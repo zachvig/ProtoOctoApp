@@ -16,6 +16,10 @@ class OctoPrintRepository(
     private val mutableOctoprint = MutableLiveData<OctoPrint>()
     val octoprint = Transformations.map(mutableOctoprint) { it }
 
+    private val mutableInstanceInformationAvailable = MutableLiveData<Boolean>()
+    val instanceInforationAvailable =
+        Transformations.map(mutableInstanceInformationAvailable) { it }
+
     init {
         storeOctoprintInstanceInformation(getOctoprintInstanceInformation())
     }
@@ -26,6 +30,10 @@ class OctoPrintRepository(
         private const val KEY_API_KEY = "octoprint_api_key"
     }
 
+    fun clearOctoprintInstanceInformation() {
+        storeOctoprintInstanceInformation(OctoPrintInstanceInformation("", -1, ""))
+    }
+
     fun storeOctoprintInstanceInformation(instance: OctoPrintInstanceInformation) {
         sharedPreferences.edit {
             putString(KEY_API_KEY, instance.apiKey)
@@ -34,6 +42,7 @@ class OctoPrintRepository(
         }
 
         mutableOctoprint.postValue(getOctoprint(instance))
+        mutableInstanceInformationAvailable.postValue(isInstanceInformationAvailable())
     }
 
     private fun getOctoprintInstanceInformation() = OctoPrintInstanceInformation(
@@ -42,7 +51,7 @@ class OctoPrintRepository(
         sharedPreferences.getString(KEY_API_KEY, "") ?: ""
     )
 
-    fun isInstanceInformationAvailable() : Boolean {
+    private fun isInstanceInformationAvailable(): Boolean {
         val info = getOctoprintInstanceInformation()
         return !(info.apiKey.isBlank() || info.hostName.isBlank() || info.port <= 0)
     }
