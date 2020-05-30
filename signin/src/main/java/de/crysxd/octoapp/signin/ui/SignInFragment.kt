@@ -8,13 +8,14 @@ import com.google.android.material.textfield.TextInputLayout
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.di.injectViewModel
+import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInInformationValidationResult
 import kotlinx.android.synthetic.main.fragment_signin.*
 
 
 class SignInFragment : BaseFragment(R.layout.fragment_signin) {
 
-   override val viewModel: SignInViewModel by injectViewModel()
+    override val viewModel: SignInViewModel by injectViewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,10 +53,10 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
 
     private fun signIn(@Suppress("UNUSED_PARAMETER") view: View) {
         viewModel.startSignIn(
-            de.crysxd.octoapp.signin.models.SignInInformation(
-                textInputLayoutIpAddress.editText?.text ?: "",
-                textInputLayoutPort.editText?.text ?: "",
-                textInputLayoutApiKey.editText?.text ?: ""
+            SignInInformation(
+                textInputLayoutIpAddress.editText?.text?.toString() ?: "",
+                textInputLayoutPort.editText?.text?.toString() ?: "",
+                textInputLayoutApiKey.editText?.text?.toString() ?: ""
             )
         )
     }

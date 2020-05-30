@@ -1,30 +1,29 @@
 package de.crysxd.octoapp.signin.usecases
 
-import android.content.Context
+import de.crysxd.octoapp.base.OctoPrintRepository
 import de.crysxd.octoapp.base.UseCase
-import de.crysxd.octoapp.octoprint.Octoprint
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
 import de.crysxd.octoapp.signin.models.SignInInformation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
-import java.net.InetAddress
 
 
-class SignInUseCase(context: Context) : UseCase<SignInInformation, Unit> {
+class SignInUseCase(private val octoprintRepository: OctoPrintRepository) : UseCase<SignInInformation, Unit> {
 
     override suspend fun execute(param: SignInInformation) = withContext(Dispatchers.IO) {
-        val octoprint = Octoprint(
-            param.ipAddress.toString(),
-            param.port.toString().toInt(),
-            param.apiKey.toString(),
-            listOf(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-                override fun log(message: String) {
-                   Timber.tag("HTTP").i(message)
-                }
-            }).setLevel(HttpLoggingInterceptor.Level.BODY))
+        val octoprintInstanceInformation = OctoPrintInstanceInformation(
+            param.ipAddress,
+            param.port.toInt(),
+            param.ipAddress
         )
 
-        Timber.i("Version: ${octoprint.createVersionApi().getVersion()}")
+        val octoprint = octoprintRepository.getOctoprint(octoprintInstanceInformation)
+
+        // Test connection, will throw in case of faulty configuration
+        val version = octoprint.createVersionApi().getVersion()
+        Timber.i("Connected to ${version.serverVersionText}")
+
+        octoprintRepository.storeOctoprintInstanceInformation(octoprintInstanceInformation)
     }
 }

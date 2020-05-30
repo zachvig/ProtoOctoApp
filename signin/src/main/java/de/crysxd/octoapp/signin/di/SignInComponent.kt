@@ -2,15 +2,16 @@ package de.crysxd.octoapp.signin.di
 
 import androidx.lifecycle.ViewModelProvider
 import dagger.Component
-import de.crysxd.octoapp.base.di.AndroidModule
+import de.crysxd.octoapp.base.di.BaseComponent
 
+@SignInScope
 @Component(
     modules = [
-        AndroidModule::class,
         UseCaseModule::class,
         ViewModelModule::class
     ],
     dependencies = [
+        BaseComponent::class
     ]
 )
 interface SignInComponent {

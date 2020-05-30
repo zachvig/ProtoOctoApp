@@ -35,6 +35,7 @@ dependencies {
     api 'androidx.navigation:navigation-fragment-ktx:2.2.2'
     api 'androidx.navigation:navigation-ui-ktx:2.2.2'
 
+
     /*
      * Test
      */
@@ -53,4 +54,14 @@ dependencies {
      */
     api 'com.jakewharton.timber:timber:4.7.1'
     api 'com.squareup.okhttp3:logging-interceptor:4.7.2'
+
+    /*
+     * Octoprint
+     */
+    api project(':octoprint')
+
+    /*
+     * Android X
+     */
+    api "androidx.preference:preference-ktx:1.1.1"
 }

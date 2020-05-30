@@ -1,6 +1,8 @@
 package de.crysxd.octoapp.base.di
 
 import android.app.Application
+import android.content.Context
+import androidx.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
 
@@ -13,4 +15,7 @@ open class AndroidModule(private val app: Application) {
     @Provides
     open fun provideContext() = app.applicationContext
 
+    @Provides
+    open fun sharedPreferences(context: Context) =
+        PreferenceManager.getDefaultSharedPreferences(context)
 }

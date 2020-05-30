@@ -7,14 +7,14 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-class Octoprint (
+class OctoPrint (
     private val hostName: String,
     private val port: Int,
     private val apiKey: String,
     private val interceptors: List<Interceptor> = emptyList()
 ) {
 
-    fun createVersionApi() = createRetrofit().create(VersionApi::class.java)
+    fun createVersionApi(): VersionApi = createRetrofit().create(VersionApi::class.java)
 
     private fun createRetrofit() = Retrofit.Builder()
         .baseUrl("http://${hostName}:${port}/api/")
@@ -23,7 +23,7 @@ class Octoprint (
         .build()
 
     private fun createOkHttpClient() = OkHttpClient.Builder().apply {
-        this@Octoprint.interceptors.forEach { addInterceptor(it) }
+        this@OctoPrint.interceptors.forEach { addInterceptor(it) }
         addInterceptor(createAddHeaderInterceptor())
     }.build()
 
