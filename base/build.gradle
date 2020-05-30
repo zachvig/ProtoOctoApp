@@ -35,7 +35,6 @@ dependencies {
     api 'androidx.navigation:navigation-fragment-ktx:2.2.2'
     api 'androidx.navigation:navigation-ui-ktx:2.2.2'
 
-
     /*
      * Test
      */
@@ -46,7 +45,7 @@ dependencies {
     /*
      * Dagger
      */
-    implementation "com.google.dagger:dagger:$dagger_version"
+    api "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
     /*
