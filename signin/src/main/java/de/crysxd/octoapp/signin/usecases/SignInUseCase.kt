@@ -26,11 +26,12 @@ class SignInUseCase(private val octoprintRepository: OctoPrintRepository) :
             // Test connection, will throw in case of faulty configuration
             val version = octoprint.createVersionApi().getVersion()
             Timber.i("Connected to ${version.serverVersionText}")
-            octoprintRepository.storeOctoprintInstanceInformation(octoprintInstanceInformation)
-            true
         } catch (e: Exception) {
             Timber.e(e)
-            false
+            return@withContext false
         }
+
+        octoprintRepository.storeOctoprintInstanceInformation(octoprintInstanceInformation)
+        true
     }
 }

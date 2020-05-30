@@ -1,8 +1,10 @@
 package de.crysxd.octoapp.signin.ui
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.google.android.material.textfield.TextInputLayout
 import de.crysxd.octoapp.base.ui.BaseFragment
@@ -10,6 +12,7 @@ import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInInformationValidationResult
+import de.crysxd.octoapp.signin.models.SignInViewState
 import kotlinx.android.synthetic.main.fragment_signin.*
 
 
@@ -28,27 +31,35 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
                 true
             }
         }
-        viewModel.verificationStatus.observe(this, Observer(this::updateValidationResult))
+        viewModel.viewState.observe(this, Observer(this::updateViewState))
     }
 
-    private fun updateValidationResult(res: SignInInformationValidationResult) {
-        fun applyError(til: TextInputLayout, error: String?) {
-            til.error = error
-            til.isErrorEnabled = error != null
+    private fun showError(til: TextInputLayout, error: String?) {
+        til.error = error
+        til.isErrorEnabled = error != null
+    }
+
+    private fun updateViewState(res: SignInViewState) {
+        if (res is SignInViewState.SignInFailed) {
+            AlertDialog.Builder(requireContext())
+                .setMessage("Unable to connect to OctoPrint with the provided information.")
+                .setPositiveButton(android.R.string.ok, null)
+                .show()
         }
 
-        applyError(
-            textInputLayoutIpAddress,
-            (res as? SignInInformationValidationResult.ValidationFailed)?.ipErrorMessage
-        )
-        applyError(
-            textInputLayoutPort,
-            (res as? SignInInformationValidationResult.ValidationFailed)?.portErrorMessage
-        )
-        applyError(
-            textInputLayoutApiKey,
-            (res as? SignInInformationValidationResult.ValidationFailed)?.apiKeyErrorMessage
-        )
+        if (res is SignInViewState.SignInInformationInvalid) {
+            showError(textInputLayoutIpAddress, res.result.ipErrorMessage)
+            showError(textInputLayoutPort, res.result.portErrorMessage)
+            showError(textInputLayoutApiKey, res.result.apiKeyErrorMessage)
+        } else {
+            showError(textInputLayoutIpAddress, null)
+            showError(textInputLayoutPort, null)
+            showError(textInputLayoutApiKey, null)
+        }
+
+        if (res is SignInViewState.Loading) {
+            Toast.makeText(requireContext(), "Laoding", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun signIn(@Suppress("UNUSED_PARAMETER") view: View) {
