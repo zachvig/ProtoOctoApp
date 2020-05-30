@@ -10,5 +10,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Injector.init(application)
         setContentView(R.layout.activity_main)
+
+
     }
 }
