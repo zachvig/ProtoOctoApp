@@ -12,8 +12,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/models" />
-            <option value="$PROJECT_DIR$/usecases" />
+            <option value="$PROJECT_DIR$/base" />
+            <option value="$PROJECT_DIR$/signin" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

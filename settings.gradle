@@ -1,4 +1,4 @@
-include ':models'
-include ':usecases'
+include ':signin'
+include ':base'
 include ':app'
 rootProject.name = "OctoApp"

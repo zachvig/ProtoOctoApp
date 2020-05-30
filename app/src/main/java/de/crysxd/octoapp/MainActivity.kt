@@ -2,7 +2,7 @@ package de.crysxd.octoapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import de.crysxd.octoapp.di.Injector
+import de.crysxd.octoapp.signin.di.Injector
 
 class MainActivity : AppCompatActivity() {
 
