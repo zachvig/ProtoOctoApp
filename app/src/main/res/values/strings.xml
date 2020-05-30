@@ -6,10 +6,5 @@
     <string name="sign_in_to_octoprint">Sign in to OctoPrint</string>
     <string name="port">Port</string>
     <string name="default_port">80</string>
-    <string name="a_ip_address">a IP address</string>
-    <string name="enter_a_valid_ip_address">Enter a valid IP address</string>
-    <string name="the_port">the Port</string>
-    <string name="only_digits">Only digits</string>
-    <string name="an_api_key">an API key</string>
-    <string name="please_enter_x">Please enter %s</string>
+    <string name="error_general">Something went wrong! Please try again.</string>
 </resources>

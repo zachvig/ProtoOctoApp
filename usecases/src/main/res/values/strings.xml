@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="a_ip_address">a IP address</string>
+    <string name="enter_a_valid_ip_address">Enter a valid IP address</string>
+    <string name="the_port">the Port</string>
+    <string name="only_digits">Only digits</string>
+    <string name="an_api_key">an API key</string>
+    <string name="please_enter_x">Please enter %s</string>
+</resources>
