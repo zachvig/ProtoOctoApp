@@ -17,7 +17,7 @@ class SignInUseCase(private val octoprintRepository: OctoPrintRepository) :
         val octoprintInstanceInformation = OctoPrintInstanceInformation(
             param.ipAddress,
             param.port.toInt(),
-            param.ipAddress
+            param.apiKey
         )
 
         val octoprint = octoprintRepository.getOctoprint(octoprintInstanceInformation)

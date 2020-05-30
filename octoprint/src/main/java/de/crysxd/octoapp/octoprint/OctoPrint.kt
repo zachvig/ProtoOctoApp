@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.octoprint
 
+import de.crysxd.octoapp.octoprint.api.PrinterApi
 import de.crysxd.octoapp.octoprint.api.VersionApi
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -16,6 +17,8 @@ class OctoPrint (
 
     fun createVersionApi(): VersionApi = createRetrofit().create(VersionApi::class.java)
 
+    fun createPrinterApi(): PrinterApi = createRetrofit().create(PrinterApi::class.java)
+
     private fun createRetrofit() = Retrofit.Builder()
         .baseUrl("http://${hostName}:${port}/api/")
         .addConverterFactory(GsonConverterFactory.create())
@@ -23,8 +26,8 @@ class OctoPrint (
         .build()
 
     private fun createOkHttpClient() = OkHttpClient.Builder().apply {
-        this@OctoPrint.interceptors.forEach { addInterceptor(it) }
         addInterceptor(createAddHeaderInterceptor())
+        this@OctoPrint.interceptors.forEach { addInterceptor(it) }
     }.build()
 
     private fun createAddHeaderInterceptor() = Interceptor {

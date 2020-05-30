@@ -1,6 +1,6 @@
 package de.crysxd.octoapp.octoprint.api
 
-import de.crysxd.octoapp.octoprint.models.VersionInfo
+import de.crysxd.octoapp.octoprint.models.version.VersionInfo
 import retrofit2.http.GET
 
 

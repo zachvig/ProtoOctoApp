@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.octoprint.models
+package de.crysxd.octoapp.octoprint.models.version
 
 import com.google.gson.annotations.SerializedName
 
