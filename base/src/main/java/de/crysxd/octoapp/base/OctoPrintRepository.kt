@@ -16,6 +16,10 @@ class OctoPrintRepository(
     private val mutableOctoprint = MutableLiveData<OctoPrint>()
     val octoprint = Transformations.map(mutableOctoprint) { it }
 
+    init {
+        storeOctoprintInstanceInformation(getOctoprintInstanceInformation())
+    }
+
     companion object {
         private const val KEY_HOST_NAME = "octorpint_host_name"
         private const val KEY_PORT = "octoprint_port"
@@ -37,6 +41,11 @@ class OctoPrintRepository(
         sharedPreferences.getInt(KEY_PORT, -1),
         sharedPreferences.getString(KEY_API_KEY, "") ?: ""
     )
+
+    fun isInstanceInformationAvailable() : Boolean {
+        val info = getOctoprintInstanceInformation()
+        return !(info.apiKey.isBlank() || info.hostName.isBlank() || info.port <= 0)
+    }
 
     fun getOctoprint(instance: OctoPrintInstanceInformation) = OctoPrint(
         instance.hostName,
