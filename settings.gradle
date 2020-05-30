@@ -1,3 +1,4 @@
+include ':octoprint'
 include ':signin'
 include ':base'
 include ':app'

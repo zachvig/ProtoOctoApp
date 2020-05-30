@@ -3,6 +3,7 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
       <module name="models" target="1.7" />
+      <module name="octoprint" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>
