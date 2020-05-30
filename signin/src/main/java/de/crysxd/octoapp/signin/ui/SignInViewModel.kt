@@ -8,6 +8,7 @@ import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInInformationValidationResult
 import de.crysxd.octoapp.signin.usecases.SignInUseCase
 import de.crysxd.octoapp.signin.usecases.VerifySignInInformationUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SignInViewModel(
@@ -19,12 +20,13 @@ class SignInViewModel(
     val verificationStatus = Transformations.map(mutableVerificationStatus) { it }
 
 
-    fun startSignIn(info: SignInInformation) = viewModelScope.launch(coroutineExceptionHandler) {
-        val res = verifyUseCase.execute(info)
-        mutableVerificationStatus.postValue(res)
+    fun startSignIn(info: SignInInformation) =
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val res = verifyUseCase.execute(info)
+            mutableVerificationStatus.postValue(res)
 
-        if (res == SignInInformationValidationResult.ValidationOk) {
-            signInUseCase.execute(info)
+            if (res == SignInInformationValidationResult.ValidationOk) {
+                signInUseCase.execute(info)
+            }
         }
-    }
 }

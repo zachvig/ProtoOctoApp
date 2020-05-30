@@ -6,6 +6,7 @@ import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.UserMessageException
 
 abstract class BaseFragment(@LayoutRes layout: Int) : Fragment(layout) {
 
@@ -18,8 +19,9 @@ abstract class BaseFragment(@LayoutRes layout: Int) : Fragment(layout) {
             errorDialog?.dismiss()
             errorDialog = AlertDialog.Builder(requireContext())
                 .setMessage(
-                    (it as? de.crysxd.octoapp.base.UserMessageException)?.userMessage ?: getString(
-                        R.string.error_general)
+                    (it as? UserMessageException)?.userMessage ?: getString(
+                        R.string.error_general
+                    )
                 )
                 .setPositiveButton(android.R.string.ok, null)
                 .show()
