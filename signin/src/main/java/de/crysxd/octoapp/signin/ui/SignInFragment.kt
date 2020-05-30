@@ -6,6 +6,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import com.google.android.material.textfield.TextInputLayout
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.signin.R
@@ -14,7 +15,7 @@ import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInInformationValidationResult
 import de.crysxd.octoapp.signin.models.SignInViewState
 import kotlinx.android.synthetic.main.fragment_signin.*
-
+import de.crysxd.octoapp.base.R as BaseR
 
 class SignInFragment : BaseFragment(R.layout.fragment_signin) {
 
@@ -58,7 +59,15 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         }
 
         if (res is SignInViewState.Loading) {
-            Toast.makeText(requireContext(), "Laoding", Toast.LENGTH_LONG).show()
+            buttonSignIn.isEnabled = false
+            buttonSignIn.text = getString(R.string.loading)
+        } else {
+            buttonSignIn.isEnabled = true
+            buttonSignIn.text = getString(R.string.sign_in)
+        }
+
+        if (res is SignInViewState.SignInSuccess) {
+            requireView().findNavController().navigate(BaseR.id.action_sign_in_completed)
         }
     }
 

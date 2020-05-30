@@ -5,4 +5,5 @@ sealed class SignInViewState {
     object Loading: SignInViewState()
     data class SignInInformationInvalid(val result: SignInInformationValidationResult.ValidationFailed) : SignInViewState()
     object SignInFailed : SignInViewState()
+    object SignInSuccess : SignInViewState()
 }

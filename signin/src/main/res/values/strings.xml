@@ -11,4 +11,5 @@
     <string name="only_digits">Only digits</string>
     <string name="an_api_key">an API key</string>
     <string name="please_enter_x">Please enter %s</string>
+    <string name="loading">Loading…</string>
 </resources>

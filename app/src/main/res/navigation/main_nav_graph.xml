@@ -6,4 +6,13 @@
     app:startDestination="@id/main_nav_graph">
 
     <include app:graph="@navigation/sign_in_nav_graph" />
+
+    <action
+        android:id="@+id/action_sign_in_completed"
+        app:destination="@+id/homeFragment" />
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="de.crysxd.octoapp.HomeFragment"
+        android:label="HomeFragment" />
 </navigation>

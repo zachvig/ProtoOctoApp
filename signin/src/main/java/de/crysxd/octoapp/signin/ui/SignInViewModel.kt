@@ -9,7 +9,6 @@ import de.crysxd.octoapp.signin.models.SignInInformationValidationResult
 import de.crysxd.octoapp.signin.models.SignInViewState
 import de.crysxd.octoapp.signin.usecases.SignInUseCase
 import de.crysxd.octoapp.signin.usecases.VerifySignInInformationUseCase
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SignInViewModel(
@@ -22,19 +21,26 @@ class SignInViewModel(
 
     fun startSignIn(info: SignInInformation) =
         viewModelScope.launch(coroutineExceptionHandler) {
-            when (val res = verifyUseCase.execute(info)) {
-                is SignInInformationValidationResult.ValidationOk -> {
-                    mutableViewState.postValue(SignInViewState.Loading)
-                    if (!signInUseCase.execute(info)) {
-                        mutableViewState.postValue(SignInViewState.SignInFailed)
-                    } else {
-                        // Sign in success
+            try {
+                when (val res = verifyUseCase.execute(info)) {
+                    is SignInInformationValidationResult.ValidationOk -> {
+                        mutableViewState.postValue(SignInViewState.Loading)
+                        if (!signInUseCase.execute(info)) {
+                            mutableViewState.postValue(SignInViewState.SignInFailed)
+                        } else {
+                            // Sign in success
+                            mutableViewState.postValue(SignInViewState.SignInSuccess)
+
+                        }
+                    }
+
+                    is SignInInformationValidationResult.ValidationFailed -> {
+                        mutableViewState.postValue(SignInViewState.SignInInformationInvalid(res))
                     }
                 }
-
-                is SignInInformationValidationResult.ValidationFailed -> {
-                    mutableViewState.postValue(SignInViewState.SignInInformationInvalid(res))
-                }
+            } catch (e: Throwable) {
+                mutableViewState.postValue(SignInViewState.Idle)
+                throw e
             }
         }
 }
