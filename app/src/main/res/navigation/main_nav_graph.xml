@@ -25,7 +25,7 @@
 
     <action
         android:id="@+id/action_printer_connected"
-        app:destination="@+id/homeScreenFragment"
+        app:destination="@+id/pre_print_controls_nav_graph"
         app:popUpTo="@id/main_nav_graph"
         app:popUpToInclusive="true" />
 
@@ -34,6 +34,9 @@
 
     <include
         app:graph="@navigation/connect_printer_nav_graph" />
+
+    <include
+        app:graph="@navigation/pre_print_controls_nav_graph" />
 
     <fragment
         android:id="@+id/homeScreenFragment"
