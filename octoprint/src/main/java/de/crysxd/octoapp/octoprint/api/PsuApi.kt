@@ -11,7 +11,7 @@ interface PsuApi {
     @POST("plugin/psucontrol")
     suspend fun sendPsuCommand(@Body command: PsuCommand): Response<Unit>
 
-    class PsuApiWrapper(private val wrapped: PsuApi) {
+    class Wrapper(private val wrapped: PsuApi) {
 
         suspend fun turnPsuOn() {
             wrapped.sendPsuCommand(PsuCommand.TurnOnPsuCommand)

@@ -8,6 +8,7 @@ import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.ui.ViewModelFactory
+import de.crysxd.octoapp.base.usecase.SetToolTargetTemperatureUseCase
 import de.crysxd.octoapp.pre_print_controls.ui.PrePrintControlsViewModel
 import javax.inject.Provider
 
@@ -21,7 +22,9 @@ open class ViewModelModule {
     @Provides
     @IntoMap
     @ViewModelKey(PrePrintControlsViewModel::class)
-    open fun provideSignInViewModel(octoPrintProvider: OctoPrintProvider): ViewModel =
-        PrePrintControlsViewModel(octoPrintProvider)
+    open fun provideSignInViewModel(
+        octoPrintProvider: OctoPrintProvider,
+        setToolTargetTemperatureUseCase: SetToolTargetTemperatureUseCase
+    ): ViewModel = PrePrintControlsViewModel(octoPrintProvider, setToolTargetTemperatureUseCase)
 
 }

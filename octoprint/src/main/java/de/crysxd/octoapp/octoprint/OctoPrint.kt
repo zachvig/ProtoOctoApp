@@ -20,11 +20,11 @@ class OctoPrint(
     fun createVersionApi(): VersionApi =
         createRetrofit().create(VersionApi::class.java)
 
-    fun createPrinterApi(): PrinterApi =
-        createRetrofit().create(PrinterApi::class.java)
+    fun createPrinterApi(): PrinterApi.Wrapper =
+        PrinterApi.Wrapper(createRetrofit().create(PrinterApi::class.java))
 
-    fun createPsuApi(): PsuApi.PsuApiWrapper =
-        PsuApi.PsuApiWrapper((createRetrofit().create(PsuApi::class.java)))
+    fun createPsuApi(): PsuApi.Wrapper =
+        PsuApi.Wrapper((createRetrofit().create(PsuApi::class.java)))
 
     private fun createRetrofit() = Retrofit.Builder()
         .baseUrl("http://${hostName}:${port}/api/")

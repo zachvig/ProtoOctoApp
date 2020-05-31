@@ -6,6 +6,7 @@ import dagger.Component
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.modules.*
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.usecase.SetToolTargetTemperatureUseCase
 import okhttp3.logging.HttpLoggingInterceptor
 
 @BaseScope
@@ -30,5 +31,8 @@ interface BaseComponent {
     // OctoprintModule
     fun octorPrintRepository(): OctoPrintRepository
     fun octoPrintProvider(): OctoPrintProvider
+
+    // UseCaseModule
+    fun setToolTargetTemperatureUseCase(): SetToolTargetTemperatureUseCase
 
 }
