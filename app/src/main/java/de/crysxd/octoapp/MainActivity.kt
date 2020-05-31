@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
-import de.crysxd.octoapp.signin.di.Injector
+import timber.log.Timber
+import de.crysxd.octoapp.signin.di.Injector as SignInInjector
+import de.crysxd.octoapp.connect_printer.di.Injector as ConnectPrinterInjector
 import java.lang.RuntimeException
 
 class MainActivity : AppCompatActivity() {
@@ -13,19 +15,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.mainNavController)
-                as? NavHostFragment
+        val navController = (supportFragmentManager.findFragmentById(R.id.mainNavController)
+                as? NavHostFragment)?.navController
 
-        if (navHostFragment != null) {
-            Injector.get().octoprintRepository().instanceInformation.observe(
+        if (navController != null) {
+            SignInInjector.get().octoprintRepository().instanceInformation.observe(
                 this,
                 Observer {
                     if (it != null) {
-                        navHostFragment.navController.navigate(R.id.action_sign_in_completed)
+                        navController.navigate(R.id.action_sign_in_completed)
                     } else {
-                        navHostFragment.navController.navigate(R.id.action_sign_in_required)
+                        navController.navigate(R.id.action_sign_in_required)
                     }
                 })
+            ConnectPrinterInjector.get().octoprintProvider().exception.observe(this, Observer {
+                Timber.w("OctoPrint reported error, attempting to reconnect")
+                navController.navigate(R.id.action_connect_printer)
+            })
         } else {
             throw RuntimeException("mainNavController not available! ")
         }

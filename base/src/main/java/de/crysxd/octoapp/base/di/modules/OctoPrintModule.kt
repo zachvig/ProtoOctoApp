@@ -23,6 +23,7 @@ open class OctoPrintModule {
         checkOctoPrintInstanceInformationUseCase
     )
 
+    @BaseScope
     @Provides
     open fun provideOctoPrintProvider(
         httpLoggingInterceptor: HttpLoggingInterceptor,
