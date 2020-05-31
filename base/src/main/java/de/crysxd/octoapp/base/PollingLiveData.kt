@@ -35,7 +35,7 @@ class PollingLiveData<T>(
     }
 
     sealed class Result<T> {
-        data class Success<T>(val t: T) : Result<T>()
+        data class Success<T>(val result: T) : Result<T>()
         data class Failure<T>(val exception: Exception): Result<T>()
     }
 }

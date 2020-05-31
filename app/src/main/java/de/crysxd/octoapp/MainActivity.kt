@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
     private fun onPrinterStateChanged(printerState: PollingLiveData.Result<PrinterState>) {
         when (printerState) {
             is PollingLiveData.Result.Success -> {
-                val f = printerState.t.state.flags
+                val f = printerState.result.state.flags
                 when {
                     f.printing || f.cancelling || f.pausing || f.paused -> {
                         navigate(R.id.action_printer_active)

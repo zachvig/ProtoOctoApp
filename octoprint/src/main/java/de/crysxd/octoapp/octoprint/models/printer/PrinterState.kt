@@ -1,7 +1,8 @@
 package de.crysxd.octoapp.octoprint.models.printer
 
 data class PrinterState(
-    val state: State
+    val state: State,
+    val temperature: PrinterTemperature?
 ) {
 
     data class State(
@@ -19,5 +20,16 @@ data class PrinterState(
         val error: Boolean,
         val ready: Boolean,
         val closedOrError: Boolean
+    )
+
+    data class PrinterTemperature(
+        val bed: ComponentTemperature,
+        val tool0 : ComponentTemperature
+    )
+
+    data class ComponentTemperature(
+        val actual: Float,
+        val offset: Float,
+        val target: Float
     )
 }
