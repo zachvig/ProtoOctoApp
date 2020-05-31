@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/print_controls_nav_graph"
+    app:startDestination="@id/printControlsFragment">
+
+    <fragment
+        android:id="@+id/printControlsFragment"
+        android:name="de.crysxd.octoapp.print_controls.ui.PrintControlsFragment"
+        android:label="PrintControlsFragment"
+        tools:layout="@layout/fragment_print_controls" />
+</navigation>

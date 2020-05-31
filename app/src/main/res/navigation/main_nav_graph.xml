@@ -29,14 +29,19 @@
         app:popUpTo="@id/main_nav_graph"
         app:popUpToInclusive="true" />
 
-    <include
-        app:graph="@navigation/sign_in_nav_graph" />
+    <action
+        android:id="@+id/action_printer_active"
+        app:destination="@+id/print_controls_nav_graph"
+        app:popUpTo="@id/main_nav_graph"
+        app:popUpToInclusive="true" />
 
-    <include
-        app:graph="@navigation/connect_printer_nav_graph" />
+    <include app:graph="@navigation/sign_in_nav_graph" />
 
-    <include
-        app:graph="@navigation/pre_print_controls_nav_graph" />
+    <include app:graph="@navigation/connect_printer_nav_graph" />
+
+    <include app:graph="@navigation/pre_print_controls_nav_graph" />
+
+    <include app:graph="@navigation/print_controls_nav_graph" />
 
     <fragment
         android:id="@+id/homeScreenFragment"

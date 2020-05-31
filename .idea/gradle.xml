@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/connect-printer" />
             <option value="$PROJECT_DIR$/octoprint" />
             <option value="$PROJECT_DIR$/pre-print-controls" />
+            <option value="$PROJECT_DIR$/print-controls" />
             <option value="$PROJECT_DIR$/signin" />
           </set>
         </option>

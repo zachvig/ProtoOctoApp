@@ -45,10 +45,7 @@ class MainActivity : AppCompatActivity() {
                 val f = printerState.t.state.flags
                 when {
                     f.printing || f.cancelling || f.pausing || f.paused -> {
-                        //navigate(R.id.action_printer_active)
-                    }
-                    f.error -> {
-                        navigate(R.id.action_printer_connected)
+                        navigate(R.id.action_printer_active)
                     }
                     else -> {
                         navigate(R.id.action_printer_connected)

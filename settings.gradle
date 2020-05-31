@@ -1,3 +1,4 @@
+include ':print-controls'
 include ':pre-print-controls'
 include ':connect-printer'
 include ':octoprint'
