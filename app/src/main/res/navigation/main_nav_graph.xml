@@ -12,14 +12,20 @@
         app:popUpToInclusive="true" />
 
     <action
+        android:id="@+id/action_sign_in_completed"
+        app:destination="@id/connect_printer_nav_graph"
+        app:popUpTo="@id/main_nav_graph"
+        app:popUpToInclusive="true" />
+
+    <action
         android:id="@+id/action_connect_printer"
         app:destination="@id/connect_printer_nav_graph"
         app:popUpTo="@id/main_nav_graph"
         app:popUpToInclusive="true" />
 
     <action
-        android:id="@+id/action_sign_in_completed"
-        app:destination="@id/connect_printer_nav_graph"
+        android:id="@+id/action_printer_connected"
+        app:destination="@id/homeScreenFragment"
         app:popUpTo="@id/main_nav_graph"
         app:popUpToInclusive="true" />
 
@@ -28,5 +34,10 @@
 
     <include
         app:graph="@navigation/connect_printer_nav_graph" />
+
+    <fragment
+        android:id="@+id/homeScreenFragment"
+        android:name="de.crysxd.octoapp.HomeScreenFragment"
+        android:label="HomeScreenFragment" />
 
 </navigation>
