@@ -3,7 +3,7 @@ package de.crysxd.octoapp.signin.usecases
 import android.content.Context
 import android.util.Patterns
 import androidx.core.text.isDigitsOnly
-import de.crysxd.octoapp.base.UseCase
+import de.crysxd.octoapp.base.usecase.UseCase
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInInformationValidationResult

@@ -20,9 +20,9 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Injector.get().octoprintRepository().octoprint.observe(this, Observer {
+        Injector.get().octoprintProvider().octoPrint.observe(this, Observer {
             GlobalScope.launch(Dispatchers.IO) {
-                val state = it.createPrinterApi().getPrinterState()
+                val state = it!!.createPrinterApi().getPrinterState()
                 Timber.i("State: $state")
             }
         })

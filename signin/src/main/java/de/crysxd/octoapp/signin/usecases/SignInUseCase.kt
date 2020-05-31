@@ -1,7 +1,8 @@
 package de.crysxd.octoapp.signin.usecases
 
-import de.crysxd.octoapp.base.OctoPrintRepository
-import de.crysxd.octoapp.base.UseCase
+import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.usecase.UseCase
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
 import de.crysxd.octoapp.signin.models.SignInInformation
 import kotlinx.coroutines.Dispatchers
@@ -10,8 +11,10 @@ import timber.log.Timber
 import java.lang.Exception
 
 
-class SignInUseCase(private val octoprintRepository: OctoPrintRepository) :
-    UseCase<SignInInformation, Boolean> {
+class SignInUseCase(
+    private val octoprintRepository: OctoPrintRepository,
+    private val octoPrintProvider: OctoPrintProvider
+) : UseCase<SignInInformation, Boolean> {
 
     override suspend fun execute(param: SignInInformation): Boolean = withContext(Dispatchers.IO) {
         val octoprintInstanceInformation = OctoPrintInstanceInformation(
@@ -20,7 +23,7 @@ class SignInUseCase(private val octoprintRepository: OctoPrintRepository) :
             param.apiKey
         )
 
-        val octoprint = octoprintRepository.getOctoprint(octoprintInstanceInformation)
+        val octoprint = octoPrintProvider.createAdHocOctoPrint(octoprintInstanceInformation)
 
         try {
             // Test connection, will throw in case of faulty configuration

@@ -3,7 +3,8 @@ package de.crysxd.octoapp.base.di
 import android.app.Application
 import android.content.Context
 import dagger.Component
-import de.crysxd.octoapp.base.OctoPrintRepository
+import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import okhttp3.logging.HttpLoggingInterceptor
 
 @BaseScope
@@ -11,7 +12,9 @@ import okhttp3.logging.HttpLoggingInterceptor
     modules = [
         AndroidModule::class,
         LoggingModule::class,
-        OctoPrintModule::class
+        OctoPrintModule::class,
+        UseCaseModule::class,
+        DataSourceModule::class
     ]
 )
 interface BaseComponent {
@@ -25,5 +28,6 @@ interface BaseComponent {
 
     // OctoprintModule
     fun octorPrintRepository(): OctoPrintRepository
+    fun octoPrintProvider(): OctoPrintProvider
 
 }

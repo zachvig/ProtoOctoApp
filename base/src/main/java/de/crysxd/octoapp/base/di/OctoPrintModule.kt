@@ -3,7 +3,11 @@ package de.crysxd.octoapp.base.di
 import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
-import de.crysxd.octoapp.base.OctoPrintRepository
+import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.datasource.DataSource
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.usecase.CheckOctoPrintInstanceInformationUseCase
 import okhttp3.logging.HttpLoggingInterceptor
 
 @Module
@@ -12,8 +16,17 @@ open class OctoPrintModule {
     @BaseScope
     @Provides
     open fun provideOctoPrintRepository(
-        sharedPreferences: SharedPreferences,
-        httpLoggingInterceptor: HttpLoggingInterceptor
-    ) = OctoPrintRepository(sharedPreferences, httpLoggingInterceptor)
+        dataSource: DataSource<OctoPrintInstanceInformation>,
+        checkOctoPrintInstanceInformationUseCase: CheckOctoPrintInstanceInformationUseCase
+    ) = OctoPrintRepository(
+        dataSource,
+        checkOctoPrintInstanceInformationUseCase
+    )
+
+    @Provides
+    open fun provideOctoPrintProvider(
+        httpLoggingInterceptor: HttpLoggingInterceptor,
+        octoPrintRepository: OctoPrintRepository
+    ) = OctoPrintProvider(httpLoggingInterceptor, octoPrintRepository)
 
 }

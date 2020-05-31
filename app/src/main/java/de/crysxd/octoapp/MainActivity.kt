@@ -17,10 +17,10 @@ class MainActivity : AppCompatActivity() {
                 as? NavHostFragment
 
         if (navHostFragment != null) {
-            Injector.get().octoprintRepository().instanceInforationAvailable.observe(
+            Injector.get().octoprintRepository().instanceInformation.observe(
                 this,
                 Observer {
-                    if (it) {
+                    if (it != null) {
                         navHostFragment.navController.navigate(R.id.action_sign_in_completed)
                     } else {
                         navHostFragment.navController.navigate(R.id.action_sign_in_required)
