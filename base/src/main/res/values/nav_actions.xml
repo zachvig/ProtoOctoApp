@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <item type="id" name="action_sign_in_completed" />
-    <item type="id" name="action_sign_in_required" />
-    <item type="id" name="action_connect_printer" />
-    <item type="id" name="action_printer_connected" />
-</resources>

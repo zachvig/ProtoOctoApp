@@ -25,7 +25,7 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
             Timber.i("$it")
             when(it) {
                 is PollingLiveData.Result.Success -> {
-                    requireView().findNavController().navigate(R.id.action_printer_connected)
+                    // MainActivity will navigate away
                 }
                 is PollingLiveData.Result.Failure -> {
                     val (state, subState) = when (it.exception) {
@@ -38,7 +38,7 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
                     buttonTurnOnPsu.isVisible = it.exception is NoPrinterConnectedException
                     textViewAutoConnectInfo.isVisible = buttonTurnOnPsu.isVisible
                 }
-            }
+            }.let {  }
 
             buttonTurnOnPsu.setOnClickListener {
                 viewModel.turnOnPsu()

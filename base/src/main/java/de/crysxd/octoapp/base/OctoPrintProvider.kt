@@ -39,8 +39,7 @@ class OctoPrintProvider(
             PollingLiveData {
                 withContext(Dispatchers.IO) {
                     try {
-                        it?.createPrinterApi()?.getPrinterState()
-                            ?: throw IllegalStateException("OctoPrint not connected")
+                        it?.createPrinterApi()?.getPrinterState() ?: throw InvalidApiKeyException()
                     } catch (e: PrinterNotOperationalException) {
                         mutableException.postValue(e)
                         throw NoPrinterConnectedException()

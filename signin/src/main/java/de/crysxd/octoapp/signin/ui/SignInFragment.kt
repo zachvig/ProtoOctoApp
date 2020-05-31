@@ -67,7 +67,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         }
 
         if (res is SignInViewState.SignInSuccess) {
-            requireView().findNavController().navigate(BaseR.id.action_sign_in_completed)
+            // MainActivity will navigate away
         }
     }
 
