@@ -11,15 +11,16 @@ class GenerateExceptionInterceptor : Interceptor {
         try {
             val response = chain.proceed(chain.request())
             when (response.code()) {
+                in 200..204 ->  return response
                 409 -> throw PrinterNotOperationalException()
                 403 -> throw InvalidApiKeyException()
-                in 500..599 -> throw OctoprintBootingException()
+                in 501..599 -> throw OctoPrintBootingException()
+                else -> throw OctoPrintApiException()
             }
-            return response
         } catch (e: ConnectException) {
-            throw OctoprintUnavailableException(e)
+            throw OctoPrintUnavailableException(e)
         } catch (e: HttpException) {
-            throw OctoprintUnavailableException(e)
+            throw OctoPrintUnavailableException(e)
         }
     }
 }

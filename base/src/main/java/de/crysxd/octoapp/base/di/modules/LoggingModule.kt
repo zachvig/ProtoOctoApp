@@ -15,7 +15,7 @@ open class LoggingModule {
             override fun log(message: String) {
                 Timber.tag("HTTP").i(message)
             }
-        }).setLevel(HttpLoggingInterceptor.Level.HEADERS)
+        }).setLevel(HttpLoggingInterceptor.Level.BODY)
 
 
 }
