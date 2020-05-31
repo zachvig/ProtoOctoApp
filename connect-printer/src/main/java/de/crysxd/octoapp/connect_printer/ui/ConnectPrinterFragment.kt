@@ -15,16 +15,14 @@ import timber.log.Timber
 
 class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
 
-    override val viewModel: BaseViewModel by injectViewModel()
+    override val viewModel: ConnectPrinterViewModel by injectViewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Injector.get().octoprintProvider().octoPrint.observe(this, Observer {
-            GlobalScope.launch(Dispatchers.IO) {
-                val state = it!!.createPrinterApi().getPrinterState()
-                Timber.i("State: $state")
-            }
+        viewModel.printerState.observe(this, Observer {
+            Timber.i("$it")
         })
+
     }
 }

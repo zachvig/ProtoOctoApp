@@ -19,8 +19,8 @@ abstract class BaseFragment(@LayoutRes layout: Int) : Fragment(layout) {
             errorDialog?.dismiss()
             errorDialog = AlertDialog.Builder(requireContext())
                 .setMessage(
-                    (it as? UserMessageException)?.userMessage ?: getString(
-                        R.string.error_general
+                    getString(
+                        (it as? UserMessageException)?.userMessage ?: R.string.error_general
                     )
                 )
                 .setPositiveButton(android.R.string.ok, null)

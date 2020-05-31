@@ -2,6 +2,6 @@ package de.crysxd.octoapp.base
 
 interface UserMessageException {
 
-    val userMessage: CharSequence
-    
+    val userMessage: Int
+
 }

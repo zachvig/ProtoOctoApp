@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="error_general">Something went wrong! Please try again.</string>
+    <string name="error_no_printer_connected">No printer is connected to OctoPrint</string>
+    <string name="error_invalid_octoprint_instance_information">OctoPrint declined the API key</string>
 </resources>

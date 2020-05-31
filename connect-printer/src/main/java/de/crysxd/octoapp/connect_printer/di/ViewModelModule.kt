@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.connect_printer.ui.ConnectPrinterViewModel
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.ui.ViewModelFactory
@@ -20,7 +21,7 @@ open class ViewModelModule {
     @Provides
     @IntoMap
     @ViewModelKey(ConnectPrinterViewModel::class)
-    open fun provideSignInViewModel(): ViewModel =
-        ConnectPrinterViewModel()
+    open fun provideSignInViewModel(octoPrintProvider: OctoPrintProvider): ViewModel =
+        ConnectPrinterViewModel(octoPrintProvider)
 
 }

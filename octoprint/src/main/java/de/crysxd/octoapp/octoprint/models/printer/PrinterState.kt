@@ -1,9 +1,13 @@
 package de.crysxd.octoapp.octoprint.models.printer
 
 data class PrinterState(
-    val text: String,
-    val flags: Flags
+    val state: State
 ) {
+
+    data class State(
+        val text: String,
+        val flags: Flags
+    )
 
     data class Flags(
         val operational: Boolean,

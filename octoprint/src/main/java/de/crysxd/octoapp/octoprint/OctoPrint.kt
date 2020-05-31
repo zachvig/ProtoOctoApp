@@ -2,6 +2,7 @@ package de.crysxd.octoapp.octoprint
 
 import de.crysxd.octoapp.octoprint.api.PrinterApi
 import de.crysxd.octoapp.octoprint.api.VersionApi
+import de.crysxd.octoapp.octoprint.exceptions.GenerateExceptionInterceptor
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -27,6 +28,7 @@ class OctoPrint (
 
     private fun createOkHttpClient() = OkHttpClient.Builder().apply {
         addInterceptor(createAddHeaderInterceptor())
+        addInterceptor(GenerateExceptionInterceptor())
         this@OctoPrint.interceptors.forEach { addInterceptor(it) }
     }.build()
 
