@@ -7,7 +7,7 @@ import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.PollingLiveData
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import timber.log.Timber
-import de.crysxd.octoapp.connect_printer.di.Injector as ConnectPrinterInjector
+import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
 
 class MainActivity : AppCompatActivity() {
