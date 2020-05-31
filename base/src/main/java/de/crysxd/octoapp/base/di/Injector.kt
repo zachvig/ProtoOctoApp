@@ -1,8 +1,7 @@
 package de.crysxd.octoapp.base.di
 
 import android.app.Application
-import de.crysxd.octoapp.base.di.AndroidModule
-import de.crysxd.octoapp.base.di.DaggerBaseComponent
+import de.crysxd.octoapp.base.di.modules.AndroidModule
 
 object Injector {
 

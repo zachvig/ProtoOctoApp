@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.di
+package de.crysxd.octoapp.base.di.modules
 
 import android.app.Application
 import android.content.Context

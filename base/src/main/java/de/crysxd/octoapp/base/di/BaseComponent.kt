@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import dagger.Component
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.di.modules.*
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import okhttp3.logging.HttpLoggingInterceptor
 

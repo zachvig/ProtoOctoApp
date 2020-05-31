@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.di
+package de.crysxd.octoapp.base.di.modules
 
 import dagger.Module
 import dagger.Provides

@@ -1,10 +1,10 @@
-package de.crysxd.octoapp.base.di
+package de.crysxd.octoapp.base.di.modules
 
-import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.datasource.DataSource
+import de.crysxd.octoapp.base.di.BaseScope
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.usecase.CheckOctoPrintInstanceInformationUseCase
