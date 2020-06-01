@@ -16,7 +16,8 @@ import okhttp3.logging.HttpLoggingInterceptor
         LoggingModule::class,
         OctoPrintModule::class,
         UseCaseModule::class,
-        DataSourceModule::class
+        DataSourceModule::class,
+        ViewModelModule::class
     ]
 )
 interface BaseComponent {
