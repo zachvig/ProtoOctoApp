@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.di
 
 import android.app.Application
 import android.content.Context
+import androidx.lifecycle.ViewModelProvider
 import dagger.Component
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.modules.*
@@ -35,5 +36,8 @@ interface BaseComponent {
 
     // UseCaseModule
     fun setToolTargetTemperatureUseCase(): SetToolTargetTemperatureUseCase
+
+    // ViewModelModule
+    fun viewModelFactory(): ViewModelProvider.Factory
 
 }

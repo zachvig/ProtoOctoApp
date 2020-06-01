@@ -16,10 +16,6 @@ import javax.inject.Provider
 open class ViewModelModule {
 
     @Provides
-    fun bindViewModelFactory(creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>): ViewModelProvider.Factory =
-        ViewModelFactory(creators)
-
-    @Provides
     @IntoMap
     @ViewModelKey(PrePrintControlsViewModel::class)
     open fun provideSignInViewModel(
