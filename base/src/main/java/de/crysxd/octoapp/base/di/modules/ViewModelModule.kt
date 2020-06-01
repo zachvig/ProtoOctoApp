@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
+import de.crysxd.octoapp.base.ui.BaseViewModelFactory
 import de.crysxd.octoapp.base.ui.ViewModelFactory
 import de.crysxd.octoapp.base.ui.temperature.ControlTemperatureViewModel
 import javax.inject.Provider
@@ -15,8 +16,8 @@ import javax.inject.Provider
 open class ViewModelModule {
 
     @Provides
-    fun bindViewModelFactory(creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>): ViewModelProvider.Factory =
-        ViewModelFactory(creators)
+    fun bindViewModelFactory(creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>): BaseViewModelFactory =
+        BaseViewModelFactory(creators)
 
     @Provides
     @IntoMap

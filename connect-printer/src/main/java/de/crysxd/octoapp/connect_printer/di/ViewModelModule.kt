@@ -8,11 +8,16 @@ import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.connect_printer.ui.ConnectPrinterViewModel
 import de.crysxd.octoapp.base.di.ViewModelKey
+import de.crysxd.octoapp.base.ui.BaseViewModelFactory
 import de.crysxd.octoapp.base.ui.ViewModelFactory
 import javax.inject.Provider
 
 @Module
 open class ViewModelModule {
+
+    @Provides
+    fun bindViewModelFactory(creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>): ViewModelProvider.Factory =
+        ViewModelFactory(creators)
 
     @Provides
     @IntoMap

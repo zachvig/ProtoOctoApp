@@ -7,6 +7,7 @@ import dagger.Component
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.modules.*
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.ui.BaseViewModelFactory
 import de.crysxd.octoapp.base.usecase.SetToolTargetTemperatureUseCase
 import okhttp3.logging.HttpLoggingInterceptor
 
@@ -38,6 +39,6 @@ interface BaseComponent {
     fun setToolTargetTemperatureUseCase(): SetToolTargetTemperatureUseCase
 
     // ViewModelModule
-    fun viewModelFactory(): ViewModelProvider.Factory
+    fun viewModelFactory(): BaseViewModelFactory
 
 }
