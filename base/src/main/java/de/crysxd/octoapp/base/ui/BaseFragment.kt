@@ -18,7 +18,6 @@ abstract class BaseFragment(@LayoutRes layout: Int) : Fragment(layout) {
         super.onCreate(savedInstanceState)
 
         viewModel.navContoller = findNavController()
-        viewModel.viewModelLiveDatas.observe(this, Observer {  })
         viewModel.errorLiveData.observe(this, Observer {
             errorDialog?.dismiss()
             errorDialog = AlertDialog.Builder(requireContext())

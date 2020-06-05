@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.base.ui
 
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
@@ -18,8 +17,6 @@ abstract class BaseViewModel : ViewModel() {
     }
 
     lateinit var navContoller: NavController
-
-    val viewModelLiveDatas = MediatorLiveData<Any>()
 
     protected fun postException(e: Throwable) {
         mutableErrorLiveData.postValue(e)

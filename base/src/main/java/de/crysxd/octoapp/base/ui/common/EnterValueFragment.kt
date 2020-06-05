@@ -87,4 +87,10 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
             null
         }
     }
+
+    interface ValueSink : Parcelable {
+
+        fun useValue(value: String)
+
+    }
 }

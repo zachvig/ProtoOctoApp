@@ -8,7 +8,6 @@ import androidx.lifecycle.Transformations
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ui.BaseViewModel
-import de.crysxd.octoapp.base.ui.common.EnterValueFragment
 import de.crysxd.octoapp.base.ui.common.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
@@ -25,27 +24,10 @@ class PrePrintControlsViewModel(
     private val executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase
 ) : BaseViewModel() {
 
-    private var lastGcodeSource: LiveData<String>? = null
-    private val gcodeCommandsMediator = MediatorLiveData<String>()
-
-    init {
-        viewModelLiveDatas.addSource(gcodeCommandsMediator) {
-            executeGcode(it)
-        }
-    }
-
     fun turnOffPsu() = GlobalScope.launch(coroutineExceptionHandler) {
         octoPrintProvider.octoPrint.value?.let {
             turnOffPsuUseCase.execute(it)
         }
-    }
-
-    private fun waitForGcodeCommand(): Int {
-        lastGcodeSource?.let(gcodeCommandsMediator::removeSource)
-        val registration = NavigationResultMediator.registerResultCallback<String>()
-        lastGcodeSource = registration.second
-        gcodeCommandsMediator.addSource(lastGcodeSource!!) { gcodeCommandsMediator.postValue(it) }
-        return registration.first
     }
 
     private fun executeGcode(gcode: String) = GlobalScope.launch(coroutineExceptionHandler) {
@@ -56,7 +38,7 @@ class PrePrintControlsViewModel(
     }
 
     fun executeGcodeCommand(context: Context) {
-        val resultId = waitForGcodeCommand()
+        val resultId = NavigationResultMediator.registerResultCallback(this::executeGcode)
         navContoller.navigate(
             R.id.action_enter_gcode, EnterValueFragmentArgs(
                 title = context.getString(R.string.send_gcode),
