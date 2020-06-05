@@ -9,5 +9,11 @@
         android:id="@+id/prePrintControlsFragment"
         android:name="de.crysxd.octoapp.pre_print_controls.ui.PrePrintControlsFragment"
         android:label="@string/prepare"
-        tools:layout="@layout/fragment_pre_print_controls" />
+        tools:layout="@layout/fragment_pre_print_controls" >
+        <action
+            android:id="@+id/action_enter_gcode"
+            app:destination="@id/enter_value_nav_graph" />
+    </fragment>
+
+    <include app:graph="@navigation/enter_value_nav_graph" />
 </navigation>

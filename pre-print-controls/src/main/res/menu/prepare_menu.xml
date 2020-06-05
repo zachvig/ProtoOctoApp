@@ -6,4 +6,9 @@
         android:id="@+id/menuItemTurnOffPsu"
         android:title="@string/turn_off_psu"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menuItemSendGcode"
+        android:title="@string/send_gcode"
+        app:showAsAction="never" />
 </menu>

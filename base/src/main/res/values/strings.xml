@@ -19,4 +19,5 @@
     <string name="cd_move_z_down">move z down</string>
     <string name="cd_move_z_up">move Z up</string>
     <string name="x_mm">%s mm</string>
+    <string name="done">Done</string>
 </resources>

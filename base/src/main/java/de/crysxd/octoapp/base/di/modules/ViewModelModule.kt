@@ -7,6 +7,7 @@ import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.ui.BaseViewModelFactory
+import de.crysxd.octoapp.base.ui.common.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.temperature.ControlBedTemperatureViewModel
 import de.crysxd.octoapp.base.ui.temperature.ControlToolTemperatureViewModel
 import de.crysxd.octoapp.base.usecase.SetBedTargetTemperatureUseCase
@@ -35,5 +36,11 @@ open class ViewModelModule {
         octoPrintProvider: OctoPrintProvider,
         useCase: SetBedTargetTemperatureUseCase
     ): ViewModel = ControlBedTemperatureViewModel(octoPrintProvider, useCase)
+
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(EnterValueViewModel::class)
+    open fun provideEnterValueViewModel(): ViewModel = EnterValueViewModel()
 
 }
