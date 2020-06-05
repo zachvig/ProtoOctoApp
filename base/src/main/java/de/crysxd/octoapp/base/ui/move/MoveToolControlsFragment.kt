@@ -8,6 +8,7 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.BaseFragment
 import kotlinx.android.synthetic.main.fragment_move_tool_controls.*
+import java.text.DecimalFormat
 
 class MoveToolControlsFragment : BaseFragment(R.layout.fragment_move_tool_controls) {
 
@@ -19,7 +20,8 @@ class MoveToolControlsFragment : BaseFragment(R.layout.fragment_move_tool_contro
         initJogResolutionSeekBar()
         initControlButtons()
         viewModel.jogResolution.observe(this, Observer {
-            textViewJogResolution.text = getString(R.string.x_mm, it)
+            val number = DecimalFormat("#.###").format(it)
+            textViewJogResolution.text = getString(R.string.x_mm, number)
         })
     }
 
