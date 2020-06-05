@@ -13,29 +13,27 @@ import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 abstract class ControlTemperatureViewModelContract(octoPrintProvider: OctoPrintProvider) :
     BaseViewModel() {
 
-    private val manualOverwriteLiveData = MutableLiveData<PrinterState.ComponentTemperature?>()
+    protected abstract val manualOverwriteLiveData: MutableLiveData<PrinterState.ComponentTemperature?>
+    private val temperatureMediator: MediatorLiveData<PrinterState.ComponentTemperature?> by lazy { initMediator() }
+    val temperature: LiveData<PrinterState.ComponentTemperature?> by lazy { Transformations.map(temperatureMediator) { it } }
     private val octoPrintTempLiveData = Transformations.map(octoPrintProvider.printerState) { s ->
         (s as? PollingLiveData.Result.Success)?.result?.temperature?.let(::extractComponentTemperature)
     }
-    private val temperatureMediator = MediatorLiveData<PrinterState.ComponentTemperature?>()
-    val temperature: LiveData<PrinterState.ComponentTemperature?> =
-        Transformations.map(temperatureMediator) { it }
 
-    init {
-        temperatureMediator.addSource(octoPrintTempLiveData) { temperatureMediator.postValue(it) }
-        temperatureMediator.addSource(manualOverwriteLiveData) { temperatureMediator.postValue(it) }
+    private fun initMediator() = MediatorLiveData<PrinterState.ComponentTemperature?>().apply {
+        addSource(octoPrintTempLiveData) { temperatureMediator.postValue(it) }
+        addSource(manualOverwriteLiveData) { temperatureMediator.postValue(it) }
     }
-
-    protected abstract fun extractComponentTemperature(pst: PrinterState.PrinterTemperature): PrinterState.ComponentTemperature
 
     fun setTemperature(temp: Int) {
         applyTemperature(temp)
         manualOverwriteLiveData.postValue(temperatureMediator.value?.copy(target = temp.toFloat()))
     }
 
-    abstract protected fun applyTemperature(temp: Int)
+    protected abstract fun extractComponentTemperature(pst: PrinterState.PrinterTemperature): PrinterState.ComponentTemperature
+
+    protected abstract fun applyTemperature(temp: Int)
 
     @StringRes
     abstract fun getComponentName(): Int
-
 }
