@@ -7,7 +7,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import de.crysxd.octoapp.base.ui.BaseFragment
-import de.crysxd.octoapp.base.ui.common.EnterValueFragmentArgs
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 import kotlinx.android.synthetic.main.fragment_pre_print_controls.*

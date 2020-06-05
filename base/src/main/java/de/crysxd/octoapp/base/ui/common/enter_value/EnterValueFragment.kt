@@ -11,7 +11,6 @@ import androidx.navigation.ui.setupWithNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.BaseFragment
-import de.crysxd.octoapp.base.ui.common.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requestFocusAndOpenSoftKeyboard
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
@@ -70,10 +69,11 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
             if (navArgs.valueSink != null) {
                 navArgs.valueSink!!.useValue(result)
             } else {
-                textInputLayout.editText?.clearFocusAndHideSoftKeyboard()
                 NavigationResultMediator.postResult(navArgs.resultId, result)
-                findNavController().popBackStack()
             }
+
+            textInputLayout.editText?.clearFocusAndHideSoftKeyboard()
+            findNavController().popBackStack()
         }
     }
 
@@ -91,11 +91,5 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
         } else {
             null
         }
-    }
-
-    interface ValueSink : Parcelable {
-
-        fun useValue(value: String)
-
     }
 }

@@ -7,6 +7,7 @@ import dagger.Component
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.modules.*
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.sinks.SendGcodeCommandValueSink
 import de.crysxd.octoapp.base.ui.BaseViewModelFactory
 import de.crysxd.octoapp.base.usecase.*
 import okhttp3.logging.HttpLoggingInterceptor
@@ -19,7 +20,8 @@ import okhttp3.logging.HttpLoggingInterceptor
         OctoPrintModule::class,
         UseCaseModule::class,
         DataSourceModule::class,
-        ViewModelModule::class
+        ViewModelModule::class,
+        ValueSinkModules::class
     ]
 )
 interface BaseComponent {
@@ -41,9 +43,12 @@ interface BaseComponent {
     fun jogPrintHeadUseCase(): JogPrintHeadUseCase
     fun turnOnPsuUseCase(): TurnOnPsuUseCase
     fun turnOffPsuUseCase(): TurnOffPsuUseCase
-    fun executeGcodeCommandUseCase() : ExecuteGcodeCommandUseCase
+    fun executeGcodeCommandUseCase(): ExecuteGcodeCommandUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory
+
+    // ValueSinkModule
+    fun sendGcodeValueSink(): SendGcodeCommandValueSink
 
 }
