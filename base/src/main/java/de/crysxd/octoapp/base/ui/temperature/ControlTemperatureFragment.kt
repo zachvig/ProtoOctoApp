@@ -35,8 +35,12 @@ abstract class ControlTemperatureFragment : BaseFragment(R.layout.fragment_contr
 
         val dialog = AlertDialog.Builder(requireContext())
             .setView(view)
-            .setNegativeButton(R.string.cancel, null)
+            .setCancelable(false)
+            .setNegativeButton(R.string.cancel) { _, _ ->
+                view.textInputLayoutTemperature.editText?.clearFocusAndHideSoftKeyboard()
+            }
             .setPositiveButton(R.string.set_temperature) { _, _ ->
+                view.textInputLayoutTemperature.editText?.clearFocusAndHideSoftKeyboard()
                 viewModel.setTemperature(
                     try {
                         view.textInputLayoutTemperature?.editText?.text?.toString()?.toInt() ?: 0
@@ -50,5 +54,13 @@ abstract class ControlTemperatureFragment : BaseFragment(R.layout.fragment_contr
         view.textInputLayoutTemperature.editText?.setOnEditorActionListener { _, _, _ ->
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).callOnClick()
         }
+
+        // Delay opening of SoftKeyboard to prevent animation glitches
+        view.postDelayed({
+            view.textInputLayoutTemperature.editText?.let {
+                it.requestFocusAndOpenSoftKeyboard()
+                it.selectAll()
+            }
+        }, 400)
     }
 }
