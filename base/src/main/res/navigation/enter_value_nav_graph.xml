@@ -29,6 +29,9 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue=""/>
+        <argument
+            android:name="resultId"
+            app:argType="integer" />
     </fragment>
 
 </navigation>

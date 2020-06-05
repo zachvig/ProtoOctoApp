@@ -41,6 +41,7 @@ interface BaseComponent {
     fun jogPrintHeadUseCase(): JogPrintHeadUseCase
     fun turnOnPsuUseCase(): TurnOnPsuUseCase
     fun turnOffPsuUseCase(): TurnOffPsuUseCase
+    fun executeGcodeCommandUseCase() : ExecuteGcodeCommandUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

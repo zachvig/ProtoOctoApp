@@ -8,11 +8,9 @@ import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.ui.ViewModelFactory
-import de.crysxd.octoapp.base.usecase.HomePrintHeadUseCase
-import de.crysxd.octoapp.base.usecase.JogPrintHeadUseCase
-import de.crysxd.octoapp.base.usecase.SetToolTargetTemperatureUseCase
-import de.crysxd.octoapp.base.usecase.TurnOffPsuUseCase
+import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.pre_print_controls.ui.PrePrintControlsViewModel
+import de.crysxd.octoapp.pre_print_controls.ui.move.MoveToolControlsViewModel
 import javax.inject.Provider
 
 @Module
@@ -25,16 +23,19 @@ open class ViewModelModule {
     @Provides
     @IntoMap
     @ViewModelKey(PrePrintControlsViewModel::class)
-    open fun provideSignInViewModel(octoPrintProvider: OctoPrintProvider, turnOffPsuUseCase: TurnOffPsuUseCase): ViewModel =
-        PrePrintControlsViewModel(octoPrintProvider, turnOffPsuUseCase)
+    open fun provideSignInViewModel(
+        octoPrintProvider: OctoPrintProvider,
+        turnOffPsuUseCase: TurnOffPsuUseCase,
+        executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase
+    ): ViewModel = PrePrintControlsViewModel(octoPrintProvider, turnOffPsuUseCase, executeGcodeCommandUseCase)
 
     @Provides
     @IntoMap
-    @ViewModelKey(de.crysxd.octoapp.pre_print_controls.ui.move.MoveToolControlsViewModel::class)
+    @ViewModelKey(MoveToolControlsViewModel::class)
     open fun provideMoveToolControlsViewModel(
         octoPrintProvider: OctoPrintProvider,
         useCase1: HomePrintHeadUseCase,
         useCase2: JogPrintHeadUseCase
-    ): ViewModel = de.crysxd.octoapp.pre_print_controls.ui.move.MoveToolControlsViewModel(useCase1, useCase2, octoPrintProvider)
+    ): ViewModel = MoveToolControlsViewModel(useCase1, useCase2, octoPrintProvider)
 
 }

@@ -35,4 +35,8 @@ class UseCaseModule {
     fun provideTurnOffPsuUseCase() =
         TurnOffPsuUseCase()
 
+    @Provides
+    fun provideExecuteGcodeCommandUseCase() =
+        ExecuteGcodeCommandUseCase()
+
 }

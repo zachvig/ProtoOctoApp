@@ -9,22 +9,25 @@ import androidx.navigation.ui.setupWithNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.BaseFragment
+import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import kotlinx.android.synthetic.main.fragment_enter_value.*
 
 class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
 
     override val viewModel: EnterValueViewModel by injectViewModel()
 
+    private val navArgs: EnterValueFragmentArgs by navArgs()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val args = navArgs<EnterValueFragmentArgs>().value
         toolbar.setupWithNavController(findNavController())
-        toolbar.title = args.title
-        textInputLayout.hint = args.hint
-        textInputLayout.editText?.inputType = args.inputType
-        textInputLayout.editText?.maxLines = args.maxLines
-        textInputLayout.editText?.imeOptions = if(args.maxLines > 1) {
+        toolbar.title = navArgs.title
+        textInputLayout.hint = navArgs.hint
+        textInputLayout.editText?.inputType = navArgs.inputType
+        textInputLayout.editText?.maxLines = navArgs.maxLines
+        textInputLayout.editText?.setText(navArgs.value)
+        textInputLayout.editText?.imeOptions = if(navArgs.maxLines > 1) {
             EditorInfo.IME_ACTION_NONE
         } else {
             EditorInfo.IME_ACTION_DONE
@@ -52,6 +55,7 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
     }
 
     private fun navigateBackWithResult() {
+        NavigationResultMediator.postResult(navArgs.resultId, textInputLayout.editText?.text?.toString() ?: "")
         findNavController().popBackStack()
     }
 }
