@@ -10,4 +10,13 @@
     <string name="target_temperature">Target temperature</string>
     <string name="hotend">Hotend</string>
     <string name="bed">Bed</string>
+    <string name="cd_home_xy">Home XY</string>
+    <string name="cd_home_z">Home Z</string>
+    <string name="cd_move_plus_y">Move +Y</string>
+    <string name="cd_move_minus_y">Move minus Y</string>
+    <string name="cd_move_minus_x">Move minus X</string>
+    <string name="cd_move_plus_x">move plus X</string>
+    <string name="cd_move_z_down">move z down</string>
+    <string name="cd_move_z_up">move Z up</string>
+    <string name="x_mm">%f mm</string>
 </resources>
