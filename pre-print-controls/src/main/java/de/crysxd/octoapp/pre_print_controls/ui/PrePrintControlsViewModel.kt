@@ -49,23 +49,21 @@ class PrePrintControlsViewModel(
 
     private fun executeGcode(gcode: String) = GlobalScope.launch(coroutineExceptionHandler) {
         octoPrintProvider.octoPrint.value?.let {
-            val gcodeCommand = GcodeCommand.Batch(gcode.toUpperCase(Locale.ENGLISH).split("\n").toTypedArray())
+            val gcodeCommand = GcodeCommand.Batch(gcode.split("\n").toTypedArray())
             executeGcodeCommandUseCase.execute(Pair(it, gcodeCommand))
         }
     }
 
     fun executeGcodeCommand(context: Context) {
         val resultId = waitForGcodeCommand()
-
         navContoller.navigate(
             R.id.action_enter_gcode, EnterValueFragmentArgs(
-            title = context.getString(R.string.send_gcode),
-            hint = context.getString(R.string.gcode_one_command_per_line),
-            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS,
-            maxLines = 10,
-            resultId = resultId
-        ).toBundle())
-
-
+                title = context.getString(R.string.send_gcode),
+                hint = context.getString(R.string.gcode_one_command_per_line),
+                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS,
+                maxLines = 10,
+                resultId = resultId
+            ).toBundle()
+        )
     }
 }
