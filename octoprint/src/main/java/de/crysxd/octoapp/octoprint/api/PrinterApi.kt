@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.octoprint.api
 
 import de.crysxd.octoapp.octoprint.models.printer.BedCommand
+import de.crysxd.octoapp.octoprint.models.printer.PrintHeadCommand
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import de.crysxd.octoapp.octoprint.models.printer.ToolCommand
 import retrofit2.Response
@@ -22,6 +23,10 @@ interface PrinterApi {
     // Body needs to be Any in order to trick Gson to serialize all fields
     suspend fun executeBedCommand(@Body bedCommand: Any): Response<Unit>
 
+    @POST("printer/printhead")
+    // Body needs to be Any in order to trick Gson to serialize all fields
+    suspend fun executePrintHeadCommand(@Body printHeadCommand: Any): Response<Unit>
+
     class Wrapper(private val wrapped: PrinterApi) {
 
         suspend fun getPrinterState(): PrinterState = wrapped.getPrinterState()
@@ -32,6 +37,10 @@ interface PrinterApi {
 
         suspend fun executeBedCommand(command: BedCommand) {
             wrapped.executeBedCommand(command)
+        }
+
+        suspend fun executePrintHeadCommand(command: PrintHeadCommand) {
+            wrapped.executePrintHeadCommand(command)
         }
     }
 }

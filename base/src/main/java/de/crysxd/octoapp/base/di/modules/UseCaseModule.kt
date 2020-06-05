@@ -2,9 +2,7 @@ package de.crysxd.octoapp.base.di.modules
 
 import dagger.Module
 import dagger.Provides
-import de.crysxd.octoapp.base.usecase.CheckOctoPrintInstanceInformationUseCase
-import de.crysxd.octoapp.base.usecase.SetBedTargetTemperatureUseCase
-import de.crysxd.octoapp.base.usecase.SetToolTargetTemperatureUseCase
+import de.crysxd.octoapp.base.usecase.*
 
 @Module
 class UseCaseModule {
@@ -13,7 +11,6 @@ class UseCaseModule {
     fun provideCheckOctoPrintInstanceInformationUseCase() =
         CheckOctoPrintInstanceInformationUseCase()
 
-
     @Provides
     fun provideSetToolTargetTemperatureUseCase() =
         SetToolTargetTemperatureUseCase()
@@ -21,5 +18,13 @@ class UseCaseModule {
     @Provides
     fun provideSetBedTargetTemperatureUseCase() =
         SetBedTargetTemperatureUseCase()
+
+    @Provides
+    fun provideHomePrintHeadUseCase() =
+        HomePrintHeadUseCase()
+
+    @Provides
+    fun jogPrintHeadUseCase() =
+        JogPrintHeadUseCase()
 
 }
