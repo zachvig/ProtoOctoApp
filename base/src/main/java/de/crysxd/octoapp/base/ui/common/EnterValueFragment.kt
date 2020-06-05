@@ -32,7 +32,7 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
         textInputLayout.editText?.inputType = navArgs.inputType
         textInputLayout.editText?.maxLines = navArgs.maxLines
         textInputLayout.editText?.setText(navArgs.value)
-        textInputLayout.editText?.imeOptions = if(navArgs.maxLines > 1) {
+        textInputLayout.editText?.imeOptions = if (navArgs.maxLines > 1) {
             EditorInfo.IME_ACTION_NONE
         } else {
             EditorInfo.IME_ACTION_DONE
@@ -66,9 +66,13 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
         textInputLayout.error = (navArgs.validator ?: NotEmptyValidator()).validate(requireContext(), result)
 
         if (textInputLayout.error == null) {
-            textInputLayout.editText?.clearFocusAndHideSoftKeyboard()
-            NavigationResultMediator.postResult(navArgs.resultId, result)
-            findNavController().popBackStack()
+            if (navArgs.valueSink != null) {
+                navArgs.valueSink!!.useValue(result)
+            } else {
+                textInputLayout.editText?.clearFocusAndHideSoftKeyboard()
+                NavigationResultMediator.postResult(navArgs.resultId, result)
+                findNavController().popBackStack()
+            }
         }
     }
 

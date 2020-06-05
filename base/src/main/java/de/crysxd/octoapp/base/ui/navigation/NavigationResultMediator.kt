@@ -27,21 +27,25 @@ object NavigationResultMediator {
     }
 
     fun <T: Any> postResult(resultId: Int, result: T): Boolean {
-        val liveData = liveDataIndex[resultId]?.get()
-        val callback = callbackIndex[resultId]?.get()
+        if (resultId >= 0) {
+            val liveData = liveDataIndex[resultId]?.get()
+            val callback = callbackIndex[resultId]?.get()
 
-        return when {
-            liveData != null -> {
-                liveData.postValue(result)
-                true
+            return when {
+                liveData != null -> {
+                    liveData.postValue(result)
+                    true
+                }
+                callback != null -> {
+                    callback(result)
+                    true
+                }
+                else -> {
+                    false
+                }
             }
-            callback != null -> {
-                callback(result)
-                true
-            }
-            else -> {
-                false
-            }
-         }
+        } else {
+            return false
+        }
     }
 }

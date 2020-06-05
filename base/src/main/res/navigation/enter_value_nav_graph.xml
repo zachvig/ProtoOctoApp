@@ -31,7 +31,8 @@
             android:defaultValue=""/>
         <argument
             android:name="resultId"
-            app:argType="integer" />
+            app:argType="integer"
+            android:defaultValue="-1" />
         <argument
             android:name="validator"
             app:argType="de.crysxd.octoapp.base.ui.common.EnterValueFragment$ValueValidator"
