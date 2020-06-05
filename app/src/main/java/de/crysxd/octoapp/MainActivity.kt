@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     private fun navigate(id: Int) {
         if (id != lastNavigation) {
             lastNavigation = id
-          //  findNavController(R.id.mainNavController).navigate(id)
+            findNavController(R.id.mainNavController).navigate(id)
         }
     }
 

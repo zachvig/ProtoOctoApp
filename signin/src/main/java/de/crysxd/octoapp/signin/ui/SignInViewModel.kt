@@ -30,7 +30,6 @@ class SignInViewModel(
                         } else {
                             // Sign in success
                             mutableViewState.postValue(SignInViewState.SignInSuccess)
-
                         }
                     }
 
