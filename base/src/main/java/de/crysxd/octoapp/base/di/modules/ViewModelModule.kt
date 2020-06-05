@@ -7,11 +7,8 @@ import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.ui.BaseViewModelFactory
-import de.crysxd.octoapp.base.ui.move.MoveToolControlsViewModel
 import de.crysxd.octoapp.base.ui.temperature.ControlBedTemperatureViewModel
 import de.crysxd.octoapp.base.ui.temperature.ControlToolTemperatureViewModel
-import de.crysxd.octoapp.base.usecase.HomePrintHeadUseCase
-import de.crysxd.octoapp.base.usecase.JogPrintHeadUseCase
 import de.crysxd.octoapp.base.usecase.SetBedTargetTemperatureUseCase
 import de.crysxd.octoapp.base.usecase.SetToolTargetTemperatureUseCase
 import javax.inject.Provider
@@ -38,14 +35,5 @@ open class ViewModelModule {
         octoPrintProvider: OctoPrintProvider,
         useCase: SetBedTargetTemperatureUseCase
     ): ViewModel = ControlBedTemperatureViewModel(octoPrintProvider, useCase)
-
-    @Provides
-    @IntoMap
-    @ViewModelKey(MoveToolControlsViewModel::class)
-    open fun provideMoveToolControlsViewModel(
-        octoPrintProvider: OctoPrintProvider,
-        useCase1: HomePrintHeadUseCase,
-        useCase2: JogPrintHeadUseCase
-    ): ViewModel = MoveToolControlsViewModel(useCase1, useCase2, octoPrintProvider)
 
 }

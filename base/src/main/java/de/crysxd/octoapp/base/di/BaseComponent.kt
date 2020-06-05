@@ -8,6 +8,8 @@ import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.modules.*
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModelFactory
+import de.crysxd.octoapp.base.usecase.HomePrintHeadUseCase
+import de.crysxd.octoapp.base.usecase.JogPrintHeadUseCase
 import de.crysxd.octoapp.base.usecase.SetToolTargetTemperatureUseCase
 import okhttp3.logging.HttpLoggingInterceptor
 
@@ -37,6 +39,8 @@ interface BaseComponent {
 
     // UseCaseModule
     fun setToolTargetTemperatureUseCase(): SetToolTargetTemperatureUseCase
+    fun homePrintHeadUseCase(): HomePrintHeadUseCase
+    fun jogPrintHeadUseCase(): JogPrintHeadUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

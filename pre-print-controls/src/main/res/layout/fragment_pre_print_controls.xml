@@ -80,7 +80,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/moveToolControls"
-        android:name="de.crysxd.octoapp.base.ui.move.MoveToolControlsFragment"
+        android:name="de.crysxd.octoapp.pre_print_controls.ui.move.MoveToolControlsFragment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

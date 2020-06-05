@@ -1,12 +1,13 @@
-package de.crysxd.octoapp.base.ui.move
+package de.crysxd.octoapp.pre_print_controls.ui.move
 
 import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
 import androidx.lifecycle.Observer
-import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.BaseFragment
+import de.crysxd.octoapp.pre_print_controls.R
+import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
+import de.crysxd.octoapp.base.R as BaseR
 import kotlinx.android.synthetic.main.fragment_move_tool_controls.*
 import java.text.DecimalFormat
 
@@ -21,7 +22,7 @@ class MoveToolControlsFragment : BaseFragment(R.layout.fragment_move_tool_contro
         initControlButtons()
         viewModel.jogResolution.observe(this, Observer {
             val number = DecimalFormat("#.###").format(it)
-            textViewJogResolution.text = getString(R.string.x_mm, number)
+            textViewJogResolution.text = getString(BaseR.string.x_mm, number)
         })
     }
 
