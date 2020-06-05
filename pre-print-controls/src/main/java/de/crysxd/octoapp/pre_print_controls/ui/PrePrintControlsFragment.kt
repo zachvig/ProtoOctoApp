@@ -28,21 +28,11 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
                     true
                 }
                 R.id.menuItemSendGcode -> {
-                    findNavController().navigate(R.id.action_enter_gcode, EnterValueFragmentArgs(
-                        title = getString(R.string.send_gcode),
-                        hint = getString(R.string.gcode_one_command_per_line),
-                        inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS,
-                        maxLines = 10,
-                        resultId = viewModel.waitForGcodeCommand()
-                    ).toBundle())
+                    viewModel.executeGcodeCommand(requireContext())
                     true
                 }
                 else -> false
             }
         }
-
-        viewModel.gcodeCommands.observe(this, Observer {
-            viewModel.executeGcode(it)
-        })
     }
 }
