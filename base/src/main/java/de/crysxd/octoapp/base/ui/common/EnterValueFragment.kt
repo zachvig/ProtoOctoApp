@@ -1,6 +1,8 @@
 package de.crysxd.octoapp.base.ui.common
 
+import android.content.Context
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.navigation.fragment.findNavController
@@ -12,6 +14,7 @@ import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requestFocusAndOpenSoftKeyboard
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_enter_value.*
 
 class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
@@ -59,8 +62,29 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
     }
 
     private fun navigateBackWithResult() {
-        textInputLayout.editText?.clearFocusAndHideSoftKeyboard()
-        NavigationResultMediator.postResult(navArgs.resultId, textInputLayout.editText?.text?.toString() ?: "")
-        findNavController().popBackStack()
+        val result = textInputLayout.editText?.text?.toString() ?: ""
+        textInputLayout.error = (navArgs.validator ?: NotEmptyValidator()).validate(requireContext(), result)
+
+        if (textInputLayout.error == null) {
+            textInputLayout.editText?.clearFocusAndHideSoftKeyboard()
+            NavigationResultMediator.postResult(navArgs.resultId, result)
+            findNavController().popBackStack()
+        }
+    }
+
+    interface ValueValidator : Parcelable {
+
+        fun validate(context: Context, value: String): String?
+
+    }
+
+    @Parcelize
+    class NotEmptyValidator : ValueValidator {
+
+        override fun validate(context: Context, value: String) = if (value.isBlank()) {
+            context.getString(R.string.error_please_enter_a_value)
+        } else {
+            null
+        }
     }
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.Transformations
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.ui.common.EnterValueFragment
 import de.crysxd.octoapp.base.ui.common.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
