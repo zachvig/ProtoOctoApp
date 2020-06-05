@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/enterValueFragment"
-        android:name="de.crysxd.octoapp.base.ui.common.EnterValueFragment"
+        android:name="de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragment"
         android:label="EnterValueFragment"
         tools:layout="@layout/fragment_enter_value" >
         <argument

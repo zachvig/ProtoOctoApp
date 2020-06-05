@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui.common
+package de.crysxd.octoapp.base.ui.common.enter_value
 
 import android.content.Context
 import android.os.Bundle
@@ -11,6 +11,7 @@ import androidx.navigation.ui.setupWithNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.BaseFragment
+import de.crysxd.octoapp.base.ui.common.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requestFocusAndOpenSoftKeyboard
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator

@@ -2,16 +2,11 @@ package de.crysxd.octoapp.pre_print_controls.ui
 
 import android.content.Context
 import android.text.InputType
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Transformations
-import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.BaseViewModel
-import de.crysxd.octoapp.base.ui.common.EnterValueFragment
+import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragment
 import de.crysxd.octoapp.base.ui.common.EnterValueFragmentArgs
-import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.TurnOffPsuUseCase
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
@@ -19,7 +14,6 @@ import de.crysxd.octoapp.pre_print_controls.R
 import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.util.*
 
 class PrePrintControlsViewModel(
     private val octoPrintProvider: OctoPrintProvider,
