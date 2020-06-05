@@ -16,6 +16,7 @@ import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import de.crysxd.octoapp.pre_print_controls.R
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.*
 
 class PrePrintControlsViewModel(
     private val octoPrintProvider: OctoPrintProvider,
@@ -48,7 +49,7 @@ class PrePrintControlsViewModel(
 
     private fun executeGcode(gcode: String) = GlobalScope.launch(coroutineExceptionHandler) {
         octoPrintProvider.octoPrint.value?.let {
-            val gcodeCommand = GcodeCommand.Batch(gcode.split("\n").toTypedArray())
+            val gcodeCommand = GcodeCommand.Batch(gcode.toUpperCase(Locale.ENGLISH).split("\n").toTypedArray())
             executeGcodeCommandUseCase.execute(Pair(it, gcodeCommand))
         }
     }

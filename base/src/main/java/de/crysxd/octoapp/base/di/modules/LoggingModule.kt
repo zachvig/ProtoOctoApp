@@ -13,7 +13,7 @@ open class LoggingModule {
     open fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor =
         HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
             override fun log(message: String) {
-                Timber.tag("HTTP").i(message)
+                Timber.tag("HTTP").v(message)
             }
         }).setLevel(HttpLoggingInterceptor.Level.BODY)
 
