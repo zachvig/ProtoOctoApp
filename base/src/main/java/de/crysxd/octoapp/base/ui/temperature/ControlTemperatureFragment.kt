@@ -6,6 +6,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.BaseFragment
+import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
+import de.crysxd.octoapp.base.ui.ext.requestFocusAndOpenSoftKeyboard
 import kotlinx.android.synthetic.main.fragment_control_temperature.*
 import kotlinx.android.synthetic.main.view_temperature_input.view.*
 

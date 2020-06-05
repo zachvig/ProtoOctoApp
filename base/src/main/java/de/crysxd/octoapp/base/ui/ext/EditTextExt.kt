@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui.temperature
+package de.crysxd.octoapp.base.ui.ext
 
 import android.content.Context
 import android.view.View
@@ -13,7 +13,7 @@ fun EditText.requestFocusAndOpenSoftKeyboard() {
     )
 }
 
-fun View.clearFocusAndHideSoftKeyboard() {
+fun EditText.clearFocusAndHideSoftKeyboard() {
     clearFocus()
     (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(windowToken, 0)
 }
