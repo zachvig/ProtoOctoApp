@@ -7,7 +7,7 @@ import kotlinx.coroutines.withContext
 
 class TurnOffPsuUseCase : UseCase<OctoPrint, Unit> {
 
-    override suspend fun execute(param: OctoPrint) = withContext(Dispatchers.IO) {
+    override suspend fun execute(param: OctoPrint) {
         param.createPsuApi().turnPsuOff()
     }
 

@@ -7,7 +7,7 @@ import kotlinx.coroutines.withContext
 
 class SetBedTargetTemperatureUseCase : UseCase<Pair<OctoPrint, Int>, Unit> {
 
-    override suspend fun execute(param: Pair<OctoPrint, Int>) = withContext(Dispatchers.IO) {
+    override suspend fun execute(param: Pair<OctoPrint, Int>) {
         param.first.createPrinterApi().executeBedCommand(
             BedCommand.SetTargetTemperatureToolCommand(param.second)
         )

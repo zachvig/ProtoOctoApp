@@ -14,7 +14,7 @@ class JogPrintHeadUseCase : UseCase<JogPrintHeadUseCase.Param, Unit> {
         val zDistance: Float = 0f
     )
 
-    override suspend fun execute(param: Param) = withContext(Dispatchers.IO) {
+    override suspend fun execute(param: Param) {
         param.octoPrint.createPrinterApi().executePrintHeadCommand(
             PrintHeadCommand.JogPrintHeadCommand(
                 param.xDistance,
