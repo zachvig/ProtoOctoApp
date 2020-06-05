@@ -22,9 +22,6 @@ open class ViewModelModule {
     @Provides
     @IntoMap
     @ViewModelKey(PrePrintControlsViewModel::class)
-    open fun provideSignInViewModel(
-        octoPrintProvider: OctoPrintProvider,
-        setToolTargetTemperatureUseCase: SetToolTargetTemperatureUseCase
-    ): ViewModel = PrePrintControlsViewModel(octoPrintProvider, setToolTargetTemperatureUseCase)
+    open fun provideSignInViewModel(): ViewModel = PrePrintControlsViewModel()
 
 }

@@ -3,4 +3,10 @@
     <string name="error_general">Something went wrong! Please try again.</string>
     <string name="error_no_printer_connected">No printer is connected to OctoPrint</string>
     <string name="error_invalid_octoprint_instance_information">OctoPrint declined the API key</string>
+    <string name="temperature_x_of_y">%1$s / %2$s °C</string>
+    <string name="no_value_placeholder">--</string>
+    <string name="set_temperature">Set temperature</string>
+    <string name="cancel">Cancel</string>
+    <string name="target_temperature">Target temperature</string>
+    <string name="hotend">Hotend</string>
 </resources>
