@@ -8,10 +8,17 @@ import androidx.lifecycle.Transformations
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.PollingLiveData
 import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.usecase.SetBedTargetTemperatureUseCase
+import de.crysxd.octoapp.base.usecase.UseCase
+import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-abstract class ControlTemperatureViewModelContract(octoPrintProvider: OctoPrintProvider) :
-    BaseViewModel() {
+abstract class ControlTemperatureViewModelContract(
+    private val octoPrintProvider: OctoPrintProvider,
+    private val useCase: UseCase<Pair<OctoPrint, Int>, Unit>
+) : BaseViewModel() {
 
     protected abstract val manualOverwriteLiveData: MutableLiveData<PrinterState.ComponentTemperature?>
     private val temperatureMediator: MediatorLiveData<PrinterState.ComponentTemperature?> by lazy { initMediator() }
@@ -26,13 +33,15 @@ abstract class ControlTemperatureViewModelContract(octoPrintProvider: OctoPrintP
     }
 
     fun setTemperature(temp: Int) {
-        applyTemperature(temp)
         manualOverwriteLiveData.postValue(temperatureMediator.value?.copy(target = temp.toFloat()))
+        GlobalScope.launch(coroutineExceptionHandler) {
+            octoPrintProvider.octoPrint.value?.let {
+                useCase.execute(Pair(it, temp))
+            }
+        }
     }
 
     protected abstract fun extractComponentTemperature(pst: PrinterState.PrinterTemperature): PrinterState.ComponentTemperature
-
-    protected abstract fun applyTemperature(temp: Int)
 
     @StringRes
     abstract fun getComponentName(): Int

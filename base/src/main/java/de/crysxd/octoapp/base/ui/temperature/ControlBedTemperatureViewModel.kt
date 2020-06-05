@@ -3,12 +3,15 @@ package de.crysxd.octoapp.base.ui.temperature
 import androidx.lifecycle.MutableLiveData
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.usecase.SetBedTargetTemperatureUseCase
 import de.crysxd.octoapp.base.usecase.SetToolTargetTemperatureUseCase
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-class ControlToolTemperatureViewModel(
+class ControlBedTemperatureViewModel(
     octoPrintProvider: OctoPrintProvider,
-    useCase: SetToolTargetTemperatureUseCase
+    useCase: SetBedTargetTemperatureUseCase
 ) : ControlTemperatureViewModelContract(octoPrintProvider, useCase) {
 
     companion object {
@@ -17,7 +20,7 @@ class ControlToolTemperatureViewModel(
 
     override val manualOverwriteLiveData = sharedManualOverwriteLiveData
 
-    override fun extractComponentTemperature(pst: PrinterState.PrinterTemperature) = pst.tool0
+    override fun extractComponentTemperature(pst: PrinterState.PrinterTemperature) = pst.bed
 
-    override fun getComponentName() = R.string.hotend
+    override fun getComponentName() = R.string.bed
 }
