@@ -9,6 +9,8 @@ import androidx.navigation.ui.setupWithNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.BaseFragment
+import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
+import de.crysxd.octoapp.base.ui.ext.requestFocusAndOpenSoftKeyboard
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import kotlinx.android.synthetic.main.fragment_enter_value.*
 
@@ -42,6 +44,8 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
             }
         }
 
+        textInputLayout.editText?.requestFocusAndOpenSoftKeyboard()
+
         toolbar.inflateMenu(R.menu.menu_enter_value)
         toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -55,6 +59,7 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
     }
 
     private fun navigateBackWithResult() {
+        textInputLayout.editText?.clearFocusAndHideSoftKeyboard()
         NavigationResultMediator.postResult(navArgs.resultId, textInputLayout.editText?.text?.toString() ?: "")
         findNavController().popBackStack()
     }
