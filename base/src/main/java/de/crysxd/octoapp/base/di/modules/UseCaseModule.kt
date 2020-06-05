@@ -24,7 +24,15 @@ class UseCaseModule {
         HomePrintHeadUseCase()
 
     @Provides
-    fun jogPrintHeadUseCase() =
+    fun provideJogPrintHeadUseCase() =
         JogPrintHeadUseCase()
+
+    @Provides
+    fun provideTurnOnPsuUseCase() =
+        TurnOnPsuUseCase()
+
+    @Provides
+    fun provideTurnOffPsuUseCase() =
+        TurnOffPsuUseCase()
 
 }

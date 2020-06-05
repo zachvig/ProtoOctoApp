@@ -2,6 +2,8 @@ package de.crysxd.octoapp.base.usecase
 
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.printer.PrintHeadCommand
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class JogPrintHeadUseCase : UseCase<JogPrintHeadUseCase.Param, Unit> {
 
@@ -12,11 +14,13 @@ class JogPrintHeadUseCase : UseCase<JogPrintHeadUseCase.Param, Unit> {
         val zDistance: Float = 0f
     )
 
-    override suspend fun execute(param: Param) {
-        param.octoPrint.createPrinterApi().executePrintHeadCommand(PrintHeadCommand.JogPrintHeadCommand(
-            param.xDistance,
-            param.yDistance,
-            param.zDistance
-        ))
+    override suspend fun execute(param: Param) = withContext(Dispatchers.IO) {
+        param.octoPrint.createPrinterApi().executePrintHeadCommand(
+            PrintHeadCommand.JogPrintHeadCommand(
+                param.xDistance,
+                param.yDistance,
+                param.zDistance
+            )
+        )
     }
 }
