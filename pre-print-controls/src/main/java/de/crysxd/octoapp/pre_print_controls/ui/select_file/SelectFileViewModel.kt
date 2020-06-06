@@ -7,14 +7,17 @@ import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
+import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
 import de.crysxd.octoapp.pre_print_controls.R
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class SelectFileViewModel(
     private val octoPrintProvider: OctoPrintProvider,
-    private val loadFilesUseCase: LoadFilesUseCase
+    private val loadFilesUseCase: LoadFilesUseCase,
+    private val startPrintJobUseCase: StartPrintJobUseCase
 ) : BaseViewModel() {
 
     val rootFilesMediator = MediatorLiveData<List<FileObject>>()
@@ -38,10 +41,12 @@ class SelectFileViewModel(
         return Transformations.map(rootFilesMediator) { it }
     }
 
-    fun selectFile(file: FileObject) {
+    fun selectFile(file: FileObject) = GlobalScope.launch(coroutineExceptionHandler) {
         when (file) {
             is FileObject.File -> {
-
+                octoPrintProvider.octoPrint.value?.let {
+                    startPrintJobUseCase.execute(Pair(it, file))
+                }
             }
             is FileObject.Folder -> {
                 navContoller.navigate(R.id.action_open_folder, SelectFileFragmentArgs(file).toBundle())

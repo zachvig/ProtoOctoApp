@@ -25,8 +25,8 @@ class OctoPrint(
     fun createVersionApi(): VersionApi =
         createRetrofit().create(VersionApi::class.java)
 
-    fun createFilesApi(): FilesApi =
-        createRetrofit().create(FilesApi::class.java)
+    fun createFilesApi(): FilesApi.Wrapper =
+        FilesApi.Wrapper(createRetrofit().create(FilesApi::class.java))
 
     fun createPrinterApi(): PrinterApi.Wrapper =
         PrinterApi.Wrapper(createRetrofit().create(PrinterApi::class.java))

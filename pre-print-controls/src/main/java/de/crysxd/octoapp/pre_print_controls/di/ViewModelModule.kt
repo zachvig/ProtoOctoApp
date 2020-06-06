@@ -53,7 +53,8 @@ open class ViewModelModule {
     @ViewModelKey(SelectFileViewModel::class)
     open fun provideSelectFileViewModel(
         octoPrintProvider: OctoPrintProvider,
-        loadFilesUseCase: LoadFilesUseCase
-    ): ViewModel = SelectFileViewModel(octoPrintProvider, loadFilesUseCase)
+        loadFilesUseCase: LoadFilesUseCase,
+        startPrintJobUseCase: StartPrintJobUseCase
+    ): ViewModel = SelectFileViewModel(octoPrintProvider, loadFilesUseCase, startPrintJobUseCase)
 
 }

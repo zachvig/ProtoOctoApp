@@ -47,4 +47,8 @@ class UseCaseModule {
     fun provideLoadFilesUseCase() =
         LoadFilesUseCase()
 
+    @Provides
+    fun provideStartPrintJobUseCase() =
+        StartPrintJobUseCase()
+
 }

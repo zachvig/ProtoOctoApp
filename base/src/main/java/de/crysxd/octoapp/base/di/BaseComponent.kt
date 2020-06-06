@@ -44,6 +44,7 @@ interface BaseComponent {
     fun executeGcodeCommandUseCase(): ExecuteGcodeCommandUseCase
     fun extrudeFilamentUseCase(): ExtrudeFilamentUseCase
     fun loadFilesUseCase(): LoadFilesUseCase
+    fun startPrintJobUseCase(): StartPrintJobUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory
