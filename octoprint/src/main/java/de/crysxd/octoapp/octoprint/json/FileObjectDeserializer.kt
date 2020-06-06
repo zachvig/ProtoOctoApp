@@ -10,7 +10,7 @@ class FileObjectDeserializer(val gson: Gson) : JsonDeserializer<FileObject> {
         val typedGson = gson.newBuilder().registerTypeAdapter(FileObject::class.java, this).create()
 
         return when (json.asJsonObject["type"].asString) {
-            "folder" -> typedGson.fromJson(json, FileObject.Folder::class.java)
+            FileObject.FILE_TYPE_FOLDER -> typedGson.fromJson(json, FileObject.Folder::class.java)
             else -> typedGson.fromJson(json, FileObject.File::class.java)
         }
     }

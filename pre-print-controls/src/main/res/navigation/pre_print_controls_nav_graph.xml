@@ -45,5 +45,20 @@
         android:id="@+id/selectFileFragment"
         android:name="de.crysxd.octoapp.pre_print_controls.ui.select_file.SelectFileFragment"
         android:label="SelectFileFragment"
-        tools:layout="@layout/fragment_select_file" />
+        tools:layout="@layout/fragment_select_file" >
+
+        <action
+            android:id="@+id/action_open_folder"
+            app:destination="@id/selectFileFragment"
+            app:enterAnim="@anim/enterAnim"
+            app:exitAnim="@anim/exitAnim"
+            app:popEnterAnim="@anim/popEnterAnim"
+            app:popExitAnim="@anim/popExitAnim"/>
+        <argument
+            android:name="folder"
+            app:argType="de.crysxd.octoapp.octoprint.models.files.FileObject$Folder"
+            app:nullable="true"
+            android:defaultValue="@null" />
+
+    </fragment>
 </navigation>

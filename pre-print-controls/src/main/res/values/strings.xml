@@ -13,4 +13,6 @@
     <string name="move">Move</string>
     <string name="tap_temperature_to_edit">Tap temperature to edit</string>
     <string name="preheat">Preheat</string>
+    <string name="x_items_y">%d items (%s)</string>
+    <string name="x_y">%s (%s)</string>
 </resources>
