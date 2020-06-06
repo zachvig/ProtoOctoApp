@@ -2,14 +2,14 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/enterValueFragment"
-    android:id="@+id/enter_value_nav_graph">
+    android:id="@+id/enter_value_nav_graph"
+    app:startDestination="@id/enterValueFragment">
 
     <fragment
         android:id="@+id/enterValueFragment"
         android:name="de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragment"
         android:label="EnterValueFragment"
-        tools:layout="@layout/fragment_enter_value" >
+        tools:layout="@layout/fragment_enter_value">
         <argument
             android:name="title"
             app:argType="string" />
@@ -18,28 +18,29 @@
             app:argType="string" />
         <argument
             android:name="inputType"
-            app:argType="integer"
-            android:defaultValue="1" />
+            android:defaultValue="1"
+            app:argType="integer" />
         <argument
             android:name="maxLines"
-            app:argType="integer"
-            android:defaultValue="1" />
+            android:defaultValue="1"
+            app:argType="integer" />
         <argument
             android:name="value"
+            android:defaultValue=""
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue=""/>
+            app:nullable="true" />
         <argument
             android:name="resultId"
-            app:argType="integer"
-            android:defaultValue="-1" />
+            android:defaultValue="-1"
+            app:argType="integer" />
         <argument
             android:name="validator"
+            android:defaultValue="@null"
             app:argType="de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragment$ValueValidator"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
         <argument
             android:name="valueSink"
+            android:defaultValue="@null"
             app:argType="de.crysxd.octoapp.base.sinks.ValueSink"
             app:nullable="true" />
     </fragment>
