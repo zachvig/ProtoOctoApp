@@ -9,59 +9,53 @@
         android:id="@+id/imageButtonHomeXy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/imageButtonMoveXPositive"
-        app:layout_constraintHorizontal_bias="0.5"
+        android:contentDescription="@string/cd_home_xy"
         app:layout_constraintStart_toEndOf="@+id/imageButtonMoveXNegative"
         app:layout_constraintTop_toBottomOf="@+id/imageButtonMoveYPositive"
-        app:srcCompat="@drawable/ic_baseline_home_24"
-        android:contentDescription="@string/cd_home_xy" />
+        app:srcCompat="@drawable/ic_baseline_home_24" />
 
     <ImageButton
         android:id="@+id/imageButtonHomeZ"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        android:contentDescription="@string/cd_home_z"
+        app:layout_constraintEnd_toStartOf="@+id/seekBarJogResolution"
         app:layout_constraintStart_toEndOf="@+id/imageButtonMoveXPositive"
         app:layout_constraintTop_toTopOf="@+id/imageButtonHomeXy"
-        app:srcCompat="@drawable/ic_baseline_home_24"
-        android:contentDescription="@string/cd_home_z"/>
+        app:srcCompat="@drawable/ic_baseline_home_24" />
 
     <ImageButton
         android:id="@+id/imageButtonMoveYPositive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/cd_move_plus_y"
         app:layout_constraintStart_toStartOf="@+id/imageButtonHomeXy"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_up_24"
-        android:contentDescription="@string/cd_move_plus_y" />
+        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_up_24" />
 
     <ImageButton
         android:id="@+id/imageButtonMoveYNegative"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:contentDescription="@string/cd_move_minus_y"
         app:layout_constraintStart_toStartOf="@+id/imageButtonHomeXy"
         app:layout_constraintTop_toBottomOf="@+id/imageButtonHomeXy"
-        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_down_24"
-        android:contentDescription="@string/cd_move_minus_y" />
+        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_down_24" />
 
     <ImageButton
         android:id="@+id/imageButtonMoveXNegative"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:contentDescription="@string/cd_move_minus_x"
         app:layout_constraintEnd_toStartOf="@+id/imageButtonHomeXy"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imageButtonHomeXy"
-        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_left_24"
-        android:contentDescription="@string/cd_move_minus_x" />
+        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_left_24" />
 
     <ImageButton
         android:id="@+id/imageButtonMoveXPositive"
@@ -69,49 +63,47 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/imageButtonHomeZ"
-        app:layout_constraintHorizontal_bias="0.5"
+        android:contentDescription="@string/cd_move_plus_x"
         app:layout_constraintStart_toEndOf="@+id/imageButtonHomeXy"
         app:layout_constraintTop_toTopOf="@+id/imageButtonHomeXy"
-        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_right_24"
-        android:contentDescription="@string/cd_move_plus_x" />
+        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_right_24" />
 
     <ImageButton
         android:id="@+id/imageButtonMoveZNegative"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/cd_move_z_down"
         app:layout_constraintStart_toStartOf="@+id/imageButtonHomeZ"
         app:layout_constraintTop_toTopOf="@+id/imageButtonMoveYNegative"
-        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_down_24"
-        android:contentDescription="@string/cd_move_z_down" />
+        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_down_24" />
 
     <ImageButton
         android:id="@+id/imageButtonMoveZPositive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/cd_move_z_up"
         app:layout_constraintStart_toStartOf="@+id/imageButtonHomeZ"
         app:layout_constraintTop_toTopOf="@+id/imageButtonMoveYPositive"
-        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_up_24"
-        android:contentDescription="@string/cd_move_z_up" />
+        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_up_24" />
 
-    <SeekBar
+    <de.crysxd.octoapp.pre_print_controls.ui.move.VerticalSeekBar
         android:id="@+id/seekBarJogResolution"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
         android:max="4"
         android:progress="3"
-        app:layout_constraintEnd_toEndOf="@+id/imageButtonHomeZ"
-        app:layout_constraintStart_toStartOf="@+id/imageButtonMoveXNegative"
+        app:layout_constraintBottom_toBottomOf="@+id/imageButtonMoveYNegative"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textViewJogResolution"
         app:layout_constraintTop_toBottomOf="@+id/textViewJogResolution" />
 
     <TextView
         android:id="@+id/textViewJogResolution"
-        android:layout_width="wrap_content"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        app:layout_constraintEnd_toEndOf="@+id/seekBarJogResolution"
-        app:layout_constraintStart_toStartOf="@+id/seekBarJogResolution"
-        app:layout_constraintTop_toBottomOf="@+id/imageButtonMoveYNegative"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toTopOf="@+id/imageButtonMoveZPositive"
         tools:text="1 mm" />
 </androidx.constraintlayout.widget.ConstraintLayout>
