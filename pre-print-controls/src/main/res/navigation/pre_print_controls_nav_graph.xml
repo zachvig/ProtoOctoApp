@@ -31,7 +31,19 @@
             app:exitAnim="@anim/exitAnim"
             app:popEnterAnim="@anim/popEnterAnim"
             app:popExitAnim="@anim/popExitAnim" />
+        <action
+            android:id="@+id/action_start_print"
+            app:destination="@id/selectFileFragment"
+            app:enterAnim="@anim/enterAnim"
+            app:exitAnim="@anim/exitAnim"
+            app:popEnterAnim="@anim/popEnterAnim"
+            app:popExitAnim="@anim/popExitAnim" />
     </fragment>
 
     <include app:graph="@navigation/enter_value_nav_graph" />
+    <fragment
+        android:id="@+id/selectFileFragment"
+        android:name="de.crysxd.octoapp.pre_print_controls.ui.select_file.SelectFileFragment"
+        android:label="SelectFileFragment"
+        tools:layout="@layout/fragment_select_file" />
 </navigation>

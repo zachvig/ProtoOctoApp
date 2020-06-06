@@ -52,4 +52,8 @@ class PrePrintControlsViewModel(
             ).toBundle()
         )
     }
+
+    fun startPrint() {
+        navContoller.navigate(R.id.action_start_print)
+    }
 }

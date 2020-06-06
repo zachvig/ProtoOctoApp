@@ -35,5 +35,9 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
                 else -> false
             }
         }
+
+        buttonStartPrint.setOnClickListener {
+            viewModel.startPrint()
+        }
     }
 }

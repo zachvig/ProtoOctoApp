@@ -12,6 +12,7 @@ import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.pre_print_controls.ui.PrePrintControlsViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.extrude.ExtrudeControlsViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.move.MoveToolControlsViewModel
+import de.crysxd.octoapp.pre_print_controls.ui.select_file.SelectFileViewModel
 import javax.inject.Provider
 
 @Module
@@ -46,5 +47,12 @@ open class ViewModelModule {
         octoPrintProvider: OctoPrintProvider,
         extrudeFilamentUseCase: ExtrudeFilamentUseCase
     ): ViewModel = ExtrudeControlsViewModel(octoPrintProvider, extrudeFilamentUseCase)
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(SelectFileViewModel::class)
+    open fun provideSelectFileViewModel(
+        octoPrintProvider: OctoPrintProvider
+    ): ViewModel = SelectFileViewModel(octoPrintProvider)
 
 }
