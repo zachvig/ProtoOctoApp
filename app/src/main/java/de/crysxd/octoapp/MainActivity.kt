@@ -5,8 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.PollingLiveData
+import de.crysxd.octoapp.base.usecase.CheckPrinterConnectedUseCase
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.lang.Exception
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
 
@@ -23,8 +27,21 @@ class MainActivity : AppCompatActivity() {
 
         SignInInjector.get().octoprintRepository().instanceInformation.observe(this, Observer {
             if (it != null) {
-                navigate(R.id.action_sign_in_completed)
                 printerState.observe(this, observer)
+
+                GlobalScope.launch {
+                    try {
+                        val octoPrint = ConnectPrinterInjector.get().octoprintProvider().createAdHocOctoPrint(it)
+                        if (CheckPrinterConnectedUseCase().execute(octoPrint)) {
+                            navigate(R.id.action_printer_connected)
+                        } else {
+                            navigate(R.id.action_sign_in_completed)
+                        }
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                        navigate(R.id.action_sign_in_completed)
+                    }
+                }
             } else {
                 navigate(R.id.action_sign_in_required)
                 printerState.removeObserver(observer)
