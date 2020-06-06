@@ -12,10 +12,12 @@
         tools:layout="@layout/fragment_enter_value">
         <argument
             android:name="title"
-            app:argType="string" />
+            app:argType="string"
+            android:defaultValue=""/>
         <argument
             android:name="hint"
-            app:argType="string" />
+            app:argType="string"
+            android:defaultValue=""/>
         <argument
             android:name="inputType"
             android:defaultValue="1"
@@ -31,7 +33,6 @@
             app:nullable="true" />
         <argument
             android:name="resultId"
-            android:defaultValue="-1"
             app:argType="integer" />
         <argument
             android:name="validator"

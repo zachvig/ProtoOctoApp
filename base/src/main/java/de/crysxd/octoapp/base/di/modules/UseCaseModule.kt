@@ -39,4 +39,8 @@ class UseCaseModule {
     fun provideExecuteGcodeCommandUseCase() =
         ExecuteGcodeCommandUseCase()
 
+    @Provides
+    fun provideExtrudeFilamentUseCase() =
+        ExtrudeFilamentUseCase()
+
 }

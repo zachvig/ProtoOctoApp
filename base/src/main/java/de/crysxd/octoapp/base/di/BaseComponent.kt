@@ -42,6 +42,7 @@ interface BaseComponent {
     fun turnOnPsuUseCase(): TurnOnPsuUseCase
     fun turnOffPsuUseCase(): TurnOffPsuUseCase
     fun executeGcodeCommandUseCase(): ExecuteGcodeCommandUseCase
+    fun extrudeFilamentUseCase(): ExtrudeFilamentUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

@@ -10,6 +10,7 @@ import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.ui.ViewModelFactory
 import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.pre_print_controls.ui.PrePrintControlsViewModel
+import de.crysxd.octoapp.pre_print_controls.ui.extrude.ExtrudeControlsViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.move.MoveToolControlsViewModel
 import javax.inject.Provider
 
@@ -37,5 +38,13 @@ open class ViewModelModule {
         useCase1: HomePrintHeadUseCase,
         useCase2: JogPrintHeadUseCase
     ): ViewModel = MoveToolControlsViewModel(useCase1, useCase2, octoPrintProvider)
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(ExtrudeControlsViewModel::class)
+    open fun provideExtrudeControlsViewModel(
+        octoPrintProvider: OctoPrintProvider,
+        extrudeFilamentUseCase: ExtrudeFilamentUseCase
+    ): ViewModel = ExtrudeControlsViewModel(octoPrintProvider, extrudeFilamentUseCase)
 
 }

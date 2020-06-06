@@ -6,4 +6,6 @@
     <string name="gcode_one_command_per_line">Gcode (one command per line)</string>
     <string name="sent_x">Sent %s</string>
     <string name="sent_x_and_y_others">Sent %s and %d others</string>
+    <string name="extrude_retract">Extrude / Retract</string>
+    <string name="distance_in_mm_negative_for_retract">Distance in mm (negative for retract)</string>
 </resources>

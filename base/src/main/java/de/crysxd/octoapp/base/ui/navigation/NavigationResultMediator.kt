@@ -3,6 +3,8 @@ package de.crysxd.octoapp.base.ui.navigation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import timber.log.Timber
+import java.lang.Exception
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -20,13 +22,13 @@ object NavigationResultMediator {
         return Pair(resultId, wrappedLiveData)
     }
 
-    fun <T: Any> registerResultCallback(callback: (T) -> Any): Int {
+    fun <T : Any> registerResultCallback(callback: (T) -> Any): Int {
         val resultId = resultCounter.incrementAndGet()
         callbackIndex[resultId] = WeakReference(callback as (Any) -> Unit)
         return resultId
     }
 
-    fun <T: Any> postResult(resultId: Int, result: T): Boolean {
+    fun <T : Any> postResult(resultId: Int, result: T): Boolean {
         if (resultId >= 0) {
             val liveData = liveDataIndex[resultId]?.get()
             val callback = callbackIndex[resultId]?.get()
@@ -37,8 +39,13 @@ object NavigationResultMediator {
                     true
                 }
                 callback != null -> {
-                    callback(result)
-                    true
+                    try {
+                        callback(result)
+                        true
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                        false
+                    }
                 }
                 else -> {
                     false

@@ -6,6 +6,8 @@ sealed class ToolCommand(val command: String) {
 
     data class SetTemperatureOffsetToolCommand(val targets: TemperatureSet) : ToolCommand("offset")
 
+    data class ExtrudeFilamentToolCommand(val amount: Int) : ToolCommand("extrude")
+
     data class TemperatureSet(val tool0: Int)
 
 }
