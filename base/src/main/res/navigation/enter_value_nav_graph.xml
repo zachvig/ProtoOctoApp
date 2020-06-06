@@ -38,11 +38,6 @@
             android:defaultValue="@null"
             app:argType="de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragment$ValueValidator"
             app:nullable="true" />
-        <argument
-            android:name="valueSink"
-            android:defaultValue="@null"
-            app:argType="de.crysxd.octoapp.base.sinks.ValueSink"
-            app:nullable="true" />
     </fragment>
 
 </navigation>

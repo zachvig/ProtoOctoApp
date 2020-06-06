@@ -2,11 +2,7 @@ package de.crysxd.octoapp.pre_print_controls.ui
 
 import android.content.Context
 import android.text.InputType
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.sinks.SendGcodeCommandValueSink
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator

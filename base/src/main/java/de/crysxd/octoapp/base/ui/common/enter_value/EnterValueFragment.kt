@@ -66,7 +66,6 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
         textInputLayout.error = (navArgs.validator ?: NotEmptyValidator()).validate(requireContext(), result)
 
         if (textInputLayout.error == null) {
-            navArgs.valueSink?.useValue(result)
             NavigationResultMediator.postResult(navArgs.resultId, result)
             textInputLayout.editText?.clearFocusAndHideSoftKeyboard()
             findNavController().popBackStack()
