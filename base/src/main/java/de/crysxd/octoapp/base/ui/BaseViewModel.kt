@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.ui
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
@@ -16,10 +17,17 @@ abstract class BaseViewModel : ViewModel() {
         Timber.e(e)
     }
 
+    private val mutableMessages = MutableLiveData<(Context) -> CharSequence>()
+    val messages = Transformations.map(mutableMessages) { it }
+
     lateinit var navContoller: NavController
 
     protected fun postException(e: Throwable) {
         mutableErrorLiveData.postValue(e)
+    }
+
+    protected fun postMessage(generator: (Context) -> CharSequence) {
+        mutableMessages.postValue(generator)
     }
 
 

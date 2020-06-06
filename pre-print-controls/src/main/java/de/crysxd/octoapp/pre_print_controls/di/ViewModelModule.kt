@@ -27,8 +27,8 @@ open class ViewModelModule {
     open fun provideSignInViewModel(
         octoPrintProvider: OctoPrintProvider,
         turnOffPsuUseCase: TurnOffPsuUseCase,
-        executeGcodeCommandValueSink: SendGcodeCommandValueSink
-    ): ViewModel = PrePrintControlsViewModel(octoPrintProvider, turnOffPsuUseCase, executeGcodeCommandValueSink)
+        executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase
+    ): ViewModel = PrePrintControlsViewModel(octoPrintProvider, turnOffPsuUseCase, executeGcodeCommandUseCase)
 
     @Provides
     @IntoMap

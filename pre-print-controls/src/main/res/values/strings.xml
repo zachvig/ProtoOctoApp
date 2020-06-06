@@ -4,4 +4,6 @@
     <string name="turn_off_psu">Turn off PSU</string>
     <string name="send_gcode">Send Gcode</string>
     <string name="gcode_one_command_per_line">Gcode (one command per line)</string>
+    <string name="sent_x">Sent %s</string>
+    <string name="sent_x_and_y_others">Sent %s and %d others</string>
 </resources>

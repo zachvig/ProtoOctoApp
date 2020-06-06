@@ -6,6 +6,7 @@ import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UserMessageException
 
@@ -28,6 +29,10 @@ abstract class BaseFragment(@LayoutRes layout: Int) : Fragment(layout) {
                 )
                 .setPositiveButton(android.R.string.ok, null)
                 .show()
+        })
+
+        viewModel.messages.observe(this, Observer {
+            Snackbar.make(requireView(), it(requireContext()), Snackbar.LENGTH_SHORT).show()
         })
     }
 }

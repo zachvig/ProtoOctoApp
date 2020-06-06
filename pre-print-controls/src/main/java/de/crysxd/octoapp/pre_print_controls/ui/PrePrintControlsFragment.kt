@@ -1,9 +1,7 @@
 package de.crysxd.octoapp.pre_print_controls.ui
 
 import android.os.Bundle
-import android.text.InputType
 import android.view.View
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import de.crysxd.octoapp.base.ui.BaseFragment
@@ -27,7 +25,7 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
                     true
                 }
                 R.id.menuItemSendGcode -> {
-                    viewModel.executeGcodeCommand(requireContext())
+                    viewModel.executeGcode(requireContext())
                     true
                 }
                 else -> false
