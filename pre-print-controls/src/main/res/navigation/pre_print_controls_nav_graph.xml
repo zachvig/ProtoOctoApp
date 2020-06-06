@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_enter_extrude_distance"
             app:destination="@id/enter_value_nav_graph" />
+        <action
+            android:id="@id/action_enter_temperature"
+            app:destination="@id/enter_value_nav_graph" />
     </fragment>
 
     <include app:graph="@navigation/enter_value_nav_graph" />

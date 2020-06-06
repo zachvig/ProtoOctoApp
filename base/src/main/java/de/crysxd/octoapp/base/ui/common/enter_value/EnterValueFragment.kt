@@ -59,6 +59,10 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
                 else -> false
             }
         }
+
+        if (navArgs.selectAll) {
+            textInputLayout?.editText?.selectAll()
+        }
     }
 
     private fun navigateBackWithResult() {

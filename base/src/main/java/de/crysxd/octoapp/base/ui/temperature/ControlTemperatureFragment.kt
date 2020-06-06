@@ -19,7 +19,7 @@ abstract class ControlTemperatureFragment : BaseFragment(R.layout.fragment_contr
         super.onViewCreated(view, savedInstanceState)
 
         view.setOnClickListener {
-            showEditDialog()
+            viewModel.changeTemperature(requireContext())
         }
 
         textViewComponentName.setText(viewModel.getComponentName())
@@ -28,41 +28,5 @@ abstract class ControlTemperatureFragment : BaseFragment(R.layout.fragment_contr
             val target = it?.target?.toInt()?.toString() ?: getString(R.string.no_value_placeholder)
             textViewTemperature.text = getString(R.string.temperature_x_of_y, actual, target)
         })
-    }
-
-    private fun showEditDialog() {
-        val view = View.inflate(requireContext(), R.layout.view_temperature_input, null)
-        val currentTarget = viewModel.temperature.value?.target?.toInt() ?: 0
-        view.textInputLayoutTemperature.editText?.setText(currentTarget.toString())
-
-        val dialog = AlertDialog.Builder(requireContext())
-            .setView(view)
-            .setCancelable(false)
-            .setNegativeButton(R.string.cancel) { _, _ ->
-                view.textInputLayoutTemperature.editText?.clearFocusAndHideSoftKeyboard()
-            }
-            .setPositiveButton(R.string.set_temperature) { _, _ ->
-                view.textInputLayoutTemperature.editText?.clearFocusAndHideSoftKeyboard()
-                viewModel.setTemperature(
-                    try {
-                        view.textInputLayoutTemperature?.editText?.text?.toString()?.toInt() ?: 0
-                    } catch (e: Exception) {
-                        0
-                    }
-                )
-            }
-            .show()
-
-        view.textInputLayoutTemperature.editText?.setOnEditorActionListener { _, _, _ ->
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).callOnClick()
-        }
-
-        // Delay opening of SoftKeyboard to prevent animation glitches
-        view.postDelayed({
-            view.textInputLayoutTemperature.editText?.let {
-                it.requestFocusAndOpenSoftKeyboard()
-                it.selectAll()
-            }
-        }, 400)
     }
 }

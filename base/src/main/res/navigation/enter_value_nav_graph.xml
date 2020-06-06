@@ -35,6 +35,10 @@
             android:name="resultId"
             app:argType="integer" />
         <argument
+            android:name="selectAll"
+            app:argType="boolean"
+            android:defaultValue="false"/>
+        <argument
             android:name="validator"
             android:defaultValue="@null"
             app:argType="de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragment$ValueValidator"
