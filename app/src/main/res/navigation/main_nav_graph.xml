@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph"
-    app:startDestination="@id/sign_in_nav_graph">
+    app:startDestination="@id/splashFragment">
 
     <action
         android:id="@+id/action_sign_in_required"
@@ -42,10 +42,10 @@
     <include app:graph="@navigation/pre_print_controls_nav_graph" />
 
     <include app:graph="@navigation/print_controls_nav_graph" />
-
     <fragment
-        android:id="@+id/homeScreenFragment"
-        android:name="de.crysxd.octoapp.HomeScreenFragment"
-        android:label="HomeScreenFragment" />
+        android:id="@+id/splashFragment"
+        android:name="de.crysxd.octoapp.SplashFragment"
+        android:label="SplashFragment"
+        tools:layout="@layout/fragment_splash" />
 
 </navigation>
