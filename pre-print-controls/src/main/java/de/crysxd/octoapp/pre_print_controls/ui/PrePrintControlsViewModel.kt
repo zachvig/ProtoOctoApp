@@ -2,6 +2,8 @@ package de.crysxd.octoapp.pre_print_controls.ui
 
 import android.content.Context
 import android.text.InputType
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.sinks.SendGcodeCommandValueSink
 import de.crysxd.octoapp.base.ui.BaseViewModel
@@ -16,6 +18,9 @@ class PrePrintControlsViewModel(
     private val turnOffPsuUseCase: TurnOffPsuUseCase,
     private val executeGcodeCommandValueSink: SendGcodeCommandValueSink
 ) : BaseViewModel() {
+
+    private val mutableMessages = MutableLiveData<(Context) -> CharSequence>()
+    val messages = Transformations.map(mutableMessages) { it }
 
     fun turnOffPsu() = GlobalScope.launch(coroutineExceptionHandler) {
         octoPrintProvider.octoPrint.value?.let {
