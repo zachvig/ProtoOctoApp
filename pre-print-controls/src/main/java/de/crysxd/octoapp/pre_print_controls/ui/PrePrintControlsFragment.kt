@@ -16,7 +16,11 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Manually disable the back navigation, we can't go back
         toolbar.setupWithNavController(findNavController())
+        toolbar.navigationIcon = null
+        toolbar.setNavigationOnClickListener {  }
+
         toolbar.inflateMenu(R.menu.prepare_menu)
         toolbar.setOnMenuItemClickListener {
             when(it.itemId) {
