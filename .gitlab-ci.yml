@@ -36,6 +36,7 @@ build:
   artifacts:
     when: always
     paths:
-      - app/release/*.aab
+      - app/build/outputs/bundle/release/*.aab
+      - app/build/outputs/bundle/debug/*.aab
   only:
     - tags
