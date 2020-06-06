@@ -1,0 +1,41 @@
+image: jangrewe/gitlab-ci-android
+
+cache:
+  key: ${CI_PROJECT_ID}
+  paths:
+    - .m2/
+    - .gradle/
+
+stages:
+  - test
+  - build
+  - deploy
+
+before_script:
+  - chmod +x gradlew
+  - echo $KEY_FILE_B64 | base64 --decode > key.keystore
+  - cp key.keystore app/
+
+after_script:
+  - rm key.keystore
+  - rm app/key.keystore
+
+test:
+  stage: test
+  script:
+    - ./gradlew test
+  artifacts:
+    when: always
+    paths:
+      - app/build/reports/
+
+build:
+  stage: build
+  script:
+    - ./gradlew bundleRelease -Pandroid.injected.signing.store.file=key.keystore -Pandroid.injected.signing.store.password=$KEY_STORE_PASSWORD -Pandroid.injected.signing.key.alias=$RELEASE_KEY_ALIAS -Pandroid.injected.signing.key.password=$RELEASE_KEY_PASSWORD
+  artifacts:
+    when: always
+    paths:
+      - app/release/*.aab
+  only:
+    - tags
