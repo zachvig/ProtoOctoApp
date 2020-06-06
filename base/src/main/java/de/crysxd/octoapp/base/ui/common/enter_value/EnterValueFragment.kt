@@ -47,7 +47,6 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
             }
         }
 
-        textInputLayout.editText?.requestFocusAndOpenSoftKeyboard()
 
         toolbar.inflateMenu(R.menu.menu_enter_value)
         toolbar.setOnMenuItemClickListener {
@@ -65,13 +64,22 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        textInputLayout.editText?.requestFocusAndOpenSoftKeyboard()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        textInputLayout.editText?.clearFocusAndHideSoftKeyboard()
+    }
+
     private fun navigateBackWithResult() {
         val result = textInputLayout.editText?.text?.toString() ?: ""
         textInputLayout.error = (navArgs.validator ?: NotEmptyValidator()).validate(requireContext(), result)
 
         if (textInputLayout.error == null) {
             NavigationResultMediator.postResult(navArgs.resultId, result)
-            textInputLayout.editText?.clearFocusAndHideSoftKeyboard()
             findNavController().popBackStack()
         }
     }
