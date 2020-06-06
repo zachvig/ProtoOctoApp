@@ -43,4 +43,8 @@ class UseCaseModule {
     fun provideExtrudeFilamentUseCase() =
         ExtrudeFilamentUseCase()
 
+    @Provides
+    fun provideLoadFilesUseCase() =
+        LoadFilesUseCase()
+
 }

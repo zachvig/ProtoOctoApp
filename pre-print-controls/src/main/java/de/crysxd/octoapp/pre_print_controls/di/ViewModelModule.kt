@@ -52,7 +52,8 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(SelectFileViewModel::class)
     open fun provideSelectFileViewModel(
-        octoPrintProvider: OctoPrintProvider
-    ): ViewModel = SelectFileViewModel(octoPrintProvider)
+        octoPrintProvider: OctoPrintProvider,
+        loadFilesUseCase: LoadFilesUseCase
+    ): ViewModel = SelectFileViewModel(octoPrintProvider, loadFilesUseCase)
 
 }
