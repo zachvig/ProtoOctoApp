@@ -16,7 +16,7 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.files.observe(this, Observer {
-            Timber.i("Loaded ${it.files.size} files")
+            Timber.i("Loaded ${it.size} files")
         })
     }
 

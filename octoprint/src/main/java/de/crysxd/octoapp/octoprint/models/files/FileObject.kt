@@ -29,7 +29,8 @@ sealed class FileObject(
         path: String,
         type: String,
         typePath: List<String>,
-        ref: Reference
+        ref: Reference,
+        val children: List<FileObject>?
     ) : FileObject(display, name, origin, path, type, typePath, ref)
 
     data class Reference(
