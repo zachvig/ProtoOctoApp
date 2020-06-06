@@ -68,14 +68,14 @@ class SelectFileAdapter(private val callback: (FileObject) -> Unit) : RecyclerVi
     }
 
     private fun styleFileSize(size: Long): String {
-        val kb = size / 8
-        val mb = kb / 1000f
-        val gb = mb / 1000f
+        val kb = size / 1024f
+        val mb = kb / 1024f
+        val gb = mb / 1024f
 
         return when {
-            gb > 1 -> DecimalFormat("#.## 'GB'").format(gb)
-            mb > 1 -> DecimalFormat("#.# 'MB'").format(mb)
-            else -> DecimalFormat("# 'kB'").format(mb)
+            gb > 1 -> DecimalFormat("#.## 'GiB'").format(gb)
+            mb > 1 -> DecimalFormat("#.# 'MiB'").format(mb)
+            else -> DecimalFormat("# 'kiB'").format(kb)
         }
     }
 }
