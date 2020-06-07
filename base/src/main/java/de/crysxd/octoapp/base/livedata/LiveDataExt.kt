@@ -21,7 +21,7 @@ object OctoTransformations {
     fun <T : Any> LiveData<Any>.filterForType(type: Class<T>): LiveData<T> {
         val result: MediatorLiveData<T> = MediatorLiveData<T>()
         result.addSource(this) { x ->
-            if (x::class.java.isAssignableFrom(type)) {
+            if (type.isAssignableFrom(x::class.java)) {
                 @Suppress("UNCHECKED_CAST")
                 result.value = x as T
             }
@@ -32,7 +32,7 @@ object OctoTransformations {
     fun <T : Message> LiveData<Event>.filterEventsForMessageType(type: Class<T>): LiveData<T> {
         val result: MediatorLiveData<T> = MediatorLiveData<T>()
         result.addSource(this) { x ->
-            if (x is Event.MessageReceived && x.message::class.java.isAssignableFrom(type)) {
+            if (x is Event.MessageReceived && type.isAssignableFrom(x.message::class.java)) {
                 @Suppress("UNCHECKED_CAST")
                 result.value = x.message as T
             }

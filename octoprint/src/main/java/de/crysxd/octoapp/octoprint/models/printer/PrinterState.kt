@@ -1,7 +1,7 @@
 package de.crysxd.octoapp.octoprint.models.printer
 
 data class PrinterState(
-    val state: State,
+    val state: State?,
     val temperature: PrinterTemperature?
 ) {
 
