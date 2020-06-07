@@ -26,9 +26,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val observer = Observer(this::onMessageReceived)
+        val observer = Observer(this::onEventReceived)
         val events = ConnectPrinterInjector.get().octoprintProvider().eventLiveData
-            .filterEventsForMessageType(Message::class.java)
 
         SignInInjector.get().octoprintRepository().instanceInformation.observe(this, Observer {
             if (it != null) {
@@ -44,6 +43,13 @@ class MainActivity : AppCompatActivity() {
         if (id != lastNavigation) {
             lastNavigation = id
             findNavController(R.id.mainNavController).navigate(id)
+        }
+    }
+
+    private fun onEventReceived(e: Event) {
+        when (e) {
+            is Event.Disconnected -> navigate(R.id.action_connect_printer)
+            is Event.MessageReceived -> onMessageReceived(e.message)
         }
     }
 
