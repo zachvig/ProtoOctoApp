@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.connect_printer.ui
 
 import android.os.Bundle
+import android.util.EventLog
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
@@ -11,6 +12,8 @@ import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.connect_printer.di.injectViewModel
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintBootingException
+import de.crysxd.octoapp.octoprint.models.socket.Event
+import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.android.synthetic.main.fragment_connect_printer.*
 import timber.log.Timber
 

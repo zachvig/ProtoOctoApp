@@ -16,6 +16,8 @@ import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.UseCase
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
+import de.crysxd.octoapp.octoprint.models.socket.Event
+import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -27,8 +29,8 @@ abstract class ControlTemperatureViewModelContract(
     protected abstract val manualOverwriteLiveData: MutableLiveData<PrinterState.ComponentTemperature?>
     private val temperatureMediator: MediatorLiveData<PrinterState.ComponentTemperature?> by lazy { initMediator() }
     val temperature: LiveData<PrinterState.ComponentTemperature?> by lazy { Transformations.map(temperatureMediator) { it } }
-    private val octoPrintTempLiveData = Transformations.map(octoPrintProvider.printerState) { s ->
-        (s as? PollingLiveData.Result.Success)?.result?.temperature?.let(::extractComponentTemperature)
+    private val octoPrintTempLiveData = Transformations.map(octoPrintProvider.eventLiveData) { event ->
+        ((event as? Event.MessageReceived)?.message as? Message.CurrentMessage)?.temps?.let(this::extractComponentTemperature)
     }
 
     private fun initMediator() = MediatorLiveData<PrinterState.ComponentTemperature?>().apply {

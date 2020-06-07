@@ -21,11 +21,8 @@ import java.lang.Exception
 
 class OctoPrintProvider(
     private val httpLoggingInterceptor: HttpLoggingInterceptor,
-    private val octoPrintRepository: OctoPrintRepository
+    octoPrintRepository: OctoPrintRepository
 ) {
-
-    private val mutableException = MutableLiveData<OctoPrintException>()
-    val exception = Transformations.map(mutableException) { it }
 
     val octoPrint: LiveData<OctoPrint?> =
         Transformations.map(octoPrintRepository.instanceInformation) {
@@ -43,14 +40,11 @@ class OctoPrintProvider(
                     try {
                         it?.createPrinterApi()?.getPrinterState() ?: throw InvalidApiKeyException()
                     } catch (e: PrinterNotOperationalException) {
-                        mutableException.postValue(e)
                         throw NoPrinterConnectedException()
                     } catch (e: InvalidApiKeyException) {
-                        mutableException.postValue(e)
                         octoPrintRepository.clearOctoprintInstanceInformation()
                         throw InvalidOctoPrintInstanceInformation()
                     } catch (e: OctoPrintException) {
-                        mutableException.postValue(e)
                         throw e
                     }
                 }
@@ -59,7 +53,7 @@ class OctoPrintProvider(
 
     val eventLiveData: LiveData<Event> = Transformations.switchMap(octoPrint) {
         if (it == null) {
-            MutableLiveData()
+            MutableLiveData<Event>()
         } else {
             WebSocketLiveData(it.getEventWebSocket())
         }
