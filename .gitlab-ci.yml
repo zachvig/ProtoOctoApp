@@ -15,10 +15,14 @@ before_script:
   - chmod +x gradlew
   - echo $KEY_FILE_B64 | base64 --decode > key.keystore
   - cp key.keystore app/
+  - echo "signing.storePassword=$KEY_STORE_PASSWORD" >> local.properties
+  - echo "signing.storeAlias=$RELEASE_KEY_ALIAS" >> local.properties
+  - echo "signing.keyPassword=$RELEASE_KEY_PASSWORD" >> local.properties
 
 after_script:
   - rm key.keystore
   - rm app/key.keystore
+  - rm local.properties
 
 test:
   stage: test
@@ -32,7 +36,7 @@ test:
 build:
   stage: build
   script:
-    - ./gradlew bundle -Pandroid.injected.signing.store.file=key.keystore -Pandroid.injected.signing.store.password=$KEY_STORE_PASSWORD -Pandroid.injected.signing.key.alias=$RELEASE_KEY_ALIAS -Pandroid.injected.signing.key.password=$RELEASE_KEY_PASSWORD
+    - ./gradlew bundle
   artifacts:
     when: always
     paths:

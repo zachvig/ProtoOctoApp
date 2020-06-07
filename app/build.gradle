@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
+apply plugin: "com.github.triplet.play"
 
 android {
     compileSdkVersion 29
@@ -17,9 +18,22 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        release {
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+            storeFile file("key.keystore")
+            storePassword properties.getProperty('signing.storePassword')
+            keyAlias properties.getProperty('signing.storeAlias')
+            keyPassword properties.getProperty('signing.keyPassword')
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -33,6 +47,15 @@ android {
         jvmTarget = "1.8"
     }
 }
+
+
+play {
+    serviceAccountCredentials = file("service-account.json")
+    track = "internal"
+    userFraction = 1
+    defaultToAppBundles = true
+}
+
 
 dependencies {
     implementation project(':base')
