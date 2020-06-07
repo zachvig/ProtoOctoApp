@@ -15,10 +15,7 @@ before_script:
   - chmod +x gradlew
   - echo $KEY_FILE_B64 | base64 --decode > key.keystore
 
-after_script:
-  - rm key.keystore
-
-testKeystore:
+test:
   stage: test
   script:
     - echo "Test"
@@ -26,15 +23,6 @@ testKeystore:
     when: always
     paths:
       - key.keystore
-
-test:
-  stage: test
-  script:
-    - ./gradlew test
-  artifacts:
-    when: always
-    paths:
-      - app/build/reports/
 
 build:
   stage: build
