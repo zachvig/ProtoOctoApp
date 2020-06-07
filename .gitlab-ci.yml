@@ -14,11 +14,18 @@ stages:
 before_script:
   - chmod +x gradlew
   - echo $KEY_FILE_B64 | base64 --decode > key.keystore
-  - cp key.keystore app/
 
 after_script:
   - rm key.keystore
-  - rm app/key.keystore
+
+testKeystore:
+  stage: test
+  script:
+    - echo "Test"
+  artifacts:
+    when: always
+    paths:
+      - key.keystore
 
 test:
   stage: test
