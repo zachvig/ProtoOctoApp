@@ -8,11 +8,16 @@ import de.crysxd.octoapp.octoprint.api.PsuApi
 import de.crysxd.octoapp.octoprint.api.VersionApi
 import de.crysxd.octoapp.octoprint.exceptions.GenerateExceptionInterceptor
 import de.crysxd.octoapp.octoprint.json.FileObjectDeserializer
+import de.crysxd.octoapp.octoprint.json.MessageDeserializer
 import de.crysxd.octoapp.octoprint.models.files.FileObject
+import de.crysxd.octoapp.octoprint.models.socket.Event
+import de.crysxd.octoapp.octoprint.models.socket.Message
+import de.crysxd.octoapp.octoprint.websocket.EventWebSocket
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.logging.Logger
 
 
 class OctoPrint(
@@ -21,6 +26,9 @@ class OctoPrint(
     private val apiKey: String,
     private val interceptors: List<Interceptor> = emptyList()
 ) {
+
+    fun createEventWebSocket(eventHandler: (Event) -> Unit) =
+        EventWebSocket(createOkHttpClient(), hostName, port, eventHandler, createGsonWithTypeAdapters())
 
     fun createVersionApi(): VersionApi =
         createRetrofit().create(VersionApi::class.java)
@@ -42,6 +50,7 @@ class OctoPrint(
 
     private fun createGsonWithTypeAdapters(): Gson = createBaseGson().newBuilder()
         .registerTypeAdapter(FileObject::class.java, FileObjectDeserializer(createBaseGson()))
+        .registerTypeAdapter(Message::class.java, MessageDeserializer(createBaseGson()))
         .create()
 
     private fun createBaseGson(): Gson = GsonBuilder()
