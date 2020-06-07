@@ -25,19 +25,16 @@ class EventWebSocket(
 
     fun start() {
         if (isConnected.compareAndSet(false, true)) {
-            forceStart()
+            val request = Request.Builder()
+                .url("http://$hostname:$port/sockjs/websocket")
+                .build()
+
+            httpClient.newBuilder()
+                .pingInterval(1, TimeUnit.SECONDS)
+                .connectTimeout(2, TimeUnit.SECONDS)
+                .build()
+                .newWebSocket(request, WebSocketListener())
         }
-    }
-
-    private fun forceStart() {
-        val request = Request.Builder()
-            .url("http://$hostname:$port/sockjs/websocket")
-            .build()
-
-        httpClient.newBuilder()
-            .pingInterval(1, TimeUnit.SECONDS)
-            .build()
-            .newWebSocket(request, WebSocketListener())
     }
 
     fun stop() {
@@ -93,10 +90,11 @@ class EventWebSocket(
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
             dispatchEvent(Event.Disconnected(t))
+            isConnected.set(false)
 
             reconnectJob = GlobalScope.launch {
                 delay(1000L)
-                forceStart()
+                start()
             }
         }
     }
