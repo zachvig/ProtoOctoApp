@@ -33,24 +33,6 @@ class OctoPrintProvider(
             }
         }
 
-    val printerState: LiveData<PollingLiveData.Result<PrinterState>> =
-        Transformations.switchMap(octoPrint) {
-            PollingLiveData {
-                withContext(Dispatchers.IO) {
-                    try {
-                        it?.createPrinterApi()?.getPrinterState() ?: throw InvalidApiKeyException()
-                    } catch (e: PrinterNotOperationalException) {
-                        throw NoPrinterConnectedException()
-                    } catch (e: InvalidApiKeyException) {
-                        octoPrintRepository.clearOctoprintInstanceInformation()
-                        throw InvalidOctoPrintInstanceInformation()
-                    } catch (e: OctoPrintException) {
-                        throw e
-                    }
-                }
-            }
-        }
-
     val eventLiveData: LiveData<Event> = Transformations.switchMap(octoPrint) {
         if (it == null) {
             MutableLiveData<Event>()
