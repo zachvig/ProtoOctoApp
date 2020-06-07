@@ -12,7 +12,9 @@ import de.crysxd.octoapp.octoprint.exceptions.InvalidApiKeyException
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintException
 import de.crysxd.octoapp.octoprint.exceptions.PrinterNotOperationalException
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
+import de.crysxd.octoapp.octoprint.models.socket.Event
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.withContext
 import okhttp3.logging.HttpLoggingInterceptor
 import java.lang.Exception
@@ -54,6 +56,14 @@ class OctoPrintProvider(
                 }
             }
         }
+
+    val eventLiveData: LiveData<Event> = Transformations.switchMap(octoPrint) {
+        if (it == null) {
+            MutableLiveData()
+        } else {
+            WebSocketLiveData(it.getEventWebSocket())
+        }
+    }
 
     fun createAdHocOctoPrint(it: OctoPrintInstanceInformation) =
         OctoPrint(it.hostName, it.port, it.apiKey, listOf(httpLoggingInterceptor))

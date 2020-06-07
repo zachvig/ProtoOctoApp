@@ -47,6 +47,12 @@ class MainActivity : AppCompatActivity() {
                 printerState.removeObserver(observer)
             }
         })
+
+        ConnectPrinterInjector.get().octoprintProvider().octoPrint.observe(this, Observer {
+            it?.createEventWebSocket {
+                Timber.i(it::class.simpleName)
+            }?.start()
+        })
     }
 
     private fun navigate(id: Int) {
