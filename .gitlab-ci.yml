@@ -13,14 +13,14 @@ stages:
 
 before_script:
   - chmod +x gradlew
-  - echo $KEY_FILE_B64 | base64 --decode > key.keystore
-  - cp key.keystore app/
+  - echo $KEY_FILE_B64 | base64 --decode > app/key.keystore
+  - echo $SERVICE_ACCOUNT_JSON > app/service-account.json
   - echo "signing.storePassword=$KEY_STORE_PASSWORD" >> local.properties
   - echo "signing.storeAlias=$RELEASE_KEY_ALIAS" >> local.properties
   - echo "signing.keyPassword=$RELEASE_KEY_PASSWORD" >> local.properties
 
 after_script:
-  - rm key.keystore
+  - rm app/service-account.json
   - rm app/key.keystore
   - rm local.properties
 
@@ -36,11 +36,10 @@ test:
 build:
   stage: build
   script:
-    - ./gradlew bundle
+    - ./gradlew publishReleaseBundle
   artifacts:
     when: always
     paths:
       - app/build/outputs/bundle/release/*.aab
-      - app/build/outputs/bundle/debug/*.aab
   only:
     - tags
