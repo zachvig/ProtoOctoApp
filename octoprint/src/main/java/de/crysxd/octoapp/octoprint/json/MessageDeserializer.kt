@@ -10,8 +10,8 @@ class MessageDeserializer(val gson: Gson) : JsonDeserializer<Message> {
 
         val o = json.asJsonObject
         return when {
-            o.has("current") -> gson.fromJson(json, Message.CurrentMessage::class.java)
-            o.has("connected") -> gson.fromJson(json, Message.ConnectedMessage::class.java)
+            o.has("current") -> gson.fromJson(o["current"], Message.CurrentMessage::class.java)
+            o.has("connected") -> gson.fromJson(o["connected"], Message.ConnectedMessage::class.java)
             o.has("plugin") -> Message.PluginMessage(o["plugin"].asJsonObject)
             else -> Message.RawMessage(o)
         }

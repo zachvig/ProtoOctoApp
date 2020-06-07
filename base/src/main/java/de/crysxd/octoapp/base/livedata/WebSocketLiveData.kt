@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base
+package de.crysxd.octoapp.base.livedata
 
 import androidx.lifecycle.LiveData
 import de.crysxd.octoapp.octoprint.models.socket.Event

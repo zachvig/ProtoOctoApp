@@ -12,7 +12,7 @@ sealed class Message {
 
     data class CurrentMessage(
         val logs: List<String>,
-        val temps: PrinterState.PrinterTemperature,
+        val temps: List<HistoricTemperatureData>,
         val state: PrinterState
     ) : Message()
 

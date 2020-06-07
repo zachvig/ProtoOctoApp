@@ -1,11 +1,10 @@
-package de.crysxd.octoapp.base
+package de.crysxd.octoapp.base.livedata
 
 import android.os.Handler
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
 
 class PollingLiveData<T>(
     private val internval: Long = 1000,

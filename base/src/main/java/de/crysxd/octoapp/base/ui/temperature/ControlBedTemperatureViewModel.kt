@@ -6,6 +6,7 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.usecase.SetBedTargetTemperatureUseCase
 import de.crysxd.octoapp.base.usecase.SetToolTargetTemperatureUseCase
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
+import de.crysxd.octoapp.octoprint.models.socket.HistoricTemperatureData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -14,13 +15,7 @@ class ControlBedTemperatureViewModel(
     useCase: SetBedTargetTemperatureUseCase
 ) : ControlTemperatureViewModelContract(octoPrintProvider, useCase) {
 
-    companion object {
-        val sharedManualOverwriteLiveData = MutableLiveData<PrinterState.ComponentTemperature?>()
-    }
-
-    override val manualOverwriteLiveData = sharedManualOverwriteLiveData
-
-    override fun extractComponentTemperature(pst: PrinterState.PrinterTemperature) = pst.bed
+    override fun extractComponentTemperature(temp: HistoricTemperatureData): PrinterState.ComponentTemperature = temp.bed
 
     override fun getComponentName() = R.string.bed
 }

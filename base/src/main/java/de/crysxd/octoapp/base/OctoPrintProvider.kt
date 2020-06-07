@@ -3,6 +3,8 @@ package de.crysxd.octoapp.base
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import de.crysxd.octoapp.base.livedata.PollingLiveData
+import de.crysxd.octoapp.base.livedata.WebSocketLiveData
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
 import de.crysxd.octoapp.base.models.exceptions.InvalidOctoPrintInstanceInformation
 import de.crysxd.octoapp.base.models.exceptions.NoPrinterConnectedException
@@ -14,10 +16,8 @@ import de.crysxd.octoapp.octoprint.exceptions.PrinterNotOperationalException
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.withContext
 import okhttp3.logging.HttpLoggingInterceptor
-import java.lang.Exception
 
 class OctoPrintProvider(
     private val httpLoggingInterceptor: HttpLoggingInterceptor,

@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base
+package de.crysxd.octoapp.base.models.exceptions
 
 interface UserMessageException {
 

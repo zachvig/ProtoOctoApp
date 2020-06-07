@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
-import de.crysxd.octoapp.base.PollingLiveData
+import de.crysxd.octoapp.base.livedata.PollingLiveData
 import de.crysxd.octoapp.base.usecase.CheckPrinterConnectedUseCase
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import kotlinx.coroutines.GlobalScope

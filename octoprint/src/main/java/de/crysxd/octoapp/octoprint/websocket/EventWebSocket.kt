@@ -10,6 +10,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
+import java.lang.Exception
 import java.util.concurrent.atomic.AtomicBoolean
 
 class EventWebSocket(
@@ -20,11 +21,11 @@ class EventWebSocket(
 ) {
 
     private var webSocket: WebSocket? = null
-    private var isConnected = AtomicBoolean()
+    private var isConnected = AtomicBoolean(false)
     private val eventHandlers: MutableList<Pair<CoroutineScope, suspend (Event) -> Unit>> = mutableListOf()
 
     fun start() {
-        if (isConnected.getAndSet(true)) {
+        if (isConnected.compareAndSet(false, true)) {
 
             val request = Request.Builder()
                 .url("http://$hostname:$port/sockjs/websocket")
@@ -70,7 +71,11 @@ class EventWebSocket(
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             super.onMessage(webSocket, text)
-            dispatchEvent(Event.MessageReceived(gson.fromJson(text, Message::class.java)))
+            try {
+                dispatchEvent(Event.MessageReceived(gson.fromJson(text, Message::class.java)))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {

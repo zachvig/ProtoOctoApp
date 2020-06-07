@@ -1,9 +1,7 @@
 package de.crysxd.octoapp.base.models.exceptions
 
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.UserMessageException
 import de.crysxd.octoapp.octoprint.exceptions.InvalidApiKeyException
-import de.crysxd.octoapp.octoprint.exceptions.PrinterNotOperationalException
 
 class InvalidOctoPrintInstanceInformation : InvalidApiKeyException(),
     UserMessageException {

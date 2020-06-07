@@ -8,7 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.UserMessageException
+import de.crysxd.octoapp.base.models.exceptions.UserMessageException
 
 abstract class BaseFragment(@LayoutRes layout: Int) : Fragment(layout) {
 
