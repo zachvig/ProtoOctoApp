@@ -10,7 +10,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
-import java.lang.Exception
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
 class EventWebSocket(
@@ -26,12 +26,14 @@ class EventWebSocket(
 
     fun start() {
         if (isConnected.compareAndSet(false, true)) {
-
             val request = Request.Builder()
                 .url("http://$hostname:$port/sockjs/websocket")
                 .build()
 
-            httpClient.newWebSocket(request, WebSocketListener())
+            httpClient.newBuilder()
+                .pingInterval(1, TimeUnit.SECONDS)
+                .build()
+                .newWebSocket(request, WebSocketListener())
         }
     }
 
@@ -86,7 +88,6 @@ class EventWebSocket(
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
-            isConnected.set(false)
             dispatchEvent(Event.Disconnected(t))
         }
     }
