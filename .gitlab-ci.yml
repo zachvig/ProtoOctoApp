@@ -29,7 +29,7 @@ after_script:
 test:
   stage: test
   script:
-    - ./gradlew test
+    - ./gradlew publishReleaseBundle
   artifacts:
     when: always
     paths:
