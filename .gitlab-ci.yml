@@ -18,7 +18,7 @@ before_script:
   - echo "signing.storePassword=$KEY_STORE_PASSWORD" >> local.properties
   - echo "signing.storeAlias=$RELEASE_KEY_ALIAS" >> local.properties
   - echo "signing.keyPassword=$RELEASE_KEY_PASSWORD" >> local.properties
-  - shasum app/service-account.json
+  - echo app/service-account.json
 
 after_script:
   - rm app/service-account.json
