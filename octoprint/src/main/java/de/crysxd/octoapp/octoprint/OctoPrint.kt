@@ -2,10 +2,7 @@ package de.crysxd.octoapp.octoprint
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import de.crysxd.octoapp.octoprint.api.FilesApi
-import de.crysxd.octoapp.octoprint.api.PrinterApi
-import de.crysxd.octoapp.octoprint.api.PsuApi
-import de.crysxd.octoapp.octoprint.api.VersionApi
+import de.crysxd.octoapp.octoprint.api.*
 import de.crysxd.octoapp.octoprint.exceptions.GenerateExceptionInterceptor
 import de.crysxd.octoapp.octoprint.json.FileObjectDeserializer
 import de.crysxd.octoapp.octoprint.json.MessageDeserializer
@@ -33,6 +30,9 @@ class OctoPrint(
 
     fun createVersionApi(): VersionApi =
         createRetrofit().create(VersionApi::class.java)
+
+    fun createJobApi(): JobApi.Wrapper =
+        JobApi.Wrapper(createRetrofit().create(JobApi::class.java))
 
     fun createFilesApi(): FilesApi.Wrapper =
         FilesApi.Wrapper(createRetrofit().create(FilesApi::class.java))

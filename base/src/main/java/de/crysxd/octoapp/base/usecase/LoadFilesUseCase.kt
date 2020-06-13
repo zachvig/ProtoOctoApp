@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.base.usecase
 
-import de.crysxd.octoapp.base.usecase.UseCase
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
