@@ -14,8 +14,18 @@ sealed class Message {
     data class CurrentMessage(
         val logs: List<String>,
         val temps: List<HistoricTemperatureData>,
-        val state: PrinterState.State?
-    ) : Message()
+        val state: PrinterState.State?,
+        val progress: ProgressInformation?
+    ) : Message() {
+
+        data class ProgressInformation(
+            val completion: Float,
+            val fileOps: Long,
+            val printTime: Int,
+            val printTimeLeft: Int,
+            val printTimeLeftOrigin: String
+        )
+    }
 
     data class PluginMessage(
         val data: JsonObject
