@@ -45,6 +45,7 @@ interface BaseComponent {
     fun startPrintJobUseCase(): StartPrintJobUseCase
     fun cancelPrintJobUseCase(): CancelPrintJobUseCase
     fun togglePausePrintJobUseCase(): TogglePausePrintJobUseCase
+    fun emergencyStopUseCase(): EmergencyStopUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

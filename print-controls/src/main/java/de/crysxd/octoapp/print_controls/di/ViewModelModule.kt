@@ -9,6 +9,7 @@ import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.ui.ViewModelFactory
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
+import de.crysxd.octoapp.base.usecase.EmergencyStopUseCase
 import de.crysxd.octoapp.base.usecase.TogglePausePrintJobUseCase
 import de.crysxd.octoapp.print_controls.ui.PrintControlsViewModel
 import javax.inject.Provider
@@ -26,6 +27,7 @@ open class ViewModelModule {
     open fun provideSignInViewModel(
         octoPrintProvider: OctoPrintProvider,
         cancelPrintJobUseCase: CancelPrintJobUseCase,
-        togglePausePrintJobUseCase: TogglePausePrintJobUseCase
-    ): ViewModel = PrintControlsViewModel(octoPrintProvider, cancelPrintJobUseCase, togglePausePrintJobUseCase)
+        togglePausePrintJobUseCase: TogglePausePrintJobUseCase,
+        emergencyStopUseCase: EmergencyStopUseCase
+    ): ViewModel = PrintControlsViewModel(octoPrintProvider, cancelPrintJobUseCase, togglePausePrintJobUseCase, emergencyStopUseCase)
 }

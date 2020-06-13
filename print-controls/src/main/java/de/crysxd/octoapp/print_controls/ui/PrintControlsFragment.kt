@@ -18,6 +18,7 @@ class PrintControlsFragment : Fragment(R.layout.fragment_print_controls) {
         super.onViewCreated(view, savedInstanceState)
 
         buttonCancelPrint.setOnClickListener { viewModel.cancelPrint() }
+        buttonCancelPrint.setOnLongClickListener { viewModel.emergencyStop(); true }
         buttonTogglePausePrint.setOnClickListener { viewModel.togglePausePrint() }
 
         viewModel.printState.observe(viewLifecycleOwner, Observer {
