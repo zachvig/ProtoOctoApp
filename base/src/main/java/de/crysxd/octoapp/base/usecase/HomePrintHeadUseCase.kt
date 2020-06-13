@@ -2,8 +2,9 @@ package de.crysxd.octoapp.base.usecase
 
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.printer.PrintHeadCommand
+import javax.inject.Inject
 
-class HomePrintHeadUseCase : UseCase<Pair<OctoPrint, HomePrintHeadUseCase.Axis>, Unit> {
+class HomePrintHeadUseCase @Inject constructor() : UseCase<Pair<OctoPrint, HomePrintHeadUseCase.Axis>, Unit> {
 
     sealed class Axis(val printHeadCommand: PrintHeadCommand) {
         object All : Axis(PrintHeadCommand.HomeAllAxisPrintHeadCommand)

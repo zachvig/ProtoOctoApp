@@ -4,8 +4,9 @@ import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.printer.PrintHeadCommand
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class JogPrintHeadUseCase : UseCase<JogPrintHeadUseCase.Param, Unit> {
+class JogPrintHeadUseCase @Inject constructor() : UseCase<JogPrintHeadUseCase.Param, Unit> {
 
     data class Param(
         val octoPrint: OctoPrint,

@@ -2,7 +2,6 @@ package de.crysxd.octoapp.base.di
 
 import android.app.Application
 import android.content.Context
-import androidx.lifecycle.ViewModelProvider
 import dagger.Component
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.modules.*
@@ -17,7 +16,6 @@ import okhttp3.logging.HttpLoggingInterceptor
         AndroidModule::class,
         LoggingModule::class,
         OctoPrintModule::class,
-        UseCaseModule::class,
         DataSourceModule::class,
         ViewModelModule::class
     ]
@@ -45,6 +43,8 @@ interface BaseComponent {
     fun extrudeFilamentUseCase(): ExtrudeFilamentUseCase
     fun loadFilesUseCase(): LoadFilesUseCase
     fun startPrintJobUseCase(): StartPrintJobUseCase
+    fun cancelPrintJobUseCase(): CancelPrintJobUseCase
+    fun togglePausePrintJobUseCase(): TogglePausePrintJobUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

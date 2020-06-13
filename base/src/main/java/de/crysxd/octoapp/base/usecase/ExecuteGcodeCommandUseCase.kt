@@ -3,8 +3,9 @@ package de.crysxd.octoapp.base.usecase
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import timber.log.Timber
+import javax.inject.Inject
 
-class ExecuteGcodeCommandUseCase : UseCase<Pair<OctoPrint, GcodeCommand>, Unit> {
+class ExecuteGcodeCommandUseCase @Inject constructor() : UseCase<Pair<OctoPrint, GcodeCommand>, Unit> {
 
     override suspend fun execute(param: Pair<OctoPrint, GcodeCommand>) {
         Timber.i("Executing: ${param.second}")
