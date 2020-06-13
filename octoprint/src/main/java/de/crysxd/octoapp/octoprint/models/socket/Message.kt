@@ -104,7 +104,7 @@ sealed class Message {
 
         object Disconnected : EventMessage()
 
-        object Unknown : EventMessage()
+        data class Unknown(val type: String) : EventMessage()
 
     }
 }

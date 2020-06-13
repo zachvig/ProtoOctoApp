@@ -53,7 +53,7 @@ class MessageDeserializer(val gson: Gson) : JsonDeserializer<Message> {
         "PrintFailed" -> deserializeFileEventMessage(Message.EventMessage.PrintFailed::class.java, o["payload"].asJsonObject)
 
         else -> {
-            Message.EventMessage.Unknown
+            Message.EventMessage.Unknown(o["type"].asString)
         }
     }
 
