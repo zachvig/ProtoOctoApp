@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.pre_print_controls.di
+package de.crysxd.octoapp.print_controls.di
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
