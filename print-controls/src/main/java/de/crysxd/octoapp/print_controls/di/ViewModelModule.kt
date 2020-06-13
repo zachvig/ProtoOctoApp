@@ -8,6 +8,8 @@ import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.ui.ViewModelFactory
+import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
+import de.crysxd.octoapp.base.usecase.TogglePausePrintJobUseCase
 import de.crysxd.octoapp.print_controls.ui.PrintControlsViewModel
 import javax.inject.Provider
 
@@ -22,6 +24,8 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(PrintControlsViewModel::class)
     open fun provideSignInViewModel(
-        octoPrintProvider: OctoPrintProvider
-    ): ViewModel = PrintControlsViewModel(octoPrintProvider)
+        octoPrintProvider: OctoPrintProvider,
+        cancelPrintJobUseCase: CancelPrintJobUseCase,
+        togglePausePrintJobUseCase: TogglePausePrintJobUseCase
+    ): ViewModel = PrintControlsViewModel(octoPrintProvider, cancelPrintJobUseCase, togglePausePrintJobUseCase)
 }

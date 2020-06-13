@@ -6,6 +6,19 @@
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:text="Print active" />
+
+    <Button
+        android:id="@+id/buttonCancelPrint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cancel Print" />
+
+    <Button
+        android:id="@+id/buttonTogglePausePrint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pause" />
 </LinearLayout>
