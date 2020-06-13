@@ -34,6 +34,7 @@ class PrintControlsFragment : Fragment(R.layout.fragment_print_controls) {
 
             buttonCancelPrint.isEnabled = true
             buttonCancelPrint.text = if (it.state?.flags?.cancelling == true) {
+                buttonCancelPrint.isEnabled = false
                 buttonTogglePausePrint.isEnabled = false
                 "Cancelling..."
             } else {

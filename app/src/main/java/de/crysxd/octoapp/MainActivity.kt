@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
+import timber.log.Timber
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
 
@@ -52,6 +53,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onCurrentMessageReceived(e: Message.CurrentMessage) {
+        Timber.tag("navigation").d(e.state?.flags.toString())
         val flags = e.state?.flags
         navigate(
             when {
@@ -64,13 +66,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onEventMessageReceived(e: Message.EventMessage) {
+        Timber.tag("navigation").d(e.toString())
         navigate(
-            when (e) {
-                is Message.EventMessage.Disconnected -> R.id.action_connect_printer
-                is Message.EventMessage.Connected,
-                is Message.EventMessage.PrintCancelled,
-                is Message.EventMessage.PrintFailed -> R.id.action_printer_connected
-                is Message.EventMessage.PrintStarted -> R.id.action_printer_active
+            when {
+                e is Message.EventMessage.Disconnected -> R.id.action_connect_printer
+                e is Message.EventMessage.Connected -> R.id.action_printer_connected
+                e is Message.EventMessage.PrinterStateChanged &&
+                        e.stateId == Message.EventMessage.PrinterStateChanged.PrinterState.OPERATIONAL -> R.id.action_printer_connected
+                e is Message.EventMessage.PrintStarted -> R.id.action_printer_active
                 else -> lastNavigation
             }
         )
