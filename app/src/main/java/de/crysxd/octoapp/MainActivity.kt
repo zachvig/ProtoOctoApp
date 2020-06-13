@@ -4,17 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
-import de.crysxd.octoapp.base.livedata.OctoTransformations.filter
-import de.crysxd.octoapp.base.livedata.OctoTransformations.filterEventsForMessageType
-import de.crysxd.octoapp.base.livedata.PollingLiveData
-import de.crysxd.octoapp.base.usecase.CheckPrinterConnectedUseCase
-import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.lang.Exception
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
 
