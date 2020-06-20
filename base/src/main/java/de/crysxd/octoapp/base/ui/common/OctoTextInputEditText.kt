@@ -11,7 +11,7 @@ import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.ui.animation.InstantAutoTransition
+import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import kotlinx.android.synthetic.main.view_octo_input_layout.view.*
 
 class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, style: Int = 0) : FrameLayout(context, attrs, style) {

@@ -2,10 +2,17 @@ package de.crysxd.octoapp.signin.ui
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.os.Handler
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
+import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import de.crysxd.octoapp.base.ui.BaseFragment
+import de.crysxd.octoapp.base.ui.ext.setTextAppearanceCompat
+import de.crysxd.octoapp.base.ui.utils.ViewCompactor
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.models.SignInInformation
@@ -27,6 +34,23 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         }
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer(this::updateViewState))
+
+        val full = ConstraintSet()
+        full.load(requireContext(), R.layout.fragment_signin)
+        val compact = ConstraintSet()
+        compact.load(requireContext(), R.layout.fragment_signin_compact)
+        ViewCompactor(view as ViewGroup, reset = {
+            full.applyTo(constraintLayout)
+            textViewTitle.setTextAppearanceCompat(R.style.OctoTheme_TextAppearance_Title_Large)
+            textViewTitle.gravity = Gravity.CENTER
+            textViewSubTitle.gravity = Gravity.CENTER
+        }, compact = {
+            compact.applyTo(constraintLayout)
+            textViewTitle.setTextAppearanceCompat(R.style.OctoTheme_TextAppearance_Title)
+            textViewTitle.gravity = Gravity.START
+            textViewSubTitle.gravity = Gravity.START
+            false
+        })
     }
 
     private fun updateViewState(res: SignInViewState) {

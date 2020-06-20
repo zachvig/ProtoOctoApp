@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui.animation
+package de.crysxd.octoapp.base.ui.utils
 
 import androidx.transition.*
 
