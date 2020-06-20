@@ -22,7 +22,7 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
     init {
         View.inflate(context, R.layout.view_octo_input_layout, this)
 
-        editText.setOnFocusChangeListener { _, _ ->
+        input.setOnFocusChangeListener { _, _ ->
             updateViewState()
         }
 
@@ -31,7 +31,7 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             R.styleable.OctoTextInputLayout, 0, 0
         ).use {
             label.text = it.getString(R.styleable.OctoTextInputLayout_label)
-            editText.setText(it.getString(R.styleable.OctoTextInputLayout_defaultInputValue))
+            input.setText(it.getString(R.styleable.OctoTextInputLayout_defaultInputValue))
         }
 
         initialLabelColors = label.textColors
@@ -42,8 +42,9 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
 
     private fun updateViewState() {
         TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
-        label.isVisible = editText.hasFocus() || !editText.text.isNullOrEmpty()
-        editText.hint = if (label.isVisible) {
+
+        label.isVisible = input.hasFocus() || !input.text.isNullOrEmpty() || label.text != initialLabelText
+        input.hint = if (label.isVisible) {
             ""
         } else {
             initialLabelText
@@ -51,14 +52,18 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     @Suppress("unused")
-    fun setError(error: CharSequence?) = if (error != null) {
-        label.setTextColor(ContextCompat.getColor(context, R.color.color_error))
-        label.text = error
-    } else {
-        label.setTextColor(initialLabelColors)
-        label.text = initialLabelText
+    fun setError(error: CharSequence?) {
+        if (error != null) {
+            label.setTextColor(ContextCompat.getColor(context, R.color.color_error))
+            label.text = error
+        } else {
+            label.setTextColor(initialLabelColors)
+            label.text = initialLabelText
+        }
+
+        updateViewState()
     }
 
     @Suppress("unused")
-    fun getEditText(): AppCompatEditText = editText
+    val editText: AppCompatEditText = input
 }
