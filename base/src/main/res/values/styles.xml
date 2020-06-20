@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="OctoTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="OctoTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
@@ -10,6 +10,9 @@
         <item name="android:textColorSecondary">@color/light_text</item>
         <item name="android:textColorTertiary">@color/light_text</item>
         <item name="android:textColorHighlight">?android:attr/colorAccent</item>
+        <item name="android:statusBarColor">@color/black</item>
     </style>
+
+    <style name="OctoTheme" parent="OctoTheme.Base" />
 
 </resources>
