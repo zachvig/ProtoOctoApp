@@ -35,7 +35,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer(this::updateViewState))
 
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData(ReadQrCodeFragment.RESULT_API_KEY, Observer<String> {
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(ReadQrCodeFragment.RESULT_API_KEY)?.observe(viewLifecycleOwner, Observer {
             inputApiKey.editText.setText(it)
         })
 

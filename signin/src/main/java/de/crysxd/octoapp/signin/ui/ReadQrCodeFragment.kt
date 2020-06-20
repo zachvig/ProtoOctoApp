@@ -20,7 +20,7 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code) {
         super.onViewCreated(view, savedInstanceState)
 
         scannerView.setResultHandler {
-            findNavController().previousBackStackEntry?.savedStateHandle?.set(RESULT_API_KEY, "")
+            findNavController().previousBackStackEntry?.savedStateHandle?.set(RESULT_API_KEY, it.text)
             findNavController().popBackStack()
         }
 

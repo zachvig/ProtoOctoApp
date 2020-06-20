@@ -2,6 +2,8 @@ package de.crysxd.octoapp.base.ui.common
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
@@ -28,6 +30,12 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         input.setOnFocusChangeListener { _, _ ->
             updateViewState()
         }
+
+        input.addTextChangedListener(object: TextWatcher {
+            override fun afterTextChanged(s: Editable?) = updateViewState()
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+        })
 
         context.theme.obtainStyledAttributes(
             attrs,
