@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="OctoTextInputLayout">
+        <attr name="label" format="string" />
+        <attr name="defaultInputValue" format="string" />
+        <attr name="actionDrawable" format="reference" />
+    </declare-styleable>
+</resources>

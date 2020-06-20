@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
@@ -20,19 +21,32 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
 
     init {
         View.inflate(context, R.layout.view_octo_input_layout, this)
+
+        editText.setOnFocusChangeListener { _, _ ->
+            updateViewState()
+        }
+
+        context.theme.obtainStyledAttributes(
+            attrs,
+            R.styleable.OctoTextInputLayout, 0, 0
+        ).use {
+            label.text = it.getString(R.styleable.OctoTextInputLayout_label)
+            editText.setText(it.getString(R.styleable.OctoTextInputLayout_defaultInputValue))
+        }
+
         initialLabelColors = label.textColors
         initialLabelText = label.text
 
-        editText.setOnFocusChangeListener { _, hasFocus ->
-            TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
+        updateViewState()
+    }
 
-            label.isVisible = hasFocus || !editText.text.isNullOrEmpty()
-
-            editText.hint = if (label.isVisible) {
-                ""
-            } else {
-                initialLabelText
-            }
+    private fun updateViewState() {
+        TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
+        label.isVisible = editText.hasFocus() || !editText.text.isNullOrEmpty()
+        editText.hint = if (label.isVisible) {
+            ""
+        } else {
+            initialLabelText
         }
     }
 

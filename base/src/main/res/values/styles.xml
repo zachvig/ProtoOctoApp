@@ -9,10 +9,20 @@
         <item name="android:textColorPrimary">@color/normal_text</item>
         <item name="android:textColorSecondary">@color/light_text</item>
         <item name="android:textColorTertiary">@color/light_text</item>
+        <item name="android:textColorPrimaryInverse">@color/inverse_text</item>
+        <item name="android:textColorSecondaryInverse">@color/inverse_text</item>
+        <item name="android:textColorTertiaryInverse">@color/inverse_text</item>
         <item name="android:textColorHighlight">?android:attr/colorAccent</item>
         <item name="android:statusBarColor">@color/black</item>
+
+        <item name="android:buttonStyle">@style/OctoTheme.Widget.Button</item>
     </style>
 
     <style name="OctoTheme" parent="OctoTheme.Base" />
+
+    <style name="OctoTheme.Widget.Button" parent="Widget.AppCompat.Button">
+        <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Button</item>
+        <item name="android:background">@drawable/bg_button</item>
+    </style>
 
 </resources>

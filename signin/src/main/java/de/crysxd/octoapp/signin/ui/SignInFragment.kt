@@ -24,14 +24,14 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        buttonSignIn.setOnClickListener(this::signIn)
+        /*buttonSignIn.setOnClickListener(this::signIn)
         textInputLayoutApiKey.editText?.let {
             it.setImeActionLabel(getString(R.string.sign_in), KeyEvent.KEYCODE_ENTER)
             it.setOnEditorActionListener { v, _, _ ->
                 signIn(v)
                 true
             }
-        }
+        }*/
         viewModel.viewState.observe(this, Observer(this::updateViewState))
     }
 
@@ -41,7 +41,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
     }
 
     private fun updateViewState(res: SignInViewState) {
-        if (res is SignInViewState.SignInFailed) {
+  /*      if (res is SignInViewState.SignInFailed) {
             AlertDialog.Builder(requireContext())
                 .setMessage("Unable to connect to OctoPrint with the provided information.")
                 .setPositiveButton(android.R.string.ok, null)
@@ -68,16 +68,16 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
 
         if (res is SignInViewState.SignInSuccess) {
             // MainActivity will navigate away
-        }
+        }*/
     }
 
     private fun signIn(@Suppress("UNUSED_PARAMETER") view: View) {
-        viewModel.startSignIn(
+     /*   viewModel.startSignIn(
             SignInInformation(
                 textInputLayoutIpAddress.editText?.text?.toString() ?: "",
                 textInputLayoutPort.editText?.text?.toString() ?: "",
                 textInputLayoutApiKey.editText?.text?.toString() ?: ""
             )
-        )
+        )*/
     }
 }

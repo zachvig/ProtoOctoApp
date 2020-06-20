@@ -5,7 +5,7 @@
     <string name="send_gcode">Send Gcode</string>
     <string name="gcode_one_command_per_line">Gcode (one command per line)</string>
     <string name="sent_x">Sent %s</string>
-    <string name="sent_x_and_y_others">Sent %s and %d others</string>
+    <string name="sent_x_and_y_others">Sent %1$s and %2$d others</string>
     <string name="extrude_retract">Extrude / Retract</string>
     <string name="distance_in_mm_negative_for_retract">Distance in mm (negative for retract)</string>
     <string name="start_printing">Start Printing</string>
@@ -13,7 +13,7 @@
     <string name="move">Move</string>
     <string name="tap_temperature_to_edit">Tap temperature to edit</string>
     <string name="preheat">Preheat</string>
-    <string name="x_items_y">%d items (%s)</string>
-    <string name="x_y">%s (%s)</string>
+    <string name="x_items_y">%1$d items (%2$s)</string>
+    <string name="x_y">%1$s (%2$s)</string>
     <string name="select_file_to_print">Select file to print</string>
 </resources>
