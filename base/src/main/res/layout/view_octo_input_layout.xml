@@ -38,6 +38,7 @@
 
     <ImageButton
         android:id="@+id/action"
+        android:contentDescription="@string/cd_read_octoprint_api_credentials_with_ar_code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"
