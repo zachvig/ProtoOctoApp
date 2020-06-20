@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "de.crysxd.octoapp"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 8
         versionName "1.0-alpha8"
