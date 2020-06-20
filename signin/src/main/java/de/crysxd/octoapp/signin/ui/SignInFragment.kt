@@ -2,7 +2,6 @@ package de.crysxd.octoapp.signin.ui
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.os.Handler
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
@@ -10,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.ext.setTextAppearanceCompat
 import de.crysxd.octoapp.base.ui.utils.ViewCompactor
@@ -36,6 +35,14 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer(this::updateViewState))
 
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData(ReadQrCodeFragment.RESULT_API_KEY, Observer<String> {
+            inputApiKey.editText.setText(it)
+        })
+
+        inputApiKey.setOnActionListener {
+            findNavController().navigate(R.id.actionReadQrCode)
+        }
+
         val full = ConstraintSet()
         full.load(requireContext(), R.layout.fragment_signin)
         val compact = ConstraintSet()
@@ -52,10 +59,6 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
             textViewSubTitle.gravity = Gravity.START
             false
         })
-
-        inputApiKey.setOnActionListener {
-            Toast.makeText(it.context, "QR", Toast.LENGTH_SHORT).show()
-        }
     }
 
     private fun updateViewState(res: SignInViewState) {

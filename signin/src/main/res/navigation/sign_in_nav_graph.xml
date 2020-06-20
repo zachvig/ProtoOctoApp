@@ -9,5 +9,20 @@
         android:id="@+id/loginFragment"
         android:name="de.crysxd.octoapp.signin.ui.SignInFragment"
         android:label="LoginFragment"
-        tools:layout="@layout/fragment_signin"/>
+        tools:layout="@layout/fragment_signin">
+        <action
+            android:id="@+id/actionReadQrCode"
+            app:destination="@id/readQrCodeFragment"
+            app:enterAnim="@anim/enterAnim"
+            app:exitAnim="@anim/exitAnim"
+            app:popEnterAnim="@anim/popEnterAnim"
+            app:popExitAnim="@anim/popExitAnim"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/readQrCodeFragment"
+        android:name="de.crysxd.octoapp.signin.ui.ReadQrCodeFragment"
+        tools:layout="@layout/fragment_read_qr_code"
+        android:label="ReadQrCodeFragment" />
+
 </navigation>
