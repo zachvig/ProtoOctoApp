@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -51,6 +52,10 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
             textViewSubTitle.gravity = Gravity.START
             false
         })
+
+        inputApiKey.setOnActionListener {
+            Toast.makeText(it.context, "QR", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun updateViewState(res: SignInViewState) {

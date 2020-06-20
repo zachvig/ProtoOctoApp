@@ -10,29 +10,41 @@
         android:id="@+id/label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Label"
         android:textAppearance="@style/OctoTheme.TextAppearance.Label"
         android:textColor="?android:attr/textColorHighlight"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Label" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
+        android:layout_marginEnd="@dimen/common_corner_radius"
         android:background="@null"
-        android:hint="Label"
-        android:textAppearance="@style/OctoTheme.TextAppearance.Input"
         android:inputType="textPersonName"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Input"
         android:textColor="?android:attr/textColorPrimary"
         android:textColorHint="?android:attr/textColorSecondary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/action"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/label"
-        app:layout_goneMarginTop="0dp" />
+        app:layout_goneMarginTop="0dp"
+        tools:hint="Label" />
+
+    <ImageButton
+        android:id="@+id/action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:tint="?android:attr/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@drawable/ic_qr_code_scanner_24px" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -58,6 +58,7 @@
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_1"
         app:label="@string/api_key"
+        app:actionDrawable="@drawable/ic_qr_code_scanner_24px"
         app:layout_constraintEnd_toEndOf="@+id/inputPort"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

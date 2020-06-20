@@ -19,6 +19,9 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
     private val initialLabelColors: ColorStateList
     private val initialLabelText: CharSequence
 
+    @Suppress("unused")
+    val editText: AppCompatEditText by lazy { input }
+
     init {
         View.inflate(context, R.layout.view_octo_input_layout, this)
 
@@ -32,6 +35,12 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         ).use {
             label.text = it.getString(R.styleable.OctoTextInputLayout_label)
             input.setText(it.getString(R.styleable.OctoTextInputLayout_defaultInputValue))
+            val actionDrawable = it.getResourceId(R.styleable.OctoTextInputLayout_actionDrawable, 0)
+            if (actionDrawable > 0) {
+                action.setImageResource(actionDrawable)
+            } else {
+                action.isVisible = false
+            }
         }
 
         initialLabelColors = label.textColors
@@ -65,5 +74,7 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     @Suppress("unused")
-    val editText: AppCompatEditText = input
+    fun setOnActionListener(l: (View) -> Unit) {
+        action.setOnClickListener(l)
+    }
 }
