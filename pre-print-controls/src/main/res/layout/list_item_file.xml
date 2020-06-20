@@ -13,7 +13,7 @@
         android:padding="8dp"
         android:layout_marginStart="16dp"
         android:background="@drawable/circle_background"
-        android:tint="@color/colorPrimary"
+        android:tint="@color/primary"
         app:layout_constraintBottom_toBottomOf="@+id/textViewDetail"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textViewTitle"

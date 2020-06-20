@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="OctoTheme.TextAppearance" parent="Theme.AppCompat" />
+
+    <style name="OctoTheme.TextAppearance.Label">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">@font/roboto_light</item>
+    </style>
+
+    <style name="OctoTheme.TextAppearance.Input">
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
+</resources>
