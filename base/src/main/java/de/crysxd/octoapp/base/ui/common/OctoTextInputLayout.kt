@@ -2,7 +2,10 @@ package de.crysxd.octoapp.base.ui.common
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.os.Parcel
+import android.os.Parcelable
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.View
@@ -15,6 +18,7 @@ import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import kotlinx.android.synthetic.main.view_octo_input_layout.view.*
+
 
 class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, style: Int = 0) : FrameLayout(context, attrs, style) {
 
@@ -31,7 +35,7 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             updateViewState()
         }
 
-        input.addTextChangedListener(object: TextWatcher {
+        input.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) = updateViewState()
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
@@ -55,6 +59,9 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         initialLabelText = label.text
 
         updateViewState()
+
+        isSaveEnabled = true
+        input.isSaveEnabled = false
     }
 
     private fun updateViewState() {
@@ -84,5 +91,48 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
     @Suppress("unused")
     fun setOnActionListener(l: (View) -> Unit) {
         action.setOnClickListener(l)
+    }
+
+    override fun onSaveInstanceState(): Parcelable {
+        val savedState = SavedState(super.onSaveInstanceState()!!)
+        savedState.labelText = label.text
+        savedState.value = input.text.toString()
+        return savedState
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable) {
+        val savedState = state as SavedState
+        super.onRestoreInstanceState(savedState.superState)
+        label.text = savedState.labelText
+        input.setText(savedState.value)
+    }
+
+    private class SavedState : BaseSavedState {
+        lateinit var labelText: CharSequence
+        lateinit var value: CharSequence
+
+        constructor(parcelable: Parcelable) : super(parcelable)
+
+        constructor(parcel: Parcel) : super(parcel) {
+            labelText = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(parcel)
+            value = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(parcel)
+        }
+
+        override fun writeToParcel(out: Parcel, flags: Int) {
+            super.writeToParcel(out, flags)
+            TextUtils.writeToParcel(labelText, out, flags)
+            TextUtils.writeToParcel(value, out, flags)
+        }
+
+        @Suppress("unused")
+        val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
+            override fun createFromParcel(`in`: Parcel): SavedState {
+                return SavedState(`in`)
+            }
+
+            override fun newArray(size: Int): Array<SavedState?> {
+                return Array(size) { null }
+            }
+        }
     }
 }
