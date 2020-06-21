@@ -5,4 +5,10 @@
         <attr name="defaultInputValue" format="string" />
         <attr name="actionDrawable" format="reference" />
     </declare-styleable>
+    <declare-styleable name="OctoView">
+        <attr name="octoActivity" format="enum">
+            <enum name="idle" value="0" />
+            <enum name="swim" value="1" />
+        </attr>
+    </declare-styleable>
 </resources>

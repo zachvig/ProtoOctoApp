@@ -1,7 +1,9 @@
 package de.crysxd.octoapp.connect_printer.ui
 
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.View
+import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import de.crysxd.octoapp.base.livedata.PollingLiveData
@@ -20,9 +22,15 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.printerState.observe(this, Observer {
+        textViewAutoConnectInfo.movementMethod = LinkMovementMethod()
+        textViewAutoConnectInfo.text = HtmlCompat.fromHtml(
+            getString(R.string.install_then_port_listener_plugin_to_enable_auto_connect),
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        )
+
+        viewModel.printerState.observe(viewLifecycleOwner, Observer {
             Timber.i("$it")
-            when(it) {
+            when (it) {
                 is PollingLiveData.Result.Success -> {
                     // MainActivity will navigate away
                 }
@@ -37,7 +45,7 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
                     buttonTurnOnPsu.isVisible = it.exception is NoPrinterConnectedException
                     textViewAutoConnectInfo.isVisible = buttonTurnOnPsu.isVisible
                 }
-            }.let {  }
+            }.let { }
 
             buttonTurnOnPsu.setOnClickListener {
                 viewModel.turnOnPsu()

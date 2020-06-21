@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.res.use
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import de.crysxd.octoapp.base.R
@@ -33,7 +34,18 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     init {
         (swimDrawable as? AnimatedVectorDrawableCompat)?.registerAnimationCallback(loopCallback)
         (idleDrawable as? AnimatedVectorDrawableCompat)?.registerAnimationCallback(loopCallback)
-        idle()
+
+        context.theme.obtainStyledAttributes(
+            attrs,
+            R.styleable.OctoView,
+            0,
+            0
+        ).use {
+            when (it.getInt(R.styleable.OctoView_octoActivity, 0)) {
+                1 -> swim()
+                else -> idle()
+            }
+        }
     }
 
     @Suppress("MemberVisibilityCanBePrivate", "Unused")

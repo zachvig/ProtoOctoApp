@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="turn_psu_on">Turn PSU on</string>
+    <string name="install_then_port_listener_plugin_to_enable_auto_connect"><![CDATA[
+        Install the <a href="https://plugins.octoprint.org/plugins/portlister/">Port Lister plugin</a> to enable auto-connect
+    ]]></string>
+</resources>
