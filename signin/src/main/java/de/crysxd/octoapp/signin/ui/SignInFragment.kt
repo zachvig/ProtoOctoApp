@@ -63,7 +63,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
     private fun updateViewState(res: SignInViewState) {
         if (res is SignInViewState.SignInFailed) {
             AlertDialog.Builder(requireContext())
-                .setMessage("Unable to connect to OctoPrint with the provided information.")
+                .setMessage(R.string.error_unable_to_connect)
                 .setPositiveButton(android.R.string.ok, null)
                 .show()
         }
