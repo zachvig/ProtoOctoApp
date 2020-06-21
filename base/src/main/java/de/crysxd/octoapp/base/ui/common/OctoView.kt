@@ -20,7 +20,7 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     private val loopCallback = object : Animatable2Compat.AnimationCallback() {
         override fun onAnimationEnd(drawable: Drawable) {
             super.onAnimationEnd(drawable)
-            handler.postDelayed(startRunnable, getLoopDelay(currentDrawable))
+            handler?.postDelayed(startRunnable, getLoopDelay(currentDrawable))
         }
     }
 
@@ -78,6 +78,6 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        handler.removeCallbacks(startRunnable)
+        handler?.removeCallbacks(startRunnable)
     }
 }
