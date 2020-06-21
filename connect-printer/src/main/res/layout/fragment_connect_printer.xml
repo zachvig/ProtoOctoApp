@@ -5,34 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
+    <de.crysxd.octoapp.base.ui.common.OctoBackgroundView
         android:id="@+id/imageView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:importantForAccessibility="no"
         app:layout_constraintBottom_toBottomOf="@+id/octoView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/octoView"
-        app:srcCompat="@drawable/water_background" />
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_2"
-        android:layout_marginEnd="@dimen/margin_2"
-        android:adjustViewBounds="true"
-        android:alpha="0"
-        android:importantForAccessibility="no"
-        android:rotation="180"
-        app:layout_constraintBottom_toBottomOf="@+id/octoView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/octoView"
-        app:srcCompat="@drawable/water_background"
-        tools:visibility="gone" />
+        app:layout_constraintTop_toTopOf="@+id/octoView" />
 
     <de.crysxd.octoapp.base.ui.common.OctoView
         android:id="@+id/octoView"

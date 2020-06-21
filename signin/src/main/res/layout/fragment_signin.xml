@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
+    <de.crysxd.octoapp.base.ui.common.OctoBackgroundView
         android:id="@+id/imageView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -14,9 +14,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/octoView"
-        android:alpha="0.5"
-        android:importantForAccessibility="no"
-        app:srcCompat="@drawable/water_background" />
+        android:alpha="0.5" />
 
     <de.crysxd.octoapp.base.ui.common.OctoView
         android:id="@+id/octoView"

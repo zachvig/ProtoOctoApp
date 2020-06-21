@@ -53,9 +53,4 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
             }
         })
     }
-
-    override fun onResume() {
-        super.onResume()
-        imageView2.startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in_out_loop))
-    }
 }
