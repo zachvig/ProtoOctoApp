@@ -3,6 +3,7 @@ package de.crysxd.octoapp.connect_printer.ui
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.View
+import android.view.animation.AnimationUtils
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
@@ -51,5 +52,10 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
                 viewModel.turnOnPsu()
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        imageView2.startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in_out_loop))
     }
 }
