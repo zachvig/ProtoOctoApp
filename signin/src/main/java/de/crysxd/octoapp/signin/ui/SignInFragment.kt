@@ -45,10 +45,9 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
             findNavController().navigate(R.id.actionReadQrCode)
         }
 
-        val full = ConstraintSet()
-        full.load(requireContext(), R.layout.fragment_signin)
-        val compact = ConstraintSet()
-        compact.load(requireContext(), R.layout.fragment_signin_compact)
+        val full = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin) }
+        val compact = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin_compact) }
+
         ViewCompactor(view as ViewGroup, reset = {
             TransitionManager.beginDelayedTransition(requireView() as ViewGroup, InstantAutoTransition(quickTransition = true, explode = true))
             full.applyTo(constraintLayout)
