@@ -4,7 +4,7 @@
     <item android:state_enabled="false">
         <shape android:shape="rectangle">
             <corners android:radius="100dp" />
-            <padding android:bottom="@dimen/margin_1" android:left="@dimen/margin_2" android:right="@dimen/margin_2" android:top="@dimen/margin_1" />
+            <padding android:bottom="@dimen/margin_2" android:left="@dimen/margin_2" android:right="@dimen/margin_2" android:top="@dimen/margin_2" />
             <solid android:color="@color/input_background" />
         </shape>
     </item>
@@ -14,7 +14,7 @@
             <item>
                 <shape android:shape="rectangle">
                     <corners android:radius="100dp" />
-                    <padding android:bottom="@dimen/margin_1" android:left="@dimen/margin_2" android:right="@dimen/margin_2" android:top="@dimen/margin_1" />
+                    <padding android:bottom="@dimen/margin_2" android:left="@dimen/margin_2" android:right="@dimen/margin_2" android:top="@dimen/margin_2" />
                     <solid android:color="?attr/colorAccent" />
                 </shape>
             </item>
