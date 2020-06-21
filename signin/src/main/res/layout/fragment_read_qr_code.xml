@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <me.dm7.barcodescanner.zxing.ZXingScannerView
+    <de.crysxd.octoapp.signin.ui.ScannerView
         android:id="@+id/scannerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
