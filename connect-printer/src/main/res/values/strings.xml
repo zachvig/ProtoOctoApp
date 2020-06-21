@@ -4,4 +4,9 @@
     <string name="install_then_port_listener_plugin_to_enable_auto_connect"><![CDATA[
         Install the <a href="https://plugins.octoprint.org/plugins/portlister/">Port Lister plugin</a> to enable auto-connect
     ]]></string>
+    <string name="octoprint_is_starting_up">OctoPrint is starting up</string>
+    <string name="waiting_for_printer_to_auto_connect">Waiting for printer to auto-connect</string>
+    <string name="no_printer_is_available">No printer is available</string>
+    <string name="octoprint_is_not_available">OctoPrint is not available</string>
+    <string name="check_your_network_connection">Check your network connection</string>
 </resources>

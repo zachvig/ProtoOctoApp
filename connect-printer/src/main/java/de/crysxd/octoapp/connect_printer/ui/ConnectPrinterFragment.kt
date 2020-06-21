@@ -36,9 +36,9 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
                 }
                 is PollingLiveData.Result.Failure -> {
                     val (state, subState) = when (it.exception) {
-                        is OctoPrintBootingException -> Pair("OctoPrint is starting up", "")
-                        is NoPrinterConnectedException -> Pair("Waiting for printer to auto-connect", "No printer is available")
-                        else -> Pair("OctoPrint is not available", "Check your network connection")
+                        is OctoPrintBootingException -> Pair(getString(R.string.octoprint_is_starting_up), "")
+                        is NoPrinterConnectedException -> Pair(getString(R.string.waiting_for_printer_to_auto_connect), getString(R.string.no_printer_is_available))
+                        else -> Pair(getString(R.string.octoprint_is_not_available), getString(R.string.check_your_network_connection))
                     }
                     textViewState.text = state
                     textViewSubState.text = subState
