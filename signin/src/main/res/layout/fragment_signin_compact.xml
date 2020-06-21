@@ -18,25 +18,22 @@
 
     <TextView
         android:id="@+id/textViewTitle"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_3"
         android:layout_marginTop="@dimen/margin_2"
-        android:layout_marginEnd="@dimen/margin_3"
         android:text="@string/sign_in"
         android:textAppearance="@style/OctoTheme.TextAppearance.Title"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/octoView" />
 
     <TextView
         android:id="@+id/textViewSubTitle"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:text="@string/welcome_to_octoapp"
         android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
-        app:layout_constraintEnd_toEndOf="@+id/textViewTitle"
         app:layout_constraintStart_toStartOf="@+id/textViewTitle"
         app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
 

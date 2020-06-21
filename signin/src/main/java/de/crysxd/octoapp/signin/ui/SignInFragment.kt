@@ -2,6 +2,7 @@ package de.crysxd.octoapp.signin.ui
 
 import android.app.AlertDialog
 import android.os.Bundle
+import androidx.transition.TransitionManager
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.ext.setTextAppearanceCompat
+import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.ui.utils.ViewCompactor
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.di.injectViewModel
@@ -48,15 +50,12 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         val compact = ConstraintSet()
         compact.load(requireContext(), R.layout.fragment_signin_compact)
         ViewCompactor(view as ViewGroup, reset = {
+            TransitionManager.beginDelayedTransition(requireView() as ViewGroup, InstantAutoTransition(quickTransition = true, explode = true))
             full.applyTo(constraintLayout)
             textViewTitle.setTextAppearanceCompat(R.style.OctoTheme_TextAppearance_Title_Large)
-            textViewTitle.gravity = Gravity.CENTER
-            textViewSubTitle.gravity = Gravity.CENTER
         }, compact = {
             compact.applyTo(constraintLayout)
             textViewTitle.setTextAppearanceCompat(R.style.OctoTheme_TextAppearance_Title)
-            textViewTitle.gravity = Gravity.START
-            textViewSubTitle.gravity = Gravity.START
             false
         })
     }
