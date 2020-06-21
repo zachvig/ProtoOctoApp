@@ -23,4 +23,7 @@
     <string name="error_please_enter_a_value">Please enter a value</string>
     <string name="x_temperature">%s temperature</string>
     <string name="cd_read_octoprint_api_credentials_with_ar_code">Read Octoprint API credentials with AR code</string>
+    <string name="print">Print</string>
+    <string name="prepare">Prepare</string>
+    <string name="connect">Connect</string>
 </resources>

@@ -2,6 +2,7 @@
 <resources>
     <color name="primary">#13C100</color>
     <color name="primary_dark">#169300</color>
+    <color name="primary_light">#D0F3CC</color>
     <color name="accent">#3888C6</color>
 
     <color name="input_background">@color/light_blue</color>

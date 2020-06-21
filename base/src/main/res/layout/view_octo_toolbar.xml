@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbarChips"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/textViewStep1Label"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:background="@drawable/bg_toolbar_chip"
+        android:gravity="center"
+        android:paddingStart="40dp"
+        android:paddingEnd="10dp"
+        android:textColor="?android:attr/textColorPrimary"
+        android:text="@string/connect"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewStep1"
+        app:layout_constraintStart_toStartOf="@+id/textViewStep1"
+        app:layout_constraintTop_toTopOf="@+id/textViewStep1" />
+
+    <TextView
+        android:id="@+id/textViewStep1"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/bg_toolbar_chip_number"
+        android:gravity="center"
+        tools:text="1"
+        android:textColor="?android:attr/textColorPrimaryInverse"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/viewConnector1To2"
+        android:layout_width="@dimen/margin_1"
+        android:layout_height="2dp"
+        android:background="@drawable/bg_chip_connector"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewStep1Label"
+        app:layout_constraintStart_toEndOf="@+id/textViewStep1Label"
+        app:layout_constraintTop_toTopOf="@+id/textViewStep1Label"
+        app:layout_goneMarginStart="30dp" />
+
+    <TextView
+        android:id="@+id/textViewStep2Label"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:background="@drawable/bg_toolbar_chip"
+        android:gravity="center"
+        android:paddingStart="40dp"
+        android:paddingEnd="10dp"
+        android:text="@string/prepare"
+        android:textColor="?android:attr/textColorPrimary"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewStep2"
+        app:layout_constraintStart_toStartOf="@+id/textViewStep2"
+        app:layout_constraintTop_toTopOf="@+id/textViewStep2" />
+
+    <TextView
+        android:id="@+id/textViewStep2"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/bg_toolbar_chip_number"
+        android:gravity="center"
+        tools:text="2"
+        android:textColor="?android:attr/textColorPrimaryInverse"
+        app:layout_constraintBottom_toBottomOf="@+id/viewConnector1To2"
+        app:layout_constraintStart_toEndOf="@+id/viewConnector1To2"
+        app:layout_constraintTop_toTopOf="@+id/viewConnector1To2" />
+
+    <View
+        android:id="@+id/viewConnector2To3"
+        android:layout_width="@dimen/margin_1"
+        android:layout_height="2dp"
+        android:background="@drawable/bg_chip_connector"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewStep2Label"
+        app:layout_constraintStart_toEndOf="@+id/textViewStep2Label"
+        app:layout_constraintTop_toTopOf="@+id/textViewStep2Label"
+        app:layout_goneMarginStart="30dp" />
+
+    <TextView
+        android:id="@+id/textViewStep3Label"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:background="@drawable/bg_toolbar_chip"
+        android:gravity="center"
+        android:paddingStart="40dp"
+        android:paddingEnd="10dp"
+        android:text="@string/print"
+        android:textColor="?android:attr/textColorPrimary"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewStep3"
+        app:layout_constraintStart_toStartOf="@+id/textViewStep3"
+        app:layout_constraintTop_toTopOf="@+id/textViewStep3" />
+
+    <TextView
+        android:id="@+id/textViewStep3"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/bg_toolbar_chip_number"
+        android:gravity="center"
+        tools:text="3"
+        android:textColor="?android:attr/textColorPrimaryInverse"
+        app:layout_constraintBottom_toBottomOf="@+id/viewConnector2To3"
+        app:layout_constraintStart_toEndOf="@+id/viewConnector2To3"
+        app:layout_constraintTop_toTopOf="@+id/viewConnector2To3" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

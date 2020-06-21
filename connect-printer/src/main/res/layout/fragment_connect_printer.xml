@@ -5,6 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <de.crysxd.octoapp.base.ui.common.OctoToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/margin_3"/>
+
     <de.crysxd.octoapp.base.ui.common.OctoBackgroundView
         android:id="@+id/imageView"
         android:layout_width="0dp"
@@ -21,7 +28,7 @@
         android:layout_marginTop="@dimen/margin_4"
         app:layout_constraintEnd_toEndOf="@+id/textViewState"
         app:layout_constraintStart_toStartOf="@+id/textViewState"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:octoActivity="swim" />
 
     <Button
