@@ -35,6 +35,7 @@ class OctoBackgroundView @JvmOverloads constructor(context: Context, attrs: Attr
         addView(bubblesView.also {
             it.setImageDrawable(bubblesAnimation)
             it.adjustViewBounds = true
+            it.isVisible = false
         })
 
         // The bubbles in the animation are not centered. Quick fix: offset bubbles
