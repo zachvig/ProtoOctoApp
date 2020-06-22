@@ -3,8 +3,10 @@ package de.crysxd.octoapp.base.ui.common
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.res.use
+import androidx.core.view.children
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import de.crysxd.octoapp.base.R
@@ -29,6 +31,7 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
 
     private val startRunnable = Runnable {
         (drawable as? AnimatedVectorDrawableCompat)?.start()
+        triggerBackgroundAction(currentDrawable)
     }
 
     init {
@@ -77,6 +80,13 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         idleDrawable -> (2000 + 2000 * random()).toLong()
         else -> 0L
     }
+
+    private fun triggerBackgroundAction(d: Drawable?) = when (d) {
+        swimDrawable -> findBackgroundView()?.triggerSwimBubbles()
+        else -> Unit
+    }
+
+    private fun findBackgroundView() = (parent as? ViewGroup)?.children?.firstOrNull { it is OctoBackgroundView } as OctoBackgroundView?
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) = super.onMeasure(
         MeasureSpec.makeMeasureSpec(
