@@ -41,6 +41,8 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:text="@string/turn_psu_on"
+        android:visibility="gone"
+        tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -81,7 +83,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_1"
         android:gravity="center"
-        android:text="@string/error_no_printer_connected"
+        tools:text="@string/error_no_printer_connected"
         android:textAppearance="@style/OctoTheme.TextAppearance"
         android:textColor="?android:attr/textColorSecondary"
         app:layout_constraintEnd_toEndOf="@+id/textViewState"
