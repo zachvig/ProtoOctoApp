@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import de.crysxd.octoapp.base.R
+import timber.log.Timber
 
 class OctoBackgroundView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, style: Int = 0) : FrameLayout(context, attrs, style) {
 
@@ -38,10 +39,6 @@ class OctoBackgroundView @JvmOverloads constructor(context: Context, attrs: Attr
             it.isVisible = false
         })
 
-        // The bubbles in the animation are not centered. Quick fix: offset bubbles
-        bubblesView.translationX = resources.getDimension(R.dimen.margin_1)
-        bubblesView.translationY = resources.getDimension(R.dimen.margin_1)
-
         bubblesAnimation?.registerAnimationCallback(object : Animatable2Compat.AnimationCallback() {
             override fun onAnimationEnd(drawable: Drawable?) {
                 bubblesView.isVisible = false
@@ -51,6 +48,7 @@ class OctoBackgroundView @JvmOverloads constructor(context: Context, attrs: Attr
 
     fun triggerSwimBubbles() {
         bubblesView.isVisible = true
+        bubblesAnimation?.stop()
         bubblesAnimation?.start()
     }
 }
