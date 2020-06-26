@@ -36,7 +36,7 @@
     <style name="OctoTheme.Widget.Button.Small.Secondary">
         <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Button</item>
         <item name="android:background">@drawable/bg_button_small_secondary</item>
-        <item name="android:textColor">?attr/colorAccent</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
 </resources>
