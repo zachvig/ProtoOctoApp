@@ -62,14 +62,14 @@
         android:layout_marginTop="@dimen/margin_3"
         android:layout_marginEnd="@dimen/margin_3"
         android:gravity="center"
+        android:text="@string/searching_for_octoprint"
         android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
         android:textColor="?android:attr/textColorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/octoView"
-        app:layout_goneMarginTop="@dimen/margin_3"
-        tools:text="Waiting for printer to auto-connect" />
+        app:layout_goneMarginTop="@dimen/margin_3" />
 
     <TextView
         android:id="@+id/textViewSubState"
