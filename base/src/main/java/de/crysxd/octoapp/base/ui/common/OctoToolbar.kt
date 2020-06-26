@@ -26,47 +26,53 @@ class OctoToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
         alpha = 0f
     }
 
-    @SuppressWarnings("unused")
-    fun setState(step: State) {
-        if (step == State.Hidden) {
-            animate().alpha(0f).start()
-            return
-        }
-
-        if (alpha > 0) {
-            TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
-        }
-
-        animate().alpha(1f).start()
-        textViewStep1Label.isVisible = false
-        textViewStep2Label.isVisible = false
-        textViewStep3Label.isVisible = false
-        textViewStep1.text = ""
-        textViewStep2.text = ""
-        textViewStep3.text = ""
-        textViewStep1.setBackgroundResource(R.drawable.bg_toolbar_chip_number_hidden)
-        textViewStep2.setBackgroundResource(R.drawable.bg_toolbar_chip_number_hidden)
-        textViewStep3.setBackgroundResource(R.drawable.bg_toolbar_chip_number_hidden)
-
-        when (step) {
-            State.Connect -> {
-                textViewStep1Label.isVisible = true
-                textViewStep1.text = "1"
-                textViewStep1.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
+    var state: State = State.Hidden
+        set(value) {
+            if (field == value) {
+                return
             }
-            State.Prepare -> {
-                textViewStep2Label.isVisible = true
-                textViewStep2.text = "2"
-                textViewStep2.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
+
+            field = value
+
+            if (value == State.Hidden) {
+                animate().alpha(0f).start()
+                return
             }
-            State.Print -> {
-                textViewStep3Label.isVisible = true
-                textViewStep3.text = "3"
-                textViewStep3.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
+
+            if (alpha > 0) {
+                TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
             }
-            State.Hidden -> Unit
+
+            animate().alpha(1f).start()
+            textViewStep1Label.isVisible = false
+            textViewStep2Label.isVisible = false
+            textViewStep3Label.isVisible = false
+            textViewStep1.text = ""
+            textViewStep2.text = ""
+            textViewStep3.text = ""
+            textViewStep1.setBackgroundResource(R.drawable.bg_toolbar_chip_number_hidden)
+            textViewStep2.setBackgroundResource(R.drawable.bg_toolbar_chip_number_hidden)
+            textViewStep3.setBackgroundResource(R.drawable.bg_toolbar_chip_number_hidden)
+
+            when (value) {
+                State.Connect -> {
+                    textViewStep1Label.isVisible = true
+                    textViewStep1.text = "1"
+                    textViewStep1.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
+                }
+                State.Prepare -> {
+                    textViewStep2Label.isVisible = true
+                    textViewStep2.text = "2"
+                    textViewStep2.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
+                }
+                State.Print -> {
+                    textViewStep3Label.isVisible = true
+                    textViewStep3.text = "3"
+                    textViewStep3.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
+                }
+                State.Hidden -> Unit
+            }
         }
-    }
 
     sealed class State {
         object Connect : State()
