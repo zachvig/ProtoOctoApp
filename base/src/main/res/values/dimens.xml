@@ -6,7 +6,9 @@
     <dimen name="octo_text_input_edit_text_idle_y_translation">-5dp</dimen>
     <dimen name="octo_text_input_edit_text_active_y_translation">0dp</dimen>
 
+    <dimen name="common_view_top_padding">130dp</dimen>
     <dimen name="common_corner_radius">10dp</dimen>
+
     <dimen name="margin_1">10dp</dimen>
     <dimen name="margin_2">20dp</dimen>
     <dimen name="margin_3">40dp</dimen>
