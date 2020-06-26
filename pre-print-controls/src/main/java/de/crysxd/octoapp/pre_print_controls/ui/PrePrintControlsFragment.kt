@@ -48,5 +48,6 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
+        scrollView.setupWithToolbar(requireOctoActivity().octoToolbar)
     }
 }
