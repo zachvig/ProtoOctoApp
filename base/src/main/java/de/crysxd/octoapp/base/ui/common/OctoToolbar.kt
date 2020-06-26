@@ -23,11 +23,7 @@ class OctoToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
             it.height = ViewGroup.LayoutParams.WRAP_CONTENT
         }
 
-        setState(if (isInEditMode) {
-            State.Connect
-        } else {
-            State.Hidden
-        })
+        alpha = 0f
     }
 
     @SuppressWarnings("unused")
