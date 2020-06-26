@@ -16,6 +16,7 @@ import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintBootingException
 import kotlinx.android.synthetic.main.fragment_connect_printer.*
+import kotlinx.android.synthetic.main.fragment_enter_value.*
 import timber.log.Timber
 
 class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
@@ -54,26 +55,10 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
                 viewModel.turnOnPsu()
             }
         })
+    }
 
-        view.postDelayed({
-            requireOctoActivity().octoToolbar.setState(OctoToolbar.State.Prepare)
-        }, 3000)
-
-        view.postDelayed({
-            requireOctoActivity().octoToolbar.setState(OctoToolbar.State.Hidden)
-        }, 6000)
-
-        view.postDelayed({
-            requireOctoActivity().octoToolbar.setState(OctoToolbar.State.Prepare)
-        }, 9000)
-        view.postDelayed({
-            requireOctoActivity().octoToolbar.setState(OctoToolbar.State.Hidden)
-        }, 12000)
-        view.postDelayed({
-            requireOctoActivity().octoToolbar.setState(OctoToolbar.State.Connect)
-        }, 15000)
-        view.postDelayed({
-            requireOctoActivity().octoToolbar.setState(OctoToolbar.State.Prepare)
-        }, 18000)
+    override fun onStart() {
+        super.onStart()
+        requireOctoActivity().octoToolbar.setState(OctoToolbar.State.Connect)
     }
 }
