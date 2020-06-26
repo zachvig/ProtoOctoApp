@@ -56,8 +56,14 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
         })
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Connect
+        requireOctoActivity().octo.isVisible = false
+    }
+
+    override fun onPause() {
+        super.onPause()
+        requireOctoActivity().octo.isVisible = true
     }
 }

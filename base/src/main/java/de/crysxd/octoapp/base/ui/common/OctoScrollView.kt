@@ -8,8 +8,10 @@ import android.util.Property
 import android.view.animation.DecelerateInterpolator
 import androidx.annotation.StyleRes
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.ui.OctoActivity
 import kotlin.math.roundToInt
 
 class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, @StyleRes defStyle: Int = 0) :
@@ -46,12 +48,18 @@ class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: A
         setWillNotDraw(false)
     }
 
-    fun setupWithToolbar(octoToolbar: OctoToolbar) {
-        val initialState = octoToolbar.state
+    fun setupWithToolbar(octoActivity: OctoActivity) {
+        val initialState = octoActivity.octoToolbar.state
         setOnScrollChangeListener { _: NestedScrollView, _: Int, scrollY: Int, _: Int, _: Int ->
-            octoToolbar.state = if (scrollY == 0) {
+            octoActivity.octoToolbar.state = if (scrollY < paddingTop / 3f) {
+                if (octoActivity.octoToolbar.state == OctoToolbar.State.Hidden) {
+                    octoActivity.octo.animate().alpha(1f).start()
+                }
                 initialState
             } else {
+                if (octoActivity.octoToolbar.state != OctoToolbar.State.Hidden) {
+                    octoActivity.octo.animate().alpha(0f).start()
+                }
                 OctoToolbar.State.Hidden
             }
 
@@ -65,7 +73,7 @@ class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: A
     }
 
     private fun updateViewState(animated: Boolean = true) {
-        val duration = if (animated) 300L else 0L
+        val duration = if (animated) animate().duration else 0L
 
         val alphaTop = if (scrollY > paddingTop) 1f else 0f
         if (topShadowAlpha != alphaTop) {

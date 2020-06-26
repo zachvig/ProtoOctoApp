@@ -19,4 +19,11 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="@dimen/margin_3"/>
 
+    <de.crysxd.octoapp.base.ui.common.OctoView
+        android:id="@+id/toolbarOctoView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:translationX="60dp"
+        android:layout_gravity="end"
+        android:rotation="270" />
 </FrameLayout>

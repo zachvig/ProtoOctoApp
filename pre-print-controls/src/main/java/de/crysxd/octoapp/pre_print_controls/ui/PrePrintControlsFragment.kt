@@ -2,6 +2,7 @@ package de.crysxd.octoapp.pre_print_controls.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import de.crysxd.octoapp.base.ui.BaseFragment
@@ -38,8 +39,6 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
             }
         }*/
 
-        scrollView.setupWithToolbar(requireOctoActivity().octoToolbar)
-
         buttonStartPrint.setOnClickListener {
             viewModel.startPrint()
         }
@@ -48,6 +47,7 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
-        scrollView.setupWithToolbar(requireOctoActivity().octoToolbar)
+        requireOctoActivity().octo.isVisible = true
+        scrollView.setupWithToolbar(requireOctoActivity())
     }
 }

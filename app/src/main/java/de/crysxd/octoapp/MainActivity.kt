@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.ui.OctoActivity
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.common.OctoView
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.android.synthetic.main.activity_main.*
@@ -18,6 +19,7 @@ class MainActivity : OctoActivity() {
     private var lastNavigation = -1
 
     override val octoToolbar: OctoToolbar by lazy { toolbar }
+    override val octo: OctoView by lazy { toolbarOctoView }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
