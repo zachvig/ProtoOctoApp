@@ -16,7 +16,6 @@ import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintBootingException
 import kotlinx.android.synthetic.main.fragment_connect_printer.*
-import kotlinx.android.synthetic.main.fragment_enter_value.*
 import timber.log.Timber
 
 class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
