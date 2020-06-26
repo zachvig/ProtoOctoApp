@@ -18,9 +18,11 @@ class ExtrudeControlsViewModel(
 
     fun extrude5mm() = extrude(5)
 
-    fun extrude25mm() = extrude(25)
-
     fun extrude50mm() = extrude(50)
+
+    fun extrude100mm() = extrude(100)
+
+    fun extrude120mm() = extrude(120)
 
     fun extrudeOther(context: Context) {
         navContoller.navigate(

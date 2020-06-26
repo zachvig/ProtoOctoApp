@@ -26,4 +26,17 @@
         <item name="android:background">@drawable/bg_button</item>
     </style>
 
+    <style name="OctoTheme.Widget.Button.Small">
+        <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Button</item>
+        <item name="android:background">@drawable/bg_button_small</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="OctoTheme.Widget.Button.Small.Secondary">
+        <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Button</item>
+        <item name="android:background">@drawable/bg_button_small_secondary</item>
+        <item name="android:textColor">?attr/colorAccent</item>
+    </style>
+
 </resources>

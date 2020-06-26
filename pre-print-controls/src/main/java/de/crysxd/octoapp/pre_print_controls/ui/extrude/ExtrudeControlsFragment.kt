@@ -14,8 +14,9 @@ class ExtrudeControlsFragment : BaseFragment(R.layout.fragment_extrude_filament)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         buttonExtrude5.setOnClickListener { viewModel.extrude5mm() }
-        buttonExtrude25.setOnClickListener { viewModel.extrude25mm() }
         buttonExtrude50.setOnClickListener { viewModel.extrude50mm() }
+        buttonExtrude100.setOnClickListener { viewModel.extrude100mm() }
+        buttonExtrude120.setOnClickListener { viewModel.extrude120mm() }
         buttonExtrudeOther.setOnClickListener { viewModel.extrudeOther(requireContext()) }
     }
 }
