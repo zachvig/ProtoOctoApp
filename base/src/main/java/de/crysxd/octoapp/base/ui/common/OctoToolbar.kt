@@ -6,6 +6,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
@@ -22,13 +23,21 @@ class OctoToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
             it.height = ViewGroup.LayoutParams.WRAP_CONTENT
         }
 
-        setActiveStep(Step.Connect)
+        setState(State.Connect)
     }
 
     @SuppressWarnings("unused")
-    fun setActiveStep(step: Step) {
-        TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
+    fun setState(step: State) {
+        if (step == State.Hidden) {
+            animate().alpha(0f).start()
+            return
+        }
 
+        if (alpha > 0) {
+            TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
+        }
+
+        animate().alpha(1f).start()
         textViewStep1Label.isVisible = false
         textViewStep2Label.isVisible = false
         textViewStep3Label.isVisible = false
@@ -40,27 +49,29 @@ class OctoToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
         textViewStep3.setBackgroundResource(R.drawable.bg_toolbar_chip_number_hidden)
 
         when (step) {
-            Step.Connect -> {
+            State.Connect -> {
                 textViewStep1Label.isVisible = true
                 textViewStep1.text = "1"
                 textViewStep1.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
             }
-            Step.Prepare -> {
+            State.Prepare -> {
                 textViewStep2Label.isVisible = true
                 textViewStep2.text = "2"
                 textViewStep2.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
             }
-            Step.Print -> {
+            State.Print -> {
                 textViewStep3Label.isVisible = true
                 textViewStep3.text = "3"
                 textViewStep3.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
             }
+            State.Hidden -> Unit
         }
     }
 
-    sealed class Step {
-        object Connect : Step()
-        object Prepare : Step()
-        object Print : Step()
+    sealed class State {
+        object Connect : State()
+        object Prepare : State()
+        object Print : State()
+        object Hidden : State()
     }
 }

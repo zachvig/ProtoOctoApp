@@ -4,15 +4,20 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
+import de.crysxd.octoapp.base.ui.OctoActivity
+import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
+import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : OctoActivity() {
 
     private var lastNavigation = -1
+
+    override val octoToolbar: OctoToolbar by lazy { toolbar }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
