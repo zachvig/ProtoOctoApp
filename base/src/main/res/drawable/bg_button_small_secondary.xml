@@ -15,12 +15,12 @@
                 <shape android:shape="rectangle">
                     <corners android:radius="100dp" />
                     <padding android:bottom="@dimen/margin_1" android:left="@dimen/margin_2" android:right="@dimen/margin_2" android:top="@dimen/margin_1" />
-                    <stroke android:color="?attr/colorAccent" android:width="2dp" />
+                    <stroke android:color="?android:attr/colorAccent" android:width="2dp" />
                     <solid android:color="@color/input_background" />
                 </shape>
             </item>
             <item>
-                <ripple android:color="@color/white_translucent" />
+                <ripple android:color="?android:attr/colorAccent" />
             </item>
         </layer-list>
     </item>
