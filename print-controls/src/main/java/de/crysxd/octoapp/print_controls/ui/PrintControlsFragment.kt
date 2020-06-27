@@ -10,6 +10,8 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import de.crysxd.octoapp.base.ui.common.MenuBottomSheet
+import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.injectParentViewModel
@@ -49,6 +51,11 @@ Estimation method: ${it.progress?.printTimeLeftOrigin}"""
         buttonMore.setOnClickListener {
             MenuBottomSheet().show(childFragmentManager, "menu")
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        requireOctoActivity().octoToolbar.state = OctoToolbar.State.Print
     }
 
     private fun formatDuration(seconds: Int): String = if (seconds < 60) {
