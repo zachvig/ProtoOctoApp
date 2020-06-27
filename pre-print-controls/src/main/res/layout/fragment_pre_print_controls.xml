@@ -6,122 +6,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <de.crysxd.octoapp.base.ui.common.OctoScrollView
-        android:id="@+id/scrollView"
+    <de.crysxd.octoapp.base.ui.common.OctoRecyclerView
+        android:id="@+id/widgetList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_marginBottom="@dimen/margin_2"
         android:clipToPadding="false"
-        android:fillViewport="true"
         android:paddingTop="@dimen/common_view_top_padding"
-        android:paddingBottom="@dimen/margin_2"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/buttonStartPrint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/controlToolTemperature"
-                android:name="de.crysxd.octoapp.base.ui.temperature.ControlBedTemperatureFragment"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_2"
-                android:layout_marginTop="@dimen/margin_2"
-                android:layout_marginEnd="@dimen/margin_1"
-                app:layout_constraintEnd_toStartOf="@+id/guideline"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView"
-                tools:layout_height="20dp" />
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/controlBedTemperature"
-                android:name="de.crysxd.octoapp.base.ui.temperature.ControlToolTemperatureFragment"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_1"
-                android:layout_marginEnd="@dimen/margin_2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toTopOf="@+id/controlToolTemperature"
-                tools:layout_height="20dp" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5" />
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_3"
-                android:layout_marginEnd="@dimen/margin_3"
-                android:text="@string/preheat"
-                android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_3"
-                android:text="@string/move"
-                android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
-                app:layout_constraintEnd_toEndOf="@+id/textView"
-                app:layout_constraintStart_toStartOf="@+id/textView"
-                app:layout_constraintTop_toBottomOf="@+id/controlToolTemperature" />
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/moveToolControls"
-                android:name="de.crysxd.octoapp.pre_print_controls.ui.move.MoveToolControlsFragment"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_2"
-                android:layout_marginTop="@dimen/margin_2"
-                android:layout_marginEnd="@dimen/margin_2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView3"
-                tools:layout_height="20dp" />
-
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_3"
-                android:text="@string/extrude"
-                android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
-                app:layout_constraintEnd_toEndOf="@+id/textView"
-                app:layout_constraintStart_toStartOf="@+id/textView"
-                app:layout_constraintTop_toBottomOf="@+id/moveToolControls" />
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/extrudeControls"
-                android:name="de.crysxd.octoapp.pre_print_controls.ui.extrude.ExtrudeControlsFragment"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_2"
-                android:layout_marginTop="@dimen/margin_2"
-                android:layout_marginEnd="@dimen/margin_2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView4"
-                tools:layout_height="20dp" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </de.crysxd.octoapp.base.ui.common.OctoScrollView>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/buttonStartPrint"

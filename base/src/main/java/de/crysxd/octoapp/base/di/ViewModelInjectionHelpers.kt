@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 
 /**
@@ -17,7 +18,9 @@ internal inline fun <reified VM : ViewModel> FragmentActivity.injectViewModel(pr
 }
 
 internal inline fun <reified VM : ViewModel> OctoWidget.injectViewModel(provider: ViewModelProvider.Factory = Injector.get().viewModelFactory()) = lazy {
-    ViewModelProvider(this.parent, provider)[VM::class.java]
+    val vm = ViewModelProvider(this.parent, provider)[VM::class.java]
+    (vm as? BaseViewModel)?.let { this.setupBaseViewModel(it) }
+    vm
 }
 
 /**

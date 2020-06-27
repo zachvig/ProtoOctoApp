@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.ui
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
@@ -19,20 +20,23 @@ abstract class BaseFragment(@LayoutRes layout: Int) : Fragment(layout) {
         super.onCreate(savedInstanceState)
 
         viewModel.navContoller = findNavController()
-        viewModel.errorLiveData.observe(this, Observer {
-            errorDialog?.dismiss()
-            errorDialog = AlertDialog.Builder(requireContext())
-                .setMessage(
-                    getString(
-                        (it as? UserMessageException)?.userMessage ?: R.string.error_general
-                    )
-                )
-                .setPositiveButton(android.R.string.ok, null)
-                .show()
-        })
+        viewModel.errorLiveData.observe(this, Observer(this::handleError))
+        viewModel.messages.observe(this, Observer(this::handleMessage))
+    }
 
-        viewModel.messages.observe(this, Observer {
-            Snackbar.make(requireView(), it(requireContext()), Snackbar.LENGTH_SHORT).show()
-        })
+    fun handleMessage(generator: (Context) -> CharSequence) {
+        Snackbar.make(requireView(), generator(requireContext()), Snackbar.LENGTH_SHORT).show()
+    }
+
+    fun handleError(error: Throwable) {
+        errorDialog?.dismiss()
+        errorDialog = AlertDialog.Builder(requireContext())
+            .setMessage(
+                getString(
+                    (error as? UserMessageException)?.userMessage ?: R.string.error_general
+                )
+            )
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
     }
 }

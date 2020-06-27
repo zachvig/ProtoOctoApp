@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui.temperature
+package de.crysxd.octoapp.base.ui.widget.temperature
 
 import android.content.Context
 import android.text.InputType
@@ -19,7 +19,7 @@ import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-abstract class ControlTemperatureViewModelContract(
+abstract class ControlTemperatureWidgetViewModelContract(
     private val octoPrintProvider: OctoPrintProvider,
     private val useCase: UseCase<Pair<OctoPrint, Int>, Unit>
 ) : BaseViewModel() {
