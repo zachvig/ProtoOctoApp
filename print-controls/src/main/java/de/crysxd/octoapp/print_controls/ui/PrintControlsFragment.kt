@@ -23,8 +23,6 @@ class PrintControlsFragment : Fragment(R.layout.fragment_print_controls) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        buttonCancelPrint.setOnClickListener { viewModel.cancelPrint() }
-        buttonCancelPrint.setOnLongClickListener { viewModel.emergencyStop(); true }
         buttonTogglePausePrint.setOnClickListener { viewModel.togglePausePrint() }
 
         viewModel.printState.observe(viewLifecycleOwner, Observer {
@@ -34,17 +32,11 @@ class PrintControlsFragment : Fragment(R.layout.fragment_print_controls) {
             } else if (it.state?.flags?.pausing == true) {
                 buttonTogglePausePrint.isEnabled = false
                 "Pausing..."
-            } else {
-                "Pause"
-            }
-
-            buttonCancelPrint.isEnabled = true
-            buttonCancelPrint.text = if (it.state?.flags?.cancelling == true) {
-                buttonCancelPrint.isEnabled = false
+            } else if (it.state?.flags?.cancelling == true) {
                 buttonTogglePausePrint.isEnabled = false
                 "Cancelling..."
             } else {
-                "Cancel"
+                "Pause"
             }
 
             textView.text = """
@@ -89,6 +81,7 @@ Estimation method: ${it.progress?.printTimeLeftOrigin}"""
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
                 }
                 R.id.menuCancelPrint -> viewModel.cancelPrint()
+                R.id.menuEmergencyStop -> viewModel.emergencyStop()
                 else -> Unit
             }
         }

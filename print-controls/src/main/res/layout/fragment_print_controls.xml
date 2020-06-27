@@ -21,18 +21,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/buttonCancelPrint"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_2"
-        android:layout_marginEnd="@dimen/margin_2"
-        android:layout_marginBottom="@dimen/margin_2"
-        android:text="Cancel Print"
-        app:layout_constraintBottom_toTopOf="@+id/buttonTogglePausePrint"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
         android:id="@+id/buttonTogglePausePrint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
