@@ -76,10 +76,8 @@ Estimation method: ${it.progress?.printTimeLeftOrigin}"""
 
         override fun onMenuItemSelected(id: Int) {
             when (id) {
-                R.id.menuChangeFilament -> Unit
-                R.id.menuOpenOctoprint -> viewModel.getOctoPrintUrl()?.let {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
-                }
+                R.id.menuChangeFilament -> viewModel.changeFilament()
+                R.id.menuOpenOctoprint -> viewModel.getOctoPrintUrl()?.let { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it))) }
                 R.id.menuCancelPrint -> viewModel.cancelPrint()
                 R.id.menuEmergencyStop -> viewModel.emergencyStop()
                 else -> Unit

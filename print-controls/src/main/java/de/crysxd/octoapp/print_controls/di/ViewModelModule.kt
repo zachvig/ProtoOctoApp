@@ -9,6 +9,7 @@ import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.ui.ViewModelFactory
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
+import de.crysxd.octoapp.base.usecase.ChangeFilamentUseCase
 import de.crysxd.octoapp.base.usecase.EmergencyStopUseCase
 import de.crysxd.octoapp.base.usecase.TogglePausePrintJobUseCase
 import de.crysxd.octoapp.print_controls.ui.PrintControlsViewModel
@@ -28,6 +29,7 @@ open class ViewModelModule {
         octoPrintProvider: OctoPrintProvider,
         cancelPrintJobUseCase: CancelPrintJobUseCase,
         togglePausePrintJobUseCase: TogglePausePrintJobUseCase,
-        emergencyStopUseCase: EmergencyStopUseCase
-    ): ViewModel = PrintControlsViewModel(octoPrintProvider, cancelPrintJobUseCase, togglePausePrintJobUseCase, emergencyStopUseCase)
+        emergencyStopUseCase: EmergencyStopUseCase,
+        changeFilamentUseCase: ChangeFilamentUseCase
+    ): ViewModel = PrintControlsViewModel(octoPrintProvider, cancelPrintJobUseCase, togglePausePrintJobUseCase, emergencyStopUseCase, changeFilamentUseCase)
 }
