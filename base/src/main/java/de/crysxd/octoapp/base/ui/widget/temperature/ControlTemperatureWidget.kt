@@ -23,8 +23,8 @@ class ControlTemperatureWidget(parent: Fragment) : OctoWidget(parent) {
         inflater.inflate(R.layout.widget_temperature, container, false)
 
     override fun onViewCreated(view: View) {
-        bedViewModel.temperature.observe(viewLifecycleOwner, Observer(this::onToolTemperatureChanged))
-        toolViewModel.temperature.observe(viewLifecycleOwner, Observer(this::onBedTemperatureChanged))
+        bedViewModel.temperature.observe(viewLifecycleOwner, Observer(this::onBedTemperatureChanged))
+        toolViewModel.temperature.observe(viewLifecycleOwner, Observer(this::onToolTemperatureChanged))
 
         view.bedTemperature.setComponentName(view.context.getString(bedViewModel.getComponentName()))
         view.bedTemperature.setOnClickListener { bedViewModel.changeTemperature(it.context) }
