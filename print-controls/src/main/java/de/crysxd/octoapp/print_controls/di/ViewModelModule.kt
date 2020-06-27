@@ -8,6 +8,7 @@ import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.ui.ViewModelFactory
+import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidgetViewModel
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.base.usecase.ChangeFilamentUseCase
 import de.crysxd.octoapp.base.usecase.EmergencyStopUseCase
@@ -32,4 +33,11 @@ open class ViewModelModule {
         emergencyStopUseCase: EmergencyStopUseCase,
         changeFilamentUseCase: ChangeFilamentUseCase
     ): ViewModel = PrintControlsViewModel(octoPrintProvider, cancelPrintJobUseCase, togglePausePrintJobUseCase, emergencyStopUseCase, changeFilamentUseCase)
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(ProgressWidgetViewModel::class)
+    open fun provideProgressWidgetViewModel(
+        octoPrintProvider: OctoPrintProvider
+    ): ViewModel = ProgressWidgetViewModel(octoPrintProvider)
 }

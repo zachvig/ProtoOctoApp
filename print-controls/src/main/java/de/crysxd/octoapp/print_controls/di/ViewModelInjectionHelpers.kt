@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.print_controls.di.Injector
 
 /**
@@ -14,6 +15,11 @@ import de.crysxd.octoapp.print_controls.di.Injector
  */
 inline fun <reified VM : ViewModel> FragmentActivity.injectViewModel(provider: ViewModelProvider.Factory = Injector.get().viewModelFactory()) = lazy {
     ViewModelProvider(this, provider)[VM::class.java]
+}
+
+
+internal inline fun <reified VM : ViewModel> OctoWidget.injectViewModel(provider: ViewModelProvider.Factory = Injector.get().viewModelFactory()) = lazy {
+    ViewModelProvider(this.parent, provider)[VM::class.java]
 }
 
 /**

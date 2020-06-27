@@ -12,6 +12,8 @@ import androidx.lifecycle.Observer
 import de.crysxd.octoapp.base.ui.common.MenuBottomSheet
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
+import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidget
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.injectParentViewModel
@@ -25,7 +27,6 @@ class PrintControlsFragment : Fragment(R.layout.fragment_print_controls) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        buttonTogglePausePrint.setOnClickListener { viewModel.togglePausePrint() }
 
         viewModel.printState.observe(viewLifecycleOwner, Observer {
             buttonTogglePausePrint.isEnabled = true
@@ -40,14 +41,12 @@ class PrintControlsFragment : Fragment(R.layout.fragment_print_controls) {
             } else {
                 "Pause"
             }
-
-            textView.text = """
-Status: ${formatStatus(it.state)}
-Print time: ${it.progress?.printTime?.let(::formatDuration)}
-Print time left: ${it.progress?.printTimeLeft?.let(::formatDuration)}
-Estimation method: ${it.progress?.printTimeLeftOrigin}"""
         })
 
+        widgetsList.adapter = OctoWidgetAdapter().also {
+            it.widgets = listOf(ProgressWidget(this))
+        }
+        buttonTogglePausePrint.setOnClickListener { viewModel.togglePausePrint() }
         buttonMore.setOnClickListener {
             MenuBottomSheet().show(childFragmentManager, "menu")
         }
@@ -56,23 +55,6 @@ Estimation method: ${it.progress?.printTimeLeftOrigin}"""
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Print
-    }
-
-    private fun formatDuration(seconds: Int): String = if (seconds < 60) {
-        seconds.toString()
-    } else {
-        DateUtils.formatElapsedTime(seconds.toLong())
-    }
-
-    private fun formatStatus(state: PrinterState.State?) = when {
-        state?.flags?.pausing == true -> "Pausing"
-        state?.flags?.paused == true -> "Paused"
-        state?.flags?.printing == true -> "Printing"
-        state?.flags?.operational == true -> "Ready"
-        state?.flags?.error == true -> "Error"
-        state?.flags?.closedOrError == true -> "Error or closed"
-        state?.flags?.cancelling == true -> "Cancelling"
-        else -> "Unknown"
     }
 
     class MenuBottomSheet : de.crysxd.octoapp.base.ui.common.MenuBottomSheet() {
