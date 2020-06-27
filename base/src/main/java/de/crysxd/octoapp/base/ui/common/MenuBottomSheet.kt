@@ -8,6 +8,7 @@ import android.widget.PopupMenu
 import androidx.annotation.IdRes
 import androidx.annotation.MenuRes
 import androidx.core.view.get
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -49,6 +50,10 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
             )
 
         }
+    }
+
+    fun show(fm: FragmentManager) {
+        show(fm, "overflow-menu")
     }
 
     private class MenuAdapter(context: Context, @MenuRes menuRes: Int, val callback: (Int) -> Any) : RecyclerView.Adapter<MenuItemViewHolder>() {

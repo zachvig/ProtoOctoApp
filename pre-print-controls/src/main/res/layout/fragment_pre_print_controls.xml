@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,7 +14,11 @@
         android:clipToPadding="false"
         android:fillViewport="true"
         android:paddingTop="@dimen/common_view_top_padding"
-        android:paddingBottom="@dimen/margin_2">
+        android:paddingBottom="@dimen/margin_2"
+        app:layout_constraintBottom_toTopOf="@+id/buttonStartPrint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -63,7 +67,7 @@
                 android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textView3"
@@ -125,6 +129,21 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_margin="16dp"
-        android:text="@string/start_printing" />
+        android:layout_marginStart="@dimen/margin_2"
+        android:layout_marginEnd="@dimen/margin_2"
+        android:text="@string/start_printing"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-</LinearLayout>
+    <de.crysxd.octoapp.base.ui.common.OctoMoreButton
+        android:id="@+id/buttonMore"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="bottom"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonStartPrint"
+        app:layout_constraintEnd_toEndOf="@+id/buttonStartPrint"
+        app:layout_constraintTop_toTopOf="@+id/buttonStartPrint" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
