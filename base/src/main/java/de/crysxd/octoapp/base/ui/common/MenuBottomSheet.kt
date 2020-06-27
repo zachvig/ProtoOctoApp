@@ -21,7 +21,10 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = RecyclerView(requireContext())
         view.layoutManager = LinearLayoutManager(requireContext())
-        view.adapter = MenuAdapter(requireContext(), getMenuRes(), this::onMenuItemSelected)
+        view.adapter = MenuAdapter(requireContext(), getMenuRes()) {
+            dismiss()
+            this.onMenuItemSelected(it)
+        }
         return view
     }
 
