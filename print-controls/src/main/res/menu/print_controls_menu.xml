@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menuOpenOctoprint"
+        android:title="Open OctoPrint"
+        android:icon="@drawable/ic_round_open_in_browser_24"/>
+
+    <item
+        android:id="@+id/menuChangeFilament"
+        android:title="Change Filament"
+        android:icon="@drawable/ic_round_change_history_24"/>
+
+    <item
+        android:id="@+id/menuCancelPrint"
+        android:title="Cancel Print"
+        android:icon="@drawable/ic_round_cancel_24"/>
+
+</menu>

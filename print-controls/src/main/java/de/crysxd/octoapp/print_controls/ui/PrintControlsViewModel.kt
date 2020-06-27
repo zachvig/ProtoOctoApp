@@ -33,9 +33,13 @@ class PrintControlsViewModel(
             cancelPrintJobUseCase.execute(it)
         }
     }
+
     fun emergencyStop() = viewModelScope.launch(coroutineExceptionHandler) {
         octoPrintProvider.octoPrint.value?.let {
             emergencyStopUseCase.execute(it)
         }
     }
+
+    fun getOctoPrintUrl() = octoPrintProvider.octoPrint.value?.gerWebUrl()
+
 }

@@ -43,8 +43,10 @@ class OctoPrint(
     fun createPsuApi(): PsuApi.Wrapper =
         PsuApi.Wrapper((createRetrofit().create(PsuApi::class.java)))
 
+    fun gerWebUrl(): String = "http://${hostName}:${port}/"
+
     private fun createRetrofit() = Retrofit.Builder()
-        .baseUrl("http://${hostName}:${port}/api/")
+        .baseUrl("${gerWebUrl()}api/")
         .addConverterFactory(GsonConverterFactory.create(createGsonWithTypeAdapters()))
         .client(createOkHttpClient())
         .build()

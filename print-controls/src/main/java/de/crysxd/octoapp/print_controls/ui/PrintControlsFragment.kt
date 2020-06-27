@@ -1,12 +1,18 @@
 package de.crysxd.octoapp.print_controls.ui
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateUtils
+import android.view.ContextMenu
+import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import de.crysxd.octoapp.base.ui.common.MenuBottomSheet
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import de.crysxd.octoapp.print_controls.R
+import de.crysxd.octoapp.print_controls.di.injectParentViewModel
 import de.crysxd.octoapp.print_controls.di.injectViewModel
 import kotlinx.android.synthetic.main.fragment_print_controls.*
 
@@ -47,6 +53,10 @@ Print time: ${it.progress?.printTime?.let(::formatDuration)}
 Print time left: ${it.progress?.printTimeLeft?.let(::formatDuration)}
 Estimation method: ${it.progress?.printTimeLeftOrigin}"""
         })
+
+        buttonMore.setOnClickListener {
+            MenuBottomSheet().show(childFragmentManager, "menu")
+        }
     }
 
     private fun formatDuration(seconds: Int): String = if (seconds < 60) {
@@ -64,5 +74,23 @@ Estimation method: ${it.progress?.printTimeLeftOrigin}"""
         state?.flags?.closedOrError == true -> "Error or closed"
         state?.flags?.cancelling == true -> "Cancelling"
         else -> "Unknown"
+    }
+
+    class MenuBottomSheet : de.crysxd.octoapp.base.ui.common.MenuBottomSheet() {
+
+        private val viewModel: PrintControlsViewModel by injectParentViewModel()
+
+        override fun getMenuRes() = R.menu.print_controls_menu
+
+        override fun onMenuItemSelected(id: Int) {
+            when (id) {
+                R.id.menuChangeFilament -> Unit
+                R.id.menuOpenOctoprint -> viewModel.getOctoPrintUrl()?.let {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
+                }
+                R.id.menuCancelPrint -> viewModel.cancelPrint()
+                else -> Unit
+            }
+        }
     }
 }
