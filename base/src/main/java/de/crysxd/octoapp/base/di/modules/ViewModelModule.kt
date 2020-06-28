@@ -8,8 +8,10 @@ import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.ui.BaseViewModelFactory
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
+import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlBedTemperatureWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlToolTemperatureWidgetViewModel
+import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.SetBedTargetTemperatureUseCase
 import de.crysxd.octoapp.base.usecase.SetToolTargetTemperatureUseCase
 import javax.inject.Provider
@@ -36,6 +38,14 @@ open class ViewModelModule {
         octoPrintProvider: OctoPrintProvider,
         useCase: SetBedTargetTemperatureUseCase
     ): ViewModel = ControlBedTemperatureWidgetViewModel(octoPrintProvider, useCase)
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(SendGcodeWidgetViewModel::class)
+    open fun provideSendGcodeWidgetViewModel(
+        octoPrintProvider: OctoPrintProvider,
+        useCase: ExecuteGcodeCommandUseCase
+    ): ViewModel = SendGcodeWidgetViewModel(octoPrintProvider, useCase)
 
     @Provides
     @IntoMap
