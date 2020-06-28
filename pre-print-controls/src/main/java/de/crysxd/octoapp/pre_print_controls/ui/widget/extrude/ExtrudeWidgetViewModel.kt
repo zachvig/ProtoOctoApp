@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.pre_print_controls.ui.extrude
+package de.crysxd.octoapp.pre_print_controls.ui.widget.extrude
 
 import android.content.Context
 import android.text.InputType
@@ -11,7 +11,7 @@ import de.crysxd.octoapp.pre_print_controls.R
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class ExtrudeControlsViewModel(
+class ExtrudeWidgetViewModel(
     private val octoPrintProvider: OctoPrintProvider,
     private val extrudeFilamentUseCase: ExtrudeFilamentUseCase
 ) : BaseViewModel() {

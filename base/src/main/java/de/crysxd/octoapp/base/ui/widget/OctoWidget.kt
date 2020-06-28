@@ -47,4 +47,6 @@ abstract class OctoWidget(val parent: Fragment) : LayoutContainer {
         })
         baseViewModel.navContoller = parent.findNavController()
     }
+
+    fun requireContext() = parent.requireContext()
 }
