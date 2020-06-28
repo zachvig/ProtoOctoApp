@@ -19,6 +19,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="G28"
+        style="@style/OctoTheme.Widget.Button.Small.Secondary" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="G29"
         style="@style/OctoTheme.Widget.Button.Small.Secondary" />
 
