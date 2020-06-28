@@ -29,6 +29,7 @@ class OctoWidgetAdapter() : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHol
         holder.itemView.textViewWidgetTitle.text = widgets[position].getTitle(holder.itemView.context)
         holder.itemView.widgetContainer.removeAllViews()
         holder.itemView.widgetContainer.addView(widgets[position].getView(holder.itemView.context, holder.itemView.widgetContainer))
+        holder.itemView.padding.isVisible = position < itemCount - 1
     }
 
     class WidgetViewHolder(parent: ViewGroup) : AutoBindViewHolder(parent, R.layout.item_widget)

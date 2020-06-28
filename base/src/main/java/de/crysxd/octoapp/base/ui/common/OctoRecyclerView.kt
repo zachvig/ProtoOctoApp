@@ -11,10 +11,13 @@ import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.OctoActivity
+import timber.log.Timber
 import kotlin.math.roundToInt
 
 class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, @StyleRes defStyle: Int = 0) :
     RecyclerView(context, attributeSet, defStyle) {
+
+    private var calculatedScrollY = 0
 
     private val topShadowDrawable = context.resources.getDrawable(R.drawable.top_scroll_edge_shadow, context.theme)
     private var topShadowAlpha = 0f
@@ -50,10 +53,14 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
     @Suppress("DEPRECATION")
     fun setupWithToolbar(octoActivity: OctoActivity) {
         val initialState = octoActivity.octoToolbar.state
-        setOnScrollListener(object: RecyclerView.OnScrollListener() {
+        setOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                octoActivity.octoToolbar.state = if (scrollY < paddingTop / 3f) {
+
+                calculatedScrollY += dy
+                Timber.i("dy: $dy scrollY: $calculatedScrollY")
+
+                octoActivity.octoToolbar.state = if (calculatedScrollY < paddingTop / 3f) {
                     if (octoActivity.octoToolbar.state == OctoToolbar.State.Hidden) {
                         octoActivity.octo.animate().alpha(1f).start()
                     }
@@ -78,12 +85,12 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
     private fun updateViewState(animated: Boolean = true) {
         val duration = if (animated) animate().duration else 0L
 
-        val alphaTop = if (scrollY > paddingTop) 1f else 0f
+        val alphaTop = if (calculatedScrollY > paddingTop) 1f else 0f
         if (topShadowAlpha != alphaTop) {
             createAnimator(topShadowAlphaProperty, alphaTop, duration).start()
         }
 
-        val alphaBottom = if (scrollY + height - paddingTop - paddingBottom < children.first().height) 1f else 0f
+        val alphaBottom = if (calculatedScrollY + height - paddingTop - paddingBottom < children.sumBy { it.height }) 1f else 0f
         if (bottomShadowAlpha != alphaBottom) {
             createAnimator(bottomShadowAlphaProperty, alphaBottom, duration).start()
         }
@@ -99,12 +106,12 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
         super.onDraw(canvas)
         if (topShadowAlpha > 0) {
             topShadowDrawable.alpha = (topShadowAlpha * 255).roundToInt()
-            topShadowDrawable.setBounds(0, scrollY, width, scrollY + topShadowDrawable.intrinsicHeight)
+            topShadowDrawable.setBounds(0, calculatedScrollY, width, calculatedScrollY + topShadowDrawable.intrinsicHeight)
             topShadowDrawable.draw(canvas)
         }
         if (bottomShadowAlpha > 0) {
             bottomShadowDrawable.alpha = (bottomShadowAlpha * 255).roundToInt()
-            bottomShadowDrawable.setBounds(0, scrollY + height - bottomShadowDrawable.intrinsicHeight, width, scrollY + height)
+            bottomShadowDrawable.setBounds(0, height - bottomShadowDrawable.intrinsicHeight, width, height)
             bottomShadowDrawable.draw(canvas)
         }
     }
