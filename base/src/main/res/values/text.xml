@@ -47,4 +47,10 @@
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
+    <style name="OctoTheme.TextAppearance.LargeData">
+        <item name="android:textSize">30sp</item>
+        <item name="android:fontFamily">@font/roboto_light</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
 </resources>
