@@ -10,6 +10,7 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
+import kotlinx.android.synthetic.main.view_temperature.view.*
 import kotlinx.android.synthetic.main.widget_temperature.view.*
 
 class ControlTemperatureWidget(parent: Fragment) : OctoWidget(parent) {
@@ -27,9 +28,9 @@ class ControlTemperatureWidget(parent: Fragment) : OctoWidget(parent) {
         toolViewModel.temperature.observe(viewLifecycleOwner, Observer(this::onToolTemperatureChanged))
 
         view.bedTemperature.setComponentName(view.context.getString(bedViewModel.getComponentName()))
-        view.bedTemperature.setOnClickListener { bedViewModel.changeTemperature(it.context) }
+        view.bedTemperature.button.setOnClickListener { bedViewModel.changeTemperature(it.context) }
         view.toolTemperature.setComponentName(view.context.getString(toolViewModel.getComponentName()))
-        view.toolTemperature.setOnClickListener { toolViewModel.changeTemperature(it.context) }
+        view.toolTemperature.button.setOnClickListener { toolViewModel.changeTemperature(it.context) }
     }
 
     private fun onBedTemperatureChanged(temperature: PrinterState.ComponentTemperature) {

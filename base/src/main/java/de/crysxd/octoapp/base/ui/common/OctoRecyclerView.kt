@@ -106,7 +106,7 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
         super.onDraw(canvas)
         if (topShadowAlpha > 0) {
             topShadowDrawable.alpha = (topShadowAlpha * 255).roundToInt()
-            topShadowDrawable.setBounds(0, calculatedScrollY, width, calculatedScrollY + topShadowDrawable.intrinsicHeight)
+            topShadowDrawable.setBounds(0, 0, width, topShadowDrawable.intrinsicHeight)
             topShadowDrawable.draw(canvas)
         }
         if (bottomShadowAlpha > 0) {
