@@ -48,7 +48,6 @@ open class ViewModelModule {
         extrudeFilamentUseCase: ExtrudeFilamentUseCase
     ): ViewModel = ExtrudeWidgetViewModel(octoPrintProvider, extrudeFilamentUseCase)
 
-
     @Provides
     @IntoMap
     @ViewModelKey(SelectFileViewModel::class)

@@ -17,7 +17,7 @@ inline fun <reified VM : ViewModel> FragmentActivity.injectViewModel(provider: V
     ViewModelProvider(this, provider)[VM::class.java]
 }
 
-internal inline fun <reified VM : ViewModel> OctoWidget.injectViewModel(provider: ViewModelProvider.Factory = de.crysxd.octoapp.base.di.Injector.get().viewModelFactory()) = lazy {
+internal inline fun <reified VM : ViewModel> OctoWidget.injectViewModel(provider: ViewModelProvider.Factory = Injector.get().viewModelFactory()) = lazy {
     val vm = ViewModelProvider(this.parent, provider)[VM::class.java]
     (vm as? BaseViewModel)?.let { this.setupBaseViewModel(it) }
     vm
