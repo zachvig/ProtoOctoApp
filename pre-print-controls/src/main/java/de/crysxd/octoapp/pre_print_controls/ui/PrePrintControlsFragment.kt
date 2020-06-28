@@ -7,6 +7,7 @@ import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
+import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.injectParentViewModel
@@ -29,7 +30,10 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
         }
 
         widgetList.adapter = OctoWidgetAdapter().also {
-            it.widgets = listOf(ControlTemperatureWidget(this))
+            it.widgets = listOf(
+                ControlTemperatureWidget(this),
+                SendGcodeWidget(this)
+            )
         }
     }
 
