@@ -16,4 +16,5 @@
     <string name="x_items_y">%1$d items (%2$s)</string>
     <string name="x_y">%1$s (%2$s)</string>
     <string name="select_file_to_print">Select file to print</string>
+    <string name="extruding_x_mm">Extruding %d mm</string>
 </resources>

@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.ui.widget.gcode
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
@@ -16,6 +17,7 @@ class SendGcodeWidgetViewModel(
     fun sendGcodeCommand(command: String) = viewModelScope.launch(coroutineExceptionHandler) {
         octoPrintProvider.octoPrint.value?.let {
             sendGcodeCommandUseCase.execute(Pair(it, GcodeCommand.Single(command)))
+            postMessage { c -> c.getString(R.string.sent_x, command) }
         }
     }
 }

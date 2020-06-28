@@ -43,6 +43,7 @@ class ExtrudeWidgetViewModel(
     private fun extrude(mm: Int) = GlobalScope.launch(coroutineExceptionHandler) {
         octoPrintProvider.octoPrint.value?.let {
             extrudeFilamentUseCase.execute(Pair(it, mm))
+            postMessage { c -> c.getString(R.string.extruding_x_mm, mm) }
         }
     }
 }
