@@ -4,22 +4,22 @@
 
     <item
         android:id="@+id/menuOpenOctoprint"
-        android:title="Open OctoPrint"
+        android:title="@string/open_octoprint"
         android:icon="@drawable/ic_round_open_in_browser_24"/>
 
     <item
         android:id="@+id/menuChangeFilament"
-        android:title="Change Filament"
+        android:title="@string/change_filament"
         android:icon="@drawable/ic_round_change_history_24"/>
 
     <item
         android:id="@+id/menuCancelPrint"
-        android:title="Emergency Stop"
+        android:title="@string/emergency_stop"
         android:icon="@drawable/ic_round_cancel_24"/>
 
     <item
         android:id="@+id/menuEmergencyStop"
-        android:title="Cancel Print"
+        android:title="@string/cancel_print"
         android:icon="@drawable/ic_round_remove_circle_24"/>
 
 </menu>

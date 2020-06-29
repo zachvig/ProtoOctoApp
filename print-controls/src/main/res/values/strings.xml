@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="emergency_stop">Emergency Stop</string>
+    <string name="cancel_print">Cancel Print</string>
+</resources>

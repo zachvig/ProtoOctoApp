@@ -2,10 +2,12 @@ package de.crysxd.octoapp.pre_print_controls.ui
 
 import android.content.Context
 import android.text.InputType
+import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
+import de.crysxd.octoapp.base.usecase.ChangeFilamentUseCase
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.TurnOffPsuUseCase
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
@@ -16,6 +18,7 @@ import kotlinx.coroutines.launch
 class PrePrintControlsViewModel(
     private val octoPrintProvider: OctoPrintProvider,
     private val turnOffPsuUseCase: TurnOffPsuUseCase,
+    private val changeFilamentUseCase: ChangeFilamentUseCase,
     private val executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase
 ) : BaseViewModel() {
 
@@ -56,4 +59,12 @@ class PrePrintControlsViewModel(
     fun startPrint() {
         navContoller.navigate(R.id.action_start_print)
     }
+
+    fun changeFilament() = viewModelScope.launch(coroutineExceptionHandler) {
+        octoPrintProvider.octoPrint.value?.let {
+            changeFilamentUseCase.execute(it)
+        }
+    }
+
+    fun getOctoPrintUrl() = octoPrintProvider.octoPrint.value?.gerWebUrl()
 }

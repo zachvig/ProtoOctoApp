@@ -30,4 +30,6 @@
     <string name="prepare">Prepare</string>
     <string name="connect">Connect</string>
     <string name="sent_x">Sent %s</string>
+    <string name="change_filament">Change Filament</string>
+    <string name="open_octoprint">Open OctoPrint</string>
 </resources>

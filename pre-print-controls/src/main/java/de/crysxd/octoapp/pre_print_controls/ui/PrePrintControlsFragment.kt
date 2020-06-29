@@ -1,5 +1,7 @@
 package de.crysxd.octoapp.pre_print_controls.ui
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
@@ -56,6 +58,8 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
 
         override fun onMenuItemSelected(id: Int) {
             when (id) {
+                R.id.menuChangeFilament -> viewModel.changeFilament()
+                R.id.menuOpenOctoprint -> viewModel.getOctoPrintUrl()?.let { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it))) }
                 R.id.menuItemTurnOffPsu -> viewModel.turnOffPsu()
                 R.id.menuItemSendGcode -> viewModel.executeGcode(requireContext())
                 else -> Unit
