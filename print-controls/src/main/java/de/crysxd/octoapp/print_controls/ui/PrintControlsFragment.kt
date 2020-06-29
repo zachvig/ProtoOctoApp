@@ -14,6 +14,7 @@ import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
 import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidget
+import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.injectParentViewModel
@@ -44,7 +45,10 @@ class PrintControlsFragment : Fragment(R.layout.fragment_print_controls) {
         })
 
         widgetsList.adapter = OctoWidgetAdapter().also {
-            it.widgets = listOf(ProgressWidget(this))
+            it.widgets = listOf(
+                ProgressWidget(this),
+                ControlTemperatureWidget(this)
+            )
         }
         buttonTogglePausePrint.setOnClickListener { viewModel.togglePausePrint() }
         buttonMore.setOnClickListener {
