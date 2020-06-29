@@ -10,7 +10,7 @@ import androidx.lifecycle.Observer
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
-import kotlinx.android.synthetic.main.widget_move_tool_controls.*
+import kotlinx.android.synthetic.main.widget_move_tool.*
 import java.text.DecimalFormat
 import de.crysxd.octoapp.base.R as BaseR
 
@@ -21,7 +21,7 @@ class MoveToolWidget(parent: Fragment) : OctoWidget(parent) {
     override fun getTitle(context: Context) = "Move"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
-        inflater.inflate(R.layout.widget_move_tool_controls, container, false)
+        inflater.inflate(R.layout.widget_move_tool, container, false)
 
     override fun onViewCreated(view: View) {
         initJogResolutionSeekBar()
