@@ -16,7 +16,8 @@
         <item name="android:statusBarColor">@color/black</item>
         <item name="android:textAppearance">@style/OctoTheme.TextAppearance</item>
 
-        <item name="android:buttonStyle">@style/OctoTheme.Widget.Button</item>
+        <item name="buttonStyle">@style/OctoTheme.Widget.Button</item>
+        <item name="imageButtonStyle">@style/OctoTheme.Widget.Button.Image</item>
     </style>
 
     <style name="OctoTheme" parent="OctoTheme.Base" />
@@ -37,6 +38,12 @@
         <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Button</item>
         <item name="android:background">@drawable/bg_button_small_secondary</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
+    <style name="OctoTheme.Widget.Button.Image" parent="Widget.AppCompat.ImageButton">
+        <item name="android:padding">@dimen/margin_1</item>
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
+        <item name="android:tint">?android:attr/colorAccent</item>
     </style>
 
 </resources>

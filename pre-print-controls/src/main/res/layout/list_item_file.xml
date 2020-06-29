@@ -59,6 +59,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textViewTitle"
         android:importantForAccessibility="no"
-        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_right_24" />
+        app:srcCompat="@drawable/ic_round_keyboard_arrow_right_24" />
     
 </androidx.constraintlayout.widget.ConstraintLayout>
