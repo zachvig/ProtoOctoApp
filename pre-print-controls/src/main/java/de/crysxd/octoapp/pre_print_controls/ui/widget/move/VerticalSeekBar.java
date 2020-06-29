@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.pre_print_controls.ui.move;
+package de.crysxd.octoapp.pre_print_controls.ui.widget.move;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

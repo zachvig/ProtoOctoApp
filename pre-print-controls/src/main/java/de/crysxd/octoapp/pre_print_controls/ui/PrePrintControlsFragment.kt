@@ -13,6 +13,7 @@ import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.injectParentViewModel
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.widget.extrude.ExtrudeWidget
+import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidget
 import kotlinx.android.synthetic.main.fragment_pre_print_controls.*
 
 class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_controls) {
@@ -33,6 +34,7 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
         widgetList.adapter = OctoWidgetAdapter().also {
             it.widgets = listOf(
                 ControlTemperatureWidget(this),
+                MoveToolWidget(this),
                 ExtrudeWidget(this),
                 SendGcodeWidget(this)
             )

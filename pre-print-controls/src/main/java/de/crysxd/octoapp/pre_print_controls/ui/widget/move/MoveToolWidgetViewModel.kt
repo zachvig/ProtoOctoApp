@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.pre_print_controls.ui.move
+package de.crysxd.octoapp.pre_print_controls.ui.widget.move
 
 import androidx.lifecycle.MutableLiveData
 import de.crysxd.octoapp.base.OctoPrintProvider
@@ -8,7 +8,7 @@ import de.crysxd.octoapp.base.usecase.JogPrintHeadUseCase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class MoveToolControlsViewModel(
+class MoveToolWidgetViewModel(
     private val homePrintHeadUseCase: HomePrintHeadUseCase,
     private val jogPrintHeadUseCase: JogPrintHeadUseCase,
     private val octoPrintProvider: OctoPrintProvider

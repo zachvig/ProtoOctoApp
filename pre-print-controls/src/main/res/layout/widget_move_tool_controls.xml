@@ -86,7 +86,7 @@
         app:layout_constraintTop_toTopOf="@+id/imageButtonMoveYPositive"
         app:srcCompat="@drawable/ic_baseline_keyboard_arrow_up_24" />
 
-    <de.crysxd.octoapp.pre_print_controls.ui.move.VerticalSeekBar
+    <de.crysxd.octoapp.pre_print_controls.ui.widget.move.VerticalSeekBar
         android:id="@+id/seekBarJogResolution"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
         android:layout_width="wrap_content"
