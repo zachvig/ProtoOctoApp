@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView android:id="@+id/textViewTitle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/margin_2"
+    android:layout_marginStart="@dimen/margin_5"
+    android:layout_marginBottom="@dimen/margin_3"
+    android:ellipsize="end"
+    android:lines="1"
+    android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+    app:layout_constraintEnd_toStartOf="@+id/imageView"
+    app:layout_constraintStart_toEndOf="@+id/imageViewFileIcon"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:text="TextView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" />

@@ -8,30 +8,34 @@
 
     <ImageView
         android:id="@+id/imageViewFileIcon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:padding="8dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="@dimen/margin_2"
+        android:layout_marginTop="@dimen/margin_1"
+        android:layout_marginBottom="@dimen/margin_1"
         android:background="@drawable/circle_background"
+        android:padding="8dp"
         android:tint="@color/primary"
-        app:layout_constraintBottom_toBottomOf="@+id/textViewDetail"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textViewTitle"
+        app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/ic_outline_print_24" />
 
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/margin_2"
+        android:layout_marginEnd="@dimen/margin_2"
         android:ellipsize="end"
         android:lines="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textAppearance="@style/OctoTheme.TextAppearance"
+        app:layout_constraintBottom_toTopOf="@+id/textViewDetail"
         app:layout_constraintEnd_toStartOf="@+id/imageView"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imageViewFileIcon"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:text="TextView" />
 
     <TextView
@@ -39,11 +43,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:layout_marginBottom="4dp"
         android:lines="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Label"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/textViewTitle"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/textViewTitle"
         app:layout_constraintTop_toBottomOf="@+id/textViewTitle"
         tools:text="TextView" />
@@ -52,13 +56,12 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginEnd="@dimen/margin_2"
+        android:importantForAccessibility="no"
         android:tint="?android:attr/textColorPrimary"
         app:layout_constraintBottom_toBottomOf="@+id/textViewDetail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textViewTitle"
-        android:importantForAccessibility="no"
         app:srcCompat="@drawable/ic_round_keyboard_arrow_right_24" />
-    
+
 </androidx.constraintlayout.widget.ConstraintLayout>
