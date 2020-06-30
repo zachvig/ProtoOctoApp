@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "845830199568",
+    "firebase_url": "https://octoapp-4e438.firebaseio.com",
+    "project_id": "octoapp-4e438",
+    "storage_bucket": "octoapp-4e438.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845830199568:android:79599a03c5050c9444ed95",
+        "android_client_info": {
+          "package_name": "de.crysxd.octoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "845830199568-f9231dgv1hd79c5cm2cm4fs7258hpijm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVvzYluX2DTZXFn-RO5P1zV5wRsCSyDTs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "845830199568-f9231dgv1hd79c5cm2cm4fs7258hpijm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
