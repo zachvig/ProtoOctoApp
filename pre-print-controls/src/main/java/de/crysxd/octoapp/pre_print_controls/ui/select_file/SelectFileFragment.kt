@@ -7,6 +7,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
 import de.crysxd.octoapp.base.ui.BaseFragment
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
@@ -21,7 +22,7 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        toolbar.setupWithNavController(findNavController())
+        recyclerViewFileList.setupWithToolbar(requireOctoActivity())
 
         val adapter = SelectFileAdapter() {
             viewModel.selectFile(it)
@@ -37,11 +38,10 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
 
     private fun initWithFolder(adapter: SelectFileAdapter, folder: FileObject.Folder) {
         adapter.files = folder.children ?: emptyList()
-        toolbar.subtitle = folder.display
     }
 
     private fun initWithRootFolder(adapter: SelectFileAdapter) {
-        viewModel.loadRootFiles().observe(this, Observer {
+        viewModel.loadRootFiles().observe(viewLifecycleOwner, Observer {
             adapter.files = it
         })
     }
