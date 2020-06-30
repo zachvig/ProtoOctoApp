@@ -4,10 +4,10 @@ import android.content.Context
 import android.text.InputType
 import androidx.annotation.StringRes
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filter
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filterEventsForMessageType
-import de.crysxd.octoapp.base.livedata.OctoTransformations.map
-import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.livedata.OctoTransformations.mapNotNull
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
@@ -27,7 +27,7 @@ abstract class ControlTemperatureWidgetViewModelContract(
     val temperature = octoPrintProvider.eventLiveData
         .filterEventsForMessageType(Message.CurrentMessage::class.java)
         .filter { it.temps.isNotEmpty() }
-        .map { extractComponentTemperature(it.temps.first()) }
+        .mapNotNull { extractComponentTemperature(it.temps.first()) }
 
     private fun setTemperature(temp: Int) = GlobalScope.launch(coroutineExceptionHandler) {
         octoPrintProvider.octoPrint.value?.let {
@@ -53,7 +53,7 @@ abstract class ControlTemperatureWidgetViewModelContract(
         setTemperature(temp.toInt())
     }
 
-    protected abstract fun extractComponentTemperature(temp: HistoricTemperatureData): PrinterState.ComponentTemperature
+    protected abstract fun extractComponentTemperature(temp: HistoricTemperatureData): PrinterState.ComponentTemperature?
 
     @StringRes
     abstract fun getComponentName(): Int

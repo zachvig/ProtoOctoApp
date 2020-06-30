@@ -3,8 +3,11 @@ package de.crysxd.octoapp.base.livedata
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
+import de.crysxd.octoapp.base.livedata.OctoTransformations.filter
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
+import timber.log.Timber
+import java.lang.NullPointerException
 
 object OctoTransformations {
 
@@ -40,7 +43,18 @@ object OctoTransformations {
         return result
     }
 
-    fun <X, Y> LiveData<X>.map(mapFunction: (X) -> Y): LiveData<Y> =
+    fun <X, Y> LiveData<X>.map(mapFunction: (X) -> Y?): LiveData<Y> =
         Transformations.map(this, mapFunction)
+
+    fun <X, Y> LiveData<X>.mapNotNull(mapFunction: (X) -> Y?): LiveData<Y> {
+        val result: MediatorLiveData<Y> = MediatorLiveData<Y>()
+        result.addSource(this) { x ->
+            val mapped = mapFunction(x)
+            if (mapped != null) {
+                result.value = mapped
+            }
+        }
+        return result
+    }
 
 }
