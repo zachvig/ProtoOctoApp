@@ -13,12 +13,12 @@
         android:icon="@drawable/ic_round_change_history_24"/>
 
     <item
-        android:id="@+id/menuCancelPrint"
+        android:id="@+id/menuEmergencyStop"
         android:title="@string/emergency_stop"
         android:icon="@drawable/ic_round_cancel_24"/>
 
     <item
-        android:id="@+id/menuEmergencyStop"
+        android:id="@+id/menuCancelPrint"
         android:title="@string/cancel_print"
         android:icon="@drawable/ic_round_remove_circle_24"/>
 
