@@ -57,7 +57,7 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                calculatedScrollY += dy
+                calculatedScrollY += computeVerticalScrollOffset()
                 Timber.i("dy: $dy scrollY: $calculatedScrollY")
 
                 octoActivity.octoToolbar.state = if (calculatedScrollY < paddingTop / 3f) {
@@ -72,7 +72,9 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
                     OctoToolbar.State.Hidden
                 }
 
-                updateViewState()
+                post {
+                    updateViewState()
+                }
             }
         })
     }

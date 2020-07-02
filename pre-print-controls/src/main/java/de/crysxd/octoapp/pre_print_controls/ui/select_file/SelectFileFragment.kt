@@ -24,8 +24,6 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerViewFileList.setupWithToolbar(requireOctoActivity())
-
         val adapter = SelectFileAdapter {
             viewModel.selectFile(it)
         }
@@ -41,6 +39,7 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
+        recyclerViewFileList.setupWithToolbar(requireOctoActivity())
     }
 
     private fun initWithFolder(adapter: SelectFileAdapter, folder: FileObject.Folder) {
