@@ -1,8 +1,8 @@
 <resources>
 
     <style name="OctoTheme" parent="OctoTheme.Base">
-        <item name="android:statusBarColor">?android:attr/windowBackground</item>
-        <item name="android:navigationBarColor">?android:attr/windowBackground</item>
+        <item name="android:statusBarColor">@color/window_background</item>
+        <item name="android:navigationBarColor">@color/window_background</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
     </style>
