@@ -12,12 +12,17 @@
         tools:layout="@layout/fragment_enter_value">
         <argument
             android:name="title"
-            app:argType="string"
-            android:defaultValue=""/>
+            android:defaultValue=""
+            app:argType="string" />
         <argument
             android:name="hint"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="action"
+            android:defaultValue="@null"
             app:argType="string"
-            android:defaultValue=""/>
+            app:nullable="true" />
         <argument
             android:name="inputType"
             android:defaultValue="1"
@@ -36,8 +41,8 @@
             app:argType="integer" />
         <argument
             android:name="selectAll"
-            app:argType="boolean"
-            android:defaultValue="false"/>
+            android:defaultValue="false"
+            app:argType="boolean" />
         <argument
             android:name="validator"
             android:defaultValue="@null"

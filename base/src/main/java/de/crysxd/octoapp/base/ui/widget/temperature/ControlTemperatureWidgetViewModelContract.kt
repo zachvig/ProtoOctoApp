@@ -41,6 +41,7 @@ abstract class ControlTemperatureWidgetViewModelContract(
             EnterValueFragmentArgs(
                 title = context.getString(R.string.x_temperature, context.getString(getComponentName())),
                 hint = context.getString(R.string.target_temperature),
+                action = context.getString(R.string.set_temperature),
                 resultId = NavigationResultMediator.registerResultCallback(this::onTemperatureEntered),
                 value = temperature.value?.target?.toInt()?.toString(),
                 inputType = InputType.TYPE_CLASS_NUMBER,

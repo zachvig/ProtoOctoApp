@@ -49,6 +49,7 @@ class PrePrintControlsViewModel(
             R.id.action_enter_gcode, EnterValueFragmentArgs(
                 title = context.getString(R.string.send_gcode),
                 hint = context.getString(R.string.gcode_one_command_per_line),
+                action = context.getString(R.string.send_gcode),
                 inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS,
                 maxLines = 10,
                 resultId = NavigationResultMediator.registerResultCallback(this::onGcodeEntered)

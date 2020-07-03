@@ -28,6 +28,7 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
         super.onViewCreated(view, savedInstanceState)
 
         buttonSet.setOnClickListener { navigateBackWithResult() }
+        buttonSet.text = navArgs.action ?: getString(android.R.string.ok)
         textViewTitle.text = navArgs.title
         textInputLayout.hint = navArgs.hint
         textInputLayout.editText.inputType = navArgs.inputType
