@@ -32,4 +32,5 @@
     <string name="sent_x">Sent %s</string>
     <string name="change_filament">Change Filament</string>
     <string name="open_octoprint">Open OctoPrint</string>
+    <string name="set">Set</string>
 </resources>

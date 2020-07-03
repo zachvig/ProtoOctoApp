@@ -24,6 +24,12 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
 
     private val initialLabelColors: ColorStateList
     private val initialLabelText: CharSequence
+    var hint: CharSequence = ""
+        set(value) {
+            field = value
+            input.hint = value
+            label.text = value
+        }
 
     @Suppress("unused")
     val editText: AppCompatEditText by lazy { input }
@@ -97,6 +103,7 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         val savedState = SavedState(super.onSaveInstanceState()!!)
         savedState.labelText = label.text
         savedState.value = input.text.toString()
+        savedState.hint = input.hint
         return savedState
     }
 
@@ -105,26 +112,30 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         super.onRestoreInstanceState(savedState.superState)
         label.text = savedState.labelText
         input.setText(savedState.value)
+        input.hint = savedState.hint
     }
 
     private class SavedState : BaseSavedState {
         lateinit var labelText: CharSequence
         lateinit var value: CharSequence
+        lateinit var hint: CharSequence
 
         constructor(parcelable: Parcelable) : super(parcelable)
 
         constructor(parcel: Parcel) : super(parcel) {
             labelText = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(parcel)
             value = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(parcel)
+            hint = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(parcel)
         }
 
         override fun writeToParcel(out: Parcel, flags: Int) {
             super.writeToParcel(out, flags)
             TextUtils.writeToParcel(labelText, out, flags)
             TextUtils.writeToParcel(value, out, flags)
+            TextUtils.writeToParcel(hint, out, flags)
         }
 
-        @Suppress("unused")
+        @Suppress("unused", "PropertyName")
         val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
             override fun createFromParcel(`in`: Parcel): SavedState {
                 return SavedState(`in`)

@@ -7,12 +7,13 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.navigation.ui.setupWithNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.BaseFragment
+import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requestFocusAndOpenSoftKeyboard
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_enter_value.*
@@ -26,36 +27,24 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        toolbar.setupWithNavController(findNavController())
-        toolbar.title = navArgs.title
+        buttonSet.setOnClickListener { navigateBackWithResult() }
+        textViewTitle.text = navArgs.title
         textInputLayout.hint = navArgs.hint
-        textInputLayout.editText?.inputType = navArgs.inputType
-        textInputLayout.editText?.maxLines = navArgs.maxLines
-        textInputLayout.editText?.setText(navArgs.value)
-        textInputLayout.editText?.imeOptions = if (navArgs.maxLines > 1) {
+        textInputLayout.editText.inputType = navArgs.inputType
+        textInputLayout.editText.maxLines = navArgs.maxLines
+        textInputLayout.editText.setText(navArgs.value)
+        textInputLayout.editText.imeOptions = if (navArgs.maxLines > 1) {
             EditorInfo.IME_ACTION_NONE
         } else {
             EditorInfo.IME_ACTION_DONE
         }
 
-        textInputLayout.editText?.setOnEditorActionListener { _, actionId, _ ->
+        textInputLayout.editText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId != EditorInfo.IME_ACTION_NONE) {
                 navigateBackWithResult()
                 true
             } else {
                 false
-            }
-        }
-
-
-        toolbar.inflateMenu(R.menu.menu_enter_value)
-        toolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.menuItemDone -> {
-                    navigateBackWithResult()
-                    true
-                }
-                else -> false
             }
         }
 
@@ -66,21 +55,27 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
 
     override fun onResume() {
         super.onResume()
-        textInputLayout.editText?.requestFocusAndOpenSoftKeyboard()
+        textInputLayout.editText.requestFocusAndOpenSoftKeyboard()
+        requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
     }
 
     override fun onPause() {
         super.onPause()
-        textInputLayout.editText?.clearFocusAndHideSoftKeyboard()
+        textInputLayout.editText.clearFocusAndHideSoftKeyboard()
     }
 
     private fun navigateBackWithResult() {
-        val result = textInputLayout.editText?.text?.toString() ?: ""
-        textInputLayout.error = (navArgs.validator ?: NotEmptyValidator()).validate(requireContext(), result)
+        val result = textInputLayout.editText.text?.toString() ?: ""
+        val error = (navArgs.validator ?: NotEmptyValidator()).validate(requireContext(), result)
+        textInputLayout.setError(error)
 
-        if (textInputLayout.error == null) {
-            NavigationResultMediator.postResult(navArgs.resultId, result)
-            findNavController().popBackStack()
+        if (error == null) {
+            textInputLayout.editText.clearFocusAndHideSoftKeyboard()
+
+            requireView().postDelayed({
+                NavigationResultMediator.postResult(navArgs.resultId, result)
+                findNavController().popBackStack()
+            }, 300)
         }
     }
 
