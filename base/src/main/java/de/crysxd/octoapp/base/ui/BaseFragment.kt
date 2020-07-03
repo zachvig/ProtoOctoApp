@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.ui
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -16,12 +17,12 @@ abstract class BaseFragment(@LayoutRes layout: Int) : Fragment(layout) {
     protected abstract val viewModel: BaseViewModel
     private var errorDialog: AlertDialog? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         viewModel.navContoller = findNavController()
-        viewModel.errorLiveData.observe(this, Observer(this::handleError))
-        viewModel.messages.observe(this, Observer(this::handleMessage))
+        viewModel.errorLiveData.observe(viewLifecycleOwner, Observer(this::handleError))
+        viewModel.messages.observe(viewLifecycleOwner, Observer(this::handleMessage))
     }
 
     fun handleMessage(generator: (Context) -> CharSequence) {
