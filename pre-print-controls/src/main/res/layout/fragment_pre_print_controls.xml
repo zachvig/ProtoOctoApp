@@ -13,7 +13,7 @@
         android:paddingBottom="@dimen/margin_2"
         android:clipToPadding="false"
         android:paddingTop="@dimen/common_view_top_padding"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/buttonStartPrint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

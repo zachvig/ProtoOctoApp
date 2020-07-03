@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.crysxd.octoapp.base.ui.common.MenuBottomSheet
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -54,6 +55,8 @@ class PrintControlsFragment : Fragment(R.layout.fragment_print_controls) {
         buttonMore.setOnClickListener {
             MenuBottomSheet().show(childFragmentManager, "menu")
         }
+
+        (widgetsList.layoutManager as? StaggeredGridLayoutManager)?.spanCount = resources.getInteger(de.crysxd.octoapp.base.R.integer.widget_list_span_count)
     }
 
     override fun onStart() {
