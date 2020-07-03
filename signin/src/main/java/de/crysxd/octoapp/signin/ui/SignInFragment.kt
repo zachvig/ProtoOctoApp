@@ -20,6 +20,7 @@ import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInViewState
 import kotlinx.android.synthetic.main.fragment_signin.*
+import timber.log.Timber
 
 class SignInFragment : BaseFragment(R.layout.fragment_signin) {
 
@@ -77,16 +78,18 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
             inputApiKey.setError(null)
         }
 
+        Timber.i(res.toString())
         if (res is SignInViewState.Loading) {
             buttonSignIn.isEnabled = false
             buttonSignIn.text = getString(R.string.loading)
         } else {
             buttonSignIn.isEnabled = true
-            buttonSignIn.text = getString(R.string.sign_in)
+            buttonSignIn.text = getString(R.string.sign_in_to_octoprint)
         }
 
         @Suppress("ControlFlowWithEmptyBody")
         if (res is SignInViewState.SignInSuccess) {
+            buttonSignIn.isEnabled = false
             // MainActivity will navigate away
         }
     }
