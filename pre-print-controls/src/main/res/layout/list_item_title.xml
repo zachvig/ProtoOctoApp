@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_marginEnd="@dimen/margin_2"
     android:layout_marginStart="@dimen/margin_5"
-    android:layout_marginBottom="@dimen/margin_3"
+    android:layout_marginBottom="@dimen/margin_2"
     android:ellipsize="end"
     android:lines="1"
     android:textAppearance="@style/OctoTheme.TextAppearance.Title"
