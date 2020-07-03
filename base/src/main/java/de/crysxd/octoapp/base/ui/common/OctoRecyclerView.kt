@@ -57,7 +57,7 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                calculatedScrollY += computeVerticalScrollOffset()
+                calculatedScrollY = computeVerticalScrollOffset()
                 Timber.i("dy: $dy scrollY: $calculatedScrollY")
 
                 octoActivity.octoToolbar.state = if (calculatedScrollY < paddingTop / 3f) {
@@ -92,7 +92,7 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
             createAnimator(topShadowAlphaProperty, alphaTop, duration).start()
         }
 
-        val alphaBottom = if (calculatedScrollY + height - paddingTop - paddingBottom < children.sumBy { it.height }) 1f else 0f
+        val alphaBottom = if (calculatedScrollY + height - paddingTop - paddingBottom < computeVerticalScrollRange()) 1f else 0f
         if (bottomShadowAlpha != alphaBottom) {
             createAnimator(bottomShadowAlphaProperty, alphaBottom, duration).start()
         }
