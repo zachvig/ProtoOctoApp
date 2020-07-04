@@ -22,6 +22,7 @@ interface PsuApi {
 
         suspend fun turnPsuOff() {
             webSocket.postMessage(Message.PsuControlPluginMessage(false))
+            webSocket.postMessage(Message.EventMessage.Disconnected)
             wrapped.sendPsuCommand(PsuCommand.TurnOffPsuCommand)
         }
     }
