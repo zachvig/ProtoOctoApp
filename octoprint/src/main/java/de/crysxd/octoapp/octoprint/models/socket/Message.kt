@@ -27,8 +27,12 @@ sealed class Message {
         )
     }
 
-    data class PluginMessage(
+    data class UnknownPluginMessage(
         val data: JsonObject
+    ) : Message()
+
+    data class PsuControlPluginMessage(
+        val isPsuOn: Boolean
     ) : Message()
 
     data class RawMessage(

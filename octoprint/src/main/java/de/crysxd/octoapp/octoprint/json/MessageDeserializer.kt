@@ -15,7 +15,10 @@ class MessageDeserializer(val gson: Gson) : JsonDeserializer<Message> {
             o.has("current") -> gson.fromJson(o["current"], Message.CurrentMessage::class.java)
             o.has("history") -> gson.fromJson(o["history"], Message.CurrentMessage::class.java)
             o.has("connected") -> gson.fromJson(o["connected"], Message.ConnectedMessage::class.java)
-            o.has("plugin") -> Message.PluginMessage(o["plugin"].asJsonObject)
+            o.has("plugin") -> when (o["plugin"].asJsonObject["plugin"].asString) {
+                "psucontrol" -> Message.PsuControlPluginMessage(o["plugin"].asJsonObject["data"].asJsonObject["isPSUOn"].asBoolean)
+                else -> Message.UnknownPluginMessage(o["plugin"].asJsonObject)
+            }
             o.has("event") -> deserializeEventMessage(o["event"].asJsonObject)
             else -> Message.RawMessage(o)
         }

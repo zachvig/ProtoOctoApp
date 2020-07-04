@@ -23,6 +23,7 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
         viewModel.uiState.observe(viewLifecycleOwner, Observer {
             Timber.i("$it")
             buttonTurnOnPsu.isVisible = false
+
             when (it) {
                 ConnectPrinterViewModel.UiState.OctoPrintNotAvailable -> showStatus(
                     R.string.octoprint_is_not_available,
@@ -33,8 +34,15 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
                     R.string.octoprint_is_starting_up
                 )
 
-                ConnectPrinterViewModel.UiState.WaitingForPrinterToComeOnline -> {
-                    buttonTurnOnPsu.isVisible = true
+                is ConnectPrinterViewModel.UiState.WaitingForPrinterToComeOnline -> {
+                    buttonTurnOnPsu.isVisible = it.psuIsOn != null
+                    buttonTurnOnPsu.setText(
+                        if (it.psuIsOn == true) {
+                            R.string.turn_off_psu
+                        } else {
+                            R.string.turn_psu_on
+                        }
+                    )
                     showStatus(
                         R.string.waiting_for_printer_to_come_online,
                         R.string.octoapp_will_auto_connect_the_printer_once_available
@@ -53,7 +61,7 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
         })
 
         buttonTurnOnPsu.setOnClickListener {
-            viewModel.turnOnPsu()
+            viewModel.togglePsu()
         }
     }
 
