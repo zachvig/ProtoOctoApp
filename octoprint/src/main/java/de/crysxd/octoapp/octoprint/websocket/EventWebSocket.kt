@@ -65,6 +65,10 @@ class EventWebSocket(
         }
     }
 
+    internal fun postMessage(message: Message) {
+        dispatchEvent(Event.MessageReceived(message, true))
+    }
+
     inner class WebSocketListener : okhttp3.WebSocketListener() {
 
         override fun onOpen(webSocket: WebSocket, response: Response) {

@@ -8,4 +8,5 @@
     <string name="check_your_network_connection">Check your network connection</string>
     <string name="searching_for_octoprint">Searching for Octoprint</string>
     <string name="printer_is_connecting">Printer is connecting…</string>
+    <string name="turn_off_psu">Turn off PSU</string>
 </resources>

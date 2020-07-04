@@ -2,12 +2,15 @@ package de.crysxd.octoapp.connect_printer.ui
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
+import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.connect_printer.di.injectViewModel
 import kotlinx.android.synthetic.main.fragment_connect_printer.*
@@ -21,8 +24,11 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.uiState.observe(viewLifecycleOwner, Observer {
+            TransitionManager.beginDelayedTransition(requireView() as ViewGroup, InstantAutoTransition())
+
             Timber.i("$it")
             buttonTurnOnPsu.isVisible = false
+
             when (it) {
                 ConnectPrinterViewModel.UiState.OctoPrintNotAvailable -> showStatus(
                     R.string.octoprint_is_not_available,
@@ -33,8 +39,15 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
                     R.string.octoprint_is_starting_up
                 )
 
-                ConnectPrinterViewModel.UiState.WaitingForPrinterToComeOnline -> {
-                    buttonTurnOnPsu.isVisible = true
+                is ConnectPrinterViewModel.UiState.WaitingForPrinterToComeOnline -> {
+                    buttonTurnOnPsu.isVisible = it.psuIsOn != null
+                    buttonTurnOnPsu.setText(
+                        if (it.psuIsOn == true) {
+                            R.string.turn_off_psu
+                        } else {
+                            R.string.turn_psu_on
+                        }
+                    )
                     showStatus(
                         R.string.waiting_for_printer_to_come_online,
                         R.string.octoapp_will_auto_connect_the_printer_once_available
@@ -53,7 +66,7 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
         })
 
         buttonTurnOnPsu.setOnClickListener {
-            viewModel.turnOnPsu()
+            viewModel.togglePsu()
         }
     }
 
