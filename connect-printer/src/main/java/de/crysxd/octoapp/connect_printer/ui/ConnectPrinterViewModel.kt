@@ -7,31 +7,31 @@ import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filter
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filterEventsForMessageType
 import de.crysxd.octoapp.base.livedata.PollingLiveData
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase
+import de.crysxd.octoapp.base.usecase.GetPrinterConnectionUseCase
 import de.crysxd.octoapp.base.usecase.TurnOnPsuUseCase
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintBootingException
-import de.crysxd.octoapp.octoprint.models.connection.ConnectionCommand
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 class ConnectPrinterViewModel(
     private val octoPrintProvider: OctoPrintProvider,
     private val turnOnPsuUseCase: TurnOnPsuUseCase,
-    private val octoPrintRepository: OctoPrintRepository
+    private val autoConnectPrinterUseCase: AutoConnectPrinterUseCase,
+    private val getPrinterConnectionUseCase: GetPrinterConnectionUseCase
 ) : BaseViewModel() {
 
     private var lastConnectionAttempt = 0L
 
     private val availableSerialConnections = Transformations.switchMap(octoPrintProvider.octoPrint) {
         PollingLiveData {
-            withContext(Dispatchers.IO) {
-                it?.createConnectionApi()?.getConnection()
+            it?.let {
+                getPrinterConnectionUseCase.execute(it)
             }
         }
     }
@@ -84,7 +84,7 @@ class ConnectPrinterViewModel(
                 if (connectionOptions.ports.isNotEmpty() && !didJustAttemptToConnect() && !isConnecting(printerState)) {
                     recordConnectionAttemp()
                     Timber.i("Attempting auto connect")
-                    octoPrint.createConnectionApi().executeConnectionCommand(ConnectionCommand.Connect())
+                    autoConnectPrinterUseCase.execute(octoPrint)
                 }
             }
         }
