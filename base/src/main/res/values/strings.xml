@@ -33,4 +33,5 @@
     <string name="change_filament">Change Filament</string>
     <string name="open_octoprint">Open OctoPrint</string>
     <string name="set">Set</string>
+    <string name="try_restrating_the_app_or_octoprint">Try restarting the app or OctoPrint</string>
 </resources>

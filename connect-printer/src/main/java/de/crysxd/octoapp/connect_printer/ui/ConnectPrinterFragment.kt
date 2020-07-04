@@ -2,6 +2,7 @@ package de.crysxd.octoapp.connect_printer.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import de.crysxd.octoapp.base.ui.BaseFragment
@@ -24,31 +25,29 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
             buttonTurnOnPsu.isVisible = false
             when (it) {
                 ConnectPrinterViewModel.UiState.OctoPrintNotAvailable -> showStatus(
-                    getString(R.string.octoprint_is_not_available),
-                    getString(R.string.check_your_network_connection)
+                    R.string.octoprint_is_not_available,
+                    R.string.check_your_network_connection
                 )
 
                 ConnectPrinterViewModel.UiState.OctoPrintStarting -> showStatus(
-                    getString(R.string.octoprint_is_starting_up),
-                    ""
+                    R.string.octoprint_is_starting_up
                 )
 
                 ConnectPrinterViewModel.UiState.WaitingForPrinterToComeOnline -> {
                     buttonTurnOnPsu.isVisible = true
                     showStatus(
-                        getString(R.string.waiting_for_printer_to_auto_connect),
-                        getString(R.string.no_printer_is_available)
+                        R.string.waiting_for_printer_to_come_online,
+                        R.string.octoapp_will_auto_connect_the_printer_once_available
                     )
                 }
 
                 ConnectPrinterViewModel.UiState.PrinterConnecting -> showStatus(
-                    "Printer is connecting…",
-                    ""
+                    R.string.printer_is_connecting
                 )
 
                 ConnectPrinterViewModel.UiState.Unknown -> showStatus(
-                    getString(R.string.error_general),
-                    "Try restarting the app or OctoPrint"
+                    R.string.error_general,
+                    R.string.try_restrating_the_app_or_octoprint
                 )
             }
         })
@@ -58,9 +57,9 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
         }
     }
 
-    private fun showStatus(state: String, subState: String) {
-        textViewState.text = state
-        textViewSubState.text = subState
+    private fun showStatus(@StringRes state: Int, @StringRes subState: Int? = null) {
+        textViewState.text = getString(state)
+        textViewSubState.text = subState?.let(this::getString)
     }
 
     override fun onResume() {
