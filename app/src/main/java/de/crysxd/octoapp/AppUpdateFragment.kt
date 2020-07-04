@@ -13,7 +13,6 @@ import timber.log.Timber
 class AppUpdateFragment : Fragment() {
 
     private val appUpdateManager by lazy { AppUpdateManagerFactory.create(context) }
-    private val clientVersionStalenessDays = 5
     private val minUpdatePriority = 2
     private val appUpdateType = AppUpdateType.IMMEDIATE
     private val appUpdateRequestCode = 135
@@ -32,8 +31,6 @@ class AppUpdateFragment : Fragment() {
             Timber.i("App update info: $appUpdateInfo")
 
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
-                appUpdateInfo.clientVersionStalenessDays() != null &&
-                appUpdateInfo.clientVersionStalenessDays() >= clientVersionStalenessDays &&
                 appUpdateInfo.updatePriority() >= minUpdatePriority &&
                 appUpdateInfo.isUpdateTypeAllowed(appUpdateType)
             ) activity?.let {
