@@ -7,14 +7,12 @@ import de.crysxd.octoapp.octoprint.exceptions.GenerateExceptionInterceptor
 import de.crysxd.octoapp.octoprint.json.FileObjectDeserializer
 import de.crysxd.octoapp.octoprint.json.MessageDeserializer
 import de.crysxd.octoapp.octoprint.models.files.FileObject
-import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.octoprint.websocket.EventWebSocket
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.logging.Logger
 
 
 class OctoPrint(
@@ -42,6 +40,9 @@ class OctoPrint(
 
     fun createPsuApi(): PsuApi.Wrapper =
         PsuApi.Wrapper((createRetrofit().create(PsuApi::class.java)))
+
+    fun createConnectionApi(): ConnectionApi.Wrapper =
+        ConnectionApi.Wrapper((createRetrofit().create(ConnectionApi::class.java)))
 
     fun gerWebUrl(): String = "http://${hostName}:${port}/"
 
