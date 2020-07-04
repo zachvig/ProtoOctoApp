@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.octoprint.models.socket
 
 import com.google.gson.JsonObject
+import com.google.gson.annotations.SerializedName
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 
@@ -74,37 +75,43 @@ sealed class Message {
             origin: FileOrigin,
             name: String,
             path: String
-        ): FileMessageEvent(origin, name, path)
+        ) : FileMessageEvent(origin, name, path)
 
         class PrintPausing(
             origin: FileOrigin,
             name: String,
             path: String
-        ): FileMessageEvent(origin, name, path)
+        ) : FileMessageEvent(origin, name, path)
 
         class PrintPaused(
             origin: FileOrigin,
             name: String,
             path: String
-        ): FileMessageEvent(origin, name, path)
+        ) : FileMessageEvent(origin, name, path)
 
         class PrintCancelling(
             origin: FileOrigin,
             name: String,
             path: String
-        ): FileMessageEvent(origin, name, path)
+        ) : FileMessageEvent(origin, name, path)
 
         class PrintCancelled(
             origin: FileOrigin,
             name: String,
             path: String
-        ): FileMessageEvent(origin, name, path)
+        ) : FileMessageEvent(origin, name, path)
 
         class PrintFailed(
             origin: FileOrigin,
             name: String,
             path: String
-        ) :FileMessageEvent(origin, name, path)
+        ) : FileMessageEvent(origin, name, path)
+
+        class FirmwareData(
+            @SerializedName("FIRMWARE_NAME") val firmwareName: String,
+            @SerializedName("MACHINE_TYPE") val machineType: String,
+            @SerializedName("EXTRUDER_COUNT") val extruderCount: Int
+        ) : EventMessage()
 
         object Disconnected : EventMessage()
 

@@ -17,7 +17,8 @@ import okhttp3.logging.HttpLoggingInterceptor
         LoggingModule::class,
         OctoPrintModule::class,
         DataSourceModule::class,
-        ViewModelModule::class
+        ViewModelModule::class,
+        FirebaseModule::class
     ]
 )
 interface BaseComponent {
