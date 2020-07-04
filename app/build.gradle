@@ -62,6 +62,7 @@ play {
     userFraction = 1
     defaultToAppBundles = true
     resolutionStrategy = "ignore"
+    updatePriority = 2
 }
 
 
@@ -71,6 +72,11 @@ dependencies {
     implementation project(':connect-printer')
     implementation project(':print-controls')
     implementation project(':pre-print-controls')
+
+    /*
+     * Google Play
+     */
+    implementation 'com.google.android.play:core-ktx:1.7.0'
 
     /**
      * Firebase
