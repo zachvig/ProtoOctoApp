@@ -27,22 +27,29 @@ class AppUpdateFragment : Fragment() {
 
         // Checks that the platform will allow the specified type of update.
         Timber.i("Requesting app update info")
-        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-            Timber.i("App update info: $appUpdateInfo")
+        appUpdateInfoTask.addOnCompleteListener { result ->
+            Timber.i("App update info: $result")
 
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
-                appUpdateInfo.updatePriority() >= minUpdatePriority &&
-                appUpdateInfo.isUpdateTypeAllowed(appUpdateType)
-            ) activity?.let {
-                Timber.i("Requesting app update")
+            if (result.exception != null) {
+                Timber.e(result.exception)
+            } else {
+                val appUpdateInfo = result.result
+                Timber.i("App update info: $appUpdateInfo")
 
-                // Request the update
-                appUpdateManager.startUpdateFlowForResult(
-                    appUpdateInfo,
-                    appUpdateType,
-                    it,
-                    appUpdateRequestCode
-                )
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                    appUpdateInfo.updatePriority() >= minUpdatePriority &&
+                    appUpdateInfo.isUpdateTypeAllowed(appUpdateType)
+                ) activity?.let {
+                    Timber.i("Requesting app update")
+
+                    // Request the update
+                    appUpdateManager.startUpdateFlowForResult(
+                        appUpdateInfo,
+                        appUpdateType,
+                        it,
+                        appUpdateRequestCode
+                    )
+                }
             }
         }
     }
