@@ -55,6 +55,8 @@ class MessageDeserializer(val gson: Gson) : JsonDeserializer<Message> {
 
         "PrintFailed" -> deserializeFileEventMessage(Message.EventMessage.PrintFailed::class.java, o["payload"].asJsonObject)
 
+        "FirmwareData" -> gson.fromJson(o["payload"].asJsonObject["data"], Message.EventMessage.FirmwareData::class.java)
+
         else -> {
             Message.EventMessage.Unknown(o["type"].asString)
         }

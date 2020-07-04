@@ -109,7 +109,6 @@ class ConnectPrinterViewModel(
     private fun isConnecting(printerState: Message.EventMessage.PrinterStateChanged.PrinterState?) = listOf(
         Message.EventMessage.PrinterStateChanged.PrinterState.OPERATIONAL,
         Message.EventMessage.PrinterStateChanged.PrinterState.CONNECTING,
-        Message.EventMessage.PrinterStateChanged.PrinterState.DETECT_SERIAL,
         Message.EventMessage.PrinterStateChanged.PrinterState.OPEN_SERIAL
     ).contains(printerState)
 

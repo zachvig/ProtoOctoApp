@@ -48,6 +48,11 @@ dependencies {
     api 'com.google.android:flexbox:2.0.1'
 
     /*
+     * Firebase
+     */
+    api 'com.google.firebase:firebase-analytics-ktx:17.4.3'
+
+    /*
      * Test
      */
     testImplementation 'junit:junit:4.12'

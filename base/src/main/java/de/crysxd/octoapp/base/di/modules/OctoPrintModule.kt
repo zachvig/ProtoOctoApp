@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.di.modules
 
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
 import dagger.Provides
 import de.crysxd.octoapp.base.OctoPrintProvider
@@ -27,7 +28,8 @@ open class OctoPrintModule {
     @Provides
     open fun provideOctoPrintProvider(
         httpLoggingInterceptor: HttpLoggingInterceptor,
-        octoPrintRepository: OctoPrintRepository
-    ) = OctoPrintProvider(httpLoggingInterceptor, octoPrintRepository)
+        octoPrintRepository: OctoPrintRepository,
+        analytics: FirebaseAnalytics
+    ) = OctoPrintProvider(httpLoggingInterceptor, octoPrintRepository, analytics)
 
 }
