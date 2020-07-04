@@ -37,7 +37,6 @@ class AppUpdateFragment : Fragment() {
                 Timber.i("App update info: $appUpdateInfo")
 
                 if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
-                    appUpdateInfo.updatePriority() >= minUpdatePriority &&
                     appUpdateInfo.isUpdateTypeAllowed(appUpdateType)
                 ) activity?.let {
                     Timber.i("Requesting app update")
