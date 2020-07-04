@@ -1,20 +1,15 @@
 package de.crysxd.octoapp.connect_printer.ui
 
 import android.os.Bundle
-import android.text.method.LinkMovementMethod
 import android.view.View
-import android.view.animation.AnimationUtils
-import androidx.core.text.HtmlCompat
+import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
-import de.crysxd.octoapp.base.livedata.PollingLiveData
-import de.crysxd.octoapp.base.models.exceptions.NoPrinterConnectedException
-import de.crysxd.octoapp.connect_printer.R
-import de.crysxd.octoapp.connect_printer.di.injectViewModel
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import de.crysxd.octoapp.octoprint.exceptions.OctoPrintBootingException
+import de.crysxd.octoapp.connect_printer.R
+import de.crysxd.octoapp.connect_printer.di.injectViewModel
 import kotlinx.android.synthetic.main.fragment_connect_printer.*
 import timber.log.Timber
 
@@ -25,35 +20,46 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        textViewAutoConnectInfo.movementMethod = LinkMovementMethod()
-        textViewAutoConnectInfo.text = HtmlCompat.fromHtml(
-            getString(R.string.install_then_port_listener_plugin_to_enable_auto_connect),
-            HtmlCompat.FROM_HTML_MODE_LEGACY
-        )
-
-        viewModel.printerState.observe(viewLifecycleOwner, Observer {
+        viewModel.uiState.observe(viewLifecycleOwner, Observer {
             Timber.i("$it")
+            buttonTurnOnPsu.isVisible = false
             when (it) {
-                is PollingLiveData.Result.Success -> {
-                    // MainActivity will navigate away
-                }
-                is PollingLiveData.Result.Failure -> {
-                    val (state, subState) = when (it.exception) {
-                        is OctoPrintBootingException -> Pair(getString(R.string.octoprint_is_starting_up), "")
-                        is NoPrinterConnectedException -> Pair(getString(R.string.waiting_for_printer_to_auto_connect), getString(R.string.no_printer_is_available))
-                        else -> Pair(getString(R.string.octoprint_is_not_available), getString(R.string.check_your_network_connection))
-                    }
-                    textViewState.text = state
-                    textViewSubState.text = subState
-                    buttonTurnOnPsu.isVisible = it.exception is NoPrinterConnectedException
-                    textViewAutoConnectInfo.isVisible = buttonTurnOnPsu.isVisible
-                }
-            }.let { }
+                ConnectPrinterViewModel.UiState.OctoPrintNotAvailable -> showStatus(
+                    R.string.octoprint_is_not_available,
+                    R.string.check_your_network_connection
+                )
 
-            buttonTurnOnPsu.setOnClickListener {
-                viewModel.turnOnPsu()
+                ConnectPrinterViewModel.UiState.OctoPrintStarting -> showStatus(
+                    R.string.octoprint_is_starting_up
+                )
+
+                ConnectPrinterViewModel.UiState.WaitingForPrinterToComeOnline -> {
+                    buttonTurnOnPsu.isVisible = true
+                    showStatus(
+                        R.string.waiting_for_printer_to_come_online,
+                        R.string.octoapp_will_auto_connect_the_printer_once_available
+                    )
+                }
+
+                ConnectPrinterViewModel.UiState.PrinterConnecting -> showStatus(
+                    R.string.printer_is_connecting
+                )
+
+                ConnectPrinterViewModel.UiState.Unknown -> showStatus(
+                    R.string.error_general,
+                    R.string.try_restrating_the_app_or_octoprint
+                )
             }
         })
+
+        buttonTurnOnPsu.setOnClickListener {
+            viewModel.turnOnPsu()
+        }
+    }
+
+    private fun showStatus(@StringRes state: Int, @StringRes subState: Int? = null) {
+        textViewState.text = getString(state)
+        textViewSubState.text = subState?.let(this::getString)
     }
 
     override fun onResume() {
