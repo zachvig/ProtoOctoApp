@@ -42,21 +42,6 @@
         tools:visibility="visible" />
 
     <TextView
-        android:id="@+id/textViewAutoConnectInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_2"
-        android:gravity="center"
-        android:text="@string/install_then_port_listener_plugin_to_enable_auto_connect"
-        android:textAppearance="@style/OctoTheme.TextAppearance"
-        android:textColor="?android:attr/textColorSecondary"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/buttonTurnOnPsu"
-        app:layout_constraintEnd_toEndOf="@+id/buttonTurnOnPsu"
-        app:layout_constraintStart_toStartOf="@+id/buttonTurnOnPsu"
-        tools:visibility="visible" />
-
-    <TextView
         android:id="@+id/textViewState"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
