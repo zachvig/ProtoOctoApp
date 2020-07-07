@@ -22,6 +22,7 @@ class EventWebSocket(
     private var webSocket: WebSocket? = null
     private var isConnected = AtomicBoolean(false)
     private val eventHandlers: MutableList<Pair<CoroutineScope, suspend (Event) -> Unit>> = mutableListOf()
+    private var lastCurrentMessage: Message.CurrentMessage? = null
 
     fun start() {
         if (isConnected.compareAndSet(false, true)) {
@@ -69,6 +70,12 @@ class EventWebSocket(
         dispatchEvent(Event.MessageReceived(message, true))
     }
 
+    internal fun postCurrentMessageInterpolation(modifier: (Message.CurrentMessage) -> Message.CurrentMessage) {
+        lastCurrentMessage?.let {
+            postMessage(modifier(it))
+        }
+    }
+
     inner class WebSocketListener : okhttp3.WebSocketListener() {
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
@@ -79,7 +86,11 @@ class EventWebSocket(
         override fun onMessage(webSocket: WebSocket, text: String) {
             super.onMessage(webSocket, text)
             try {
-                dispatchEvent(Event.MessageReceived(gson.fromJson(text, Message::class.java)))
+                val message = gson.fromJson(text, Message::class.java)
+                if (message is Message.CurrentMessage) {
+                    lastCurrentMessage = message
+                }
+                dispatchEvent(Event.MessageReceived(message))
             } catch (e: Exception) {
                 e.printStackTrace()
             }
