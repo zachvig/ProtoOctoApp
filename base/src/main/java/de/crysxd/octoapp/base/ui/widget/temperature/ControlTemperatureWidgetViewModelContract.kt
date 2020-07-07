@@ -3,6 +3,8 @@ package de.crysxd.octoapp.base.ui.widget.temperature
 import android.content.Context
 import android.text.InputType
 import androidx.annotation.StringRes
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filter
@@ -16,8 +18,11 @@ import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import de.crysxd.octoapp.octoprint.models.socket.HistoricTemperatureData
 import de.crysxd.octoapp.octoprint.models.socket.Message
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 abstract class ControlTemperatureWidgetViewModelContract(
     private val octoPrintProvider: OctoPrintProvider,
@@ -35,22 +40,26 @@ abstract class ControlTemperatureWidgetViewModelContract(
         }
     }
 
-    fun changeTemperature(context: Context) {
+    fun changeTemperature(context: Context) = viewModelScope.launch(coroutineExceptionHandler) {
+        val result = NavigationResultMediator.registerResultCallback<String>()
+
         navContoller.navigate(
             R.id.action_enter_temperature,
             EnterValueFragmentArgs(
                 title = context.getString(R.string.x_temperature, context.getString(getComponentName())),
                 hint = context.getString(R.string.target_temperature),
                 action = context.getString(R.string.set_temperature),
-                resultId = NavigationResultMediator.registerResultCallback(this::onTemperatureEntered),
+                resultId = result.first,
                 value = temperature.value?.target?.toInt()?.toString(),
                 inputType = InputType.TYPE_CLASS_NUMBER,
                 selectAll = true
             ).toBundle()
         )
-    }
 
-    private fun onTemperatureEntered(temp: String) {
+        val temp = withContext(Dispatchers.Default) {
+            result.second.asFlow().first()
+        }
+
         setTemperature(temp.toInt())
     }
 

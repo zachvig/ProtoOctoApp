@@ -36,7 +36,7 @@ class OctoPrint(
         FilesApi.Wrapper(createRetrofit().create(FilesApi::class.java))
 
     fun createPrinterApi(): PrinterApi.Wrapper =
-        PrinterApi.Wrapper(createRetrofit().create(PrinterApi::class.java))
+        PrinterApi.Wrapper(createRetrofit().create(PrinterApi::class.java), webSocket)
 
     fun createPsuApi(): PsuApi.Wrapper =
         PsuApi.Wrapper((createRetrofit().create(PsuApi::class.java)), webSocket)
