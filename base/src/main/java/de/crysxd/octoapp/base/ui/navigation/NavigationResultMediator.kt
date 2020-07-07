@@ -3,49 +3,30 @@ package de.crysxd.octoapp.base.ui.navigation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import timber.log.Timber
-import java.lang.Exception
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicInteger
 
 object NavigationResultMediator {
 
     private var resultCounter = AtomicInteger()
-    private val liveDataIndex = mutableMapOf<Int, WeakReference<MutableLiveData<in Any>>>()
-    private val callbackIndex = mutableMapOf<Int, WeakReference<(Any) -> Unit>>()
+    private val liveDataIndex = mutableMapOf<Int, WeakReference<MutableLiveData<in Any?>>>()
 
-    fun <T : Any> registerResultCallback(): Pair<Int, LiveData<T>> {
+    fun <T : Any?> registerResultCallback(): Pair<Int, LiveData<T?>> {
         val resultId = resultCounter.incrementAndGet()
-        val liveData = MutableLiveData<T>()
-        liveDataIndex[resultId] = WeakReference(liveData as MutableLiveData<in Any>)
-        val wrappedLiveData: LiveData<T> = Transformations.map(liveData) { it as T }
+        val liveData = MutableLiveData<T?>()
+        liveDataIndex[resultId] = WeakReference(liveData as MutableLiveData<in Any?>)
+        val wrappedLiveData: LiveData<T?> = Transformations.map(liveData) { it as T? }
         return Pair(resultId, wrappedLiveData)
     }
 
-    fun <T : Any> registerResultCallback(callback: (T) -> Any): Int {
-        val resultId = resultCounter.incrementAndGet()
-        callbackIndex[resultId] = WeakReference(callback as (Any) -> Unit)
-        return resultId
-    }
-
-    fun <T : Any> postResult(resultId: Int, result: T): Boolean {
+    fun <T : Any> postResult(resultId: Int, result: T?): Boolean {
         if (resultId >= 0) {
             val liveData = liveDataIndex[resultId]?.get()
-            val callback = callbackIndex[resultId]?.get()
 
             return when {
                 liveData != null -> {
                     liveData.postValue(result)
                     true
-                }
-                callback != null -> {
-                    try {
-                        callback(result)
-                        true
-                    } catch (e: Exception) {
-                        Timber.e(e)
-                        false
-                    }
                 }
                 else -> {
                     false

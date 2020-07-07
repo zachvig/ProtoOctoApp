@@ -24,6 +24,8 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
 
     private val navArgs: EnterValueFragmentArgs by navArgs()
 
+    private var resultPosted = false
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -65,6 +67,15 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
         textInputLayout.editText.clearFocusAndHideSoftKeyboard()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        // Cancelled, post null result
+        if (!resultPosted) {
+            NavigationResultMediator.postResult(navArgs.resultId, null)
+        }
+    }
+
     private fun navigateBackWithResult() {
         val result = textInputLayout.editText.text?.toString() ?: ""
         val error = (navArgs.validator ?: NotEmptyValidator()).validate(requireContext(), result)
@@ -73,6 +84,7 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
         if (error == null) {
             textInputLayout.editText.clearFocusAndHideSoftKeyboard()
 
+            resultPosted = true
             requireView().postDelayed({
                 NavigationResultMediator.postResult(navArgs.resultId, result)
                 findNavController().popBackStack()

@@ -2,6 +2,7 @@ package de.crysxd.octoapp.pre_print_controls.ui
 
 import android.content.Context
 import android.text.InputType
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ui.BaseViewModel
@@ -12,8 +13,11 @@ import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.TurnOffPsuUseCase
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import de.crysxd.octoapp.pre_print_controls.R
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PrePrintControlsViewModel(
     private val octoPrintProvider: OctoPrintProvider,
@@ -28,7 +32,28 @@ class PrePrintControlsViewModel(
         }
     }
 
-    private fun onGcodeEntered(gcode: String) = GlobalScope.launch(coroutineExceptionHandler) {
+    fun executeGcode(context: Context) = viewModelScope.launch(coroutineExceptionHandler) {
+        val result = NavigationResultMediator.registerResultCallback<String?>()
+
+        navContoller.navigate(
+            R.id.action_enter_gcode, EnterValueFragmentArgs(
+                title = context.getString(R.string.send_gcode),
+                hint = context.getString(R.string.gcode_one_command_per_line),
+                action = context.getString(R.string.send_gcode),
+                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS,
+                maxLines = 10,
+                resultId = result.first
+            ).toBundle()
+        )
+
+        withContext(Dispatchers.Default) {
+            result.second.asFlow().first()
+        }?.let {
+            sendGcode(it)
+        }
+    }
+
+    private suspend fun sendGcode(gcode: String) {
         octoPrintProvider.octoPrint.value?.let {
             val gcodeCommand = GcodeCommand.Batch(gcode.split("\n").toTypedArray())
             executeGcodeCommandUseCase.execute(Pair(it, gcodeCommand))
@@ -42,19 +67,6 @@ class PrePrintControlsViewModel(
                 )
             }
         }
-    }
-
-    fun executeGcode(context: Context) {
-        navContoller.navigate(
-            R.id.action_enter_gcode, EnterValueFragmentArgs(
-                title = context.getString(R.string.send_gcode),
-                hint = context.getString(R.string.gcode_one_command_per_line),
-                action = context.getString(R.string.send_gcode),
-                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS,
-                maxLines = 10,
-                resultId = NavigationResultMediator.registerResultCallback(this::onGcodeEntered)
-            ).toBundle()
-        )
     }
 
     fun startPrint() {

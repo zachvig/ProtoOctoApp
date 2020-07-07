@@ -2,14 +2,19 @@ package de.crysxd.octoapp.pre_print_controls.ui.widget.extrude
 
 import android.content.Context
 import android.text.InputType
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.ExtrudeFilamentUseCase
 import de.crysxd.octoapp.pre_print_controls.R
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ExtrudeWidgetViewModel(
     private val octoPrintProvider: OctoPrintProvider,
@@ -24,20 +29,24 @@ class ExtrudeWidgetViewModel(
 
     fun extrude120mm() = extrude(120)
 
-    fun extrudeOther(context: Context) {
+    fun extrudeOther(context: Context) = viewModelScope.launch(coroutineExceptionHandler) {
+        val result = NavigationResultMediator.registerResultCallback<String?>()
+
         navContoller.navigate(
             R.id.action_enter_extrude_distance,
             EnterValueFragmentArgs(
                 title = context.getString(R.string.extrude_retract),
                 hint = context.getString(R.string.distance_in_mm_negative_for_retract),
                 inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_SIGNED,
-                resultId = NavigationResultMediator.registerResultCallback<String>(this::onDistanceEntered)
+                resultId = result.first
             ).toBundle()
         )
-    }
 
-    private fun onDistanceEntered(distance: String) {
-        extrude(distance.toInt())
+        withContext(Dispatchers.Default) {
+            result.second.asFlow().first()
+        }?.let {
+            extrude(it.toInt())
+        }
     }
 
     private fun extrude(mm: Int) = GlobalScope.launch(coroutineExceptionHandler) {
