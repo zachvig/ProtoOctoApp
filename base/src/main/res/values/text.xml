@@ -38,7 +38,7 @@
     <style name="OctoTheme.TextAppearance.Button">
         <item name="android:textSize">20sp</item>
         <item name="android:fontFamily">@font/roboto_light</item>
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textColor">@color/button_primary_text_color</item>
     </style>
 
     <style name="OctoTheme.TextAppearance.SectionHeader">
