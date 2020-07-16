@@ -44,7 +44,11 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
                         }
                     )
                     showStatus(
-                        R.string.waiting_for_printer_to_come_online,
+                        if (it.psuIsOn == true) {
+                            R.string.psu_turned_on_waiting_for_printer_to_boot
+                        } else {
+                            R.string.waiting_for_printer_to_come_online
+                        },
                         R.string.octoapp_will_auto_connect_the_printer_once_available
                     )
                 }
