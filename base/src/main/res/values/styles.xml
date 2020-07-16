@@ -37,13 +37,13 @@
     <style name="OctoTheme.Widget.Button.Small.Secondary">
         <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Button</item>
         <item name="android:background">@drawable/bg_button_small_secondary</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textColor">@color/button_secondary_text_color</item>
     </style>
 
     <style name="OctoTheme.Widget.Button.Image" parent="Widget.AppCompat.ImageButton">
         <item name="android:padding">@dimen/margin_1</item>
         <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
-        <item name="android:tint">?android:attr/colorAccent</item>
+        <item name="android:tint">@color/button_secondary_text_color</item>
     </style>
 
 </resources>
