@@ -41,7 +41,7 @@ abstract class ControlTemperatureWidgetViewModelContract(
     }
 
     fun changeTemperature(context: Context) = viewModelScope.launch(coroutineExceptionHandler) {
-        val result = NavigationResultMediator.registerResultCallback<String>()
+        val result = NavigationResultMediator.registerResultCallback<String?>()
 
         navContoller.navigate(
             R.id.action_enter_temperature,
@@ -56,11 +56,11 @@ abstract class ControlTemperatureWidgetViewModelContract(
             ).toBundle()
         )
 
-        val temp = withContext(Dispatchers.Default) {
+        withContext(Dispatchers.Default) {
             result.second.asFlow().first()
+        }?.let { temp ->
+            setTemperature(temp.toInt())
         }
-
-        setTemperature(temp.toInt())
     }
 
     protected abstract fun extractComponentTemperature(temp: HistoricTemperatureData): PrinterState.ComponentTemperature?

@@ -2,6 +2,7 @@ package de.crysxd.octoapp.connect_printer.ui
 
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filter
@@ -48,7 +49,7 @@ class ConnectPrinterViewModel(
         .filterEventsForMessageType(Message.PsuControlPluginMessage::class.java)
 
     private val uiStateMediator = MediatorLiveData<UiState>()
-    val uiState = Transformations.map(uiStateMediator) { it }
+    val uiState = uiStateMediator.map { it }.distinctUntilChanged()
 
     init {
         uiStateMediator.addSource(availableSerialConnections) { uiStateMediator.postValue(updateUiState()) }
