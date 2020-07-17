@@ -1,7 +1,6 @@
 package de.crysxd.octoapp.print_controls.ui.widget.progress
 
 import android.content.Context
-import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +15,7 @@ import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidgetViewModel
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.injectViewModel
 import kotlinx.android.synthetic.main.widget_progress.view.*
+import java.util.concurrent.TimeUnit
 
 class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
 
@@ -62,15 +62,21 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
             )
 
             view.textViewProgressPercent.text = requireContext().getString(R.string.x_percent, progressPercent)
-            view.textViewTimeSpent.text = it.progress?.printTime?.let(::formatDuration)
-            view.textViewTimeLeft.text = it.progress?.printTimeLeft?.let(::formatDuration)
+            view.textViewTimeSpent.text = it.progress?.printTime?.toLong()?.let(::formatDuration)
+            view.textViewTimeLeft.text = it.progress?.printTimeLeft?.toLong()?.let(::formatDuration)
             view.textViewEstimation.text = it.progress?.printTimeLeftOrigin
         })
     }
 
-    private fun formatDuration(seconds: Int): String = if (seconds < 60) {
-        seconds.toString()
-    } else {
-        DateUtils.formatElapsedTime(seconds.toLong())
+    private fun formatDuration(seconds: Long): String {
+        val hours = TimeUnit.SECONDS.toHours(seconds)
+        val minutes = TimeUnit.SECONDS.toMinutes(seconds - TimeUnit.HOURS.toSeconds(hours))
+
+        val format = when {
+            hours > 0 -> "%1$02d:%2$02d h"
+            else -> "%2$02d min"
+        }
+
+        return String.format(format, hours, minutes)
     }
 }
