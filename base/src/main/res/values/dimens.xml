@@ -9,6 +9,7 @@
     <dimen name="common_view_top_padding">@dimen/margin_6</dimen>
     <dimen name="common_corner_radius">@dimen/margin_1</dimen>
 
+    <dimen name="margin_0">2dp</dimen>
     <dimen name="margin_1">10dp</dimen>
     <dimen name="margin_2">20dp</dimen>
     <dimen name="margin_3">40dp</dimen>
