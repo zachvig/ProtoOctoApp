@@ -2,4 +2,9 @@
 <resources>
     <string name="emergency_stop">Emergency Stop</string>
     <string name="cancel_print">Cancel Print</string>
+    <string name="estimation">Estimation</string>
+    <string name="time_left">Time left</string>
+    <string name="time_spent">Time spent</string>
+    <string name="progress">Prorgess</string>
+    <string name="x_percent">%.0f %%</string>
 </resources>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/progressBarBackground"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin_3"
+        android:background="@drawable/bg_input"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/progressBarFill"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_prorgess"
+        android:backgroundTint="?android:attr/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@+id/progressBarBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/progressBar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_prorgess"
+        android:backgroundTint="?android:attr/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@+id/progressBarBackground"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_constraintWidth_percent="0.8" />
+
+    <TextView
+        android:id="@+id/textViewProgressPercent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_1"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
+        app:layout_constraintBottom_toBottomOf="@+id/progressBarBackground"
+        app:layout_constraintEnd_toEndOf="@+id/progressBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.761"
+        tools:text="20%" />
+
+    <TextView
+        android:id="@+id/textViewTimeSpentLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_2"
+        android:layout_marginTop="@dimen/margin_2"
+        android:text="@string/time_spent"
+        android:textColor="@color/dark_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBarBackground" />
+
+    <TextView
+        android:id="@+id/textViewTimeSpent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_2"
+        android:layout_marginTop="@dimen/margin_2"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/labelBarrier"
+        app:layout_constraintTop_toBottomOf="@+id/progressBarBackground"
+        tools:text="2:45 h"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/textViewTimeLeftLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_2"
+        android:layout_marginTop="@dimen/margin_0"
+        android:text="@string/time_left"
+        android:textColor="@color/dark_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTimeSpentLabel" />
+
+    <TextView
+        android:id="@+id/textViewTimeLeft"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_2"
+        android:layout_marginTop="@dimen/margin_0"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/labelBarrier"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTimeSpentLabel"
+        tools:text="32 min"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/textViewEstimationLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_2"
+        android:layout_marginTop="@dimen/margin_0"
+        android:text="@string/estimation"
+        android:textColor="@color/dark_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTimeLeftLabel" />
+
+    <TextView
+        android:id="@+id/textViewEstimation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_2"
+        android:layout_marginTop="@dimen/margin_0"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/labelBarrier"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTimeLeft"
+        tools:text="Linear"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/labelBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="textViewTimeSpentLabel,textViewEstimationLabel,textViewTimeLeftLabel"
+        tools:layout_editor_absoluteX="393dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
