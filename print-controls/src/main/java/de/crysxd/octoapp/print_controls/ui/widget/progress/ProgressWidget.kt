@@ -1,21 +1,26 @@
 package de.crysxd.octoapp.print_controls.ui.widget.progress
 
+import android.animation.ObjectAnimator
 import android.content.Context
+import android.graphics.drawable.ClipDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.transition.TransitionManager
+import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidgetViewModel
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.injectViewModel
 import kotlinx.android.synthetic.main.widget_progress.view.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
 class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
 
@@ -28,7 +33,7 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
 
     override fun onViewCreated(view: View) {
         viewModel.printState.observe(viewLifecycleOwner, Observer {
-            TransitionManager.beginDelayedTransition(view as ViewGroup)
+            TransitionManager.beginDelayedTransition(view as ViewGroup, InstantAutoTransition())
 
             val progressPercent = it.progress?.completion ?: 0f
             val progressPercentLayoutThreshold = 80f
@@ -61,10 +66,19 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
                 )
             )
 
+            (view.progressBarFill.background as? ClipDrawable)?.apply {
+                ObjectAnimator.ofInt(this, "level", level, (10000f * (progressPercent / 100f)).roundToInt()).start()
+            }
+
             view.textViewProgressPercent.text = requireContext().getString(R.string.x_percent, progressPercent)
             view.textViewTimeSpent.text = it.progress?.printTime?.toLong()?.let(::formatDuration)
             view.textViewTimeLeft.text = it.progress?.printTimeLeft?.toLong()?.let(::formatDuration)
             view.textViewEstimation.text = it.progress?.printTimeLeftOrigin
+
+            view.textViewProgressPercent.isVisible = true
+            view.textViewTimeSpent.isVisible = true
+            view.textViewTimeLeft.isVisible = true
+            view.textViewEstimation.isVisible = true
         })
     }
 
@@ -74,7 +88,7 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
 
         val format = when {
             hours > 0 -> "%1$02d:%2$02d h"
-            else -> "%2$02d min"
+            else -> "%2\$d min"
         }
 
         return String.format(format, hours, minutes)

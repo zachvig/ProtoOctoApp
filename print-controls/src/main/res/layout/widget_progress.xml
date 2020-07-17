@@ -15,26 +15,38 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
-        android:id="@+id/progressBar"
+        android:id="@+id/progressBarFill"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/bg_prorgess"
         android:backgroundTint="?android:attr/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@+id/progressBarBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/progressBar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/progressBarBackground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textViewProgressPercent"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/margin_1"
         android:paddingEnd="@dimen/margin_1"
         android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/progressBarBackground"
+        app:layout_constraintEnd_toEndOf="@+id/progressBarBackground"
         app:layout_constraintStart_toEndOf="@+id/progressBar"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="20%" />
+        tools:text="20%"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/textViewTimeSpentLabel"
@@ -49,13 +61,16 @@
 
     <TextView
         android:id="@+id/textViewTimeSpent"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_2"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/labelBarrier"
         app:layout_constraintTop_toBottomOf="@+id/progressBarBackground"
-        tools:text="2:45 h" />
+        tools:text="2:45 h"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/textViewTimeLeftLabel"
@@ -70,13 +85,16 @@
 
     <TextView
         android:id="@+id/textViewTimeLeft"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_0"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/labelBarrier"
         app:layout_constraintTop_toBottomOf="@+id/textViewTimeSpentLabel"
-        tools:text="32 min" />
+        tools:text="32 min"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/textViewEstimationLabel"
@@ -91,13 +109,16 @@
 
     <TextView
         android:id="@+id/textViewEstimation"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_0"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/labelBarrier"
         app:layout_constraintTop_toBottomOf="@+id/textViewTimeLeft"
-        tools:text="Linear" />
+        tools:text="Linear"
+        tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/labelBarrier"
@@ -106,6 +127,5 @@
         app:barrierDirection="end"
         app:constraint_referenced_ids="textViewTimeSpentLabel,textViewEstimationLabel,textViewTimeLeftLabel"
         tools:layout_editor_absoluteX="393dp" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
