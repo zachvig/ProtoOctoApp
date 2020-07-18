@@ -38,8 +38,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:visibility="visible" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textViewState"
@@ -73,10 +72,5 @@
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="@string/error_no_printer_connected" />
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/stateViews"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="textViewState,textViewSubState,buttonTurnOnPsu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,12 +26,12 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
             Timber.i("$state")
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                val views = stateViews.referencedIds.map { view.findViewById<View>(it) }
+                val views = listOf(buttonTurnOnPsu, textViewState, textViewSubState)
                 val duration = view.animate().duration
                 views.forEach { it.animate().alpha(0f).start() }
                 delay(duration)
                 handleUiStateUpdate(state)
-                views.filter { it.isVisible }.forEach { it.animate().alpha(1f).start() }
+                views.forEach { it.animate().alpha(1f).start() }
             }
         })
 
