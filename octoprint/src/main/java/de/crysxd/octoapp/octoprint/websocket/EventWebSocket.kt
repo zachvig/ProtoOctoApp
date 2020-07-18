@@ -70,9 +70,9 @@ class EventWebSocket(
         dispatchEvent(Event.MessageReceived(message, true))
     }
 
-    internal fun postCurrentMessageInterpolation(modifier: (Message.CurrentMessage) -> Message.CurrentMessage) {
+    internal fun postCurrentMessageInterpolation(modifier: (Message.CurrentMessage) -> Message.CurrentMessage?) {
         lastCurrentMessage?.let {
-            postMessage(modifier(it))
+            modifier(it)?.let(this::postMessage)
         }
     }
 

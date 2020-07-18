@@ -30,7 +30,7 @@ class OctoPrint(
         createRetrofit().create(VersionApi::class.java)
 
     fun createJobApi(): JobApi.Wrapper =
-        JobApi.Wrapper(createRetrofit().create(JobApi::class.java))
+        JobApi.Wrapper(createRetrofit().create(JobApi::class.java), webSocket)
 
     fun createFilesApi(): FilesApi.Wrapper =
         FilesApi.Wrapper(createRetrofit().create(FilesApi::class.java))
