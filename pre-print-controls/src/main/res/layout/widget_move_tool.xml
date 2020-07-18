@@ -103,7 +103,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:importantForAccessibility="no"
-                android:text="Y"
+                android:text="@string/y"
                 android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
                 app:layout_constraintBottom_toBottomOf="@+id/yLabelHelper"
                 app:layout_constraintEnd_toEndOf="@+id/imageButtonMoveYPositive"
@@ -115,7 +115,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:importantForAccessibility="no"
-                android:text="X"
+                android:text="@string/x"
                 android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
                 app:layout_constraintBottom_toBottomOf="@+id/imageButtonMoveXPositive"
                 app:layout_constraintEnd_toEndOf="@+id/xLabelHelper"
@@ -237,7 +237,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:importantForAccessibility="no"
-                android:text="Z"
+                android:text="@string/z"
                 android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
                 app:layout_constraintBottom_toBottomOf="@+id/zLabelHelper"
                 app:layout_constraintEnd_toEndOf="@+id/imageButtonHomeZ"
@@ -297,47 +297,72 @@
         app:layout_constraintStart_toEndOf="@+id/controlsZ"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <RadioGroup
+            android:id="@+id/jogResolutionGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_1"
+            android:layout_marginBottom="@dimen/margin_1"
+            android:background="?attr/selectableItemBackground"
+            tools:ignore="UnusedAttribute">
 
-            <View
-                android:id="@+id/labelHelper"
-                android:layout_width="1dp"
-                android:layout_height="@dimen/margin_2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <de.crysxd.octoapp.pre_print_controls.ui.widget.move.VerticalSeekBar
-                android:id="@+id/seekBarJogResolution"
-                style="@style/Widget.AppCompat.SeekBar.Discrete"
+            <ToggleButton
+                android:id="@+id/buttonJogResolution100"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:max="4"
-                android:progress="3"
-                android:layout_marginStart="@dimen/margin_1"
-                android:layout_marginEnd="@dimen/margin_1"
-                android:padding="@dimen/margin_2"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewJogResolution" />
+                android:layout_weight="1"
+                android:background="@null"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:textAllCaps="false"
+                android:textOff=""
+                android:textOn="@string/mm_100"
+                tools:checked="true" />
 
-            <TextView
-                android:id="@+id/textViewJogResolution"
-                style="@style/OctoTheme.TextAppearance.Label.Small"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                app:layout_constraintBottom_toBottomOf="@+id/labelHelper"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="1 mm" />
+            <ToggleButton
+                android:id="@+id/buttonJogResolution10"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:textAllCaps="false"
+                android:textOff=""
+                android:textOn="@string/mm_10" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <ToggleButton
+                android:id="@+id/buttonJogResolution1"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:textAllCaps="false"
+                android:textOff=""
+                android:textOn="@string/mm_1" />
 
+            <ToggleButton
+                android:id="@+id/buttonJogResolution01"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:textAllCaps="false"
+                android:textOff=""
+                android:textOn="@string/mm_0_1" />
+
+            <ToggleButton
+                android:id="@+id/buttonJogResolution0025"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:textAllCaps="false"
+                android:textOff=""
+                android:textOn="@string/mm_0_025" />
+
+        </RadioGroup>
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
