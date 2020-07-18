@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:minHeight="70dp"
     android:background="@drawable/bg_input">
 
     <LinearLayout
@@ -48,7 +50,6 @@
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:tint="?android:attr/colorAccent"
-        android:layout_gravity="center_vertical"
         android:layout_marginStart="@dimen/margin_1"
         tools:srcCompat="@drawable/ic_qr_code_scanner_24px" />
 
