@@ -25,12 +25,16 @@ class OctoPrintRepository(
     }
 
     fun storeOctoprintInstanceInformation(instance: OctoPrintInstanceInformation?) = GlobalScope.launch {
-        dataSource.store(instance)
-        mutableInstanceInformation.postValue(if(instance != null && checkOctoPrintInstanceInformationUseCase.execute(instance)) {
-            instance
-        } else {
-          null
-        })
+        if (instance == null || instance != instanceInformation.value) {
+            dataSource.store(instance)
+            mutableInstanceInformation.postValue(
+                if (instance != null && checkOctoPrintInstanceInformationUseCase.execute(instance)) {
+                    instance
+                } else {
+                    null
+                }
+            )
+        }
     }
 
     private fun getOctoprintInstanceInformation() = dataSource.get()
