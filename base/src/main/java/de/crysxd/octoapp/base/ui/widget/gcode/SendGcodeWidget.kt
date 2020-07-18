@@ -29,5 +29,9 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
         }?.forEach {
             it.setOnClickListener { _ -> viewModel.sendGcodeCommand(it.text.toString()) }
         }
+
+        view.buttonOpenTerminal.setOnClickListener {
+            viewModel.sendGcodeCommand(it.context)
+        }
     }
 }

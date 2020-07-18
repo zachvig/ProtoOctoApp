@@ -21,8 +21,4 @@
         android:icon="@drawable/ic_baseline_power_settings_new_24"
         android:title="@string/turn_off_psu" />
 
-    <item
-        android:id="@+id/menuItemSendGcode"
-        android:icon="@drawable/ic_round_code_24"
-        android:title="@string/send_gcode" />
 </menu>

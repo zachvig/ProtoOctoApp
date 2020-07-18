@@ -33,7 +33,7 @@ class ExtrudeWidgetViewModel(
         val result = NavigationResultMediator.registerResultCallback<String?>()
 
         navContoller.navigate(
-            R.id.action_enter_extrude_distance,
+            R.id.action_enter_value,
             EnterValueFragmentArgs(
                 title = context.getString(R.string.extrude_retract),
                 hint = context.getString(R.string.distance_in_mm_negative_for_retract),

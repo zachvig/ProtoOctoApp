@@ -44,7 +44,7 @@ abstract class ControlTemperatureWidgetViewModelContract(
         val result = NavigationResultMediator.registerResultCallback<String?>()
 
         navContoller.navigate(
-            R.id.action_enter_temperature,
+            R.id.action_enter_value,
             EnterValueFragmentArgs(
                 title = context.getString(R.string.x_temperature, context.getString(getComponentName())),
                 hint = context.getString(R.string.target_temperature),

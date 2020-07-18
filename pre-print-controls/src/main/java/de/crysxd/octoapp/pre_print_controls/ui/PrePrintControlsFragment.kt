@@ -62,7 +62,6 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
             when (id) {
                 R.id.menuChangeFilament -> viewModel.changeFilament()
                 R.id.menuItemTurnOffPsu -> viewModel.turnOffPsu()
-                R.id.menuItemSendGcode -> viewModel.executeGcode(requireContext())
                 else -> return false
             }
 
