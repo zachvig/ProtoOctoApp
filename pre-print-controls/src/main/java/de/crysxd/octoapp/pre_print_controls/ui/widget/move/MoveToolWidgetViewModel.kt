@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.pre_print_controls.ui.widget.move
 
-import androidx.lifecycle.MutableLiveData
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.HomePrintHeadUseCase
@@ -14,8 +13,7 @@ class MoveToolWidgetViewModel(
     private val octoPrintProvider: OctoPrintProvider
 ) : BaseViewModel() {
 
-    val jogResolutionStepsMm = listOf(0.025f, 0.1f, 1f, 10f, 100f)
-    val jogResolution = MutableLiveData<Float>(jogResolutionStepsMm[0])
+    var jogResolution: Float = -1f
 
     fun homeXYAxis() = GlobalScope.launch(coroutineExceptionHandler) {
         octoPrintProvider.octoPrint.value?.let {
@@ -31,16 +29,14 @@ class MoveToolWidgetViewModel(
 
     fun jog(x: Direction = Direction.None, y: Direction = Direction.None, z: Direction = Direction.None) = GlobalScope.launch(coroutineExceptionHandler) {
         octoPrintProvider.octoPrint.value?.let { octoPrint ->
-            jogResolution.value?.let {
-                jogPrintHeadUseCase.execute(
-                    JogPrintHeadUseCase.Param(
-                        octoPrint,
-                        x.applyToDistance(it),
-                        y.applyToDistance(it),
-                        z.applyToDistance(it)
-                    )
+            jogPrintHeadUseCase.execute(
+                JogPrintHeadUseCase.Param(
+                    octoPrint,
+                    x.applyToDistance(jogResolution),
+                    y.applyToDistance(jogResolution),
+                    z.applyToDistance(jogResolution)
                 )
-            }
+            )
         }
     }
 
