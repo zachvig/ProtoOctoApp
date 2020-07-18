@@ -2,22 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menuOpenOctoprint"
+        android:id="@id/menuGiveFeedback"
+        android:icon="@drawable/ic_round_feedback_24"
+        android:title="@string/give_feedback" />
+
+    <item
+        android:id="@id/menuOpenOctoprint"
         android:title="@string/open_octoprint"
-        android:icon="@drawable/ic_round_open_in_browser_24"/>
+        android:icon="@drawable/ic_round_open_in_browser_24" />
 
     <item
         android:id="@+id/menuChangeFilament"
         android:title="@string/change_filament"
-        android:icon="@drawable/ic_round_change_history_24"/>
+        android:icon="@drawable/ic_round_change_history_24" />
 
     <item
         android:id="@+id/menuItemTurnOffPsu"
         android:icon="@drawable/ic_baseline_power_settings_new_24"
         android:title="@string/turn_off_psu" />
 
-    <item
-        android:id="@+id/menuItemSendGcode"
-        android:icon="@drawable/ic_round_code_24"
-        android:title="@string/send_gcode" />
 </menu>

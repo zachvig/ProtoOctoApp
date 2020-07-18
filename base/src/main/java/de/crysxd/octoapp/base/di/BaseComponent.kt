@@ -47,6 +47,8 @@ interface BaseComponent {
     fun cancelPrintJobUseCase(): CancelPrintJobUseCase
     fun togglePausePrintJobUseCase(): TogglePausePrintJobUseCase
     fun emergencyStopUseCase(): EmergencyStopUseCase
+    fun openOctoPrintWebUseCase(): OpenOctoprintWebUseCase
+    fun openEmailClientForFeedbackUseCase(): OpenEmailClientForFeedbackUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

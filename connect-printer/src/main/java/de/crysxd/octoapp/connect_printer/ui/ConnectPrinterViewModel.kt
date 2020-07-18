@@ -4,6 +4,8 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filter
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filterEventsForMessageType
@@ -61,6 +63,8 @@ class ConnectPrinterViewModel(
         val connectionResult = availableSerialConnections.value
         val printerState = printerState.value
         val psuState = psuState.value
+
+        Firebase.analytics.setUserProperty("psu_plugin_available", (psuState != null).toString())
 
         Timber.d("-----")
         Timber.d(connectionResult.toString())

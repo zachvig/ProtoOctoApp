@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
+        app:layout_behavior=".base.ui.common.ShrinkBehaviour"
         app:navGraph="@navigation/main_nav_graph" />
 
     <androidx.fragment.app.FragmentContainerView
@@ -33,4 +35,4 @@
         android:layout_gravity="end"
         android:rotation="270" />
 
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -2,15 +2,16 @@ package de.crysxd.octoapp.signin.ui
 
 import android.app.AlertDialog
 import android.os.Bundle
-import androidx.transition.TransitionManager
-import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.transition.TransitionManager
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.ext.setTextAppearanceCompat
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
@@ -20,7 +21,6 @@ import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInViewState
 import kotlinx.android.synthetic.main.fragment_signin.*
-import timber.log.Timber
 
 class SignInFragment : BaseFragment(R.layout.fragment_signin) {
 
@@ -43,6 +43,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         })
 
         inputApiKey.setOnActionListener {
+            Firebase.analytics.logEvent("qr_code_login", Bundle.EMPTY)
             findNavController().navigate(R.id.actionReadQrCode)
         }
 
@@ -78,7 +79,6 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
             inputApiKey.setError(null)
         }
 
-        Timber.i(res.toString())
         if (res is SignInViewState.Loading) {
             buttonSignIn.isEnabled = false
             buttonSignIn.text = getString(R.string.loading)
@@ -90,6 +90,8 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         @Suppress("ControlFlowWithEmptyBody")
         if (res is SignInViewState.SignInSuccess) {
             buttonSignIn.isEnabled = false
+            Firebase.analytics.logEvent(FirebaseAnalytics.Event.LOGIN, Bundle.EMPTY)
+
             // MainActivity will navigate away
         }
     }

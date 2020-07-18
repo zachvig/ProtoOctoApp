@@ -1,7 +1,5 @@
 package de.crysxd.octoapp.pre_print_controls.ui
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
@@ -13,12 +11,12 @@ import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.pre_print_controls.R
-import de.crysxd.octoapp.base.R as BaseR
 import de.crysxd.octoapp.pre_print_controls.di.injectParentViewModel
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.widget.extrude.ExtrudeWidget
 import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidget
 import kotlinx.android.synthetic.main.fragment_pre_print_controls.*
+import de.crysxd.octoapp.base.R as BaseR
 
 class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_controls) {
 
@@ -60,14 +58,14 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
 
         override fun getMenuRes() = R.menu.prepare_menu
 
-        override fun onMenuItemSelected(id: Int) {
+        override suspend fun onMenuItemSelected(id: Int): Boolean {
             when (id) {
                 R.id.menuChangeFilament -> viewModel.changeFilament()
-                R.id.menuOpenOctoprint -> viewModel.getOctoPrintUrl()?.let { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it))) }
                 R.id.menuItemTurnOffPsu -> viewModel.turnOffPsu()
-                R.id.menuItemSendGcode -> viewModel.executeGcode(requireContext())
-                else -> Unit
+                else -> return false
             }
+
+            return true
         }
     }
 }

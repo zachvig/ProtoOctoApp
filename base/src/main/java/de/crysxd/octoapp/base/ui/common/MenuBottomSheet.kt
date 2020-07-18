@@ -9,11 +9,14 @@ import androidx.annotation.IdRes
 import androidx.annotation.MenuRes
 import androidx.core.view.get
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.di.Injector
 import kotlinx.android.synthetic.main.item_menu.view.*
+import kotlinx.coroutines.launch
 
 
 abstract class MenuBottomSheet : BottomSheetDialogFragment() {
@@ -22,8 +25,12 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
         val view = RecyclerView(requireContext())
         view.layoutManager = LinearLayoutManager(requireContext())
         view.adapter = MenuAdapter(requireContext(), getMenuRes()) {
-            dismiss()
-            this.onMenuItemSelected(it)
+            lifecycleScope.launch {
+                dismiss()
+                if (!onMenuItemSelected(it)) {
+                    onMenuItemSelectedBase(it)
+                }
+            }
         }
         return view
     }
@@ -31,7 +38,15 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
     @MenuRes
     abstract fun getMenuRes(): Int
 
-    abstract fun onMenuItemSelected(@IdRes id: Int): Any
+    abstract suspend fun onMenuItemSelected(@IdRes id: Int): Boolean
+
+    private suspend fun onMenuItemSelectedBase(@IdRes id: Int) = when (id) {
+        R.id.menuOpenOctoprint -> Injector.get().octoPrintProvider().octoPrint.value?.let {
+            Injector.get().openOctoPrintWebUseCase().execute(Pair(it, requireContext()))
+        }
+        R.id.menuGiveFeedback -> Injector.get().openEmailClientForFeedbackUseCase().execute(requireContext())
+        else -> Unit
+    }
 
     override fun onStart() {
         super.onStart()
@@ -39,7 +54,7 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
         // Fixes dialog hides nav bar on Android O
         if (dialog != null && dialog!!.window != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val window = dialog!!.window
-            window!!.findViewById<View>(com.google.android.material.R.id.container).setFitsSystemWindows(false)
+            window!!.findViewById<View>(com.google.android.material.R.id.container).fitsSystemWindows = false
             // dark navigation bar icons
             val decorView = window.decorView
             decorView.systemUiVisibility = decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR

@@ -11,27 +11,6 @@
         android:label="@string/prepare"
         tools:layout="@layout/fragment_pre_print_controls">
         <action
-            android:id="@+id/action_enter_gcode"
-            app:destination="@id/enter_value_nav_graph"
-            app:enterAnim="@anim/enterAnim"
-            app:exitAnim="@anim/exitAnim"
-            app:popEnterAnim="@anim/popEnterAnim"
-            app:popExitAnim="@anim/popExitAnim" />
-        <action
-            android:id="@+id/action_enter_extrude_distance"
-            app:destination="@id/enter_value_nav_graph"
-            app:enterAnim="@anim/enterAnim"
-            app:exitAnim="@anim/exitAnim"
-            app:popEnterAnim="@anim/popEnterAnim"
-            app:popExitAnim="@anim/popExitAnim" />
-        <action
-            android:id="@id/action_enter_temperature"
-            app:destination="@id/enter_value_nav_graph"
-            app:enterAnim="@anim/enterAnim"
-            app:exitAnim="@anim/exitAnim"
-            app:popEnterAnim="@anim/popEnterAnim"
-            app:popExitAnim="@anim/popExitAnim" />
-        <action
             android:id="@+id/action_start_print"
             app:destination="@id/selectFileFragment"
             app:enterAnim="@anim/enterAnim"
@@ -40,7 +19,7 @@
             app:popExitAnim="@anim/popExitAnim" />
     </fragment>
 
-    <include app:graph="@navigation/enter_value_nav_graph" />
+
     <fragment
         android:id="@+id/selectFileFragment"
         android:name="de.crysxd.octoapp.pre_print_controls.ui.select_file.SelectFileFragment"
@@ -53,7 +32,7 @@
             app:enterAnim="@anim/enterAnim"
             app:exitAnim="@anim/exitAnim"
             app:popEnterAnim="@anim/popEnterAnim"
-            app:popExitAnim="@anim/popExitAnim"/>
+            app:popExitAnim="@anim/popExitAnim" />
         <argument
             android:name="folder"
             app:argType="de.crysxd.octoapp.octoprint.models.files.FileObject$Folder"
@@ -61,4 +40,15 @@
             android:defaultValue="@null" />
 
     </fragment>
+
+    <include app:graph="@navigation/enter_value_nav_graph" />
+
+    <action
+        android:id="@id/action_enter_value"
+        app:destination="@id/enter_value_nav_graph"
+        app:enterAnim="@anim/enterAnim"
+        app:exitAnim="@anim/exitAnim"
+        app:popEnterAnim="@anim/popEnterAnim"
+        app:popExitAnim="@anim/popExitAnim" />
+
 </navigation>

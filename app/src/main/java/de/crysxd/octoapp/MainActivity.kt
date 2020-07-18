@@ -1,9 +1,12 @@
 package de.crysxd.octoapp
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.ui.OctoActivity
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
@@ -20,6 +23,7 @@ class MainActivity : OctoActivity() {
 
     override val octoToolbar: OctoToolbar by lazy { toolbar }
     override val octo: OctoView by lazy { toolbarOctoView }
+    override val coordinatorLayout: CoordinatorLayout by lazy { coordinator }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +40,12 @@ class MainActivity : OctoActivity() {
                 events.removeObserver(observer)
             }
         })
+
+        lifecycleScope.launchWhenResumed {
+            findNavController(R.id.mainNavController).addOnDestinationChangedListener { _, destination, _ ->
+                Firebase.analytics.setCurrentScreen(this@MainActivity, destination.displayName, null)
+            }
+        }
     }
 
     private fun navigate(id: Int) {

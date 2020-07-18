@@ -30,8 +30,12 @@
     <string name="prepare">Prepare</string>
     <string name="connect">Connect</string>
     <string name="sent_x">Sent %s</string>
+    <string name="sent_x_and_y_others">Sent %1$s and %2$d others</string>
+    <string name="send_gcode">Send Gcode</string>
+    <string name="gcode_one_command_per_line">Gcode (one command per line)</string>
     <string name="change_filament">Change Filament</string>
     <string name="open_octoprint">Open OctoPrint</string>
     <string name="set">Set</string>
     <string name="try_restrating_the_app_or_octoprint">Try restarting the app or OctoPrint</string>
+    <string name="give_feedback">Give Feedback</string>
 </resources>

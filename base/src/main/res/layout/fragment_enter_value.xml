@@ -17,15 +17,23 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Title" />
 
-    <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
-        android:id="@+id/textInputLayout"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_2"
         android:layout_marginEnd="@dimen/margin_2"
-        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
-        tools:hint="Hint" />
+        android:layout_marginBottom="@dimen/margin_2"
+        app:layout_constraintBottom_toTopOf="@+id/buttonSet"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle">
+
+        <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
+            android:id="@+id/textInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:hint="Hint" />
+
+    </FrameLayout>
 
     <Button
         android:id="@+id/buttonSet"

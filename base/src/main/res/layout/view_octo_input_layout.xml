@@ -1,40 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="64dp"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:minHeight="70dp"
     android:background="@drawable/bg_input">
 
-    <TextView
-        android:id="@+id/label"
+    <LinearLayout
         android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/OctoTheme.TextAppearance.Label"
-        android:textColor="?android:attr/textColorHighlight"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Label" />
+        android:orientation="vertical">
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/input"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="@dimen/common_corner_radius"
-        android:background="@null"
-        android:inputType="textPersonName"
-        android:textAppearance="@style/OctoTheme.TextAppearance.Input"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textColorHint="?android:attr/textColorSecondary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/action"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label"
-        app:layout_goneMarginTop="0dp"
-        tools:hint="Label" />
+        <TextView
+            android:id="@+id/label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_0"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Label"
+            android:textColor="?android:attr/textColorHighlight"
+            android:visibility="gone"
+            tools:text="Label"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="@dimen/common_corner_radius"
+            android:background="@null"
+            android:inputType="textPersonName"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Input"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textColorHint="?android:attr/textColorSecondary"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintHeight_max="150dp"
+            tools:hint="Label" />
+
+    </LinearLayout>
 
     <ImageButton
         android:id="@+id/action"
@@ -43,9 +50,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:tint="?android:attr/colorAccent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="@dimen/margin_1"
         tools:srcCompat="@drawable/ic_qr_code_scanner_24px" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
