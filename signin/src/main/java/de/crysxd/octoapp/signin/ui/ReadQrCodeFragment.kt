@@ -6,9 +6,11 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.signin.R
 import kotlinx.android.synthetic.main.fragment_read_qr_code.*
@@ -52,24 +54,7 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code) {
             it.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val margin2 = requireContext().resources.getDimension(R.dimen.margin_2).toInt()
-                ConstraintSet().apply {
-                    clone(constraintLayout)
-                    connect(
-                        R.id.buttonCancel,
-                        ConstraintSet.BOTTOM,
-                        ConstraintSet.PARENT_ID,
-                        ConstraintSet.BOTTOM,
-                        it.decorView.rootWindowInsets.systemWindowInsetBottom + margin2
-                    )
-                    connect(
-                        R.id.octoView,
-                        ConstraintSet.TOP,
-                        ConstraintSet.PARENT_ID,
-                        ConstraintSet.TOP,
-                        it.decorView.rootWindowInsets.systemWindowInsetTop
-                    )
-                }.applyTo(constraintLayout)
+                applyInsets()
             }
 
             navigationBarColorBackup = it.navigationBarColor
@@ -81,6 +66,32 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     it.decorView.systemUiVisibility = it.decorView.systemUiVisibility xor View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
                 }
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun applyInsets() {
+        lifecycleScope.launchWhenCreated {
+            requireActivity().window.let {
+                val margin2 = requireContext().resources.getDimension(R.dimen.margin_2).toInt()
+                ConstraintSet().apply {
+                    clone(constraintLayout)
+                    connect(
+                        R.id.buttonCancel,
+                        ConstraintSet.BOTTOM,
+                        ConstraintSet.PARENT_ID,
+                        ConstraintSet.BOTTOM,
+                        it.decorView.rootWindowInsets.stableInsetBottom + margin2
+                    )
+                    connect(
+                        R.id.octoView,
+                        ConstraintSet.TOP,
+                        ConstraintSet.PARENT_ID,
+                        ConstraintSet.TOP,
+                        it.decorView.rootWindowInsets.stableInsetBottom
+                    )
+                }.applyTo(constraintLayout)
             }
         }
     }
