@@ -14,6 +14,8 @@
         android:layout_marginTop="@dimen/margin_1"
         android:layout_marginBottom="@dimen/margin_1"
         android:background="@drawable/circle_background"
+        android:backgroundTint="@color/input_background"
+        android:importantForAccessibility="no"
         android:padding="8dp"
         android:tint="@color/primary"
         app:layout_constraintBottom_toBottomOf="parent"
