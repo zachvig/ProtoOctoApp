@@ -7,7 +7,7 @@
     <string name="octoprint_is_not_available">OctoPrint is not available</string>
     <string name="check_your_network_connection">Check your network connection</string>
     <string name="searching_for_octoprint">Searching for Octoprint</string>
-    <string name="printer_is_connecting">Printer is connecting…</string>
+    <string name="printer_is_connecting">Printer is connecting</string>
     <string name="turn_off_psu">Turn off PSU</string>
     <string name="psu_turned_on_waiting_for_printer_to_boot">PSU turned on, waiting for printer to boot</string>
 </resources>
