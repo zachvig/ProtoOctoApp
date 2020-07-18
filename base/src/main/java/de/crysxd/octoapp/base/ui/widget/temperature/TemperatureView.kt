@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.AnimationUtils
@@ -14,12 +13,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.get
-import androidx.core.view.isVisible
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
-import kotlinx.android.synthetic.main.view_octo_input_layout.view.*
 import kotlinx.android.synthetic.main.view_temperature.view.*
-import okhttp3.internal.wait
 import timber.log.Timber
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -81,7 +77,7 @@ class TemperatureView @JvmOverloads constructor(context: Context, attrs: Attribu
             else -> context.getString(R.string.target_x, target)
         }
         backgroundImage.setColorFilter(getTemperatureColor(temperature?.actual), PorterDuff.Mode.SRC_IN)
-        backgroundImageAnimated.setColorFilter(getTemperatureColor(temperature?.actual ?: 0 * 1.2f), PorterDuff.Mode.SRC_IN)
+        backgroundImageAnimated.setColorFilter(getTemperatureColor(temperature?.actual ?: 0 * 1.33f), PorterDuff.Mode.SRC_IN)
     }
 
     fun setComponentName(name: String) {
