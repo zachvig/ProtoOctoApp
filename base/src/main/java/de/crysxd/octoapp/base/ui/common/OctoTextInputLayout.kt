@@ -71,13 +71,18 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     private fun updateViewState() {
-        TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
-
-        label.isVisible = input.hasFocus() || !input.text.isNullOrEmpty() || label.text != initialLabelText
-        input.hint = if (label.isVisible) {
+        val labelVisible = input.hasFocus() || !input.text.isNullOrEmpty() || label.text != initialLabelText
+        val hint = if (label.isVisible) {
             ""
         } else {
             initialLabelText
+        }
+
+        // Only animate if changes worth animation are detected
+        if (labelVisible != label.isVisible || hint != input.hint) {
+            TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
+            label.isVisible = labelVisible
+            input.hint = hint
         }
     }
 
