@@ -78,6 +78,4 @@ class PrePrintControlsViewModel(
             changeFilamentUseCase.execute(it)
         }
     }
-
-    fun getOctoPrintUrl() = octoPrintProvider.octoPrint.value?.gerWebUrl()
 }

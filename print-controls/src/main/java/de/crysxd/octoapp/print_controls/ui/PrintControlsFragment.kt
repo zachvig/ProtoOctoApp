@@ -1,7 +1,5 @@
 package de.crysxd.octoapp.print_controls.ui
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
@@ -67,14 +65,15 @@ class PrintControlsFragment : Fragment(R.layout.fragment_print_controls) {
 
         override fun getMenuRes() = R.menu.print_controls_menu
 
-        override fun onMenuItemSelected(id: Int) {
+        override suspend fun onMenuItemSelected(id: Int): Boolean {
             when (id) {
                 R.id.menuChangeFilament -> viewModel.changeFilament()
-                R.id.menuOpenOctoprint -> viewModel.getOctoPrintUrl()?.let { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it))) }
                 R.id.menuCancelPrint -> viewModel.cancelPrint()
                 R.id.menuEmergencyStop -> viewModel.emergencyStop()
-                else -> Unit
+                else -> return false
             }
+
+            return true
         }
     }
 }

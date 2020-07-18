@@ -47,7 +47,4 @@ class PrintControlsViewModel(
             emergencyStopUseCase.execute(it)
         }
     }
-
-    fun getOctoPrintUrl() = octoPrintProvider.octoPrint.value?.gerWebUrl()
-
 }

@@ -53,7 +53,8 @@ dependencies {
     /*
      * Firebase
      */
-    api 'com.google.firebase:firebase-analytics-ktx:17.4.3'
+    api 'com.google.firebase:firebase-analytics-ktx:17.4.4'
+    api 'com.google.firebase:firebase-config-ktx:19.2.0'
 
     /*
      * Test
