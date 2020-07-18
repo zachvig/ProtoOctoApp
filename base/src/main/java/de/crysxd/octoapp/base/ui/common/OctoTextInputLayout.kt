@@ -72,7 +72,7 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
 
     private fun updateViewState() {
         val labelVisible = input.hasFocus() || !input.text.isNullOrEmpty() || label.text != initialLabelText
-        val hint = if (label.isVisible) {
+        val hint = if (labelVisible) {
             ""
         } else {
             initialLabelText
