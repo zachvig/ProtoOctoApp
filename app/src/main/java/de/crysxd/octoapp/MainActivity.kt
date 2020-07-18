@@ -33,6 +33,7 @@ class MainActivity : OctoActivity() {
         val events = ConnectPrinterInjector.get().octoprintProvider().eventLiveData
 
         SignInInjector.get().octoprintRepository().instanceInformation.observe(this, Observer {
+            Timber.i("Instance information received")
             if (it != null) {
                 events.observe(this, observer)
             } else {
@@ -43,6 +44,7 @@ class MainActivity : OctoActivity() {
 
         lifecycleScope.launchWhenResumed {
             findNavController(R.id.mainNavController).addOnDestinationChangedListener { _, destination, _ ->
+                Timber.i("Navigated to ${destination.displayName}")
                 Firebase.analytics.setCurrentScreen(this@MainActivity, destination.displayName, null)
             }
         }
@@ -70,7 +72,7 @@ class MainActivity : OctoActivity() {
     }
 
     private fun onCurrentMessageReceived(e: Message.CurrentMessage) {
-        Timber.tag("navigation").d(e.state?.flags.toString())
+        Timber.tag("navigation").v(e.state?.flags.toString())
         val flags = e.state?.flags
         navigate(
             when {
@@ -83,7 +85,7 @@ class MainActivity : OctoActivity() {
     }
 
     private fun onEventMessageReceived(e: Message.EventMessage) {
-        Timber.tag("navigation").d(e.toString())
+        Timber.tag("navigation").v(e.toString())
         navigate(
             when {
                 e is Message.EventMessage.Disconnected -> R.id.action_connect_printer
