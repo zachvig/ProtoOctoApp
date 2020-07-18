@@ -19,5 +19,6 @@
     <color name="light_grey">#999</color>
     <color name="light_blue">#0D3888C6</color>
     <color name="black_translucent">#B4000000</color>
+    <color name="black_translucent_2">#1A000000</color>
     <color name="white_translucent">#2AFFFFFF</color>
 </resources>
