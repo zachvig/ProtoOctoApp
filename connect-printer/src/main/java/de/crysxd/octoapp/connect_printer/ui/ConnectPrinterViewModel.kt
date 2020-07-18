@@ -11,6 +11,7 @@ import de.crysxd.octoapp.base.livedata.OctoTransformations.filter
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filterEventsForMessageType
 import de.crysxd.octoapp.base.livedata.OctoTransformations.map
 import de.crysxd.octoapp.base.livedata.PollingLiveData
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase
 import de.crysxd.octoapp.base.usecase.GetPrinterConnectionUseCase
@@ -29,7 +30,8 @@ class ConnectPrinterViewModel(
     private val turnOnPsuUseCase: TurnOnPsuUseCase,
     private val turnOffPsuUseCase: TurnOffPsuUseCase,
     private val autoConnectPrinterUseCase: AutoConnectPrinterUseCase,
-    private val getPrinterConnectionUseCase: GetPrinterConnectionUseCase
+    private val getPrinterConnectionUseCase: GetPrinterConnectionUseCase,
+    private val octoPrintRepository: OctoPrintRepository
 ) : BaseViewModel() {
 
     private var lastConnectionAttempt = 0L
@@ -59,19 +61,33 @@ class ConnectPrinterViewModel(
         uiStateMediator.addSource(psuState) { uiStateMediator.postValue(updateUiState()) }
     }
 
-    private fun updateUiState(): UiState {
+    private fun updateUiState(): UiState = try {
         val connectionResult = availableSerialConnections.value
         val printerState = printerState.value
-        val psuState = psuState.value
+        val psuState = psuState.value ?: if (octoPrintRepository.instanceInformation.value?.supportsPsuPlugin == true) {
+            Message.PsuControlPluginMessage(false)
+        } else {
+            null
+        }
 
-        Firebase.analytics.setUserProperty("psu_plugin_available", (psuState != null).toString())
+        viewModelScope.launch(Dispatchers.IO) {
+            val supportsPsuPlugin = psuState != null
+            Firebase.analytics.setUserProperty("psu_plugin_available", supportsPsuPlugin.toString())
+
+            if (supportsPsuPlugin) {
+                octoPrintRepository.instanceInformation.value?.let {
+                    octoPrintRepository.storeOctoprintInstanceInformation(it.copy(supportsPsuPlugin = supportsPsuPlugin))
+                }
+            }
+        }
 
         Timber.d("-----")
         Timber.d(connectionResult.toString())
         Timber.d(printerState.toString())
         Timber.d(psuState.toString())
+        Timber.d(octoPrintRepository.instanceInformation.value?.supportsPsuPlugin.toString())
 
-        return when {
+        when {
             connectionResult is PollingLiveData.Result.Failure -> when (connectionResult.exception) {
                 is OctoPrintBootingException -> UiState.OctoPrintStarting
                 else -> UiState.OctoPrintNotAvailable
@@ -91,6 +107,9 @@ class ConnectPrinterViewModel(
 
             else -> UiState.Unknown
         }
+    } catch (e: Exception) {
+        Timber.e(e)
+        UiState.Unknown
     }
 
     private fun autoConnect(printerState: Message.EventMessage.PrinterStateChanged.PrinterState?, connectionOptions: ConnectionResponse.ConnectionOptions) =

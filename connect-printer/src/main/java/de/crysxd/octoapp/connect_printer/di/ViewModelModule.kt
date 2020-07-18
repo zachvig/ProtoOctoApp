@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.ViewModelFactory
 import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase
 import de.crysxd.octoapp.base.usecase.GetPrinterConnectionUseCase
@@ -26,6 +27,7 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(ConnectPrinterViewModel::class)
     open fun provideSignInViewModel(
+        octoPrintRepository: OctoPrintRepository,
         octoPrintProvider: OctoPrintProvider,
         turnOnPsuUseCase: TurnOnPsuUseCase,
         turnOffPsuUseCase: TurnOffPsuUseCase,
@@ -36,6 +38,7 @@ open class ViewModelModule {
         turnOnPsuUseCase,
         turnOffPsuUseCase,
         autoConnectPrinterUseCase,
-        getPrinterConnectionUseCase
+        getPrinterConnectionUseCase,
+        octoPrintRepository
     )
 }
