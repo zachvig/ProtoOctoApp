@@ -2,13 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
+    android:background="@color/black"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <de.crysxd.octoapp.signin.ui.ScannerView
         android:id="@+id/scannerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
+
+    </de.crysxd.octoapp.signin.ui.ScannerView>
 
     <Button
         android:id="@+id/buttonCancel"
@@ -18,5 +24,43 @@
         android:text="@string/cancel"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="20dp" />
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_3"
+        android:layout_marginTop="@dimen/common_view_top_padding"
+        android:layout_marginEnd="@dimen/margin_3"
+        android:gravity="center"
+        android:text="@string/scan_the_qr_code"
+        android:textAlignment="center"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+        android:textColor="?android:attr/textColorPrimaryInverse"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewSubTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_2"
+        android:gravity="center"
+        android:text="@string/you_can_find_the_api_key_in_octoprint_s_settings_under_api"
+        android:textAppearance="@style/OctoTheme.TextAppearance"
+        android:textColor="?android:attr/textColorPrimaryInverse"
+        app:layout_constraintEnd_toEndOf="@+id/textViewTitle"
+        app:layout_constraintStart_toStartOf="@+id/textViewTitle"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
+
+    <de.crysxd.octoapp.base.ui.common.OctoView
+        android:id="@+id/octoView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:rotation="-90"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/scannerView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
