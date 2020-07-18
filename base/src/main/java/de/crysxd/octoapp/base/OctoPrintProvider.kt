@@ -43,6 +43,9 @@ class OctoPrintProvider(
                 param("machine_type", data.machineType)
                 param("extruder_count", data.extruderCount.toLong())
             }
+            analytics.setUserProperty("printer_firmware_name", data.firmwareName)
+            analytics.setUserProperty("printer_machine_type", data.machineType)
+            analytics.setUserProperty("printer_extruder_count", data.extruderCount.toString())
         }
 
         it
