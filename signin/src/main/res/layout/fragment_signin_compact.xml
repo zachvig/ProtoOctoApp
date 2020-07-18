@@ -94,5 +94,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_2"
+        android:layout_marginTop="@dimen/margin_1"
+        android:layout_marginEnd="@dimen/margin_2"
+        android:text="@string/you_can_find_the_api_key_in_octoprint_s_settings"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/inputApiKey"
+        app:layout_constraintStart_toStartOf="@+id/inputApiKey"
+        app:layout_constraintTop_toBottomOf="@+id/inputApiKey" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
