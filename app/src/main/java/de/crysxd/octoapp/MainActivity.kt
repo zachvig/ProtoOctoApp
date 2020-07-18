@@ -1,7 +1,7 @@
 package de.crysxd.octoapp
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.ui.OctoActivity
@@ -20,6 +20,7 @@ class MainActivity : OctoActivity() {
 
     override val octoToolbar: OctoToolbar by lazy { toolbar }
     override val octo: OctoView by lazy { toolbarOctoView }
+    override val coordinatorLayout: CoordinatorLayout by lazy { coordinator }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
