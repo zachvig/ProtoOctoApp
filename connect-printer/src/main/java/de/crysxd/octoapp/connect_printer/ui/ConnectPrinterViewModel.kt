@@ -96,7 +96,7 @@ class ConnectPrinterViewModel(
 
             psuCyclingState == PsuCycledState.Cycling -> UiState.PrinterPsuCycling
 
-            isOffline(connectionResult, printerState?.stateId) && psuCyclingState != PsuCycledState.Cycled && !didJustAttemptToConnect() ->
+            isOffline(connectionResult, printerState?.stateId) && psuCyclingState != PsuCycledState.Cycled && !didJustAttemptToConnect() && psuState?.isPsuOn != true ->
                 UiState.PrinterOffline(supportsPsuPlugin)
 
             isUnknown(printerState?.stateId) -> UiState.Unknown
