@@ -21,7 +21,18 @@ The app offers a dedicated button to trigger an `M112` emergency stop from the p
 You can install the app from [Google Play](https://play.google.com/store/apps/details?id=de.crysxd.octoapp) or download an APK from the [release section](https://gitlab.com/crysxd/octoapp/-/releases).
 
 # Build
-Run `./gradlew assemble` to build the app after cloning
+## Debug builds
+Run `./gradlew assembleDebug` to build the app after cloning. The APK file can be found at `app/build/outputs/apk/debug/app-debug.apk`.
+
+## Release builds
+
+- Place your keystore file at `app/key.keystore`
+- Place your Google Service file at `app/service-account.json`
+- Add following entried to `local.properties`
+  - `signing.storePassword=` followed by your store password
+  - `signing.keyAlias=` followed by your key alias
+  - `signing.keyPassword=` followed by your key password
+- Run `./gradlew assembleRelease`. The APK file can be found at `app/build/outputs/apk/release/app-release.apk`.
 
 # Project structure
 The app is devided in modules:
