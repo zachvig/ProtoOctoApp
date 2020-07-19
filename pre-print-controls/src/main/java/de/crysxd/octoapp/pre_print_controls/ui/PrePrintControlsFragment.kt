@@ -2,7 +2,6 @@ package de.crysxd.octoapp.pre_print_controls.ui
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
@@ -48,7 +47,6 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
-        requireOctoActivity().octo.isVisible = true
         widgetList.setupWithToolbar(requireOctoActivity())
     }
 

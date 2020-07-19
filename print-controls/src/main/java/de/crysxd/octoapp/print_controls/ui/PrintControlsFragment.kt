@@ -2,7 +2,6 @@ package de.crysxd.octoapp.print_controls.ui
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.crysxd.octoapp.base.ui.BaseFragment
@@ -56,7 +55,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Print
-        requireOctoActivity().octo.isVisible = true
+        widgetsList.setupWithToolbar(requireOctoActivity())
     }
 
     class MenuBottomSheet : de.crysxd.octoapp.base.ui.common.MenuBottomSheet() {

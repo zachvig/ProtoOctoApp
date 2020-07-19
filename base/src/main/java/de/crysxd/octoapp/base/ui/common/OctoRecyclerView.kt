@@ -7,7 +7,6 @@ import android.util.AttributeSet
 import android.util.Property
 import android.view.animation.DecelerateInterpolator
 import androidx.annotation.StyleRes
-import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.OctoActivity
@@ -18,6 +17,8 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
     RecyclerView(context, attributeSet, defStyle) {
 
     private var calculatedScrollY = 0
+    private lateinit var octoActivity: OctoActivity
+    private lateinit var initialState: OctoToolbar.State
 
     private val topShadowDrawable = context.resources.getDrawable(R.drawable.top_scroll_edge_shadow, context.theme)
     private var topShadowAlpha = 0f
@@ -52,7 +53,8 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
 
     @Suppress("DEPRECATION")
     fun setupWithToolbar(octoActivity: OctoActivity) {
-        val initialState = octoActivity.octoToolbar.state
+        initialState = octoActivity.octoToolbar.state
+        this.octoActivity = octoActivity
         setOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -60,23 +62,15 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
                 calculatedScrollY = computeVerticalScrollOffset()
                 Timber.i("dy: $dy scrollY: $calculatedScrollY")
 
-                octoActivity.octoToolbar.state = if (calculatedScrollY < paddingTop / 3f) {
-                    if (octoActivity.octoToolbar.state == OctoToolbar.State.Hidden) {
-                        octoActivity.octo.animate().alpha(1f).start()
-                    }
-                    initialState
-                } else {
-                    if (octoActivity.octoToolbar.state != OctoToolbar.State.Hidden) {
-                        octoActivity.octo.animate().alpha(0f).start()
-                    }
-                    OctoToolbar.State.Hidden
-                }
-
                 post {
                     updateViewState()
                 }
             }
         })
+
+        post {
+            updateViewState(true)
+        }
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
@@ -95,6 +89,18 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
         val alphaBottom = if (calculatedScrollY + height - paddingTop - paddingBottom < computeVerticalScrollRange()) 1f else 0f
         if (bottomShadowAlpha != alphaBottom) {
             createAnimator(bottomShadowAlphaProperty, alphaBottom, duration).start()
+        }
+
+        octoActivity.octoToolbar.state = if (calculatedScrollY < paddingTop / 3f) {
+            if (octoActivity.octoToolbar.state == OctoToolbar.State.Hidden) {
+                octoActivity.octo.animate().alpha(1f).start()
+            }
+            initialState
+        } else {
+            if (octoActivity.octoToolbar.state != OctoToolbar.State.Hidden) {
+                octoActivity.octo.animate().alpha(0f).start()
+            }
+            OctoToolbar.State.Hidden
         }
     }
 
