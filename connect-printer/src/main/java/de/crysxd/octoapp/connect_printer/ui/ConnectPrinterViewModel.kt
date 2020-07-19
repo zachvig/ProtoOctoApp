@@ -96,7 +96,11 @@ class ConnectPrinterViewModel(
 
             psuCyclingState == PsuCycledState.Cycling -> UiState.PrinterPsuCycling
 
-            isOffline(connectionResult, printerState?.stateId) && psuCyclingState != PsuCycledState.Cycled && !didJustAttemptToConnect() && psuState?.isPsuOn != true ->
+            isOffline(connectionResult, printerState?.stateId) &&
+                    psuCyclingState != PsuCycledState.Cycled &&
+                    !didJustAttemptToConnect() &&
+                    psuState?.isPsuOn != false &&
+                    connectionResult?.options?.ports?.isEmpty() == true ->
                 UiState.PrinterOffline(supportsPsuPlugin)
 
             isUnknown(printerState?.stateId) -> UiState.Unknown
@@ -145,8 +149,7 @@ class ConnectPrinterViewModel(
         connectionResponse: ConnectionResponse?,
         printerState: Message.EventMessage.PrinterStateChanged.PrinterState?
     ) = listOf(
-        Message.EventMessage.PrinterStateChanged.PrinterState.OFFLINE,
-        Message.EventMessage.PrinterStateChanged.PrinterState.ERROR
+        Message.EventMessage.PrinterStateChanged.PrinterState.OFFLINE
     ).contains(printerState) || connectionResponse?.current?.state.equals("closed", ignoreCase = true)
 
     private fun isUnknown(printerState: Message.EventMessage.PrinterStateChanged.PrinterState?) = listOf(
@@ -184,12 +187,14 @@ class ConnectPrinterViewModel(
 
     sealed class UiState {
 
-        object OctoPrintNotAvailable : UiState()
         object OctoPrintStarting : UiState()
+        object OctoPrintNotAvailable : UiState()
+
         data class WaitingForPrinterToComeOnline(val psuIsOn: Boolean?) : UiState()
         object PrinterConnecting : UiState()
         data class PrinterOffline(val psuSupported: Boolean) : UiState()
         object PrinterPsuCycling : UiState()
+
         object Unknown : UiState()
 
     }
