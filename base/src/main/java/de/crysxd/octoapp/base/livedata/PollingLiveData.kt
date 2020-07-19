@@ -8,7 +8,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class PollingLiveData<T>(
-    private val internval: Long = 1000,
+    private val interval: Long = 1000,
     private val action: suspend () -> T
 ) : LiveData<PollingLiveData.Result<T>>() {
 
@@ -33,7 +33,7 @@ class PollingLiveData<T>(
         }
 
         if (this.isActive) {
-            handler.postDelayed(runnable, internval)
+            handler.postDelayed(runnable, interval)
         }
     }
 
