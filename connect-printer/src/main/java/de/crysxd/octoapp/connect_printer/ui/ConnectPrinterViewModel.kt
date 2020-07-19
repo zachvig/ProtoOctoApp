@@ -31,7 +31,6 @@ class ConnectPrinterViewModel(
 
     private var lastConnectionAttempt = 0L
     private var psuCyclingState = MutableLiveData<PsuCycledState>(PsuCycledState.NotCycled)
-    private var psuTurnedOnAt = 0L
 
     private val availableSerialConnections = Transformations.switchMap(octoPrintProvider.octoPrint) {
         PollingLiveData {
@@ -83,7 +82,6 @@ class ConnectPrinterViewModel(
                 Timber.d("PrinterState: $printerState")
                 Timber.d("PsuState: $psuState")
                 Timber.d("PsuCycled: $psuCyclingState")
-                Timber.d("PsuJustTurnedOn: ${isPsuJustTurnedOn()}")
 
                 Firebase.analytics.setUserProperty("psu_plugin_available", supportsPsuPlugin.toString())
 
@@ -177,8 +175,6 @@ class ConnectPrinterViewModel(
     private fun resetConnectionAttempt() {
         lastConnectionAttempt = 0
     }
-
-    private fun isPsuJustTurnedOn() = (System.currentTimeMillis() - psuTurnedOnAt) < 10000
 
     fun togglePsu() = viewModelScope.launch(coroutineExceptionHandler) {
         octoPrintProvider.octoPrint.value?.let {
