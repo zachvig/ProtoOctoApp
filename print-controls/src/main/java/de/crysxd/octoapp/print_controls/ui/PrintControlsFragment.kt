@@ -3,9 +3,9 @@ package de.crysxd.octoapp.print_controls.ui
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
@@ -16,9 +16,9 @@ import de.crysxd.octoapp.print_controls.di.injectViewModel
 import de.crysxd.octoapp.print_controls.ui.widget.progress.ProgressWidget
 import kotlinx.android.synthetic.main.fragment_print_controls.*
 
-class PrintControlsFragment : Fragment(R.layout.fragment_print_controls) {
+class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
 
-    private val viewModel: PrintControlsViewModel by injectViewModel()
+    override val viewModel: PrintControlsViewModel by injectViewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
