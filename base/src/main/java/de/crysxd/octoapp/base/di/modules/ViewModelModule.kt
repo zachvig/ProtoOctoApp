@@ -7,7 +7,6 @@ import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.ui.BaseViewModelFactory
-import de.crysxd.octoapp.base.ui.WindowInsetsViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlBedTemperatureWidgetViewModel
@@ -52,10 +51,5 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(EnterValueViewModel::class)
     open fun provideEnterValueViewModel(): ViewModel = EnterValueViewModel()
-
-    @Provides
-    @IntoMap
-    @ViewModelKey(WindowInsetsViewModel::class)
-    open fun provideWindowInsetsViewModel(): ViewModel = WindowInsetsViewModel()
 
 }
