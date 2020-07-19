@@ -44,8 +44,8 @@ class MainActivity : OctoActivity() {
 
         lifecycleScope.launchWhenResumed {
             findNavController(R.id.mainNavController).addOnDestinationChangedListener { _, destination, _ ->
-                Timber.i("Navigated to ${destination.displayName}")
-                Firebase.analytics.setCurrentScreen(this@MainActivity, destination.displayName, null)
+                Timber.i("Navigated to ${destination.label}")
+                Firebase.analytics.setCurrentScreen(this@MainActivity, destination.label?.toString(), null)
             }
         }
     }
@@ -76,9 +76,19 @@ class MainActivity : OctoActivity() {
         val flags = e.state?.flags
         navigate(
             when {
+                // We encountered an error, try reconnecting
                 flags == null || flags.closedOrError || flags.error -> R.id.action_connect_printer
+
+                // We are printing
                 flags.printing || flags.paused || flags.pausing || flags.cancelling -> R.id.action_printer_active
+
+                // We are connected
                 flags.operational -> R.id.action_printer_connected
+
+                // This is a special case where all flags are false. This may happen after an emergency stop of the printer. Go to connect.
+                !flags.operational && !flags.paused && !flags.cancelling && !flags.closedOrError && !flags.error && !flags.printing && !flags.pausing -> R.id.action_connect_printer
+
+                // Fallback
                 else -> lastNavigation
             }
         )

@@ -10,4 +10,12 @@
     <string name="printer_is_connecting">Printer is connecting</string>
     <string name="turn_off_psu">Turn off PSU</string>
     <string name="psu_turned_on_waiting_for_printer_to_boot">PSU turned on, waiting for printer to boot</string>
+    <string name="this_may_happen_after_an_emergency_stop">This may happen after an emergency stop. Try restarting your printer.</string>
+    <string name="the_printer_is_offline">The printer is offline</string>
+    <string name="printer_is_offline">Printer is offline</string>
+    <string name="cycle_psu_to_reset_the_printer">Cycle the PSU to reset the printer</string>
+    <string name="turn_the_printer_off_and_on_again_to_reset_it">Turn the printer off and on again to reset it</string>
+    <string name="cycle_psu">Cycle PSU</string>
+    <string name="retry_connection">Retry connection</string>
+    <string name="psu_is_being_cycled">PSU is being cycled</string>
 </resources>
