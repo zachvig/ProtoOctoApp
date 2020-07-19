@@ -44,8 +44,8 @@ class MainActivity : OctoActivity() {
 
         lifecycleScope.launchWhenResumed {
             findNavController(R.id.mainNavController).addOnDestinationChangedListener { _, destination, _ ->
-                Timber.i("Navigated to ${destination.displayName}")
-                Firebase.analytics.setCurrentScreen(this@MainActivity, destination.displayName, null)
+                Timber.i("Navigated to ${destination.label}")
+                Firebase.analytics.setCurrentScreen(this@MainActivity, destination.label?.toString(), null)
             }
         }
     }

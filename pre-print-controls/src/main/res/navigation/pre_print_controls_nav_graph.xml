@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/prePrintControlsFragment"
         android:name="de.crysxd.octoapp.pre_print_controls.ui.PrePrintControlsFragment"
-        android:label="@string/prepare"
+        android:label="PrePrintControlsFragment"
         tools:layout="@layout/fragment_pre_print_controls">
         <action
             android:id="@+id/action_start_print"
@@ -23,7 +23,7 @@
     <fragment
         android:id="@+id/selectFileFragment"
         android:name="de.crysxd.octoapp.pre_print_controls.ui.select_file.SelectFileFragment"
-        android:label="@string/select_file_to_print"
+        android:label="SelectFileFragment"
         tools:layout="@layout/fragment_select_file" >
 
         <action
