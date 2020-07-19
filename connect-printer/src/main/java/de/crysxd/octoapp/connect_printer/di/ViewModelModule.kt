@@ -9,10 +9,7 @@ import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.ViewModelFactory
-import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase
-import de.crysxd.octoapp.base.usecase.GetPrinterConnectionUseCase
-import de.crysxd.octoapp.base.usecase.TurnOffPsuUseCase
-import de.crysxd.octoapp.base.usecase.TurnOnPsuUseCase
+import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.connect_printer.ui.ConnectPrinterViewModel
 import javax.inject.Provider
 
@@ -31,12 +28,14 @@ open class ViewModelModule {
         octoPrintProvider: OctoPrintProvider,
         turnOnPsuUseCase: TurnOnPsuUseCase,
         turnOffPsuUseCase: TurnOffPsuUseCase,
+        cyclePsuUseCase: CyclePsuUseCase,
         autoConnectPrinterUseCase: AutoConnectPrinterUseCase,
         getPrinterConnectionUseCase: GetPrinterConnectionUseCase
     ): ViewModel = ConnectPrinterViewModel(
         octoPrintProvider,
         turnOnPsuUseCase,
         turnOffPsuUseCase,
+        cyclePsuUseCase,
         autoConnectPrinterUseCase,
         getPrinterConnectionUseCase,
         octoPrintRepository

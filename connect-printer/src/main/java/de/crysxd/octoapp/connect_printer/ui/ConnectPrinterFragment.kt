@@ -34,10 +34,6 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
                 views.forEach { it.animate().alpha(1f).start() }
             }
         })
-
-        buttonTurnOnPsu.setOnClickListener {
-            viewModel.togglePsu()
-        }
     }
 
     private fun handleUiStateUpdate(state: ConnectPrinterViewModel.UiState) {
@@ -55,6 +51,9 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
 
             is ConnectPrinterViewModel.UiState.WaitingForPrinterToComeOnline -> {
                 buttonTurnOnPsu.isVisible = state.psuIsOn != null
+                buttonTurnOnPsu.setOnClickListener {
+                    viewModel.togglePsu()
+                }
                 buttonTurnOnPsu.setText(
                     if (state.psuIsOn == true) {
                         R.string.turn_off_psu
@@ -76,11 +75,37 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
                 R.string.printer_is_connecting
             )
 
+            is ConnectPrinterViewModel.UiState.PrinterOffline -> {
+                buttonTurnOnPsu.isVisible = state.psuSupported
+                buttonTurnOnPsu.setOnClickListener {
+                    if (state.psuSupported) {
+                        viewModel.cyclePsu()
+                    } else {
+                        viewModel.retryConnectionFromOfflineState()
+                    }
+                }
+                buttonTurnOnPsu.setText(
+                    if (state.psuSupported) {
+                        R.string.cycle_psu
+                    } else {
+                        R.string.retry_connection
+                    }
+                )
+                showStatus(
+                    R.string.printer_is_offline,
+                    if (state.psuSupported) {
+                        R.string.cycle_psu_to_reset_the_printer
+                    } else {
+                        R.string.turn_the_printer_off_and_on_again_to_reset_it
+                    }
+                )
+            }
+
             ConnectPrinterViewModel.UiState.Unknown -> showStatus(
                 R.string.error_general,
                 R.string.try_restrating_the_app_or_octoprint
             )
-        }
+        }.let { }
     }
 
     private fun showStatus(@StringRes state: Int, @StringRes subState: Int? = null) {
