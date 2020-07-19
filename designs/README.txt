@@ -1,0 +1,1 @@
+Design files can be found in [Figma](https://www.figma.com/file/GE1TWjtnp7t5cW1Zj3K3en/Octoprint?node-id=27%3A71)
