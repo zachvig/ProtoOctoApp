@@ -8,7 +8,7 @@ The app is structured into "workspaces" which get activated by the app depending
 - The **Prepare** workspace is activated when a printer is connected but no print is active. You can prepare your print in this workspace by e.g. homing your machine or preparing filament for the print
 - The **Print** workspace is activated as soon as a print is started. This workspaces shows the current print progress and allows tweaking of the current print
 
-!()[https://gitlab.com/crysxd/octoapp/-/raw/master/designs/Gitlab%20Readme.jpg?inline=false]
+![Image](https://gitlab.com/crysxd/octoapp/-/raw/master/designs/Gitlab%20Readme.jpg?inline=false)
 
 # Notworthy features
 **PSU plugin support**
