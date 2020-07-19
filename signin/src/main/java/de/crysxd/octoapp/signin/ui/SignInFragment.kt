@@ -6,6 +6,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
@@ -13,6 +14,8 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.ui.BaseFragment
+import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.ext.setTextAppearanceCompat
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.ui.utils.ViewCompactor
@@ -104,5 +107,11 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
                 inputApiKey.editText.text.toString()
             )
         )
+    }
+
+    override fun onStart() {
+        super.onStart()
+        requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
+        requireOctoActivity().octo.isVisible = false
     }
 }

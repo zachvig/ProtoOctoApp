@@ -4,10 +4,11 @@ import android.os.Handler
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class PollingLiveData<T>(
-    private val internval: Long = 1000,
+    private val interval: Long = 1000,
     private val action: suspend () -> T
 ) : LiveData<PollingLiveData.Result<T>>() {
 
@@ -30,7 +31,10 @@ class PollingLiveData<T>(
         } catch (e: Exception) {
             postValue(Result.Failure(e))
         }
-        handler.postDelayed(runnable, internval)
+
+        if (this.isActive) {
+            handler.postDelayed(runnable, interval)
+        }
     }
 
     sealed class Result<T> {
