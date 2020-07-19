@@ -101,6 +101,10 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
                 )
             }
 
+            is ConnectPrinterViewModel.UiState.PrinterPsuCycling -> showStatus(
+                R.string.psu_is_being_cycled
+            )
+
             ConnectPrinterViewModel.UiState.Unknown -> showStatus(
                 R.string.error_general,
                 R.string.try_restrating_the_app_or_octoprint

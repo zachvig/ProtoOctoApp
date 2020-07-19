@@ -68,6 +68,7 @@ class ConnectPrinterViewModel(
             null
         }
         val supportsPsuPlugin = psuState != null
+        val psuCyclingState = psuCyclingState.value ?: PsuCycledState.NotCycled
 
         viewModelScope.launch(Dispatchers.IO) {
             Firebase.analytics.setUserProperty("psu_plugin_available", supportsPsuPlugin.toString())
@@ -83,7 +84,7 @@ class ConnectPrinterViewModel(
         Timber.d("ConnectionResult: $connectionResult")
         Timber.d("PrinterState: $printerState")
         Timber.d("PsuState: $psuState")
-        Timber.d("PsuCycled: ${psuCyclingState.value}")
+        Timber.d("PsuCycled: $psuCyclingState")
 
         when {
             connectionResponse is PollingLiveData.Result.Failure -> when (connectionResponse.exception) {
@@ -93,9 +94,9 @@ class ConnectPrinterViewModel(
 
             isConnecting(printerState?.stateId) -> UiState.PrinterConnecting
 
-            psuCyclingState.value == PsuCycledState.Cycling -> UiState.PrinterPsuCycling
+            psuCyclingState == PsuCycledState.Cycling -> UiState.PrinterPsuCycling
 
-            isOffline(connectionResult, printerState?.stateId) && psuCyclingState.value != PsuCycledState.Cycled && !didJustAttemptToConnect() ->
+            isOffline(connectionResult, printerState?.stateId) && psuCyclingState != PsuCycledState.Cycled && !didJustAttemptToConnect() ->
                 UiState.PrinterOffline(supportsPsuPlugin)
 
             isUnknown(printerState?.stateId) -> UiState.Unknown
@@ -175,7 +176,7 @@ class ConnectPrinterViewModel(
         psuCyclingState.postValue(PsuCycledState.Cycled)
     }
 
-    sealed class PsuCycledState {
+    private sealed class PsuCycledState {
         object NotCycled : PsuCycledState()
         object Cycled : PsuCycledState()
         object Cycling : PsuCycledState()

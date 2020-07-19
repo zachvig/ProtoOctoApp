@@ -17,4 +17,5 @@
     <string name="turn_the_printer_off_and_on_again_to_reset_it">Turn the printer off and on again to reset it</string>
     <string name="cycle_psu">Cycle PSU</string>
     <string name="retry_connection">Retry connection</string>
+    <string name="psu_is_being_cycled">PSU is being cycled</string>
 </resources>
