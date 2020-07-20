@@ -85,7 +85,7 @@ class TemperatureView @JvmOverloads constructor(context: Context, attrs: Attribu
     }
 
     private fun getTemperatureColor(temp: Float?): Int = try {
-        val tempRange = 35..maxTemp
+        val tempRange = 35..(maxTemp.coerceAtLeast(36))
         val cappedTemp = temp?.toInt()?.coerceIn(tempRange) ?: tempRange.first
         val tempPercent = ((cappedTemp - tempRange.first) / (tempRange.last - tempRange.first).toFloat())
         val y = (temperatureGradient.height - (tempPercent * temperatureGradient.height)).coerceAtMost(temperatureGradient.height - 1f)

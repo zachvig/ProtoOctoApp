@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.ui
 
 import android.app.AlertDialog
 import android.content.Context
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.LiveData
@@ -15,6 +16,11 @@ import de.crysxd.octoapp.base.ui.common.OctoView
 
 abstract class OctoActivity : AppCompatActivity() {
 
+    internal companion object {
+        lateinit var instance: OctoActivity
+            private set
+    }
+
     private var errorDialog: AlertDialog? = null
 
     abstract val octoToolbar: OctoToolbar
@@ -23,14 +29,13 @@ abstract class OctoActivity : AppCompatActivity() {
 
     abstract val coordinatorLayout: CoordinatorLayout
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        instance = this
+        super.onCreate(savedInstanceState)
+    }
+
     fun observeErrorEvents(events: LiveData<Event<Throwable>>) = events.observe(this, Observer {
-        it.value?.let {
-            errorDialog?.dismiss()
-            errorDialog = AlertDialog.Builder(this)
-                .setMessage(getString((it as? UserMessageException)?.userMessage ?: R.string.error_general))
-                .setPositiveButton(android.R.string.ok, null)
-                .show()
-        }
+        it.value?.let(this::showErrorDialog)
     })
 
     fun observerMessageEvents(events: LiveData<Event<(Context) -> CharSequence>>) = events.observe(this, Observer {
@@ -38,4 +43,12 @@ abstract class OctoActivity : AppCompatActivity() {
             Snackbar.make(coordinatorLayout, it(this), Snackbar.LENGTH_SHORT).show()
         }
     })
+
+    fun showErrorDialog(e: Throwable) {
+        errorDialog?.dismiss()
+        errorDialog = AlertDialog.Builder(this)
+            .setMessage(getString((e as? UserMessageException)?.userMessage ?: R.string.error_general))
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
+    }
 }

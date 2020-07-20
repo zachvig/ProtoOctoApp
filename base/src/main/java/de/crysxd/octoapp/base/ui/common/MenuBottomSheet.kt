@@ -15,8 +15,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.synthetic.main.item_menu.view.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 abstract class MenuBottomSheet : BottomSheetDialogFragment() {
@@ -30,6 +33,8 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
                 if (!onMenuItemSelected(it)) {
                     onMenuItemSelectedBase(it)
                 }
+            }.invokeOnCompletion {
+                it?.let { Timber.e(it); requireOctoActivity().showErrorDialog(it) }
             }
         }
         return view
@@ -44,7 +49,7 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
         R.id.menuOpenOctoprint -> Injector.get().octoPrintProvider().octoPrint.value?.let {
             Injector.get().openOctoPrintWebUseCase().execute(Pair(it, requireContext()))
         }
-        R.id.menuGiveFeedback -> Injector.get().openEmailClientForFeedbackUseCase().execute(requireContext())
+        R.id.menuGiveFeedback -> SendFeedbackDialog().show(requireActivity().supportFragmentManager, "send-feedback")
         else -> Unit
     }
 

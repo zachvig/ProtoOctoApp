@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="public_file_dir_name" translatable="false">public_files</string>
+
     <string name="error_general">Something went wrong! Please try again.</string>
     <string name="error_no_printer_connected">No printer is connected to OctoPrint</string>
     <string name="error_invalid_octoprint_instance_information">OctoPrint declined the API key</string>
@@ -38,4 +40,9 @@
     <string name="set">Set</string>
     <string name="try_restrating_the_app_or_octoprint">Try restarting the app or OctoPrint</string>
     <string name="give_feedback">Give Feedback</string>
+    <string name="screenshot_of_current_screen">Screenshot of current screen</string>
+    <string name="app_logs">App logs</string>
+    <string name="thank_you_for_sending_feedback_please_select_what_should_be_included_in_your_message">Thank you for sending feedback. Please select what should be included in your message:</string>
+    <string name="send_feedback">Send Feedback</string>
+    <string name="open_email">Open Email</string>
 </resources>
