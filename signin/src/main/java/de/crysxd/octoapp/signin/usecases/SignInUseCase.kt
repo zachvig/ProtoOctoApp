@@ -1,14 +1,15 @@
 package de.crysxd.octoapp.signin.usecases
 
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.usecase.UseCase
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
 import de.crysxd.octoapp.signin.models.SignInInformation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.lang.Exception
 
 
 class SignInUseCase(
@@ -29,6 +30,8 @@ class SignInUseCase(
             // Test connection, will throw in case of faulty configuration
             val version = octoprint.createVersionApi().getVersion()
             Timber.i("Connected to ${version.serverVersionText}")
+            Firebase.analytics.setUserProperty("octoprint_api_version", version.apiVersion)
+            Firebase.analytics.setUserProperty("octoprint_server_version", version.severVersion)
         } catch (e: Exception) {
             Timber.e(e)
             return@withContext false
