@@ -24,13 +24,7 @@ abstract class OctoActivity : AppCompatActivity() {
     abstract val coordinatorLayout: CoordinatorLayout
 
     fun observeErrorEvents(events: LiveData<Event<Throwable>>) = events.observe(this, Observer {
-        it.value?.let {
-            errorDialog?.dismiss()
-            errorDialog = AlertDialog.Builder(this)
-                .setMessage(getString((it as? UserMessageException)?.userMessage ?: R.string.error_general))
-                .setPositiveButton(android.R.string.ok, null)
-                .show()
-        }
+        it.value?.let(this::showErrorDialog)
     })
 
     fun observerMessageEvents(events: LiveData<Event<(Context) -> CharSequence>>) = events.observe(this, Observer {
@@ -38,4 +32,12 @@ abstract class OctoActivity : AppCompatActivity() {
             Snackbar.make(coordinatorLayout, it(this), Snackbar.LENGTH_SHORT).show()
         }
     })
+
+    fun showErrorDialog(e: Throwable) {
+        errorDialog?.dismiss()
+        errorDialog = AlertDialog.Builder(this)
+            .setMessage(getString((e as? UserMessageException)?.userMessage ?: R.string.error_general))
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
+    }
 }

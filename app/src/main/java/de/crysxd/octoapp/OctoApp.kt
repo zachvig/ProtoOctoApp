@@ -36,5 +36,8 @@ class OctoApp : Application() {
         Firebase.remoteConfig.setConfigSettingsAsync(remoteConfigSettings {
             minimumFetchIntervalInSeconds = 3600
         })
+
+        // Add cache for logging
+        Timber.plant(BaseInjector.get().timberCacheTree())
     }
 }

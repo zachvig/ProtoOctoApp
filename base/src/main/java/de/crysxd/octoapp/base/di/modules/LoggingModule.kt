@@ -2,7 +2,8 @@ package de.crysxd.octoapp.base.di.modules
 
 import dagger.Module
 import dagger.Provides
-import okhttp3.Interceptor
+import de.crysxd.octoapp.base.di.BaseScope
+import de.crysxd.octoapp.base.logging.TimberCacheTree
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 
@@ -17,5 +18,8 @@ open class LoggingModule {
             }
         }).setLevel(HttpLoggingInterceptor.Level.BODY)
 
+    @Provides
+    @BaseScope
+    open fun provideTimberCacheTree(): TimberCacheTree = TimberCacheTree()
 
 }
