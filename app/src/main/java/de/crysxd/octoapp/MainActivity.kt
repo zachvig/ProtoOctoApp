@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.OctoActivity
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
@@ -47,6 +48,11 @@ class MainActivity : OctoActivity() {
                 Timber.i("Navigated to ${destination.label}")
                 Firebase.analytics.setCurrentScreen(this@MainActivity, destination.label?.toString(), null)
             }
+        }
+
+        feedbackTrigger.setOnLongClickListener {
+            SendFeedbackDialog().show(supportFragmentManager, "send-feedback")
+            true
         }
     }
 
