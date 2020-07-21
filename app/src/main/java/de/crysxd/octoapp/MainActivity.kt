@@ -36,6 +36,7 @@ class MainActivity : OctoActivity() {
         SignInInjector.get().octoprintRepository().instanceInformation.observe(this, Observer {
             Timber.i("Instance information received")
             if (it != null) {
+                navigate(R.id.action_connect_printer)
                 events.observe(this, observer)
             } else {
                 navigate(R.id.action_sign_in_required)
