@@ -56,6 +56,7 @@ class ConnectPrinterViewModel(
         uiStateMediator.addSource(printerState) { uiStateMediator.postValue(updateUiState()) }
         uiStateMediator.addSource(psuState) { uiStateMediator.postValue(updateUiState()) }
         uiStateMediator.addSource(psuCyclingState) { uiStateMediator.postValue(updateUiState()) }
+        uiStateMediator.value = UiState.Initializing
     }
 
     private fun updateUiState(): UiState {
@@ -123,7 +124,7 @@ class ConnectPrinterViewModel(
             Timber.e(e)
         }
 
-        return uiStateMediator.value ?: UiState.Unknown
+        return uiStateMediator.value ?: UiState.Initializing
     }
 
     private fun isPsuBeingCycled(psuCycledState: PsuCycledState) =
@@ -208,6 +209,8 @@ class ConnectPrinterViewModel(
     }
 
     sealed class UiState {
+
+        object Initializing : UiState()
 
         object OctoPrintStarting : UiState()
         object OctoPrintNotAvailable : UiState()

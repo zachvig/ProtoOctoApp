@@ -19,6 +19,8 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
 
     override val viewModel: ConnectPrinterViewModel by injectViewModel()
 
+    private var firstStateUpdate = true
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -28,10 +30,15 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 val views = listOf(buttonTurnOnPsu, textViewState, textViewSubState)
                 val duration = view.animate().duration
-                views.forEach { it.animate().alpha(0f).start() }
-                delay(duration)
-                handleUiStateUpdate(state)
-                views.forEach { it.animate().alpha(1f).start() }
+                if (firstStateUpdate) {
+                    handleUiStateUpdate(state)
+                    firstStateUpdate = false
+                } else {
+                    views.forEach { it.animate().alpha(0f).start() }
+                    delay(duration)
+                    handleUiStateUpdate(state)
+                    views.forEach { it.animate().alpha(1f).start() }
+                }
             }
         })
     }
@@ -103,6 +110,10 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
 
             is ConnectPrinterViewModel.UiState.PrinterPsuCycling -> showStatus(
                 R.string.psu_is_being_cycled
+            )
+
+            ConnectPrinterViewModel.UiState.Initializing -> showStatus(
+                R.string.searching_for_octoprint
             )
 
             ConnectPrinterViewModel.UiState.Unknown -> showStatus(
