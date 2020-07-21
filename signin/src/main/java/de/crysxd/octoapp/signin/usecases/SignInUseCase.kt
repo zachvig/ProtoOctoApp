@@ -28,6 +28,9 @@ class SignInUseCase(
 
         try {
             // Test connection, will throw in case of faulty configuration
+            octoprint.createConnectionApi().getConnection()
+
+            // Get version info
             val version = octoprint.createVersionApi().getVersion()
             Timber.i("Connected to ${version.serverVersionText}")
             Firebase.analytics.setUserProperty("octoprint_api_version", version.apiVersion)
