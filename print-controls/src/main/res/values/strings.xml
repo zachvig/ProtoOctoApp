@@ -15,10 +15,10 @@
     <string name="resume_print_confirmation_action">Resume print</string>
     <string name="cancel_print_confirmation_message">Do you want to cancel the print?</string>
     <string name="cancel_print_confirmation_action">Cancel print</string>
-    <string name="emergency_stop_confirmation_message">Do you want to cancel the print?</string>
-    <string name="emergency_stop_confirmation_action">Cancel print</string>
+    <string name="emergency_stop_confirmation_message">Do you want to emergency stop the printer?</string>
+    <string name="emergency_stop_confirmation_action">Emergency stop</string>
     <string name="resume">Resume</string>
-    <string name="pausing">Pausing...</string>
-    <string name="cancelling">Cancelling...</string>
+    <string name="pausing">Pausing…</string>
+    <string name="cancelling">Cancelling…</string>
     <string name="pause">Pause</string>
 </resources>
