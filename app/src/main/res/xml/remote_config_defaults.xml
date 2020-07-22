@@ -4,4 +4,8 @@
         <key>contact_email</key>
         <value>octoapp.for.octoprint@gmail.com</value>
     </entry>
+    <entry>
+        <key>printer_connection_timeout_sec</key>
+        <value>5</value>
+    </entry>
 </defaultsMap>
