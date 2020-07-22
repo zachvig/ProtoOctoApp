@@ -3,6 +3,7 @@ package de.crysxd.octoapp.connect_printer.ui
 import androidx.lifecycle.*
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filter
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filterEventsForMessageType
@@ -30,7 +31,7 @@ class ConnectPrinterViewModel(
     private val octoPrintRepository: OctoPrintRepository
 ) : BaseViewModel() {
 
-    private val connectionTimeoutNs = TimeUnit.SECONDS.toNanos(5)
+    private val connectionTimeoutNs = TimeUnit.SECONDS.toNanos(Firebase.remoteConfig.getLong("printer_connection_timeout_sec"))
     private var lastConnectionAttempt = 0L
     private var psuCyclingState = MutableLiveData<PsuCycledState>(PsuCycledState.NotCycled)
 
