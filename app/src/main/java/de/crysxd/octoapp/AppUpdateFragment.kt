@@ -9,6 +9,8 @@ import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import timber.log.Timber
 
 class AppUpdateFragment : Fragment() {
@@ -34,7 +36,7 @@ class AppUpdateFragment : Fragment() {
             if (result.exception != null) {
                 Timber.e(result.exception)
             } else {
-                FirebaseAnalytics.getInstance(requireContext()).logEvent("app_update_available", Bundle.EMPTY)
+                Firebase.analytics.logEvent("app_update_available", Bundle.EMPTY)
                 val appUpdateInfo = result.result
                 Timber.i("App update info: $appUpdateInfo")
 
