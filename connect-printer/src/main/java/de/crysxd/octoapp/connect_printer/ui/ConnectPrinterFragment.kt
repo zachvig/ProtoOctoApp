@@ -83,7 +83,7 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
             )
 
             is ConnectPrinterViewModel.UiState.PrinterOffline -> {
-                buttonTurnOnPsu.isVisible = state.psuSupported
+                buttonTurnOnPsu.isVisible = true
                 buttonTurnOnPsu.setOnClickListener {
                     if (state.psuSupported) {
                         viewModel.cyclePsu()
