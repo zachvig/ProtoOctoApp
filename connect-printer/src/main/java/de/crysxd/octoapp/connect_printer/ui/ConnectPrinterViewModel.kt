@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
+
 class ConnectPrinterViewModel(
     private val octoPrintProvider: OctoPrintProvider,
     private val turnOnPsuUseCase: TurnOnPsuUseCase,
@@ -29,6 +30,7 @@ class ConnectPrinterViewModel(
     private val octoPrintRepository: OctoPrintRepository
 ) : BaseViewModel() {
 
+    private val connectionTimeoutNs = TimeUnit.SECONDS.toNanos(5)
     private var lastConnectionAttempt = 0L
     private var psuCyclingState = MutableLiveData<PsuCycledState>(PsuCycledState.NotCycled)
 
@@ -144,9 +146,17 @@ class ConnectPrinterViewModel(
         printerState: Message.EventMessage.PrinterStateChanged.PrinterState,
         psuState: PsuCycledState
     ) = connectionResponse.options.ports.isNotEmpty() &&
-            !isPrinterConnecting(printerState) &&
-            !didJustAttemptToConnect() &&
+            (isInErrorState(printerState) || isConnectionAttemptTimedOut(printerState)) &&
             psuState != PsuCycledState.Cycled
+
+    private fun isConnectionAttemptTimedOut(printerState: Message.EventMessage.PrinterStateChanged.PrinterState) = !didJustAttemptToConnect() &&
+            isPrinterConnecting(printerState) &&
+            System.nanoTime() - lastConnectionAttempt > connectionTimeoutNs
+
+
+    private fun isInErrorState(printerState: Message.EventMessage.PrinterStateChanged.PrinterState) = listOf(
+        Message.EventMessage.PrinterStateChanged.PrinterState.ERROR
+    ).contains(printerState)
 
     private fun isPrinterConnecting(printerState: Message.EventMessage.PrinterStateChanged.PrinterState) = listOf(
         Message.EventMessage.PrinterStateChanged.PrinterState.OPERATIONAL,
@@ -199,6 +209,7 @@ class ConnectPrinterViewModel(
     }
 
     fun retryConnectionFromOfflineState() {
+        lastConnectionAttempt = 0L
         psuCyclingState.postValue(PsuCycledState.Cycled)
     }
 
