@@ -4,8 +4,10 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import de.crysxd.octoapp.octoprint.api.*
 import de.crysxd.octoapp.octoprint.exceptions.GenerateExceptionInterceptor
+import de.crysxd.octoapp.octoprint.json.ConnectionStateDeserializer
 import de.crysxd.octoapp.octoprint.json.FileObjectDeserializer
 import de.crysxd.octoapp.octoprint.json.MessageDeserializer
+import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.octoprint.websocket.EventWebSocket
@@ -53,6 +55,7 @@ class OctoPrint(
         .build()
 
     private fun createGsonWithTypeAdapters(): Gson = createBaseGson().newBuilder()
+        .registerTypeAdapter(ConnectionResponse.ConnectionState::class.java, ConnectionStateDeserializer())
         .registerTypeAdapter(FileObject::class.java, FileObjectDeserializer(createBaseGson()))
         .registerTypeAdapter(Message::class.java, MessageDeserializer(createBaseGson()))
         .create()

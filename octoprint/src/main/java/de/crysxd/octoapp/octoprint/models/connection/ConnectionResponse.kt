@@ -6,7 +6,7 @@ data class ConnectionResponse(
 ) {
 
     data class Connection(
-        val state: String,
+        val state: ConnectionState,
         val port: String,
         val baudrate: Int,
         val printerProfile: String
@@ -21,6 +21,10 @@ data class ConnectionResponse(
         val printerProfilePreference: String,
         val autoConnect: Boolean
     )
+
+    enum class ConnectionState {
+        CLOSED, DETECTING_SERIAL_PORT, CONNECTING, OPERATIONAL, UNKNOWN
+    }
 
     data class PrinterProfile(
         val name: String,
