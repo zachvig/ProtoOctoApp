@@ -6,16 +6,19 @@ import java.io.PrintWriter
 import java.io.StringWriter
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 class TimberCacheTree(private val maxSize: Int = 1024 * 128) : Timber.DebugTree() {
 
     private val maxMessageLength = 4000
     private val dateFormat = SimpleDateFormat("yyyy/MM/dd hh:mm:ss.SSS", Locale.ENGLISH)
     private val cache = StringBuilder()
+    private val lock = ReentrantLock()
 
     val logs get() = cache.toString()
 
-    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) = lock.withLock {
         val prefix = "${getTime()} ${getLevel(priority)}/${tag ?: "???"}: "
         cache.append(prefix)
         cache.append(message.substring(0, message.length.coerceAtMost(maxMessageLength)))

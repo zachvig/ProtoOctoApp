@@ -6,6 +6,6 @@
     </entry>
     <entry>
         <key>printer_connection_timeout_sec</key>
-        <value>5</value>
+        <value>10</value>
     </entry>
 </defaultsMap>

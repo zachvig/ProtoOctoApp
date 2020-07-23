@@ -5,7 +5,6 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.livedata.OctoTransformations.filter
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filterEventsForMessageType
 import de.crysxd.octoapp.base.livedata.OctoTransformations.map
 import de.crysxd.octoapp.base.livedata.PollingLiveData
@@ -43,11 +42,6 @@ class ConnectPrinterViewModel(
         }
     }
 
-    private val printerState = octoPrintProvider.eventLiveData
-        .filterEventsForMessageType(Message.EventMessage::class.java)
-        .filter { it is Message.EventMessage.PrinterStateChanged }
-        .map { it as Message.EventMessage.PrinterStateChanged }
-
     private val psuState = octoPrintProvider.eventLiveData
         .filterEventsForMessageType(Message.PsuControlPluginMessage::class.java)
 
@@ -56,7 +50,6 @@ class ConnectPrinterViewModel(
 
     init {
         uiStateMediator.addSource(availableSerialConnections) { uiStateMediator.postValue(updateUiState()) }
-        uiStateMediator.addSource(printerState) { uiStateMediator.postValue(updateUiState()) }
         uiStateMediator.addSource(psuState) { uiStateMediator.postValue(updateUiState()) }
         uiStateMediator.addSource(psuCyclingState) { uiStateMediator.postValue(updateUiState()) }
         uiStateMediator.value = UiState.Initializing
@@ -67,9 +60,6 @@ class ConnectPrinterViewModel(
             // Connection
             val connectionResponse = availableSerialConnections.value
             val connectionResult = (connectionResponse as? PollingLiveData.Result.Success)?.result
-
-            // Printer
-            val printerState = printerState.value?.stateId ?: Message.EventMessage.PrinterStateChanged.PrinterState.UNKNOWN
 
             // PSU
             val psuState = psuState.value ?: if (octoPrintRepository.instanceInformation.value?.supportsPsuPlugin == true) {
@@ -83,7 +73,6 @@ class ConnectPrinterViewModel(
             viewModelScope.launch(Dispatchers.IO) {
                 Timber.d("-----")
                 Timber.d("ConnectionResult: $connectionResult")
-                Timber.d("PrinterState: $printerState")
                 Timber.d("PsuState: $psuState")
                 Timber.d("PsuCycled: $psuCyclingState")
 
@@ -110,15 +99,15 @@ class ConnectPrinterViewModel(
                     isNoPrinterAvailable(connectionResult) ->
                         UiState.WaitingForPrinterToComeOnline(psuState?.isPsuOn)
 
-                    isPrinterOffline(connectionResult, printerState, psuCyclingState) ->
+                    isPrinterOffline(connectionResult, psuCyclingState) ->
                         UiState.PrinterOffline(supportsPsuPlugin)
 
-                    isPrinterConnecting(printerState) ->
+                    isPrinterConnecting(connectionResult) ->
                         UiState.PrinterConnecting
 
                     else -> {
                         // Printer ready to connect
-                        autoConnect(printerState, connectionResult.options)
+                        autoConnect(connectionResult)
                         UiState.WaitingForPrinterToComeOnline(psuState?.isPsuOn)
                     }
                 }
@@ -144,31 +133,25 @@ class ConnectPrinterViewModel(
 
     private fun isPrinterOffline(
         connectionResponse: ConnectionResponse,
-        printerState: Message.EventMessage.PrinterStateChanged.PrinterState,
         psuState: PsuCycledState
     ) = connectionResponse.options.ports.isNotEmpty() &&
-            (isInErrorState(printerState) || isConnectionAttemptTimedOut(printerState)) &&
+            (isInErrorState() || isConnectionAttemptTimedOut(connectionResponse)) &&
             psuState != PsuCycledState.Cycled
 
-    private fun isConnectionAttemptTimedOut(printerState: Message.EventMessage.PrinterStateChanged.PrinterState) = !didJustAttemptToConnect() &&
-            isPrinterConnecting(printerState) &&
+    private fun isConnectionAttemptTimedOut(connectionResponse: ConnectionResponse) = isPrinterConnecting(connectionResponse) &&
             System.nanoTime() - lastConnectionAttempt > connectionTimeoutNs
 
+    private fun isInErrorState() = false
 
-    private fun isInErrorState(printerState: Message.EventMessage.PrinterStateChanged.PrinterState) = listOf(
-        Message.EventMessage.PrinterStateChanged.PrinterState.ERROR
-    ).contains(printerState)
+    private fun isPrinterConnecting(connectionResponse: ConnectionResponse) = listOf(
+        ConnectionResponse.ConnectionState.CONNECTING,
+        ConnectionResponse.ConnectionState.OPERATIONAL
+    ).contains(connectionResponse.current.state)
 
-    private fun isPrinterConnecting(printerState: Message.EventMessage.PrinterStateChanged.PrinterState) = listOf(
-        Message.EventMessage.PrinterStateChanged.PrinterState.OPERATIONAL,
-        Message.EventMessage.PrinterStateChanged.PrinterState.CONNECTING,
-        Message.EventMessage.PrinterStateChanged.PrinterState.OPEN_SERIAL
-    ).contains(printerState)
-
-    private fun autoConnect(printerState: Message.EventMessage.PrinterStateChanged.PrinterState, connectionOptions: ConnectionResponse.ConnectionOptions) =
+    private fun autoConnect(connectionResponse: ConnectionResponse) =
         viewModelScope.launch(Dispatchers.IO) {
             octoPrintProvider.octoPrint.value?.let { octoPrint ->
-                if (connectionOptions.ports.isNotEmpty() && !didJustAttemptToConnect() && !isPrinterConnecting(printerState)) {
+                if (connectionResponse.options.ports.isNotEmpty() && !didJustAttemptToConnect() && !isPrinterConnecting(connectionResponse)) {
                     recordConnectionAttempt()
                     Timber.i("Attempting auto connect")
                     autoConnectPrinterUseCase.execute(octoPrint)
