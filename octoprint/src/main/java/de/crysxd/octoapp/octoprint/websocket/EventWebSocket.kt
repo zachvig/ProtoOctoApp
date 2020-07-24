@@ -114,6 +114,7 @@ class EventWebSocket(
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
+            dispatchEvent(Event.Error(t))
             isConnected.set(false)
 
             reconnectJob = GlobalScope.launch {

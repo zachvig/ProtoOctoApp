@@ -13,6 +13,7 @@ import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import okhttp3.logging.HttpLoggingInterceptor
+import timber.log.Timber
 
 class OctoPrintProvider(
     private val httpLoggingInterceptor: HttpLoggingInterceptor,
@@ -37,16 +38,20 @@ class OctoPrintProvider(
             WebSocketLiveData(it.getEventWebSocket())
         }
     }.map {
-        if (it is Event.MessageReceived && it.message is Message.EventMessage.FirmwareData) {
-            val data = it.message as Message.EventMessage.FirmwareData
-            analytics.logEvent("printer_firmware_data") {
-                param("firmware_name", data.firmwareName)
-                param("machine_type", data.machineType)
-                param("extruder_count", data.extruderCount.toLong())
+        when {
+            it is Event.MessageReceived && it.message is Message.EventMessage.FirmwareData -> {
+                val data = it.message as Message.EventMessage.FirmwareData
+                analytics.logEvent("printer_firmware_data") {
+                    param("firmware_name", data.firmwareName)
+                    param("machine_type", data.machineType)
+                    param("extruder_count", data.extruderCount.toLong())
+                }
+                analytics.setUserProperty("printer_firmware_name", data.firmwareName)
+                analytics.setUserProperty("printer_machine_type", data.machineType)
+                analytics.setUserProperty("printer_extruder_count", data.extruderCount.toString())
             }
-            analytics.setUserProperty("printer_firmware_name", data.firmwareName)
-            analytics.setUserProperty("printer_machine_type", data.machineType)
-            analytics.setUserProperty("printer_extruder_count", data.extruderCount.toString())
+
+            it is Event.Error -> Timber.tag("Websocket").w(it.exception)
         }
 
         it
