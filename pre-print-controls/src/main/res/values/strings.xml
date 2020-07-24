@@ -16,8 +16,8 @@
     <string name="mm_0_025">0.025 mm</string>
     <string name="mm_0_1">0.1 mm</string>
     <string name="mm_1">1 mm</string>
-    <string name="mm_10">1 cm</string>
-    <string name="mm_100">10 cm</string>
+    <string name="mm_10">10 mm</string>
+    <string name="mm_100">100 mm</string>
     <string name="y">Y</string>
     <string name="x">X</string>
     <string name="z">Z</string>
