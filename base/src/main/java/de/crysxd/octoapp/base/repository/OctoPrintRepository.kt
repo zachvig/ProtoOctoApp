@@ -17,11 +17,19 @@ class OctoPrintRepository(
     val instanceInformation = Transformations.map(mutableInstanceInformation) { it }
 
     init {
-        storeOctoprintInstanceInformation(getOctoprintInstanceInformation())
+        storeOctoprintInstanceInformation(getRawOctoPrintInstanceInformation())
     }
 
-    fun clearOctoprintInstanceInformation() {
-        storeOctoprintInstanceInformation(OctoPrintInstanceInformation("", -1, ""))
+    fun clearOctoprintInstanceInformation(apiKeyWasInvalid: Boolean = false) {
+        val currentValue = getRawOctoPrintInstanceInformation()
+        storeOctoprintInstanceInformation(
+            OctoPrintInstanceInformation(
+                if (apiKeyWasInvalid) currentValue?.hostName ?: "" else "",
+                if (apiKeyWasInvalid) currentValue?.port ?: -1 else -1,
+                "",
+                apiKeyWasInvalid = apiKeyWasInvalid
+            )
+        )
     }
 
     fun storeOctoprintInstanceInformation(instance: OctoPrintInstanceInformation?) = GlobalScope.launch {
@@ -37,5 +45,5 @@ class OctoPrintRepository(
         }
     }
 
-    private fun getOctoprintInstanceInformation() = dataSource.get()
+    fun getRawOctoPrintInstanceInformation() = dataSource.get()
 }

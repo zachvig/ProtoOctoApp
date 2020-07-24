@@ -12,6 +12,7 @@ class LocalOctoPrintInstanceInformationSource(private val sharedPreferences: Sha
         private const val KEY_PORT = "octoprint_port"
         private const val KEY_API_KEY = "octoprint_api_key"
         private const val KEY_SUPPORTS_PSU_PLUGIN = "octoprint_supports_psu_plugin"
+        private const val KEY_API_KEY_WAS_INVALID = "octoprint_api_key_was_invalid"
     }
 
     override fun store(t: OctoPrintInstanceInformation?) = sharedPreferences.edit {
@@ -20,11 +21,13 @@ class LocalOctoPrintInstanceInformationSource(private val sharedPreferences: Sha
             remove(KEY_HOST_NAME)
             remove(KEY_PORT)
             remove(KEY_SUPPORTS_PSU_PLUGIN)
+            remove(KEY_API_KEY_WAS_INVALID)
         } else {
             putString(KEY_API_KEY, t.apiKey)
             putString(KEY_HOST_NAME, t.hostName)
             putInt(KEY_PORT, t.port)
             putBoolean(KEY_SUPPORTS_PSU_PLUGIN, t.supportsPsuPlugin)
+            putBoolean(KEY_API_KEY_WAS_INVALID, t.apiKeyWasInvalid)
         }
     }
 
@@ -37,7 +40,8 @@ class LocalOctoPrintInstanceInformationSource(private val sharedPreferences: Sha
             sharedPreferences.getString(KEY_HOST_NAME, "") ?: "",
             sharedPreferences.getInt(KEY_PORT, -1),
             sharedPreferences.getString(KEY_API_KEY, "") ?: "",
-            sharedPreferences.getBoolean(KEY_SUPPORTS_PSU_PLUGIN, false)
+            sharedPreferences.getBoolean(KEY_SUPPORTS_PSU_PLUGIN, false),
+            sharedPreferences.getBoolean(KEY_API_KEY_WAS_INVALID, false)
         )
     } else {
         null

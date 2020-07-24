@@ -14,7 +14,7 @@ class InvalidApiKeyInterceptor(
 
         if (response.code == 403) {
             Timber.e("API key invalid, clearing data")
-            octoPrintRepository.clearOctoprintInstanceInformation()
+            octoPrintRepository.clearOctoprintInstanceInformation(apiKeyWasInvalid = true)
         }
 
         return response
