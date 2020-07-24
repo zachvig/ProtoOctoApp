@@ -65,7 +65,11 @@ class OctoApp : Application() {
         }
 
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(OnCompleteListener { task ->
-            Timber.tag("FCM").i("Token: ${task.result?.token}")
+            if (task.isSuccessful) {
+                Timber.tag("FCM").i("Token: ${task.result?.token}")
+            } else {
+                Timber.tag("FCM").w("Unable to get token")
+            }
         })
     }
 }
