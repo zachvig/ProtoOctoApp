@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.di.modules
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
 import dagger.Provides
+import de.crysxd.octoapp.base.InvalidApiKeyInterceptor
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.datasource.DataSource
 import de.crysxd.octoapp.base.di.BaseScope
@@ -28,8 +29,15 @@ open class OctoPrintModule {
     @Provides
     open fun provideOctoPrintProvider(
         httpLoggingInterceptor: HttpLoggingInterceptor,
+        invalidApiKeyInterceptor: InvalidApiKeyInterceptor,
         octoPrintRepository: OctoPrintRepository,
         analytics: FirebaseAnalytics
-    ) = OctoPrintProvider(httpLoggingInterceptor, octoPrintRepository, analytics)
+    ) = OctoPrintProvider(httpLoggingInterceptor, invalidApiKeyInterceptor, octoPrintRepository, analytics)
+
+    @BaseScope
+    @Provides
+    open fun provideInvalidApiKeyInterceptor(
+        octoPrintRepository: OctoPrintRepository
+    ) = InvalidApiKeyInterceptor(octoPrintRepository)
 
 }
