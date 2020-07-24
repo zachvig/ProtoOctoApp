@@ -41,7 +41,8 @@ class OctoApp : Application() {
             Timber.i("Complete remote config fetch (success=${it.isSuccessful})")
         }
 
-        // Add cache for logging
+        // Add cache for logging and report to firebase
         Timber.plant(BaseInjector.get().timberCacheTree())
+        Timber.plant(BaseInjector.get().firebaseTree())
     }
 }
