@@ -4,5 +4,6 @@ data class OctoPrintInstanceInformation(
     val hostName: String,
     val port: Int,
     val apiKey: String,
-    val supportsPsuPlugin: Boolean = false
+    val supportsPsuPlugin: Boolean = false,
+    val apiKeyWasInvalid: Boolean = false
 )

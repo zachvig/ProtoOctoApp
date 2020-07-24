@@ -16,6 +16,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 
 class OctoPrintProvider(
     private val httpLoggingInterceptor: HttpLoggingInterceptor,
+    private val invalidApiKeyInterceptor: InvalidApiKeyInterceptor,
     octoPrintRepository: OctoPrintRepository,
     private val analytics: FirebaseAnalytics
 ) {
@@ -52,5 +53,5 @@ class OctoPrintProvider(
     }
 
     fun createAdHocOctoPrint(it: OctoPrintInstanceInformation) =
-        OctoPrint(it.hostName, it.port, it.apiKey, listOf(httpLoggingInterceptor))
+        OctoPrint(it.hostName, it.port, it.apiKey, listOf(invalidApiKeyInterceptor, httpLoggingInterceptor))
 }
