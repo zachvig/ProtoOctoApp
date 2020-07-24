@@ -9,6 +9,7 @@ import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
+import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.injectParentViewModel
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
@@ -37,7 +38,8 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
                 ControlTemperatureWidget(this),
                 MoveToolWidget(this),
                 ExtrudeWidget(this),
-                SendGcodeWidget(this)
+                SendGcodeWidget(this),
+                WebcamWidget(this)
             )
         }
 

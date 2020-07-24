@@ -13,6 +13,7 @@ import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlBedTemperatureWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlToolTemperatureWidgetViewModel
+import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidgetViewModel
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.OpenEmailClientForFeedbackUseCase
 import de.crysxd.octoapp.base.usecase.SetBedTargetTemperatureUseCase
@@ -62,4 +63,10 @@ open class ViewModelModule {
         cacheTree: TimberCacheTree,
         sendUseCase: OpenEmailClientForFeedbackUseCase
     ): ViewModel = SendFeedbackViewModel(sendUseCase, cacheTree)
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(WebcamWidgetViewModel::class)
+    open fun provideWebcamWidgetViewModel(
+    ): ViewModel = WebcamWidgetViewModel()
 }
