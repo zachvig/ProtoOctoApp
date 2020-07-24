@@ -108,7 +108,6 @@ class ConnectPrinterViewModel(
                     isPrinterConnecting(connectionResult) ->
                         UiState.PrinterConnecting
 
-
                     else -> {
                         // Printer ready to connect
                         autoConnect(connectionResult)
