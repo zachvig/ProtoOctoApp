@@ -28,6 +28,7 @@ after_script:
 
 test:
   stage: test
+  needs: []
   script:
     - ./gradlew test
   artifacts:
@@ -38,6 +39,7 @@ test:
 
 build:
   stage: build
+  needs: ["test"]
   script:
     - ./gradlew assembleRelease
   artifacts:
@@ -48,8 +50,9 @@ build:
   only:
     - tags
 
-release_google_play:
+deploy_google_play:
   stage: deploy
+  needs: ["test"]
   script:
     - ./gradlew publishReleaseBundle
   artifacts:
@@ -59,8 +62,9 @@ release_google_play:
   only:
     - tags
 
-release_gitlab:
+deploy_gitlab:
   stage: deploy
+  needs: ["build"]
   image: inetprocess/gitlab-release
   script:
     - gitlab-release --message "$CI_COMMIT_TAG" app/build/outputs/apk/release/app-release.apk
