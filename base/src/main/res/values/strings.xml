@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="public_file_dir_name" translatable="false">public_files</string>
+    <string name="updates_notification_channel" translatable="false">updates</string>
 
     <string name="error_general">Something went wrong! Please try again.</string>
     <string name="error_no_printer_connected">No printer is connected to OctoPrint</string>
@@ -45,4 +46,5 @@
     <string name="thank_you_for_sending_feedback_please_select_what_should_be_included_in_your_message">Thank you for sending feedback. Please select what should be included in your message:</string>
     <string name="send_feedback">Send Feedback</string>
     <string name="open_email">Open Email</string>
+    <string name="updates_notification_channel_name">Updates</string>
 </resources>
