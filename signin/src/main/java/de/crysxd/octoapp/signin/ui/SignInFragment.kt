@@ -1,10 +1,10 @@
 package de.crysxd.octoapp.signin.ui
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
@@ -40,6 +40,11 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         }
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer(this::updateViewState))
+
+        val preFill = viewModel.getPreFillInfo()
+        inputHostname.editText.setText(preFill.hostName)
+        inputPort.editText.setText(preFill.port.toString())
+        inputApiKey.editText.setText(preFill.apiKey)
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(ReadQrCodeFragment.RESULT_API_KEY)?.observe(viewLifecycleOwner, Observer {
             inputApiKey.editText.setText(it)
@@ -113,5 +118,15 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
         requireOctoActivity().octo.isVisible = false
+
+        // Show message if logout because of invalid API key
+        // Do not show if already shown in this "session"
+        if (viewModel.getPreFillInfo().apiKeyWasInvalid && !viewModel.invalidApiKeyInfoWasShown) {
+            viewModel.invalidApiKeyInfoWasShown = true
+            AlertDialog.Builder(requireContext())
+                .setMessage(R.string.error_api_key_reported_invalid)
+                .setPositiveButton(android.R.string.ok, null)
+                .show()
+        }
     }
 }
