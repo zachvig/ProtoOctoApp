@@ -36,24 +36,24 @@ class AppUpdateFragment : Fragment() {
             if (result.exception != null) {
                 Timber.e(result.exception)
             } else {
-                Firebase.analytics.logEvent("app_update_available", Bundle.EMPTY)
                 val appUpdateInfo = result.result
-                Timber.i("App update info: $appUpdateInfo")
 
-                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
-                    appUpdateInfo.updatePriority() >= minUpdatePriority &&
-                    appUpdateInfo.isUpdateTypeAllowed(appUpdateType)
-                ) activity?.let {
-                    Timber.i("Requesting app update")
-                    FirebaseAnalytics.getInstance(requireContext()).logEvent("app_update_presented", Bundle.EMPTY)
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
+                    Firebase.analytics.logEvent("app_update_available", Bundle.EMPTY)
+                    Timber.i("App update info: $appUpdateInfo")
 
-                    // Request the update
-                    appUpdateManager.startUpdateFlowForResult(
-                        appUpdateInfo,
-                        appUpdateType,
-                        it,
-                        appUpdateRequestCode
-                    )
+                    if (appUpdateInfo.updatePriority() >= minUpdatePriority && appUpdateInfo.isUpdateTypeAllowed(appUpdateType)) activity?.let {
+                        Timber.i("Requesting app update")
+                        FirebaseAnalytics.getInstance(requireContext()).logEvent("app_update_presented", Bundle.EMPTY)
+
+                        // Request the update
+                        appUpdateManager.startUpdateFlowForResult(
+                            appUpdateInfo,
+                            appUpdateType,
+                            it,
+                            appUpdateRequestCode
+                        )
+                    }
                 }
             }
         }
