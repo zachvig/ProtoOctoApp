@@ -13,8 +13,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 const val PING_TIMEOUT_MS = 1000L
 const val CONNECTION_TIMEOUT_MS = 2000L
-const val RECONNECT_TIMEOUT_MS = 6000L
 const val RECONNECT_DELAY_MS = 1000L
+const val RECONNECT_TIMEOUT_MS = CONNECTION_TIMEOUT_MS + RECONNECT_DELAY_MS
 
 class EventWebSocket(
     private val httpClient: OkHttpClient,
