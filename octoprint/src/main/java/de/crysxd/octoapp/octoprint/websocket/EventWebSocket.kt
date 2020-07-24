@@ -11,6 +11,11 @@ import okhttp3.WebSocket
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
+const val PING_TIMEOUT_MS = 1000L
+const val CONNECTION_TIMEOUT_MS = 2000L
+const val RECONNECT_DELAY_MS = 1000L
+const val RECONNECT_TIMEOUT_MS = CONNECTION_TIMEOUT_MS + RECONNECT_DELAY_MS
+
 class EventWebSocket(
     private val httpClient: OkHttpClient,
     private val hostname: String,
@@ -19,6 +24,7 @@ class EventWebSocket(
 ) {
 
     private var reconnectJob: Job? = null
+    private var reportDisconnectedJob: Job? = null
     private var webSocket: WebSocket? = null
     private var isConnected = AtomicBoolean(false)
     private val eventHandlers: MutableList<Pair<CoroutineScope, suspend (Event) -> Unit>> = mutableListOf()
@@ -31,8 +37,8 @@ class EventWebSocket(
                 .build()
 
             httpClient.newBuilder()
-                .pingInterval(1, TimeUnit.SECONDS)
-                .connectTimeout(2, TimeUnit.SECONDS)
+                .pingInterval(PING_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+                .connectTimeout(CONNECTION_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .build()
                 .newWebSocket(request, WebSocketListener())
         }
@@ -41,6 +47,8 @@ class EventWebSocket(
     fun stop() {
         webSocket?.cancel()
         reconnectJob?.cancel()
+        reportDisconnectedJob?.cancel()
+        dispatchEvent(Event.Disconnected())
     }
 
     fun addEventHandler(scope: CoroutineScope, handler: suspend (Event) -> Unit) {
@@ -80,6 +88,8 @@ class EventWebSocket(
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
+            reportDisconnectedJob?.cancel()
+            reportDisconnectedJob = null
             dispatchEvent(Event.Connected)
         }
 
@@ -104,12 +114,20 @@ class EventWebSocket(
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
-            dispatchEvent(Event.Disconnected(t))
             isConnected.set(false)
 
             reconnectJob = GlobalScope.launch {
-                delay(1000L)
+                delay(RECONNECT_DELAY_MS)
                 start()
+            }
+
+            // If not yet done, schedule to dispatch the disconnected event
+            // This will be cancelled once connected
+            if (reportDisconnectedJob == null) {
+                reportDisconnectedJob = GlobalScope.launch {
+                    delay(RECONNECT_TIMEOUT_MS)
+                    dispatchEvent(Event.Disconnected(t))
+                }
             }
         }
     }
