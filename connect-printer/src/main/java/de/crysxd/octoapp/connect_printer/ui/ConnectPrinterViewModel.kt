@@ -96,6 +96,9 @@ class ConnectPrinterViewModel(
                     isPsuBeingCycled(psuCyclingState) ->
                         UiState.PrinterPsuCycling
 
+                    isPrinterConnected(connectionResult) ->
+                        uiStateMediator.value ?: UiState.Initializing
+
                     isNoPrinterAvailable(connectionResult) ->
                         UiState.WaitingForPrinterToComeOnline(psuState?.isPsuOn)
 
@@ -144,7 +147,10 @@ class ConnectPrinterViewModel(
     private fun isInErrorState() = false
 
     private fun isPrinterConnecting(connectionResponse: ConnectionResponse) = listOf(
-        ConnectionResponse.ConnectionState.CONNECTING,
+        ConnectionResponse.ConnectionState.CONNECTING
+    ).contains(connectionResponse.current.state)
+
+    private fun isPrinterConnected(connectionResponse: ConnectionResponse) = listOf(
         ConnectionResponse.ConnectionState.OPERATIONAL
     ).contains(connectionResponse.current.state)
 
