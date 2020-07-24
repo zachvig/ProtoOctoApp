@@ -11,8 +11,8 @@ import okhttp3.WebSocket
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
-const val PING_TIMEOUT_MS = 1000L
-const val CONNECTION_TIMEOUT_MS = 2000L
+const val PING_TIMEOUT_MS = 3000L
+const val CONNECTION_TIMEOUT_MS = 3000L
 const val RECONNECT_DELAY_MS = 1000L
 const val RECONNECT_TIMEOUT_MS = CONNECTION_TIMEOUT_MS + RECONNECT_DELAY_MS
 

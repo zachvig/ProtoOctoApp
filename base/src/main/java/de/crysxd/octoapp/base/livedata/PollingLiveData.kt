@@ -6,6 +6,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class PollingLiveData<T>(
     private val interval: Long = 1000,
@@ -29,6 +30,7 @@ class PollingLiveData<T>(
         try {
             postValue(Result.Success(action()))
         } catch (e: Exception) {
+            Timber.e(e)
             postValue(Result.Failure(e))
         }
 

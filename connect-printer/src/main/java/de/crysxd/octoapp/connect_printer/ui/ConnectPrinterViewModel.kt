@@ -37,7 +37,12 @@ class ConnectPrinterViewModel(
     private val availableSerialConnections = Transformations.switchMap(octoPrintProvider.octoPrint) {
         PollingLiveData {
             it?.let {
-                getPrinterConnectionUseCase.execute(it)
+                try {
+                    getPrinterConnectionUseCase.execute(it)
+                } catch (e: Exception) {
+                    Timber.wtf(e, "[1] Caught exception")
+                    null
+                }
             }
         }
     }
