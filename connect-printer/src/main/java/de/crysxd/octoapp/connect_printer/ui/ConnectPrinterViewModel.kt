@@ -75,7 +75,7 @@ class ConnectPrinterViewModel(
             val supportsPsuPlugin = psuState != null
             val psuCyclingState = psuCyclingState.value ?: PsuCycledState.NotCycled
 
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
                 Timber.d("-----")
                 Timber.d("ConnectionResult: $connectionResult")
                 Timber.d("PsuState: $psuState")
@@ -160,7 +160,7 @@ class ConnectPrinterViewModel(
     ).contains(connectionResponse.current.state)
 
     private fun autoConnect(connectionResponse: ConnectionResponse) =
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             octoPrintProvider.octoPrint.value?.let { octoPrint ->
                 if (connectionResponse.options.ports.isNotEmpty() && !didJustAttemptToConnect() && !isPrinterConnecting(connectionResponse)) {
                     recordConnectionAttempt()
