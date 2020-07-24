@@ -14,8 +14,13 @@ open class LoggingModule {
     @Provides
     open fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor =
         HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+            val tag = "HTTP"
             override fun log(message: String) {
-                Timber.tag("HTTP").v(message)
+                if (message.startsWith("-->") || message.startsWith("<--")) {
+                    Timber.tag(tag).i(message)
+                } else {
+                    Timber.tag(tag).v(message)
+                }
             }
         }).setLevel(HttpLoggingInterceptor.Level.BODY)
 
