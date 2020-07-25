@@ -33,7 +33,7 @@ plugins:
 printerProfiles:
     default: _default
 server:
-    firstRun: false
+    firstRun: true
     onlineCheck:
         enabled: true
     pluginBlacklist:
