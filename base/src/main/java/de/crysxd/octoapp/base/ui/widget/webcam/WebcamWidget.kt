@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.widget_webcam.view.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 
-const val NOT_LIVE_IF_NO_FRAME_FOR_MS = 3000
+const val NOT_LIVE_IF_NO_FRAME_FOR_MS = 3000L
 
 class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
 
