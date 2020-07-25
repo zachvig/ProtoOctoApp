@@ -2,6 +2,8 @@ accessControl:
     salt: gNNhuVTYJvPb79F2UBCZK78EuazyEgQd
 api:
     key: C3A9413B2ACB42009499720198C20994
+appearance:
+    color: red
 devel:
     virtualPrinter:
         enabled: true
