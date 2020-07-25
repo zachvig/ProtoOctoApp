@@ -10,7 +10,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.ui.BaseFragment
@@ -23,6 +22,8 @@ import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInViewState
+import de.crysxd.octoapp.signin.usecases.SignInUseCase.Warning.NotAdmin
+import de.crysxd.octoapp.signin.usecases.SignInUseCase.Warning.TooNewServerVersion
 import kotlinx.android.synthetic.main.fragment_signin.*
 
 class SignInFragment : BaseFragment(R.layout.fragment_signin) {
@@ -98,9 +99,26 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         @Suppress("ControlFlowWithEmptyBody")
         if (res is SignInViewState.SignInSuccess) {
             buttonSignIn.isEnabled = false
-            Firebase.analytics.logEvent(FirebaseAnalytics.Event.LOGIN, Bundle.EMPTY)
 
-            // MainActivity will navigate away
+            // Show warning dialog if
+            if (res.warnings.isNotEmpty()) {
+                val message = res.warnings.joinToString("\n") {
+                    val text = when (it) {
+                        is TooNewServerVersion -> getString(R.string.warning_server_version_too_new, it.testedOnVersion, it.serverVersion)
+                        is NotAdmin -> getString(R.string.warning_no_admin_rights)
+                    }
+
+                    "⚠️ $text"
+                }
+
+                AlertDialog.Builder(requireContext())
+                    .setTitle(getString(R.string.sign_in_succes_with_warnings))
+                    .setMessage(message)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show()
+
+                viewModel.completeSignIn(res.instanceInformation)
+            }
         }
     }
 

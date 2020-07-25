@@ -1,8 +1,12 @@
 package de.crysxd.octoapp.signin.ui
 
+import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
@@ -29,11 +33,11 @@ class SignInViewModel(
                 when (val res = verifyUseCase.execute(info)) {
                     is SignInInformationValidationResult.ValidationOk -> {
                         mutableViewState.postValue(SignInViewState.Loading)
-                        if (!signInUseCase.execute(info)) {
-                            mutableViewState.postValue(SignInViewState.SignInFailed)
+                        val result = signInUseCase.execute(info)
+                        if (result is SignInUseCase.Result.Success) {
+                            mutableViewState.postValue(SignInViewState.SignInSuccess(result.octoPrintInstanceInformation, result.warnings))
                         } else {
-                            // Sign in success
-                            mutableViewState.postValue(SignInViewState.SignInSuccess)
+                            mutableViewState.postValue(SignInViewState.SignInFailed)
                         }
                     }
 
@@ -46,6 +50,12 @@ class SignInViewModel(
                 throw e
             }
         }
+
+    fun completeSignIn(instanceInformation: OctoPrintInstanceInformation) {
+        // Save instance information, MainActivity will navigate away
+        Firebase.analytics.logEvent(FirebaseAnalytics.Event.LOGIN, Bundle.EMPTY)
+        octoPrintRepository.storeOctoprintInstanceInformation(instanceInformation)
+    }
 
     fun getPreFillInfo() = octoPrintRepository.getRawOctoPrintInstanceInformation() ?: OctoPrintInstanceInformation("", 80, "")
 }
