@@ -1,0 +1,8 @@
+logs/
+.cache/
+config.backup
+data/announcements/
+data/plugin_blacklist.yaml
+data/pluginmanager/
+data/preemptive_cache_config.yaml
+data/softwareupdate/versioncache.yaml
