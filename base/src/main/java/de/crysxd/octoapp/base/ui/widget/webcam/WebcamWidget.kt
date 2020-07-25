@@ -44,7 +44,7 @@ class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
     private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(view.webcamContent, InstantAutoTransition())
 
     private fun onUiStateChanged(state: UiState) {
-        if (state != lastState) {
+        if (lastState == null || state::class != lastState!!::class) {
             beginDelayedTransition()
         }
 
