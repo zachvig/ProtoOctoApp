@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.content.Context
+import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -65,7 +66,7 @@ class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
                 view.loadingIndicator.isVisible = false
 
                 view.liveIndicator.isVisible = true
-                //(view.streamView.drawable as? BitmapDrawable)?.bitmap?.recycle()
+                (view.streamView.drawable as? BitmapDrawable)?.bitmap?.recycle()
                 view.streamView.setImageBitmap(state.frame)
 
                 // Hide live indicator if no new frame arrives within 3s

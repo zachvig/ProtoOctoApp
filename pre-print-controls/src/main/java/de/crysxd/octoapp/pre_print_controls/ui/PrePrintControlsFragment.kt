@@ -38,9 +38,9 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
             it.widgets = listOf(
                 ControlTemperatureWidget(this),
                 MoveToolWidget(this),
+                WebcamWidget(this),
                 ExtrudeWidget(this),
-                SendGcodeWidget(this),
-                WebcamWidget(this)
+                SendGcodeWidget(this)
             )
         }
 
