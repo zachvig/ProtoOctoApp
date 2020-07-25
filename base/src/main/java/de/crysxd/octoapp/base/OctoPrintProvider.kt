@@ -42,9 +42,9 @@ class OctoPrintProvider(
             it is Event.MessageReceived && it.message is Message.EventMessage.FirmwareData -> {
                 val data = it.message as Message.EventMessage.FirmwareData
                 analytics.logEvent("printer_firmware_data") {
-                    param("firmware_name", data.firmwareName)
-                    param("machine_type", data.machineType)
-                    param("extruder_count", data.extruderCount.toLong())
+                    param("firmware_name", data.firmwareName ?: "unspecified")
+                    param("machine_type", data.machineType ?: "unspecified")
+                    param("extruder_count", data.extruderCount?.toLong() ?: 0)
                 }
                 analytics.setUserProperty("printer_firmware_name", data.firmwareName)
                 analytics.setUserProperty("printer_machine_type", data.machineType)
