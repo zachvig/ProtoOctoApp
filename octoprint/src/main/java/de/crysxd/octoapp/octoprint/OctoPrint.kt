@@ -66,9 +66,9 @@ class OctoPrint(
         .build()
 
     private fun createGsonWithTypeAdapters(): Gson = createBaseGson().newBuilder()
-        .registerTypeAdapter(ConnectionResponse.ConnectionState::class.java, ConnectionStateDeserializer())
+        .registerTypeAdapter(ConnectionResponse.ConnectionState::class.java, ConnectionStateDeserializer(getLogger()))
         .registerTypeAdapter(FileObject::class.java, FileObjectDeserializer(createBaseGson()))
-        .registerTypeAdapter(Message::class.java, MessageDeserializer(createBaseGson()))
+        .registerTypeAdapter(Message::class.java, MessageDeserializer(getLogger(), createBaseGson()))
         .create()
 
     private fun createBaseGson(): Gson = GsonBuilder()
