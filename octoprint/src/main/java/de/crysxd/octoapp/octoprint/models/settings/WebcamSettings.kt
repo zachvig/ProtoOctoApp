@@ -4,5 +4,6 @@ data class WebcamSettings(
     val streamUrl: String,
     val flipH: Boolean,
     val flipV: Boolean,
-    val rotate90: Boolean
+    val rotate90: Boolean,
+    val webcamEnabled: Boolean
 )

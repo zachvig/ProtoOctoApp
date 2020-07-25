@@ -1,7 +1,6 @@
 package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.content.Context
-import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,7 +39,7 @@ class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
         view.buttonReconnect.setOnClickListener { viewModel.connect() }
     }
 
-    private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(view as ViewGroup, InstantAutoTransition())
+    private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(view.webcamContent, InstantAutoTransition())
 
     private fun onUiStateChanged(state: UiState) {
         beginDelayedTransition()
@@ -48,16 +47,25 @@ class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
         view.errorIndicatorManual.isVisible = false
         view.liveIndicator.isVisible = false
         view.streamStalledIndicator.isVisible = false
-        view.loadingIndicator.isVisible = false
+        view.notConfiguredIndicator.isVisible = false
+
+        // Hide loading indicator in every state to prevent the animation to start over
 
         when (state) {
             Loading -> {
                 view.loadingIndicator.isVisible = true
             }
 
+            UiState.WebcamNotConfigured -> {
+                view.loadingIndicator.isVisible = false
+                view.notConfiguredIndicator.isVisible = true
+            }
+
             is UiState.FrameReady -> {
+                view.loadingIndicator.isVisible = false
+
                 view.liveIndicator.isVisible = true
-                (view.streamView.drawable as? BitmapDrawable)?.bitmap?.recycle()
+                //(view.streamView.drawable as? BitmapDrawable)?.bitmap?.recycle()
                 view.streamView.setImageBitmap(state.frame)
 
                 // Hide live indicator if no new frame arrives within 3s
@@ -77,6 +85,8 @@ class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
             }
 
             is Error -> {
+                view.loadingIndicator.isVisible = false
+
                 view.erroIndicator.isVisible = !state.isManualReconnect
                 view.errorIndicatorManual.isVisible = state.isManualReconnect
             }

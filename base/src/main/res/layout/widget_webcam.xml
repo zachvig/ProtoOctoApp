@@ -11,6 +11,7 @@
     app:cardElevation="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/webcamContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -45,6 +46,21 @@
             android:visibility="gone"
             android:textAppearance="@style/OctoTheme.TextAppearance.Title"
             android:textColor="?android:attr/textColorPrimaryInverse"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/streamView"
+            app:layout_constraintTop_toTopOf="@+id/streamView" />
+
+        <TextView
+            android:id="@+id/notConfiguredIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_2"
+            android:gravity="center"
+            android:text="@string/please_configure_your_webcam_in_octoprint"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+            android:textColor="?android:attr/textColorPrimaryInverse"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/streamView"
@@ -87,6 +103,7 @@
             android:background="@color/black_translucent"
             android:gravity="center"
             android:orientation="vertical"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -38,6 +38,11 @@ class WebcamWidgetViewModel(
                 val octoPrint = octoPrintProvider.octoPrint.value ?: return@liveData emit(UiState.Error(true))
                 val webcamSettings = octoPrint.createSettingsApi().getSettings().webcam
 
+                // Check if webcam is configured
+                if (!webcamSettings.webcamEnabled || webcamSettings.streamUrl.isEmpty()) {
+                    return@liveData emit(UiState.WebcamNotConfigured)
+                }
+
                 // Open stream
                 emitSource(MjpegLiveData(webcamSettings.streamUrl).map {
                     when (it) {
@@ -79,6 +84,7 @@ class WebcamWidgetViewModel(
 
     sealed class UiState {
         object Loading : UiState()
+        object WebcamNotConfigured : UiState()
         data class FrameReady(val frame: Bitmap) : UiState()
         data class Error(val isManualReconnect: Boolean) : UiState()
     }
