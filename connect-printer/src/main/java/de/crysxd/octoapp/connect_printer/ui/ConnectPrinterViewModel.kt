@@ -11,6 +11,7 @@ import de.crysxd.octoapp.base.livedata.PollingLiveData
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.*
+import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase.Params
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintBootingException
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import de.crysxd.octoapp.octoprint.models.socket.Message
@@ -167,7 +168,7 @@ class ConnectPrinterViewModel(
                 if (connectionResponse.options.ports.isNotEmpty() && !didJustAttemptToConnect() && !isPrinterConnecting(connectionResponse)) {
                     recordConnectionAttempt()
                     Timber.i("Attempting auto connect")
-                    autoConnectPrinterUseCase.execute(octoPrint)
+                    autoConnectPrinterUseCase.execute(Params(octoPrint, connectionResponse.options.ports.firstOrNull()))
                     psuCyclingState.postValue(PsuCycledState.NotCycled)
                 }
             }
