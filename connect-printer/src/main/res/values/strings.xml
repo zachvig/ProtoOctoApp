@@ -18,4 +18,5 @@
     <string name="cycle_psu">Cycle PSU</string>
     <string name="retry_connection">Retry connection</string>
     <string name="psu_is_being_cycled">PSU is being cycled</string>
+    <string name="printer_connected">Printer connected</string>
 </resources>

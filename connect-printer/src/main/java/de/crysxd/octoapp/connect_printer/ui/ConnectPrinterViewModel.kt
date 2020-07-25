@@ -98,7 +98,7 @@ class ConnectPrinterViewModel(
                         UiState.PrinterPsuCycling
 
                     isPrinterConnected(connectionResult) ->
-                        uiStateMediator.value ?: UiState.Initializing
+                        UiState.PrinterConnected
 
                     isNoPrinterAvailable(connectionResult) ->
                         UiState.WaitingForPrinterToComeOnline(psuState?.isPsuOn)
@@ -225,6 +225,7 @@ class ConnectPrinterViewModel(
         object PrinterConnecting : UiState()
         data class PrinterOffline(val psuSupported: Boolean) : UiState()
         object PrinterPsuCycling : UiState()
+        object PrinterConnected : UiState()
 
         object Unknown : UiState()
 
