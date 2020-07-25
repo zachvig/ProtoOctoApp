@@ -27,15 +27,23 @@ class OctoPrint(
     private val interceptors: List<Interceptor> = emptyList()
 ) {
 
+    companion object {
+        const val TESTED_SERVER_VERSION = "1.4.0"
+    }
+
     private val webSocket = EventWebSocket(
         httpClient = createOkHttpClient(),
         hostname = hostName,
         port = port,
         gson = createGsonWithTypeAdapters(),
-        logger = getLogger()
+        logger = getLogger(),
+        loginApi = createLoginApi()
     )
 
     fun getEventWebSocket() = webSocket
+
+    fun createLoginApi(): LoginApi =
+        createRetrofit().create(LoginApi::class.java)
 
     fun createVersionApi(): VersionApi =
         createRetrofit().create(VersionApi::class.java)
