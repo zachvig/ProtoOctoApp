@@ -29,6 +29,7 @@ class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
 
     private val viewModel: WebcamWidgetViewModel by injectViewModel()
     private var hideLiveIndicatorJob: Job? = null
+    private var lastState: UiState? = null
 
     override fun getTitle(context: Context) = context.getString(R.string.webcam)
 
@@ -43,7 +44,10 @@ class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
     private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(view.webcamContent, InstantAutoTransition())
 
     private fun onUiStateChanged(state: UiState) {
-        beginDelayedTransition()
+        if (state != lastState) {
+            beginDelayedTransition()
+        }
+
         view.erroIndicator.isVisible = false
         view.errorIndicatorManual.isVisible = false
         view.liveIndicator.isVisible = false
@@ -66,8 +70,9 @@ class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
                 view.loadingIndicator.isVisible = false
 
                 view.liveIndicator.isVisible = true
-                (view.streamView.drawable as? BitmapDrawable)?.bitmap?.recycle()
+                val old = (view.streamView.drawable as? BitmapDrawable)?.bitmap
                 view.streamView.setImageBitmap(state.frame)
+                old?.recycle()
 
                 // Hide live indicator if no new frame arrives within 3s
                 // Show stalled indicator if no new frame arrives within 10s
@@ -92,5 +97,7 @@ class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
                 view.errorIndicatorManual.isVisible = state.isManualReconnect
             }
         }
+
+        lastState = state
     }
 }
