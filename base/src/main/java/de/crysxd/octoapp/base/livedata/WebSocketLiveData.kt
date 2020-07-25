@@ -6,7 +6,6 @@ import de.crysxd.octoapp.octoprint.websocket.EventWebSocket
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.plus
-import timber.log.Timber
 
 class WebSocketLiveData(private val webSocket: EventWebSocket) : LiveData<Event>() {
 
@@ -29,6 +28,6 @@ class WebSocketLiveData(private val webSocket: EventWebSocket) : LiveData<Event>
 
     private suspend fun onEvent(event: Event) {
         postValue(event)
-        Timber.v(event.toString())
+        //Timber.v(event.toString())
     }
 }

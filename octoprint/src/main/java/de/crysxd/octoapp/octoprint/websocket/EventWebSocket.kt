@@ -10,6 +10,8 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.logging.Level
+import java.util.logging.Logger
 
 const val PING_TIMEOUT_MS = 3000L
 const val CONNECTION_TIMEOUT_MS = 3000L
@@ -20,7 +22,8 @@ class EventWebSocket(
     private val httpClient: OkHttpClient,
     private val hostname: String,
     private val port: Int,
-    private val gson: Gson
+    private val gson: Gson,
+    private val logger: Logger
 ) {
 
     private var reconnectJob: Job? = null
@@ -102,7 +105,7 @@ class EventWebSocket(
                 }
                 dispatchEvent(Event.MessageReceived(message))
             } catch (e: Exception) {
-                e.printStackTrace()
+                logger.log(Level.SEVERE, "Error while parsing websocket message", e)
             }
         }
 
@@ -114,8 +117,9 @@ class EventWebSocket(
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
-            dispatchEvent(Event.Error(t))
             isConnected.set(false)
+
+            logger.log(Level.WARNING, "Websocket encountered failure", t)
 
             reconnectJob = GlobalScope.launch {
                 delay(RECONNECT_DELAY_MS)

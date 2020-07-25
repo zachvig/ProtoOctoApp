@@ -7,10 +7,10 @@ import de.crysxd.octoapp.base.InvalidApiKeyInterceptor
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.datasource.DataSource
 import de.crysxd.octoapp.base.di.BaseScope
+import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.usecase.CheckOctoPrintInstanceInformationUseCase
-import okhttp3.logging.HttpLoggingInterceptor
 
 @Module
 open class OctoPrintModule {
@@ -28,11 +28,11 @@ open class OctoPrintModule {
     @BaseScope
     @Provides
     open fun provideOctoPrintProvider(
-        httpLoggingInterceptor: HttpLoggingInterceptor,
+        timberHandler: TimberHandler,
         invalidApiKeyInterceptor: InvalidApiKeyInterceptor,
         octoPrintRepository: OctoPrintRepository,
         analytics: FirebaseAnalytics
-    ) = OctoPrintProvider(httpLoggingInterceptor, invalidApiKeyInterceptor, octoPrintRepository, analytics)
+    ) = OctoPrintProvider(timberHandler, invalidApiKeyInterceptor, octoPrintRepository, analytics)
 
     @BaseScope
     @Provides

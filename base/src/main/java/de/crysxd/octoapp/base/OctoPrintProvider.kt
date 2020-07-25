@@ -7,16 +7,16 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import de.crysxd.octoapp.base.livedata.OctoTransformations.map
 import de.crysxd.octoapp.base.livedata.WebSocketLiveData
+import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
-import okhttp3.logging.HttpLoggingInterceptor
-import timber.log.Timber
+import java.util.logging.Level
 
 class OctoPrintProvider(
-    private val httpLoggingInterceptor: HttpLoggingInterceptor,
+    private val timberHandler: TimberHandler,
     private val invalidApiKeyInterceptor: InvalidApiKeyInterceptor,
     octoPrintRepository: OctoPrintRepository,
     private val analytics: FirebaseAnalytics
@@ -50,13 +50,17 @@ class OctoPrintProvider(
                 analytics.setUserProperty("printer_machine_type", data.machineType)
                 analytics.setUserProperty("printer_extruder_count", data.extruderCount.toString())
             }
-
-            it is Event.Error -> Timber.tag("Websocket").w(it.exception)
         }
 
         it
     }
 
     fun createAdHocOctoPrint(it: OctoPrintInstanceInformation) =
-        OctoPrint(it.hostName, it.port, it.apiKey, listOf(invalidApiKeyInterceptor, httpLoggingInterceptor))
+        OctoPrint(it.hostName, it.port, it.apiKey, listOf(invalidApiKeyInterceptor)).also { octoPrint ->
+            val logger = octoPrint.getLogger()
+            logger.handlers.forEach { logger.removeHandler(it) }
+            logger.addHandler(timberHandler)
+            logger.level = Level.ALL
+            logger.useParentHandlers = false
+        }
 }
