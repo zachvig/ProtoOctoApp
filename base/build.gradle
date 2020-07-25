@@ -57,6 +57,8 @@ dependencies {
     api 'com.google.firebase:firebase-config-ktx:19.2.0'
     api 'com.google.firebase:firebase-crashlytics:17.1.1'
     api 'com.google.firebase:firebase-perf:19.0.8'
+    api 'com.google.firebase:firebase-messaging:20.2.3'
+
 
     /*
      * Test
@@ -75,7 +77,6 @@ dependencies {
      * Logging
      */
     api 'com.jakewharton.timber:timber:4.7.1'
-    api 'com.squareup.okhttp3:logging-interceptor:4.7.2'
 
     /*
      * Octoprint

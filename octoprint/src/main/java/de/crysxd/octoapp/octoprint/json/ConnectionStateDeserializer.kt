@@ -6,8 +6,12 @@ import com.google.gson.JsonElement
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import java.lang.reflect.Type
 import java.util.*
+import java.util.logging.Level
+import java.util.logging.Logger
 
-class ConnectionStateDeserializer() : JsonDeserializer<ConnectionResponse.ConnectionState> {
+class ConnectionStateDeserializer(
+    private val logger: Logger
+) : JsonDeserializer<ConnectionResponse.ConnectionState> {
 
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ConnectionResponse.ConnectionState {
         return try {
@@ -17,6 +21,7 @@ class ConnectionStateDeserializer() : JsonDeserializer<ConnectionResponse.Connec
                     .replace(" ", "_")
             )
         } catch (e: Exception) {
+            logger.log(Level.SEVERE, "Unable to deserialize '$json'", e)
             ConnectionResponse.ConnectionState.UNKNOWN
         }
     }

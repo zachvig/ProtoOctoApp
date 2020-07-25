@@ -3,6 +3,7 @@ package de.crysxd.octoapp.pre_print_controls.ui
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -57,6 +58,12 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
         private val viewModel: PrePrintControlsViewModel by injectParentViewModel()
 
         override fun getMenuRes() = R.menu.prepare_menu
+
+        override fun onStart() {
+            super.onStart()
+            val psuSupported = Injector.get().octorPrintRepository().instanceInformation.value?.supportsPsuPlugin == true
+            setMenuItemVisibility(R.id.menuItemTurnOffPsu, psuSupported)
+        }
 
         override suspend fun onMenuItemSelected(id: Int): Boolean {
             when (id) {

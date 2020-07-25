@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
+import de.crysxd.octoapp.base.usecase.LoadFilesUseCase.Params
 import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
@@ -29,10 +30,8 @@ class SelectFileViewModel(
             rootFilesMediator.addSource(octoPrintProvider.octoPrint) {
                 viewModelScope.launch(coroutineExceptionHandler) {
                     it?.let {
-                        val root = loadFilesUseCase.execute(Triple(it, FileOrigin.Local, null))
+                        val root = loadFilesUseCase.execute(Params(it, FileOrigin.Local))
                         rootFilesMediator.postValue(root)
-                        val test = loadFilesUseCase.execute(Triple(it, FileOrigin.Local, root.first { it is FileObject.Folder } as FileObject.Folder))
-                        rootFilesMediator.postValue(test)
                     }
                 }
             }

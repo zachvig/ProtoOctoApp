@@ -11,6 +11,7 @@ import de.crysxd.octoapp.base.livedata.PollingLiveData
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.*
+import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase.Params
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintBootingException
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import de.crysxd.octoapp.octoprint.models.socket.Message
@@ -70,7 +71,7 @@ class ConnectPrinterViewModel(
             val supportsPsuPlugin = psuState != null
             val psuCyclingState = psuCyclingState.value ?: PsuCycledState.NotCycled
 
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
                 Timber.d("-----")
                 Timber.d("ConnectionResult: $connectionResult")
                 Timber.d("PsuState: $psuState")
@@ -97,7 +98,7 @@ class ConnectPrinterViewModel(
                         UiState.PrinterPsuCycling
 
                     isPrinterConnected(connectionResult) ->
-                        uiStateMediator.value ?: UiState.Initializing
+                        UiState.PrinterConnected
 
                     isNoPrinterAvailable(connectionResult) ->
                         UiState.WaitingForPrinterToComeOnline(psuState?.isPsuOn)
@@ -138,16 +139,20 @@ class ConnectPrinterViewModel(
         connectionResponse: ConnectionResponse,
         psuState: PsuCycledState
     ) = connectionResponse.options.ports.isNotEmpty() &&
-            (isInErrorState() || isConnectionAttemptTimedOut(connectionResponse)) &&
+            (isInErrorState(connectionResponse) || isConnectionAttemptTimedOut(connectionResponse)) &&
             psuState != PsuCycledState.Cycled
 
     private fun isConnectionAttemptTimedOut(connectionResponse: ConnectionResponse) = isPrinterConnecting(connectionResponse) &&
             System.nanoTime() - lastConnectionAttempt > connectionTimeoutNs
 
-    private fun isInErrorState() = false
+    private fun isInErrorState(connectionResponse: ConnectionResponse) = listOf(
+        ConnectionResponse.ConnectionState.UNKNOWN
+    ).contains(connectionResponse.current.state)
 
     private fun isPrinterConnecting(connectionResponse: ConnectionResponse) = listOf(
-        ConnectionResponse.ConnectionState.CONNECTING
+        ConnectionResponse.ConnectionState.CONNECTING,
+        ConnectionResponse.ConnectionState.DETECTING_SERIAL_PORT,
+        ConnectionResponse.ConnectionState.DETECTING_BAUDRATE
     ).contains(connectionResponse.current.state)
 
     private fun isPrinterConnected(connectionResponse: ConnectionResponse) = listOf(
@@ -155,12 +160,12 @@ class ConnectPrinterViewModel(
     ).contains(connectionResponse.current.state)
 
     private fun autoConnect(connectionResponse: ConnectionResponse) =
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             octoPrintProvider.octoPrint.value?.let { octoPrint ->
                 if (connectionResponse.options.ports.isNotEmpty() && !didJustAttemptToConnect() && !isPrinterConnecting(connectionResponse)) {
                     recordConnectionAttempt()
                     Timber.i("Attempting auto connect")
-                    autoConnectPrinterUseCase.execute(octoPrint)
+                    autoConnectPrinterUseCase.execute(Params(octoPrint, connectionResponse.options.ports.firstOrNull()))
                     psuCyclingState.postValue(PsuCycledState.NotCycled)
                 }
             }
@@ -220,6 +225,7 @@ class ConnectPrinterViewModel(
         object PrinterConnecting : UiState()
         data class PrinterOffline(val psuSupported: Boolean) : UiState()
         object PrinterPsuCycling : UiState()
+        object PrinterConnected : UiState()
 
         object Unknown : UiState()
 

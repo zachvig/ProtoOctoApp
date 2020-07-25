@@ -10,7 +10,6 @@ import de.crysxd.octoapp.base.logging.TimberCacheTree
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModelFactory
 import de.crysxd.octoapp.base.usecase.*
-import okhttp3.logging.HttpLoggingInterceptor
 
 @BaseScope
 @Component(
@@ -30,7 +29,6 @@ interface BaseComponent {
     fun app(): Application
 
     // LoggingModule
-    fun httpLoggingInterceptor(): HttpLoggingInterceptor
     fun timberCacheTree(): TimberCacheTree
     fun firebaseTree(): FirebaseTree
 

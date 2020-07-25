@@ -23,7 +23,7 @@ data class ConnectionResponse(
     )
 
     enum class ConnectionState {
-        CLOSED, DETECTING_SERIAL_PORT, CONNECTING, OPERATIONAL, UNKNOWN
+        CLOSED, DETECTING_SERIAL_PORT, DETECTING_BAUDRATE, CONNECTING, OPERATIONAL, UNKNOWN
     }
 
     data class PrinterProfile(

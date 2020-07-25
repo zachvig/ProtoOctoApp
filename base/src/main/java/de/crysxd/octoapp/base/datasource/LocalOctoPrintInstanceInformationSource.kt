@@ -38,7 +38,7 @@ class LocalOctoPrintInstanceInformationSource(private val sharedPreferences: Sha
     ) {
         OctoPrintInstanceInformation(
             sharedPreferences.getString(KEY_HOST_NAME, "") ?: "",
-            sharedPreferences.getInt(KEY_PORT, -1),
+            sharedPreferences.getInt(KEY_PORT, 80),
             sharedPreferences.getString(KEY_API_KEY, "") ?: "",
             sharedPreferences.getBoolean(KEY_SUPPORTS_PSU_PLUGIN, false),
             sharedPreferences.getBoolean(KEY_API_KEY_WAS_INVALID, false)

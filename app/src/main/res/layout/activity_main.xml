@@ -32,13 +32,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
+        app:layout_anchor="@+id/updateChecker"
+        app:layout_anchorGravity="center"
         app:layout_behavior=".base.ui.common.ShrinkBehaviour"
         app:navGraph="@navigation/main_nav_graph" />
 
     <View
         android:id="@+id/feedbackTrigger"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:clickable="false"
         android:layout_gravity="top|end" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

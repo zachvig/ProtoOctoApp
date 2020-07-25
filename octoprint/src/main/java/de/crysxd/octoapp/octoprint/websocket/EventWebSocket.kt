@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.octoprint.websocket
 
 import com.google.gson.Gson
+import de.crysxd.octoapp.octoprint.api.LoginApi
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.*
@@ -10,9 +11,11 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.logging.Level
+import java.util.logging.Logger
 
-const val PING_TIMEOUT_MS = 1000L
-const val CONNECTION_TIMEOUT_MS = 2000L
+const val PING_TIMEOUT_MS = 3000L
+const val CONNECTION_TIMEOUT_MS = 3000L
 const val RECONNECT_DELAY_MS = 1000L
 const val RECONNECT_TIMEOUT_MS = CONNECTION_TIMEOUT_MS + RECONNECT_DELAY_MS
 
@@ -20,7 +23,9 @@ class EventWebSocket(
     private val httpClient: OkHttpClient,
     private val hostname: String,
     private val port: Int,
-    private val gson: Gson
+    private val loginApi: LoginApi,
+    private val gson: Gson,
+    private val logger: Logger
 ) {
 
     private var reconnectJob: Job? = null
@@ -41,6 +46,8 @@ class EventWebSocket(
                 .connectTimeout(CONNECTION_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .build()
                 .newWebSocket(request, WebSocketListener())
+
+            logger.log(Level.INFO, "Opening websocket")
         }
     }
 
@@ -49,6 +56,7 @@ class EventWebSocket(
         reconnectJob?.cancel()
         reportDisconnectedJob?.cancel()
         dispatchEvent(Event.Disconnected())
+        logger.log(Level.INFO, "Closing websocket")
     }
 
     fun addEventHandler(scope: CoroutineScope, handler: suspend (Event) -> Unit) {
@@ -88,13 +96,24 @@ class EventWebSocket(
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
+
+            // Handle open event
+            logger.log(Level.INFO, "Websocket connected")
             reportDisconnectedJob?.cancel()
             reportDisconnectedJob = null
             dispatchEvent(Event.Connected)
+
+            // In order to receive any messages on OctoPrint instances with authentication set up,
+            // we need to perform a login and sen the "auth" message
+            val login = runBlocking { loginApi.passiveLogin() }
+            logger.log(Level.INFO, "Sending auth message for user \"${login.name}\"")
+            webSocket.send("{\"auth\": \"${login.name}:${login.session}\"}")
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             super.onMessage(webSocket, text)
+            logger.log(Level.FINER, "Message received: ${text.substring(0, 128.coerceAtMost(text.length))} ")
+
             try {
                 val message = gson.fromJson(text, Message::class.java)
                 if (message is Message.CurrentMessage) {
@@ -102,7 +121,7 @@ class EventWebSocket(
                 }
                 dispatchEvent(Event.MessageReceived(message))
             } catch (e: Exception) {
-                e.printStackTrace()
+                logger.log(Level.SEVERE, "Error while parsing websocket message", e)
             }
         }
 
@@ -115,6 +134,8 @@ class EventWebSocket(
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
             isConnected.set(false)
+
+            logger.log(Level.WARNING, "Websocket encountered failure", t)
 
             reconnectJob = GlobalScope.launch {
                 delay(RECONNECT_DELAY_MS)

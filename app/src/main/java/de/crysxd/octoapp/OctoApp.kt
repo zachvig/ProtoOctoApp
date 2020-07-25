@@ -1,6 +1,12 @@
 package de.crysxd.octoapp
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
@@ -10,6 +16,7 @@ import de.crysxd.octoapp.connect_printer.di.Injector as ConnectPrintInjector
 import de.crysxd.octoapp.pre_print_controls.di.Injector as PrePrintControlsInjector
 import de.crysxd.octoapp.print_controls.di.Injector as PrintControlsInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
+
 
 class OctoApp : Application() {
 
@@ -31,6 +38,10 @@ class OctoApp : Application() {
         PrePrintControlsInjector.init(BaseInjector.get())
         PrintControlsInjector.init(BaseInjector.get())
 
+        // Add cache for logging and report to firebase
+        Timber.plant(BaseInjector.get().timberCacheTree())
+        Timber.plant(BaseInjector.get().firebaseTree())
+
         // Setup Firebase
         Firebase.remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
         Firebase.remoteConfig.setConfigSettingsAsync(remoteConfigSettings {
@@ -41,8 +52,24 @@ class OctoApp : Application() {
             Timber.i("Complete remote config fetch (success=${it.isSuccessful})")
         }
 
-        // Add cache for logging and report to firebase
-        Timber.plant(BaseInjector.get().timberCacheTree())
-        Timber.plant(BaseInjector.get().firebaseTree())
+        // Register default notification channel
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(
+                NotificationChannel(
+                    getString(R.string.updates_notification_channel),
+                    getString(R.string.updates_notification_channel_name),
+                    NotificationManager.IMPORTANCE_HIGH
+                )
+            )
+        }
+
+        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(OnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Timber.tag("FCM").i("Token: ${task.result?.token}")
+            } else {
+                Timber.tag("FCM").w("Unable to get token")
+            }
+        })
     }
 }

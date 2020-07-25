@@ -25,7 +25,7 @@ class OctoPrintRepository(
         storeOctoprintInstanceInformation(
             OctoPrintInstanceInformation(
                 if (apiKeyWasInvalid) currentValue?.hostName ?: "" else "",
-                if (apiKeyWasInvalid) currentValue?.port ?: -1 else -1,
+                if (apiKeyWasInvalid) currentValue?.port ?: 80 else 80,
                 "",
                 apiKeyWasInvalid = apiKeyWasInvalid
             )
