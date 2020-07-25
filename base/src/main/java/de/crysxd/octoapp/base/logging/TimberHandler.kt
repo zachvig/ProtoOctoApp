@@ -8,7 +8,7 @@ import java.util.logging.LogRecord
 class TimberHandler : Handler() {
 
     override fun publish(record: LogRecord) {
-        val timber = Timber.tag("test")
+        val timber = Timber.tag(record.loggerName)
 
         when (record.level) {
             Level.OFF ->
