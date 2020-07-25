@@ -117,8 +117,9 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
                     .setPositiveButton(android.R.string.ok, null)
                     .show()
 
-                viewModel.completeSignIn(res.instanceInformation)
             }
+
+            viewModel.completeSignIn(res.instanceInformation)
         }
     }
 
