@@ -14,42 +14,18 @@ class TimberHandler : Handler() {
             Level.OFF ->
                 Unit
             Level.FINEST ->
-                if (record.thrown == null) {
-                    timber.v(record.message)
-                } else {
-                    timber.v(record.thrown, record.message)
-                }
+                timber.v(record.thrown, record.message)
             Level.FINER, Level.FINE ->
-                if (record.thrown == null) {
-                    timber.d(record.message)
-                } else {
-                    timber.d(record.thrown, record.message)
-                }
+                timber.d(record.thrown, record.message)
             Level.INFO ->
-                if (record.thrown == null) {
-                    timber.i(record.message)
-                } else {
-                    timber.i(record.thrown, record.message)
-                }
+                timber.i(record.thrown, record.message)
             Level.WARNING ->
-                if (record.thrown == null) {
-                    timber.w(record.message)
-                } else {
-                    timber.w(record.thrown, record.message)
-                }
+                timber.w(record.thrown, record.message)
             Level.SEVERE ->
-                if (record.thrown == null) {
-                    timber.e(record.message)
-                } else {
-                    timber.e(record.thrown, record.message)
-                }
+                timber.e(record.thrown, record.message)
             else -> {
                 Timber.wtf("Received log with unsupported level ${record.level.name}")
-                if (record.thrown == null) {
-                    timber.wtf(record.message)
-                } else {
-                    timber.wtf(record.thrown, record.message)
-                }
+                Timber.wtf(record.thrown, record.message)
             }
         }
     }
