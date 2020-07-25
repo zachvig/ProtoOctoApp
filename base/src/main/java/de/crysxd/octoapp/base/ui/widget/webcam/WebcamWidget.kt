@@ -33,6 +33,7 @@ class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
 
     override fun onViewCreated(view: View) {
         viewModel.uiState.observe(viewLifecycleOwner, Observer(this::onUiStateChanged))
+        view.buttonReconnect.setOnClickListener { viewModel.connect() }
     }
 
     private fun onUiStateChanged(state: UiState) {

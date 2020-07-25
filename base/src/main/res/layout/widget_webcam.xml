@@ -68,11 +68,11 @@
 
             <Button
                 style="@style/OctoTheme.Widget.Button.Small.Secondary"
+                android:id="@+id/buttonReconnect"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/reconnect"
                 android:textColor="?android:attr/textColorPrimaryInverse" />
-
 
         </LinearLayout>
 
