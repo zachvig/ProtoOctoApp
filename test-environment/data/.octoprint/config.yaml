@@ -2,6 +2,8 @@ accessControl:
     enabled: false
 api:
     key: 3C5B3FB6C868418A954662A84C3B7F3B
+appearance:
+    color: red
 devel:
     virtualPrinter:
         enabled: true
