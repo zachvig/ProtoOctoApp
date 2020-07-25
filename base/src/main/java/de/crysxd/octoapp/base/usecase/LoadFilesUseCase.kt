@@ -5,9 +5,14 @@ import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
 import javax.inject.Inject
 
-class LoadFilesUseCase @Inject constructor() : UseCase<Triple<OctoPrint, FileOrigin, FileObject.Folder?>, List<FileObject>> {
+class LoadFilesUseCase @Inject constructor() : UseCase<LoadFilesUseCase.Params, List<FileObject>> {
 
-    override suspend fun execute(param: Triple<OctoPrint, FileOrigin, FileObject.Folder?>): List<FileObject> {
-        return param.first.createFilesApi().getFiles(param.second).files
+    override suspend fun execute(param: Params): List<FileObject> {
+        return param.octoPrint.createFilesApi().getFiles(param.fileOrigin).files
     }
+
+    data class Params(
+        val octoPrint: OctoPrint,
+        val fileOrigin: FileOrigin
+    )
 }
