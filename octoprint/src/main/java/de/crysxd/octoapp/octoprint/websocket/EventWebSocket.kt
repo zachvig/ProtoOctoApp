@@ -10,6 +10,8 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.logging.Level
+import java.util.logging.Logger
 
 const val PING_TIMEOUT_MS = 3000L
 const val CONNECTION_TIMEOUT_MS = 3000L
@@ -20,7 +22,8 @@ class EventWebSocket(
     private val httpClient: OkHttpClient,
     private val hostname: String,
     private val port: Int,
-    private val gson: Gson
+    private val gson: Gson,
+    private val logger: Logger
 ) {
 
     private var reconnectJob: Job? = null
@@ -41,6 +44,8 @@ class EventWebSocket(
                 .connectTimeout(CONNECTION_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .build()
                 .newWebSocket(request, WebSocketListener())
+
+            logger.log(Level.INFO, "Opening websocket")
         }
     }
 
@@ -49,6 +54,7 @@ class EventWebSocket(
         reconnectJob?.cancel()
         reportDisconnectedJob?.cancel()
         dispatchEvent(Event.Disconnected())
+        logger.log(Level.INFO, "Closing websocket")
     }
 
     fun addEventHandler(scope: CoroutineScope, handler: suspend (Event) -> Unit) {
@@ -88,6 +94,7 @@ class EventWebSocket(
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
+            logger.log(Level.INFO, "Websocket connected")
             reportDisconnectedJob?.cancel()
             reportDisconnectedJob = null
             dispatchEvent(Event.Connected)
@@ -95,6 +102,8 @@ class EventWebSocket(
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             super.onMessage(webSocket, text)
+            logger.log(Level.INFO, "Message received: ${text.substring(0, 128.coerceAtMost(text.length))} ")
+
             try {
                 val message = gson.fromJson(text, Message::class.java)
                 if (message is Message.CurrentMessage) {
@@ -102,7 +111,7 @@ class EventWebSocket(
                 }
                 dispatchEvent(Event.MessageReceived(message))
             } catch (e: Exception) {
-                e.printStackTrace()
+                logger.log(Level.SEVERE, "Error while parsing websocket message", e)
             }
         }
 
@@ -114,8 +123,9 @@ class EventWebSocket(
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
-            dispatchEvent(Event.Error(t))
             isConnected.set(false)
+
+            logger.log(Level.WARNING, "Websocket encountered failure", t)
 
             reconnectJob = GlobalScope.launch {
                 delay(RECONNECT_DELAY_MS)

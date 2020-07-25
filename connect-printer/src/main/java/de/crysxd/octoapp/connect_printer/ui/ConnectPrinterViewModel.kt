@@ -143,13 +143,15 @@ class ConnectPrinterViewModel(
         connectionResponse: ConnectionResponse,
         psuState: PsuCycledState
     ) = connectionResponse.options.ports.isNotEmpty() &&
-            (isInErrorState() || isConnectionAttemptTimedOut(connectionResponse)) &&
+            (isInErrorState(connectionResponse) || isConnectionAttemptTimedOut(connectionResponse)) &&
             psuState != PsuCycledState.Cycled
 
     private fun isConnectionAttemptTimedOut(connectionResponse: ConnectionResponse) = isPrinterConnecting(connectionResponse) &&
             System.nanoTime() - lastConnectionAttempt > connectionTimeoutNs
 
-    private fun isInErrorState() = false
+    private fun isInErrorState(connectionResponse: ConnectionResponse) = listOf(
+        ConnectionResponse.ConnectionState.UNKNOWN
+    ).contains(connectionResponse.current.state)
 
     private fun isPrinterConnecting(connectionResponse: ConnectionResponse) = listOf(
         ConnectionResponse.ConnectionState.CONNECTING

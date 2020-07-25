@@ -1,0 +1,5 @@
+logs/*
+timelapse/*
+generated/*
+data/*
+config.backup

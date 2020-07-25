@@ -5,8 +5,13 @@ import de.crysxd.octoapp.octoprint.models.files.FileOrigin
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import java.lang.reflect.Type
 import java.util.*
+import java.util.logging.Level
+import java.util.logging.Logger
 
-class MessageDeserializer(val gson: Gson) : JsonDeserializer<Message> {
+class MessageDeserializer(
+    val logger: Logger,
+    val gson: Gson
+) : JsonDeserializer<Message> {
 
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Message {
 
@@ -77,6 +82,7 @@ class MessageDeserializer(val gson: Gson) : JsonDeserializer<Message> {
     private fun mapPrinterStateId(id: String) = try {
         Message.EventMessage.PrinterStateChanged.PrinterState.valueOf(id.toUpperCase(Locale.ENGLISH))
     } catch (e: Exception) {
+        logger.log(Level.SEVERE, "Unable to map printer state '$id'", e)
         Message.EventMessage.PrinterStateChanged.PrinterState.UNKNOWN
     }
 }
