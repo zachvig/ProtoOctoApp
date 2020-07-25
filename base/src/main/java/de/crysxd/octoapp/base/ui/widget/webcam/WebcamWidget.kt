@@ -19,6 +19,8 @@ import kotlinx.android.synthetic.main.widget_webcam.view.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 
+const val NOT_LIVE_IF_NO_FRAME_FOR_MS = 3000
+
 class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
 
     private val viewModel: WebcamWidgetViewModel by injectViewModel()
@@ -53,7 +55,7 @@ class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
                 hideLiveIndicatorJob?.cancel()
                 view.liveIndicator.animate().alpha(1f).start()
                 hideLiveIndicatorJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-                    delay(3000)
+                    delay(NOT_LIVE_IF_NO_FRAME_FOR_MS)
                     view.liveIndicator.animate().alpha(0f).start()
                 }
             }
