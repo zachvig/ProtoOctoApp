@@ -112,7 +112,7 @@ class EventWebSocket(
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             super.onMessage(webSocket, text)
-            logger.log(Level.INFO, "Message received: ${text.substring(0, 128.coerceAtMost(text.length))} ")
+            logger.log(Level.FINER, "Message received: ${text.substring(0, 128.coerceAtMost(text.length))} ")
 
             try {
                 val message = gson.fromJson(text, Message::class.java)
