@@ -47,4 +47,9 @@
     <string name="send_feedback">Send Feedback</string>
     <string name="open_email">Open Email</string>
     <string name="updates_notification_channel_name">Updates</string>
+    <string name="connection_failed">Connection failed</string>
+    <string name="reconnecting">Reconnecting…</string>
+    <string name="reconnect">Reconnect</string>
+    <string name="webcam">Webcam</string>
+    <string name="cd_live">Live</string>
 </resources>

@@ -17,22 +17,64 @@
             android:id="@+id/streamView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:importantForAccessibility="no"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="H,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageView
+            android:id="@+id/liveIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_1"
+            android:contentDescription="@string/cd_live"
+            android:src="@drawable/ic_live"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/erroIndicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Reconnecting"
+            android:gravity="center"
+            android:text="@string/reconnecting"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
             android:textColor="?android:attr/textColorPrimaryInverse"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/streamView"
             app:layout_constraintTop_toTopOf="@+id/streamView" />
+
+        <LinearLayout
+            android:id="@+id/errorIndicatorManual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/streamView"
+            app:layout_constraintTop_toTopOf="@+id/streamView">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_2"
+                android:gravity="center"
+                android:text="@string/connection_failed"
+                android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+                android:textColor="?android:attr/textColorPrimaryInverse" />
+
+            <Button
+                style="@style/OctoTheme.Widget.Button.Small.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/reconnect"
+                android:textColor="?android:attr/textColorPrimaryInverse" />
+
+
+        </LinearLayout>
 
         <ProgressBar
             android:id="@+id/loadingIndicator"
