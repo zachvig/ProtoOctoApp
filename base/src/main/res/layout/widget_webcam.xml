@@ -68,17 +68,19 @@
 
         <LinearLayout
             android:id="@+id/errorIndicatorManual"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:orientation="vertical"
             android:visibility="gone"
+            android:background="@color/black_translucent"
+            android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/streamView"
             app:layout_constraintTop_toTopOf="@+id/streamView">
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_2"
                 android:gravity="center"
@@ -89,7 +91,7 @@
             <Button
                 style="@style/OctoTheme.Widget.Button.Small.Secondary"
                 android:id="@+id/buttonReconnect"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/reconnect"
                 android:textColor="?android:attr/textColorPrimaryInverse" />
