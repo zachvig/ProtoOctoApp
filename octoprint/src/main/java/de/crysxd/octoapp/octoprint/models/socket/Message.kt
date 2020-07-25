@@ -54,7 +54,7 @@ sealed class Message {
         ) : EventMessage() {
 
             enum class PrinterState {
-                OFFLINE, CONNECTING, OPEN_SERIAL, OPERATIONAL, STARTING, PRINTING, CANCELLING, DETECT_SERIAL, ERROR, UNKNOWN
+                OFFLINE, CONNECTING, DETECT_BAUDRATE, OPEN_SERIAL, OPERATIONAL, STARTING, PRINTING, CANCELLING, DETECT_SERIAL, ERROR, UNKNOWN
             }
         }
 
