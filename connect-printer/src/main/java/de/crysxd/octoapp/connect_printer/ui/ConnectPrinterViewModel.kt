@@ -155,7 +155,9 @@ class ConnectPrinterViewModel(
     ).contains(connectionResponse.current.state)
 
     private fun isPrinterConnecting(connectionResponse: ConnectionResponse) = listOf(
-        ConnectionResponse.ConnectionState.CONNECTING
+        ConnectionResponse.ConnectionState.CONNECTING,
+        ConnectionResponse.ConnectionState.DETECTING_SERIAL_PORT,
+        ConnectionResponse.ConnectionState.DETECTING_BAUDRATE
     ).contains(connectionResponse.current.state)
 
     private fun isPrinterConnected(connectionResponse: ConnectionResponse) = listOf(

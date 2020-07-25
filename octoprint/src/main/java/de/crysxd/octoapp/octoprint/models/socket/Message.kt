@@ -54,7 +54,7 @@ sealed class Message {
         ) : EventMessage() {
 
             enum class PrinterState {
-                OFFLINE, CONNECTING, OPEN_SERIAL, OPERATIONAL, STARTING, PRINTING, CANCELLING, DETECT_SERIAL, ERROR, UNKNOWN
+                OFFLINE, CONNECTING, DETECT_BAUDRATE, OPEN_SERIAL, OPERATIONAL, STARTING, PRINTING, CANCELLING, DETECT_SERIAL, ERROR, UNKNOWN
             }
         }
 
@@ -108,9 +108,9 @@ sealed class Message {
         ) : FileMessageEvent(origin, name, path)
 
         class FirmwareData(
-            @SerializedName("FIRMWARE_NAME") val firmwareName: String,
-            @SerializedName("MACHINE_TYPE") val machineType: String,
-            @SerializedName("EXTRUDER_COUNT") val extruderCount: Int
+            @SerializedName("FIRMWARE_NAME") val firmwareName: String?,
+            @SerializedName("MACHINE_TYPE") val machineType: String?,
+            @SerializedName("EXTRUDER_COUNT") val extruderCount: Int?
         ) : EventMessage()
 
         object Disconnected : EventMessage()
