@@ -21,13 +21,14 @@ import kotlinx.android.synthetic.main.item_menu.view.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-
 abstract class MenuBottomSheet : BottomSheetDialogFragment() {
+
+    private lateinit var adapter: MenuAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = RecyclerView(requireContext())
         view.layoutManager = LinearLayoutManager(requireContext())
-        view.adapter = MenuAdapter(requireContext(), getMenuRes()) {
+        adapter = MenuAdapter(requireContext(), getMenuRes()) {
             lifecycleScope.launch {
                 dismiss()
                 if (!onMenuItemSelected(it)) {
@@ -37,11 +38,16 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
                 it?.let { Timber.e(it); requireOctoActivity().showErrorDialog(it) }
             }
         }
+        view.adapter = adapter
         return view
     }
 
     @MenuRes
     abstract fun getMenuRes(): Int
+
+    fun setMenuItemVisibility(@IdRes id: Int, visible: Boolean) {
+        adapter.setMenuItemVisibility(id, visible)
+    }
 
     abstract suspend fun onMenuItemSelected(@IdRes id: Int): Boolean
 
@@ -79,16 +85,39 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
         show(fm, "overflow-menu")
     }
 
-    private class MenuAdapter(context: Context, @MenuRes menuRes: Int, val callback: (Int) -> Any) : RecyclerView.Adapter<MenuItemViewHolder>() {
+    private class MenuAdapter(
+        private val context: Context,
+        @MenuRes private val menuRes: Int,
+        private val callback: (Int) -> Any
+    ) : RecyclerView.Adapter<MenuItemViewHolder>() {
 
-        private val menuItems: List<MenuItem>
+        private val menuItems = mutableListOf<MenuItem>()
+        private val hiddenItems = mutableListOf<Int>()
 
         init {
+            inflateMenu()
+        }
+
+        fun setMenuItemVisibility(@IdRes id: Int, visible: Boolean) {
+            if (visible) {
+                hiddenItems.remove(id)
+            } else {
+                hiddenItems.add(id)
+            }
+
+            inflateMenu()
+        }
+
+        fun inflateMenu() {
             val menu = PopupMenu(context, null).menu
             MenuInflater(context).inflate(menuRes, menu)
-            menuItems = (0.until(menu.size())).map { i ->
+            menuItems.clear()
+            menuItems.addAll((0.until(menu.size())).map { i ->
                 menu[i]
-            }
+            }.filter {
+                !hiddenItems.contains(it.itemId) && it.isVisible
+            })
+            notifyDataSetChanged()
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MenuItemViewHolder(parent)
