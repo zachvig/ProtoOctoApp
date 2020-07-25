@@ -52,3 +52,7 @@ temperature:
           chamber: null
           extruder: 180
           name: PLA
+webcam:
+    flipH: true
+    flipV: true
+    stream: http://192.168.1.33:6677/videofeed?username=&password=
