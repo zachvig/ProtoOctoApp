@@ -9,8 +9,10 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
+import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidgetViewModel.UiState
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidgetViewModel.UiState.Error
@@ -18,8 +20,10 @@ import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidgetViewModel.UiState.Loa
 import kotlinx.android.synthetic.main.widget_webcam.view.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import java.util.concurrent.TimeUnit
 
 const val NOT_LIVE_IF_NO_FRAME_FOR_MS = 3000L
+const val STALLED_IF_NO_FRAME_FOR_MS = 5000L
 
 class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
 
@@ -36,10 +40,15 @@ class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
         view.buttonReconnect.setOnClickListener { viewModel.connect() }
     }
 
+    private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(view as ViewGroup, InstantAutoTransition())
+
     private fun onUiStateChanged(state: UiState) {
+        beginDelayedTransition()
         view.erroIndicator.isVisible = false
         view.errorIndicatorManual.isVisible = false
         view.liveIndicator.isVisible = false
+        view.streamStalledIndicator.isVisible = false
+        view.loadingIndicator.isVisible = false
 
         when (state) {
             Loading -> {
@@ -48,22 +57,26 @@ class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
 
             is UiState.FrameReady -> {
                 view.liveIndicator.isVisible = true
-                view.loadingIndicator.isVisible = false
                 (view.streamView.drawable as? BitmapDrawable)?.bitmap?.recycle()
                 view.streamView.setImageBitmap(state.frame)
 
                 // Hide live indicator if no new frame arrives within 3s
+                // Show stalled indicator if no new frame arrives within 10s
                 hideLiveIndicatorJob?.cancel()
-                view.liveIndicator.animate().alpha(1f).start()
                 hideLiveIndicatorJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
                     delay(NOT_LIVE_IF_NO_FRAME_FOR_MS)
-                    view.liveIndicator.animate().alpha(0f).start()
+                    beginDelayedTransition()
+                    view.liveIndicator.isVisible = false
+
+                    delay(STALLED_IF_NO_FRAME_FOR_MS - NOT_LIVE_IF_NO_FRAME_FOR_MS)
+                    beginDelayedTransition()
+                    val seconds = TimeUnit.MILLISECONDS.toSeconds(STALLED_IF_NO_FRAME_FOR_MS)
+                    view.streamStalledIndicatorDetail.text = requireContext().getString(R.string.no_frames_since_xs, seconds)
+                    view.streamStalledIndicator.isVisible = true
                 }
             }
 
             is Error -> {
-                view.liveIndicator.isVisible = false
-                view.loadingIndicator.isVisible = false
                 view.erroIndicator.isVisible = !state.isManualReconnect
                 view.errorIndicatorManual.isVisible = state.isManualReconnect
             }

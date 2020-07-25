@@ -52,4 +52,6 @@
     <string name="reconnect">Reconnect</string>
     <string name="webcam">Webcam</string>
     <string name="cd_live">Live</string>
+    <string name="stream_stalled">Stream stalled</string>
+    <string name="no_frames_since_xs">No frames since %ds</string>
 </resources>

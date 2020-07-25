@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:clipToPadding="true"
     android:elevation="0dp"
     app:cardBackgroundColor="@color/black"
@@ -31,6 +32,7 @@
             android:layout_margin="@dimen/margin_1"
             android:contentDescription="@string/cd_live"
             android:src="@drawable/ic_live"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,6 +42,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/reconnecting"
+            android:visibility="gone"
             android:textAppearance="@style/OctoTheme.TextAppearance.Title"
             android:textColor="?android:attr/textColorPrimaryInverse"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -52,6 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/streamView"
@@ -76,11 +80,46 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/streamStalledIndicator"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/black_translucent"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/margin_0"
+                android:gravity="center"
+                android:text="@string/stream_stalled"
+                android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+                android:textColor="?android:attr/textColorPrimaryInverse" />
+
+            <TextView
+                android:id="@+id/streamStalledIndicatorDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textAppearance="@style/OctoTheme.TextAppearance"
+                android:textColor="?android:attr/textColorPrimaryInverse"
+                tools:text="@string/no_frames_since_xs" />
+
+        </LinearLayout>
+
         <ProgressBar
             android:id="@+id/loadingIndicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:visibility="gone"
             android:indeterminateTint="?android:attr/textColorPrimaryInverse"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
