@@ -21,9 +21,9 @@ extruder:
   sharedNozzle: false
 heatedBed: true
 heatedChamber: false
-id: virtual
-model: Virtual
-name: Virtual
+id: _default
+model: Generic RepRap Printer
+name: Default
 volume:
   custom_box: false
   depth: 200.0

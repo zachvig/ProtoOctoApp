@@ -19,25 +19,27 @@ class TimberCacheTree(private val maxSize: Int = 1024 * 128) : Timber.DebugTree(
     val logs get() = cache.toString()
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) = lock.withLock {
-        val prefix = "${getTime()} ${getLevel(priority)}/${tag ?: "???"}: "
-        cache.append(prefix)
-        cache.append(message.substring(0, message.length.coerceAtMost(maxMessageLength)))
-        cache.append("\n")
+        if (priority >= Log.DEBUG) {
+            val prefix = "${getTime()} ${getLevel(priority)}/${tag ?: "???"}: "
+            cache.append(prefix)
+            cache.append(message.substring(0, message.length.coerceAtMost(maxMessageLength)))
+            cache.append("\n")
 
-        t?.let {
-            val stackTrace = StringWriter()
-            val writer = PrintWriter(stackTrace)
-            t.printStackTrace(writer)
+            t?.let {
+                val stackTrace = StringWriter()
+                val writer = PrintWriter(stackTrace)
+                t.printStackTrace(writer)
 
-            stackTrace.buffer.lines().forEach {
-                cache.append(prefix)
-                cache.append(it)
-                cache.append("\n")
+                stackTrace.buffer.lines().forEach {
+                    cache.append(prefix)
+                    cache.append(it)
+                    cache.append("\n")
+                }
             }
-        }
 
-        if (cache.length > maxSize) {
-            cache.delete(0, cache.length - maxSize)
+            if (cache.length > maxSize) {
+                cache.delete(0, cache.length - maxSize)
+            }
         }
     }
 

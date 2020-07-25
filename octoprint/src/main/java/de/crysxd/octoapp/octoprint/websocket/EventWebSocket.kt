@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.octoprint.websocket
 
 import com.google.gson.Gson
+import de.crysxd.octoapp.octoprint.api.LoginApi
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.*
@@ -22,6 +23,7 @@ class EventWebSocket(
     private val httpClient: OkHttpClient,
     private val hostname: String,
     private val port: Int,
+    private val loginApi: LoginApi,
     private val gson: Gson,
     private val logger: Logger
 ) {
@@ -94,15 +96,23 @@ class EventWebSocket(
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
+
+            // Handle open event
             logger.log(Level.INFO, "Websocket connected")
             reportDisconnectedJob?.cancel()
             reportDisconnectedJob = null
             dispatchEvent(Event.Connected)
+
+            // In order to receive any messages on OctoPrint instances with authentication set up,
+            // we need to perform a login and sen the "auth" message
+            val login = runBlocking { loginApi.passiveLogin() }
+            logger.log(Level.INFO, "Sending auth message for user \"${login.name}\"")
+            webSocket.send("{\"auth\": \"${login.name}:${login.session}\"}")
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             super.onMessage(webSocket, text)
-            logger.log(Level.INFO, "Message received: ${text.substring(0, 128.coerceAtMost(text.length))} ")
+            logger.log(Level.FINER, "Message received: ${text.substring(0, 128.coerceAtMost(text.length))} ")
 
             try {
                 val message = gson.fromJson(text, Message::class.java)

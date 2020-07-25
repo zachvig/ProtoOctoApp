@@ -1,9 +1,12 @@
 package de.crysxd.octoapp.signin.models
 
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
+import de.crysxd.octoapp.signin.usecases.SignInUseCase
+
 sealed class SignInViewState {
     object Idle : SignInViewState()
-    object Loading: SignInViewState()
+    object Loading : SignInViewState()
     data class SignInInformationInvalid(val result: SignInInformationValidationResult.ValidationFailed) : SignInViewState()
     object SignInFailed : SignInViewState()
-    object SignInSuccess : SignInViewState()
+    data class SignInSuccess(val instanceInformation: OctoPrintInstanceInformation, val warnings: List<SignInUseCase.Warning>) : SignInViewState()
 }
