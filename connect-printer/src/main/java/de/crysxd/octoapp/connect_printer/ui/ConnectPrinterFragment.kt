@@ -116,6 +116,10 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
                 R.string.searching_for_octoprint
             )
 
+            ConnectPrinterViewModel.UiState.PrinterConnected -> showStatus(
+                R.string.printer_connected
+            )
+
             ConnectPrinterViewModel.UiState.Unknown -> showStatus(
                 R.string.error_general,
                 R.string.try_restrating_the_app_or_octoprint
