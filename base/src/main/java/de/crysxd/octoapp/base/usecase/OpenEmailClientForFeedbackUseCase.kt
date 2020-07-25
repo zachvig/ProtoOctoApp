@@ -34,7 +34,7 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor() : UseCase<OpenEmai
         var fileCount = 0
 
         param.logs?.let {
-            zipStream.putNextEntry(ZipEntry("logs.txt"))
+            zipStream.putNextEntry(ZipEntry("logs.log"))
             zipStream.writer().write(it)
             zipStream.closeEntry()
             fileCount++
