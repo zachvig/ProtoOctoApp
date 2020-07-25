@@ -44,6 +44,8 @@ class EventWebSocket(
                 .connectTimeout(CONNECTION_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .build()
                 .newWebSocket(request, WebSocketListener())
+
+            logger.log(Level.INFO, "Opening websocket")
         }
     }
 
@@ -52,6 +54,7 @@ class EventWebSocket(
         reconnectJob?.cancel()
         reportDisconnectedJob?.cancel()
         dispatchEvent(Event.Disconnected())
+        logger.log(Level.INFO, "Closing websocket")
     }
 
     fun addEventHandler(scope: CoroutineScope, handler: suspend (Event) -> Unit) {
@@ -91,6 +94,7 @@ class EventWebSocket(
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
+            logger.log(Level.INFO, "Websocket connected")
             reportDisconnectedJob?.cancel()
             reportDisconnectedJob = null
             dispatchEvent(Event.Connected)
@@ -98,6 +102,8 @@ class EventWebSocket(
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             super.onMessage(webSocket, text)
+            logger.log(Level.INFO, "Message received: ${text.substring(0, 128.coerceAtMost(text.length))} ")
+
             try {
                 val message = gson.fromJson(text, Message::class.java)
                 if (message is Message.CurrentMessage) {
