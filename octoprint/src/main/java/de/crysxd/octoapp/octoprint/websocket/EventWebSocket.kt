@@ -106,7 +106,7 @@ class EventWebSocket(
             // In order to receive any messages on OctoPrint instances with authentication set up,
             // we need to perform a login and sen the "auth" message
             val login = runBlocking { loginApi.passiveLogin() }
-            logger.log(Level.INFO, "Sending auth message")
+            logger.log(Level.INFO, "Sending auth message for user \"${login.name}\"")
             webSocket.send("{\"auth\": \"${login.name}:${login.session}\"}")
         }
 
