@@ -32,10 +32,14 @@ class OctoPrint(
         hostname = hostName,
         port = port,
         gson = createGsonWithTypeAdapters(),
-        logger = getLogger()
+        logger = getLogger(),
+        loginApi = createLoginApi()
     )
 
     fun getEventWebSocket() = webSocket
+
+    fun createLoginApi(): LoginApi =
+        createRetrofit().create(LoginApi::class.java)
 
     fun createVersionApi(): VersionApi =
         createRetrofit().create(VersionApi::class.java)
