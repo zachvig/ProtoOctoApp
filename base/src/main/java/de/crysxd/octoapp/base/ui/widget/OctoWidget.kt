@@ -37,9 +37,11 @@ abstract class OctoWidget(val parent: Fragment) : LayoutContainer {
     }
 
     fun setupBaseViewModel(baseViewModel: BaseViewModel) {
-        (parent as? BaseFragment)?.requireOctoActivity()?.observeErrorEvents(baseViewModel.errorLiveData)
-        (parent as? BaseFragment)?.requireOctoActivity()?.observerMessageEvents(baseViewModel.messages)
-        baseViewModel.navContoller = parent.findNavController()
+        if (parent is BaseFragment) {
+            parent.requireOctoActivity().observeErrorEvents(baseViewModel.errorLiveData)
+            parent.requireOctoActivity().observerMessageEvents(baseViewModel.messages)
+            baseViewModel.navContoller = parent.findNavController()
+        }
     }
 
     fun requireContext() = parent.requireContext()

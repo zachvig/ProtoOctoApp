@@ -1,10 +1,11 @@
 package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.content.Context
-import android.graphics.drawable.BitmapDrawable
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -25,7 +26,10 @@ import java.util.concurrent.TimeUnit
 const val NOT_LIVE_IF_NO_FRAME_FOR_MS = 3000L
 const val STALLED_IF_NO_FRAME_FOR_MS = 5000L
 
-class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
+class WebcamWidget(
+    parent: Fragment,
+    private val isFullscreen: Boolean = false
+) : OctoWidget(parent) {
 
     private val viewModel: WebcamWidgetViewModel by injectViewModel()
     private var hideLiveIndicatorJob: Job? = null
@@ -33,12 +37,50 @@ class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
 
     override fun getTitle(context: Context) = context.getString(R.string.webcam)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
-        inflater.inflate(R.layout.widget_webcam, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+        val view = inflater.inflate(R.layout.widget_webcam, container, false) as ViewGroup
+
+        // Do not use the card view in fullscreen
+        return if (isFullscreen) {
+            val webcamContent = view.webcamContent
+            view.removeView(webcamContent)
+            webcamContent
+        } else {
+            view
+        }
+    }
 
     override fun onViewCreated(view: View) {
         viewModel.uiState.observe(viewLifecycleOwner, Observer(this::onUiStateChanged))
         view.buttonReconnect.setOnClickListener { viewModel.connect() }
+
+        // Fullscreen button
+        view.imageButtonFullscreen.setOnClickListener {
+            if (isFullscreen) {
+                parent.activity?.finish()
+            } else {
+                requireContext().startActivity(Intent(requireContext(), FullscreenWebcamActivity::class.java))
+            }
+        }
+        view.imageButtonFullscreen.setImageResource(
+            if (isFullscreen) {
+                R.drawable.ic_round_fullscreen_exit_24
+            } else {
+                R.drawable.ic_round_fullscreen_24
+            }
+        )
+
+        // Aspect ratio
+        ConstraintSet().also {
+            it.clone(view.webcamContent)
+            it.setDimensionRatio(
+                R.id.streamView, if (isFullscreen) {
+                    null
+                } else {
+                    "16:9"
+                }
+            )
+        }.applyTo(view.webcamContent)
     }
 
     private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(view.webcamContent, InstantAutoTransition())
@@ -70,9 +112,7 @@ class WebcamWidget(parent: Fragment) : OctoWidget(parent) {
                 view.loadingIndicator.isVisible = false
 
                 view.liveIndicator.isVisible = true
-                val old = (view.streamView.drawable as? BitmapDrawable)?.bitmap
                 view.streamView.setImageBitmap(state.frame)
-                old?.recycle()
 
                 // Hide live indicator if no new frame arrives within 3s
                 // Show stalled indicator if no new frame arrives within 10s
