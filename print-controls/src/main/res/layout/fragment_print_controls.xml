@@ -8,7 +8,7 @@
     tools:context="de.crysxd.octoapp.base.ui.OctoActivity">
 
     <de.crysxd.octoapp.base.ui.common.OctoRecyclerView
-        android:id="@+id/widgetList"
+        android:id="@+id/widgetsList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="@dimen/margin_2"
