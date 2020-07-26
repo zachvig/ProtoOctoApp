@@ -39,7 +39,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/erroIndicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -51,6 +50,29 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/erroIndicator"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/black_translucent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/reconnecting"
+                android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+                android:textColor="?android:attr/textColorPrimaryInverse" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/notConfiguredIndicator"
