@@ -52,6 +52,7 @@ interface BaseComponent {
     fun openOctoPrintWebUseCase(): OpenOctoprintWebUseCase
     fun openEmailClientForFeedbackUseCase(): OpenEmailClientForFeedbackUseCase
     fun takeScreenshotUseCase(): TakeScreenshotUseCase
+    fun formatDurationUseCase(): FormatDurationUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory
