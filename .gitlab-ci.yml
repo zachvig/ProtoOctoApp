@@ -70,3 +70,13 @@ deploy_gitlab:
     - gitlab-release --message "$CI_COMMIT_TAG" app/build/outputs/apk/release/app-release.apk
   only:
     - tags
+
+deploy_gitlab:
+  stage: deploy
+  needs: ["build"]
+  image: mitelone/firebase-cli
+  script:
+    - RELEASE_NOTES=$(git tag -l --format='%(contents)' 1.0-beta16)
+    - firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk --token "$FIREBASE_CLI_TOKEN" --app "$FIREBASE_APP_ID" --release-notes "$RELEASE_NOTES" --groups "$FIREBASE_TESTER_GROUPS" 
+  only:
+    - tags
