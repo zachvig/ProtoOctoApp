@@ -42,9 +42,12 @@ build:
   needs: ["test"]
   script:
     - ./gradlew assembleRelease
+    - mkdir outputs
+    - git tag -l --format='%(contents)' "$CI_COMMIT_TAG" > outputs/release_notes.txt
   artifacts:
     when: always
     paths:
+      - outputs/release_notes.txt
       - app/build/reports/
       - app/build/outputs/apk/release/app-release.apk
   only:
@@ -71,12 +74,12 @@ deploy_gitlab:
   only:
     - tags
 
-deploy_gitlab:
+deploy_firebase:
   stage: deploy
   needs: ["build"]
   image: mitelone/firebase-cli
   script:
-    - RELEASE_NOTES=$(git tag -l --format='%(contents)' 1.0-beta16)
-    - firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk --token "$FIREBASE_CLI_TOKEN" --app "$FIREBASE_APP_ID" --release-notes "$RELEASE_NOTES" --groups "$FIREBASE_TESTER_GROUPS" 
+    - 
+    - firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk --token "$FIREBASE_CLI_TOKEN" --app "$FIREBASE_APP_ID" --release-notes-file "outputs/release_notes.txt" --groups "$FIREBASE_TESTER_GROUPS" 
   only:
     - tags
