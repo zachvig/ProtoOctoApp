@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">OctoApp</string>
+    <string name="notification_channel_print_progress">Printing…</string>
+    <string name="notification_pausing_title">Pausing…</string>
+    <string name="notification_paused_title">Paused</string>
+    <string name="notification_cancelling_title">Cancelling…</string>
+    <string name="notification_printing_title">Printing…</string>
+    <string name="notification_printing_message">%1$d%% completed, %2$s left</string>
+    <string name="notification_printing_lost_connection_message">Printing…</string>
+    <string name="notification_print_done_title">Print completed</string>
 </resources>

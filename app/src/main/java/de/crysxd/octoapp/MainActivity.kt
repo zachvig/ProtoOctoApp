@@ -1,5 +1,6 @@
 package de.crysxd.octoapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
@@ -21,6 +22,7 @@ import de.crysxd.octoapp.signin.di.Injector as SignInInjector
 class MainActivity : OctoActivity() {
 
     private var lastNavigation = -1
+    private val notificationServiceIntent by lazy { Intent(this, PrintNotificationService::class.java) }
 
     override val octoToolbar: OctoToolbar by lazy { toolbar }
     override val octo: OctoView by lazy { toolbarOctoView }
@@ -84,16 +86,28 @@ class MainActivity : OctoActivity() {
         navigate(
             when {
                 // We encountered an error, try reconnecting
-                flags == null || flags.closedOrError || flags.error -> R.id.action_connect_printer
+                flags == null || flags.closedOrError || flags.error -> {
+                    stopService(notificationServiceIntent)
+                    R.id.action_connect_printer
+                }
 
                 // We are printing
-                flags.printing || flags.paused || flags.pausing || flags.cancelling -> R.id.action_printer_active
+                flags.printing || flags.paused || flags.pausing || flags.cancelling -> {
+                    startService(notificationServiceIntent)
+                    R.id.action_printer_active
+                }
 
                 // We are connected
-                flags.operational -> R.id.action_printer_connected
+                flags.operational -> {
+                    stopService(notificationServiceIntent)
+                    R.id.action_printer_connected
+                }
 
                 // This is a special case where all flags are false. This may happen after an emergency stop of the printer. Go to connect.
-                !flags.operational && !flags.paused && !flags.cancelling && !flags.closedOrError && !flags.error && !flags.printing && !flags.pausing -> R.id.action_connect_printer
+                !flags.operational && !flags.paused && !flags.cancelling && !flags.closedOrError && !flags.error && !flags.printing && !flags.pausing -> {
+                    stopService(notificationServiceIntent)
+                    R.id.action_connect_printer
+                }
 
                 // Fallback
                 else -> lastNavigation
