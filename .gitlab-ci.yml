@@ -79,7 +79,6 @@ deploy_firebase:
   needs: ["build"]
   image: mitelone/firebase-cli
   script:
-    - 
     - firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk --token "$FIREBASE_CLI_TOKEN" --app "$FIREBASE_APP_ID" --release-notes-file "outputs/release_notes.txt" --groups "$FIREBASE_TESTER_GROUPS" 
   only:
     - tags
