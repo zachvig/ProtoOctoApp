@@ -25,6 +25,7 @@ import kotlin.math.roundToInt
 class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
 
     private val viewModel: ProgressWidgetViewModel by injectViewModel()
+    private var lastProgress: Float? = null
 
     override fun getTitle(context: Context) = context.getString(R.string.progress)
 
@@ -33,14 +34,18 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
 
     override fun onViewCreated(view: View) {
         viewModel.printState.observe(viewLifecycleOwner, Observer {
-            TransitionManager.beginDelayedTransition(view as ViewGroup, InstantAutoTransition())
-
             val progressPercent = it.progress?.completion ?: 0f
             val progressPercentLayoutThreshold = 80f
+            val progress = progressPercent.toInt() / 100f
+            val progressText = requireContext().getString(R.string.x_percent, progress * 100f)
+
+            if (lastProgress != progress) {
+                TransitionManager.beginDelayedTransition(view as ViewGroup, InstantAutoTransition())
+            }
 
             ConstraintSet().apply {
                 clone(view as ConstraintLayout)
-                constrainPercentWidth(R.id.progressBar, progressPercent / 100f)
+                constrainPercentWidth(R.id.progressBar, progress)
                 centerVertically(R.id.textViewProgressPercent, R.id.progressBar)
                 clear(R.id.textViewProgressPercent, ConstraintSet.END)
                 clear(R.id.textViewProgressPercent, ConstraintSet.START)
@@ -67,10 +72,10 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
             )
 
             (view.progressBarFill.background as? ClipDrawable)?.apply {
-                ObjectAnimator.ofInt(this, "level", level, (10000f * (progressPercent / 100f)).roundToInt()).start()
+                ObjectAnimator.ofInt(this, "level", level, (10000f * progress).roundToInt()).start()
             }
 
-            view.textViewProgressPercent.text = requireContext().getString(R.string.x_percent, progressPercent)
+            view.textViewProgressPercent.text = progressText
             view.textViewTimeSpent.text = it.progress?.printTime?.toLong()?.let(::formatDuration)
             view.textViewTimeLeft.text = it.progress?.printTimeLeft?.toLong()?.let(::formatDuration)
             view.textViewEstimation.text = it.progress?.printTimeLeftOrigin
@@ -79,6 +84,8 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
             view.textViewTimeSpent.isVisible = true
             view.textViewTimeLeft.isVisible = true
             view.textViewEstimation.isVisible = true
+
+            lastProgress = progress
         })
     }
 
