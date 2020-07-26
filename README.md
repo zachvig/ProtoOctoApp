@@ -24,6 +24,13 @@ You can install the app from [Google Play](https://play.google.com/store/apps/de
 ## Debug builds
 Run `./gradlew assembleDebug` to build the app after cloning. The APK file can be found at `app/build/outputs/apk/debug/app-debug.apk`.
 
+# Build
+The folder `test-environment` contains a configured OctoPrint instance you can use as a test environment. Start it with `docker-compose up -d`.
+
+### Test users
+
+- `tests` (password `test`, is admin)
+
 ## Release builds
 
 - Place your keystore file at `app/key.keystore`

@@ -47,4 +47,12 @@
     <string name="send_feedback">Send Feedback</string>
     <string name="open_email">Open Email</string>
     <string name="updates_notification_channel_name">Updates</string>
+    <string name="connection_failed">Connection failed</string>
+    <string name="reconnecting">Reconnecting…</string>
+    <string name="reconnect">Reconnect</string>
+    <string name="webcam">Webcam</string>
+    <string name="cd_live">Live</string>
+    <string name="stream_stalled">Stream stalled</string>
+    <string name="no_frames_since_xs">No frames since %ds</string>
+    <string name="please_configure_your_webcam_in_octoprint">Please configure your webcam in Octoprint</string>
 </resources>
