@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:clipToPadding="true"
+    android:elevation="0dp"
+    app:cardBackgroundColor="@color/black"
+    app:cardCornerRadius="@dimen/common_corner_radius"
+    app:cardElevation="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/webcamContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/streamView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:importantForAccessibility="no"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="H,16:9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/liveIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_1"
+            android:contentDescription="@string/cd_live"
+            android:src="@drawable/ic_live"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/erroIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/reconnecting"
+            android:visibility="gone"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+            android:textColor="?android:attr/textColorPrimaryInverse"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/streamView"
+            app:layout_constraintTop_toTopOf="@+id/streamView" />
+
+        <TextView
+            android:id="@+id/notConfiguredIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_2"
+            android:gravity="center"
+            android:text="@string/please_configure_your_webcam_in_octoprint"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+            android:textColor="?android:attr/textColorPrimaryInverse"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/streamView"
+            app:layout_constraintTop_toTopOf="@+id/streamView" />
+
+        <LinearLayout
+            android:id="@+id/errorIndicatorManual"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:background="@color/black_translucent"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/streamView"
+            app:layout_constraintTop_toTopOf="@+id/streamView">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_2"
+                android:gravity="center"
+                android:text="@string/connection_failed"
+                android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+                android:textColor="?android:attr/textColorPrimaryInverse" />
+
+            <Button
+                style="@style/OctoTheme.Widget.Button.Small.Secondary"
+                android:id="@+id/buttonReconnect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reconnect"
+                android:textColor="?android:attr/textColorPrimaryInverse" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/streamStalledIndicator"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/black_translucent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/margin_0"
+                android:gravity="center"
+                android:text="@string/stream_stalled"
+                android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+                android:textColor="?android:attr/textColorPrimaryInverse" />
+
+            <TextView
+                android:id="@+id/streamStalledIndicatorDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textAppearance="@style/OctoTheme.TextAppearance"
+                android:textColor="?android:attr/textColorPrimaryInverse"
+                tools:text="@string/no_frames_since_xs" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/loadingIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:indeterminateTint="?android:attr/textColorPrimaryInverse"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/streamView"
+            app:layout_constraintTop_toTopOf="@+id/streamView" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

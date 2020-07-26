@@ -11,6 +11,7 @@ import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
+import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.injectParentViewModel
 import de.crysxd.octoapp.print_controls.di.injectViewModel
@@ -59,7 +60,8 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
         widgetsList.adapter = OctoWidgetAdapter().also {
             it.widgets = listOf(
                 ProgressWidget(this),
-                ControlTemperatureWidget(this)
+                ControlTemperatureWidget(this),
+                WebcamWidget(this)
             )
         }
 
