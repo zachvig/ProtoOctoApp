@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.navigation.ui.setupWithNavController
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -34,6 +32,8 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
         } else {
             initWithRootFolder(adapter)
         }
+
+        viewModel.picasso.observe(viewLifecycleOwner, Observer(adapter::updatePicasso))
     }
 
     override fun onStart() {

@@ -8,7 +8,8 @@ import de.crysxd.octoapp.base.di.BaseComponent
 @PrePrintControlsScope
 @Component(
     modules = [
-        ViewModelModule::class
+        ViewModelModule::class,
+        PicassoModule::class
     ],
     dependencies = [
         BaseComponent::class
@@ -20,6 +21,6 @@ interface PrePrintControlsComponent {
     fun viewModelFactory(): ViewModelProvider.Factory
 
     // OctoprintModule
-    fun octoprintProvider() : OctoPrintProvider
+    fun octoprintProvider(): OctoPrintProvider
 
 }

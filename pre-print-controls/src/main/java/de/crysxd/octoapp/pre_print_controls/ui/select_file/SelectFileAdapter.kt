@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import de.crysxd.octoapp.base.ui.common.AutoBindViewHolder
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
@@ -33,22 +34,29 @@ class SelectFileAdapter(private val callback: (FileObject) -> Unit) : RecyclerVi
             notifyItemChanged(0)
         }
 
+    private var picasso: Picasso? = null
+
     private val dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
+
+    fun updatePicasso(picasso: Picasso?) {
+        this.picasso = picasso
+        notifyDataSetChanged()
+    }
 
     override fun getItemCount() = files.size
 
-    override fun getItemViewType(position: Int) = when(files[position]) {
+    override fun getItemViewType(position: Int) = when (files[position]) {
         null -> VIEW_TYPE_TITLE
         else -> VIEW_TYPE_FILE
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when(viewType) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         VIEW_TYPE_TITLE -> ViewHolder.TitleViewHolder(parent)
         VIEW_TYPE_FILE -> ViewHolder.FileViewHolder(parent)
         else -> throw RuntimeException("Unsupported view type $viewType")
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = when(holder) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) = when (holder) {
         is ViewHolder.FileViewHolder -> {
             val file = files[position]
             holder.textViewTitle.text = file?.display
@@ -63,6 +71,7 @@ class SelectFileAdapter(private val callback: (FileObject) -> Unit) : RecyclerVi
                     holder.imageView.visibility = View.VISIBLE
                     holder.imageViewFileIcon.setImageResource(R.drawable.ic_outline_folder_24)
                 }
+
                 is FileObject.File -> {
                     holder.textViewDetail.text = holder.itemView.context.getString(
                         R.string.x_y,
@@ -70,15 +79,30 @@ class SelectFileAdapter(private val callback: (FileObject) -> Unit) : RecyclerVi
                         styleFileSize(file.size)
                     )
                     holder.imageView.visibility = View.INVISIBLE
-                    holder.imageViewFileIcon.setImageResource(
-                        if (file.typePath.contains(FileObject.FILE_TYPE_MACHINE_CODE)) {
-                            R.drawable.ic_outline_print_24
-                        } else {
-                            R.drawable.ic_outline_insert_drive_file_24
+
+                    val iconRes = if (file.typePath.contains(FileObject.FILE_TYPE_MACHINE_CODE)) {
+                        R.drawable.ic_outline_print_24
+                    } else {
+                        R.drawable.ic_outline_insert_drive_file_24
+                    }
+
+                    when {
+                        picasso == null -> {
+                            holder.imageViewFileIcon.setImageResource(iconRes)
+                            null
                         }
-                    )
+                        !file.thumbnail.isNullOrBlank() -> picasso?.load(file.thumbnail)?.error(iconRes)?.into(holder.imageViewFileIcon)
+                        else -> {
+                            // Use Picasso as well to prevent the recycled view to get corrupted
+                            // Picasso fails to load the image (as it is vector) so let's set it manually as well
+                            picasso?.load(iconRes)?.into(holder.imageViewFileIcon)
+                            holder.imageViewFileIcon.setImageResource(iconRes)
+                        }
+                    }
                 }
+
                 else -> Unit
+
             }.let {}
 
             holder.itemView.setOnClickListener {

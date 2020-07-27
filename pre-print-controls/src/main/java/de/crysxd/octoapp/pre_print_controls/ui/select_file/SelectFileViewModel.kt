@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
+import com.squareup.picasso.Picasso
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
@@ -18,7 +19,8 @@ import kotlinx.coroutines.launch
 class SelectFileViewModel(
     private val octoPrintProvider: OctoPrintProvider,
     private val loadFilesUseCase: LoadFilesUseCase,
-    private val startPrintJobUseCase: StartPrintJobUseCase
+    private val startPrintJobUseCase: StartPrintJobUseCase,
+    val picasso: LiveData<Picasso?>
 ) : BaseViewModel() {
 
     val rootFilesMediator = MediatorLiveData<List<FileObject>>()
