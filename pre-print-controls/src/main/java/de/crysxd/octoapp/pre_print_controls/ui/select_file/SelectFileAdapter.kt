@@ -17,16 +17,7 @@ import java.util.*
 
 class SelectFileAdapter(private val callback: (FileObject) -> Unit) : RecyclerView.Adapter<SelectFileAdapter.ViewHolder>() {
 
-    var files: List<FileObject?> = emptyList()
-        set(value) {
-            // Sort files by date, folders by name
-            val groups = value.filterNotNull().groupBy { it::class.java }
-            val files = groups[FileObject.File::class.java]?.sortedByDescending { (it as FileObject.File).date } ?: emptyList()
-            val folders = groups[FileObject.Folder::class.java]?.sortedBy { it.display } ?: emptyList()
-
-            field = listOf(listOf(null), folders, files).flatten()
-            notifyDataSetChanged()
-        }
+    var items: List<DataItem> = emptyList()
 
     var title: String = ""
         set(value) {
@@ -38,28 +29,52 @@ class SelectFileAdapter(private val callback: (FileObject) -> Unit) : RecyclerVi
 
     private val dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
 
+    fun setFiles(files: List<FileObject>) {
+        // Sort files by date, folders by name
+        val groups = files.groupBy { it::class.java }
+        val sortedFiles = groups[FileObject.File::class.java]?.sortedByDescending { (it as FileObject.File).date } ?: emptyList()
+        val sortedFolders = groups[FileObject.Folder::class.java]?.sortedBy { it.display } ?: emptyList()
+
+        // Headers
+        val headers = mutableListOf<DataItem>()
+        if (files.none { !(it as? FileObject.File)?.thumbnail.isNullOrBlank() }) {
+            headers.add(DataItem.ThumbnailHint)
+        }
+        headers.add(DataItem.TitleItem)
+
+        items = listOf(
+            headers,
+            sortedFolders.map { DataItem.FileItem(it) },
+            sortedFiles.map { DataItem.FileItem(it) }
+        ).flatten()
+
+        notifyDataSetChanged()
+    }
+
     fun updatePicasso(picasso: Picasso?) {
         this.picasso = picasso
         notifyDataSetChanged()
     }
 
-    override fun getItemCount() = files.size
+    override fun getItemCount() = items.size
 
-    override fun getItemViewType(position: Int) = when (files[position]) {
-        null -> VIEW_TYPE_TITLE
+    override fun getItemViewType(position: Int) = when (items[position]) {
+        DataItem.TitleItem -> VIEW_TYPE_TITLE
+        DataItem.ThumbnailHint -> VIEW_TYPE_THUMBNAIL_HINT
         else -> VIEW_TYPE_FILE
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         VIEW_TYPE_TITLE -> ViewHolder.TitleViewHolder(parent)
+        VIEW_TYPE_THUMBNAIL_HINT -> ViewHolder.ThumbnailHintViewHolder(parent)
         VIEW_TYPE_FILE -> ViewHolder.FileViewHolder(parent)
         else -> throw RuntimeException("Unsupported view type $viewType")
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = when (holder) {
         is ViewHolder.FileViewHolder -> {
-            val file = files[position]
-            holder.textViewTitle.text = file?.display
+            val file = (items[position] as DataItem.FileItem).file
+            holder.textViewTitle.text = file.display
 
             when (file) {
                 is FileObject.Folder -> {
@@ -106,7 +121,7 @@ class SelectFileAdapter(private val callback: (FileObject) -> Unit) : RecyclerVi
             }.let {}
 
             holder.itemView.setOnClickListener {
-                file?.let(callback)
+                callback(file)
             }
         }
 
@@ -114,6 +129,9 @@ class SelectFileAdapter(private val callback: (FileObject) -> Unit) : RecyclerVi
             holder.itemView.textViewTitle.text = title
             holder.itemView.isVisible = !title.isBlank()
         }
+
+        is ViewHolder.ThumbnailHintViewHolder -> Unit
+
     }
 
     private fun styleFileSize(size: Long): String {
@@ -131,10 +149,18 @@ class SelectFileAdapter(private val callback: (FileObject) -> Unit) : RecyclerVi
     companion object {
         const val VIEW_TYPE_TITLE = 0
         const val VIEW_TYPE_FILE = 1
+        const val VIEW_TYPE_THUMBNAIL_HINT = 2
+    }
+
+    sealed class DataItem {
+        data class FileItem(val file: FileObject) : DataItem()
+        object TitleItem : DataItem()
+        object ThumbnailHint : DataItem()
     }
 
     sealed class ViewHolder(parent: ViewGroup, @LayoutRes layout: Int) : AutoBindViewHolder(parent, layout) {
         class FileViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_file)
         class TitleViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_title)
+        class ThumbnailHintViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_thumbnail_hint)
     }
 }
