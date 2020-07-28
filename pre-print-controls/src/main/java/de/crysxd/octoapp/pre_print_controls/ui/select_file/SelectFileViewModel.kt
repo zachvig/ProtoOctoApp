@@ -23,23 +23,32 @@ class SelectFileViewModel(
     val picasso: LiveData<Picasso?>
 ) : BaseViewModel() {
 
-    val rootFilesMediator = MediatorLiveData<List<FileObject>>()
+    private val rootFilesMediator = MediatorLiveData<UiState>()
     private var rootFilesInitialised = false
+    private var showThumbnailHint = false
 
-    fun loadRootFiles(): LiveData<List<FileObject>> {
+    fun loadRootFiles(): LiveData<UiState> {
         if (!rootFilesInitialised) {
             rootFilesInitialised = true
             rootFilesMediator.addSource(octoPrintProvider.octoPrint) {
                 viewModelScope.launch(coroutineExceptionHandler) {
                     it?.let {
                         val root = loadFilesUseCase.execute(Params(it, FileOrigin.Local))
-                        rootFilesMediator.postValue(root)
+                        showThumbnailHint = !anyThumbnailPresent(root)
+                        rootFilesMediator.postValue(UiState(root, showThumbnailHint))
                     }
                 }
             }
         }
 
         return Transformations.map(rootFilesMediator) { it }
+    }
+
+    private fun anyThumbnailPresent(files: List<FileObject>): Boolean = files.any {
+        when (it) {
+            is FileObject.Folder -> anyThumbnailPresent(it.children ?: emptyList())
+            is FileObject.File -> !it.thumbnail.isNullOrBlank()
+        }
     }
 
     fun selectFile(file: FileObject) = GlobalScope.launch(coroutineExceptionHandler) {
@@ -50,8 +59,10 @@ class SelectFileViewModel(
                 }
             }
             is FileObject.Folder -> {
-                navContoller.navigate(R.id.action_open_folder, SelectFileFragmentArgs(file).toBundle())
+                navContoller.navigate(R.id.action_open_folder, SelectFileFragmentArgs(file, showThumbnailHint).toBundle())
             }
         }
     }
+
+    data class UiState(val files: List<FileObject>, val showThumbnailHint: Boolean)
 }

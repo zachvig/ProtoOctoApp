@@ -43,7 +43,7 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
     }
 
     private fun initWithFolder(adapter: SelectFileAdapter, folder: FileObject.Folder) {
-        adapter.setFiles(folder.children ?: emptyList())
+        adapter.setFiles(folder.children ?: emptyList(), navArgs.showThumbnailHint)
         adapter.title = folder.name
     }
 
@@ -51,7 +51,7 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
         progressIndicator.isVisible = true
         viewModel.loadRootFiles().observe(viewLifecycleOwner, Observer {
             progressIndicator.isVisible = false
-            adapter.setFiles(it)
+            adapter.setFiles(it.files, it.showThumbnailHint)
             adapter.title = "Select a file to print"
         })
     }

@@ -29,7 +29,7 @@ class SelectFileAdapter(private val callback: (FileObject) -> Unit) : RecyclerVi
 
     private val dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
 
-    fun setFiles(files: List<FileObject>) {
+    fun setFiles(files: List<FileObject>, showThumbnailHint: Boolean) {
         // Sort files by date, folders by name
         val groups = files.groupBy { it::class.java }
         val sortedFiles = groups[FileObject.File::class.java]?.sortedByDescending { (it as FileObject.File).date } ?: emptyList()
@@ -37,7 +37,7 @@ class SelectFileAdapter(private val callback: (FileObject) -> Unit) : RecyclerVi
 
         // Headers
         val headers = mutableListOf<DataItem>()
-        if (files.none { !(it as? FileObject.File)?.thumbnail.isNullOrBlank() }) {
+        if (showThumbnailHint) {
             headers.add(DataItem.ThumbnailHint)
         }
         headers.add(DataItem.TitleItem)
