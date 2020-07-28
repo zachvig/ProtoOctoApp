@@ -10,12 +10,17 @@ import de.crysxd.octoapp.base.ui.common.AutoBindViewHolder
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
 import kotlinx.android.synthetic.main.list_item_file.*
+import kotlinx.android.synthetic.main.list_item_thumbnail_hint.view.*
 import kotlinx.android.synthetic.main.list_item_title.view.*
 import java.text.DateFormat
 import java.text.DecimalFormat
 import java.util.*
 
-class SelectFileAdapter(private val callback: (FileObject) -> Unit) : RecyclerView.Adapter<SelectFileAdapter.ViewHolder>() {
+class SelectFileAdapter(
+    private val onFileSelected: (FileObject) -> Unit,
+    private val onHideThumbnailHint: () -> Unit,
+    private val onShowThumbnailInfo: () -> Unit
+) : RecyclerView.Adapter<SelectFileAdapter.ViewHolder>() {
 
     var items: List<DataItem> = emptyList()
 
@@ -28,6 +33,10 @@ class SelectFileAdapter(private val callback: (FileObject) -> Unit) : RecyclerVi
     private var picasso: Picasso? = null
 
     private val dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
+
+    init {
+        setHasStableIds(true)
+    }
 
     fun setFiles(files: List<FileObject>, showThumbnailHint: Boolean) {
         // Sort files by date, folders by name
@@ -50,6 +59,8 @@ class SelectFileAdapter(private val callback: (FileObject) -> Unit) : RecyclerVi
 
         notifyDataSetChanged()
     }
+
+    override fun getItemId(position: Int) = items[position].hashCode().toLong()
 
     fun updatePicasso(picasso: Picasso?) {
         this.picasso = picasso
@@ -121,7 +132,7 @@ class SelectFileAdapter(private val callback: (FileObject) -> Unit) : RecyclerVi
             }.let {}
 
             holder.itemView.setOnClickListener {
-                callback(file)
+                onFileSelected(file)
             }
         }
 
@@ -130,8 +141,10 @@ class SelectFileAdapter(private val callback: (FileObject) -> Unit) : RecyclerVi
             holder.itemView.isVisible = !title.isBlank()
         }
 
-        is ViewHolder.ThumbnailHintViewHolder -> Unit
-
+        is ViewHolder.ThumbnailHintViewHolder -> {
+            holder.itemView.buttonHide.setOnClickListener { onHideThumbnailHint() }
+            holder.itemView.buttonLearnMore.setOnClickListener { onShowThumbnailInfo() }
+        }
     }
 
     private fun styleFileSize(size: Long): String {

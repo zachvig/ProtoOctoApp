@@ -1,7 +1,10 @@
 package de.crysxd.octoapp.pre_print_controls.ui.select_file
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
@@ -12,6 +15,7 @@ import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 import kotlinx.android.synthetic.main.fragment_select_file.*
+import timber.log.Timber
 
 class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
 
@@ -22,9 +26,26 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = SelectFileAdapter {
-            viewModel.selectFile(it)
-        }
+        val adapter = SelectFileAdapter(
+            onFileSelected = {
+                viewModel.selectFile(it)
+            },
+            onHideThumbnailHint = {
+                viewModel.hideThumbnailHint()
+            },
+            onShowThumbnailInfo = {
+                AlertDialog.Builder(requireContext())
+                    .setMessage(getString(R.string.thumbnail_info_message))
+                    .setPositiveButton(R.string.cura_plugin) { _, _ ->
+                        openLink("https://plugins.octoprint.org/plugins/UltimakerFormatPackage/")
+                    }
+                    .setNegativeButton(R.string.prusa_slicer_plugin) { _, _ ->
+                        openLink("https://plugins.octoprint.org/plugins/prusaslicerthumbnails/")
+                    }
+                    .setNeutralButton(R.string.cancel, null)
+                    .show()
+            }
+        )
         recyclerViewFileList.adapter = adapter
 
         if (navArgs.folder != null) {
@@ -52,7 +73,15 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
         viewModel.loadRootFiles().observe(viewLifecycleOwner, Observer {
             progressIndicator.isVisible = false
             adapter.setFiles(it.files, it.showThumbnailHint)
-            adapter.title = "Select a file to print"
+            adapter.title = getString(R.string.select_file_to_print)
         })
+    }
+
+    private fun openLink(url: String) {
+        try {
+            requireContext().startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
 }
