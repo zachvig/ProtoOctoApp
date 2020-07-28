@@ -28,7 +28,7 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
             Timber.i("$state")
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                val views = listOf(buttonTurnOnPsu, textViewState, textViewSubState)
+                val views = listOf(buttonTurnOnPsu, buttonTurnOffPsu, textViewState, textViewSubState)
                 val duration = view.animate().duration
                 if (firstStateUpdate) {
                     handleUiStateUpdate(state)
@@ -45,6 +45,7 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
 
     private fun handleUiStateUpdate(state: ConnectPrinterViewModel.UiState) {
         buttonTurnOnPsu.isVisible = false
+        buttonTurnOffPsu.isVisible = false
 
         when (state) {
             ConnectPrinterViewModel.UiState.OctoPrintNotAvailable -> showStatus(
@@ -57,17 +58,16 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
             )
 
             is ConnectPrinterViewModel.UiState.WaitingForPrinterToComeOnline -> {
-                buttonTurnOnPsu.isVisible = state.psuIsOn != null
                 buttonTurnOnPsu.setOnClickListener {
                     viewModel.togglePsu()
                 }
-                buttonTurnOnPsu.setText(
-                    if (state.psuIsOn == true) {
-                        R.string.turn_off_psu
-                    } else {
-                        R.string.turn_psu_on
-                    }
-                )
+                buttonTurnOffPsu.setOnClickListener {
+                    viewModel.togglePsu()
+                }
+                buttonTurnOnPsu.isVisible = state.psuIsOn == false
+                buttonTurnOffPsu.isVisible = state.psuIsOn == true
+                buttonTurnOnPsu.text = getString(R.string.turn_psu_on)
+                buttonTurnOffPsu.text = getString(R.string.turn_off_psu)
                 showStatus(
                     if (state.psuIsOn == true) {
                         R.string.psu_turned_on_waiting_for_printer_to_boot
