@@ -21,4 +21,10 @@
     <string name="y">Y</string>
     <string name="x">X</string>
     <string name="z">Z</string>
+    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews">Using Cura or Prusa Slicer? Install a plugin to get thumbnail previews!</string>
+    <string name="learn_more">Learn more</string>
+    <string name="hide">Hide</string>
+    <string name="thumbnail_info_message">Install the below plugin for your slicer to get thumbnail previews of all files!</string>
+    <string name="prusa_slicer_plugin">Prusa Slicer Plugin</string>
+    <string name="cura_plugin">Cura Plugin</string>
 </resources>
