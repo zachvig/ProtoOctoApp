@@ -62,8 +62,6 @@ class MessageDeserializer(
 
         "FirmwareData" -> gson.fromJson(o["payload"].asJsonObject["data"], Message.EventMessage.FirmwareData::class.java)
 
-        "SettingsUpdated" -> Message.EventMessage.SettingsUpdated()
-
         else -> {
             Message.EventMessage.Unknown(o["type"].asString)
         }
