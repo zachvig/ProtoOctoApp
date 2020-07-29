@@ -61,7 +61,7 @@ class MainActivity : OctoActivity() {
         }
 
         cameraStreamButton.setOnClickListener {
-            FullscreenWebcamActivity.start(this)
+            startActivity(Intent(this, FullscreenWebcamActivity::class.java))
         }
     }
 
