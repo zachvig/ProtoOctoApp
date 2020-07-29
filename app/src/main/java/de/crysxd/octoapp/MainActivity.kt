@@ -2,6 +2,7 @@ package de.crysxd.octoapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageButton
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -12,6 +13,7 @@ import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.OctoActivity
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
+import de.crysxd.octoapp.base.ui.widget.webcam.FullscreenWebcamActivity
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.android.synthetic.main.activity_main.*
@@ -26,6 +28,7 @@ class MainActivity : OctoActivity() {
 
     override val octoToolbar: OctoToolbar by lazy { toolbar }
     override val octo: OctoView by lazy { toolbarOctoView }
+    override val cameraStreamButton: ImageButton by lazy { cameraButton }
     override val coordinatorLayout: CoordinatorLayout by lazy { coordinator }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +58,10 @@ class MainActivity : OctoActivity() {
 
         coordinator.onFeedbackTriggeredListener = {
             SendFeedbackDialog().show(supportFragmentManager, "send-feedback")
+        }
+
+        cameraStreamButton.setOnClickListener {
+            startActivity(Intent(this, FullscreenWebcamActivity::class.java))
         }
     }
 

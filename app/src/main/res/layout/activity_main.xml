@@ -11,21 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <de.crysxd.octoapp.base.ui.common.OctoToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="@dimen/margin_3" />
-
-    <de.crysxd.octoapp.base.ui.common.OctoView
-        android:id="@+id/toolbarOctoView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:rotation="89"
-        android:translationX="-50dp" />
-
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/mainNavController"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -36,5 +21,41 @@
         app:layout_anchorGravity="center"
         app:layout_behavior=".base.ui.common.ShrinkBehaviour"
         app:navGraph="@navigation/main_nav_graph" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <de.crysxd.octoapp.base.ui.common.OctoToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <de.crysxd.octoapp.base.ui.common.OctoView
+            android:id="@+id/toolbarOctoView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:rotation="90"
+            android:translationX="-50dp"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/toolbar" />
+
+        <ImageButton
+            android:id="@+id/cameraButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_2"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/toolbar"
+            app:srcCompat="@drawable/ic_round_videocam_24" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </de.crysxd.octoapp.FeedbackTriggerCoordinatorLayout>

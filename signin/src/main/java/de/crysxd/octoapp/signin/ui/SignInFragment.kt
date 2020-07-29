@@ -137,6 +137,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
         requireOctoActivity().octo.isVisible = false
+        requireOctoActivity().cameraStreamButton.isVisible = false
 
         // Show message if logout because of invalid API key
         // Do not show if already shown in this "session"
