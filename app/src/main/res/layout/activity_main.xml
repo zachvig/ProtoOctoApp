@@ -22,9 +22,9 @@
         android:id="@+id/toolbarOctoView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:rotation="89"
-        android:translationX="-50dp" />
+        android:layout_gravity="end"
+        android:rotation="270"
+        android:translationX="60dp" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/mainNavController"
