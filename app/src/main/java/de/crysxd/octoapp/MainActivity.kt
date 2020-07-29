@@ -53,9 +53,8 @@ class MainActivity : OctoActivity() {
             }
         }
 
-        feedbackTrigger.setOnLongClickListener {
+        coordinator.onFeedbackTriggeredListener = {
             SendFeedbackDialog().show(supportFragmentManager, "send-feedback")
-            true
         }
     }
 
