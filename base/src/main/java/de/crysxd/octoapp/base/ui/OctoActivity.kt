@@ -3,7 +3,6 @@ package de.crysxd.octoapp.base.ui
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.LiveData
@@ -27,8 +26,6 @@ abstract class OctoActivity : AppCompatActivity() {
     abstract val octoToolbar: OctoToolbar
 
     abstract val octo: OctoView
-
-    abstract val cameraStreamButton: ImageButton
 
     abstract val coordinatorLayout: CoordinatorLayout
 

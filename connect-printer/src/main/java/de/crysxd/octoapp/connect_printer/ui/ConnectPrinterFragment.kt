@@ -136,6 +136,5 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Connect
         requireOctoActivity().octo.isVisible = false
-        requireOctoActivity().cameraStreamButton.isVisible = true
     }
 }
