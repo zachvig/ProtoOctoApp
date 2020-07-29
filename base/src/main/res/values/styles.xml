@@ -33,6 +33,12 @@
         <item name="android:background">@drawable/bg_button</item>
     </style>
 
+    <style name="OctoTheme.Widget.Button.Secondary">
+        <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Button</item>
+        <item name="android:background">@drawable/bg_button_secondary</item>
+        <item name="android:textColor">@color/button_secondary_text_color</item>
+    </style>
+
     <style name="OctoTheme.Widget.Button.Small">
         <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Button</item>
         <item name="android:background">@drawable/bg_button_small</item>
@@ -50,6 +56,12 @@
         <item name="android:padding">@dimen/margin_1</item>
         <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
         <item name="android:tint">@color/button_secondary_text_color</item>
+    </style>
+
+    <style name="OctoTheme.Widget.Button.Borderless" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:textColor">?android:attr/colorAccent</item>
+        <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Button.Borderless</item>
     </style>
 
 </resources>

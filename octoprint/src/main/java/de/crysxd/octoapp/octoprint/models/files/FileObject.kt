@@ -22,6 +22,7 @@ sealed class FileObject(
         typePath: List<String>,
         ref: Reference,
         size: Long,
+        val thumbnail: String?,
         val date: Long
     ) : FileObject(display, name, origin, path, type, typePath, size, ref), Serializable
 

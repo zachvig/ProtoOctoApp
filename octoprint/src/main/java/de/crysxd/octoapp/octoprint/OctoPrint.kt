@@ -85,7 +85,7 @@ class OctoPrint(
     private fun createBaseGson(): Gson = GsonBuilder()
         .create()
 
-    private fun createOkHttpClient() = OkHttpClient.Builder().apply {
+    fun createOkHttpClient() = OkHttpClient.Builder().apply {
         val logger = Logger.getLogger("OctoPrint/HTTP")
         logger.parent = getLogger()
         logger.useParentHandlers = true

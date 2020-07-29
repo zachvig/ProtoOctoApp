@@ -1,7 +1,10 @@
 package de.crysxd.octoapp.pre_print_controls.di
 
+import android.content.SharedPreferences
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
@@ -54,7 +57,9 @@ open class ViewModelModule {
     open fun provideSelectFileViewModel(
         octoPrintProvider: OctoPrintProvider,
         loadFilesUseCase: LoadFilesUseCase,
-        startPrintJobUseCase: StartPrintJobUseCase
-    ): ViewModel = SelectFileViewModel(octoPrintProvider, loadFilesUseCase, startPrintJobUseCase)
+        startPrintJobUseCase: StartPrintJobUseCase,
+        sharedPreferences: SharedPreferences,
+        picasso: LiveData<Picasso?>
+    ): ViewModel = SelectFileViewModel(octoPrintProvider, loadFilesUseCase, startPrintJobUseCase, sharedPreferences, picasso)
 
 }
