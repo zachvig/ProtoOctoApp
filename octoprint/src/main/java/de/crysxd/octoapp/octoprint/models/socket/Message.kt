@@ -113,6 +113,8 @@ sealed class Message {
             @SerializedName("EXTRUDER_COUNT") val extruderCount: Int?
         ) : EventMessage()
 
+        class SettingsUpdated : EventMessage()
+
         object Disconnected : EventMessage()
 
         data class Unknown(val type: String) : EventMessage()
