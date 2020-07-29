@@ -19,7 +19,6 @@ class WebcamFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val widget = WebcamWidget(this, true)
         val widgetView = widget.getView(requireContext(), view as ViewGroup)
-        widget.onViewCreated(widgetView)
         view.addView(widgetView)
     }
 }

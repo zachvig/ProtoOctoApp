@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<de.crysxd.octoapp.FeedbackTriggerCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
@@ -15,16 +15,16 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="@dimen/margin_3" />
+        android:layout_marginTop="@dimen/margin_3"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <de.crysxd.octoapp.base.ui.common.OctoView
         android:id="@+id/toolbarOctoView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:translationX="60dp"
         android:layout_gravity="end"
-        android:rotation="270" />
+        android:rotation="270"
+        android:translationX="60dp" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/mainNavController"
@@ -37,11 +37,4 @@
         app:layout_behavior=".base.ui.common.ShrinkBehaviour"
         app:navGraph="@navigation/main_nav_graph" />
 
-    <View
-        android:id="@+id/feedbackTrigger"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:clickable="false"
-        android:layout_gravity="top|end" />
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</de.crysxd.octoapp.FeedbackTriggerCoordinatorLayout>

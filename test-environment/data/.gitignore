@@ -1,1 +1,4 @@
 .cache/
+/.octoprint/uploads/.metadata.json
+/.octoprint/uploads/CE3_66949fdc-62fb-40e7-8c74-08866032eefc.gcode
+/.octoprint/data/appkeys/keys.yaml
