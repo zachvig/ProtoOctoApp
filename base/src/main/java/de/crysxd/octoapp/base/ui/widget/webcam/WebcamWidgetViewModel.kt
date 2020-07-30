@@ -7,22 +7,29 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.livedata.OctoTransformations.filterEventsForMessageType
 import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
+import de.crysxd.octoapp.octoprint.models.socket.Message
 import timber.log.Timber
 
 
 class WebcamWidgetViewModel(
-    val octoPrintProvider: OctoPrintProvider
+    val octoPrintProvider: OctoPrintProvider,
+    val getWebcamSettingsUseCase: GetWebcamSettingsUseCase
 ) : BaseViewModel() {
 
 
     private var previousSource: LiveData<UiState>? = null
     private val uiStateMediator = MediatorLiveData<UiState>()
     val uiState = uiStateMediator.map { it }
+    private val settingsUpdatedLiveData = octoPrintProvider.eventLiveData
+        .filterEventsForMessageType(Message.EventMessage.SettingsUpdated::class.java)
 
     init {
         uiStateMediator.addSource(octoPrintProvider.octoPrint) { connect() }
+        uiStateMediator.addSource(settingsUpdatedLiveData) { connect() }
         uiStateMediator.postValue(UiState.Loading)
         connect()
     }
@@ -36,7 +43,7 @@ class WebcamWidgetViewModel(
 
                 // Load settings
                 val octoPrint = octoPrintProvider.octoPrint.value ?: return@liveData emit(UiState.Error(true))
-                val webcamSettings = octoPrint.createSettingsApi().getSettings().webcam
+                val webcamSettings = getWebcamSettingsUseCase.execute(GetWebcamSettingsUseCase.Params(octoPrint))
 
                 // Check if webcam is configured
                 if (!webcamSettings.webcamEnabled || webcamSettings.streamUrl.isEmpty()) {
