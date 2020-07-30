@@ -114,6 +114,7 @@ class PrintNotificationService : Service() {
     private fun createProgressNotification(progress: Int, title: String, status: String) = createNotificationBuilder()
         .setContentTitle(title)
         .setContentText(status)
+        .setNotificationSilent()
         .setProgress(maxProgress, progress, false)
         .build()
 
