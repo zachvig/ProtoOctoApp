@@ -108,7 +108,7 @@ class MoveToolWidget(parent: Fragment) : OctoWidget(parent) {
     private fun createJogResolutionButtonBackground(diameterDp: Float): Drawable {
         val diameterPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, diameterDp, requireContext().resources.displayMetrics).toInt()
         val bitmap = Bitmap.createBitmap(diameterPx, diameterPx, Bitmap.Config.ARGB_8888)
-        val circle = ContextCompat.getDrawable(requireContext(), R.drawable.icon_background)
+        val circle = ContextCompat.getDrawable(requireContext(), R.drawable.circle)
         circle?.setTint(ContextCompat.getColor(requireContext(), R.color.accent))
         circle?.setBounds(0, 0, diameterPx, diameterPx)
         bitmap.applyCanvas { circle?.draw(this) }
