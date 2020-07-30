@@ -20,7 +20,7 @@
                 </shape>
             </item>
             <item>
-                <ripple android:color="@color/white_translucent" />
+                <ripple android:color="@color/white_translucent_2" />
             </item>
         </layer-list>
     </item>

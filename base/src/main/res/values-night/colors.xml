@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#119C02</color>
+    <color name="primary_dark">#158501</color>
+    <color name="primary_light">#81C179</color>
+    <color name="accent">#2F6895</color>
+
+    <color name="window_background">@color/dark_grey</color>
+    <color name="input_background">@color/white_translucent_2</color>
+    <color name="light_text">@color/light_grey</color>
+    <color name="normal_text">@color/white_translucent</color>
+    <color name="dark_text">@color/white</color>
+    <color name="inverse_text">@color/black</color>
+    <color name="color_error">@color/red</color>
+
+    <color name="temperature_text">@color/black</color>
+    <color name="swim_lines">#757FB5</color>
+
+</resources>
