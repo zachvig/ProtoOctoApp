@@ -12,6 +12,7 @@
     <color name="dark_text">@color/white</color>
     <color name="inverse_text">@color/black</color>
     <color name="color_error">@color/red</color>
+    <color name="secondary_button_text">@color/white_translucent</color>
 
     <color name="temperature_text">@color/white</color>
     <color name="swim_lines">#757FB5</color>

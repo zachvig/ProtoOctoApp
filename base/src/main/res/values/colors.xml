@@ -17,6 +17,7 @@
     <color name="text_colored_background">@color/white</color>
     <color name="swim_bubbles">@color/window_background</color>
     <color name="swim_lines">@color/window_background</color>
+    <color name="secondary_button_text">@color/accent</color>
 
     <color name="white">#fff</color>
     <color name="black">#000</color>
