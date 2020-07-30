@@ -18,6 +18,8 @@
     <color name="swim_bubbles">@color/window_background</color>
     <color name="swim_lines">@color/window_background</color>
     <color name="secondary_button_text">@color/accent</color>
+    <color name="primary_button_background">@color/accent</color>
+    <color name="button_more_foreground">@color/accent</color>
 
     <color name="white">#fff</color>
     <color name="black">#000</color>

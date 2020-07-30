@@ -71,7 +71,9 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
             window!!.findViewById<View>(com.google.android.material.R.id.container).fitsSystemWindows = false
             // dark navigation bar icons
             val decorView = window.decorView
-            decorView.systemUiVisibility = decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+            if (!requireContext().resources.getBoolean(R.bool.night_mode)) {
+                decorView.systemUiVisibility = decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+            }
 
             val padding = requireContext().resources.getDimensionPixelSize(R.dimen.margin_2)
             requireView().setPadding(

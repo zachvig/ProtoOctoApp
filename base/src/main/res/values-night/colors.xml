@@ -3,7 +3,7 @@
     <color name="primary">#0E8101</color>
     <color name="primary_dark">#106101</color>
     <color name="primary_light">#6A9C63</color>
-    <color name="accent">#2F6895</color>
+    <color name="accent">#0A90FA</color>
 
     <color name="window_background">@color/dark_grey</color>
     <color name="input_background">@color/white_translucent_2</color>
@@ -13,6 +13,8 @@
     <color name="inverse_text">@color/black</color>
     <color name="color_error">@color/red</color>
     <color name="secondary_button_text">@color/white_translucent</color>
+    <color name="primary_button_background">#2F6895</color>
+    <color name="button_more_foreground">@color/white_translucent</color>
 
     <color name="temperature_text">@color/white</color>
     <color name="swim_lines">#757FB5</color>
