@@ -66,6 +66,8 @@ class SelectFileViewModel(
         rootFilesMediator.value?.let {
             rootFilesMediator.postValue(it.copy(showThumbnailHint = false))
         }
+
+        showThumbnailHint = false
     }
 
     private fun isAnyThumbnailPresent(files: List<FileObject>): Boolean = files.any {
