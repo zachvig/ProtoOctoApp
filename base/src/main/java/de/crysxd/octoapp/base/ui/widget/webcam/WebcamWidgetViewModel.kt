@@ -8,12 +8,14 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import timber.log.Timber
 
 
 class WebcamWidgetViewModel(
-    val octoPrintProvider: OctoPrintProvider
+    val octoPrintProvider: OctoPrintProvider,
+    val getWebcamSettingsUseCase: GetWebcamSettingsUseCase
 ) : BaseViewModel() {
 
 
@@ -36,7 +38,7 @@ class WebcamWidgetViewModel(
 
                 // Load settings
                 val octoPrint = octoPrintProvider.octoPrint.value ?: return@liveData emit(UiState.Error(true))
-                val webcamSettings = octoPrint.createSettingsApi().getSettings().webcam
+                val webcamSettings = getWebcamSettingsUseCase.execute(GetWebcamSettingsUseCase.Params(octoPrint))
 
                 // Check if webcam is configured
                 if (!webcamSettings.webcamEnabled || webcamSettings.streamUrl.isEmpty()) {
