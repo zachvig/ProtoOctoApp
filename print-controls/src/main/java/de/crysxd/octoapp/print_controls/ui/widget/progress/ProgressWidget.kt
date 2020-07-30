@@ -38,8 +38,6 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
     override fun onViewCreated(view: View) {
         viewModel.printState.observe(viewLifecycleOwner, Observer {
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                TransitionManager.beginDelayedTransition(view as ViewGroup, InstantAutoTransition())
-
                 val progressPercent = it.progress?.completion ?: 0f
                 val progressPercentLayoutThreshold = 80f
                 val progress = progressPercent.toInt() / 100f
@@ -70,7 +68,7 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
                 view.textViewProgressPercent.setTextColor(
                     ContextCompat.getColor(
                         requireContext(), if (progressPercent > progressPercentLayoutThreshold) {
-                            R.color.inverse_text
+                            R.color.text_colored_background
                         } else {
                             R.color.normal_text
                         }
