@@ -108,8 +108,9 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
         setAutoCancel(true)
     }
 
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
+    override fun onDrawForeground(canvas: Canvas) {
+        super.onDrawForeground(canvas)
+
         if (topShadowAlpha > 0) {
             topShadowDrawable.alpha = (topShadowAlpha * 255).roundToInt()
             topShadowDrawable.setBounds(0, 0, width, topShadowDrawable.intrinsicHeight)

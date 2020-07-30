@@ -13,12 +13,22 @@
     <color name="inverse_text">@color/white</color>
     <color name="color_error">@color/red</color>
 
+    <color name="temperature_text">@color/black</color>
+    <color name="text_colored_background">@color/white</color>
+    <color name="swim_bubbles">@color/window_background</color>
+    <color name="swim_lines">@color/window_background</color>
+    <color name="secondary_button_text">@color/accent</color>
+    <color name="primary_button_background">@color/accent</color>
+    <color name="button_more_foreground">@color/accent</color>
+
     <color name="white">#fff</color>
     <color name="black">#000</color>
     <color name="red">#F44336</color>
     <color name="light_grey">#999</color>
+    <color name="dark_grey">#1a1a1a</color>
     <color name="light_blue">#0D3888C6</color>
     <color name="black_translucent">#B4000000</color>
     <color name="black_translucent_2">#1A000000</color>
-    <color name="white_translucent">#2AFFFFFF</color>
+    <color name="white_translucent">#B5FFFFFF</color>
+    <color name="white_translucent_2">#2AFFFFFF</color>
 </resources>

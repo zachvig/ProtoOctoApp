@@ -3,5 +3,5 @@
 
     <item android:color="?android:attr/textColorSecondary" android:state_enabled="false" />
 
-    <item android:color="?android:attr/colorAccent" />
+    <item android:color="@color/secondary_button_text" />
 </selector>

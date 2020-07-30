@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:importantForAccessibility="no"
             android:scaleType="center"
-            android:tint="?android:attr/colorAccent"
+            android:tint="?android:attr/colorPrimary"
             app:layout_constraintBottom_toBottomOf="@+id/textView"
             app:layout_constraintEnd_toStartOf="@+id/textView"
             app:layout_constraintStart_toStartOf="parent"
@@ -60,12 +60,9 @@
             style="@style/OctoTheme.Widget.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_1"
             android:text="@string/hide"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/buttonLearnMore"
-            app:layout_constraintTop_toBottomOf="@+id/textView"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toTopOf="@+id/buttonLearnMore" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"

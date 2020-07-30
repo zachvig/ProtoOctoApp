@@ -4,6 +4,7 @@
     <style name="OctoTheme.TextAppearance" parent="Theme.AppCompat">
         <item name="android:fontFamily">@font/roboto_regular</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
     <style name="OctoTheme.TextAppearance.Label">
