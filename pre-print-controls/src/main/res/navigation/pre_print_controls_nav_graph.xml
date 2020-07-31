@@ -38,6 +38,10 @@
             app:argType="de.crysxd.octoapp.octoprint.models.files.FileObject$Folder"
             app:nullable="true"
             android:defaultValue="@null" />
+        <argument
+            android:name="showThumbnailHint"
+            android:defaultValue="false"
+            app:argType="boolean" />
 
     </fragment>
 

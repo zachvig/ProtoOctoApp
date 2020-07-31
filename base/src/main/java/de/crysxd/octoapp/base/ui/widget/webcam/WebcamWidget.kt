@@ -1,7 +1,6 @@
 package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,7 +58,7 @@ class WebcamWidget(
             if (isFullscreen) {
                 parent.activity?.finish()
             } else {
-                requireContext().startActivity(Intent(requireContext(), FullscreenWebcamActivity::class.java))
+                FullscreenWebcamActivity.start(parent.requireActivity())
             }
         }
         view.imageButtonFullscreen.setImageResource(

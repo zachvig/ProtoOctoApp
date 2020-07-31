@@ -7,6 +7,7 @@ import android.view.*
 import android.widget.PopupMenu
 import androidx.annotation.IdRes
 import androidx.annotation.MenuRes
+import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
@@ -21,12 +22,14 @@ import kotlinx.android.synthetic.main.item_menu.view.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+
 abstract class MenuBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var adapter: MenuAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = RecyclerView(requireContext())
+        view.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.window_background))
         view.layoutManager = LinearLayoutManager(requireContext())
         adapter = MenuAdapter(requireContext(), getMenuRes()) {
             lifecycleScope.launch {
@@ -68,7 +71,9 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
             window!!.findViewById<View>(com.google.android.material.R.id.container).fitsSystemWindows = false
             // dark navigation bar icons
             val decorView = window.decorView
-            decorView.systemUiVisibility = decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+            if (!requireContext().resources.getBoolean(R.bool.night_mode)) {
+                decorView.systemUiVisibility = decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+            }
 
             val padding = requireContext().resources.getDimensionPixelSize(R.dimen.margin_2)
             requireView().setPadding(

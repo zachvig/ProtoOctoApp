@@ -165,7 +165,7 @@ class ConnectPrinterViewModel(
                 if (connectionResponse.options.ports.isNotEmpty() && !didJustAttemptToConnect() && !isPrinterConnecting(connectionResponse)) {
                     recordConnectionAttempt()
                     Timber.i("Attempting auto connect")
-                    autoConnectPrinterUseCase.execute(Params(octoPrint, connectionResponse.options.ports.firstOrNull()))
+                    autoConnectPrinterUseCase.execute(Params(octoPrint))
                     psuCyclingState.postValue(PsuCycledState.NotCycled)
                 }
             }

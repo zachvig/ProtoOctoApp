@@ -14,10 +14,7 @@ import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlBedTemperatureWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlToolTemperatureWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidgetViewModel
-import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
-import de.crysxd.octoapp.base.usecase.OpenEmailClientForFeedbackUseCase
-import de.crysxd.octoapp.base.usecase.SetBedTargetTemperatureUseCase
-import de.crysxd.octoapp.base.usecase.SetToolTargetTemperatureUseCase
+import de.crysxd.octoapp.base.usecase.*
 import javax.inject.Provider
 
 @Module
@@ -68,6 +65,7 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(WebcamWidgetViewModel::class)
     open fun provideWebcamWidgetViewModel(
-        octoPrintProvider: OctoPrintProvider
-    ): ViewModel = WebcamWidgetViewModel(octoPrintProvider)
+        octoPrintProvider: OctoPrintProvider,
+        getWebcamSettingsUseCase: GetWebcamSettingsUseCase
+    ): ViewModel = WebcamWidgetViewModel(octoPrintProvider, getWebcamSettingsUseCase)
 }

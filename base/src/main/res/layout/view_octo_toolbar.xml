@@ -27,7 +27,7 @@
         android:background="@drawable/bg_toolbar_chip_number"
         android:gravity="center"
         tools:text="1"
-        android:textColor="?android:attr/textColorPrimaryInverse"
+        android:textColor="@color/text_colored_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -62,7 +62,7 @@
         android:background="@drawable/bg_toolbar_chip_number"
         android:gravity="center"
         tools:text="2"
-        android:textColor="?android:attr/textColorPrimaryInverse"
+        android:textColor="@color/text_colored_background"
         app:layout_constraintBottom_toBottomOf="@+id/viewConnector1To2"
         app:layout_constraintStart_toEndOf="@+id/viewConnector1To2"
         app:layout_constraintTop_toTopOf="@+id/viewConnector1To2" />
@@ -98,7 +98,7 @@
         android:background="@drawable/bg_toolbar_chip_number"
         android:gravity="center"
         tools:text="3"
-        android:textColor="?android:attr/textColorPrimaryInverse"
+        android:textColor="@color/text_colored_background"
         app:layout_constraintBottom_toBottomOf="@+id/viewConnector2To3"
         app:layout_constraintStart_toEndOf="@+id/viewConnector2To3"
         app:layout_constraintTop_toTopOf="@+id/viewConnector2To3" />

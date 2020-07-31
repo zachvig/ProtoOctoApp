@@ -16,6 +16,6 @@ class AutoConnectPrinterUseCase @Inject constructor() : UseCase<AutoConnectPrint
 
     data class Params(
         val octoPrint: OctoPrint,
-        val port: String?
+        val port: String = "AUTO"
     )
 }

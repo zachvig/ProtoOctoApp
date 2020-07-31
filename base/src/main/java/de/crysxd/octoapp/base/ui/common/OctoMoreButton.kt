@@ -10,7 +10,7 @@ class OctoMoreButton @JvmOverloads constructor(context: Context, attrs: Attribut
 
     init {
         setImageResource(R.drawable.ic_baseline_more_vert_24)
-        setColorFilter(ContextCompat.getColor(context, R.color.accent))
+        setColorFilter(ContextCompat.getColor(context, R.color.button_more_foreground))
         setBackgroundResource(R.drawable.bg_button_more)
         outlineProvider = null
     }

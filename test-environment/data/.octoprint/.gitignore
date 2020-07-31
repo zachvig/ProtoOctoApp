@@ -7,3 +7,4 @@ data/pluginmanager/
 data/preemptive_cache_config.yaml
 data/softwareupdate/versioncache.yaml
 generated/
+/data/print_recovery_data.yaml
