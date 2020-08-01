@@ -2,6 +2,7 @@ package de.crysxd.octoapp.pre_print_controls.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.BaseFragment
@@ -17,6 +18,7 @@ import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.widget.extrude.ExtrudeWidget
 import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidget
 import kotlinx.android.synthetic.main.fragment_pre_print_controls.*
+import kotlinx.coroutines.delay
 import de.crysxd.octoapp.base.R as BaseR
 
 class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_controls) {
@@ -34,14 +36,19 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
             MenuBottomSheet().show(childFragmentManager)
         }
 
-        widgetList.adapter = OctoWidgetAdapter().also {
-            it.widgets = listOf(
-                ControlTemperatureWidget(this),
-                MoveToolWidget(this),
-                WebcamWidget(this),
-                ExtrudeWidget(this),
-                SendGcodeWidget(this)
-            )
+        lifecycleScope.launchWhenCreated {
+            delay(350)
+            widgetList.adapter = OctoWidgetAdapter().also {
+                it.setWidgets(
+                    listOf(
+                        ControlTemperatureWidget(this@PrePrintControlsFragment),
+                        MoveToolWidget(this@PrePrintControlsFragment),
+                        WebcamWidget(this@PrePrintControlsFragment),
+                        ExtrudeWidget(this@PrePrintControlsFragment),
+                        SendGcodeWidget(this@PrePrintControlsFragment)
+                    )
+                )
+            }
         }
 
         (widgetList.layoutManager as? StaggeredGridLayoutManager)?.spanCount = resources.getInteger(BaseR.integer.widget_list_span_count)
