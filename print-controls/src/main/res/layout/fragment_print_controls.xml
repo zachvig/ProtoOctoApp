@@ -3,45 +3,57 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:context="de.crysxd.octoapp.base.ui.OctoActivity">
+    android:theme="@style/OctoTheme">
 
-    <de.crysxd.octoapp.base.ui.common.OctoRecyclerView
-        android:id="@+id/widgetsList"
+    <!--
+    We use the scroll state to animate the button on the bottom.
+    RecyclerView's estimation of the scroll position is to rough to do that, thus we wrap it
+    -->
+    <de.crysxd.octoapp.base.ui.common.OctoScrollView
+        android:id="@+id/widgetListScroller"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="@dimen/margin_2"
-        android:paddingBottom="@dimen/margin_2"
         android:clipToPadding="false"
         android:paddingTop="@dimen/common_view_top_padding"
-        app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/buttonTogglePausePrint"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/buttonTogglePausePrint"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_2"
-        android:layout_marginEnd="@dimen/margin_2"
-        android:layout_marginBottom="@dimen/margin_2"
-        android:text="Pause"
-        android:layout_marginTop="@dimen/margin_2"
+        android:paddingBottom="@dimen/common_view_top_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <de.crysxd.octoapp.base.ui.common.OctoMoreButton
-        android:id="@+id/buttonMore"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_gravity="bottom"
-        android:elevation="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/buttonTogglePausePrint"
-        app:layout_constraintEnd_toEndOf="@+id/buttonTogglePausePrint"
-        app:layout_constraintTop_toTopOf="@+id/buttonTogglePausePrint" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/widgetsList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager" />
+
+    </de.crysxd.octoapp.base.ui.common.OctoScrollView>
+
+    <FrameLayout
+        android:id="@+id/bottomAction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingLeft="@dimen/margin_2"
+        android:paddingTop="@dimen/margin_2"
+        android:paddingRight="@dimen/margin_2"
+        android:paddingBottom="@dimen/margin_2"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/buttonTogglePausePrint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pause" />
+
+        <de.crysxd.octoapp.base.ui.common.OctoMoreButton
+            android:id="@+id/buttonMore"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:elevation="10dp" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

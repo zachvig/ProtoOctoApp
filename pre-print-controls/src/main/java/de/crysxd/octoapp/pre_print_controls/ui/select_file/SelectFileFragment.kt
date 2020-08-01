@@ -60,7 +60,7 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
-        recyclerViewFileList.setupWithToolbar(requireOctoActivity())
+        fileListScroller.setupWithToolbar(requireOctoActivity())
     }
 
     private fun initWithFolder(adapter: SelectFileAdapter, folder: FileObject.Folder) {

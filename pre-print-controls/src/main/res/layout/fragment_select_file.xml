@@ -4,16 +4,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/OctoTheme"
     android:orientation="vertical">
 
-    <de.crysxd.octoapp.base.ui.common.OctoRecyclerView
-        android:id="@+id/recyclerViewFileList"
+    <de.crysxd.octoapp.base.ui.common.OctoScrollView
+        android:id="@+id/fileListScroller"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/common_view_top_padding"
-        android:paddingBottom="@dimen/margin_2"
         android:clipToPadding="false"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        android:paddingTop="@dimen/common_view_top_padding"
+        android:paddingBottom="@dimen/margin_2">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewFileList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    </de.crysxd.octoapp.base.ui.common.OctoScrollView>
 
     <ProgressBar
         android:id="@+id/progressIndicator"
@@ -21,6 +30,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="gone"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
 
 </FrameLayout>

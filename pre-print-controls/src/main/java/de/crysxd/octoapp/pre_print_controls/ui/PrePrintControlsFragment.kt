@@ -50,7 +50,7 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
-        widgetList.setupWithToolbar(requireOctoActivity())
+        widgetListScroller.setupWithToolbar(requireOctoActivity(), bottomAction)
     }
 
     class MenuBottomSheet : de.crysxd.octoapp.base.ui.common.MenuBottomSheet() {
