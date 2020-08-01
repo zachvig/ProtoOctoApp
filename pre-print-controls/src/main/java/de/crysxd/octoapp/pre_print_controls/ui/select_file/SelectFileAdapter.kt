@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import de.crysxd.octoapp.base.ui.common.AutoBindViewHolder
@@ -107,12 +108,7 @@ class SelectFileAdapter(
 
             when (file) {
                 is FileObject.Folder -> {
-                    holder.textViewDetail.text = if ((file.children?.size ?: 0 > 0)) {
-                        holder.itemView.context.getString(R.string.x_items_y, file.children?.size, styleFileSize(file.size))
-                    } else {
-                        holder.itemView.context.getString(R.string.empty)
-                    }
-
+                    holder.textViewDetail.isVisible = false
                     holder.imageView.visibility = View.VISIBLE
                     holder.imageViewFileIcon.setImageResource(R.drawable.ic_outline_folder_24)
                 }
@@ -124,6 +120,7 @@ class SelectFileAdapter(
                         styleFileSize(file.size)
                     )
                     holder.imageView.visibility = View.INVISIBLE
+                    holder.textViewDetail.isVisible = true
 
                     val iconRes = if (file.typePath.contains(FileObject.FILE_TYPE_MACHINE_CODE)) {
                         R.drawable.ic_outline_print_24
