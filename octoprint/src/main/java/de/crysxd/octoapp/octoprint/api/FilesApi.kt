@@ -18,7 +18,7 @@ interface FilesApi {
     @GET("files/{origin}")
     suspend fun getRootFolder(@Path("origin") origin: FileOrigin): FileList
 
-    @GET("files/{origin}/{path}")
+    @GET("files/{origin}/{path}?recursive=true")
     suspend fun getSubFolder(@Path("origin") origin: FileOrigin, @Path("path") path: String): FileObject.Folder
 
     @POST("files/{origin}/{path}")

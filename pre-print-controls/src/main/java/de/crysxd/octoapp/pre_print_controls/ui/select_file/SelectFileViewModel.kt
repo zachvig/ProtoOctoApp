@@ -45,7 +45,7 @@ class SelectFileViewModel(
             lastFolder = folder
             filesMediator.removeSource(octoPrintProvider.octoPrint)
             filesMediator.addSource(octoPrintProvider.octoPrint) {
-                viewModelScope.launch(coroutineExceptionHandler) {
+                viewModelScope.launch(Dispatchers.Default + coroutineExceptionHandler) {
                     try {
                         val loadedFolder = loadFilesUseCase.execute(Params(it!!, FileOrigin.Local, folder))
 

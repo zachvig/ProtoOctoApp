@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<de.crysxd.octoapp.base.ui.common.OctoScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/fileListScroller"
+    android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clipToPadding="false"
-    android:fillViewport="true"
-    android:paddingTop="@dimen/common_view_top_padding"
-    android:paddingBottom="@dimen/margin_2">
+    android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewFileList"
+    <de.crysxd.octoapp.base.ui.common.OctoScrollView
+        android:id="@+id/fileListScroller"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:nestedScrollingEnabled="false"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingTop="@dimen/common_view_top_padding"
+        android:paddingBottom="@dimen/margin_2">
 
-</de.crysxd.octoapp.base.ui.common.OctoScrollView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewFileList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    </de.crysxd.octoapp.base.ui.common.OctoScrollView>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
