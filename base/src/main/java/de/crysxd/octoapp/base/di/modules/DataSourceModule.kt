@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.di.modules
 
 import android.content.SharedPreferences
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import de.crysxd.octoapp.base.datasource.DataSource
@@ -12,6 +13,6 @@ class DataSourceModule {
 
     @Provides
     fun provideOctoPrintInstanceInformationDataSource(sharedPreferences: SharedPreferences): DataSource<OctoPrintInstanceInformation> =
-        LocalOctoPrintInstanceInformationSource(sharedPreferences)
+        LocalOctoPrintInstanceInformationSource(sharedPreferences, Gson())
 
 }
