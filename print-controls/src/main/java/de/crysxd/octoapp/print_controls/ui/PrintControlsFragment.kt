@@ -75,7 +75,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Print
-        widgetsList.setupWithToolbar(requireOctoActivity())
+        widgetListScroller.setupWithToolbar(requireOctoActivity(), bottomAction)
     }
 
     private fun doAfterConfirmation(@StringRes message: Int, @StringRes button: Int, action: () -> Unit) {
