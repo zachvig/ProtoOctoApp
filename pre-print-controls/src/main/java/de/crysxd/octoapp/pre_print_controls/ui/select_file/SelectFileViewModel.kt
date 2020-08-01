@@ -44,7 +44,7 @@ class SelectFileViewModel(
                 viewModelScope.launch(coroutineExceptionHandler) {
                     it?.let {
                         val root = loadFilesUseCase.execute(Params(it, FileOrigin.Local))
-                        showThumbnailHint = !isAnyThumbnailPresent(root) && !isHideThumbnailHint()
+                        showThumbnailHint = !isAnyThumbnailPresent(root) && !isHideThumbnailHint() && isAnyFilePresent(root)
                         rootFilesMediator.postValue(UiState(root, showThumbnailHint))
                     }
                 }
@@ -68,6 +68,13 @@ class SelectFileViewModel(
         }
 
         showThumbnailHint = false
+    }
+
+    private fun isAnyFilePresent(files: List<FileObject>): Boolean = files.any {
+        when (it) {
+            is FileObject.Folder -> isAnyFilePresent(it.children ?: emptyList())
+            is FileObject.File -> true
+        }
     }
 
     private fun isAnyThumbnailPresent(files: List<FileObject>): Boolean = files.any {
