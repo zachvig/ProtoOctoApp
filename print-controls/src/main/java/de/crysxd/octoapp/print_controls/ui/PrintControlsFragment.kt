@@ -7,9 +7,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
@@ -18,10 +20,12 @@ import de.crysxd.octoapp.print_controls.di.injectParentViewModel
 import de.crysxd.octoapp.print_controls.di.injectViewModel
 import de.crysxd.octoapp.print_controls.ui.widget.progress.ProgressWidget
 import kotlinx.android.synthetic.main.fragment_print_controls.*
+import timber.log.Timber
 
 class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
 
     override val viewModel: PrintControlsViewModel by injectViewModel()
+    private val adapter = OctoWidgetAdapter()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -58,17 +62,8 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
             }
         })
 
-        lifecycleScope.launchWhenCreated {
-            widgetsList.adapter = OctoWidgetAdapter().also {
-                it.setWidgets(
-                    listOf(
-                        ProgressWidget(this@PrintControlsFragment),
-                        ControlTemperatureWidget(this@PrintControlsFragment),
-                        WebcamWidget(this@PrintControlsFragment)
-                    )
-                )
-            }
-        }
+        widgetsList.adapter = adapter
+        viewModel.instanceInformation.observe(viewLifecycleOwner, Observer(this::installApplicableWidgets))
 
         buttonMore.setOnClickListener {
             MenuBottomSheet().show(childFragmentManager, "menu")
@@ -89,6 +84,21 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
             .setPositiveButton(button) { _, _ -> action() }
             .setNegativeButton(R.string.cancel, null)
             .show()
+    }
+
+    private fun installApplicableWidgets(instance: OctoPrintInstanceInformation?) {
+        lifecycleScope.launchWhenCreated {
+            val widgets = mutableListOf<OctoWidget>()
+            widgets.add(ProgressWidget(this@PrintControlsFragment))
+            widgets.add(ControlTemperatureWidget(this@PrintControlsFragment))
+
+            if (instance?.supportsWebcam == true) {
+                widgets.add(WebcamWidget(this@PrintControlsFragment))
+            }
+
+            Timber.i("Installing widgets: ${widgets.map { it::class.java.simpleName }}")
+            adapter.setWidgets(widgets)
+        }
     }
 
     class MenuBottomSheet : de.crysxd.octoapp.base.ui.common.MenuBottomSheet() {

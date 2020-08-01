@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filter
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filterEventsForMessageType
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.base.usecase.ChangeFilamentUseCase
@@ -13,6 +14,7 @@ import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.launch
 
 class PrintControlsViewModel(
+    octoPrintRepository: OctoPrintRepository,
     private val octoPrintProvider: OctoPrintProvider,
     private val cancelPrintJobUseCase: CancelPrintJobUseCase,
     private val togglePausePrintJobUseCase: TogglePausePrintJobUseCase,
@@ -23,6 +25,8 @@ class PrintControlsViewModel(
     val printState = octoPrintProvider.eventLiveData
         .filterEventsForMessageType(Message.CurrentMessage::class.java)
         .filter { it.progress != null }
+
+    val instanceInformation = octoPrintRepository.instanceInformation
 
     fun togglePausePrint() = viewModelScope.launch(coroutineExceptionHandler) {
         octoPrintProvider.octoPrint.value?.let {

@@ -2,12 +2,15 @@ package de.crysxd.octoapp.pre_print_controls.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
@@ -18,12 +21,13 @@ import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.widget.extrude.ExtrudeWidget
 import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidget
 import kotlinx.android.synthetic.main.fragment_pre_print_controls.*
-import kotlinx.coroutines.delay
+import timber.log.Timber
 import de.crysxd.octoapp.base.R as BaseR
 
 class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_controls) {
 
     override val viewModel: PrePrintControlsViewModel by injectViewModel()
+    private val adapter = OctoWidgetAdapter()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,22 +40,27 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
             MenuBottomSheet().show(childFragmentManager)
         }
 
-        lifecycleScope.launchWhenCreated {
-            delay(350)
-            widgetList.adapter = OctoWidgetAdapter().also {
-                it.setWidgets(
-                    listOf(
-                        ControlTemperatureWidget(this@PrePrintControlsFragment),
-                        MoveToolWidget(this@PrePrintControlsFragment),
-                        WebcamWidget(this@PrePrintControlsFragment),
-                        ExtrudeWidget(this@PrePrintControlsFragment),
-                        SendGcodeWidget(this@PrePrintControlsFragment)
-                    )
-                )
-            }
-        }
-
+        widgetList.adapter = adapter
+        viewModel.instanceInformation.observe(viewLifecycleOwner, Observer(this::installApplicableWidgets))
         (widgetList.layoutManager as? StaggeredGridLayoutManager)?.spanCount = resources.getInteger(BaseR.integer.widget_list_span_count)
+    }
+
+    private fun installApplicableWidgets(instance: OctoPrintInstanceInformation?) {
+        lifecycleScope.launchWhenCreated {
+            val widgets = mutableListOf<OctoWidget>()
+            widgets.add(ControlTemperatureWidget(this@PrePrintControlsFragment))
+            widgets.add(MoveToolWidget(this@PrePrintControlsFragment))
+
+            if (instance?.supportsWebcam == true) {
+                widgets.add(WebcamWidget(this@PrePrintControlsFragment))
+            }
+
+            widgets.add(ExtrudeWidget(this@PrePrintControlsFragment))
+            widgets.add(SendGcodeWidget(this@PrePrintControlsFragment))
+
+            Timber.i("Installing widgets: ${widgets.map { it::class.java.simpleName }}")
+            adapter.setWidgets(widgets)
+        }
     }
 
     override fun onStart() {

@@ -10,6 +10,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.ViewModelFactory
 import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.pre_print_controls.ui.PrePrintControlsViewModel
@@ -29,10 +30,16 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(PrePrintControlsViewModel::class)
     open fun provideSignInViewModel(
+        octoPrintRepository: OctoPrintRepository,
         octoPrintProvider: OctoPrintProvider,
         turnOffPsuUseCase: TurnOffPsuUseCase,
         changeFilamentUseCase: ChangeFilamentUseCase
-    ): ViewModel = PrePrintControlsViewModel(octoPrintProvider, turnOffPsuUseCase, changeFilamentUseCase)
+    ): ViewModel = PrePrintControlsViewModel(
+        octoPrintRepository,
+        octoPrintProvider,
+        turnOffPsuUseCase,
+        changeFilamentUseCase
+    )
 
     @Provides
     @IntoMap

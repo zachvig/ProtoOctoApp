@@ -5,5 +5,6 @@ data class OctoPrintInstanceInformation(
     val port: Int,
     val apiKey: String,
     val supportsPsuPlugin: Boolean = false,
+    val supportsWebcam: Boolean = false,
     val apiKeyWasInvalid: Boolean = false
 )

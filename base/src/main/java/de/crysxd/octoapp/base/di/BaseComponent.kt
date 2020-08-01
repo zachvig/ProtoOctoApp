@@ -55,6 +55,7 @@ interface BaseComponent {
     fun openEmailClientForFeedbackUseCase(): OpenEmailClientForFeedbackUseCase
     fun takeScreenshotUseCase(): TakeScreenshotUseCase
     fun formatDurationUseCase(): FormatDurationUseCase
+    fun updateInstanceCapabilitiesUseCase(): UpdateInstanceCapabilitiesUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory
