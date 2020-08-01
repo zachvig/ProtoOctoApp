@@ -29,7 +29,7 @@ interface FilesApi {
         suspend fun getAllFiles(origin: FileOrigin): FileList = wrapped.getAllFiles(origin)
 
         suspend fun getFiles(origin: FileOrigin, folder: FileObject.Folder?): FileList = if (folder != null) {
-            FileList(files = wrapped.getSubFolder(origin, folder.path).children)
+            FileList(files = wrapped.getSubFolder(origin, folder.path).children ?: emptyList())
         } else {
             wrapped.getRootFolder(origin)
         }
