@@ -5,17 +5,21 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 import kotlinx.android.synthetic.main.fragment_select_file.*
+import kotlinx.coroutines.delay
 import timber.log.Timber
+
+// Delay the initial loading display a little. Usually we are on fast local networks so the
+// loader would just flash up for a split second which doesn't look nice
+const val LOADER_DELAY = 800L
 
 class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
 
@@ -26,6 +30,7 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Setup adapter
         val adapter = SelectFileAdapter(
             onFileSelected = {
                 viewModel.selectFile(it)
@@ -44,37 +49,44 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
                     }
                     .setNeutralButton(R.string.cancel, null)
                     .show()
+            },
+            onRetry = {
+                it.showLoading()
+                viewModel.reload()
             }
         )
         recyclerViewFileList.adapter = adapter
-
-        if (navArgs.folder != null) {
-            initWithFolder(adapter, navArgs.folder as FileObject.Folder)
-        } else {
-            initWithRootFolder(adapter)
+        viewModel.picasso.observe(viewLifecycleOwner, Observer(adapter::updatePicasso))
+        val showLoaderJob = lifecycleScope.launchWhenCreated {
+            delay(LOADER_DELAY)
+            adapter.showLoading()
         }
 
-        viewModel.picasso.observe(viewLifecycleOwner, Observer(adapter::updatePicasso))
+        // Load files
+        viewModel.loadFiles(navArgs.folder).observe(viewLifecycleOwner, Observer {
+            swipeRefreshLayout.isRefreshing = false
+            showLoaderJob.cancel()
+            if (it.error) {
+                adapter.showError()
+            } else {
+                adapter.showFiles(
+                    folderName = navArgs.folder?.name,
+                    files = it.files,
+                    showThumbnailHint = it.showThumbnailHint
+                )
+            }
+        })
+
+        // Setup swipe to refresh
+        swipeRefreshLayout.setOnRefreshListener {
+            viewModel.reload()
+        }
     }
 
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
         fileListScroller.setupWithToolbar(requireOctoActivity())
-    }
-
-    private fun initWithFolder(adapter: SelectFileAdapter, folder: FileObject.Folder) {
-        adapter.setFiles(folder.children ?: emptyList(), navArgs.showThumbnailHint)
-        adapter.title = folder.name
-    }
-
-    private fun initWithRootFolder(adapter: SelectFileAdapter) {
-        progressIndicator.isVisible = true
-        viewModel.loadRootFiles().observe(viewLifecycleOwner, Observer {
-            progressIndicator.isVisible = false
-            adapter.setFiles(it.files, it.showThumbnailHint)
-            adapter.title = getString(R.string.select_file_to_print)
-        })
     }
 
     private fun openLink(url: String) {

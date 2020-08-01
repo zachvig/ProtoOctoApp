@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -33,25 +34,44 @@ class SelectFileViewModel(
     val picasso: LiveData<Picasso?>
 ) : BaseViewModel() {
 
-    private val rootFilesMediator = MediatorLiveData<UiState>()
-    private var rootFilesInitialised = false
+    private val filesMediator = MediatorLiveData<UiState>()
+    private var filesInitialised = false
     private var showThumbnailHint = false
+    private var lastFolder: FileObject.Folder? = null
 
-    fun loadRootFiles(): LiveData<UiState> {
-        if (!rootFilesInitialised) {
-            rootFilesInitialised = true
-            rootFilesMediator.addSource(octoPrintProvider.octoPrint) {
-                viewModelScope.launch(coroutineExceptionHandler) {
-                    it?.let {
-                        val root = loadFilesUseCase.execute(Params(it, FileOrigin.Local))
-                        showThumbnailHint = !isAnyThumbnailPresent(root) && !isHideThumbnailHint()
-                        rootFilesMediator.postValue(UiState(root, showThumbnailHint))
+    fun loadFiles(folder: FileObject.Folder?): LiveData<UiState> {
+        if (!filesInitialised) {
+            filesInitialised = true
+            lastFolder = folder
+            filesMediator.removeSource(octoPrintProvider.octoPrint)
+            filesMediator.addSource(octoPrintProvider.octoPrint) {
+                viewModelScope.launch(Dispatchers.Default + coroutineExceptionHandler) {
+                    try {
+                        val loadedFolder = loadFilesUseCase.execute(Params(it!!, FileOrigin.Local, folder))
+
+                        // Check if we should show the thumbnail hint
+                        // As soon as we determine we should hide it, persist that info so we remember that
+                        // we e.g. saw a thumbnail in the root folder when showing a sub folder
+                        val showThumbnailHint = !isAnyThumbnailPresent(loadedFolder) && !isHideThumbnailHint() && isAnyFilePresent(loadedFolder)
+                        if (!showThumbnailHint) {
+                            hideThumbnailHint()
+                        }
+
+                        filesMediator.postValue(UiState(false, loadedFolder, showThumbnailHint))
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                        filesMediator.postValue(UiState(true, emptyList(), false))
                     }
                 }
             }
         }
 
-        return Transformations.map(rootFilesMediator) { it }
+        return Transformations.map(filesMediator) { it }
+    }
+
+    fun reload() {
+        filesInitialised = false
+        loadFiles(lastFolder)
     }
 
     private suspend fun isHideThumbnailHint(): Boolean = withContext(Dispatchers.IO) {
@@ -63,14 +83,21 @@ class SelectFileViewModel(
             putLong(KEY_HIDE_THUMBNAIL_HINT_UNTIL, System.currentTimeMillis() + TimeUnit.DAYS.toMillis(HIDE_THUMBNAIL_HINT_FOR_DAYS))
         }
 
-        rootFilesMediator.value?.let {
-            rootFilesMediator.postValue(it.copy(showThumbnailHint = false))
+        filesMediator.value?.let {
+            filesMediator.postValue(it.copy(showThumbnailHint = false))
         }
 
         showThumbnailHint = false
     }
 
-    private fun isAnyThumbnailPresent(files: List<FileObject>): Boolean = files.any {
+    private fun isAnyFilePresent(files: List<FileObject>): Boolean = files.any {
+        when (it) {
+            is FileObject.Folder -> isAnyFilePresent(it.children ?: emptyList())
+            is FileObject.File -> true
+        }
+    }
+
+    private fun isAnyThumbnailPresent(files: List<FileObject>): Boolean = files?.any {
         when (it) {
             is FileObject.Folder -> isAnyThumbnailPresent(it.children ?: emptyList())
             is FileObject.File -> !it.thumbnail.isNullOrBlank()
@@ -90,5 +117,5 @@ class SelectFileViewModel(
         }
     }
 
-    data class UiState(val files: List<FileObject>, val showThumbnailHint: Boolean)
+    data class UiState(val error: Boolean, val files: List<FileObject>, val showThumbnailHint: Boolean)
 }

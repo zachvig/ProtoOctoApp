@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:theme="@style/OctoTheme"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <de.crysxd.octoapp.base.ui.common.OctoScrollView
         android:id="@+id/fileListScroller"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
+        android:fillViewport="true"
         android:paddingTop="@dimen/common_view_top_padding"
         android:paddingBottom="@dimen/margin_2">
 
@@ -24,12 +23,4 @@
 
     </de.crysxd.octoapp.base.ui.common.OctoScrollView>
 
-    <ProgressBar
-        android:id="@+id/progressIndicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        tools:visibility="visible" />
-
-</FrameLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

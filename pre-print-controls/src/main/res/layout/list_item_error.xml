@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/margin_2"
+    android:theme="@style/OctoTheme">
+
+    <TextView
+        android:id="@+id/textViewErrorTitle"
+        android:layout_width="353dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Couldn't load files"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+        app:layout_constraintBottom_toTopOf="@+id/textViewErrorSubtitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.25"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/textViewErrorSubtitle"
+        android:layout_width="353dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Check your connection and try again"
+        android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+        app:layout_constraintBottom_toTopOf="@+id/buttonRery"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewErrorTitle" />
+
+    <Button
+        android:id="@+id/buttonRery"
+        style="@style/OctoTheme.Widget.Button.Small.Secondary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_4"
+        android:text="Retry"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewErrorSubtitle" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

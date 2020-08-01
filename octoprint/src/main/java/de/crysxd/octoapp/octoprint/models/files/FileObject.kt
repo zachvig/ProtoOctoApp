@@ -35,7 +35,7 @@ sealed class FileObject(
         typePath: List<String>,
         ref: Reference,
         size: Long,
-        val children: List<FileObject>?
+        val children: List<FileObject>
     ) : FileObject(display, name, origin, path, type, typePath, size, ref), Serializable
 
     data class Reference(
