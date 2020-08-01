@@ -11,6 +11,7 @@ object NavigationResultMediator {
     private var resultCounter = AtomicInteger()
     private val liveDataIndex = mutableMapOf<Int, WeakReference<MutableLiveData<in Any?>>>()
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Any?> registerResultCallback(): Pair<Int, LiveData<T?>> {
         val resultId = resultCounter.incrementAndGet()
         val liveData = MutableLiveData<T?>()

@@ -30,15 +30,35 @@
             app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
 
         <CheckBox
-            android:id="@+id/checkboxLogs"
+            android:id="@+id/checkboxPhoneInformation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_2"
             android:checked="true"
-            android:text="@string/app_logs"
+            android:text="@string/information_about_your_phone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewInfo" />
+
+        <CheckBox
+            android:id="@+id/checkboxOctoprintInformation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/information_about_your_octoprint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/checkboxPhoneInformation" />
+
+        <CheckBox
+            android:id="@+id/checkboxLogs"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/app_logs"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/checkboxOctoprintInformation" />
 
         <CheckBox
             android:id="@+id/checkboxScreenshot"

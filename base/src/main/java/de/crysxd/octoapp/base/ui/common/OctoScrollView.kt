@@ -59,7 +59,7 @@ class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: A
         var animatedOut: Boolean? = null
         var ongoingAnimation: ViewPropertyAnimator? = null
 
-        setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
+        setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
 
             val overhang = getContentHeight() - (scrollY + height - paddingTop - paddingBottom) - (bottomAction?.height ?: 0)
             val scrollingDown = oldScrollY < scrollY
