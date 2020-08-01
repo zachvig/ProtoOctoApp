@@ -64,16 +64,22 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
     }
 
     private fun initWithFolder(adapter: SelectFileAdapter, folder: FileObject.Folder) {
-        adapter.setFiles(folder.children ?: emptyList(), navArgs.showThumbnailHint)
-        adapter.title = folder.name
+        adapter.setFiles(
+            folderName = folder.name,
+            files = folder.children ?: emptyList(),
+            showThumbnailHint = navArgs.showThumbnailHint
+        )
     }
 
     private fun initWithRootFolder(adapter: SelectFileAdapter) {
         progressIndicator.isVisible = true
         viewModel.loadRootFiles().observe(viewLifecycleOwner, Observer {
             progressIndicator.isVisible = false
-            adapter.setFiles(it.files, it.showThumbnailHint)
-            adapter.title = getString(R.string.select_file_to_print)
+            adapter.setFiles(
+                folderName = null,
+                files = it.files,
+                showThumbnailHint = it.showThumbnailHint
+            )
         })
     }
 
