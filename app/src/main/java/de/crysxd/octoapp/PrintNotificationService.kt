@@ -21,6 +21,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+const val ACTION_STOP = "stop"
+
 class PrintNotificationService : Service() {
 
     private val observer = Observer(this::onEventReceived)
@@ -51,6 +53,14 @@ class PrintNotificationService : Service() {
         Timber.i("Destroying notification service")
         notificationManager.cancel(notificationId)
         liveData.removeObserver(observer)
+    }
+
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        if (intent.action == ACTION_STOP) {
+            stopSelf()
+        }
+
+        return super.onStartCommand(intent, flags, startId)
     }
 
     private fun onEventReceived(event: Event) {
@@ -128,6 +138,18 @@ class PrintNotificationService : Service() {
         .setContentTitle(getString(R.string.notification_printing_title))
         .setContentText(getString(R.string.notification_printing_lost_connection_message))
         .setProgress(maxProgress, 0, true)
+        .addAction(
+            NotificationCompat.Action.Builder(
+                null,
+                getString(R.string.close),
+                PendingIntent.getService(
+                    this,
+                    0,
+                    Intent(this, PrintNotificationService::class.java).setAction(ACTION_STOP),
+                    0
+                )
+            ).build()
+        )
         .setOngoing(false)
         .build()
 
