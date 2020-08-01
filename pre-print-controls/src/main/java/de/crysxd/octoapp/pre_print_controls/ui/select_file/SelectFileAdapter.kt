@@ -1,13 +1,21 @@
 package de.crysxd.octoapp.pre_print_controls.ui.select_file
 
+import android.content.Context
+import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.applyCanvas
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.Transformation
 import de.crysxd.octoapp.base.ui.common.AutoBindViewHolder
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
@@ -28,8 +36,15 @@ class SelectFileAdapter(
 ) : RecyclerView.Adapter<SelectFileAdapter.ViewHolder>() {
 
     var items: List<DataItem> = emptyList()
-
-    private var picasso: Picasso? = null
+    var picasso: Picasso? = null
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+    private val iconTintColorRes = R.color.primary
+    private var folderIcon: Drawable? = null
+    private var printableFileIcon: Drawable? = null
+    private var otherFileIcon: Drawable? = null
 
     private val dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
 
@@ -64,21 +79,24 @@ class SelectFileAdapter(
             headers.add(DataItem.Title(folderName))
         }
 
+
         items = listOf(
             headers,
-            sortedFolders.map { DataItem.File(it) },
-            sortedFiles.map { DataItem.File(it) }
+            sortedFolders.map { DataItem.File(it) as DataItem }.let {
+                if (it.isNotEmpty()) {
+                    it.toMutableList().also { it.add(DataItem.Margin) }
+                } else {
+                    it
+                }
+            },
+            sortedFiles.map
+            { DataItem.File(it) }
         ).flatten()
 
         notifyDataSetChanged()
     }
 
     override fun getItemId(position: Int) = items[position].hashCode().toLong()
-
-    fun updatePicasso(picasso: Picasso?) {
-        this.picasso = picasso
-        notifyDataSetChanged()
-    }
 
     override fun getItemCount() = items.size
 
@@ -89,6 +107,7 @@ class SelectFileAdapter(
         is DataItem.File -> VIEW_TYPE_FILE
         is DataItem.Error -> VIEW_TYPE_ERROR
         is DataItem.Loading -> VIEW_TYPE_LOADING
+        is DataItem.Margin -> VIEW_TYPE_MARGIN
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
@@ -98,19 +117,36 @@ class SelectFileAdapter(
         VIEW_TYPE_NO_FILES -> ViewHolder.NoFilesViewHolder(parent)
         VIEW_TYPE_ERROR -> ViewHolder.ErrorViewHolder(parent)
         VIEW_TYPE_LOADING -> ViewHolder.LoadingViewHolder(parent)
+        VIEW_TYPE_MARGIN -> ViewHolder.MarginViewHolder(parent)
         else -> throw RuntimeException("Unsupported view type $viewType")
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = when (holder) {
         is ViewHolder.FileViewHolder -> {
+            // Load icons (once)
+            val context = holder.itemView.context
+            val iconTintColor = ContextCompat.getColor(context, iconTintColorRes)
+            if (folderIcon == null || printableFileIcon == null || otherFileIcon == null) {
+                val colorFilter = PorterDuffColorFilter(iconTintColor, PorterDuff.Mode.SRC_IN)
+                folderIcon = ContextCompat.getDrawable(context, R.drawable.ic_outline_folder_24).also {
+                    it?.colorFilter = colorFilter
+                }
+                printableFileIcon = ContextCompat.getDrawable(context, R.drawable.ic_outline_print_24).also {
+                    it?.colorFilter = colorFilter
+                }
+                otherFileIcon = ContextCompat.getDrawable(context, R.drawable.ic_outline_insert_drive_file_24).also {
+                    it?.colorFilter = colorFilter
+                }
+            }
+
             val file = (items[position] as DataItem.File).file
             holder.textViewTitle.text = file.display
 
             when (file) {
                 is FileObject.Folder -> {
                     holder.textViewDetail.isVisible = false
-                    holder.imageView.visibility = View.VISIBLE
-                    holder.imageViewFileIcon.setImageResource(R.drawable.ic_outline_folder_24)
+                    holder.imageViewArrow.visibility = View.VISIBLE
+                    holder.imageViewFileIcon.setImageDrawable(folderIcon)
                 }
 
                 is FileObject.File -> {
@@ -119,26 +155,27 @@ class SelectFileAdapter(
                         dateTimeFormat.format(Date(file.date * 1000)),
                         styleFileSize(file.size)
                     )
-                    holder.imageView.visibility = View.INVISIBLE
+                    holder.imageViewArrow.visibility = View.INVISIBLE
                     holder.textViewDetail.isVisible = true
 
-                    val iconRes = if (file.typePath.contains(FileObject.FILE_TYPE_MACHINE_CODE)) {
-                        R.drawable.ic_outline_print_24
+                    val icon = if (file.typePath.contains(FileObject.FILE_TYPE_MACHINE_CODE)) {
+                        printableFileIcon
                     } else {
-                        R.drawable.ic_outline_insert_drive_file_24
-                    }
+                        otherFileIcon
+                    } ?: ColorDrawable(Color.TRANSPARENT)
 
                     when {
                         picasso == null -> {
-                            holder.imageViewFileIcon.setImageResource(iconRes)
+                            holder.imageViewFileIcon.setImageDrawable(icon)
                             null
                         }
-                        !file.thumbnail.isNullOrBlank() -> picasso?.load(file.thumbnail)?.error(iconRes)?.into(holder.imageViewFileIcon)
+                        !file.thumbnail.isNullOrBlank() -> picasso?.load(file.thumbnail)?.error(icon)
+                            ?.transform(TintThumbnailTransformation(holder.itemView.context))?.into(holder.imageViewFileIcon)
                         else -> {
                             // Use Picasso as well to prevent the recycled view to get corrupted
-                            // Picasso fails to load the image (as it is vector) so let's set it manually as well
-                            picasso?.load(iconRes)?.into(holder.imageViewFileIcon)
-                            holder.imageViewFileIcon.setImageResource(iconRes)
+                            // Picasso fails to load the image (as it is an empty path) so let's set it manually as well
+                            picasso?.cancelRequest(holder.imageViewFileIcon)
+                            holder.imageViewFileIcon.setImageDrawable(icon)
                         }
                     }
                 }
@@ -180,6 +217,8 @@ class SelectFileAdapter(
 
         is ViewHolder.LoadingViewHolder -> Unit
 
+        is ViewHolder.MarginViewHolder -> Unit
+
     }
 
     private fun styleFileSize(size: Long): String {
@@ -201,6 +240,7 @@ class SelectFileAdapter(
         const val VIEW_TYPE_NO_FILES = 3
         const val VIEW_TYPE_ERROR = 4
         const val VIEW_TYPE_LOADING = 5
+        const val VIEW_TYPE_MARGIN = 6
     }
 
     sealed class DataItem {
@@ -210,6 +250,7 @@ class SelectFileAdapter(
         object Error : DataItem()
         object ThumbnailHint : DataItem()
         object Loading : DataItem()
+        object Margin : DataItem()
     }
 
     sealed class ViewHolder(parent: ViewGroup, @LayoutRes layout: Int) : AutoBindViewHolder(parent, layout) {
@@ -219,5 +260,32 @@ class SelectFileAdapter(
         class NoFilesViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_no_files)
         class ErrorViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_error)
         class LoadingViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_loading)
+        class MarginViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_margin)
+    }
+
+    class TintThumbnailTransformation(val context: Context) : Transformation {
+        override fun key(): String = "tint-thumbnail"
+
+        override fun transform(source: Bitmap): Bitmap {
+            val destination = Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888)
+            destination.applyCanvas {
+                val cover = Rect(0, 0, width, height)
+
+                // Draw source with hard light filter (or multiply with a darker shade of the given color)
+                val drawable = BitmapDrawable(context.resources, source)
+                drawable.bounds = cover
+                val darkerColor = ContextCompat.getColor(context, R.color.thumbnail_tint)
+                drawable.colorFilter = PorterDuffColorFilter(darkerColor, PorterDuff.Mode.MULTIPLY)
+                drawable.draw(this)
+
+                // The alpha background is tinted too, apply mask
+                val paint = Paint()
+                paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_IN)
+                drawBitmap(source, null, cover, paint)
+            }
+
+            source.recycle()
+            return destination
+        }
     }
 }

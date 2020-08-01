@@ -18,7 +18,6 @@
         android:backgroundTint="@color/input_background"
         android:importantForAccessibility="no"
         android:padding="8dp"
-        android:tint="@color/primary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -34,7 +33,7 @@
         android:lines="1"
         android:textAppearance="@style/OctoTheme.TextAppearance"
         app:layout_constraintBottom_toTopOf="@+id/textViewDetail"
-        app:layout_constraintEnd_toStartOf="@+id/imageView"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewArrow"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imageViewFileIcon"
         app:layout_constraintTop_toTopOf="parent"
@@ -56,7 +55,7 @@
         tools:text="TextView" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/imageViewArrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/margin_2"

@@ -8,7 +8,6 @@
     android:ellipsize="end"
     android:lines="1"
     android:textAppearance="@style/OctoTheme.TextAppearance.Title"
-    app:layout_constraintEnd_toStartOf="@+id/imageView"
     app:layout_constraintStart_toEndOf="@+id/imageViewFileIcon"
     app:layout_constraintTop_toTopOf="parent"
     tools:text="TextView"
