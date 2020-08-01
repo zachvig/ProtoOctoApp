@@ -23,12 +23,11 @@ class OctoPrintRepository(
     fun clearOctoprintInstanceInformation(apiKeyWasInvalid: Boolean = false) {
         val currentValue = getRawOctoPrintInstanceInformation()
         storeOctoprintInstanceInformation(
-            OctoPrintInstanceInformation(
-                if (apiKeyWasInvalid) currentValue?.hostName ?: "" else "",
-                if (apiKeyWasInvalid) currentValue?.port ?: 80 else 80,
-                "",
-                apiKeyWasInvalid = apiKeyWasInvalid
-            )
+            if (apiKeyWasInvalid) {
+                currentValue?.copy(apiKey = "", apiKeyWasInvalid = true)
+            } else {
+                null
+            }
         )
     }
 

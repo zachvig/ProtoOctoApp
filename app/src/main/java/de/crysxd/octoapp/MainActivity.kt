@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.OctoActivity
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
@@ -76,6 +77,15 @@ class MainActivity : OctoActivity() {
         when (e) {
             is Message.CurrentMessage -> onCurrentMessageReceived(e)
             is Message.EventMessage -> onEventMessageReceived(e)
+            is Message.ConnectedMessage -> {
+                // We are connected, let's update the available capabilities of the connect Octoprint
+                lifecycleScope.launchWhenCreated {
+                    val octoprint = Injector.get().octoPrintProvider().octoPrint.value!!
+                    Injector.get().updateInstanceCapabilitiesUseCase().execute(octoprint)
+                }.invokeOnCompletion {
+                    it?.let(Timber::e)
+                }
+            }
         }
     }
 
