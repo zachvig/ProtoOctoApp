@@ -39,7 +39,9 @@ class MainActivity : OctoActivity() {
         SignInInjector.get().octoprintRepository().instanceInformation.observe(this, Observer {
             Timber.i("Instance information received")
             if (it != null) {
-                navigate(R.id.action_connect_printer)
+                if (lastNavigation < 0) {
+                    navigate(R.id.action_connect_printer)
+                }
                 events.observe(this, observer)
             } else {
                 navigate(R.id.action_sign_in_required)
@@ -79,12 +81,7 @@ class MainActivity : OctoActivity() {
             is Message.EventMessage -> onEventMessageReceived(e)
             is Message.ConnectedMessage -> {
                 // We are connected, let's update the available capabilities of the connect Octoprint
-                lifecycleScope.launchWhenCreated {
-                    val octoprint = Injector.get().octoPrintProvider().octoPrint.value!!
-                    Injector.get().updateInstanceCapabilitiesUseCase().execute(octoprint)
-                }.invokeOnCompletion {
-                    it?.let(Timber::e)
-                }
+                updateCapabilities()
             }
         }
     }
@@ -133,8 +130,22 @@ class MainActivity : OctoActivity() {
                 e is Message.EventMessage.PrinterStateChanged &&
                         e.stateId == Message.EventMessage.PrinterStateChanged.PrinterState.OPERATIONAL -> R.id.action_printer_connected
                 e is Message.EventMessage.PrintStarted -> R.id.action_printer_active
+                e is Message.EventMessage.SettingsUpdated -> {
+                    // Settings changed, let's update capabilities to see whether something changed
+                    updateCapabilities()
+                    lastNavigation
+                }
                 else -> lastNavigation
             }
         )
+    }
+
+    private fun updateCapabilities() {
+        lifecycleScope.launchWhenCreated {
+            val octoprint = Injector.get().octoPrintProvider().octoPrint.value!!
+            Injector.get().updateInstanceCapabilitiesUseCase().execute(octoprint)
+        }.invokeOnCompletion {
+            it?.let(Timber::e)
+        }
     }
 }
