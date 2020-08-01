@@ -79,10 +79,18 @@ class SelectFileAdapter(
             headers.add(DataItem.Title(folderName))
         }
 
+
         items = listOf(
             headers,
-            sortedFolders.map { DataItem.File(it) },
-            sortedFiles.map { DataItem.File(it) }
+            sortedFolders.map { DataItem.File(it) as DataItem }.let {
+                if (it.isNotEmpty()) {
+                    it.toMutableList().also { it.add(DataItem.Margin) }
+                } else {
+                    it
+                }
+            },
+            sortedFiles.map
+            { DataItem.File(it) }
         ).flatten()
 
         notifyDataSetChanged()
@@ -99,6 +107,7 @@ class SelectFileAdapter(
         is DataItem.File -> VIEW_TYPE_FILE
         is DataItem.Error -> VIEW_TYPE_ERROR
         is DataItem.Loading -> VIEW_TYPE_LOADING
+        is DataItem.Margin -> VIEW_TYPE_MARGIN
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
@@ -108,6 +117,7 @@ class SelectFileAdapter(
         VIEW_TYPE_NO_FILES -> ViewHolder.NoFilesViewHolder(parent)
         VIEW_TYPE_ERROR -> ViewHolder.ErrorViewHolder(parent)
         VIEW_TYPE_LOADING -> ViewHolder.LoadingViewHolder(parent)
+        VIEW_TYPE_MARGIN -> ViewHolder.MarginViewHolder(parent)
         else -> throw RuntimeException("Unsupported view type $viewType")
     }
 
@@ -207,6 +217,8 @@ class SelectFileAdapter(
 
         is ViewHolder.LoadingViewHolder -> Unit
 
+        is ViewHolder.MarginViewHolder -> Unit
+
     }
 
     private fun styleFileSize(size: Long): String {
@@ -228,6 +240,7 @@ class SelectFileAdapter(
         const val VIEW_TYPE_NO_FILES = 3
         const val VIEW_TYPE_ERROR = 4
         const val VIEW_TYPE_LOADING = 5
+        const val VIEW_TYPE_MARGIN = 6
     }
 
     sealed class DataItem {
@@ -237,6 +250,7 @@ class SelectFileAdapter(
         object Error : DataItem()
         object ThumbnailHint : DataItem()
         object Loading : DataItem()
+        object Margin : DataItem()
     }
 
     sealed class ViewHolder(parent: ViewGroup, @LayoutRes layout: Int) : AutoBindViewHolder(parent, layout) {
@@ -246,6 +260,7 @@ class SelectFileAdapter(
         class NoFilesViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_no_files)
         class ErrorViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_error)
         class LoadingViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_loading)
+        class MarginViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_margin)
     }
 
     class TintThumbnailTransformation(val context: Context) : Transformation {
