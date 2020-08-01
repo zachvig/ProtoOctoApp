@@ -27,6 +27,7 @@
             android:id="@+id/widgetList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
             app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager" />
 
     </de.crysxd.octoapp.base.ui.common.OctoScrollView>
