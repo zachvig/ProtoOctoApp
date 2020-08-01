@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -40,18 +41,27 @@ class SelectFileViewModel(
     fun loadRootFiles(): LiveData<UiState> {
         if (!rootFilesInitialised) {
             rootFilesInitialised = true
+            rootFilesMediator.removeSource(octoPrintProvider.octoPrint)
             rootFilesMediator.addSource(octoPrintProvider.octoPrint) {
                 viewModelScope.launch(coroutineExceptionHandler) {
-                    it?.let {
-                        val root = loadFilesUseCase.execute(Params(it, FileOrigin.Local))
+                    try {
+                        val root = loadFilesUseCase.execute(Params(it!!, FileOrigin.Local))
                         showThumbnailHint = !isAnyThumbnailPresent(root) && !isHideThumbnailHint() && isAnyFilePresent(root)
-                        rootFilesMediator.postValue(UiState(root, showThumbnailHint))
+                        rootFilesMediator.postValue(UiState(false, root, showThumbnailHint))
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                        rootFilesMediator.postValue(UiState(true, emptyList(), false))
                     }
                 }
             }
         }
 
         return Transformations.map(rootFilesMediator) { it }
+    }
+
+    fun reload() {
+        rootFilesInitialised = false
+        loadRootFiles()
     }
 
     private suspend fun isHideThumbnailHint(): Boolean = withContext(Dispatchers.IO) {
@@ -97,5 +107,5 @@ class SelectFileViewModel(
         }
     }
 
-    data class UiState(val files: List<FileObject>, val showThumbnailHint: Boolean)
+    data class UiState(val error: Boolean, val files: List<FileObject>, val showThumbnailHint: Boolean)
 }

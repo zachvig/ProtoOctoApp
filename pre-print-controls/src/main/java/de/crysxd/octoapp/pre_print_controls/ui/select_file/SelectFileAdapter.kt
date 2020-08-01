@@ -10,6 +10,7 @@ import com.squareup.picasso.Picasso
 import de.crysxd.octoapp.base.ui.common.AutoBindViewHolder
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
+import kotlinx.android.synthetic.main.list_item_error.view.*
 import kotlinx.android.synthetic.main.list_item_file.*
 import kotlinx.android.synthetic.main.list_item_no_files.view.*
 import kotlinx.android.synthetic.main.list_item_thumbnail_hint.view.*
@@ -20,8 +21,9 @@ import java.util.*
 
 class SelectFileAdapter(
     private val onFileSelected: (FileObject) -> Unit,
-    private val onHideThumbnailHint: () -> Unit,
-    private val onShowThumbnailInfo: () -> Unit
+    private val onHideThumbnailHint: (SelectFileAdapter) -> Unit,
+    private val onShowThumbnailInfo: (SelectFileAdapter) -> Unit,
+    private val onRetry: (SelectFileAdapter) -> Unit
 ) : RecyclerView.Adapter<SelectFileAdapter.ViewHolder>() {
 
     var items: List<DataItem> = emptyList()
@@ -34,7 +36,17 @@ class SelectFileAdapter(
         setHasStableIds(true)
     }
 
-    fun setFiles(folderName: String?, files: List<FileObject>, showThumbnailHint: Boolean) {
+    fun showLoading() {
+        items = listOf(DataItem.Loading)
+        notifyDataSetChanged()
+    }
+
+    fun showError() {
+        items = listOf(DataItem.Error)
+        notifyDataSetChanged()
+    }
+
+    fun showFiles(folderName: String?, files: List<FileObject>, showThumbnailHint: Boolean) {
         // Sort files by date, folders by name
         val groups = files.groupBy { it::class.java }
         val sortedFiles = groups[FileObject.File::class.java]?.sortedByDescending { (it as FileObject.File).date } ?: emptyList()
@@ -48,13 +60,13 @@ class SelectFileAdapter(
             if (showThumbnailHint) {
                 headers.add(DataItem.ThumbnailHint)
             }
-            headers.add(DataItem.TitleItem(folderName))
+            headers.add(DataItem.Title(folderName))
         }
 
         items = listOf(
             headers,
-            sortedFolders.map { DataItem.FileItem(it) },
-            sortedFiles.map { DataItem.FileItem(it) }
+            sortedFolders.map { DataItem.File(it) },
+            sortedFiles.map { DataItem.File(it) }
         ).flatten()
 
         notifyDataSetChanged()
@@ -70,10 +82,12 @@ class SelectFileAdapter(
     override fun getItemCount() = items.size
 
     override fun getItemViewType(position: Int) = when (items[position]) {
-        is DataItem.TitleItem -> VIEW_TYPE_TITLE
+        is DataItem.Title -> VIEW_TYPE_TITLE
         DataItem.ThumbnailHint -> VIEW_TYPE_THUMBNAIL_HINT
         is DataItem.NoFiles -> VIEW_TYPE_NO_FILES
-        is DataItem.FileItem -> VIEW_TYPE_FILE
+        is DataItem.File -> VIEW_TYPE_FILE
+        is DataItem.Error -> VIEW_TYPE_ERROR
+        is DataItem.Loading -> VIEW_TYPE_LOADING
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
@@ -81,12 +95,14 @@ class SelectFileAdapter(
         VIEW_TYPE_THUMBNAIL_HINT -> ViewHolder.ThumbnailHintViewHolder(parent)
         VIEW_TYPE_FILE -> ViewHolder.FileViewHolder(parent)
         VIEW_TYPE_NO_FILES -> ViewHolder.NoFilesViewHolder(parent)
+        VIEW_TYPE_ERROR -> ViewHolder.ErrorViewHolder(parent)
+        VIEW_TYPE_LOADING -> ViewHolder.LoadingViewHolder(parent)
         else -> throw RuntimeException("Unsupported view type $viewType")
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = when (holder) {
         is ViewHolder.FileViewHolder -> {
-            val file = (items[position] as DataItem.FileItem).file
+            val file = (items[position] as DataItem.File).file
             holder.textViewTitle.text = file.display
 
             when (file) {
@@ -140,13 +156,13 @@ class SelectFileAdapter(
         }
 
         is ViewHolder.TitleViewHolder -> {
-            holder.itemView.textViewTitle.text = (items[position] as DataItem.TitleItem).title
+            holder.itemView.textViewTitle.text = (items[position] as DataItem.Title).title
                 ?: holder.itemView.context.getString(R.string.select_file_to_print)
         }
 
         is ViewHolder.ThumbnailHintViewHolder -> {
-            holder.itemView.buttonHide.setOnClickListener { onHideThumbnailHint() }
-            holder.itemView.buttonLearnMore.setOnClickListener { onShowThumbnailInfo() }
+            holder.itemView.buttonHide.setOnClickListener { onHideThumbnailHint(this) }
+            holder.itemView.buttonLearnMore.setOnClickListener { onShowThumbnailInfo(this) }
         }
 
         is ViewHolder.NoFilesViewHolder -> {
@@ -162,6 +178,11 @@ class SelectFileAdapter(
                 )
             }
         }
+
+        is ViewHolder.ErrorViewHolder -> holder.itemView.buttonRery.setOnClickListener { onRetry(this) }
+
+        is ViewHolder.LoadingViewHolder -> Unit
+
     }
 
     private fun styleFileSize(size: Long): String {
@@ -181,13 +202,17 @@ class SelectFileAdapter(
         const val VIEW_TYPE_FILE = 1
         const val VIEW_TYPE_THUMBNAIL_HINT = 2
         const val VIEW_TYPE_NO_FILES = 3
+        const val VIEW_TYPE_ERROR = 4
+        const val VIEW_TYPE_LOADING = 5
     }
 
     sealed class DataItem {
-        data class FileItem(val file: FileObject) : DataItem()
-        data class TitleItem(val title: String?) : DataItem()
+        data class File(val file: FileObject) : DataItem()
+        data class Title(val title: String?) : DataItem()
         data class NoFiles(val folderName: String?) : DataItem()
+        object Error : DataItem()
         object ThumbnailHint : DataItem()
+        object Loading : DataItem()
     }
 
     sealed class ViewHolder(parent: ViewGroup, @LayoutRes layout: Int) : AutoBindViewHolder(parent, layout) {
@@ -195,5 +220,7 @@ class SelectFileAdapter(
         class TitleViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_title)
         class ThumbnailHintViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_thumbnail_hint)
         class NoFilesViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_no_files)
+        class ErrorViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_error)
+        class LoadingViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_loading)
     }
 }

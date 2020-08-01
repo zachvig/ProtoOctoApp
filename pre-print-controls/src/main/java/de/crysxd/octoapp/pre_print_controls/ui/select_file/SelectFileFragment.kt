@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import de.crysxd.octoapp.base.ui.BaseFragment
@@ -44,6 +43,10 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
                     }
                     .setNeutralButton(R.string.cancel, null)
                     .show()
+            },
+            onRetry = {
+                it.showLoading()
+                viewModel.reload()
             }
         )
         recyclerViewFileList.adapter = adapter
@@ -64,7 +67,7 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
     }
 
     private fun initWithFolder(adapter: SelectFileAdapter, folder: FileObject.Folder) {
-        adapter.setFiles(
+        adapter.showFiles(
             folderName = folder.name,
             files = folder.children ?: emptyList(),
             showThumbnailHint = navArgs.showThumbnailHint
@@ -72,14 +75,17 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
     }
 
     private fun initWithRootFolder(adapter: SelectFileAdapter) {
-        progressIndicator.isVisible = true
+        adapter.showLoading()
         viewModel.loadRootFiles().observe(viewLifecycleOwner, Observer {
-            progressIndicator.isVisible = false
-            adapter.setFiles(
-                folderName = null,
-                files = it.files,
-                showThumbnailHint = it.showThumbnailHint
-            )
+            if (it.error) {
+                adapter.showError()
+            } else {
+                adapter.showFiles(
+                    folderName = null,
+                    files = it.files,
+                    showThumbnailHint = it.showThumbnailHint
+                )
+            }
         })
     }
 
