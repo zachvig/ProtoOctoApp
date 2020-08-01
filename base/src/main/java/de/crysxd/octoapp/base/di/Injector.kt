@@ -8,10 +8,6 @@ object Injector {
     private lateinit var instance: BaseComponent
 
     fun init(app: Application) {
-        val baseComponent = DaggerBaseComponent.builder()
-            .androidModule(AndroidModule(app))
-            .build()
-
         instance = DaggerBaseComponent.builder()
             .androidModule(AndroidModule(app))
             .build()
