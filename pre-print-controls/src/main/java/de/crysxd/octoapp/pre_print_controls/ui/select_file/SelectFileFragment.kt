@@ -56,7 +56,10 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
             }
         )
         recyclerViewFileList.adapter = adapter
-        viewModel.picasso.observe(viewLifecycleOwner, Observer(adapter::updatePicasso))
+        viewModel.picasso.observe(
+            viewLifecycleOwner, Observer {
+                adapter.picasso = it
+            })
         val showLoaderJob = lifecycleScope.launchWhenCreated {
             delay(LOADER_DELAY)
             adapter.showLoading()
