@@ -19,7 +19,7 @@ import timber.log.Timber
 
 // Delay the initial loading display a little. Usually we are on fast local networks so the
 // loader would just flash up for a split second which doesn't look nice
-const val LOADER_DELAY = 800L
+const val LOADER_DELAY = 400L
 
 class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
 
