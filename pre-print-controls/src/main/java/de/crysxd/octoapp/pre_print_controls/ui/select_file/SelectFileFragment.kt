@@ -86,7 +86,7 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
-        fileListScroller.setupWithToolbar(requireOctoActivity())
+        recyclerViewFileList.setupWithToolbar(requireOctoActivity())
     }
 
     private fun openLink(url: String) {
