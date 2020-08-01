@@ -9,14 +9,15 @@ import kotlinx.android.synthetic.main.item_widget.view.*
 
 class OctoWidgetAdapter() : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHolder>() {
 
-    var widgets: List<OctoWidget> = emptyList()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
+    private var widgets: List<OctoWidget> = emptyList()
 
     init {
         setHasStableIds(true)
+    }
+
+    fun setWidgets(list: List<OctoWidget>) {
+        widgets = list
+        notifyDataSetChanged()
     }
 
     override fun getItemId(position: Int) = widgets[position]::class.java.canonicalName.hashCode().toLong()

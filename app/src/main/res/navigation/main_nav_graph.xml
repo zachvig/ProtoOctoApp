@@ -10,50 +10,50 @@
         app:destination="@id/sign_in_nav_graph"
         app:popUpTo="@id/main_nav_graph"
         app:popUpToInclusive="true"
-        app:enterAnim="@anim/nav_default_enter_anim"
-        app:exitAnim="@anim/nav_default_exit_anim"
-        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-        app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        app:enterAnim="@anim/enterAnim"
+        app:exitAnim="@anim/exitAnim"
+        app:popEnterAnim="@anim/popEnterAnim"
+        app:popExitAnim="@anim/popExitAnim" />
 
     <action
         android:id="@+id/action_sign_in_completed"
         app:destination="@id/connect_printer_nav_graph"
         app:popUpTo="@id/main_nav_graph"
         app:popUpToInclusive="true"
-        app:enterAnim="@anim/nav_default_enter_anim"
-        app:exitAnim="@anim/nav_default_exit_anim"
-        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-        app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        app:enterAnim="@anim/enterAnim"
+        app:exitAnim="@anim/exitAnim"
+        app:popEnterAnim="@anim/popEnterAnim"
+        app:popExitAnim="@anim/popExitAnim" />
 
     <action
         android:id="@+id/action_connect_printer"
         app:destination="@id/connect_printer_nav_graph"
         app:popUpTo="@id/main_nav_graph"
         app:popUpToInclusive="true"
-        app:enterAnim="@anim/nav_default_enter_anim"
-        app:exitAnim="@anim/nav_default_exit_anim"
-        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-        app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        app:enterAnim="@anim/enterAnim"
+        app:exitAnim="@anim/exitAnim"
+        app:popEnterAnim="@anim/popEnterAnim"
+        app:popExitAnim="@anim/popExitAnim" />
 
     <action
         android:id="@+id/action_printer_connected"
         app:destination="@+id/pre_print_controls_nav_graph"
         app:popUpTo="@id/main_nav_graph"
         app:popUpToInclusive="true"
-        app:enterAnim="@anim/nav_default_enter_anim"
-        app:exitAnim="@anim/nav_default_exit_anim"
-        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-        app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        app:enterAnim="@anim/enterAnim"
+        app:exitAnim="@anim/exitAnim"
+        app:popEnterAnim="@anim/popEnterAnim"
+        app:popExitAnim="@anim/popExitAnim" />
 
     <action
         android:id="@+id/action_printer_active"
         app:destination="@+id/print_controls_nav_graph"
         app:popUpTo="@id/main_nav_graph"
         app:popUpToInclusive="true"
-        app:enterAnim="@anim/nav_default_enter_anim"
-        app:exitAnim="@anim/nav_default_exit_anim"
-        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-        app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        app:enterAnim="@anim/enterAnim"
+        app:exitAnim="@anim/exitAnim"
+        app:popEnterAnim="@anim/popEnterAnim"
+        app:popExitAnim="@anim/popExitAnim" />
 
     <include app:graph="@navigation/sign_in_nav_graph" />
 

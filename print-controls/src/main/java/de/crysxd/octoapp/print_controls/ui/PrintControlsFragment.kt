@@ -5,6 +5,7 @@ import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
@@ -57,12 +58,16 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
             }
         })
 
-        widgetsList.adapter = OctoWidgetAdapter().also {
-            it.widgets = listOf(
-                ProgressWidget(this),
-                ControlTemperatureWidget(this),
-                WebcamWidget(this)
-            )
+        lifecycleScope.launchWhenCreated {
+            widgetsList.adapter = OctoWidgetAdapter().also {
+                it.setWidgets(
+                    listOf(
+                        ProgressWidget(this@PrintControlsFragment),
+                        ControlTemperatureWidget(this@PrintControlsFragment),
+                        WebcamWidget(this@PrintControlsFragment)
+                    )
+                )
+            }
         }
 
         buttonMore.setOnClickListener {

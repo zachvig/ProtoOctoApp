@@ -24,7 +24,9 @@ class OctoApp : Application() {
         super.onCreate()
 
         // Setup logging
-        Timber.plant(Timber.DebugTree())
+        if (BuildConfig.DEBUG) {
+            //   Timber.plant(Timber.DebugTree())
+        }
         val wrapped = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
             Timber.wtf(e)

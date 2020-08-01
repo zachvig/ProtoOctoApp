@@ -5,22 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <de.crysxd.octoapp.base.ui.common.OctoScrollView
-        android:id="@+id/fileListScroller"
+    <de.crysxd.octoapp.base.ui.common.OctoRecyclerView
+        android:id="@+id/recyclerViewFileList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:fillViewport="true"
         android:paddingTop="@dimen/common_view_top_padding"
-        android:paddingBottom="@dimen/margin_2">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewFileList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-    </de.crysxd.octoapp.base.ui.common.OctoScrollView>
+        android:nestedScrollingEnabled="false"
+        android:paddingBottom="@dimen/margin_2"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
