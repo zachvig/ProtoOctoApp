@@ -10,7 +10,6 @@ import androidx.navigation.fragment.navArgs
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 import kotlinx.android.synthetic.main.fragment_select_file.*
@@ -51,11 +50,18 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
         )
         recyclerViewFileList.adapter = adapter
 
-        if (navArgs.folder != null) {
-            initWithFolder(adapter, navArgs.folder as FileObject.Folder)
-        } else {
-            initWithRootFolder(adapter)
-        }
+        adapter.showLoading()
+        viewModel.loadFiles(navArgs.folder).observe(viewLifecycleOwner, Observer {
+            if (it.error) {
+                adapter.showError()
+            } else {
+                adapter.showFiles(
+                    folderName = navArgs.folder?.name,
+                    files = it.files,
+                    showThumbnailHint = it.showThumbnailHint
+                )
+            }
+        })
 
         viewModel.picasso.observe(viewLifecycleOwner, Observer(adapter::updatePicasso))
     }
@@ -64,29 +70,6 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
         fileListScroller.setupWithToolbar(requireOctoActivity())
-    }
-
-    private fun initWithFolder(adapter: SelectFileAdapter, folder: FileObject.Folder) {
-        adapter.showFiles(
-            folderName = folder.name,
-            files = folder.children ?: emptyList(),
-            showThumbnailHint = navArgs.showThumbnailHint
-        )
-    }
-
-    private fun initWithRootFolder(adapter: SelectFileAdapter) {
-        adapter.showLoading()
-        viewModel.loadRootFiles().observe(viewLifecycleOwner, Observer {
-            if (it.error) {
-                adapter.showError()
-            } else {
-                adapter.showFiles(
-                    folderName = null,
-                    files = it.files,
-                    showThumbnailHint = it.showThumbnailHint
-                )
-            }
-        })
     }
 
     private fun openLink(url: String) {

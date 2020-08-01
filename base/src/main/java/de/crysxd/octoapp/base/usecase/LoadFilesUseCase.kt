@@ -8,11 +8,12 @@ import javax.inject.Inject
 class LoadFilesUseCase @Inject constructor() : UseCase<LoadFilesUseCase.Params, List<FileObject>> {
 
     override suspend fun execute(param: Params): List<FileObject> {
-        return param.octoPrint.createFilesApi().getFiles(param.fileOrigin).files
+        return param.octoPrint.createFilesApi().getFiles(param.fileOrigin, param.folder).files
     }
 
     data class Params(
         val octoPrint: OctoPrint,
-        val fileOrigin: FileOrigin
+        val fileOrigin: FileOrigin,
+        val folder: FileObject.Folder?
     )
 }
