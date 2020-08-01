@@ -7,7 +7,6 @@ import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.feedback.SendFeedbackViewModel
-import de.crysxd.octoapp.base.logging.TimberCacheTree
 import de.crysxd.octoapp.base.ui.BaseViewModelFactory
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
@@ -57,9 +56,8 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(SendFeedbackViewModel::class)
     open fun provideSendFeedbackViewModel(
-        cacheTree: TimberCacheTree,
         sendUseCase: OpenEmailClientForFeedbackUseCase
-    ): ViewModel = SendFeedbackViewModel(sendUseCase, cacheTree)
+    ): ViewModel = SendFeedbackViewModel(sendUseCase)
 
     @Provides
     @IntoMap

@@ -37,13 +37,19 @@ class SendFeedbackDialog : DialogFragment() {
         }
 
         buttonOpenEmail.setOnClickListener {
-            viewModel.sendFeedback(it.context, checkboxLogs.isChecked, checkboxScreenshot.isChecked)
+            viewModel.sendFeedback(
+                context = it.context,
+                sendPhoneInfo = checkboxPhoneInformation.isChecked,
+                sendOctoPrintInfo = checkboxOctoprintInformation.isChecked,
+                sendLogs = checkboxLogs.isChecked,
+                sendScreenshot = checkboxScreenshot.isChecked
+            )
             dismissAllowingStateLoss()
         }
 
         // Fix sizing of dialog
         lifecycleScope.launchWhenResumed {
-            dialog?.getWindow()?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         }
     }
 
