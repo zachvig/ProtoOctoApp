@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.common.AutoBindViewHolder
 import kotlinx.android.synthetic.main.item_widget.view.*
-import kotlinx.coroutines.delay
 
 class OctoWidgetAdapter() : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHolder>() {
 
@@ -16,10 +15,7 @@ class OctoWidgetAdapter() : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHol
         setHasStableIds(true)
     }
 
-    suspend fun setWidgets(list: List<OctoWidget>) {
-        // Delay slightly so the window animation is decoupled from laying out the widgets
-        // The widgets will smoothly animate in
-        delay(400)
+    fun setWidgets(list: List<OctoWidget>) {
         widgets = list
         notifyDataSetChanged()
     }
