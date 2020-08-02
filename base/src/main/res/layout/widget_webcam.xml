@@ -58,7 +58,7 @@
                 android:gravity="center"
                 android:text="@string/reconnecting"
                 android:textAppearance="@style/OctoTheme.TextAppearance.Title"
-                android:textColor="?android:attr/textColorPrimaryInverse" />
+                android:textColor="@color/text_colored_background" />
 
         </LinearLayout>
 
@@ -70,7 +70,7 @@
             android:gravity="center"
             android:text="@string/please_configure_your_webcam_in_octoprint"
             android:textAppearance="@style/OctoTheme.TextAppearance.Title"
-            android:textColor="?android:attr/textColorPrimaryInverse"
+            android:textColor="@color/text_colored_background"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -97,7 +97,7 @@
                 android:gravity="center"
                 android:text="@string/connection_failed"
                 android:textAppearance="@style/OctoTheme.TextAppearance.Title"
-                android:textColor="?android:attr/textColorPrimaryInverse" />
+                android:textColor="@color/text_colored_background" />
 
             <Button
                 android:id="@+id/buttonReconnect"
@@ -105,7 +105,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/reconnect"
-                android:textColor="?android:attr/textColorPrimaryInverse" />
+                android:textColor="@color/text_colored_background" />
 
         </LinearLayout>
 
@@ -130,7 +130,7 @@
                 android:gravity="center"
                 android:text="@string/stream_stalled"
                 android:textAppearance="@style/OctoTheme.TextAppearance.Title"
-                android:textColor="?android:attr/textColorPrimaryInverse" />
+                android:textColor="@color/text_colored_background" />
 
             <TextView
                 android:id="@+id/streamStalledIndicatorDetail"
@@ -139,7 +139,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textAppearance="@style/OctoTheme.TextAppearance"
-                android:textColor="?android:attr/textColorPrimaryInverse"
+                android:textColor="@color/text_colored_background"
                 tools:text="@string/no_frames_since_xs" />
 
         </LinearLayout>
@@ -149,7 +149,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:indeterminateTint="?android:attr/textColorPrimaryInverse"
+            android:indeterminateTint="@color/text_colored_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
