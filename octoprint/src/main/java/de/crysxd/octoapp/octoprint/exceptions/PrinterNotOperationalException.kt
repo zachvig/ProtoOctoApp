@@ -1,5 +1,5 @@
 package de.crysxd.octoapp.octoprint.exceptions
 
-import java.io.IOException
+import okhttp3.HttpUrl
 
-open class PrinterNotOperationalException : OctoPrintException()
+open class PrinterNotOperationalException(httpUrl: HttpUrl) : OctoPrintException(message = "Printer was not operational when accessing $httpUrl")

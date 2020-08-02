@@ -32,7 +32,7 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
         buttonSet.setOnClickListener { navigateBackWithResult() }
         buttonSet.text = navArgs.action ?: getString(android.R.string.ok)
         textViewTitle.text = navArgs.title
-        textInputLayout.hint = navArgs.hint
+        textInputLayout.hintNormal = navArgs.hint
         textInputLayout.editText.inputType = navArgs.inputType
         textInputLayout.editText.maxLines = navArgs.maxLines
         textInputLayout.editText.setText(navArgs.value)
@@ -79,7 +79,7 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
     private fun navigateBackWithResult() {
         val result = textInputLayout.editText.text?.toString() ?: ""
         val error = (navArgs.validator ?: NotEmptyValidator()).validate(requireContext(), result)
-        textInputLayout.setError(error)
+        textInputLayout.error = error
 
         if (error == null) {
             textInputLayout.editText.clearFocusAndHideSoftKeyboard()

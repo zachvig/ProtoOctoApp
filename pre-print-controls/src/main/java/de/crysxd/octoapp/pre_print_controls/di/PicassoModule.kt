@@ -25,7 +25,7 @@ class PicassoModule {
                     .memoryCache(LruCache(context))
                     .requestTransformer { request ->
                         request.uri?.let { uri ->
-                            val newUri = octoPrint.gerWebUrl() + uri.toString()
+                            val newUri = octoPrint.webUrl + uri.toString()
                             Timber.d("Mapping $uri -> $newUri")
                             request.buildUpon()
                                 .setUri(Uri.parse(newUri))

@@ -6,7 +6,7 @@
     <string name="port">Port</string>
     <string name="default_port">80</string>
     <string name="a_ip_address">an IP address</string>
-    <string name="enter_a_valid_ip_address">Enter a valid IP address</string>
+    <string name="enter_a_valid_web_url">Enter a valid web URL</string>
     <string name="the_port">the port</string>
     <string name="only_digits">Only digits</string>
     <string name="an_api_key">an API key</string>
@@ -21,4 +21,7 @@
     <string name="warning_server_version_too_new">This app version was only tested with OctoPrint %1$s but you use %2$s</string>
     <string name="warning_no_admin_rights">The API key has no admin rights. Parts of the app may not work!</string>
     <string name="sign_in_succes_with_warnings"><b>Sign in succeeded but there were warnings:</b></string>
+    <string name="web_url">Web URL</string>
+    <string name="web_url_active_hint">Web URL — copy this from your browser!</string>
+    <string name="api_key_active_hint">API key — from the OctoPrint settings</string>
 </resources>

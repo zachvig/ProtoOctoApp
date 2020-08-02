@@ -6,7 +6,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -45,7 +45,7 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
         (widgetList.layoutManager as? StaggeredGridLayoutManager)?.spanCount = resources.getInteger(BaseR.integer.widget_list_span_count)
     }
 
-    private fun installApplicableWidgets(instance: OctoPrintInstanceInformation?) {
+    private fun installApplicableWidgets(instance: OctoPrintInstanceInformationV2?) {
         lifecycleScope.launchWhenCreated {
             val widgets = mutableListOf<OctoWidget>()
             widgets.add(ControlTemperatureWidget(this@PrePrintControlsFragment))

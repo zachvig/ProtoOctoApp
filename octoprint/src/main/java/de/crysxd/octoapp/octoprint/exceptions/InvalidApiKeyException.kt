@@ -1,5 +1,5 @@
 package de.crysxd.octoapp.octoprint.exceptions
 
-import java.io.IOException
+import okhttp3.HttpUrl
 
-open class InvalidApiKeyException : OctoPrintException()
+open class InvalidApiKeyException(httpUrl: HttpUrl) : OctoPrintException(message = "OctoPrint reported an invalid API key when accessing $httpUrl")
