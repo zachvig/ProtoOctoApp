@@ -24,4 +24,6 @@
     <string name="web_url">Web URL</string>
     <string name="web_url_active_hint">Web URL — copy this from your browser!</string>
     <string name="api_key_active_hint">API key — from the OctoPrint settings</string>
+    <string name="error_api_cotains_illegal_characters">The API key contains illegal characters</string>
+    <string name="error_enter_api_key">Please enter an API key</string>
 </resources>

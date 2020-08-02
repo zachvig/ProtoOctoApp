@@ -22,6 +22,7 @@ class VerifySignInInformationUseCase(private val context: Context) :
     }
 
     private fun verifyWebUrl(string: CharSequence) = try {
+        require(string.all { it.isLetterOrDigit() })
         require(string.startsWith("http://") || string.startsWith("https://"))
         requireNotNull(Uri.parse(string.toString()))
         null
@@ -29,11 +30,9 @@ class VerifySignInInformationUseCase(private val context: Context) :
         context.getString(R.string.enter_a_valid_web_url)
     }
 
-    private fun verifyApiKey(string: CharSequence) =
-        verify(string, context.getString(R.string.an_api_key))
-
-    private fun verify(string: CharSequence, thing: String) = when {
-        string.isBlank() -> context.getString(R.string.please_enter_x, thing)
+    private fun verifyApiKey(string: CharSequence) = when {
+        string.isBlank() -> context.getString(R.string.error_enter_api_key)
+        string.toString().any { !it.isLetterOrDigit() } -> context.getString(R.string.error_api_cotains_illegal_characters)
         else -> null
     }
 
