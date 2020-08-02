@@ -1,7 +1,7 @@
 package de.crysxd.octoapp.base.usecase
 
-import de.crysxd.octoapp.base.models.exceptions.NoPrinterConnectedException
 import de.crysxd.octoapp.octoprint.OctoPrint
+import de.crysxd.octoapp.octoprint.exceptions.PrinterNotOperationalException
 import javax.inject.Inject
 
 class CheckPrinterConnectedUseCase @Inject constructor() : UseCase<OctoPrint, Boolean> {
@@ -9,7 +9,7 @@ class CheckPrinterConnectedUseCase @Inject constructor() : UseCase<OctoPrint, Bo
     override suspend fun execute(param: OctoPrint) = try {
         param.createPrinterApi().getPrinterState()
         true
-    } catch (e: NoPrinterConnectedException) {
+    } catch (e: PrinterNotOperationalException) {
         false
     }
 }

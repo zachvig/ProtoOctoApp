@@ -3,17 +3,17 @@ package de.crysxd.octoapp.base.repository
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import de.crysxd.octoapp.base.datasource.DataSource
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.usecase.CheckOctoPrintInstanceInformationUseCase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class OctoPrintRepository(
-    private val dataSource: DataSource<OctoPrintInstanceInformation>,
+    private val dataSource: DataSource<OctoPrintInstanceInformationV2>,
     private val checkOctoPrintInstanceInformationUseCase: CheckOctoPrintInstanceInformationUseCase
 ) {
 
-    private val mutableInstanceInformation = MutableLiveData<OctoPrintInstanceInformation?>()
+    private val mutableInstanceInformation = MutableLiveData<OctoPrintInstanceInformationV2?>()
     val instanceInformation = Transformations.map(mutableInstanceInformation) { it }
 
     init {
@@ -31,7 +31,7 @@ class OctoPrintRepository(
         )
     }
 
-    fun storeOctoprintInstanceInformation(instance: OctoPrintInstanceInformation?) = GlobalScope.launch {
+    fun storeOctoprintInstanceInformation(instance: OctoPrintInstanceInformationV2?) = GlobalScope.launch {
         if (instance == null || instance != instanceInformation.value) {
             dataSource.store(instance)
             mutableInstanceInformation.postValue(

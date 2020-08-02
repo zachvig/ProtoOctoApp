@@ -3,7 +3,7 @@ package de.crysxd.octoapp.signin.usecases
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.usecase.UseCase
 import de.crysxd.octoapp.octoprint.OctoPrint
@@ -19,11 +19,10 @@ class SignInUseCase(
     private val octoPrintProvider: OctoPrintProvider
 ) : UseCase<SignInInformation, SignInUseCase.Result> {
 
-    override suspend fun execute(param: SignInInformation): SignInUseCase.Result = withContext(Dispatchers.IO) {
+    override suspend fun execute(param: SignInInformation): Result = withContext(Dispatchers.IO) {
         return@withContext try {
-            val octoprintInstanceInformation = OctoPrintInstanceInformation(
-                param.ipAddress,
-                param.port.toInt(),
+            val octoprintInstanceInformation = OctoPrintInstanceInformationV2(
+                param.webUrl,
                 param.apiKey
             )
 
@@ -32,6 +31,11 @@ class SignInUseCase(
             // Test connection, will throw in case of faulty configuration
             val response = octoprint.createLoginApi().passiveLogin()
             val isAdmin = response.groups.contains(LoginResponse.GROUP_ADMINS)
+
+            // Test that the API key is actually valid. On instances without authentication
+            // the login endpoint accepts any API key but other endpoints do not
+            // Test with connection
+            octoprint.createConnectionApi().getConnection()
 
             // Get version info
             val version = octoprint.createVersionApi().getVersion()
@@ -55,7 +59,7 @@ class SignInUseCase(
 
     sealed class Result {
         data class Success(
-            val octoPrintInstanceInformation: OctoPrintInstanceInformation,
+            val octoPrintInstanceInformation: OctoPrintInstanceInformationV2,
             val warnings: List<Warning>
         ) : Result()
 

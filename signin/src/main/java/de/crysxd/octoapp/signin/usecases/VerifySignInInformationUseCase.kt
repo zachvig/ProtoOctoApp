@@ -1,8 +1,7 @@
 package de.crysxd.octoapp.signin.usecases
 
 import android.content.Context
-import android.util.Patterns
-import androidx.core.text.isDigitsOnly
+import android.net.Uri
 import de.crysxd.octoapp.base.usecase.UseCase
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.models.SignInInformation
@@ -12,29 +11,23 @@ class VerifySignInInformationUseCase(private val context: Context) :
     UseCase<SignInInformation, SignInInformationValidationResult> {
 
     override suspend fun execute(param: SignInInformation): SignInInformationValidationResult {
-        val ip = verifyIp(param.ipAddress)
-        val port = verifyPort(param.port)
+        val webUrl = verifyWebUrl(param.webUrl)
         val apiKey = verifyApiKey(param.apiKey)
 
-        return if (listOf(ip, port, apiKey).all { it == null }) {
+        return if (listOf(webUrl, apiKey).all { it == null }) {
             SignInInformationValidationResult.ValidationOk
         } else {
-            SignInInformationValidationResult.ValidationFailed(ip, port, apiKey)
+            SignInInformationValidationResult.ValidationFailed(webUrl, apiKey)
         }
     }
 
-    private fun verifyIp(string: CharSequence) =
-        verify(string, context.getString(R.string.a_ip_address)) ?: when {
-            !Patterns.IP_ADDRESS.matcher(string)
-                .matches() -> context.getString(R.string.enter_a_valid_ip_address)
-            else -> null
-        }
-
-    private fun verifyPort(string: CharSequence) =
-        verify(string, context.getString(R.string.the_port)) ?: when {
-            !string.isDigitsOnly() -> context.getString(R.string.only_digits)
-            else -> null
-        }
+    private fun verifyWebUrl(string: CharSequence) = try {
+        require(string.startsWith("http://") || string.startsWith("https://"))
+        requireNotNull(Uri.parse(string.toString()))
+        null
+    } catch (e: Exception) {
+        context.getString(R.string.enter_a_valid_web_url)
+    }
 
     private fun verifyApiKey(string: CharSequence) =
         verify(string, context.getString(R.string.an_api_key))

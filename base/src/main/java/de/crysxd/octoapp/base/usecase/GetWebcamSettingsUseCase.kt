@@ -10,7 +10,7 @@ class GetWebcamSettingsUseCase @Inject constructor() : UseCase<GetWebcamSettings
         val raw = param.octoPrint.createSettingsApi().getSettings().webcam
         return raw.copy(
             streamUrl = if (raw.streamUrl.startsWith("/")) {
-                "${param.octoPrint.gerWebUrl()}${raw.streamUrl.replaceFirst("/", "")}"
+                "${param.octoPrint.webUrl}${raw.streamUrl.replaceFirst("/", "")}"
             } else {
                 raw.streamUrl
             }

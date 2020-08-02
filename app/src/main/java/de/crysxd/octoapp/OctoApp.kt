@@ -29,7 +29,7 @@ class OctoApp : Application() {
         }
         val wrapped = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
-            Timber.wtf(e)
+            Timber.tag("Uncaught!").wtf(e)
             wrapped?.uncaughtException(t, e)
         }
 

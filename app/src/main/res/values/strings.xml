@@ -6,7 +6,9 @@
     <string name="notification_cancelling_title">Cancelling…</string>
     <string name="notification_printing_title">Printing…</string>
     <string name="notification_printing_message">%1$d%% completed, %2$s left</string>
-    <string name="notification_printing_lost_connection_message">Lost connection, reconnecting…</string>
+    <string name="notification_printing_lost_connection_message">Reconnecting…</string>
     <string name="notification_print_done_title">Print completed</string>
     <string name="close">Close</string>
+    <string name="print_eta_x">ETA: %s</string>
+    <string name="capabilities_validation_error">Couldn\'t verify your servers capabilities. Some features of the app might not work as expected.</string>
 </resources>

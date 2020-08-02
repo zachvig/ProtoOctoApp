@@ -142,10 +142,13 @@ class MainActivity : OctoActivity() {
 
     private fun updateCapabilities() {
         lifecycleScope.launchWhenCreated {
-            val octoprint = Injector.get().octoPrintProvider().octoPrint.value!!
-            Injector.get().updateInstanceCapabilitiesUseCase().execute(octoprint)
-        }.invokeOnCompletion {
-            it?.let(Timber::e)
+            try {
+                val octoprint = Injector.get().octoPrintProvider().octoPrint.value!!
+                Injector.get().updateInstanceCapabilitiesUseCase().execute(octoprint)
+            } catch (e: Exception) {
+                Timber.e(e)
+                showErrorDialog(getString(R.string.capabilities_validation_error))
+            }
         }
     }
 }
