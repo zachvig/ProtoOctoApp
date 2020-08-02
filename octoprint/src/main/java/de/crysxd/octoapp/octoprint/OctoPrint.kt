@@ -68,7 +68,12 @@ class OctoPrint(
     fun getLogger() = Logger.getLogger("OctoPrint")
 
     private fun createRetrofit() = Retrofit.Builder()
-        .baseUrl(URI.create(webUrl).resolve("/api/").toURL())
+        .baseUrl(
+            URI.create("$webUrl/")
+                .resolve(".") // Remove // at the end
+                .resolve("api/") // Add api/ to path
+                .toURL()
+        )
         .addConverterFactory(GsonConverterFactory.create(createGsonWithTypeAdapters()))
         .client(createOkHttpClient())
         .build()
