@@ -6,6 +6,7 @@ import de.crysxd.octoapp.base.usecase.UseCase
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInInformationValidationResult
+import timber.log.Timber
 
 class VerifySignInInformationUseCase(private val context: Context) :
     UseCase<SignInInformation, SignInInformationValidationResult> {
@@ -22,11 +23,12 @@ class VerifySignInInformationUseCase(private val context: Context) :
     }
 
     private fun verifyWebUrl(string: CharSequence) = try {
-        require(string.all { it.isLetterOrDigit() })
-        require(string.startsWith("http://") || string.startsWith("https://"))
-        requireNotNull(Uri.parse(string.toString()))
+        require(string.all { it.isLetterOrDigit() }) { "Not all characters valid: $string" }
+        require(string.startsWith("http://") || string.startsWith("https://")) { "Not starting with HTTP(s): $string" }
+        requireNotNull(Uri.parse(string.toString())) { "Uri is null: $string" }
         null
     } catch (e: Exception) {
+        Timber.i("Validation error: ${e.message}")
         context.getString(R.string.enter_a_valid_web_url)
     }
 
