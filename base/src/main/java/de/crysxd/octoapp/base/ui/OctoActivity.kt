@@ -44,10 +44,14 @@ abstract class OctoActivity : AppCompatActivity() {
         }
     })
 
-    fun showErrorDialog(e: Throwable) {
+    fun showErrorDialog(e: Throwable) = showErrorDialog(
+        getString((e as? UserMessageException)?.userMessage ?: R.string.error_general)
+    )
+
+    fun showErrorDialog(message: CharSequence) {
         errorDialog?.dismiss()
         errorDialog = AlertDialog.Builder(this)
-            .setMessage(getString((e as? UserMessageException)?.userMessage ?: R.string.error_general))
+            .setMessage(message)
             .setPositiveButton(android.R.string.ok, null)
             .show()
     }

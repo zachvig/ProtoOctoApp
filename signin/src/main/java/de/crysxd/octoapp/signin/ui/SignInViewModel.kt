@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.signin.models.SignInInformation
@@ -29,11 +29,15 @@ class SignInViewModel(
 
     fun startSignIn(info: SignInInformation) =
         viewModelScope.launch(coroutineExceptionHandler) {
+            val upgradedInfo = info.copy(
+                webUrl = addHttpIfNotPresent(info.webUrl)
+            )
+
             try {
-                when (val res = verifyUseCase.execute(info)) {
+                when (val res = verifyUseCase.execute(upgradedInfo)) {
                     is SignInInformationValidationResult.ValidationOk -> {
                         mutableViewState.postValue(SignInViewState.Loading)
-                        val result = signInUseCase.execute(info)
+                        val result = signInUseCase.execute(upgradedInfo)
                         if (result is SignInUseCase.Result.Success) {
                             mutableViewState.postValue(SignInViewState.SignInSuccess(result.octoPrintInstanceInformation, result.warnings))
                         } else {
@@ -51,11 +55,20 @@ class SignInViewModel(
             }
         }
 
-    fun completeSignIn(instanceInformation: OctoPrintInstanceInformation) {
+    private fun addHttpIfNotPresent(webUrl: String) = if (!webUrl.startsWith("http://") && !webUrl.startsWith("https://")) {
+        "http://$webUrl"
+    } else {
+        webUrl
+    }
+
+    fun completeSignIn(instanceInformation: OctoPrintInstanceInformationV2) {
         // Save instance information, MainActivity will navigate away
         Firebase.analytics.logEvent(FirebaseAnalytics.Event.LOGIN, Bundle.EMPTY)
         octoPrintRepository.storeOctoprintInstanceInformation(instanceInformation)
     }
 
-    fun getPreFillInfo() = octoPrintRepository.getRawOctoPrintInstanceInformation() ?: OctoPrintInstanceInformation("", 80, "")
+    fun getPreFillInfo() = octoPrintRepository.getRawOctoPrintInstanceInformation() ?: OctoPrintInstanceInformationV2(
+        webUrl = "",
+        apiKey = ""
+    )
 }

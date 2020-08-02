@@ -9,6 +9,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
+import java.net.URI
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
@@ -21,8 +22,7 @@ const val RECONNECT_TIMEOUT_MS = CONNECTION_TIMEOUT_MS + RECONNECT_DELAY_MS
 
 class EventWebSocket(
     private val httpClient: OkHttpClient,
-    private val hostname: String,
-    private val port: Int,
+    private val webUrl: String,
     private val loginApi: LoginApi,
     private val gson: Gson,
     private val logger: Logger
@@ -37,8 +37,9 @@ class EventWebSocket(
 
     fun start() {
         if (isConnected.compareAndSet(false, true)) {
+
             val request = Request.Builder()
-                .url("http://$hostname:$port/sockjs/websocket")
+                .url(URI.create(webUrl).resolve("/sockjs/websocket").toURL())
                 .build()
 
             httpClient.newBuilder()

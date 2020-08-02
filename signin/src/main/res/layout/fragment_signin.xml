@@ -10,11 +10,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
+        android:alpha="0.5"
         app:layout_constraintBottom_toBottomOf="@+id/octoView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/octoView"
-        android:alpha="0.5" />
+        app:layout_constraintTop_toTopOf="@+id/octoView" />
 
     <de.crysxd.octoapp.base.ui.common.OctoView
         android:id="@+id/octoView"
@@ -32,8 +32,8 @@
         android:layout_marginStart="@dimen/margin_3"
         android:layout_marginTop="@dimen/margin_3"
         android:layout_marginEnd="@dimen/margin_3"
-        android:singleLine="true"
         android:ellipsize="none"
+        android:singleLine="true"
         android:text="@string/sign_in"
         android:textAppearance="@style/OctoTheme.TextAppearance.Title.Large"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,67 +52,45 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
 
     <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
-        android:id="@+id/inputPort"
-        android:layout_width="110dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_3"
-        android:layout_marginEnd="@dimen/margin_2"
-        app:defaultInputValue="@string/default_port"
-        app:label="@string/port"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewSubTitle" />
-
-    <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
         android:id="@+id/inputApiKey"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_1"
-        app:label="@string/api_key"
         app:actionDrawable="@drawable/ic_qr_code_scanner_24px"
-        app:layout_constraintEnd_toEndOf="@+id/inputPort"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:label="@string/api_key"
+        app:labelActive="@string/api_key_active_hint"
+        app:layout_constraintEnd_toEndOf="@+id/inputWebUrl"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputHostname" />
+        app:layout_constraintTop_toBottomOf="@+id/inputWebUrl" />
 
     <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
-        android:id="@+id/inputHostname"
+        android:id="@+id/inputWebUrl"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
-        android:layout_marginEnd="@dimen/margin_1"
-        app:label="@string/ip_address"
-        app:layout_constraintEnd_toStartOf="@+id/inputPort"
+        android:layout_marginTop="@dimen/margin_3"
+        android:layout_marginEnd="@dimen/margin_2"
+        app:example="http://192.168.1.42:5000"
+        app:label="@string/web_url"
+        app:labelActive="@string/web_url_active_hint"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/inputPort" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewSubTitle" />
 
     <Button
         android:id="@+id/buttonSignIn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
+        android:layout_marginTop="@dimen/margin_2"
         android:layout_marginEnd="@dimen/margin_2"
         android:layout_marginBottom="@dimen/margin_2"
-        android:layout_marginTop="@dimen/margin_2"
-        app:layout_constraintVertical_bias="1"
         android:text="@string/sign_in_to_octoprint"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputApiKey" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_2"
-        android:layout_marginTop="@dimen/margin_1"
-        android:layout_marginEnd="@dimen/margin_2"
-        android:text="@string/you_can_find_the_api_key_in_octoprint_s_settings"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@+id/inputApiKey"
-        app:layout_constraintStart_toStartOf="@+id/inputApiKey"
-        app:layout_constraintTop_toBottomOf="@+id/inputApiKey" />
-
+        app:layout_constraintTop_toBottomOf="@+id/inputApiKey"
+        app:layout_constraintVertical_bias="1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
