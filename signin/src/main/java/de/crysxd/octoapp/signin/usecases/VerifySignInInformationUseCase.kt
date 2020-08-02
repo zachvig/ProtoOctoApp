@@ -34,7 +34,10 @@ class VerifySignInInformationUseCase(private val context: Context) :
 
     private fun verifyApiKey(string: CharSequence) = when {
         string.isBlank() -> context.getString(R.string.error_enter_api_key)
-        string.toString().any { !it.isLetterOrDigit() } -> context.getString(R.string.error_api_cotains_illegal_characters)
+        string.toString().any { !it.isLetterOrDigit() } -> {
+            Timber.i("Validation error: Contains invalid letters: $string")
+            context.getString(R.string.error_api_cotains_illegal_characters)
+        }
         else -> null
     }
 
