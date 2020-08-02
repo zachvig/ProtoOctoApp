@@ -43,8 +43,8 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         viewModel.viewState.observe(viewLifecycleOwner, Observer(this::updateViewState))
 
         val preFill = viewModel.getPreFillInfo()
-        inputHostname.editText.setText(preFill.hostName)
-        inputPort.editText.setText(preFill.port.toString())
+        inputHostname.editText.setText(preFill.webUrl)
+        // inputPort.editText.setText(preFill.port.toString())
         inputApiKey.editText.setText(preFill.apiKey)
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(ReadQrCodeFragment.RESULT_API_KEY)?.observe(viewLifecycleOwner, Observer {
@@ -79,8 +79,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         }
 
         if (res is SignInViewState.SignInInformationInvalid) {
-            inputHostname.setError(res.result.ipErrorMessage)
-            inputPort.setError(res.result.portErrorMessage)
+            inputHostname.setError(res.result.webUrlErrorMessage)
             inputApiKey.setError(res.result.apiKeyErrorMessage)
         } else {
             inputHostname.setError(null)
@@ -127,7 +126,6 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         viewModel.startSignIn(
             SignInInformation(
                 inputHostname.editText.text.toString(),
-                inputPort.editText.text.toString(),
                 inputApiKey.editText.text.toString()
             )
         )

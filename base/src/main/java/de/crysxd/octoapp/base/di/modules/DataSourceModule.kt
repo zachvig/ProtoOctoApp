@@ -6,13 +6,13 @@ import dagger.Module
 import dagger.Provides
 import de.crysxd.octoapp.base.datasource.DataSource
 import de.crysxd.octoapp.base.datasource.LocalOctoPrintInstanceInformationSource
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 
 @Module
 class DataSourceModule {
 
     @Provides
-    fun provideOctoPrintInstanceInformationDataSource(sharedPreferences: SharedPreferences): DataSource<OctoPrintInstanceInformation> =
+    fun provideOctoPrintInstanceInformationDataSource(sharedPreferences: SharedPreferences): DataSource<OctoPrintInstanceInformationV2> =
         LocalOctoPrintInstanceInformationSource(sharedPreferences, Gson())
 
 }

@@ -17,12 +17,12 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.URI
 import java.util.logging.Logger
 
 
 class OctoPrint(
-    private val hostName: String,
-    private val port: Int,
+    val webUrl: String,
     private val apiKey: String,
     private val interceptors: List<Interceptor> = emptyList()
 ) {
@@ -33,7 +33,7 @@ class OctoPrint(
 
     private val webSocket = EventWebSocket(
         httpClient = createOkHttpClient(),
-        webUrl = gerWebUrl(),
+        webUrl = webUrl,
         gson = createGsonWithTypeAdapters(),
         logger = getLogger(),
         loginApi = createLoginApi()
@@ -65,12 +65,10 @@ class OctoPrint(
     fun createConnectionApi(): ConnectionApi.Wrapper =
         ConnectionApi.Wrapper((createRetrofit().create(ConnectionApi::class.java)))
 
-    fun gerWebUrl(): String = "http://${hostName}:${port}/"
-
     fun getLogger() = Logger.getLogger("OctoPrint")
 
     private fun createRetrofit() = Retrofit.Builder()
-        .baseUrl("${gerWebUrl()}api/")
+        .baseUrl(URI.create(webUrl).resolve("/api/").toURL())
         .addConverterFactory(GsonConverterFactory.create(createGsonWithTypeAdapters()))
         .client(createOkHttpClient())
         .build()

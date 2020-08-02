@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.signin.models.SignInInformation
@@ -51,11 +51,14 @@ class SignInViewModel(
             }
         }
 
-    fun completeSignIn(instanceInformation: OctoPrintInstanceInformation) {
+    fun completeSignIn(instanceInformation: OctoPrintInstanceInformationV2) {
         // Save instance information, MainActivity will navigate away
         Firebase.analytics.logEvent(FirebaseAnalytics.Event.LOGIN, Bundle.EMPTY)
         octoPrintRepository.storeOctoprintInstanceInformation(instanceInformation)
     }
 
-    fun getPreFillInfo() = octoPrintRepository.getRawOctoPrintInstanceInformation() ?: OctoPrintInstanceInformation("", 80, "")
+    fun getPreFillInfo() = octoPrintRepository.getRawOctoPrintInstanceInformation() ?: OctoPrintInstanceInformationV2(
+        webUrl = "",
+        apiKey = ""
+    )
 }

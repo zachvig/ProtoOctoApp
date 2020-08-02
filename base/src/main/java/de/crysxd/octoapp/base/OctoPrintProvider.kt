@@ -8,7 +8,7 @@ import com.google.firebase.analytics.ktx.logEvent
 import de.crysxd.octoapp.base.livedata.OctoTransformations.map
 import de.crysxd.octoapp.base.livedata.WebSocketLiveData
 import de.crysxd.octoapp.base.logging.TimberHandler
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.socket.Event
@@ -55,8 +55,8 @@ class OctoPrintProvider(
         it
     }
 
-    fun createAdHocOctoPrint(it: OctoPrintInstanceInformation) =
-        OctoPrint(it.hostName, it.port, it.apiKey, listOf(invalidApiKeyInterceptor)).also { octoPrint ->
+    fun createAdHocOctoPrint(it: OctoPrintInstanceInformationV2) =
+        OctoPrint(it.webUrl, it.apiKey, listOf(invalidApiKeyInterceptor)).also { octoPrint ->
             val logger = octoPrint.getLogger()
             logger.handlers.forEach { logger.removeHandler(it) }
             logger.addHandler(timberHandler)

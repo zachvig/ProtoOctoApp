@@ -3,7 +3,7 @@ package de.crysxd.octoapp.signin.usecases
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformation
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.usecase.UseCase
 import de.crysxd.octoapp.octoprint.OctoPrint
@@ -19,11 +19,10 @@ class SignInUseCase(
     private val octoPrintProvider: OctoPrintProvider
 ) : UseCase<SignInInformation, SignInUseCase.Result> {
 
-    override suspend fun execute(param: SignInInformation): SignInUseCase.Result = withContext(Dispatchers.IO) {
+    override suspend fun execute(param: SignInInformation): Result = withContext(Dispatchers.IO) {
         return@withContext try {
-            val octoprintInstanceInformation = OctoPrintInstanceInformation(
-                param.ipAddress,
-                param.port.toInt(),
+            val octoprintInstanceInformation = OctoPrintInstanceInformationV2(
+                param.webUrl,
                 param.apiKey
             )
 
@@ -55,7 +54,7 @@ class SignInUseCase(
 
     sealed class Result {
         data class Success(
-            val octoPrintInstanceInformation: OctoPrintInstanceInformation,
+            val octoPrintInstanceInformation: OctoPrintInstanceInformationV2,
             val warnings: List<Warning>
         ) : Result()
 
