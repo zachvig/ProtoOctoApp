@@ -11,7 +11,12 @@ class SensitiveDataMask(
 
     init {
         octoPrintRepository.instanceInformation.observeForever {
-            sensitiveData["api_key"] = it?.apiKey
+            val key = "api_key"
+            if (it?.apiKey != null) {
+                sensitiveData[key] = it.apiKey
+            } else {
+                sensitiveData.remove(key)
+            }
         }
     }
 
