@@ -138,10 +138,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         // Do not show if already shown in this "session"
         if (viewModel.getPreFillInfo().apiKeyWasInvalid && !viewModel.invalidApiKeyInfoWasShown) {
             viewModel.invalidApiKeyInfoWasShown = true
-            AlertDialog.Builder(requireContext())
-                .setMessage(R.string.error_api_key_reported_invalid)
-                .setPositiveButton(android.R.string.ok, null)
-                .show()
+            requireOctoActivity().showErrorDialog(requireContext().getString(R.string.error_api_key_reported_invalid))
         }
     }
 }
