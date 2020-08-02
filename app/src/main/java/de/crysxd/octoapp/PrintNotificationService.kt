@@ -20,6 +20,10 @@ import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 const val ACTION_STOP = "stop"
 
@@ -33,6 +37,7 @@ class PrintNotificationService : Service() {
     private val notificationChannelId = "print_progress"
     private val notificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
     private val formatDurationUseCase: FormatDurationUseCase = Injector.get().formatDurationUseCase()
+    private var lastEta: String = ""
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -65,47 +70,61 @@ class PrintNotificationService : Service() {
 
     private fun onEventReceived(event: Event) {
         GlobalScope.launch {
-            when (event) {
-                is Event.Disconnected -> createDisconnectedNotification()
-                is Event.Connected -> createInitialNotification()
-                is Event.MessageReceived -> {
-                    (event.message as? Message.CurrentMessage)?.let { message ->
-                        // Check if still printing
-                        val flags = message.state?.flags
-                        Timber.v(message.toString())
-                        if (flags == null || !listOf(flags.printing, flags.paused, flags.pausing, flags.cancelling).any { it }) {
-                            if (message.progress?.completion?.toInt() == maxProgress) {
-                                Timber.i("Print done, showing notification")
-                                notificationManager.notify((3242..4637).random(), createCompletedNotification())
+            try {
+                when (event) {
+                    is Event.Disconnected -> createDisconnectedNotification()
+                    is Event.Connected -> createInitialNotification()
+                    is Event.MessageReceived -> {
+                        (event.message as? Message.CurrentMessage)?.let { message ->
+                            // Check if still printing
+                            val flags = message.state?.flags
+                            Timber.v(message.toString())
+                            if (flags == null || !listOf(flags.printing, flags.paused, flags.pausing, flags.cancelling).any { it }) {
+                                if (message.progress?.completion?.toInt() == maxProgress) {
+                                    Timber.i("Print done, showing notification")
+                                    notificationManager.notify((3242..4637).random(), createCompletedNotification())
+                                }
+
+                                Timber.i("Not printing, stopping self")
+                                stopSelf()
+                                return@let null
                             }
 
-                            Timber.i("Not printing, stopping self")
-                            stopSelf()
-                            return@let null
-                        }
+                            // Update notification
+                            message.progress?.let {
+                                val progress = it.completion.toInt()
+                                val left = formatDurationUseCase.execute(it.printTimeLeft.toLong())
 
-                        // Update notification
-                        message.progress?.let {
-                            val progress = it.completion.toInt()
-                            val left = formatDurationUseCase.execute(it.printTimeLeft.toLong())
-                            val detail = getString(R.string.notification_printing_message, progress, left)
-                            val title = getString(
-                                when {
-                                    flags.pausing -> R.string.notification_pausing_title
-                                    flags.paused -> R.string.notification_paused_title
-                                    flags.cancelling -> R.string.notification_cancelling_title
-                                    else -> R.string.notification_printing_title
-                                }
-                            )
+                                val eta = Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(it.printTimeLeft.toLong()))
+                                lastEta = getString(
+                                    R.string.print_eta_x, if (eta.isToday()) {
+                                        DateFormat.getTimeInstance(DateFormat.SHORT).format(eta)
+                                    } else {
+                                        DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(eta)
+                                    }
+                                )
 
-                            createProgressNotification(progress, title, detail)
+                                val detail = getString(R.string.notification_printing_message, progress, left)
+                                val title = getString(
+                                    when {
+                                        flags.pausing -> R.string.notification_pausing_title
+                                        flags.paused -> R.string.notification_paused_title
+                                        flags.cancelling -> R.string.notification_cancelling_title
+                                        else -> R.string.notification_printing_title
+                                    }
+                                )
+
+                                createProgressNotification(progress, title, detail)
+                            }
                         }
                     }
+                    else -> null
+                }?.let {
+                    Timber.d("Updating notification")
+                    notificationManager.notify(notificationId, it)
                 }
-                else -> null
-            }?.let {
-                Timber.d("Updating notification")
-                notificationManager.notify(notificationId, it)
+            } catch (e: Exception) {
+                Timber.e(e)
             }
         }
     }
@@ -124,7 +143,6 @@ class PrintNotificationService : Service() {
     private fun createProgressNotification(progress: Int, title: String, status: String) = createNotificationBuilder()
         .setContentTitle(title)
         .setContentText(status)
-        .setNotificationSilent()
         .setProgress(maxProgress, progress, false)
         .build()
 
@@ -135,8 +153,8 @@ class PrintNotificationService : Service() {
         .build()
 
     private fun createDisconnectedNotification() = createNotificationBuilder()
-        .setContentTitle(getString(R.string.notification_printing_title))
-        .setContentText(getString(R.string.notification_printing_lost_connection_message))
+        .setContentTitle(getString(R.string.notification_printing_lost_connection_message))
+        .setContentText(lastEta)
         .setProgress(maxProgress, 0, true)
         .addAction(
             NotificationCompat.Action.Builder(
@@ -164,6 +182,7 @@ class PrintNotificationService : Service() {
         .setColor(ContextCompat.getColor(this, R.color.primary_light))
         .setSmallIcon(R.drawable.ic_notification_default)
         .setContentIntent(createStartAppPendingIntent())
+        .setNotificationSilent()
 
 
     private fun createStartAppPendingIntent() = PendingIntent.getActivity(
@@ -173,4 +192,9 @@ class PrintNotificationService : Service() {
         PendingIntent.FLAG_UPDATE_CURRENT
     )
 
+}
+
+private fun Date.isToday(): Boolean {
+    val format = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+    return format.format(Date()) == format.format(this)
 }
