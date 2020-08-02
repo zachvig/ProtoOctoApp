@@ -29,11 +29,15 @@ class SignInViewModel(
 
     fun startSignIn(info: SignInInformation) =
         viewModelScope.launch(coroutineExceptionHandler) {
+            val upgradedInfo = info.copy(
+                webUrl = addHttpIfNotPresent(info.webUrl)
+            )
+
             try {
-                when (val res = verifyUseCase.execute(info)) {
+                when (val res = verifyUseCase.execute(upgradedInfo)) {
                     is SignInInformationValidationResult.ValidationOk -> {
                         mutableViewState.postValue(SignInViewState.Loading)
-                        val result = signInUseCase.execute(info)
+                        val result = signInUseCase.execute(upgradedInfo)
                         if (result is SignInUseCase.Result.Success) {
                             mutableViewState.postValue(SignInViewState.SignInSuccess(result.octoPrintInstanceInformation, result.warnings))
                         } else {
@@ -50,6 +54,12 @@ class SignInViewModel(
                 throw e
             }
         }
+
+    private fun addHttpIfNotPresent(webUrl: String) = if (!webUrl.startsWith("http://") && !webUrl.startsWith("https://")) {
+        "http://$webUrl"
+    } else {
+        webUrl
+    }
 
     fun completeSignIn(instanceInformation: OctoPrintInstanceInformationV2) {
         // Save instance information, MainActivity will navigate away
