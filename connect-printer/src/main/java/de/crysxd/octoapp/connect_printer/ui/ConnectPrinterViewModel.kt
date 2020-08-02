@@ -36,10 +36,8 @@ class ConnectPrinterViewModel(
     private var psuCyclingState = MutableLiveData<PsuCycledState>(PsuCycledState.NotCycled)
 
     private val availableSerialConnections = Transformations.switchMap(octoPrintProvider.octoPrint) {
-        PollingLiveData {
-            it?.let {
-                getPrinterConnectionUseCase.execute(it)
-            }
+        PollingLiveData<ConnectionResponse?> {
+            null
         }
     }
 

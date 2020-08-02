@@ -20,10 +20,10 @@ class GenerateExceptionInterceptor : Interceptor {
             return when (response.code) {
                 101 -> response
                 in 200..204 -> response
-                409 -> throw PrinterNotOperationalException()
-                403 -> throw InvalidApiKeyException()
+                409 -> throw PrinterNotOperationalException(response.request.url)
+                403 -> throw InvalidApiKeyException(response.request.url)
                 in 501..599 -> throw OctoPrintBootingException()
-                else -> throw OctoPrintApiException(response.code)
+                else -> throw OctoPrintApiException(response.request.url, response.code)
             }
         } catch (e: ConnectException) {
             throw OctoPrintUnavailableException(e)
