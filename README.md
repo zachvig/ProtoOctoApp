@@ -8,7 +8,7 @@ The app is structured into "workspaces" which get activated by the app depending
 - The **Prepare** workspace is activated when a printer is connected but no print is active. You can prepare your print in this workspace by e.g. homing your machine or preparing filament for the print
 - The **Print** workspace is activated as soon as a print is started. This workspaces shows the current print progress and allows tweaking of the current print
 
-![Image](https://gitlab.com/crysxd/octoapp/-/raw/master/designs/Gitlab%20Readme.jpg?inline=false)
+![Image](https://gitlab.com/crysxd/octoapp/-/raw/release/1.1/designs/Gitlab%20Readme.jpg?inline=false)
 
 # Notworthy features
 **PSU plugin support**
@@ -21,15 +21,15 @@ The app offers a dedicated button to trigger an `M112` emergency stop from the p
 You can install the app from [Google Play](https://play.google.com/store/apps/details?id=de.crysxd.octoapp) or download an APK from the [release section](https://gitlab.com/crysxd/octoapp/-/releases).
 
 # Build
-## Debug builds
-Run `./gradlew assembleDebug` to build the app after cloning. The APK file can be found at `app/build/outputs/apk/debug/app-debug.apk`.
-
-# Build
+## Test environment
 The folder `test-environment` contains a configured OctoPrint instance you can use as a test environment. Start it with `docker-compose up -d`.
 
 ### Test users
 
 - `tests` (password `test`, is admin)
+
+## Debug builds
+Run `./gradlew assembleDebug` to build the app after cloning. The APK file can be found at `app/build/outputs/apk/debug/app-debug.apk`.
 
 ## Release builds
 

@@ -92,14 +92,14 @@ class SelectFileViewModel(
 
     private fun isAnyFilePresent(files: List<FileObject>): Boolean = files.any {
         when (it) {
-            is FileObject.Folder -> isAnyFilePresent(it.children)
+            is FileObject.Folder -> isAnyFilePresent(it.children ?: emptyList())
             is FileObject.File -> true
         }
     }
 
     private fun isAnyThumbnailPresent(files: List<FileObject>): Boolean = files.any {
         when (it) {
-            is FileObject.Folder -> isAnyThumbnailPresent(it.children)
+            is FileObject.Folder -> isAnyThumbnailPresent(it.children ?: emptyList())
             is FileObject.File -> !it.thumbnail.isNullOrBlank()
         }
     }
