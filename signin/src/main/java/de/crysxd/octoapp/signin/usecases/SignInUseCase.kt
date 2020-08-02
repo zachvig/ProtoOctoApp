@@ -35,7 +35,7 @@ class SignInUseCase(
             // Test that the API key is actually valid. On instances without authentication
             // the login endpoint accepts any API key but other endpoints do not
             // Test with connection
-            //  octoprint.createConnectionApi().getConnection()
+            octoprint.createConnectionApi().getConnection()
 
             // Get version info
             val version = octoprint.createVersionApi().getVersion()
