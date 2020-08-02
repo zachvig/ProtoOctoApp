@@ -5,7 +5,7 @@ import retrofit2.http.GET
 
 interface SettingsApi {
 
-    @GET("/api/settings")
+    @GET("settings")
     suspend fun getSettings(): Settings
 
 }

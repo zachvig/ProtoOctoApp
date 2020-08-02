@@ -5,7 +5,7 @@ import retrofit2.http.POST
 
 interface LoginApi {
 
-    @POST("/api/login?passive")
+    @POST("login?passive")
     suspend fun passiveLogin(): LoginResponse
 
 }
