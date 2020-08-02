@@ -124,7 +124,6 @@ class PrintNotificationService : Service() {
     private fun createProgressNotification(progress: Int, title: String, status: String) = createNotificationBuilder()
         .setContentTitle(title)
         .setContentText(status)
-        .setNotificationSilent()
         .setProgress(maxProgress, progress, false)
         .build()
 
@@ -164,6 +163,7 @@ class PrintNotificationService : Service() {
         .setColor(ContextCompat.getColor(this, R.color.primary_light))
         .setSmallIcon(R.drawable.ic_notification_default)
         .setContentIntent(createStartAppPendingIntent())
+        .setNotificationSilent()
 
 
     private fun createStartAppPendingIntent() = PendingIntent.getActivity(
