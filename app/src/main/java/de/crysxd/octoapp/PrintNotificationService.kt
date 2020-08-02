@@ -21,6 +21,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -95,7 +96,13 @@ class PrintNotificationService : Service() {
                                 val left = formatDurationUseCase.execute(it.printTimeLeft.toLong())
 
                                 val eta = Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(it.printTimeLeft.toLong()))
-                                lastEta = getString(R.string.print_eta_x, DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(eta))
+                                lastEta = getString(
+                                    R.string.print_eta_x, if (eta.isToday()) {
+                                        DateFormat.getTimeInstance(DateFormat.SHORT).format(eta)
+                                    } else {
+                                        DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(eta)
+                                    }
+                                )
 
                                 val detail = getString(R.string.notification_printing_message, progress, left)
                                 val title = getString(
@@ -185,4 +192,9 @@ class PrintNotificationService : Service() {
         PendingIntent.FLAG_UPDATE_CURRENT
     )
 
+}
+
+private fun Date.isToday(): Boolean {
+    val format = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+    return format.format(Date()) == format.format(this)
 }
