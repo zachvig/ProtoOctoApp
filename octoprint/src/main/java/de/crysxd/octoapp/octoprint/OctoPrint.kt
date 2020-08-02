@@ -33,8 +33,7 @@ class OctoPrint(
 
     private val webSocket = EventWebSocket(
         httpClient = createOkHttpClient(),
-        hostname = hostName,
-        port = port,
+        webUrl = gerWebUrl(),
         gson = createGsonWithTypeAdapters(),
         logger = getLogger(),
         loginApi = createLoginApi()
