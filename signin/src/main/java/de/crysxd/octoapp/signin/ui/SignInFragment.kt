@@ -15,7 +15,6 @@ import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import de.crysxd.octoapp.base.ui.ext.setTextAppearanceCompat
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.ui.utils.ViewCompactor
 import de.crysxd.octoapp.signin.R
@@ -43,8 +42,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         viewModel.viewState.observe(viewLifecycleOwner, Observer(this::updateViewState))
 
         val preFill = viewModel.getPreFillInfo()
-        inputHostname.editText.setText(preFill.webUrl)
-        // inputPort.editText.setText(preFill.port.toString())
+        inputWebUrl.editText.setText(preFill.webUrl)
         inputApiKey.editText.setText(preFill.apiKey)
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(ReadQrCodeFragment.RESULT_API_KEY)?.observe(viewLifecycleOwner, Observer {
@@ -79,12 +77,11 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         }
 
         if (res is SignInViewState.SignInInformationInvalid) {
-            inputHostname.setError(res.result.webUrlErrorMessage)
-            inputApiKey.setError(res.result.apiKeyErrorMessage)
+            inputWebUrl.error = res.result.webUrlErrorMessage
+            inputApiKey.error = res.result.apiKeyErrorMessage
         } else {
-            inputHostname.setError(null)
-            inputPort.setError(null)
-            inputApiKey.setError(null)
+            inputWebUrl.error = null
+            inputApiKey.error = null
         }
 
         if (res is SignInViewState.Loading) {
@@ -125,7 +122,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
     private fun signIn(@Suppress("UNUSED_PARAMETER") view: View) {
         viewModel.startSignIn(
             SignInInformation(
-                inputHostname.editText.text.toString(),
+                inputWebUrl.editText.text.toString(),
                 inputApiKey.editText.text.toString()
             )
         )

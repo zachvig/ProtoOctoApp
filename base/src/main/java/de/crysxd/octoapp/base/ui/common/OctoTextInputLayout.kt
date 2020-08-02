@@ -23,12 +23,32 @@ import kotlinx.android.synthetic.main.view_octo_input_layout.view.*
 class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, style: Int = 0) : FrameLayout(context, attrs, style) {
 
     private val initialLabelColors: ColorStateList
-    private val initialLabelText: CharSequence
-    var hint: CharSequence = ""
+    var hintNormal: CharSequence? = null
         set(value) {
             field = value
-            input.hint = value
-            label.text = value
+            updateViewState()
+        }
+    var hintActive: CharSequence? = null
+        set(value) {
+            field = value
+            updateViewState()
+        }
+    var example: CharSequence? = null
+        set(value) {
+            field = value
+            updateViewState()
+        }
+    var error: CharSequence? = null
+        set(value) {
+            field = value
+
+            if (error != null) {
+                label.setTextColor(ContextCompat.getColor(context, R.color.color_error))
+            } else {
+                label.setTextColor(initialLabelColors)
+            }
+
+            updateViewState()
         }
 
     @Suppress("unused")
@@ -51,7 +71,9 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             attrs,
             R.styleable.OctoTextInputLayout, 0, 0
         ).use {
-            label.text = it.getString(R.styleable.OctoTextInputLayout_label)
+            hintActive = it.getString(R.styleable.OctoTextInputLayout_labelActive)
+            example = it.getString(R.styleable.OctoTextInputLayout_example)
+            hintNormal = it.getString(R.styleable.OctoTextInputLayout_label)
             input.setText(it.getString(R.styleable.OctoTextInputLayout_defaultInputValue))
             val actionDrawable = it.getResourceId(R.styleable.OctoTextInputLayout_actionDrawable, 0)
             if (actionDrawable > 0) {
@@ -62,7 +84,6 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         }
 
         initialLabelColors = label.textColors
-        initialLabelText = label.text
 
         updateViewState()
 
@@ -71,32 +92,24 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     private fun updateViewState() {
-        val labelVisible = input.hasFocus() || !input.text.isNullOrEmpty() || label.text != initialLabelText
-        val hint = if (labelVisible) {
-            ""
+        val labelVisible = input.hasFocus() || !input.text.isNullOrEmpty() || error != null
+        label.text = if (input.hasFocus()) {
+            error ?: hintActive ?: hintNormal
         } else {
-            initialLabelText
+            error ?: hintNormal
+        }
+        val hintText = if (labelVisible) {
+            example
+        } else {
+            hintNormal
         }
 
         // Only animate if changes worth animation are detected
-        if (labelVisible != label.isVisible || hint != input.hint) {
+        if (labelVisible != label.isVisible || hintText != input.hint) {
             TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
             label.isVisible = labelVisible
-            input.hint = hint
+            input.hint = hintText
         }
-    }
-
-    @Suppress("unused")
-    fun setError(error: CharSequence?) {
-        if (error != null) {
-            label.setTextColor(ContextCompat.getColor(context, R.color.color_error))
-            label.text = error
-        } else {
-            label.setTextColor(initialLabelColors)
-            label.text = initialLabelText
-        }
-
-        updateViewState()
     }
 
     @Suppress("unused")
@@ -108,7 +121,7 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         val savedState = SavedState(super.onSaveInstanceState()!!)
         savedState.labelText = label.text
         savedState.value = input.text.toString()
-        savedState.hint = input.hint
+        savedState.hint = input.hint ?: ""
         return savedState
     }
 

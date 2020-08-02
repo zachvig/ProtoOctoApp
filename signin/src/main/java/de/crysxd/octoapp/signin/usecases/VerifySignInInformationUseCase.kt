@@ -2,7 +2,6 @@ package de.crysxd.octoapp.signin.usecases
 
 import android.content.Context
 import android.net.Uri
-import androidx.core.text.isDigitsOnly
 import de.crysxd.octoapp.base.usecase.UseCase
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.models.SignInInformation
@@ -23,17 +22,12 @@ class VerifySignInInformationUseCase(private val context: Context) :
     }
 
     private fun verifyWebUrl(string: CharSequence) = try {
+        require(string.startsWith("http://") || string.startsWith("https://"))
         requireNotNull(Uri.parse(string.toString()))
         null
     } catch (e: Exception) {
-        context.getString(R.string.enter_a_valid_ip_address)
+        context.getString(R.string.enter_a_valid_web_url)
     }
-
-    private fun verifyPort(string: CharSequence) =
-        verify(string, context.getString(R.string.the_port)) ?: when {
-            !string.isDigitsOnly() -> context.getString(R.string.only_digits)
-            else -> null
-        }
 
     private fun verifyApiKey(string: CharSequence) =
         verify(string, context.getString(R.string.an_api_key))
