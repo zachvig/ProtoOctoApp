@@ -32,6 +32,11 @@ class SignInUseCase(
             val response = octoprint.createLoginApi().passiveLogin()
             val isAdmin = response.groups.contains(LoginResponse.GROUP_ADMINS)
 
+            // Test that the API key is actually valid. On instances without authentication
+            // the login endpoint accepts any API key but other endpoints do not
+            // Test with connection
+            //  octoprint.createConnectionApi().getConnection()
+
             // Get version info
             val version = octoprint.createVersionApi().getVersion()
             Timber.i("Connected to ${version.serverVersionText}")
