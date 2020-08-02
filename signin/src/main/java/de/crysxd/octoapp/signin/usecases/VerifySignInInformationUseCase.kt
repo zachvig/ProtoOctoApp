@@ -23,7 +23,6 @@ class VerifySignInInformationUseCase(private val context: Context) :
     }
 
     private fun verifyWebUrl(string: CharSequence) = try {
-        require(string.all { it.isLetterOrDigit() }) { "Not all characters valid: $string" }
         require(string.startsWith("http://") || string.startsWith("https://")) { "Not starting with HTTP(s): $string" }
         requireNotNull(Uri.parse(string.toString())) { "Uri is null: $string" }
         null
