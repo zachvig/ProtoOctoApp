@@ -30,7 +30,7 @@ class SignInUseCase(
 
             // Test connection, will throw in case of faulty configuration
             val response = octoprint.createLoginApi().passiveLogin()
-            val isAdmin = response.groups.contains(LoginResponse.GROUP_ADMINS)
+            val isAdmin = response.groups?.contains(LoginResponse.GROUP_ADMINS) == true
 
             // Test that the API key is actually valid. On instances without authentication
             // the login endpoint accepts any API key but other endpoints do not
