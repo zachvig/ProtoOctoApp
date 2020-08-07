@@ -25,11 +25,6 @@ class OctoApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        // Setup analytics
-        // Do not enable if we are in a TestLab environment
-        val testLabSetting: String = Settings.System.getString(contentResolver, "firebase.test.lab")
-        Firebase.analytics.setAnalyticsCollectionEnabled("true" != testLabSetting)
-
         // Setup logging
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
@@ -51,7 +46,7 @@ class OctoApp : Application() {
         Timber.plant(BaseInjector.get().timberCacheTree())
         Timber.plant(BaseInjector.get().firebaseTree())
 
-        // Setup Firebase
+        // Setup RemoteConfig
         Firebase.remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
         Firebase.remoteConfig.setConfigSettingsAsync(remoteConfigSettings {
             minimumFetchIntervalInSeconds = 3600
@@ -73,6 +68,7 @@ class OctoApp : Application() {
             )
         }
 
+        // Setup FCM
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(OnCompleteListener { task ->
             if (task.isSuccessful) {
                 Timber.tag("FCM").i("Token: ${task.result?.token}")
@@ -80,5 +76,10 @@ class OctoApp : Application() {
                 Timber.tag("FCM").w("Unable to get token")
             }
         })
+
+        // Setup analytics
+        // Do not enable if we are in a TestLab environment
+        val testLabSetting = Settings.System.getString(contentResolver, "firebase.test.lab")
+        Firebase.analytics.setAnalyticsCollectionEnabled("true" != testLabSetting && !BuildConfig.DEBUG)
     }
 }
