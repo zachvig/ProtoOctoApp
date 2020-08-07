@@ -6,8 +6,8 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -69,13 +69,24 @@ class OctoApp : Application() {
         }
 
         // Setup FCM
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(OnCompleteListener { task ->
+        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Timber.tag("FCM").i("Token: ${task.result?.token}")
             } else {
                 Timber.tag("FCM").w("Unable to get token")
             }
-        })
+        }
+
+        // Create anonymous user
+        if (Firebase.auth.currentUser == null) {
+            Firebase.auth.signInAnonymously().addOnSuccessListener {
+                Timber.i("Signed in anonymously as ${it.user?.uid}")
+            }.addOnFailureListener {
+                Timber.e("Failed to sign in: $it")
+            }
+        } else {
+            Timber.i("Already signed in as ${Firebase.auth.currentUser?.uid}")
+        }
 
         // Setup analytics
         // Do not enable if we are in a TestLab environment
