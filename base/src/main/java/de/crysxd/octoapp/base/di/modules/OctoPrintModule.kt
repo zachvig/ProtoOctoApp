@@ -8,7 +8,9 @@ import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.datasource.DataSource
 import de.crysxd.octoapp.base.di.BaseScope
 import de.crysxd.octoapp.base.logging.TimberHandler
+import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.usecase.CheckOctoPrintInstanceInformationUseCase
 
@@ -40,4 +42,9 @@ open class OctoPrintModule {
         octoPrintRepository: OctoPrintRepository
     ) = InvalidApiKeyInterceptor(octoPrintRepository)
 
+    @BaseScope
+    @Provides
+    open fun provideGcodeHistoryRepository(
+        dataSource: DataSource<List<GcodeHistoryItem>>
+    ) = GcodeHistoryRepository(dataSource)
 }
