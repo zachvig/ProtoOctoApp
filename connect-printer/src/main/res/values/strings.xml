@@ -20,4 +20,5 @@
     <string name="psu_is_being_cycled">PSU is being cycled</string>
     <string name="printer_connected">Printer connected</string>
     <string name="auto_selection_failed">Unable to auto-detect port, selecting first</string>
+    <string name="open_octoprint">Open Octoprint</string>
 </resources>
