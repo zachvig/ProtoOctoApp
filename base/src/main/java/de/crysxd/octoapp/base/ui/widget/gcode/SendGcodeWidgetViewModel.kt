@@ -2,10 +2,13 @@ package de.crysxd.octoapp.base.ui.widget.gcode
 
 import android.content.Context
 import android.text.InputType
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.models.GcodeHistoryItem
+import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
@@ -16,25 +19,44 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+const val MAX_HISTORY_LENGTH = 5
+
 class SendGcodeWidgetViewModel(
-    private val octoPrintProvider: OctoPrintProvider,
+    private val gcodeHistoryRepository: GcodeHistoryRepository,
     private val sendGcodeCommandUseCase: ExecuteGcodeCommandUseCase
 ) : BaseViewModel() {
 
-    fun sendGcodeCommand(command: String) = viewModelScope.launch(coroutineExceptionHandler) {
-        octoPrintProvider.octoPrint.value?.let {
-            val gcodeCommand = GcodeCommand.Batch(command.split("\n").toTypedArray())
+    private val mutableGcodes = MutableLiveData<List<GcodeHistoryItem>>()
+    val gcodes = mutableGcodes.map { it }
 
-            sendGcodeCommandUseCase.execute(Pair(it, gcodeCommand))
-            postMessage { con ->
-                con.getString(
-                    if (gcodeCommand.commands.size == 1) {
-                        R.string.sent_x
-                    } else {
-                        R.string.sent_x_and_y_others
-                    }, gcodeCommand.commands.first(), gcodeCommand.commands.size - 1
-                )
-            }
+    init {
+        updateGcodes()
+    }
+
+    private fun updateGcodes() {
+        mutableGcodes.postValue(
+            gcodeHistoryRepository.getHistory().sortedWith(
+                compareBy({ it.isFavorite }, { Long.MAX_VALUE - it.lastUsed })
+            ).take(MAX_HISTORY_LENGTH)
+        )
+    }
+
+    fun sendGcodeCommand(command: String, updateViewAfterDone: Boolean = false) = viewModelScope.launch(coroutineExceptionHandler) {
+        val gcodeCommand = GcodeCommand.Batch(command.split("\n").toTypedArray())
+
+        sendGcodeCommandUseCase.execute(ExecuteGcodeCommandUseCase.Param(gcodeCommand, true))
+        postMessage { con ->
+            con.getString(
+                if (gcodeCommand.commands.size == 1) {
+                    R.string.sent_x
+                } else {
+                    R.string.sent_x_and_y_others
+                }, gcodeCommand.commands.first(), gcodeCommand.commands.size - 1
+            )
+        }
+
+        if (updateViewAfterDone) {
+            updateGcodes()
         }
     }
 
@@ -56,7 +78,7 @@ class SendGcodeWidgetViewModel(
         withContext(Dispatchers.Default) {
             result.second.asFlow().first()
         }?.let {
-            sendGcodeCommand(it)
+            sendGcodeCommand(it, true)
         }
     }
 }
