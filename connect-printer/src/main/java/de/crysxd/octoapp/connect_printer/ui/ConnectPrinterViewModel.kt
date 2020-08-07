@@ -1,10 +1,13 @@
 package de.crysxd.octoapp.connect_printer.ui
 
+import android.os.Bundle
+import android.widget.Toast
 import androidx.lifecycle.*
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filterEventsForMessageType
 import de.crysxd.octoapp.base.livedata.OctoTransformations.map
 import de.crysxd.octoapp.base.livedata.PollingLiveData
@@ -12,8 +15,10 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase.Params
+import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintBootingException
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
+import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse.ConnectionState.ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -146,7 +151,8 @@ class ConnectPrinterViewModel(
             System.nanoTime() - lastConnectionAttempt > connectionTimeoutNs
 
     private fun isInErrorState(connectionResponse: ConnectionResponse) = listOf(
-        ConnectionResponse.ConnectionState.UNKNOWN
+        ConnectionResponse.ConnectionState.UNKNOWN_ERROR,
+        ConnectionResponse.ConnectionState.CONNECTION_ERROR
     ).contains(connectionResponse.current.state)
 
     private fun isPrinterConnecting(connectionResponse: ConnectionResponse) = listOf(
@@ -156,7 +162,8 @@ class ConnectPrinterViewModel(
     ).contains(connectionResponse.current.state)
 
     private fun isPrinterConnected(connectionResponse: ConnectionResponse) = listOf(
-        ConnectionResponse.ConnectionState.OPERATIONAL
+        ConnectionResponse.ConnectionState.OPERATIONAL,
+        ConnectionResponse.ConnectionState.PRINTING
     ).contains(connectionResponse.current.state)
 
     private fun autoConnect(connectionResponse: ConnectionResponse) =
@@ -165,7 +172,17 @@ class ConnectPrinterViewModel(
                 if (connectionResponse.options.ports.isNotEmpty() && !didJustAttemptToConnect() && !isPrinterConnecting(connectionResponse)) {
                     recordConnectionAttempt()
                     Timber.i("Attempting auto connect")
-                    autoConnectPrinterUseCase.execute(Params(octoPrint))
+                    autoConnectPrinterUseCase.execute(
+                        if (connectionResponse.current.state == ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT) {
+                            // TODO Ask user which port to select
+                            val app = Injector.get().app()
+                            Toast.makeText(app, app.getString(R.string.auto_selection_failed), Toast.LENGTH_SHORT).show()
+                            Firebase.analytics.logEvent("auto_connect_failed", Bundle.EMPTY)
+                            Params(octoPrint, connectionResponse.options.ports.first())
+                        } else {
+                            Params(octoPrint)
+                        }
+                    )
                     psuCyclingState.postValue(PsuCycledState.NotCycled)
                 }
             }

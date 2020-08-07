@@ -15,11 +15,17 @@ class ConnectionStateDeserializer(
 
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ConnectionResponse.ConnectionState {
         return try {
-            ConnectionResponse.ConnectionState.valueOf(
-                json.asString
-                    .toUpperCase(Locale.ENGLISH)
-                    .replace(" ", "_")
-            )
+            val string = json.asString
+                .toUpperCase(Locale.ENGLISH)
+                .replace(" ", "_")
+                .replace(":", "")
+
+            when {
+                string.startsWith("ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT") -> ConnectionResponse.ConnectionState.ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT
+                string.startsWith("ERROR_CONNECTION_ERROR") -> ConnectionResponse.ConnectionState.CONNECTION_ERROR
+                string.contains("ERROR") -> ConnectionResponse.ConnectionState.UNKNOWN_ERROR
+                else -> ConnectionResponse.ConnectionState.valueOf(string)
+            }
         } catch (e: Exception) {
             logger.log(Level.SEVERE, "Unable to deserialize '$json'", e)
             ConnectionResponse.ConnectionState.UNKNOWN
