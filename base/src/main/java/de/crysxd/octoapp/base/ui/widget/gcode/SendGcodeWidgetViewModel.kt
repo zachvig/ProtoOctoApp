@@ -22,19 +22,17 @@ class SendGcodeWidgetViewModel(
 ) : BaseViewModel() {
 
     fun sendGcodeCommand(command: String) = viewModelScope.launch(coroutineExceptionHandler) {
-        octoPrintProvider.octoPrint.value?.let {
-            val gcodeCommand = GcodeCommand.Batch(command.split("\n").toTypedArray())
+        val gcodeCommand = GcodeCommand.Batch(command.split("\n").toTypedArray())
 
-            sendGcodeCommandUseCase.execute(Pair(it, gcodeCommand))
-            postMessage { con ->
-                con.getString(
-                    if (gcodeCommand.commands.size == 1) {
-                        R.string.sent_x
-                    } else {
-                        R.string.sent_x_and_y_others
-                    }, gcodeCommand.commands.first(), gcodeCommand.commands.size - 1
-                )
-            }
+        sendGcodeCommandUseCase.execute(ExecuteGcodeCommandUseCase.Param(gcodeCommand, true))
+        postMessage { con ->
+            con.getString(
+                if (gcodeCommand.commands.size == 1) {
+                    R.string.sent_x
+                } else {
+                    R.string.sent_x_and_y_others
+                }, gcodeCommand.commands.first(), gcodeCommand.commands.size - 1
+            )
         }
     }
 
