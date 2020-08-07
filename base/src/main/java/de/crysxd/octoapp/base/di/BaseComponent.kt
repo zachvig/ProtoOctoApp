@@ -56,6 +56,7 @@ interface BaseComponent {
     fun takeScreenshotUseCase(): TakeScreenshotUseCase
     fun formatDurationUseCase(): FormatDurationUseCase
     fun updateInstanceCapabilitiesUseCase(): UpdateInstanceCapabilitiesUseCase
+    fun formatEtaUseCase(): FormatEtaUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

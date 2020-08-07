@@ -2,6 +2,7 @@ package de.crysxd.octoapp.octoprint.models.socket
 
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
+import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 
@@ -16,7 +17,8 @@ sealed class Message {
         val logs: List<String>,
         val temps: List<HistoricTemperatureData>,
         val state: PrinterState.State?,
-        val progress: ProgressInformation?
+        val progress: ProgressInformation?,
+        val job: JobInformation?
     ) : Message() {
 
         data class ProgressInformation(
@@ -25,6 +27,10 @@ sealed class Message {
             val printTime: Int,
             val printTimeLeft: Int,
             val printTimeLeftOrigin: String
+        )
+
+        data class JobInformation(
+            val file: FileObject.File
         )
     }
 

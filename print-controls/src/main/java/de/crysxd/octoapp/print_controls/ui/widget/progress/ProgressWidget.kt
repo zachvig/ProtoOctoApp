@@ -79,15 +79,18 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
                     ObjectAnimator.ofInt(this, "level", level, (10000f * progress).roundToInt()).start()
                 }
 
+                val eta = it.progress?.let { Injector.get().formatEtaUseCase().execute(it.printTimeLeft) }
                 view.textViewProgressPercent.text = progressText
+                view.textViewPrintName.text = it.job?.file?.display
                 view.textViewTimeSpent.text = it.progress?.printTime?.toLong()?.let { formatDuration(it) }
                 view.textViewTimeLeft.text = it.progress?.printTimeLeft?.toLong()?.let { formatDuration(it) }
-                view.textViewEstimation.text = it.progress?.printTimeLeftOrigin
+                view.textVieEta.text = requireContext().getString(R.string.x_y, eta, it.progress?.printTimeLeftOrigin)
 
                 view.textViewProgressPercent.isVisible = true
+                view.textViewPrintName.isVisible = true
                 view.textViewTimeSpent.isVisible = true
                 view.textViewTimeLeft.isVisible = true
-                view.textViewEstimation.isVisible = true
+                view.textVieEta.isVisible = true
 
                 lastProgress = progress
             }

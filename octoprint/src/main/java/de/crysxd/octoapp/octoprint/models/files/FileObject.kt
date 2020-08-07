@@ -7,10 +7,10 @@ sealed class FileObject(
     open val name: String,
     open val origin: String,
     open val path: String,
-    open val type: String,
-    open val typePath: List<String>,
+    open val type: String?,
+    open val typePath: List<String>?,
     val size: Long,
-    open val ref: Reference
+    open val ref: Reference?
 ) {
 
     class File(
@@ -18,9 +18,9 @@ sealed class FileObject(
         name: String,
         origin: String,
         path: String,
-        type: String,
-        typePath: List<String>,
-        ref: Reference,
+        type: String?,
+        typePath: List<String>?,
+        ref: Reference?,
         size: Long,
         val thumbnail: String?,
         val date: Long

@@ -158,7 +158,7 @@ class SelectFileAdapter(
                     holder.imageViewArrow.visibility = View.INVISIBLE
                     holder.textViewDetail.isVisible = true
 
-                    val icon = if (file.typePath.contains(FileObject.FILE_TYPE_MACHINE_CODE)) {
+                    val icon = if (file.typePath?.contains(FileObject.FILE_TYPE_MACHINE_CODE) == true) {
                         printableFileIcon
                     } else {
                         otherFileIcon

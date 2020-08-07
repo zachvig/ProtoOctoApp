@@ -20,10 +20,6 @@ import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.*
-import java.util.concurrent.TimeUnit
 
 const val ACTION_STOP = "stop"
 
@@ -95,15 +91,7 @@ class PrintNotificationService : Service() {
                                 val progress = it.completion.toInt()
                                 val left = formatDurationUseCase.execute(it.printTimeLeft.toLong())
 
-                                val eta = Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(it.printTimeLeft.toLong()))
-                                lastEta = getString(
-                                    R.string.print_eta_x, if (eta.isToday()) {
-                                        DateFormat.getTimeInstance(DateFormat.SHORT).format(eta)
-                                    } else {
-                                        DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(eta)
-                                    }
-                                )
-
+                                lastEta = getString(R.string.print_eta_x, Injector.get().formatEtaUseCase().execute(it.printTimeLeft))
                                 val detail = getString(R.string.notification_printing_message, progress, left)
                                 val title = getString(
                                     when {
@@ -192,9 +180,4 @@ class PrintNotificationService : Service() {
         PendingIntent.FLAG_UPDATE_CURRENT
     )
 
-}
-
-private fun Date.isToday(): Boolean {
-    val format = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
-    return format.format(Date()) == format.format(this)
 }
