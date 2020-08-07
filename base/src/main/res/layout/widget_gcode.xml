@@ -1,42 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.flexbox.FlexboxLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/gcodeList"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:flexWrap="wrap"
-    app:alignItems="flex_start"
     app:alignContent="flex_start"
+    app:alignItems="flex_start"
     app:dividerDrawable="@drawable/flow_divider"
+    app:flexWrap="wrap"
     app:showDivider="middle">
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="M500"
-        style="@style/OctoTheme.Widget.Button.Small.Secondary" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="G29"
-        style="@style/OctoTheme.Widget.Button.Small.Secondary" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="M107"
-        style="@style/OctoTheme.Widget.Button.Small.Secondary" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="M851"
-        style="@style/OctoTheme.Widget.Button.Small.Secondary" />
-
-    <Button
         android:id="@+id/buttonOpenTerminal"
+        style="@style/OctoTheme.Widget.Button.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Other"
-        style="@style/OctoTheme.Widget.Button.Small" />
+        android:text="@string/other" />
+
 </com.google.android.flexbox.FlexboxLayout>

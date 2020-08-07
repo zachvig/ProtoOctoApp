@@ -2,10 +2,13 @@ package de.crysxd.octoapp.base.ui.widget.gcode
 
 import android.content.Context
 import android.text.InputType
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.models.GcodeHistoryItem
+import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
@@ -16,10 +19,27 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+const val MAX_HISTORY_LENGTH = 5
+
 class SendGcodeWidgetViewModel(
-    private val octoPrintProvider: OctoPrintProvider,
+    private val gcodeHistoryRepository: GcodeHistoryRepository,
     private val sendGcodeCommandUseCase: ExecuteGcodeCommandUseCase
 ) : BaseViewModel() {
+
+    private val mutableGcodes = MutableLiveData<List<GcodeHistoryItem>>()
+    val gcodes = mutableGcodes.map { it }
+
+    init {
+        updateGcodes()
+    }
+
+    private fun updateGcodes() {
+        mutableGcodes.postValue(
+            gcodeHistoryRepository.getHistory().sortedWith(
+                compareBy({ it.isFavorite }, { Long.MAX_VALUE - it.lastUsed })
+            ).take(MAX_HISTORY_LENGTH)
+        )
+    }
 
     fun sendGcodeCommand(command: String) = viewModelScope.launch(coroutineExceptionHandler) {
         val gcodeCommand = GcodeCommand.Batch(command.split("\n").toTypedArray())
@@ -34,6 +54,8 @@ class SendGcodeWidgetViewModel(
                 }, gcodeCommand.commands.first(), gcodeCommand.commands.size - 1
             )
         }
+
+        updateGcodes()
     }
 
     fun sendGcodeCommand(context: Context) = viewModelScope.launch(coroutineExceptionHandler) {

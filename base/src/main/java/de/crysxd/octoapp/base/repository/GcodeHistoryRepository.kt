@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
+import timber.log.Timber
 
 class GcodeHistoryRepository(
     private val dataSource: DataSource<List<GcodeHistoryItem>>
@@ -18,6 +19,7 @@ class GcodeHistoryRepository(
     }
 
     fun recordGcodeSend(command: String) = GlobalScope.launch(Dispatchers.IO) {
+        Timber.d("Record gcode send: $command")
         supervisorScope {
             val current = getHistory()
             val oldItem = getHistory().firstOrNull { it.command == command } ?: GcodeHistoryItem(command)

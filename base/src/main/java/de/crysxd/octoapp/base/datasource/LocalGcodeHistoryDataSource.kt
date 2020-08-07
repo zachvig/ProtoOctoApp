@@ -23,6 +23,6 @@ class LocalGcodeHistoryDataSource(
 
     override fun get(): List<GcodeHistoryItem> = gson.fromJson(
         sharedPreferences.getString(KEY, "[]"),
-        object : TypeToken<ArrayList<List<GcodeHistoryItem>>>() {}.type
+        object : TypeToken<List<GcodeHistoryItem>>() {}.type
     ) ?: emptyList()
 }

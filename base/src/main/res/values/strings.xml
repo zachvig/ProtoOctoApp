@@ -58,4 +58,5 @@
     <string name="fullscreen">Fullscreen</string>
     <string name="information_about_your_octoprint">Information about your OctoPrint</string>
     <string name="information_about_your_phone">Information about your phone</string>
+    <string name="other">Other</string>
 </resources>
