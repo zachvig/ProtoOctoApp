@@ -50,7 +50,7 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
     private fun handleUiStateUpdate(state: ConnectPrinterViewModel.UiState) {
         buttonTurnOnPsu.isVisible = false
         buttonTurnOffPsu.isVisible = false
-        buttonOpenOctoprint.isVisible = true
+        buttonOpenOctoprint.isVisible = false
 
         when (state) {
             ConnectPrinterViewModel.UiState.OctoPrintNotAvailable -> showStatus(
