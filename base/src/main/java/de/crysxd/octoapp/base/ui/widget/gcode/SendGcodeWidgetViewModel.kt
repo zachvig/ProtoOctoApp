@@ -41,7 +41,7 @@ class SendGcodeWidgetViewModel(
         )
     }
 
-    fun sendGcodeCommand(command: String) = viewModelScope.launch(coroutineExceptionHandler) {
+    fun sendGcodeCommand(command: String, updateViewAfterDone: Boolean = false) = viewModelScope.launch(coroutineExceptionHandler) {
         val gcodeCommand = GcodeCommand.Batch(command.split("\n").toTypedArray())
 
         sendGcodeCommandUseCase.execute(ExecuteGcodeCommandUseCase.Param(gcodeCommand, true))
@@ -55,7 +55,9 @@ class SendGcodeWidgetViewModel(
             )
         }
 
-        updateGcodes()
+        if (updateViewAfterDone) {
+            updateGcodes()
+        }
     }
 
     fun sendGcodeCommand(context: Context) = viewModelScope.launch(coroutineExceptionHandler) {
@@ -76,7 +78,7 @@ class SendGcodeWidgetViewModel(
         withContext(Dispatchers.Default) {
             result.second.asFlow().first()
         }?.let {
-            sendGcodeCommand(it)
+            sendGcodeCommand(it, true)
         }
     }
 }

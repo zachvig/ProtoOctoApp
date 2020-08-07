@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -44,7 +43,6 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
 
     private fun showGcodes(gcodes: List<GcodeHistoryItem>) {
         TransitionManager.beginDelayedTransition(gcodeList)
-        val context = ContextThemeWrapper(requireContext(), R.style.OctoTheme_Widget_Button_Small_Secondary)
 
         // Remove all old views
         val removedViews = mutableListOf<Button>()
