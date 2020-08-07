@@ -131,15 +131,30 @@
 
     <TextView
         android:id="@+id/textVieEta"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_0"
         android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/labelBarrier"
         app:layout_constraintTop_toBottomOf="@+id/textViewTimeLeftLabel"
         tools:text="32 min"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/estimationIndicator"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/bg_circle"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toEndOf="@+id/textVieEta"
+        app:layout_constraintTop_toTopOf="@+id/textVieEta"
+        tools:backgroundTint="#f00"
         tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.Barrier
@@ -147,7 +162,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="end"
-        app:constraint_referenced_ids="textViewTimeSpentLabel,textViewEstimationLabel,textViewTimeLeftLabel"
+        app:constraint_referenced_ids="textViewPrintNameLabel,textViewTimeSpentLabel,textViewEtaLabel,textViewTimeLeftLabel"
         tools:layout_editor_absoluteX="393dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

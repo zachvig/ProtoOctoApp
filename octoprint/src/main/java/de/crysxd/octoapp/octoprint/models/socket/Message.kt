@@ -27,7 +27,17 @@ sealed class Message {
             val printTime: Int,
             val printTimeLeft: Int,
             val printTimeLeftOrigin: String
-        )
+        ) {
+
+            companion object {
+                const val ORIGIN_LINEAR = "linear"
+                const val ORIGIN_ANALYSIS = "analysis"
+                const val ORIGIN_ESTIMATE = "estimate"
+                const val ORIGIN_AVERAGE = "average"
+                const val ORIGIN_MIXED_ANALYSIS = "mixed-analysis"
+                const val ORIGIN_MIXED_AVERAGE = "mixed-average"
+            }
+        }
 
         data class JobInformation(
             val file: FileObject.File

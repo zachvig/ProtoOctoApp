@@ -21,10 +21,14 @@
     <color name="primary_button_background">@color/accent</color>
     <color name="button_more_foreground">@color/accent</color>
     <color name="thumbnail_tint">#18F101</color>
+    <color name="analysis_bad">@color/red</color>
+    <color name="analysis_normal">@color/orange</color>
+    <color name="analysis_good">@color/primary</color>
 
     <color name="white">#fff</color>
     <color name="black">#000</color>
     <color name="red">#F44336</color>
+    <color name="orange">#FF9800</color>
     <color name="light_grey">#999</color>
     <color name="dark_grey">#1a1a1a</color>
     <color name="light_blue">#0D3888C6</color>
