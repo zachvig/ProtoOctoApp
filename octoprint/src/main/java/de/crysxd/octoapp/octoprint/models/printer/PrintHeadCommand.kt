@@ -2,7 +2,7 @@ package de.crysxd.octoapp.octoprint.models.printer
 
 sealed class PrintHeadCommand(val command: String) {
 
-    data class JogPrintHeadCommand(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f, val speed: Int = 500) : PrintHeadCommand("jog")
+    data class JogPrintHeadCommand(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f, val speed: Int? = null) : PrintHeadCommand("jog")
 
     abstract class HomePrintHeadCommand(val axes: Array<String>) : PrintHeadCommand("home")
 
