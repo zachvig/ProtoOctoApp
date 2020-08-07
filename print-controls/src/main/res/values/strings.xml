@@ -21,4 +21,6 @@
     <string name="pausing">Pausing…</string>
     <string name="cancelling">Cancelling…</string>
     <string name="pause">Pause</string>
+    <string name="eta">ETA</string>
+    <string name="print_name">Print name</string>
 </resources>

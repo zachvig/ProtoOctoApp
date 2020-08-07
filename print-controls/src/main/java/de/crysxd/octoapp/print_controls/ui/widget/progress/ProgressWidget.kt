@@ -2,6 +2,7 @@ package de.crysxd.octoapp.print_controls.ui.widget.progress
 
 import android.animation.ObjectAnimator
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.ClipDrawable
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,12 @@ import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidgetViewModel
 import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
+import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage.ProgressInformation.Companion.ORIGIN_ANALYSIS
+import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage.ProgressInformation.Companion.ORIGIN_AVERAGE
+import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage.ProgressInformation.Companion.ORIGIN_ESTIMATE
+import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage.ProgressInformation.Companion.ORIGIN_LINEAR
+import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage.ProgressInformation.Companion.ORIGIN_MIXED_ANALYSIS
+import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage.ProgressInformation.Companion.ORIGIN_MIXED_AVERAGE
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.injectViewModel
 import kotlinx.android.synthetic.main.widget_progress.view.*
@@ -80,14 +87,28 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
                 }
 
                 view.textViewProgressPercent.text = progressText
+                view.textViewPrintName.text = it.job?.file?.display
                 view.textViewTimeSpent.text = it.progress?.printTime?.toLong()?.let { formatDuration(it) }
                 view.textViewTimeLeft.text = it.progress?.printTimeLeft?.toLong()?.let { formatDuration(it) }
-                view.textViewEstimation.text = it.progress?.printTimeLeftOrigin
+                view.textVieEta.text = it.progress?.let { Injector.get().formatEtaUseCase().execute(it.printTimeLeft) }
+                view.estimationIndicator.background?.setTint(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        when (it.progress?.printTimeLeftOrigin) {
+                            ORIGIN_LINEAR -> R.color.analysis_bad
+                            ORIGIN_ANALYSIS, ORIGIN_MIXED_ANALYSIS -> R.color.analysis_normal
+                            ORIGIN_AVERAGE, ORIGIN_MIXED_AVERAGE, ORIGIN_ESTIMATE -> R.color.analysis_good
+                            else -> Color.TRANSPARENT
+                        }
+                    )
+                )
 
                 view.textViewProgressPercent.isVisible = true
+                view.textViewPrintName.isVisible = true
                 view.textViewTimeSpent.isVisible = true
                 view.textViewTimeLeft.isVisible = true
-                view.textViewEstimation.isVisible = true
+                view.textVieEta.isVisible = true
+                view.estimationIndicator.isVisible = true
 
                 lastProgress = progress
             }

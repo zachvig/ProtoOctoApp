@@ -49,26 +49,50 @@
         tools:visibility="visible" />
 
     <TextView
-        android:id="@+id/textViewTimeSpentLabel"
+        android:id="@+id/textViewPrintNameLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_2"
-        android:text="@string/time_spent"
+        android:text="@string/print_name"
         android:textColor="@color/dark_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progressBarBackground" />
+
+    <TextView
+        android:id="@+id/textViewPrintName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_2"
+        android:layout_marginTop="@dimen/margin_2"
+        android:visibility="invisible"
+        android:ellipsize="middle"
+        android:singleLine="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/labelBarrier"
+        app:layout_constraintTop_toBottomOf="@+id/progressBarBackground"
+        tools:text="2:45 h"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/textViewTimeSpentLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_2"
+        android:text="@string/time_spent"
+        android:textColor="@color/dark_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPrintNameLabel" />
 
     <TextView
         android:id="@+id/textViewTimeSpent"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
-        android:layout_marginTop="@dimen/margin_2"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/labelBarrier"
-        app:layout_constraintTop_toBottomOf="@+id/progressBarBackground"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPrintNameLabel"
         tools:text="2:45 h"
         tools:visibility="visible" />
 
@@ -97,27 +121,42 @@
         tools:visibility="visible" />
 
     <TextView
-        android:id="@+id/textViewEstimationLabel"
+        android:id="@+id/textViewEtaLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_0"
-        android:text="@string/estimation"
+        android:text="@string/eta"
         android:textColor="@color/dark_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewTimeLeftLabel" />
 
     <TextView
-        android:id="@+id/textViewEstimation"
-        android:layout_width="0dp"
+        android:id="@+id/textVieEta"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_0"
         android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/labelBarrier"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTimeLeft"
-        tools:text="Linear"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTimeLeftLabel"
+        tools:text="32 min"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/estimationIndicator"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/bg_circle"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toEndOf="@+id/textVieEta"
+        app:layout_constraintTop_toTopOf="@+id/textVieEta"
+        tools:backgroundTint="#f00"
         tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.Barrier
@@ -125,7 +164,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="end"
-        app:constraint_referenced_ids="textViewTimeSpentLabel,textViewEstimationLabel,textViewTimeLeftLabel"
+        app:constraint_referenced_ids="textViewPrintNameLabel,textViewTimeSpentLabel,textViewEtaLabel,textViewTimeLeftLabel"
         tools:layout_editor_absoluteX="393dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
