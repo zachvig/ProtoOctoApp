@@ -36,6 +36,8 @@ sealed class Message {
         val isPsuOn: Boolean
     ) : Message()
 
+    object ReAuthRequired : Message()
+
     data class RawMessage(
         val rawData: JsonObject
     ) : Message()
