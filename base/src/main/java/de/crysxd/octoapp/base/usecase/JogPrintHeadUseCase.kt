@@ -2,8 +2,6 @@ package de.crysxd.octoapp.base.usecase
 
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.printer.PrintHeadCommand
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class JogPrintHeadUseCase @Inject constructor() : UseCase<JogPrintHeadUseCase.Param, Unit> {
@@ -12,7 +10,8 @@ class JogPrintHeadUseCase @Inject constructor() : UseCase<JogPrintHeadUseCase.Pa
         val octoPrint: OctoPrint,
         val xDistance: Float = 0f,
         val yDistance: Float = 0f,
-        val zDistance: Float = 0f
+        val zDistance: Float = 0f,
+        val speedMmMin: Int = 4000
     )
 
     override suspend fun execute(param: Param) {
@@ -20,7 +19,8 @@ class JogPrintHeadUseCase @Inject constructor() : UseCase<JogPrintHeadUseCase.Pa
             PrintHeadCommand.JogPrintHeadCommand(
                 param.xDistance,
                 param.yDistance,
-                param.zDistance
+                param.zDistance,
+                param.speedMmMin
             )
         )
     }
