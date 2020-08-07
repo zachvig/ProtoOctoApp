@@ -122,10 +122,18 @@ class EventWebSocket(
 
             try {
                 val message = gson.fromJson(text, Message::class.java)
+
                 if (message is Message.CurrentMessage) {
                     lastCurrentMessage = message
                 }
-                dispatchEvent(Event.MessageReceived(message))
+
+                if (message is Message.ReAuthRequired) {
+                    logger.log(Level.WARNING, "Websocket needs to authenticate again")
+                    stop()
+                    reconnect()
+                } else {
+                    dispatchEvent(Event.MessageReceived(message))
+                }
             } catch (e: Exception) {
                 logger.log(Level.SEVERE, "Error while parsing websocket message", e)
             }
@@ -139,9 +147,12 @@ class EventWebSocket(
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
-            isConnected.set(false)
-
             logger.log(Level.WARNING, "Websocket encountered failure", t)
+            reconnect(t)
+        }
+
+        private fun reconnect(t: Throwable? = null) {
+            isConnected.set(false)
 
             reconnectJob = GlobalScope.launch {
                 delay(RECONNECT_DELAY_MS)
