@@ -5,7 +5,9 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import android.provider.Settings
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -22,6 +24,11 @@ class OctoApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        // Setup analytics
+        // Do not enable if we are in a TestLab environment
+        val testLabSetting: String = Settings.System.getString(contentResolver, "firebase.test.lab")
+        Firebase.analytics.setAnalyticsCollectionEnabled("true" != testLabSetting)
 
         // Setup logging
         if (BuildConfig.DEBUG) {

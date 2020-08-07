@@ -35,13 +35,13 @@ android {
 
     buildTypes {
         debug {
-            manifestPlaceholders = [crashlyticsCollectionEnabled:"false"]
+            manifestPlaceholders = [firebaseRemoteServicesEnabled:"false"]
         }
         release {
             minifyEnabled false
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            manifestPlaceholders = [crashlyticsCollectionEnabled:"true"]
+            manifestPlaceholders = [firebaseRemoteServicesEnabled:"true"]
         }
     }
 
