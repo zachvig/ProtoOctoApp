@@ -30,7 +30,8 @@ open class ViewModelModule {
         turnOffPsuUseCase: TurnOffPsuUseCase,
         cyclePsuUseCase: CyclePsuUseCase,
         autoConnectPrinterUseCase: AutoConnectPrinterUseCase,
-        getPrinterConnectionUseCase: GetPrinterConnectionUseCase
+        getPrinterConnectionUseCase: GetPrinterConnectionUseCase,
+        openOctoprintWebUseCase: OpenOctoprintWebUseCase
     ): ViewModel = ConnectPrinterViewModel(
         octoPrintProvider,
         turnOnPsuUseCase,
@@ -38,6 +39,7 @@ open class ViewModelModule {
         cyclePsuUseCase,
         autoConnectPrinterUseCase,
         getPrinterConnectionUseCase,
-        octoPrintRepository
+        octoPrintRepository,
+        openOctoprintWebUseCase
     )
 }

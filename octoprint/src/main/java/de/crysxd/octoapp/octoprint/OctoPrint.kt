@@ -30,7 +30,7 @@ class OctoPrint(
 ) {
 
     companion object {
-        const val TESTED_SERVER_VERSION = "1.4.0"
+        const val TESTED_SERVER_VERSION = "1.4.2"
     }
 
     private val webSocket = EventWebSocket(

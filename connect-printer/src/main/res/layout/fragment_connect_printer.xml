@@ -87,5 +87,16 @@
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="@string/error_no_printer_connected" />
 
+    <Button
+        android:id="@+id/buttonOpenOctoprint"
+        style="@style/OctoTheme.Widget.Button.Small.Secondary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_3"
+        android:text="@string/open_octoprint"
+        app:layout_constraintEnd_toEndOf="@+id/textViewSubState"
+        app:layout_constraintStart_toStartOf="@+id/textViewSubState"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSubState" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

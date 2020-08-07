@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.connect_printer.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.*
@@ -33,7 +34,8 @@ class ConnectPrinterViewModel(
     private val cyclePsuUseCase: CyclePsuUseCase,
     private val autoConnectPrinterUseCase: AutoConnectPrinterUseCase,
     private val getPrinterConnectionUseCase: GetPrinterConnectionUseCase,
-    private val octoPrintRepository: OctoPrintRepository
+    private val octoPrintRepository: OctoPrintRepository,
+    private val openOctoprintWebUseCase: OpenOctoprintWebUseCase
 ) : BaseViewModel() {
 
     private val connectionTimeoutNs = TimeUnit.SECONDS.toNanos(Firebase.remoteConfig.getLong("printer_connection_timeout_sec"))
@@ -223,6 +225,12 @@ class ConnectPrinterViewModel(
     fun retryConnectionFromOfflineState() {
         lastConnectionAttempt = 0L
         psuCyclingState.postValue(PsuCycledState.Cycled)
+    }
+
+    fun openWebInterface(context: Context) = viewModelScope.launch(coroutineExceptionHandler) {
+        octoPrintProvider.octoPrint.value?.let {
+            openOctoprintWebUseCase.execute(Pair(it, context))
+        }
     }
 
     private sealed class PsuCycledState {
