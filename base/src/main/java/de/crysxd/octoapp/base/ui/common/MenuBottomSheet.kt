@@ -80,7 +80,7 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
                 0,
                 padding,
                 0,
-                padding + requireActivity().window.decorView.rootWindowInsets.systemWindowInsetBottom
+                padding + (activity?.window?.decorView?.rootWindowInsets?.systemWindowInsetBottom ?: 0)
             )
 
         }
