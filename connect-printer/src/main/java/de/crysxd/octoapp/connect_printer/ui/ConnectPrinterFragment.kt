@@ -40,12 +40,17 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
                     views.forEach { it.animate().alpha(1f).start() }
                 }
             }
+
+            buttonOpenOctoprint.setOnClickListener {
+                viewModel.openWebInterface(it.context)
+            }
         })
     }
 
     private fun handleUiStateUpdate(state: ConnectPrinterViewModel.UiState) {
         buttonTurnOnPsu.isVisible = false
         buttonTurnOffPsu.isVisible = false
+        buttonOpenOctoprint.isVisible = true
 
         when (state) {
             ConnectPrinterViewModel.UiState.OctoPrintNotAvailable -> showStatus(
@@ -83,6 +88,7 @@ class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
             )
 
             is ConnectPrinterViewModel.UiState.PrinterOffline -> {
+                buttonOpenOctoprint.isVisible = true
                 buttonTurnOnPsu.isVisible = true
                 buttonTurnOnPsu.setOnClickListener {
                     if (state.psuSupported) {
