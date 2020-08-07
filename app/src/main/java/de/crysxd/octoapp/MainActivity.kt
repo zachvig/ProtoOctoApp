@@ -53,6 +53,13 @@ class MainActivity : OctoActivity() {
             findNavController(R.id.mainNavController).addOnDestinationChangedListener { _, destination, _ ->
                 Timber.i("Navigated to ${destination.label}")
                 Firebase.analytics.setCurrentScreen(this@MainActivity, destination.label?.toString(), null)
+
+                when (destination.id) {
+                    R.id.loginFragment -> Firebase.analytics.logEvent("workspace_shown_login", Bundle.EMPTY)
+                    R.id.connectPrinterFragment -> Firebase.analytics.logEvent("workspace_shown_connect", Bundle.EMPTY)
+                    R.id.prePrintControlsFragment -> Firebase.analytics.logEvent("workspace_shown_pre_print", Bundle.EMPTY)
+                    R.id.printControlsFragment -> Firebase.analytics.logEvent("workspace_shown_print", Bundle.EMPTY)
+                }
             }
         }
 
