@@ -168,27 +168,26 @@ class ConnectPrinterViewModel(
         ConnectionResponse.ConnectionState.PRINTING
     ).contains(connectionResponse.current.state)
 
-    private fun autoConnect(connectionResponse: ConnectionResponse) =
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            octoPrintProvider.octoPrint.value?.let { octoPrint ->
-                if (connectionResponse.options.ports.isNotEmpty() && !didJustAttemptToConnect() && !isPrinterConnecting(connectionResponse)) {
-                    recordConnectionAttempt()
-                    Timber.i("Attempting auto connect")
-                    autoConnectPrinterUseCase.execute(
-                        if (connectionResponse.current.state == ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT) {
-                            // TODO Ask user which port to select
-                            val app = Injector.get().app()
-                            Toast.makeText(app, app.getString(R.string.auto_selection_failed), Toast.LENGTH_SHORT).show()
-                            Firebase.analytics.logEvent("auto_connect_failed", Bundle.EMPTY)
-                            Params(octoPrint, connectionResponse.options.ports.first())
-                        } else {
-                            Params(octoPrint)
-                        }
-                    )
-                    psuCyclingState.postValue(PsuCycledState.NotCycled)
-                }
+    private fun autoConnect(connectionResponse: ConnectionResponse) = viewModelScope.launch(coroutineExceptionHandler) {
+        octoPrintProvider.octoPrint.value?.let { octoPrint ->
+            if (connectionResponse.options.ports.isNotEmpty() && !didJustAttemptToConnect() && !isPrinterConnecting(connectionResponse)) {
+                recordConnectionAttempt()
+                Timber.i("Attempting auto connect")
+                autoConnectPrinterUseCase.execute(
+                    if (connectionResponse.current.state == ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT) {
+                        // TODO Ask user which port to select
+                        val app = Injector.get().app()
+                        Toast.makeText(app, app.getString(R.string.auto_selection_failed), Toast.LENGTH_SHORT).show()
+                        Firebase.analytics.logEvent("auto_connect_failed", Bundle.EMPTY)
+                        Params(octoPrint, connectionResponse.options.ports.first())
+                    } else {
+                        Params(octoPrint)
+                    }
+                )
+                psuCyclingState.postValue(PsuCycledState.NotCycled)
             }
         }
+    }
 
     private fun didJustAttemptToConnect() =
         (System.nanoTime() - lastConnectionAttempt) < TimeUnit.SECONDS.toNanos(10)
