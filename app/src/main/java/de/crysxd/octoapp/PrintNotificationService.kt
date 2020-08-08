@@ -56,8 +56,8 @@ class PrintNotificationService : Service() {
         liveData.removeObserver(observer)
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        if (intent.action == ACTION_STOP) {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == ACTION_STOP) {
             stopSelf()
         }
 
