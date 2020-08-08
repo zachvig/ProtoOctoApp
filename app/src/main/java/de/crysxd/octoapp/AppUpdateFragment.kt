@@ -15,7 +15,7 @@ import timber.log.Timber
 
 class AppUpdateFragment : Fragment() {
 
-    private val appUpdateManager by lazy { AppUpdateManagerFactory.create(context) }
+    private val appUpdateManager by lazy { AppUpdateManagerFactory.create(requireContext()) }
     private val minUpdatePriority = 2
     private val appUpdateType = AppUpdateType.IMMEDIATE
     private val appUpdateRequestCode = 135
