@@ -2,7 +2,6 @@ package de.crysxd.octoapp.print_controls.ui.widget.progress
 
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.ClipDrawable
 import android.view.LayoutInflater
 import android.view.View
@@ -98,7 +97,7 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
                             ORIGIN_LINEAR -> R.color.analysis_bad
                             ORIGIN_ANALYSIS, ORIGIN_MIXED_ANALYSIS -> R.color.analysis_normal
                             ORIGIN_AVERAGE, ORIGIN_MIXED_AVERAGE, ORIGIN_ESTIMATE -> R.color.analysis_good
-                            else -> Color.TRANSPARENT
+                            else -> android.R.color.transparent
                         }
                     )
                 )
