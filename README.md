@@ -17,6 +17,12 @@ This app supports the [PSU Control](https://plugins.octoprint.org/plugins/psucon
 **Emergency stop**
 The app offers a dedicated button to trigger an `M112` emergency stop from the print-workspace
 
+**Webcam support**
+The webcam will be shown in the app as configured with OctoPrint
+
+**Print notifications**
+You will receive notifications about ongoing prints including progress updates
+
 # Installation
 You can install the app from [Google Play](https://play.google.com/store/apps/details?id=de.crysxd.octoapp) or download an APK from the [release section](https://gitlab.com/crysxd/octoapp/-/releases).
 
