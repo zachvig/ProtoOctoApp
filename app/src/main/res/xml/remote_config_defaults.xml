@@ -8,4 +8,16 @@
         <key>printer_connection_timeout_sec</key>
         <value>10</value>
     </entry>
+    <entry>
+        <key>review_flow_condition_min_app_launches</key>
+        <value>3</value>
+    </entry>
+    <entry>
+        <key>review_flow_condition_min_app_usage_min</key>
+        <value>180</value>
+    </entry>
+    <entry>
+        <key>review_flow_condition_print_was_active_required</key>
+        <value>true</value>
+    </entry>
 </defaultsMap>
