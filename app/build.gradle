@@ -15,8 +15,8 @@ android {
         applicationId "de.crysxd.octoapp"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 1115
-        versionName "1.1-beta10"
+        versionCode 1116
+        versionName "1.1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -58,7 +58,7 @@ android {
 
 play {
     serviceAccountCredentials = file("service-account.json")
-    track = "beta"
+    track = "production"
     userFraction = 1
     defaultToAppBundles = true
     resolutionStrategy = "ignore"
