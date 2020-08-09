@@ -75,8 +75,16 @@ class EventWebSocket(
     }
 
     fun eventFlow() = channel.asFlow()
-        .onStart { subscriberCount.incrementAndGet(); start() }
-        .onCompletion { subscriberCount.decrementAndGet(); stop() }
+        .onStart {
+            logger.log(Level.INFO, "onStart for Flow")
+            subscriberCount.incrementAndGet()
+            start()
+        }
+        .onCompletion {
+            logger.log(Level.INFO, "onCompletion for Flow")
+            subscriberCount.decrementAndGet()
+            stop()
+        }
 
     private fun dispatchEvent(event: Event) {
         channel.offer(event)

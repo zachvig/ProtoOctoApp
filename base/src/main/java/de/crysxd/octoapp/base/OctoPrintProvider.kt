@@ -1,8 +1,6 @@
 package de.crysxd.octoapp.base
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.asLiveData
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
@@ -12,9 +10,10 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 import java.util.logging.Level
 
@@ -26,23 +25,24 @@ class OctoPrintProvider(
     private val analytics: FirebaseAnalytics
 ) {
 
-    val octoPrint: LiveData<OctoPrint?> =
-        Transformations.map(octoPrintRepository.instanceInformation) {
-            if (it == null) {
-                null
-            } else {
-                createAdHocOctoPrint(it)
-            }
+    val octoPrintFlow = octoPrintRepository.instanceInformationFlow().map {
+        if (it == null) {
+            null
+        } else {
+            createAdHocOctoPrint(it)
         }
-
-    @Suppress("EXPERIMENTAL_API_USAGE")
-    val eventLiveData: LiveData<Event> = Transformations.switchMap(octoPrint) {
-        it?.getEventWebSocket()
-            ?.eventFlow()
-            ?.map { e -> updateAnalyticsProfileWithEvents(e); e }
-            ?.catch { e -> Timber.e(e) }
-            ?.asLiveData() ?: MutableLiveData<Event>()
     }
+
+    @Deprecated("Use octoPrintFlow")
+    val octoPrint: LiveData<OctoPrint?> = octoPrintFlow.asLiveData()
+
+    val eventFlow = octoPrintFlow
+        .flatMapLatest { it?.getEventWebSocket()?.eventFlow() ?: emptyFlow() }
+        .map { e -> updateAnalyticsProfileWithEvents(e); e }
+        .catch { e -> Timber.e(e) }
+
+    @Deprecated("Use eventFlow")
+    val eventLiveData: LiveData<Event> = eventFlow.asLiveData()
 
     private fun updateAnalyticsProfileWithEvents(event: Event) {
         when {
