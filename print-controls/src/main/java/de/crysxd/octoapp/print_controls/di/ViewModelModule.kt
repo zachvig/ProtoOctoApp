@@ -8,6 +8,7 @@ import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.ViewModelFactory
 import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidgetViewModel
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
@@ -55,5 +56,6 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(TuneWidgetViewModel::class)
     open fun provideTuneWidgetViewModel(
-    ): ViewModel = TuneWidgetViewModel()
+        serialCommunicationLogsRepository: SerialCommunicationLogsRepository
+    ): ViewModel = TuneWidgetViewModel(serialCommunicationLogsRepository)
 }
