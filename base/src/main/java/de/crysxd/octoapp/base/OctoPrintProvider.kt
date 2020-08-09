@@ -42,7 +42,7 @@ class OctoPrintProvider(
             ?.onStart { webSocket.start() }
             ?.onCompletion { webSocket.stop() }
             ?.map { e -> updateAnalyticsProfileWithEvents(e); e }
-            ?.catch { Timber.e(it) }
+            ?.catch { e -> Timber.e(e) }
             ?.asLiveData() ?: MutableLiveData<Event>()
     }
 
