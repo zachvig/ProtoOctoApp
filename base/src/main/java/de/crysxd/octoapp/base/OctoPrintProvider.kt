@@ -10,10 +10,7 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.util.logging.Level
 
@@ -25,11 +22,20 @@ class OctoPrintProvider(
     private val analytics: FirebaseAnalytics
 ) {
 
+    private var octoPrintCache: Pair<OctoPrintInstanceInformationV2, OctoPrint>? = null
     val octoPrintFlow = octoPrintRepository.instanceInformationFlow().map {
-        if (it == null) {
-            null
-        } else {
-            createAdHocOctoPrint(it)
+        when {
+            it == null -> null
+            octoPrintCache?.first != it -> {
+                val octoPrint = createAdHocOctoPrint(it)
+                Timber.d("Created new OctoPrint: $octoPrint")
+                octoPrintCache = Pair(it, octoPrint)
+                octoPrint
+            }
+            else -> {
+                Timber.d("Took OctoPrint from cache: ${octoPrintCache?.second}")
+                octoPrintCache?.second
+            }
         }
     }
 
