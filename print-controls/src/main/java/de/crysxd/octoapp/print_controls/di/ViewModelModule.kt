@@ -15,6 +15,7 @@ import de.crysxd.octoapp.base.usecase.ChangeFilamentUseCase
 import de.crysxd.octoapp.base.usecase.EmergencyStopUseCase
 import de.crysxd.octoapp.base.usecase.TogglePausePrintJobUseCase
 import de.crysxd.octoapp.print_controls.ui.PrintControlsViewModel
+import de.crysxd.octoapp.print_controls.ui.widget.tune.TuneWidgetViewModel
 import javax.inject.Provider
 
 @Module
@@ -49,4 +50,10 @@ open class ViewModelModule {
     open fun provideProgressWidgetViewModel(
         octoPrintProvider: OctoPrintProvider
     ): ViewModel = ProgressWidgetViewModel(octoPrintProvider)
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(TuneWidgetViewModel::class)
+    open fun provideTuneWidgetViewModel(
+    ): ViewModel = TuneWidgetViewModel()
 }

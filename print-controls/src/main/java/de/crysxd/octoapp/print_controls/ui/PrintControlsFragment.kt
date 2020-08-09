@@ -19,6 +19,7 @@ import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.injectParentViewModel
 import de.crysxd.octoapp.print_controls.di.injectViewModel
 import de.crysxd.octoapp.print_controls.ui.widget.progress.ProgressWidget
+import de.crysxd.octoapp.print_controls.ui.widget.tune.TuneWidget
 import kotlinx.android.synthetic.main.fragment_print_controls.*
 import timber.log.Timber
 
@@ -96,6 +97,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
                 widgets.add(WebcamWidget(this@PrintControlsFragment))
             }
 
+            widgets.add(TuneWidget(this@PrintControlsFragment))
             Timber.i("Installing widgets: ${widgets.map { it::class.java.simpleName }}")
             adapter.setWidgets(widgets)
         }

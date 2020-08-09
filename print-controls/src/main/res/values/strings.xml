@@ -7,6 +7,7 @@
     <string name="time_spent">Time spent</string>
     <string name="progress">Progress</string>
     <string name="x_percent">%.0f %%</string>
+    <string name="x_percent_int">%d %%</string>
     <string name="change_filament_confirmation_message">Do you want to change the filament?</string>
     <string name="change_filament_confirmation_action">Change filament</string>
     <string name="pause_print_confirmation_message">Do you want to pause the print?</string>
@@ -23,4 +24,8 @@
     <string name="pause">Pause</string>
     <string name="eta">ETA</string>
     <string name="print_name">Print name</string>
+    <string name="tune">Tune</string>
+    <string name="cd_feed_rate">Feed rate</string>
+    <string name="cd_flow_rate">Flow rate</string>
+    <string name="cd_fan_speed">Fan speed</string>
 </resources>
