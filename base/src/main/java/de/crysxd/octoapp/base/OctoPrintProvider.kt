@@ -12,13 +12,13 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.util.logging.Level
 
+@Suppress("EXPERIMENTAL_API_USAGE")
 class OctoPrintProvider(
     private val timberHandler: TimberHandler,
     private val invalidApiKeyInterceptor: InvalidApiKeyInterceptor,
@@ -37,10 +37,8 @@ class OctoPrintProvider(
 
     @Suppress("EXPERIMENTAL_API_USAGE")
     val eventLiveData: LiveData<Event> = Transformations.switchMap(octoPrint) {
-        val webSocket = it?.getEventWebSocket()
-        webSocket?.eventFlow()
-            ?.onStart { webSocket.start() }
-            ?.onCompletion { webSocket.stop() }
+        it?.getEventWebSocket()
+            ?.eventFlow()
             ?.map { e -> updateAnalyticsProfileWithEvents(e); e }
             ?.catch { e -> Timber.e(e) }
             ?.asLiveData() ?: MutableLiveData<Event>()

@@ -7,6 +7,8 @@ import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -14,6 +16,7 @@ import okhttp3.WebSocket
 import java.net.URI
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -37,10 +40,10 @@ class EventWebSocket(
     private var isConnected = AtomicBoolean(false)
     private var lastCurrentMessage: Message.CurrentMessage? = null
     private val channel = BroadcastChannel<Event>(15)
+    private val subscriberCount = AtomicInteger(0)
 
     fun start() {
-        if (isConnected.compareAndSet(false, true)) {
-
+        if (subscriberCount.get() > 0 && isConnected.compareAndSet(false, true)) {
             val request = Request.Builder()
                 .url(
                     URI.create("$webUrl/")
@@ -61,15 +64,19 @@ class EventWebSocket(
     }
 
     fun stop() {
-        webSocket?.cancel()
-        reconnectJob?.cancel()
-        reportDisconnectedJob?.cancel()
-        dispatchEvent(Event.Disconnected())
-        logger.log(Level.INFO, "Closing websocket")
-        handleClosure()
+        if (subscriberCount.get() == 0) {
+            webSocket?.cancel()
+            reconnectJob?.cancel()
+            reportDisconnectedJob?.cancel()
+            dispatchEvent(Event.Disconnected())
+            logger.log(Level.INFO, "Closing websocket")
+            handleClosure()
+        }
     }
 
     fun eventFlow() = channel.asFlow()
+        .onStart { subscriberCount.incrementAndGet(); start() }
+        .onCompletion { subscriberCount.decrementAndGet(); stop() }
 
     private fun dispatchEvent(event: Event) {
         channel.offer(event)
