@@ -50,8 +50,6 @@ build:
       - outputs/release_notes.txt
       - app/build/reports/
       - app/build/outputs/apk/release/app-release.apk
-  only:
-    - tags
 
 deploy_google_play:
   stage: deploy
