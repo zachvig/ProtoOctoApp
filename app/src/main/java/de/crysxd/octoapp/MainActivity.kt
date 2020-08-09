@@ -35,7 +35,7 @@ class MainActivity : OctoActivity() {
         setContentView(R.layout.activity_main)
 
         val observer = Observer(this::onEventReceived)
-        val events = ConnectPrinterInjector.get().octoprintProvider().eventFlow().asLiveData()
+        val events = ConnectPrinterInjector.get().octoprintProvider().eventFlow("MainActivity@events").asLiveData()
 
         SignInInjector.get().octoprintRepository().instanceInformationFlow().asLiveData().observe(this, Observer {
             Timber.i("Instance information received")
@@ -49,6 +49,9 @@ class MainActivity : OctoActivity() {
                 events.removeObserver(observer)
             }
         })
+
+        //val repo = SerialCommunicationLogsRepository(Injector.get().octoPrintProvider())
+        //repo.startWithScope(lifecycleScope)
 
         lifecycleScope.launchWhenResumed {
             findNavController(R.id.mainNavController).addOnDestinationChangedListener { _, destination, _ ->

@@ -31,7 +31,7 @@ class OctoPrintProvider(
     val octoPrint: LiveData<OctoPrint?> = octoPrintFlow().asLiveData()
 
     @Deprecated("Use eventFlow")
-    val eventLiveData: LiveData<Event> = eventFlow().asLiveData()
+    val eventLiveData: LiveData<Event> = eventFlow("OctoPrintProvider@legacy").asLiveData()
 
     fun octoPrintFlow() = octoPrintRepository.instanceInformationFlow().map {
         when {
@@ -49,8 +49,8 @@ class OctoPrintProvider(
         }
     }
 
-    fun eventFlow() = octoPrintFlow()
-        .flatMapLatest { it?.getEventWebSocket()?.eventFlow() ?: emptyFlow() }
+    fun eventFlow(tag: String) = octoPrintFlow()
+        .flatMapLatest { it?.getEventWebSocket()?.eventFlow(tag) ?: emptyFlow() }
         .map { e -> updateAnalyticsProfileWithEvents(e); e }
         .catch { e -> Timber.e(e) }
 
