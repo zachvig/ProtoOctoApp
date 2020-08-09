@@ -5,6 +5,8 @@ import de.crysxd.octoapp.octoprint.api.LoginApi
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.flow.asFlow
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -20,6 +22,7 @@ const val CONNECTION_TIMEOUT_MS = 3000L
 const val RECONNECT_DELAY_MS = 1000L
 const val RECONNECT_TIMEOUT_MS = CONNECTION_TIMEOUT_MS + RECONNECT_DELAY_MS
 
+@Suppress("EXPERIMENTAL_API_USAGE")
 class EventWebSocket(
     private val httpClient: OkHttpClient,
     private val webUrl: String,
@@ -32,8 +35,8 @@ class EventWebSocket(
     private var reportDisconnectedJob: Job? = null
     private var webSocket: WebSocket? = null
     private var isConnected = AtomicBoolean(false)
-    private val eventHandlers: MutableList<Pair<CoroutineScope, suspend (Event) -> Unit>> = mutableListOf()
     private var lastCurrentMessage: Message.CurrentMessage? = null
+    private val channel = BroadcastChannel<Event>(15)
 
     fun start() {
         if (isConnected.compareAndSet(false, true)) {
@@ -63,29 +66,19 @@ class EventWebSocket(
         reportDisconnectedJob?.cancel()
         dispatchEvent(Event.Disconnected())
         logger.log(Level.INFO, "Closing websocket")
+        handleClosure()
     }
 
-    fun addEventHandler(scope: CoroutineScope, handler: suspend (Event) -> Unit) {
-        eventHandlers.add(Pair(scope, handler))
-    }
-
-    fun removeEventHandler(handler: suspend (Event) -> Unit) {
-        eventHandlers.removeAll {
-            it.second == handler
-        }
-    }
-
-    fun clearEventHandlers() {
-        eventHandlers.clear()
-    }
+    fun eventFlow() = channel.asFlow()
 
     private fun dispatchEvent(event: Event) {
-        val e = CoroutineExceptionHandler { _, throwable -> throwable.printStackTrace() }
-        eventHandlers.forEach {
-            it.first.launch(e) {
-                it.second(event)
-            }
-        }
+        channel.offer(event)
+    }
+
+    private fun handleClosure() {
+        isConnected.set(false)
+        logger.log(Level.INFO, "Websocket closed")
+        dispatchEvent(Event.Disconnected())
     }
 
     internal fun postMessage(message: Message) {
@@ -104,7 +97,7 @@ class EventWebSocket(
             super.onOpen(webSocket, response)
 
             // Handle open event
-            logger.log(Level.INFO, "Websocket connected")
+            logger.log(Level.INFO, "Websocket open")
             reportDisconnectedJob?.cancel()
             reportDisconnectedJob = null
             dispatchEvent(Event.Connected)
@@ -141,8 +134,7 @@ class EventWebSocket(
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             super.onClosed(webSocket, code, reason)
-            isConnected.set(false)
-            dispatchEvent(Event.Disconnected())
+            handleClosure()
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
