@@ -10,10 +10,10 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.logging.Level
 
@@ -33,6 +33,17 @@ class OctoPrintProvider(
     @Deprecated("Use eventFlow")
     val eventLiveData: LiveData<Event> = eventFlow("OctoPrintProvider@legacy").asLiveData()
 
+    init {
+        // Passively collect data for the analytics profile
+        // The passive event flow does not actively open a connection but piggy-backs other Flows
+        GlobalScope.launch {
+            passiveEventFlow()
+                .onEach { updateAnalyticsProfileWithEvents(it) }
+                .retry { delay(1000); true }
+                .collect()
+        }
+    }
+
     fun octoPrintFlow() = octoPrintRepository.instanceInformationFlow().map {
         when {
             it == null -> null
@@ -49,9 +60,12 @@ class OctoPrintProvider(
         }
     }
 
+    fun passiveEventFlow() = octoPrintFlow()
+        .flatMapLatest { it?.getEventWebSocket()?.passiveEventFlow() ?: emptyFlow() }
+        .catch { e -> Timber.e(e) }
+
     fun eventFlow(tag: String) = octoPrintFlow()
         .flatMapLatest { it?.getEventWebSocket()?.eventFlow(tag) ?: emptyFlow() }
-        .map { e -> updateAnalyticsProfileWithEvents(e); e }
         .catch { e -> Timber.e(e) }
 
 

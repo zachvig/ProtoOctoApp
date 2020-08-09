@@ -78,6 +78,8 @@ class EventWebSocket(
         }
     }
 
+    fun passiveEventFlow(): Flow<Event> = channel.asFlow()
+
     fun eventFlow(tag: String): Flow<Event> {
         return channel.asFlow()
             .onStart {

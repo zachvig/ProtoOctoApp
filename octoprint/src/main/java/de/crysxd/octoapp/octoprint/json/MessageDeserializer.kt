@@ -14,11 +14,10 @@ class MessageDeserializer(
 ) : JsonDeserializer<Message> {
 
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Message {
-
         val o = json.asJsonObject
         return when {
-            o.has("current") -> gson.fromJson(o["current"], Message.CurrentMessage::class.java)
-            o.has("history") -> gson.fromJson(o["history"], Message.CurrentMessage::class.java)
+            o.has("current") -> gson.fromJson(o["current"], Message.CurrentMessage::class.java).also { it.copy(isHistoryMessage = false) }
+            o.has("history") -> gson.fromJson(o["history"], Message.CurrentMessage::class.java).also { it.copy(isHistoryMessage = true) }
             o.has("connected") -> gson.fromJson(o["connected"], Message.ConnectedMessage::class.java)
             o.has("reauthRequired") -> Message.ReAuthRequired
             o.has("plugin") -> when (o["plugin"].asJsonObject["plugin"].asString) {

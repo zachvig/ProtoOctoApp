@@ -17,6 +17,7 @@ import de.crysxd.octoapp.base.ui.common.OctoView
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.flow.first
 import timber.log.Timber
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
@@ -49,9 +50,6 @@ class MainActivity : OctoActivity() {
                 events.removeObserver(observer)
             }
         })
-
-        //val repo = SerialCommunicationLogsRepository(Injector.get().octoPrintProvider())
-        //repo.startWithScope(lifecycleScope)
 
         lifecycleScope.launchWhenResumed {
             findNavController(R.id.mainNavController).addOnDestinationChangedListener { _, destination, _ ->
@@ -154,8 +152,9 @@ class MainActivity : OctoActivity() {
     private fun updateCapabilities() {
         lifecycleScope.launchWhenCreated {
             try {
-                val octoprint = Injector.get().octoPrintProvider().octoPrint.value!!
-                Injector.get().updateInstanceCapabilitiesUseCase().execute(octoprint)
+                Injector.get().octoPrintProvider().octoPrintFlow().first()?.let {
+                    Injector.get().updateInstanceCapabilitiesUseCase().execute(it)
+                }
             } catch (e: Exception) {
                 Timber.e(e)
                 showErrorDialog(getString(R.string.capabilities_validation_error))

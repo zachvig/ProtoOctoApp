@@ -42,6 +42,9 @@ class OctoApp : Application() {
         PrePrintControlsInjector.init(BaseInjector.get())
         PrintControlsInjector.init(BaseInjector.get())
 
+        // Setup SerialCommunicationLogsRepository (jsut create the instance)
+        BaseInjector.get().serialCommunicationLogsRepository()
+
         // Add cache for logging and report to firebase
         Timber.plant(BaseInjector.get().timberCacheTree())
         Timber.plant(BaseInjector.get().firebaseTree())
