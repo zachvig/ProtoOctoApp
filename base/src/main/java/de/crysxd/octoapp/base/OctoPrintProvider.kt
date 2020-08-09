@@ -10,7 +10,10 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 import java.util.logging.Level
 
@@ -49,7 +52,6 @@ class OctoPrintProvider(
     fun eventFlow() = octoPrintFlow()
         .flatMapLatest { it?.getEventWebSocket()?.eventFlow() ?: emptyFlow() }
         .map { e -> updateAnalyticsProfileWithEvents(e); e }
-        .onEach { Timber.i("Event: $it") }
         .catch { e -> Timber.e(e) }
 
 
