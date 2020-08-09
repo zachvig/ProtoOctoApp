@@ -18,12 +18,19 @@ import java.util.logging.Level
 class OctoPrintProvider(
     private val timberHandler: TimberHandler,
     private val invalidApiKeyInterceptor: InvalidApiKeyInterceptor,
-    octoPrintRepository: OctoPrintRepository,
+    private val octoPrintRepository: OctoPrintRepository,
     private val analytics: FirebaseAnalytics
 ) {
 
     private var octoPrintCache: Pair<OctoPrintInstanceInformationV2, OctoPrint>? = null
-    val octoPrintFlow = octoPrintRepository.instanceInformationFlow().map {
+
+    @Deprecated("Use octoPrintFlow")
+    val octoPrint: LiveData<OctoPrint?> = octoPrintFlow().asLiveData()
+
+    @Deprecated("Use eventFlow")
+    val eventLiveData: LiveData<Event> = eventFlow().asLiveData()
+
+    fun octoPrintFlow() = octoPrintRepository.instanceInformationFlow().map {
         when {
             it == null -> null
             octoPrintCache?.first != it -> {
@@ -39,16 +46,12 @@ class OctoPrintProvider(
         }
     }
 
-    @Deprecated("Use octoPrintFlow")
-    val octoPrint: LiveData<OctoPrint?> = octoPrintFlow.asLiveData()
-
-    val eventFlow = octoPrintFlow
+    fun eventFlow() = octoPrintFlow()
         .flatMapLatest { it?.getEventWebSocket()?.eventFlow() ?: emptyFlow() }
         .map { e -> updateAnalyticsProfileWithEvents(e); e }
+        .onEach { Timber.i("Event: $it") }
         .catch { e -> Timber.e(e) }
 
-    @Deprecated("Use eventFlow")
-    val eventLiveData: LiveData<Event> = eventFlow.asLiveData()
 
     private fun updateAnalyticsProfileWithEvents(event: Event) {
         when {
