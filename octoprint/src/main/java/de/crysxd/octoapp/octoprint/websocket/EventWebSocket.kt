@@ -132,7 +132,7 @@ class EventWebSocket(
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             super.onMessage(webSocket, text)
-            logger.log(Level.INFO, "Message received: $text ")
+            logger.log(Level.FINEST, "Message received: ${text.substring(0, 128.coerceAtMost(text.length))} ")
 
             // OkHttp sometimes leaks connections.
             // If we are no longer supposed to be connected, we crash the socket
