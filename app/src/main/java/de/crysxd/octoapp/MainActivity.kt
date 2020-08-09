@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.firebase.analytics.ktx.analytics
@@ -34,9 +35,9 @@ class MainActivity : OctoActivity() {
         setContentView(R.layout.activity_main)
 
         val observer = Observer(this::onEventReceived)
-        val events = ConnectPrinterInjector.get().octoprintProvider().eventLiveData
+        val events = ConnectPrinterInjector.get().octoprintProvider().eventFlow().asLiveData()
 
-        SignInInjector.get().octoprintRepository().instanceInformation.observe(this, Observer {
+        SignInInjector.get().octoprintRepository().instanceInformationFlow().asLiveData().observe(this, Observer {
             Timber.i("Instance information received")
             if (it != null) {
                 if (lastNavigation < 0) {
