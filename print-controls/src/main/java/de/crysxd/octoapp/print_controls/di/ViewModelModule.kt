@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.print_controls.di
 
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.Module
@@ -13,6 +14,7 @@ import de.crysxd.octoapp.base.ui.ViewModelFactory
 import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidgetViewModel
 import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.print_controls.ui.PrintControlsViewModel
+import de.crysxd.octoapp.print_controls.ui.widget.TuneFragmentViewModel
 import de.crysxd.octoapp.print_controls.ui.widget.tune.TuneWidgetViewModel
 import javax.inject.Provider
 
@@ -58,5 +60,14 @@ open class ViewModelModule {
     ): ViewModel = TuneWidgetViewModel(
         serialCommunicationLogsRepository,
         executeGcodeCommandUseCase
+    )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(TuneFragmentViewModel::class)
+    open fun provideTuneFragmentViewModel(
+        sharedPreferences: SharedPreferences
+    ): ViewModel = TuneFragmentViewModel(
+        sharedPreferences
     )
 }

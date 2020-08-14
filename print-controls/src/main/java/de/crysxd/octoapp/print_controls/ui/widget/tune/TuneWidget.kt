@@ -13,6 +13,8 @@ import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.Injector
 import de.crysxd.octoapp.print_controls.di.injectViewModel
+import de.crysxd.octoapp.print_controls.ui.ARG_NO_VALUE
+import de.crysxd.octoapp.print_controls.ui.PrintControlsFragmentDirections.Companion.actionTunePrint
 import kotlinx.android.synthetic.main.widget_tune.view.*
 
 class TuneWidget(parent: Fragment) : OctoWidget(parent) {
@@ -38,7 +40,15 @@ class TuneWidget(parent: Fragment) : OctoWidget(parent) {
         })
 
         view.setOnClickListener {
-            it.findNavController().navigate(R.id.action_tune_print)
+            viewModel.uiState.value?.let { uiState ->
+                it.findNavController().navigate(
+                    actionTunePrint(
+                        currentFanSpeed = uiState.fanSpeed ?: ARG_NO_VALUE,
+                        currentFeedRate = uiState.feedRate ?: ARG_NO_VALUE,
+                        currentFlowRate = uiState.flowRate ?: ARG_NO_VALUE
+                    )
+                )
+            }
         }
     }
 }

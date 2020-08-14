@@ -1,7 +1,6 @@
 package de.crysxd.octoapp.base.ui.ext
 
 import android.content.Context
-import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 
@@ -11,6 +10,7 @@ fun EditText.requestFocusAndOpenSoftKeyboard() {
         InputMethodManager.SHOW_FORCED,
         InputMethodManager.HIDE_IMPLICIT_ONLY
     )
+    setSelection(0, length())
 }
 
 fun EditText.clearFocusAndHideSoftKeyboard() {
