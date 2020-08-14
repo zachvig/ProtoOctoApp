@@ -1,5 +1,7 @@
 package de.crysxd.octoapp.base.usecase
 
+import android.net.Uri
+import de.crysxd.octoapp.base.ext.appendFullPath
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import javax.inject.Inject
@@ -10,7 +12,11 @@ class GetWebcamSettingsUseCase @Inject constructor() : UseCase<GetWebcamSettings
         val raw = param.octoPrint.createSettingsApi().getSettings().webcam
         return raw.copy(
             streamUrl = if (raw.streamUrl.startsWith("/")) {
-                "${param.octoPrint.webUrl}${raw.streamUrl.replaceFirst("/", "")}"
+                Uri.parse(param.octoPrint.webUrl)
+                    .buildUpon()
+                    .appendFullPath(raw.streamUrl)
+                    .build()
+                    .toString()
             } else {
                 raw.streamUrl
             }
