@@ -6,7 +6,7 @@ import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -14,6 +14,7 @@ import timber.log.Timber
 import java.util.*
 
 const val MAX_COMMUNICATION_ENTRIES = 1000
+const val CHANNEL_BUFFER_SIZE = 10
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class SerialCommunicationLogsRepository(
@@ -21,7 +22,7 @@ class SerialCommunicationLogsRepository(
 ) {
 
     private val logs = mutableListOf<SerialCommunication>()
-    private val channel = ConflatedBroadcastChannel<List<SerialCommunication>>(emptyList())
+    private val channel = BroadcastChannel<SerialCommunication>(CHANNEL_BUFFER_SIZE)
 
     init {
         GlobalScope.launch(Dispatchers.Default) {
@@ -40,7 +41,9 @@ class SerialCommunicationLogsRepository(
                     }
 
                     logs.addAll(newLogs)
-                    channel.send(newLogs)
+                    newLogs.forEach {
+                        channel.send(it)
+                    }
 
                     if (logs.size > MAX_COMMUNICATION_ENTRIES) {
                         logs.removeAll(logs.take(logs.size - MAX_COMMUNICATION_ENTRIES))
@@ -54,8 +57,10 @@ class SerialCommunicationLogsRepository(
         }
     }
 
-    fun flow() = flow {
-        emit(all())
+    fun flow(includeOld: Boolean = false) = flow {
+        if (includeOld) {
+            all().forEach { emit(it) }
+        }
         emitAll(channel.asFlow())
     }
 
