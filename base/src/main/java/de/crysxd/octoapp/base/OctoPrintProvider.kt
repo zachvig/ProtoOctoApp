@@ -14,6 +14,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 import java.util.logging.Level
 
@@ -25,6 +27,7 @@ class OctoPrintProvider(
     private val analytics: FirebaseAnalytics
 ) {
 
+    private val octoPrintMutex = Mutex()
     private var octoPrintCache: Pair<OctoPrintInstanceInformationV2, OctoPrint>? = null
 
     @Deprecated("Use octoPrintFlow")
@@ -45,17 +48,19 @@ class OctoPrintProvider(
     }
 
     fun octoPrintFlow() = octoPrintRepository.instanceInformationFlow().map {
-        when {
-            it == null -> null
-            octoPrintCache?.first != it -> {
-                val octoPrint = createAdHocOctoPrint(it)
-                Timber.d("Created new OctoPrint: $octoPrint")
-                octoPrintCache = Pair(it, octoPrint)
-                octoPrint
-            }
-            else -> {
-                Timber.d("Took OctoPrint from cache: ${octoPrintCache?.second}")
-                octoPrintCache?.second
+        octoPrintMutex.withLock {
+            when {
+                it == null -> null
+                octoPrintCache?.first != it -> {
+                    val octoPrint = createAdHocOctoPrint(it)
+                    Timber.d("Created new OctoPrint: $octoPrint")
+                    octoPrintCache = Pair(it, octoPrint)
+                    octoPrint
+                }
+                else -> {
+                    Timber.d("Took OctoPrint from cache: ${octoPrintCache?.second}")
+                    octoPrintCache?.second
+                }
             }
         }
     }
