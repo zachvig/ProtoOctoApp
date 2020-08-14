@@ -27,7 +27,7 @@ class TimberCacheTree(
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         GlobalScope.launch(Dispatchers.IO) {
             lock.withLock {
-                if (priority >= Log.DEBUG) {
+                if (priority >= Log.VERBOSE) {
                     val prefix = "${getTime()} ${getLevel(priority)}/${tag ?: "???"}: "
                     cache.append(prefix)
                     cache.append(mask.mask(message.substring(0, message.length.coerceAtMost(maxMessageLength))))
