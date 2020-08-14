@@ -83,12 +83,12 @@ class EventWebSocket(
     fun eventFlow(tag: String): Flow<Event> {
         return channel.asFlow()
             .onStart {
-                logger.log(Level.INFO, "onStart for Flow (tag=$tag)")
+                logger.log(Level.INFO, "onStart for Flow (tag=$tag, webSocket=${this@EventWebSocket})")
                 subscriberCount.incrementAndGet()
                 start()
             }
             .onCompletion {
-                logger.log(Level.INFO, "onCompletion for Flow (tag=$tag)")
+                logger.log(Level.INFO, "onCompletion for Flow (tag=$tag, webSocket=${this@EventWebSocket})")
                 subscriberCount.decrementAndGet()
                 stop()
             }
