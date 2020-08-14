@@ -119,6 +119,27 @@
             app:layout_constraintTop_toTopOf="@+id/textView2"
             app:srcCompat="@drawable/ic_round_keyboard_arrow_right_24" />
 
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/feedRate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="imageView4,textViewFeedRate" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/flowRate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="textViewFlowRate,imageView3" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/fanSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="imageView2,textViewFanSpeed" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

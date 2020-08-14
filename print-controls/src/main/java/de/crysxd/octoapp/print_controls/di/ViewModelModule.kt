@@ -11,10 +11,7 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.ViewModelFactory
 import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidgetViewModel
-import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
-import de.crysxd.octoapp.base.usecase.ChangeFilamentUseCase
-import de.crysxd.octoapp.base.usecase.EmergencyStopUseCase
-import de.crysxd.octoapp.base.usecase.TogglePausePrintJobUseCase
+import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.print_controls.ui.PrintControlsViewModel
 import de.crysxd.octoapp.print_controls.ui.widget.tune.TuneWidgetViewModel
 import javax.inject.Provider
@@ -56,6 +53,10 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(TuneWidgetViewModel::class)
     open fun provideTuneWidgetViewModel(
-        serialCommunicationLogsRepository: SerialCommunicationLogsRepository
-    ): ViewModel = TuneWidgetViewModel(serialCommunicationLogsRepository)
+        serialCommunicationLogsRepository: SerialCommunicationLogsRepository,
+        executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase
+    ): ViewModel = TuneWidgetViewModel(
+        serialCommunicationLogsRepository,
+        executeGcodeCommandUseCase
+    )
 }

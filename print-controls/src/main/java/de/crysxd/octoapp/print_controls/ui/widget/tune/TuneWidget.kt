@@ -1,9 +1,11 @@
 package de.crysxd.octoapp.print_controls.ui.widget.tune
 
 import android.content.Context
+import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
@@ -22,8 +24,15 @@ class TuneWidget(parent: Fragment) : OctoWidget(parent) {
 
     override fun onViewCreated(view: View) {
         viewModel.uiState.observe(viewLifecycleOwner, Observer {
+            TransitionManager.beginDelayedTransition(view as ViewGroup)
+
+            view.flowRate.isVisible = it.flowRate != null
             view.textViewFlowRate.text = requireContext().getString(R.string.x_percent_int, it.flowRate)
+
+            view.feedRate.isVisible = it.feedRate != null
             view.textViewFeedRate.text = requireContext().getString(R.string.x_percent_int, it.feedRate)
+
+            view.fanSpeed.isVisible = it.fanSpeed != null
             view.textViewFanSpeed.text = requireContext().getString(R.string.x_percent_int, it.fanSpeed)
         })
     }
