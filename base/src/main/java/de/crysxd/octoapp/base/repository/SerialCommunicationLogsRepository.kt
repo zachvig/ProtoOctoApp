@@ -27,8 +27,8 @@ class SerialCommunicationLogsRepository(
         GlobalScope.launch(Dispatchers.Default) {
             Timber.i("Collecting serial communication")
             octoPrintProvider.passiveEventFlow()
-                .mapNotNull { it as Event.MessageReceived }
-                .mapNotNull { it.message as Message.CurrentMessage }
+                .mapNotNull { it as? Event.MessageReceived }
+                .mapNotNull { it.message as? Message.CurrentMessage }
                 .onEach {
                     if (it.isHistoryMessage) {
                         logs.clear()
@@ -48,7 +48,10 @@ class SerialCommunicationLogsRepository(
                 }
                 .retry { Timber.e(it); delay(100); true }
                 .collect()
-        }.invokeOnCompletion { it?.let(Timber::wtf) }
+        }.invokeOnCompletion {
+            Timber.i("Collecting completed")
+            it?.let(Timber::wtf)
+        }
     }
 
     fun flow() = flow {
