@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.Injector
@@ -35,5 +36,9 @@ class TuneWidget(parent: Fragment) : OctoWidget(parent) {
             view.fanSpeed.isVisible = it.fanSpeed != null
             view.textViewFanSpeed.text = requireContext().getString(R.string.x_percent_int, it.fanSpeed)
         })
+
+        view.setOnClickListener {
+            it.findNavController().navigate(R.id.action_tune_print)
+        }
     }
 }

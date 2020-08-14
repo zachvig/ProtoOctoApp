@@ -75,6 +75,12 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             example = it.getString(R.styleable.OctoTextInputLayout_example)
             hintNormal = it.getString(R.styleable.OctoTextInputLayout_label)
             input.setText(it.getString(R.styleable.OctoTextInputLayout_defaultInputValue))
+            val iconDrawable = it.getResourceId(R.styleable.OctoTextInputLayout_icon, 0)
+            if (iconDrawable > 0) {
+                icon.setImageResource(iconDrawable)
+            } else {
+                icon.isVisible = false
+            }
             val actionDrawable = it.getResourceId(R.styleable.OctoTextInputLayout_actionDrawable, 0)
             if (actionDrawable > 0) {
                 action.setImageResource(actionDrawable)
