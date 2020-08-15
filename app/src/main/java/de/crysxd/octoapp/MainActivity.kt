@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.firebase.analytics.ktx.analytics
@@ -16,6 +17,7 @@ import de.crysxd.octoapp.base.ui.common.OctoView
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.flow.first
 import timber.log.Timber
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
@@ -34,9 +36,9 @@ class MainActivity : OctoActivity() {
         setContentView(R.layout.activity_main)
 
         val observer = Observer(this::onEventReceived)
-        val events = ConnectPrinterInjector.get().octoprintProvider().eventLiveData
+        val events = ConnectPrinterInjector.get().octoprintProvider().eventFlow("MainActivity@events").asLiveData()
 
-        SignInInjector.get().octoprintRepository().instanceInformation.observe(this, Observer {
+        SignInInjector.get().octoprintRepository().instanceInformationFlow().asLiveData().observe(this, Observer {
             Timber.i("Instance information received")
             if (it != null) {
                 if (lastNavigation < 0) {
@@ -150,8 +152,9 @@ class MainActivity : OctoActivity() {
     private fun updateCapabilities() {
         lifecycleScope.launchWhenCreated {
             try {
-                val octoprint = Injector.get().octoPrintProvider().octoPrint.value!!
-                Injector.get().updateInstanceCapabilitiesUseCase().execute(octoprint)
+                Injector.get().octoPrintProvider().octoPrintFlow().first()?.let {
+                    Injector.get().updateInstanceCapabilitiesUseCase().execute(it)
+                }
             } catch (e: Exception) {
                 Timber.e(e)
                 showErrorDialog(getString(R.string.capabilities_validation_error))

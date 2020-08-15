@@ -20,7 +20,7 @@ abstract class OctoWidget(val parent: Fragment) : LayoutContainer {
 
     protected val viewLifecycleOwner = parent.viewLifecycleOwner
 
-    abstract fun getTitle(context: Context): String
+    abstract fun getTitle(context: Context): String?
 
     abstract fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View
 

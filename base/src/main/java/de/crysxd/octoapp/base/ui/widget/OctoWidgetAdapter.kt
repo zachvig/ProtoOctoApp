@@ -28,6 +28,7 @@ class OctoWidgetAdapter() : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHol
 
     override fun onBindViewHolder(holder: WidgetViewHolder, position: Int) {
         holder.itemView.textViewWidgetTitle.text = widgets[position].getTitle(holder.itemView.context)
+        holder.itemView.textViewWidgetTitle.isVisible = holder.itemView.textViewWidgetTitle.text.isNotBlank()
         holder.itemView.widgetContainer.removeAllViews()
         holder.itemView.widgetContainer.addView(widgets[position].getView(holder.itemView.context, holder.itemView.widgetContainer))
         holder.itemView.padding.isVisible = position < itemCount - 1

@@ -9,6 +9,15 @@
     android:minHeight="70dp"
     android:background="@drawable/bg_input">
 
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="@dimen/margin_1"
+        android:importantForAccessibility="no"
+        android:scaleType="fitCenter"
+        tools:srcCompat="@tools:sample/avatars" />
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_weight="1"

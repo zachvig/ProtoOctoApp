@@ -9,6 +9,7 @@ import de.crysxd.octoapp.base.di.modules.*
 import de.crysxd.octoapp.base.logging.FirebaseTree
 import de.crysxd.octoapp.base.logging.TimberCacheTree
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.BaseViewModelFactory
 import de.crysxd.octoapp.base.usecase.*
 
@@ -37,6 +38,7 @@ interface BaseComponent {
     // OctoprintModule
     fun octorPrintRepository(): OctoPrintRepository
     fun octoPrintProvider(): OctoPrintProvider
+    fun serialCommunicationLogsRepository(): SerialCommunicationLogsRepository
 
     // UseCaseModule
     fun setToolTargetTemperatureUseCase(): SetToolTargetTemperatureUseCase

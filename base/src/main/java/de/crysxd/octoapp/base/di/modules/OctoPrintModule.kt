@@ -12,6 +12,7 @@ import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.usecase.CheckOctoPrintInstanceInformationUseCase
 
 @Module
@@ -47,4 +48,10 @@ open class OctoPrintModule {
     open fun provideGcodeHistoryRepository(
         dataSource: DataSource<List<GcodeHistoryItem>>
     ) = GcodeHistoryRepository(dataSource)
+
+    @BaseScope
+    @Provides
+    open fun provideSerialCommunicationLogsRepository(
+        octoPrintProvider: OctoPrintProvider
+    ) = SerialCommunicationLogsRepository(octoPrintProvider)
 }
