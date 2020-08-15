@@ -12,7 +12,7 @@ import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.base.usecase.execute
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
-import de.crysxd.octoapp.octoprint.models.socket.Message
+import de.crysxd.octoapp.octoprint.models.socket.Message.EventMessage
 import timber.log.Timber
 
 
@@ -26,7 +26,7 @@ class WebcamWidgetViewModel(
     private val uiStateMediator = MediatorLiveData<UiState>()
     val uiState = uiStateMediator.map { it }
     private val settingsUpdatedLiveData = octoPrintProvider.eventLiveData
-        .filterEventsForMessageType(Message.EventMessage.SettingsUpdated::class.java)
+        .filterEventsForMessageType(EventMessage.SettingsUpdated::class.java)
 
     init {
         uiStateMediator.addSource(octoPrintProvider.octoPrint) { connect() }

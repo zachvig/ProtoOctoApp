@@ -15,7 +15,7 @@ import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import de.crysxd.octoapp.octoprint.models.socket.HistoricTemperatureData
-import de.crysxd.octoapp.octoprint.models.socket.Message
+import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -26,7 +26,7 @@ abstract class ControlTemperatureWidgetViewModelContract(
 ) : BaseViewModel() {
 
     val temperature = octoPrintProvider.eventLiveData
-        .filterEventsForMessageType(Message.CurrentMessage::class.java)
+        .filterEventsForMessageType(CurrentMessage::class.java)
         .filter { it.temps.isNotEmpty() }
         .mapNotNull { extractComponentTemperature(it.temps.first()) }
 

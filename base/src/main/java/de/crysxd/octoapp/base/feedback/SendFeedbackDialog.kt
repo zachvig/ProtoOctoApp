@@ -58,7 +58,7 @@ class SendFeedbackDialog : DialogFragment() {
         lifecycleScope.launch {
             screenshot = Injector.get().takeScreenshotUseCase().execute(requireOctoActivity())
         }.invokeOnCompletion {
-            it?.let { Timber.e(it); requireOctoActivity().showErrorDialog(it) }
+            it?.let { Timber.e(it); requireOctoActivity().showDialog(it) }
             super.show(manager, tag)
         }
     }

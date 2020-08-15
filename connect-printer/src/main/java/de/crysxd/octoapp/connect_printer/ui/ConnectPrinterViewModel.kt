@@ -23,7 +23,7 @@ import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintBootingException
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse.ConnectionState.ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT
-import de.crysxd.octoapp.octoprint.models.socket.Message
+import de.crysxd.octoapp.octoprint.models.socket.Message.PsuControlPluginMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -50,7 +50,7 @@ class ConnectPrinterViewModel(
     }
 
     private val psuState = octoPrintProvider.eventLiveData
-        .filterEventsForMessageType(Message.PsuControlPluginMessage::class.java)
+        .filterEventsForMessageType(PsuControlPluginMessage::class.java)
 
     private val uiStateMediator = MediatorLiveData<UiState>()
     val uiState = uiStateMediator.map { it }.distinctUntilChanged()
@@ -70,7 +70,7 @@ class ConnectPrinterViewModel(
 
             // PSU
             val psuState = psuState.value ?: if (octoPrintRepository.instanceInformation.value?.supportsPsuPlugin == true) {
-                Message.PsuControlPluginMessage(false)
+                PsuControlPluginMessage(false)
             } else {
                 null
             }

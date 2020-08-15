@@ -51,6 +51,6 @@ class ExtrudeWidgetViewModel(
 
     private fun extrude(mm: Int) = GlobalScope.launch(coroutineExceptionHandler) {
         extrudeFilamentUseCase.execute(ExtrudeFilamentUseCase.Param(mm))
-        postMessage { c -> c.getString(R.string.extruding_x_mm, mm) }
+        postMessage(Message.SnackbarMessage { it.getString(R.string.extruding_x_mm, mm) })
     }
 }

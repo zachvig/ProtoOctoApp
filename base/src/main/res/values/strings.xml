@@ -32,8 +32,10 @@
     <string name="print">Print</string>
     <string name="prepare">Prepare</string>
     <string name="connect">Connect</string>
-    <string name="sent_x">Sent %s</string>
-    <string name="sent_x_and_y_others">Sent %1$s and %2$d others</string>
+    <string name="sent_x">Executing %s</string>
+    <string name="sent_x_and_y_others">Executing %1$s and %2$d others</string>
+    <string name="received_response_for_x">Received logs for %s</string>
+    <string name="received_response_for_x_and_y_others">Received logs for %1$s and %2$d others</string>
     <string name="send_gcode">Send Gcode</string>
     <string name="gcode_one_command_per_line">Gcode (one command per line)</string>
     <string name="change_filament">Change Filament</string>
@@ -59,4 +61,5 @@
     <string name="information_about_your_octoprint">Information about your OctoPrint</string>
     <string name="information_about_your_phone">Information about your phone</string>
     <string name="other">Other</string>
+    <string name="show_logs">Show logs</string>
 </resources>

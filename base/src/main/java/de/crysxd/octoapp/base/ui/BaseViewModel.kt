@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.google.android.material.snackbar.Snackbar
 import de.crysxd.octoapp.base.models.Event
 import kotlinx.coroutines.CoroutineExceptionHandler
 import timber.log.Timber
@@ -18,7 +19,7 @@ abstract class BaseViewModel : ViewModel() {
         Timber.e(e)
     }
 
-    private val mutableMessages = MutableLiveData<Event<(Context) -> CharSequence>>()
+    private val mutableMessages = MutableLiveData<Event<Message>>()
     val messages = Transformations.map(mutableMessages) { it }
 
     lateinit var navContoller: NavController
@@ -27,9 +28,28 @@ abstract class BaseViewModel : ViewModel() {
         mutableErrorLiveData.postValue(Event(e))
     }
 
-    protected fun postMessage(generator: (Context) -> CharSequence) {
-        mutableMessages.postValue(Event(generator))
+    protected fun postMessage(message: Message) {
+        mutableMessages.postValue(Event(message))
     }
 
+    sealed class Message {
+        data class SnackbarMessage(
+            val duration: Int = Snackbar.LENGTH_SHORT,
+            val type: Type = Type.Neutral,
+            val actionText: (Context) -> CharSequence? = { null },
+            val action: (Context) -> Unit = {},
+            val text: (Context) -> CharSequence
+        ) : Message() {
+            sealed class Type {
+                object Neutral : Type()
+                object Positive : Type()
+                object Negative : Type()
+            }
+        }
+
+        data class DialogMessage(
+            val text: (Context) -> CharSequence
+        ) : Message()
+    }
 
 }

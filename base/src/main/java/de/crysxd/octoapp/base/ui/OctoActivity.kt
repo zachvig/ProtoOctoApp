@@ -1,10 +1,10 @@
 package de.crysxd.octoapp.base.ui
 
 import android.app.AlertDialog
-import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
@@ -21,7 +21,7 @@ abstract class OctoActivity : AppCompatActivity() {
             private set
     }
 
-    private var errorDialog: AlertDialog? = null
+    private var dialog: AlertDialog? = null
 
     abstract val octoToolbar: OctoToolbar
 
@@ -35,22 +35,50 @@ abstract class OctoActivity : AppCompatActivity() {
     }
 
     fun observeErrorEvents(events: LiveData<Event<Throwable>>) = events.observe(this, Observer {
-        it.value?.let(this::showErrorDialog)
+        it.value?.let(this::showDialog)
     })
 
-    fun observerMessageEvents(events: LiveData<Event<(Context) -> CharSequence>>) = events.observe(this, Observer {
-        it.value?.let {
-            Snackbar.make(coordinatorLayout, it(this), Snackbar.LENGTH_SHORT).show()
-        }
+    fun observerMessageEvents(events: LiveData<Event<BaseViewModel.Message>>) = events.observe(this, Observer { event ->
+        when (val message = event.value) {
+            null -> Unit
+            is BaseViewModel.Message.SnackbarMessage -> showSnackbar(message)
+            is BaseViewModel.Message.DialogMessage -> showDialog(message)
+        }.toString()
     })
 
-    fun showErrorDialog(e: Throwable) = showErrorDialog(
+    private fun showSnackbar(message: BaseViewModel.Message.SnackbarMessage) {
+        Snackbar.make(coordinatorLayout, message.text(this), message.duration).apply {
+            message.actionText(this@OctoActivity)?.let {
+                setAction(it) { message.action(this@OctoActivity) }
+            }
+
+            setBackgroundTint(
+                ContextCompat.getColor(
+                    this@OctoActivity, when (message.type) {
+                        BaseViewModel.Message.SnackbarMessage.Type.Neutral -> R.color.snackbar_neutral
+                        BaseViewModel.Message.SnackbarMessage.Type.Positive -> R.color.snackbar_positive
+                        BaseViewModel.Message.SnackbarMessage.Type.Negative -> R.color.snackbar_negative
+                    }
+                )
+            )
+
+            val foregroundColor = ContextCompat.getColor(this@OctoActivity, R.color.text_colored_background)
+            setTextColor(foregroundColor)
+            setActionTextColor(foregroundColor)
+        }.show()
+    }
+
+    private fun showDialog(message: BaseViewModel.Message.DialogMessage) {
+        showDialog(message.text(this))
+    }
+
+    fun showDialog(e: Throwable) = showDialog(
         getString((e as? UserMessageException)?.userMessage ?: R.string.error_general)
     )
 
-    fun showErrorDialog(message: CharSequence) {
-        errorDialog?.dismiss()
-        errorDialog = AlertDialog.Builder(this)
+    fun showDialog(message: CharSequence) {
+        dialog?.dismiss()
+        dialog = AlertDialog.Builder(this)
             .setMessage(message)
             .setPositiveButton(android.R.string.ok, null)
             .show()

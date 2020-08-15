@@ -25,6 +25,10 @@
     <color name="analysis_normal">@color/orange</color>
     <color name="analysis_good">@color/primary</color>
 
+    <color name="snackbar_neutral">@color/light_grey</color>
+    <color name="snackbar_positive">@color/primary</color>
+    <color name="snackbar_negative">@color/red</color>
+
     <color name="white">#fff</color>
     <color name="black">#000</color>
     <color name="red">#F44336</color>

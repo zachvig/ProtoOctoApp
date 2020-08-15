@@ -67,6 +67,7 @@ class SelectFileFragment : BaseFragment(R.layout.fragment_select_file) {
 
         // Load files
         viewModel.loadFiles(navArgs.folder).observe(viewLifecycleOwner, Observer {
+            Timber.i(it.toString())
             swipeRefreshLayout.isRefreshing = false
             showLoaderJob.cancel()
             if (it.error) {

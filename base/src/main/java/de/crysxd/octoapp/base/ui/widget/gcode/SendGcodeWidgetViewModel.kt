@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import com.google.android.material.snackbar.Snackbar
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
@@ -13,6 +14,7 @@ import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
+import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase.Response.RecordedResponse
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -44,16 +46,54 @@ class SendGcodeWidgetViewModel(
     fun sendGcodeCommand(command: String, updateViewAfterDone: Boolean = false) = viewModelScope.launch(coroutineExceptionHandler) {
         val gcodeCommand = GcodeCommand.Batch(command.split("\n").toTypedArray())
 
-        sendGcodeCommandUseCase.execute(ExecuteGcodeCommandUseCase.Param(gcodeCommand, true))
-        postMessage { con ->
-            con.getString(
-                if (gcodeCommand.commands.size == 1) {
-                    R.string.sent_x
-                } else {
-                    R.string.sent_x_and_y_others
-                }, gcodeCommand.commands.first(), gcodeCommand.commands.size - 1
+        postMessage(
+            Message.SnackbarMessage(
+                duration = Snackbar.LENGTH_INDEFINITE,
+                text = { con ->
+                    con.getString(
+                        if (gcodeCommand.commands.size == 1) {
+                            R.string.sent_x
+                        } else {
+                            R.string.sent_x_and_y_others
+                        }, gcodeCommand.commands.first(), gcodeCommand.commands.size - 1
+                    )
+                }
             )
-        }
+        )
+
+        val responses = sendGcodeCommandUseCase.execute(
+            ExecuteGcodeCommandUseCase.Param(
+                command = gcodeCommand,
+                fromUser = true,
+                recordResponse = true
+            )
+        )
+
+        postMessage(
+            Message.SnackbarMessage(
+                type = Message.SnackbarMessage.Type.Positive,
+                text = { con ->
+                    con.getString(
+                        if (gcodeCommand.commands.size == 1) {
+                            R.string.received_response_for_x
+                        } else {
+                            R.string.received_response_for_x_and_y_others
+                        }, gcodeCommand.commands.first(), gcodeCommand.commands.size - 1
+                    )
+                },
+                action = {
+                    postMessage(Message.DialogMessage {
+                        responses.map {
+                            listOf(
+                                listOf((it as? RecordedResponse)?.sendLine ?: ""),
+                                (it as? RecordedResponse)?.responseLines ?: emptyList()
+                            ).flatten().joinToString("\n")
+                        }.joinToString("\n\n")
+                    })
+                },
+                actionText = { it.getString(R.string.show_logs) }
+            )
+        )
 
         if (updateViewAfterDone) {
             updateGcodes()
