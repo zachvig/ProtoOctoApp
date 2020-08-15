@@ -17,8 +17,8 @@ import timber.log.Timber
 
 
 class WebcamWidgetViewModel(
-    val octoPrintProvider: OctoPrintProvider,
-    val getWebcamSettingsUseCase: GetWebcamSettingsUseCase
+    private val octoPrintProvider: OctoPrintProvider,
+    private val getWebcamSettingsUseCase: GetWebcamSettingsUseCase
 ) : BaseViewModel() {
 
 
