@@ -20,4 +20,16 @@
         <key>review_flow_condition_print_was_active_required</key>
         <value>true</value>
     </entry>
+    <entry>
+        <key>gcode_response_spam_pattern</key>
+        <value>(Recv:.*echo:busy.*)|(.*Printer seems to support the busy protocol.*)|((Send: (N\d+\s+)?M105)|(Recv:\s+(ok\s+(([PBN])\d+\s+)*)?([BT]\d*):\d+).*)</value>
+    </entry>
+    <entry>
+        <key>gcode_response_end_line_pattern</key>
+        <value>^Recv:\s*ok.*$</value>
+    </entry>
+    <entry>
+        <key>gcode_response_send_line_pattern</key>
+        <value>^Send:.*%%COMMAND%%</value>
+    </entry>
 </defaultsMap>

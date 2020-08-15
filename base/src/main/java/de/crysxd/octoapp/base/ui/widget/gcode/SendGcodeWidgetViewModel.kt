@@ -44,7 +44,14 @@ class SendGcodeWidgetViewModel(
     fun sendGcodeCommand(command: String, updateViewAfterDone: Boolean = false) = viewModelScope.launch(coroutineExceptionHandler) {
         val gcodeCommand = GcodeCommand.Batch(command.split("\n").toTypedArray())
 
-        sendGcodeCommandUseCase.execute(ExecuteGcodeCommandUseCase.Param(gcodeCommand, true))
+        val responses = sendGcodeCommandUseCase.execute(
+            ExecuteGcodeCommandUseCase.Param(
+                command = gcodeCommand,
+                fromUser = true,
+                recordResponse = true
+            )
+        )
+
         postMessage { con ->
             con.getString(
                 if (gcodeCommand.commands.size == 1) {
