@@ -14,6 +14,7 @@ class FirebaseTree(
 ) : Timber.DebugTree() {
 
     private val lock = Mutex()
+    private var lastException: Throwable? = null
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         if (priority >= Log.INFO) {
@@ -22,7 +23,8 @@ class FirebaseTree(
 
                     FirebaseCrashlytics.getInstance().log("$tag | ${mask.mask(message)}")
 
-                    if (t != null) {
+                    if (t != null && t != lastException) {
+                        lastException = t
                         if (priority >= Log.ERROR) {
                             FirebaseCrashlytics.getInstance().recordException(t)
                         } else {
