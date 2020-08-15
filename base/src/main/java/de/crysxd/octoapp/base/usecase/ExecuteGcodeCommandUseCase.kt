@@ -30,7 +30,10 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
     }
 
     private fun logExecuted(command: String, fromUser: Boolean) {
-        serialCommunicationLogsRepository.addLog("[OctoApp] Send: $command")
+        serialCommunicationLogsRepository.addInternalLog(
+            log = "[OctoApp] Send: $command",
+            fromUser = fromUser
+        )
 
         if (fromUser) {
             Firebase.analytics.logEvent("gcode_send") {

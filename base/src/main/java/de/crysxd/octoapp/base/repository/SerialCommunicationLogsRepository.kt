@@ -35,9 +35,14 @@ class SerialCommunicationLogsRepository(
                         logs.clear()
                     }
 
-                    val date = getDate(it.serverTime)
-                    val newLogs = it.logs.map {
-                        SerialCommunication(it, date)
+                    val serverDate = getDate(it.serverTime)
+                    val newLogs = it.logs.map { log ->
+                        SerialCommunication(
+                            content = log,
+                            date = Date(),
+                            serverDate = serverDate,
+                            source = SerialCommunication.Source.OctoPrint
+                        )
                     }
 
                     logs.addAll(newLogs)
@@ -57,8 +62,15 @@ class SerialCommunicationLogsRepository(
         }
     }
 
-    fun addLog(log: String) {
-        channel.offer(SerialCommunication(log, logs.lastOrNull()?.serverTime ?: Date()))
+    fun addInternalLog(log: String, fromUser: Boolean) {
+        channel.offer(
+            SerialCommunication(
+                content = log,
+                serverDate = null,
+                date = Date(),
+                source = if (fromUser) SerialCommunication.Source.User else SerialCommunication.Source.OctoAppInternal
+            )
+        )
     }
 
     fun flow(includeOld: Boolean = false) = flow {
