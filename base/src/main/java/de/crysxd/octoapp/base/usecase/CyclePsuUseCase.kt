@@ -5,11 +5,12 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.octoprint.OctoPrint
 import kotlinx.coroutines.delay
+import timber.log.Timber
 import javax.inject.Inject
 
-class CyclePsuUseCase @Inject constructor() : UseCase<OctoPrint, Unit> {
+class CyclePsuUseCase @Inject constructor() : UseCase<OctoPrint, Unit>() {
 
-    override suspend fun execute(param: OctoPrint) {
+    override suspend fun doExecute(param: OctoPrint, timber: Timber.Tree) {
         Firebase.analytics.logEvent("psu_cycle", Bundle.EMPTY)
         param.createPsuApi().apply {
             turnPsuOff()

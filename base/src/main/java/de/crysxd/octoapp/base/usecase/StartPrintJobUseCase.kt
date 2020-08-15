@@ -6,11 +6,12 @@ import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.files.FileCommand
 import de.crysxd.octoapp.octoprint.models.files.FileObject
+import timber.log.Timber
 import javax.inject.Inject
 
-class StartPrintJobUseCase @Inject constructor() : UseCase<Pair<OctoPrint, FileObject.File>, Unit> {
+class StartPrintJobUseCase @Inject constructor() : UseCase<Pair<OctoPrint, FileObject.File>, Unit>() {
 
-    override suspend fun execute(param: Pair<OctoPrint, FileObject.File>) {
+    override suspend fun doExecute(param: Pair<OctoPrint, FileObject.File>, timber: Timber.Tree) {
         Firebase.analytics.logEvent("print_started_by_app", Bundle.EMPTY)
         param.first.createFilesApi().executeFileCommand(param.second, FileCommand.SelectFile(true))
     }

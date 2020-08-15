@@ -13,6 +13,7 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.File
 import java.util.*
 import java.util.zip.ZipEntry
@@ -20,10 +21,10 @@ import java.util.zip.ZipOutputStream
 import javax.inject.Inject
 
 
-class OpenEmailClientForFeedbackUseCase @Inject constructor() : UseCase<OpenEmailClientForFeedbackUseCase.Params, Unit> {
+class OpenEmailClientForFeedbackUseCase @Inject constructor() : UseCase<OpenEmailClientForFeedbackUseCase.Params, Unit>() {
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    override suspend fun execute(param: Params) = withContext(Dispatchers.IO) {
+    override suspend fun doExecute(param: Params, timber: Timber.Tree) = withContext(Dispatchers.IO) {
         val context = param.context
 
         val email = Firebase.remoteConfig.getString("contact_email")

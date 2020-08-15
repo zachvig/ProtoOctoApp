@@ -2,9 +2,10 @@ package de.crysxd.octoapp.base.usecase
 
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.printer.PrintHeadCommand
+import timber.log.Timber
 import javax.inject.Inject
 
-class JogPrintHeadUseCase @Inject constructor() : UseCase<JogPrintHeadUseCase.Param, Unit> {
+class JogPrintHeadUseCase @Inject constructor() : UseCase<JogPrintHeadUseCase.Param, Unit>() {
 
     data class Param(
         val octoPrint: OctoPrint,
@@ -14,7 +15,7 @@ class JogPrintHeadUseCase @Inject constructor() : UseCase<JogPrintHeadUseCase.Pa
         val speedMmMin: Int = 4000
     )
 
-    override suspend fun execute(param: Param) {
+    override suspend fun doExecute(param: Param, timber: Timber.Tree) {
         param.octoPrint.createPrinterApi().executePrintHeadCommand(
             PrintHeadCommand.JogPrintHeadCommand(
                 param.xDistance,

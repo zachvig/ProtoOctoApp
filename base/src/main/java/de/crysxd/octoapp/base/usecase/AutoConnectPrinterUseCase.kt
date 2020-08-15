@@ -2,15 +2,14 @@ package de.crysxd.octoapp.base.usecase
 
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionCommand
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 const val AUTO_PORT = "AUTO"
 
-class AutoConnectPrinterUseCase @Inject constructor() : UseCase<AutoConnectPrinterUseCase.Params, Unit> {
+class AutoConnectPrinterUseCase @Inject constructor() : UseCase<AutoConnectPrinterUseCase.Params, Unit>() {
 
-    override suspend fun execute(param: Params) = withContext(Dispatchers.IO) {
+    override suspend fun doExecute(param: Params, timber: Timber.Tree) {
         param.octoPrint.createConnectionApi().executeConnectionCommand(
             ConnectionCommand.Connect(
                 port = param.port
