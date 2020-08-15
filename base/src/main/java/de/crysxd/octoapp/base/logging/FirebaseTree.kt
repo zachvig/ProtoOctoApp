@@ -2,12 +2,14 @@ package de.crysxd.octoapp.base.logging
 
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
+import java.io.IOException
 
 class FirebaseTree(
     private val mask: SensitiveDataMask
@@ -35,4 +37,10 @@ class FirebaseTree(
             }
         }
     }
+
+    private fun shouldLog(t: Throwable?) = t != null &&
+            t != lastException &&
+            t !is IOException &&
+            t !is CancellationException
+
 }
