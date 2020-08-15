@@ -10,7 +10,6 @@ fun EditText.requestFocusAndOpenSoftKeyboard() {
         InputMethodManager.SHOW_FORCED,
         InputMethodManager.HIDE_IMPLICIT_ONLY
     )
-    setSelection(0, length())
 }
 
 fun EditText.clearFocusAndHideSoftKeyboard() {

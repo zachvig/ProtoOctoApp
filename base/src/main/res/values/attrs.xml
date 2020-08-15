@@ -3,6 +3,7 @@
     <declare-styleable name="OctoTextInputLayout">
         <attr name="icon" format="reference" />
         <attr name="label" format="string" />
+        <attr name="selectAllOnFocus" format="boolean" />
         <attr name="labelActive" format="string" />
         <attr name="example" format="string" />
         <attr name="defaultInputValue" format="string" />

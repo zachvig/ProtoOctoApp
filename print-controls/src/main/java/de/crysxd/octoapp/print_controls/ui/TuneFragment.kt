@@ -1,14 +1,17 @@
 package de.crysxd.octoapp.print_controls.ui
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionManager
+import de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requestFocusAndOpenSoftKeyboard
@@ -53,20 +56,29 @@ class TuneFragment : Fragment(R.layout.fragment_tune) {
             viewModel.hideDataHint()
         }
 
+        fun OctoTextInputLayout.prepare() = this.apply {
+            editText.inputType = InputType.TYPE_CLASS_NUMBER
+            editText.imeOptions = EditorInfo.IME_ACTION_DONE
+            editText.setOnEditorActionListener { _, _, _ -> applyChanges(); true }
+        }
+
         // Set initial values
         val args = navArgs<TuneFragmentArgs>().value
-        feedRateInput.editText.setText(if (args.currentFeedRate == ARG_NO_VALUE) null else args.currentFeedRate.toString())
-        flowRateInput.editText.setText(if (args.currentFlowRate == ARG_NO_VALUE) null else args.currentFlowRate.toString())
-        fanSpeedInput.editText.setText(if (args.currentFanSpeed == ARG_NO_VALUE) null else args.currentFanSpeed.toString())
+        feedRateInput.prepare().editText.setText(if (args.currentFeedRate == ARG_NO_VALUE) null else args.currentFeedRate.toString())
+        flowRateInput.prepare().editText.setText(if (args.currentFlowRate == ARG_NO_VALUE) null else args.currentFlowRate.toString())
+        fanSpeedInput.prepare().editText.setText(if (args.currentFanSpeed == ARG_NO_VALUE) null else args.currentFanSpeed.toString())
+
 
         // Apply values
-        buttonApply.setOnClickListener {
-            viewModel.applyChanges(
-                feedRate = feedRateInput.editText.text.toString().toIntOrNull(),
-                flowRate = flowRateInput.editText.text.toString().toIntOrNull(),
-                fanSpeed = fanSpeedInput.editText.text.toString().toIntOrNull()
-            )
-        }
+        buttonApply.setOnClickListener { applyChanges() }
+    }
+
+    private fun applyChanges() {
+        viewModel.applyChanges(
+            feedRate = feedRateInput.editText.text.toString().toIntOrNull(),
+            flowRate = flowRateInput.editText.text.toString().toIntOrNull(),
+            fanSpeed = fanSpeedInput.editText.text.toString().toIntOrNull()
+        )
     }
 
     override fun onStart() {

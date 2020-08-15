@@ -1,8 +1,12 @@
 package de.crysxd.octoapp.print_controls.ui.widget.tune
 
-import androidx.lifecycle.*
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.models.SerialCommunication
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
+import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import kotlinx.coroutines.delay
@@ -15,11 +19,12 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 const val SETTINGS_POLLING_INTERVAL_MS = 30000L
+const val SETTINGS_POLLING_INITIAL_DELAY = 500L
 
 class TuneWidgetViewModel(
     serialCommunicationLogsRepository: SerialCommunicationLogsRepository,
     executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val uiStateMediator = MediatorLiveData<UiState>()
     val uiState = uiStateMediator.map { it }
@@ -50,7 +55,10 @@ class TuneWidgetViewModel(
 
         uiStateMediator.postValue(UiState())
 
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            // Give a little heads start for the rest of the UI to get ready
+            delay(SETTINGS_POLLING_INITIAL_DELAY)
+
             while (isActive) {
                 // Query printer for current flow and feed rate. Response will be picked up from terminal stream
                 executeGcodeCommandUseCase.execute(
