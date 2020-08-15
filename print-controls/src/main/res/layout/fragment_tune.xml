@@ -41,7 +41,7 @@
                         android:layout_marginTop="@dimen/margin_2"
                         android:layout_marginEnd="@dimen/margin_2"
                         android:drawablePadding="@dimen/margin_2"
-                        android:text="Why are the values not always shown?"
+                        android:text="@string/why_are_the_values_not_always_shown"
                         android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -55,7 +55,7 @@
                         android:layout_marginTop="@dimen/margin_0"
                         android:layout_marginEnd="@dimen/margin_2"
                         android:drawablePadding="@dimen/margin_2"
-                        android:text="OctoPrint can't query fan speed and rates. Values can only be shown if changes are witnessed."
+                        android:text="@string/octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed"
                         android:textAppearance="@style/OctoTheme.TextAppearance"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="1.0"
@@ -70,7 +70,7 @@
                         android:layout_marginTop="@dimen/margin_1"
                         android:layout_marginEnd="@dimen/margin_2"
                         android:layout_marginBottom="@dimen/margin_1"
-                        android:text="Understood"
+                        android:text="@string/understood"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView2" />
@@ -86,10 +86,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_1"
                 app:example="100"
-                app:selectAllOnFocus="true"
                 app:icon="@drawable/ic_speed_20px"
-                app:label="Feed Rate (%)"
-                app:labelActive="Feed rate as number (100 is default)" />
+                app:iconTint="?android:attr/textColorSecondary"
+                app:label="@string/feed_rate_label"
+                app:labelActive="@string/feed_rate_label_active"
+                app:selectAllOnFocus="true" />
 
             <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
                 android:id="@+id/flowRateInput"
@@ -97,20 +98,22 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_1"
                 app:example="100"
-                app:selectAllOnFocus="true"
                 app:icon="@drawable/ic_flow_20px"
-                app:label="Flow Rate (%)"
-                app:labelActive="Flow rate as number (100 is default)" />
+                app:iconTint="?android:attr/textColorSecondary"
+                app:label="@string/flow_rate_label"
+                app:labelActive="@string/flow_rate_label_active"
+                app:selectAllOnFocus="true" />
 
             <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
                 android:id="@+id/fanSpeedInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:example="100"
-                app:selectAllOnFocus="true"
                 app:icon="@drawable/ic_fan_20px"
-                app:label="Fan Speed (%)"
-                app:labelActive="Fan speed from 0 to 100" />
+                app:iconTint="?android:attr/textColorSecondary"
+                app:label="@string/fan_speed_label"
+                app:labelActive="@string/fan_speed_label_active"
+                app:selectAllOnFocus="true" />
 
         </LinearLayout>
 
@@ -127,7 +130,7 @@
             android:id="@+id/buttonApply"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Apply"
+            android:text="@string/apply"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

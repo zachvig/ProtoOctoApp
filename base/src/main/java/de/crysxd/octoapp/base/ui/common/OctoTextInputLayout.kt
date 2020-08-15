@@ -83,6 +83,10 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             } else {
                 icon.isVisible = false
             }
+            val iconTint = it.getColor(R.styleable.OctoTextInputLayout_iconTint, -1)
+            if (iconTint != -1) {
+                icon.setColorFilter(iconTint)
+            }
             val actionDrawable = it.getResourceId(R.styleable.OctoTextInputLayout_actionDrawable, 0)
             if (actionDrawable > 0) {
                 action.setImageResource(actionDrawable)
