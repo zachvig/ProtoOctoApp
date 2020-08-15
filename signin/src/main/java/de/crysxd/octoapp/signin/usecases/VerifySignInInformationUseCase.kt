@@ -8,10 +8,11 @@ import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInInformationValidationResult
 import timber.log.Timber
 
-class VerifySignInInformationUseCase(private val context: Context) :
-    UseCase<SignInInformation, SignInInformationValidationResult> {
+class VerifySignInInformationUseCase(
+    private val context: Context
+) : UseCase<SignInInformation, SignInInformationValidationResult>() {
 
-    override suspend fun execute(param: SignInInformation): SignInInformationValidationResult {
+    override suspend fun doExecute(param: SignInInformation, timber: Timber.Tree): SignInInformationValidationResult {
         val webUrl = verifyWebUrl(param.webUrl)
         val apiKey = verifyApiKey(param.apiKey)
 

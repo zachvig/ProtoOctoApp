@@ -14,18 +14,15 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
     private val octoPrintProvider: OctoPrintProvider,
     private val gcodeHistoryRepository: GcodeHistoryRepository,
     private val serialCommunicationLogsRepository: SerialCommunicationLogsRepository
-) : UseCase<ExecuteGcodeCommandUseCase.Param, Unit> {
+) : UseCase<ExecuteGcodeCommandUseCase.Param, Unit>() {
 
-    override suspend fun execute(param: Param) {
-        Timber.i("Executing: ${param.command}")
-
+    override suspend fun doExecute(param: Param, timber: Timber.Tree) {
         when (param.command) {
             is GcodeCommand.Single -> logExecuted(param.command.command, param.fromUser)
             is GcodeCommand.Batch -> param.command.commands.forEach { logExecuted(it, param.fromUser) }
         }
 
-        val octoPrint = octoPrintProvider.octoPrint.value
-        requireNotNull(octoPrint)
+        val octoPrint = octoPrintProvider.octoPrint()
         octoPrint.createPrinterApi().executeGcodeCommand(param.command)
     }
 

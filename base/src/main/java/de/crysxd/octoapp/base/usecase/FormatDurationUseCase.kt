@@ -1,11 +1,16 @@
 package de.crysxd.octoapp.base.usecase
 
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class FormatDurationUseCase @Inject constructor() : UseCase<Long, String> {
+class FormatDurationUseCase @Inject constructor() : UseCase<Long, String>() {
 
-    override suspend fun execute(param: Long): String {
+    init {
+        suppressLogging = true
+    }
+
+    override suspend fun doExecute(param: Long, timber: Timber.Tree): String {
         val hours = TimeUnit.SECONDS.toHours(param)
         val minutes = TimeUnit.SECONDS.toMinutes(param - TimeUnit.HOURS.toSeconds(hours))
 

@@ -65,6 +65,10 @@ class OctoPrintProvider(
         }
     }
 
+    suspend fun octoPrint(): OctoPrint = octoPrintMutex.withLock {
+        octoPrintCache?.second ?: throw IllegalStateException("OctoPrint not available")
+    }
+
     fun passiveEventFlow() = octoPrintFlow()
         .flatMapLatest { it?.getEventWebSocket()?.passiveEventFlow() ?: emptyFlow() }
         .catch { e -> Timber.e(e) }

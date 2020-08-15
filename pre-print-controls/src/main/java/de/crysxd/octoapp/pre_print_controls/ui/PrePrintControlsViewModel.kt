@@ -1,18 +1,17 @@
 package de.crysxd.octoapp.pre_print_controls.ui
 
 import androidx.lifecycle.viewModelScope
-import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ChangeFilamentUseCase
 import de.crysxd.octoapp.base.usecase.TurnOffPsuUseCase
+import de.crysxd.octoapp.base.usecase.execute
 import de.crysxd.octoapp.pre_print_controls.R
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class PrePrintControlsViewModel(
     octoPrintRepository: OctoPrintRepository,
-    private val octoPrintProvider: OctoPrintProvider,
     private val turnOffPsuUseCase: TurnOffPsuUseCase,
     private val changeFilamentUseCase: ChangeFilamentUseCase
 ) : BaseViewModel() {
@@ -20,9 +19,7 @@ class PrePrintControlsViewModel(
     val instanceInformation = octoPrintRepository.instanceInformation
 
     fun turnOffPsu() = GlobalScope.launch(coroutineExceptionHandler) {
-        octoPrintProvider.octoPrint.value?.let {
-            turnOffPsuUseCase.execute(it)
-        }
+        turnOffPsuUseCase.execute()
     }
 
     fun startPrint() {
@@ -30,8 +27,6 @@ class PrePrintControlsViewModel(
     }
 
     fun changeFilament() = viewModelScope.launch(coroutineExceptionHandler) {
-        octoPrintProvider.octoPrint.value?.let {
-            changeFilamentUseCase.execute(it)
-        }
+        changeFilamentUseCase.execute()
     }
 }
