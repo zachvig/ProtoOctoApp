@@ -22,8 +22,7 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
             is GcodeCommand.Batch -> param.command.commands.forEach { logExecuted(it, param.fromUser) }
         }
 
-        val octoPrint = octoPrintProvider.octoPrint.value
-        requireNotNull(octoPrint)
+        val octoPrint = octoPrintProvider.octoPrint()
         octoPrint.createPrinterApi().executeGcodeCommand(param.command)
     }
 

@@ -13,20 +13,16 @@ import de.crysxd.octoapp.base.livedata.OctoTransformations.mapNotNull
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
-import de.crysxd.octoapp.base.usecase.UseCase
-import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import de.crysxd.octoapp.octoprint.models.socket.HistoricTemperatureData
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 abstract class ControlTemperatureWidgetViewModelContract(
-    private val octoPrintProvider: OctoPrintProvider,
-    private val useCase: UseCase<Pair<OctoPrint, Int>, Unit>
+    octoPrintProvider: OctoPrintProvider
 ) : BaseViewModel() {
 
     val temperature = octoPrintProvider.eventLiveData
@@ -34,11 +30,7 @@ abstract class ControlTemperatureWidgetViewModelContract(
         .filter { it.temps.isNotEmpty() }
         .mapNotNull { extractComponentTemperature(it.temps.first()) }
 
-    private fun setTemperature(temp: Int) = GlobalScope.launch(coroutineExceptionHandler) {
-        octoPrintProvider.octoPrint.value?.let {
-            useCase.execute(Pair(it, temp))
-        }
-    }
+    protected abstract suspend fun setTemperature(temp: Int)
 
     fun changeTemperature(context: Context) = viewModelScope.launch(coroutineExceptionHandler) {
         val result = NavigationResultMediator.registerResultCallback<String?>()

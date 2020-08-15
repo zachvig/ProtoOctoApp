@@ -1,15 +1,21 @@
 package de.crysxd.octoapp.base.usecase
 
-import de.crysxd.octoapp.octoprint.OctoPrint
+import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.models.printer.BedCommand
 import timber.log.Timber
 import javax.inject.Inject
 
-class SetBedTargetTemperatureUseCase @Inject constructor() : UseCase<Pair<OctoPrint, Int>, Unit>() {
+class SetBedTargetTemperatureUseCase @Inject constructor(
+    private val octoPrintProvider: OctoPrintProvider
+) : UseCase<SetBedTargetTemperatureUseCase.Param, Unit>() {
 
-    override suspend fun doExecute(param: Pair<OctoPrint, Int>, timber: Timber.Tree) {
-        param.first.createPrinterApi().executeBedCommand(
-            BedCommand.SetTargetTemperatureToolCommand(param.second)
+    override suspend fun doExecute(param: Param, timber: Timber.Tree) {
+        octoPrintProvider.octoPrint().createPrinterApi().executeBedCommand(
+            BedCommand.SetTargetTemperatureToolCommand(param.bedTemperature)
         )
     }
+
+    data class Param(
+       val bedTemperature: Int
+    )
 }

@@ -16,28 +16,21 @@ class MoveToolWidgetViewModel(
     var jogResolution: Float = -1f
 
     fun homeXYAxis() = GlobalScope.launch(coroutineExceptionHandler) {
-        octoPrintProvider.octoPrint.value?.let {
-            homePrintHeadUseCase.execute(Pair(it, HomePrintHeadUseCase.Axis.XY))
-        }
+        homePrintHeadUseCase.execute(HomePrintHeadUseCase.Axis.XY)
     }
 
     fun homeZAxis() = GlobalScope.launch(coroutineExceptionHandler) {
-        octoPrintProvider.octoPrint.value?.let {
-            homePrintHeadUseCase.execute(Pair(it, HomePrintHeadUseCase.Axis.Z))
-        }
+        homePrintHeadUseCase.execute(HomePrintHeadUseCase.Axis.Z)
     }
 
     fun jog(x: Direction = Direction.None, y: Direction = Direction.None, z: Direction = Direction.None) = GlobalScope.launch(coroutineExceptionHandler) {
-        octoPrintProvider.octoPrint.value?.let { octoPrint ->
-            jogPrintHeadUseCase.execute(
-                JogPrintHeadUseCase.Param(
-                    octoPrint,
-                    x.applyToDistance(jogResolution),
-                    y.applyToDistance(jogResolution),
-                    z.applyToDistance(jogResolution)
-                )
+        jogPrintHeadUseCase.execute(
+            JogPrintHeadUseCase.Param(
+                x.applyToDistance(jogResolution),
+                y.applyToDistance(jogResolution),
+                z.applyToDistance(jogResolution)
             )
-        }
+        )
     }
 
     sealed class Direction(val multiplier: Float) {

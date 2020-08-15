@@ -56,7 +56,7 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
 
     private suspend fun onMenuItemSelectedBase(@IdRes id: Int) = when (id) {
         R.id.menuOpenOctoprint -> Injector.get().octoPrintProvider().octoPrint.value?.let {
-            Injector.get().openOctoPrintWebUseCase().execute(Pair(it, requireContext()))
+            Injector.get().openOctoPrintWebUseCase().execute(requireContext())
         }
         R.id.menuGiveFeedback -> SendFeedbackDialog().show(requireActivity().supportFragmentManager, "send-feedback")
         else -> Unit

@@ -8,8 +8,12 @@ import de.crysxd.octoapp.octoprint.models.socket.HistoricTemperatureData
 
 class ControlToolTemperatureWidgetViewModel(
     octoPrintProvider: OctoPrintProvider,
-    useCase: SetToolTargetTemperatureUseCase
-) : ControlTemperatureWidgetViewModelContract(octoPrintProvider, useCase) {
+    private val useCase: SetToolTargetTemperatureUseCase
+) : ControlTemperatureWidgetViewModelContract(octoPrintProvider) {
+
+    override suspend fun setTemperature(temp: Int) {
+        useCase.execute(SetToolTargetTemperatureUseCase.Param(temp))
+    }
 
     override fun extractComponentTemperature(temp: HistoricTemperatureData): PrinterState.ComponentTemperature = temp.tool0
 

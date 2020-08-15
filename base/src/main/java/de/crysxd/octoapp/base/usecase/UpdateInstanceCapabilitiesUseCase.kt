@@ -1,18 +1,20 @@
 package de.crysxd.octoapp.base.usecase
 
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.octoprint.OctoPrint
+import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import timber.log.Timber
 import javax.inject.Inject
 
-class UpdateInstanceCapabilitiesUseCase @Inject constructor() : UseCase<OctoPrint, Unit>() {
+class UpdateInstanceCapabilitiesUseCase @Inject constructor(
+    private val octoPrintProvider: OctoPrintProvider,
+    private val octoPrintRepository: OctoPrintRepository
+) : UseCase<Unit, Unit>() {
 
-    override suspend fun doExecute(param: OctoPrint, timber: Timber.Tree) {
-        val repository = Injector.get().octorPrintRepository()
-        val current = repository.getRawOctoPrintInstanceInformation()
+    override suspend fun doExecute(param: Unit, timber: Timber.Tree) {
+        val current = octoPrintRepository.getRawOctoPrintInstanceInformation()
 
-        val settings = param.createSettingsApi().getSettings()
+        val settings = octoPrintProvider.octoPrint().createSettingsApi().getSettings()
         val updated = current?.copy(
             supportsWebcam = isWebcamSupported(settings),
             supportsPsuPlugin = isPsuControlSupported(settings)
@@ -20,7 +22,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor() : UseCase<OctoPrin
 
         timber.i("Updated capabilities: $updated")
 
-        repository.storeOctoprintInstanceInformation(updated)
+        octoPrintRepository.storeOctoprintInstanceInformation(updated)
     }
 
     private fun isWebcamSupported(settings: Settings) = settings.webcam.webcamEnabled

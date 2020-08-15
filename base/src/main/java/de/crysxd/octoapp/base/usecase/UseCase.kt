@@ -38,3 +38,5 @@ abstract class UseCase<Param, Res> {
     protected abstract suspend fun doExecute(param: Param, timber: Timber.Tree): Res
 
 }
+
+suspend fun <T> UseCase<Unit, T>.execute(): T = execute(Unit)
