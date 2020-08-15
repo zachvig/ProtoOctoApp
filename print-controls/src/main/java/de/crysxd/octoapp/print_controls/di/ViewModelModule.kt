@@ -66,8 +66,10 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(TuneFragmentViewModel::class)
     open fun provideTuneFragmentViewModel(
-        sharedPreferences: SharedPreferences
+        sharedPreferences: SharedPreferences,
+        tunePrintUseCase: TunePrintUseCase
     ): ViewModel = TuneFragmentViewModel(
-        sharedPreferences
+        sharedPreferences,
+        tunePrintUseCase
     )
 }

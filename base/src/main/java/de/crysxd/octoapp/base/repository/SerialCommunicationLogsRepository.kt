@@ -57,6 +57,10 @@ class SerialCommunicationLogsRepository(
         }
     }
 
+    fun addLog(log: String) {
+        channel.offer(SerialCommunication(log, logs.lastOrNull()?.serverTime ?: Date()))
+    }
+
     fun flow(includeOld: Boolean = false) = flow {
         if (includeOld) {
             all().forEach { emit(it) }
