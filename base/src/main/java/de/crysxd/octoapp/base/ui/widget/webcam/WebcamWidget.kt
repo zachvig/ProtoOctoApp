@@ -130,6 +130,8 @@ class WebcamWidget(
             }
 
             is Error -> {
+                hideLiveIndicatorJob?.cancel()
+
                 view.loadingIndicator.isVisible = false
 
                 view.streamUrl1.text = state.streamUrl
