@@ -5,6 +5,11 @@ import de.crysxd.octoapp.octoprint.api.LoginApi
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -12,6 +17,7 @@ import okhttp3.WebSocket
 import java.net.URI
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -20,6 +26,7 @@ const val CONNECTION_TIMEOUT_MS = 3000L
 const val RECONNECT_DELAY_MS = 1000L
 const val RECONNECT_TIMEOUT_MS = CONNECTION_TIMEOUT_MS + RECONNECT_DELAY_MS
 
+@Suppress("EXPERIMENTAL_API_USAGE")
 class EventWebSocket(
     private val httpClient: OkHttpClient,
     private val webUrl: String,
@@ -32,12 +39,12 @@ class EventWebSocket(
     private var reportDisconnectedJob: Job? = null
     private var webSocket: WebSocket? = null
     private var isConnected = AtomicBoolean(false)
-    private val eventHandlers: MutableList<Pair<CoroutineScope, suspend (Event) -> Unit>> = mutableListOf()
     private var lastCurrentMessage: Message.CurrentMessage? = null
+    private val channel = BroadcastChannel<Event>(15)
+    private val subscriberCount = AtomicInteger(0)
 
     fun start() {
-        if (isConnected.compareAndSet(false, true)) {
-
+        if (subscriberCount.get() > 0 && isConnected.compareAndSet(false, true)) {
             val request = Request.Builder()
                 .url(
                     URI.create("$webUrl/")
@@ -53,39 +60,48 @@ class EventWebSocket(
                 .build()
                 .newWebSocket(request, WebSocketListener())
 
-            logger.log(Level.INFO, "Opening websocket")
+            logger.log(Level.INFO, "Opening web socket")
         }
     }
 
     fun stop() {
-        webSocket?.cancel()
-        reconnectJob?.cancel()
-        reportDisconnectedJob?.cancel()
-        dispatchEvent(Event.Disconnected())
-        logger.log(Level.INFO, "Closing websocket")
-    }
-
-    fun addEventHandler(scope: CoroutineScope, handler: suspend (Event) -> Unit) {
-        eventHandlers.add(Pair(scope, handler))
-    }
-
-    fun removeEventHandler(handler: suspend (Event) -> Unit) {
-        eventHandlers.removeAll {
-            it.second == handler
+        if (subscriberCount.get() == 0) {
+            webSocket?.close(1000, "User exited app")
+            webSocket?.cancel()
+            reconnectJob?.cancel()
+            reportDisconnectedJob?.cancel()
+            dispatchEvent(Event.Disconnected())
+            logger.log(Level.INFO, "Closing web socket")
+            handleClosure()
+        } else {
+            logger.log(Level.INFO, "${subscriberCount.get()} subscribers still active, leaving socket open")
         }
     }
 
-    fun clearEventHandlers() {
-        eventHandlers.clear()
+    fun passiveEventFlow(): Flow<Event> = channel.asFlow()
+
+    fun eventFlow(tag: String): Flow<Event> {
+        return channel.asFlow()
+            .onStart {
+                logger.log(Level.INFO, "onStart for Flow (tag=$tag, webSocket=${this@EventWebSocket})")
+                subscriberCount.incrementAndGet()
+                start()
+            }
+            .onCompletion {
+                logger.log(Level.INFO, "onCompletion for Flow (tag=$tag, webSocket=${this@EventWebSocket})")
+                subscriberCount.decrementAndGet()
+                stop()
+            }
     }
 
     private fun dispatchEvent(event: Event) {
-        val e = CoroutineExceptionHandler { _, throwable -> throwable.printStackTrace() }
-        eventHandlers.forEach {
-            it.first.launch(e) {
-                it.second(event)
-            }
-        }
+        channel.offer(event)
+    }
+
+    private fun handleClosure() {
+        isConnected.set(false)
+        logger.log(Level.INFO, "Web socket closed")
+        dispatchEvent(Event.Disconnected())
     }
 
     internal fun postMessage(message: Message) {
@@ -104,7 +120,7 @@ class EventWebSocket(
             super.onOpen(webSocket, response)
 
             // Handle open event
-            logger.log(Level.INFO, "Websocket connected")
+            logger.log(Level.INFO, "Web socket open")
             reportDisconnectedJob?.cancel()
             reportDisconnectedJob = null
             dispatchEvent(Event.Connected)
@@ -120,6 +136,12 @@ class EventWebSocket(
             super.onMessage(webSocket, text)
             logger.log(Level.FINEST, "Message received: ${text.substring(0, 128.coerceAtMost(text.length))} ")
 
+            // OkHttp sometimes leaks connections.
+            // If we are no longer supposed to be connected, we crash the socket
+            if (!isConnected.get()) {
+                throw WebSocketZombieException()
+            }
+
             try {
                 val message = gson.fromJson(text, Message::class.java)
 
@@ -128,27 +150,30 @@ class EventWebSocket(
                 }
 
                 if (message is Message.ReAuthRequired) {
-                    logger.log(Level.WARNING, "Websocket needs to authenticate again")
+                    logger.log(Level.WARNING, "Web socket needs to authenticate again")
                     stop()
                     reconnect()
                 } else {
                     dispatchEvent(Event.MessageReceived(message))
                 }
             } catch (e: Exception) {
-                logger.log(Level.SEVERE, "Error while parsing websocket message", e)
+                logger.log(Level.SEVERE, "Error while parsing webs ocket message", e)
             }
         }
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             super.onClosed(webSocket, code, reason)
-            isConnected.set(false)
-            dispatchEvent(Event.Disconnected())
+            handleClosure()
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
-            logger.log(Level.WARNING, "Websocket encountered failure", t)
-            reconnect(t)
+            if (t !is WebSocketZombieException) {
+                logger.log(Level.WARNING, "Web socket encountered failure", t)
+                reconnect(t)
+            } else {
+                logger.log(Level.WARNING, "Web socket was forcefully closed")
+            }
         }
 
         private fun reconnect(t: Throwable? = null) {
@@ -169,4 +194,6 @@ class EventWebSocket(
             }
         }
     }
+
+    class WebSocketZombieException : Exception("Web socket was closed, but still received message")
 }

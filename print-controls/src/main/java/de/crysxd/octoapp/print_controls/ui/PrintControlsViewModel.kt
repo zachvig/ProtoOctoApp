@@ -6,16 +6,13 @@ import de.crysxd.octoapp.base.livedata.OctoTransformations.filter
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filterEventsForMessageType
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
-import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
-import de.crysxd.octoapp.base.usecase.ChangeFilamentUseCase
-import de.crysxd.octoapp.base.usecase.EmergencyStopUseCase
-import de.crysxd.octoapp.base.usecase.TogglePausePrintJobUseCase
+import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.launch
 
 class PrintControlsViewModel(
     octoPrintRepository: OctoPrintRepository,
-    private val octoPrintProvider: OctoPrintProvider,
+    octoPrintProvider: OctoPrintProvider,
     private val cancelPrintJobUseCase: CancelPrintJobUseCase,
     private val togglePausePrintJobUseCase: TogglePausePrintJobUseCase,
     private val emergencyStopUseCase: EmergencyStopUseCase,
@@ -29,26 +26,18 @@ class PrintControlsViewModel(
     val instanceInformation = octoPrintRepository.instanceInformation
 
     fun togglePausePrint() = viewModelScope.launch(coroutineExceptionHandler) {
-        octoPrintProvider.octoPrint.value?.let {
-            togglePausePrintJobUseCase.execute(it)
-        }
+        togglePausePrintJobUseCase.execute()
     }
 
     fun cancelPrint() = viewModelScope.launch(coroutineExceptionHandler) {
-        octoPrintProvider.octoPrint.value?.let {
-            cancelPrintJobUseCase.execute(it)
-        }
+        cancelPrintJobUseCase.execute()
     }
 
     fun changeFilament() = viewModelScope.launch(coroutineExceptionHandler) {
-        octoPrintProvider.octoPrint.value?.let {
-            changeFilamentUseCase.execute(it)
-        }
+        changeFilamentUseCase.execute()
     }
 
     fun emergencyStop() = viewModelScope.launch(coroutineExceptionHandler) {
-        octoPrintProvider.octoPrint.value?.let {
-            emergencyStopUseCase.execute(it)
-        }
+        emergencyStopUseCase.execute()
     }
 }

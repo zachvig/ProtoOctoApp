@@ -82,13 +82,10 @@ class EnterValueFragment : BaseFragment(R.layout.fragment_enter_value) {
         textInputLayout.error = error
 
         if (error == null) {
-            textInputLayout.editText.clearFocusAndHideSoftKeyboard()
-
             resultPosted = true
-            requireView().postDelayed({
-                NavigationResultMediator.postResult(navArgs.resultId, result)
-                findNavController().popBackStack()
-            }, 300)
+            textInputLayout.editText.clearFocusAndHideSoftKeyboard()
+            NavigationResultMediator.postResult(navArgs.resultId, result)
+            findNavController().popBackStack()
         }
     }
 

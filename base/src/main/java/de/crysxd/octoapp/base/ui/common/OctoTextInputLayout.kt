@@ -50,6 +50,7 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
 
             updateViewState()
         }
+    var selectAllOnFocus: Boolean = false
 
     @Suppress("unused")
     val editText: AppCompatEditText by lazy { input }
@@ -74,7 +75,18 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             hintActive = it.getString(R.styleable.OctoTextInputLayout_labelActive)
             example = it.getString(R.styleable.OctoTextInputLayout_example)
             hintNormal = it.getString(R.styleable.OctoTextInputLayout_label)
+            selectAllOnFocus = it.getBoolean(R.styleable.OctoTextInputLayout_selectAllOnFocus, false)
             input.setText(it.getString(R.styleable.OctoTextInputLayout_defaultInputValue))
+            val iconDrawable = it.getResourceId(R.styleable.OctoTextInputLayout_icon, 0)
+            if (iconDrawable > 0) {
+                icon.setImageResource(iconDrawable)
+            } else {
+                icon.isVisible = false
+            }
+            val iconTint = it.getColor(R.styleable.OctoTextInputLayout_iconTint, -1)
+            if (iconTint != -1) {
+                icon.setColorFilter(iconTint)
+            }
             val actionDrawable = it.getResourceId(R.styleable.OctoTextInputLayout_actionDrawable, 0)
             if (actionDrawable > 0) {
                 action.setImageResource(actionDrawable)
@@ -89,6 +101,14 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
 
         isSaveEnabled = true
         input.isSaveEnabled = false
+
+        editText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && selectAllOnFocus) {
+                editText.post {
+                    editText.setSelection(0, editText.length())
+                }
+            }
+        }
     }
 
     private fun updateViewState() {

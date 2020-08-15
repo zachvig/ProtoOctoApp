@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.print_controls.di
 
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.Module
@@ -8,13 +9,13 @@ import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.ViewModelFactory
 import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidgetViewModel
-import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
-import de.crysxd.octoapp.base.usecase.ChangeFilamentUseCase
-import de.crysxd.octoapp.base.usecase.EmergencyStopUseCase
-import de.crysxd.octoapp.base.usecase.TogglePausePrintJobUseCase
+import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.print_controls.ui.PrintControlsViewModel
+import de.crysxd.octoapp.print_controls.ui.widget.TuneFragmentViewModel
+import de.crysxd.octoapp.print_controls.ui.widget.tune.TuneWidgetViewModel
 import javax.inject.Provider
 
 @Module
@@ -49,4 +50,26 @@ open class ViewModelModule {
     open fun provideProgressWidgetViewModel(
         octoPrintProvider: OctoPrintProvider
     ): ViewModel = ProgressWidgetViewModel(octoPrintProvider)
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(TuneWidgetViewModel::class)
+    open fun provideTuneWidgetViewModel(
+        serialCommunicationLogsRepository: SerialCommunicationLogsRepository,
+        executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase
+    ): ViewModel = TuneWidgetViewModel(
+        serialCommunicationLogsRepository,
+        executeGcodeCommandUseCase
+    )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(TuneFragmentViewModel::class)
+    open fun provideTuneFragmentViewModel(
+        sharedPreferences: SharedPreferences,
+        tunePrintUseCase: TunePrintUseCase
+    ): ViewModel = TuneFragmentViewModel(
+        sharedPreferences,
+        tunePrintUseCase
+    )
 }

@@ -18,7 +18,9 @@ sealed class Message {
         val temps: List<HistoricTemperatureData>,
         val state: PrinterState.State?,
         val progress: ProgressInformation?,
-        val job: JobInformation?
+        val job: JobInformation?,
+        val serverTime: Double,
+        val isHistoryMessage: Boolean
     ) : Message() {
 
         data class ProgressInformation(

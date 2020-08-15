@@ -31,12 +31,10 @@ open class ViewModelModule {
     @ViewModelKey(PrePrintControlsViewModel::class)
     open fun provideSignInViewModel(
         octoPrintRepository: OctoPrintRepository,
-        octoPrintProvider: OctoPrintProvider,
         turnOffPsuUseCase: TurnOffPsuUseCase,
         changeFilamentUseCase: ChangeFilamentUseCase
     ): ViewModel = PrePrintControlsViewModel(
         octoPrintRepository,
-        octoPrintProvider,
         turnOffPsuUseCase,
         changeFilamentUseCase
     )
@@ -62,11 +60,15 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(SelectFileViewModel::class)
     open fun provideSelectFileViewModel(
-        octoPrintProvider: OctoPrintProvider,
         loadFilesUseCase: LoadFilesUseCase,
         startPrintJobUseCase: StartPrintJobUseCase,
         sharedPreferences: SharedPreferences,
         picasso: LiveData<Picasso?>
-    ): ViewModel = SelectFileViewModel(octoPrintProvider, loadFilesUseCase, startPrintJobUseCase, sharedPreferences, picasso)
+    ): ViewModel = SelectFileViewModel(
+        loadFilesUseCase,
+        startPrintJobUseCase,
+        sharedPreferences,
+        picasso
+    )
 
 }

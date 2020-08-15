@@ -3,14 +3,17 @@ package de.crysxd.octoapp.base.usecase
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import de.crysxd.octoapp.octoprint.OctoPrint
+import de.crysxd.octoapp.base.OctoPrintProvider
+import timber.log.Timber
 import javax.inject.Inject
 
-class OpenOctoprintWebUseCase @Inject constructor() : UseCase<Pair<OctoPrint, Context>, Unit> {
+class OpenOctoprintWebUseCase @Inject constructor(
+    private val octoPrintProvider: OctoPrintProvider
+) : UseCase<Context, Unit>() {
 
-    override suspend fun execute(param: Pair<OctoPrint, Context>) {
-        param.first.webUrl.let {
-            param.second.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
+    override suspend fun doExecute(param: Context, timber: Timber.Tree) {
+        octoPrintProvider.octoPrint().webUrl.let {
+            param.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
         }
     }
 }

@@ -1,18 +1,23 @@
 package de.crysxd.octoapp.base.usecase
 
-import de.crysxd.octoapp.octoprint.OctoPrint
+import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.models.printer.ToolCommand
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
-class SetToolTargetTemperatureUseCase @Inject constructor() : UseCase<Pair<OctoPrint, Int>, Unit> {
+class SetToolTargetTemperatureUseCase @Inject constructor(
+    private val octoPrintProvider: OctoPrintProvider
+) : UseCase<SetToolTargetTemperatureUseCase.Param, Unit>() {
 
-    override suspend fun execute(param: Pair<OctoPrint, Int>) {
-        param.first.createPrinterApi().executeToolCommand(
+    override suspend fun doExecute(param: Param, timber: Timber.Tree) {
+        octoPrintProvider.octoPrint().createPrinterApi().executeToolCommand(
             ToolCommand.SetTargetTemperatureToolCommand(
-                ToolCommand.TemperatureSet(param.second)
+                ToolCommand.TemperatureSet(param.toolTemperature)
             )
         )
     }
+
+    data class Param(
+        val toolTemperature: Int
+    )
 }

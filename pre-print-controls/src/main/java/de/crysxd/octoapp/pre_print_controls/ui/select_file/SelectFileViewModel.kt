@@ -7,7 +7,6 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.squareup.picasso.Picasso
-import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase.Params
@@ -27,7 +26,6 @@ const val KEY_HIDE_THUMBNAIL_HINT_UNTIL = "hide_thumbnail_hin_until"
 const val HIDE_THUMBNAIL_HINT_FOR_DAYS = 21L
 
 class SelectFileViewModel(
-    private val octoPrintProvider: OctoPrintProvider,
     private val loadFilesUseCase: LoadFilesUseCase,
     private val startPrintJobUseCase: StartPrintJobUseCase,
     private val sharedPreferences: SharedPreferences,
@@ -43,25 +41,22 @@ class SelectFileViewModel(
         if (!filesInitialised) {
             filesInitialised = true
             lastFolder = folder
-            filesMediator.removeSource(octoPrintProvider.octoPrint)
-            filesMediator.addSource(octoPrintProvider.octoPrint) {
-                viewModelScope.launch(Dispatchers.Default + coroutineExceptionHandler) {
-                    try {
-                        val loadedFolder = loadFilesUseCase.execute(Params(it!!, FileOrigin.Local, folder))
+            viewModelScope.launch(Dispatchers.Default + coroutineExceptionHandler) {
+                try {
+                    val loadedFolder = loadFilesUseCase.execute(Params(FileOrigin.Local, folder))
 
-                        // Check if we should show the thumbnail hint
-                        // As soon as we determine we should hide it, persist that info so we remember that
-                        // we e.g. saw a thumbnail in the root folder when showing a sub folder
-                        val showThumbnailHint = !isAnyThumbnailPresent(loadedFolder) && !isHideThumbnailHint() && isAnyFilePresent(loadedFolder)
-                        if (!showThumbnailHint) {
-                            hideThumbnailHint()
-                        }
-
-                        filesMediator.postValue(UiState(false, loadedFolder, showThumbnailHint))
-                    } catch (e: Exception) {
-                        Timber.e(e)
-                        filesMediator.postValue(UiState(true, emptyList(), false))
+                    // Check if we should show the thumbnail hint
+                    // As soon as we determine we should hide it, persist that info so we remember that
+                    // we e.g. saw a thumbnail in the root folder when showing a sub folder
+                    val showThumbnailHint = !isAnyThumbnailPresent(loadedFolder) && !isHideThumbnailHint() && isAnyFilePresent(loadedFolder)
+                    if (!showThumbnailHint) {
+                        hideThumbnailHint()
                     }
+
+                    filesMediator.postValue(UiState(false, loadedFolder, showThumbnailHint))
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    filesMediator.postValue(UiState(true, emptyList(), false))
                 }
             }
         }
@@ -107,9 +102,7 @@ class SelectFileViewModel(
     fun selectFile(file: FileObject) = GlobalScope.launch(coroutineExceptionHandler) {
         when (file) {
             is FileObject.File -> {
-                octoPrintProvider.octoPrint.value?.let {
-                    startPrintJobUseCase.execute(Pair(it, file))
-                }
+                startPrintJobUseCase.execute(file)
             }
             is FileObject.Folder -> {
                 navContoller.navigate(R.id.action_open_folder, SelectFileFragmentArgs(file, showThumbnailHint).toBundle())

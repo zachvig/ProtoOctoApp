@@ -3,7 +3,10 @@ package de.crysxd.octoapp.connect_printer.ui
 import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
-import androidx.lifecycle.*
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -42,12 +45,8 @@ class ConnectPrinterViewModel(
     private var lastConnectionAttempt = 0L
     private var psuCyclingState = MutableLiveData<PsuCycledState>(PsuCycledState.NotCycled)
 
-    private val availableSerialConnections = Transformations.switchMap(octoPrintProvider.octoPrint) {
-        PollingLiveData {
-            it?.let {
-                getPrinterConnectionUseCase.execute(it)
-            }
-        }
+    private val availableSerialConnections = PollingLiveData {
+        getPrinterConnectionUseCase.execute()
     }
 
     private val psuState = octoPrintProvider.eventLiveData
@@ -133,10 +132,10 @@ class ConnectPrinterViewModel(
     private fun isPsuBeingCycled(psuCycledState: PsuCycledState) =
         psuCycledState == PsuCycledState.Cycling
 
-    private fun isOctoPrintUnavailable(connectionResponse: PollingLiveData.Result<ConnectionResponse?>) =
+    private fun isOctoPrintUnavailable(connectionResponse: PollingLiveData.Result<ConnectionResponse>?) =
         connectionResponse is PollingLiveData.Result.Failure
 
-    private fun isOctoPrintStarting(connectionResponse: PollingLiveData.Result<ConnectionResponse?>) =
+    private fun isOctoPrintStarting(connectionResponse: PollingLiveData.Result<ConnectionResponse>?) =
         (connectionResponse as? PollingLiveData.Result.Failure)?.exception is OctoPrintBootingException
 
     private fun isNoPrinterAvailable(connectionResponse: ConnectionResponse) =
@@ -169,23 +168,21 @@ class ConnectPrinterViewModel(
     ).contains(connectionResponse.current.state)
 
     private fun autoConnect(connectionResponse: ConnectionResponse) = viewModelScope.launch(coroutineExceptionHandler) {
-        octoPrintProvider.octoPrint.value?.let { octoPrint ->
-            if (connectionResponse.options.ports.isNotEmpty() && !didJustAttemptToConnect() && !isPrinterConnecting(connectionResponse)) {
-                recordConnectionAttempt()
-                Timber.i("Attempting auto connect")
-                autoConnectPrinterUseCase.execute(
-                    if (connectionResponse.current.state == ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT) {
-                        // TODO Ask user which port to select
-                        val app = Injector.get().app()
-                        Toast.makeText(app, app.getString(R.string.auto_selection_failed), Toast.LENGTH_SHORT).show()
-                        Firebase.analytics.logEvent("auto_connect_failed", Bundle.EMPTY)
-                        Params(octoPrint, connectionResponse.options.ports.first())
-                    } else {
-                        Params(octoPrint)
-                    }
-                )
-                psuCyclingState.postValue(PsuCycledState.NotCycled)
-            }
+        if (connectionResponse.options.ports.isNotEmpty() && !didJustAttemptToConnect() && !isPrinterConnecting(connectionResponse)) {
+            recordConnectionAttempt()
+            Timber.i("Attempting auto connect")
+            autoConnectPrinterUseCase.execute(
+                if (connectionResponse.current.state == ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT) {
+                    // TODO Ask user which port to select
+                    val app = Injector.get().app()
+                    Toast.makeText(app, app.getString(R.string.auto_selection_failed), Toast.LENGTH_SHORT).show()
+                    Firebase.analytics.logEvent("auto_connect_failed", Bundle.EMPTY)
+                    Params(connectionResponse.options.ports.first())
+                } else {
+                    Params()
+                }
+            )
+            psuCyclingState.postValue(PsuCycledState.NotCycled)
         }
     }
 
@@ -201,24 +198,20 @@ class ConnectPrinterViewModel(
     }
 
     fun togglePsu() = viewModelScope.launch(coroutineExceptionHandler) {
-        octoPrintProvider.octoPrint.value?.let {
-            if (psuState.value?.isPsuOn == true) {
-                turnOffPsuUseCase.execute(it)
-            } else {
-                turnOnPsuUseCase.execute(it)
-                psuCyclingState.postValue(PsuCycledState.Cycled)
-                resetConnectionAttempt()
-            }
+        if (psuState.value?.isPsuOn == true) {
+            turnOffPsuUseCase.execute()
+        } else {
+            turnOnPsuUseCase.execute()
+            psuCyclingState.postValue(PsuCycledState.Cycled)
+            resetConnectionAttempt()
         }
     }
 
     fun cyclePsu() = viewModelScope.launch(coroutineExceptionHandler) {
-        octoPrintProvider.octoPrint.value?.let {
-            psuCyclingState.postValue(PsuCycledState.Cycling)
-            cyclePsuUseCase.execute(it)
-            psuCyclingState.postValue(PsuCycledState.Cycled)
-            resetConnectionAttempt()
-        }
+        psuCyclingState.postValue(PsuCycledState.Cycling)
+        cyclePsuUseCase.execute()
+        psuCyclingState.postValue(PsuCycledState.Cycled)
+        resetConnectionAttempt()
     }
 
     fun retryConnectionFromOfflineState() {
@@ -227,9 +220,7 @@ class ConnectPrinterViewModel(
     }
 
     fun openWebInterface(context: Context) = viewModelScope.launch(coroutineExceptionHandler) {
-        octoPrintProvider.octoPrint.value?.let {
-            openOctoprintWebUseCase.execute(Pair(it, context))
-        }
+        openOctoprintWebUseCase.execute(context)
     }
 
     private sealed class PsuCycledState {

@@ -9,7 +9,17 @@
         android:id="@+id/printControlsFragment"
         android:name="de.crysxd.octoapp.print_controls.ui.PrintControlsFragment"
         android:label="PrintControlsFragment"
-        tools:layout="@layout/fragment_print_controls" />
+        tools:layout="@layout/fragment_print_controls">
+
+        <action
+            android:id="@+id/action_tune_print"
+            app:destination="@id/tuneFragment"
+            app:enterAnim="@anim/enterAnim"
+            app:exitAnim="@anim/exitAnim"
+            app:popEnterAnim="@anim/popEnterAnim"
+            app:popExitAnim="@anim/popExitAnim" />
+
+    </fragment>
 
     <include app:graph="@navigation/enter_value_nav_graph" />
 
@@ -20,4 +30,23 @@
         app:exitAnim="@anim/exitAnim"
         app:popEnterAnim="@anim/popEnterAnim"
         app:popExitAnim="@anim/popExitAnim" />
+
+    <fragment
+        android:id="@+id/tuneFragment"
+        android:name="de.crysxd.octoapp.print_controls.ui.TuneFragment"
+        android:label="TuneFragment"
+        tools:layout="@layout/fragment_tune">
+
+        <argument
+            android:name="currentFeedRate"
+            app:argType="integer" />
+        <argument
+            android:name="currentFlowRate"
+            app:argType="integer" />
+        <argument
+            android:name="currentFanSpeed"
+            app:argType="integer" />
+
+    </fragment>
+
 </navigation>

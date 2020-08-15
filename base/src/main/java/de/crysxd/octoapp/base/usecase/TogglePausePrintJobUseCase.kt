@@ -1,12 +1,15 @@
 package de.crysxd.octoapp.base.usecase
 
-import de.crysxd.octoapp.octoprint.OctoPrint
+import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.models.job.JobCommand
+import timber.log.Timber
 import javax.inject.Inject
 
-class TogglePausePrintJobUseCase @Inject constructor() : UseCase<OctoPrint, Unit> {
+class TogglePausePrintJobUseCase @Inject constructor(
+    private val octoPrintProvider: OctoPrintProvider
+) : UseCase<Unit, Unit>() {
 
-    override suspend fun execute(param: OctoPrint) {
-        param.createJobApi().executeJobCommand(JobCommand.TogglePauseCommand)
+    override suspend fun doExecute(param: Unit, timber: Timber.Tree) {
+        octoPrintProvider.octoPrint().createJobApi().executeJobCommand(JobCommand.TogglePauseCommand)
     }
 }
