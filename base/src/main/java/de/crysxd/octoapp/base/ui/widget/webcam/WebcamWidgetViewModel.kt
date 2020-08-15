@@ -54,7 +54,7 @@ class WebcamWidgetViewModel(
                 emitSource(MjpegLiveData(webcamSettings.streamUrl).map {
                     when (it) {
                         is MjpegLiveData.MjpegSnapshot.Loading -> UiState.Loading
-                        is MjpegLiveData.MjpegSnapshot.Error -> UiState.Error(false)
+                        is MjpegLiveData.MjpegSnapshot.Error -> UiState.Error(false, webcamSettings.streamUrl)
                         is MjpegLiveData.MjpegSnapshot.Frame -> UiState.FrameReady(applyTransformations(it.frame, webcamSettings))
                     }
                 })
@@ -93,6 +93,6 @@ class WebcamWidgetViewModel(
         object Loading : UiState()
         object WebcamNotConfigured : UiState()
         data class FrameReady(val frame: Bitmap) : UiState()
-        data class Error(val isManualReconnect: Boolean) : UiState()
+        data class Error(val isManualReconnect: Boolean, val streamUrl: String? = null) : UiState()
     }
 }
