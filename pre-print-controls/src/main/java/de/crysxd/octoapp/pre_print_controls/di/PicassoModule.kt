@@ -10,7 +10,7 @@ import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
 import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.ext.appendFullPath
+import de.crysxd.octoapp.base.ext.resolve
 import timber.log.Timber
 
 @Module
@@ -28,7 +28,8 @@ class PicassoModule {
                         request.uri?.let { uri ->
                             val newUri = Uri.parse(octoPrint.webUrl)
                                 .buildUpon()
-                                .appendFullPath(uri.path)
+                                .resolve(uri.path)
+                                .query(uri.query)
                                 .build()
 
                             Timber.d("Mapping $uri -> $newUri")
