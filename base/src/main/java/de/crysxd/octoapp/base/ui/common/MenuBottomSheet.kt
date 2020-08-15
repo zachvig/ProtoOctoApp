@@ -38,7 +38,7 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
                     onMenuItemSelectedBase(it)
                 }
             }.invokeOnCompletion {
-                it?.let { Timber.e(it); requireOctoActivity().showErrorDialog(it) }
+                it?.let { Timber.e(it); requireOctoActivity().showDialog(it) }
             }
         }
         view.adapter = adapter

@@ -155,7 +155,7 @@ class MainActivity : OctoActivity() {
                 Injector.get().updateInstanceCapabilitiesUseCase().execute()
             } catch (e: Exception) {
                 Timber.e(e)
-                showErrorDialog(getString(R.string.capabilities_validation_error))
+                showDialog(getString(R.string.capabilities_validation_error))
             }
         }
     }

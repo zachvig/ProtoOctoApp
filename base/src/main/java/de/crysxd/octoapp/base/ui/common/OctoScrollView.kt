@@ -12,7 +12,6 @@ import androidx.annotation.StyleRes
 import androidx.core.widget.NestedScrollView
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.OctoActivity
-import timber.log.Timber
 import kotlin.math.roundToInt
 
 class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, @StyleRes defStyle: Int = 0) :
@@ -64,7 +63,6 @@ class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: A
             val overhang = getContentHeight() - (scrollY + height - paddingTop - paddingBottom) - (bottomAction?.height ?: 0)
             val scrollingDown = oldScrollY < scrollY
             if (overhang < 0f) {
-                Timber.i("Overhang: $overhang")
                 animatedOut = null
 
                 // Cancel ongoing animations and set manually
@@ -73,14 +71,12 @@ class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: A
 
             } else if (scrollingDown) {
                 if (animatedOut != true) {
-                    Timber.i("Animating out")
                     animatedOut = true
                     ongoingAnimation = bottomAction?.animate()?.translationY(bottomAction.height.toFloat())
                     ongoingAnimation?.start()
                 }
             } else {
                 if (animatedOut != false) {
-                    Timber.i("Animating in")
                     animatedOut = false
                     ongoingAnimation = bottomAction?.animate()?.translationY(0f)
                     ongoingAnimation?.start()
