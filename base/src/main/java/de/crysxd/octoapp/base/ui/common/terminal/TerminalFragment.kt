@@ -83,12 +83,14 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
     private fun showGcodeShortcuts(gcodes: List<GcodeHistoryItem>) {
         if (!initialLayout) {
             TransitionManager.beginDelayedTransition(buttonList)
+        } else {
+            buttonList.children.forEach { it.tag = true }
         }
 
-        // Remove all old views except the predefined buttons (those have ids)
+        // Remove all old views except the predefined buttons (those have tag == true)
         val removedViews = mutableListOf<Button>()
         buttonList.children.toList().forEach {
-            if (it.id == 0) {
+            if (it.tag != true) {
                 buttonList.removeView(it)
                 removedViews.add(it as Button)
             }
