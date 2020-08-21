@@ -17,6 +17,13 @@
             app:exitAnim="@anim/exitAnim"
             app:popEnterAnim="@anim/popEnterAnim"
             app:popExitAnim="@anim/popExitAnim" />
+        <action
+            android:id="@id/action_open_terminal"
+            app:destination="@id/terminalFragment"
+            app:enterAnim="@anim/enterAnim"
+            app:exitAnim="@anim/exitAnim"
+            app:popEnterAnim="@anim/popEnterAnim"
+            app:popExitAnim="@anim/popExitAnim" />
     </fragment>
 
 
@@ -24,7 +31,7 @@
         android:id="@+id/selectFileFragment"
         android:name="de.crysxd.octoapp.pre_print_controls.ui.select_file.SelectFileFragment"
         android:label="SelectFileFragment"
-        tools:layout="@layout/fragment_select_file" >
+        tools:layout="@layout/fragment_select_file">
 
         <action
             android:id="@+id/action_open_folder"
@@ -35,15 +42,21 @@
             app:popExitAnim="@anim/popExitAnim" />
         <argument
             android:name="folder"
+            android:defaultValue="@null"
             app:argType="de.crysxd.octoapp.octoprint.models.files.FileObject$Folder"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
         <argument
             android:name="showThumbnailHint"
             android:defaultValue="false"
             app:argType="boolean" />
 
     </fragment>
+
+    <fragment
+        android:id="@+id/terminalFragment"
+        android:name="de.crysxd.octoapp.base.ui.common.terminal.TerminalFragment"
+        android:label="TerminalFragment"
+        tools:layout="@layout/fragment_terminal" />
 
     <include app:graph="@navigation/enter_value_nav_graph" />
 

@@ -9,6 +9,7 @@ import android.widget.Button
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
@@ -35,7 +36,7 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
         }
 
         view.buttonOpenTerminal.setOnClickListener {
-            viewModel.sendGcodeCommand(it.context)
+            it.findNavController().navigate(R.id.action_open_terminal)
         }
 
         viewModel.gcodes.observe(viewLifecycleOwner, Observer(this::showGcodes))

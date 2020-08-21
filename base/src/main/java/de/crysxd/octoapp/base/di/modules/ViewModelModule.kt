@@ -7,6 +7,7 @@ import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.feedback.SendFeedbackViewModel
+import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.BaseViewModelFactory
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.common.terminal.TerminalViewModel
@@ -67,4 +68,17 @@ open class ViewModelModule {
         octoPrintProvider: OctoPrintProvider,
         getWebcamSettingsUseCase: GetWebcamSettingsUseCase
     ): ViewModel = WebcamWidgetViewModel(octoPrintProvider, getWebcamSettingsUseCase)
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(TerminalViewModel::class)
+    open fun provideTerminalViewModel(
+        getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase,
+        executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase,
+        serialCommunicationLogsRepository: SerialCommunicationLogsRepository
+    ): ViewModel = TerminalViewModel(
+        getGcodeShortcutsUseCase,
+        executeGcodeCommandUseCase,
+        serialCommunicationLogsRepository
+    )
 }
