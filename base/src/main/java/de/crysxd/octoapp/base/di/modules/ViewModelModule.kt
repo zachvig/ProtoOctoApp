@@ -75,10 +75,14 @@ open class ViewModelModule {
     open fun provideTerminalViewModel(
         getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase,
         executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase,
-        serialCommunicationLogsRepository: SerialCommunicationLogsRepository
+        serialCommunicationLogsRepository: SerialCommunicationLogsRepository,
+        getTerminalFiltersUseCase: GetTerminalFiltersUseCase,
+        octoPrintProvider: OctoPrintProvider
     ): ViewModel = TerminalViewModel(
         getGcodeShortcutsUseCase,
         executeGcodeCommandUseCase,
-        serialCommunicationLogsRepository
+        serialCommunicationLogsRepository,
+        getTerminalFiltersUseCase,
+        octoPrintProvider
     )
 }

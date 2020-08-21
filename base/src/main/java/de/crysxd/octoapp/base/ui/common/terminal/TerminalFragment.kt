@@ -17,20 +17,49 @@ import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.synthetic.main.fragment_terminal.*
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 
 class TerminalFragment : Fragment(R.layout.fragment_terminal) {
 
     private val viewModel: TerminalViewModel by injectViewModel(Injector.get().viewModelFactory())
     private var initialLayout = true
+    private var observeSerialCommunicationsJob: Job? = null
+    private var adapter: PlainTerminalAdaper? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // Terminal
+        initTerminal()
+        viewModel.terminalFilters.observe(viewLifecycleOwner, Observer {})
+
+        // Shortcuts & Buttons
+        viewModel.gcodes.observe(viewLifecycleOwner, Observer(this::showGcodeShortcuts))
+        buttonClear.setOnClickListener {
+            adapter?.clear()
+            viewModel.clear()
+        }
+        buttonFilters.setOnClickListener {
+            val availableFilters = (viewModel.terminalFilters.value ?: emptyList()).map {
+                Pair(it, viewModel.selectedTerminalFilters.contains(it))
+            }
+
+            TerminalFilterDialogFactory().showDialog(
+                requireContext(),
+                availableFilters
+            ) {
+                viewModel.selectedTerminalFilters = it.filter { it.second }.map { it.first }
+                initTerminal()
+            }
+        }
+    }
+
+    private fun initTerminal() {
         val adapter = PlainTerminalAdaper()
         recyclerView.adapter = adapter
-        lifecycleScope.launchWhenCreated {
+        observeSerialCommunicationsJob?.cancel()
+        observeSerialCommunicationsJob = lifecycleScope.launchWhenCreated {
             val (old, flow) = viewModel.observeSerialCommunication()
 
             // Add all items we have so far and scroll to bottom
@@ -48,12 +77,7 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
             }
         }
 
-        // Shortcuts & Buttons
-        viewModel.gcodes.observe(viewLifecycleOwner, Observer(this::showGcodeShortcuts))
-        buttonClear.setOnClickListener {
-            adapter.clear()
-            viewModel.clear()
-        }
+        this.adapter = adapter
     }
 
     private fun showGcodeShortcuts(gcodes: List<GcodeHistoryItem>) {
