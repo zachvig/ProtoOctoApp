@@ -1,6 +1,10 @@
 package de.crysxd.octoapp.base.ui.common.terminal
 
+import android.content.SharedPreferences
+import androidx.core.content.edit
 import androidx.lifecycle.*
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.SerialCommunication
@@ -22,26 +26,36 @@ import kotlinx.coroutines.withContext
 import java.util.*
 import java.util.regex.Pattern
 
+
+const val KEY_SELECTED_TERMINAL_FILTERS = "selected_terminal_filters"
+
 class TerminalViewModel(
     private val getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase,
     private val executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase,
     private val serialCommunicationLogsRepository: SerialCommunicationLogsRepository,
     private val getTerminalFiltersUseCase: GetTerminalFiltersUseCase,
-    private val octoPrintProvider: OctoPrintProvider
+    octoPrintProvider: OctoPrintProvider,
+    private val sharedPreferences: SharedPreferences,
+    private val gson: Gson
 ) : BaseViewModel() {
 
     private val terminalFiltersMediator = MediatorLiveData<List<Settings.TerminalFilter>>()
     val terminalFilters = terminalFiltersMediator.map { it }
 
-    var selectedTerminalFilters: List<Settings.TerminalFilter> = emptyList()
+    var selectedTerminalFilters: List<Settings.TerminalFilter> = loadSelectedFilters()
+        set(value) {
+            field = value
+            saveSelectedFilters()
+        }
 
     private var clearedFrom: Date = Date(0)
     private val mutableGcodes = MutableLiveData<List<GcodeHistoryItem>>()
     val gcodes = mutableGcodes.map { it }
 
     init {
-        // Load gcode history
+        // Load gcode history and selected filters
         updateGcodes()
+        loadSelectedFilters()
 
         // Init terminal filters
         terminalFiltersMediator.addSource(liveData {
@@ -81,6 +95,16 @@ class TerminalViewModel(
     private fun updateGcodes() = viewModelScope.launch(coroutineExceptionHandler) {
         mutableGcodes.postValue(getGcodeShortcutsUseCase.execute(Unit))
     }
+
+    private fun saveSelectedFilters() {
+        sharedPreferences.edit {
+            putString(KEY_SELECTED_TERMINAL_FILTERS, gson.toJson(selectedTerminalFilters))
+        }
+    }
+
+    private fun loadSelectedFilters() = sharedPreferences.getString(KEY_SELECTED_TERMINAL_FILTERS, null)?.let {
+        gson.fromJson<List<Settings.TerminalFilter>>(it, object : TypeToken<List<Settings.TerminalFilter?>>() {}.type)
+    } ?: emptyList()
 
     fun executeGcode(gcode: String) = viewModelScope.launch(coroutineExceptionHandler) {
         executeGcodeCommandUseCase.execute(
