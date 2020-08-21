@@ -7,9 +7,9 @@ import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.feedback.SendFeedbackViewModel
-import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.ui.BaseViewModelFactory
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
+import de.crysxd.octoapp.base.ui.common.terminal.TerminalViewModel
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlBedTemperatureWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlToolTemperatureWidgetViewModel
@@ -44,9 +44,9 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(SendGcodeWidgetViewModel::class)
     open fun provideSendGcodeWidgetViewModel(
-        gcodeHistoryRepository: GcodeHistoryRepository,
+        getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase,
         useCase: ExecuteGcodeCommandUseCase
-    ): ViewModel = SendGcodeWidgetViewModel(gcodeHistoryRepository, useCase)
+    ): ViewModel = SendGcodeWidgetViewModel(getGcodeShortcutsUseCase, useCase)
 
     @Provides
     @IntoMap
