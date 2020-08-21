@@ -67,9 +67,9 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
             // If we are scrolled to the bottom right now, make sure to restore the position
             // after the keyboard is shown
             val force = wasScrolledToBottom
-            recyclerView.postDelayed({
+            requireView().doOnNextLayout {
                 scrollToBottom(force)
-            }, 100)
+            }
         }
     }
 
@@ -139,6 +139,10 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
             buttonList.addView(button, 0)
             button.setOnClickListener {
                 viewModel.executeGcode(button.text.toString())
+            }
+            button.setOnLongClickListener {
+                gcodeInput.editText.setText(gcode.command)
+                true
             }
         }
 
