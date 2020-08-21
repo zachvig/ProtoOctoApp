@@ -29,6 +29,7 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
     private var initialLayout = true
     private var observeSerialCommunicationsJob: Job? = null
     private var adapter: PlainTerminalAdaper? = null
+    private var wasScrolledToBottom = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -62,6 +63,14 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
         gcodeInput.editText.setOnEditorActionListener { _, _, _ -> sendGcodeFromInput(); true }
         gcodeInput.editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
         gcodeInput.editText.imeOptions = EditorInfo.IME_ACTION_SEND
+        gcodeInput.editText.setOnFocusChangeListener { _, _ ->
+            // If we are scrolled to the bottom right now, make sure to restore the position
+            // after the keyboard is shown
+            val force = wasScrolledToBottom
+            recyclerView.postDelayed({
+                scrollToBottom(force)
+            }, 100)
+        }
     }
 
     private fun sendGcodeFromInput() {
@@ -86,15 +95,21 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
             // Append all new items
             flow.collect {
                 adapter.appendItem(it)
-
-                // If we are scrolled to the end, scroll down again after we added the item
-                if (!recyclerView.canScrollVertically(1)) {
-                    recyclerView.scrollToPosition(adapter.itemCount - 1)
-                }
+                scrollToBottom()
             }
         }
 
         this.adapter = adapter
+    }
+
+    private fun scrollToBottom(forced: Boolean = false) {
+        // If we are scrolled to the end, scroll down again after we added the item
+        adapter?.let {
+            if (forced || !recyclerView.canScrollVertically(1)) {
+                wasScrolledToBottom = true
+                recyclerView.scrollToPosition(it.itemCount - 1)
+            }
+        }
     }
 
     private fun showGcodeShortcuts(gcodes: List<GcodeHistoryItem>) {
