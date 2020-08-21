@@ -1,50 +1,64 @@
 package de.crysxd.octoapp.connect_printer.ui
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.connect_printer.di.injectViewModel
 import kotlinx.android.synthetic.main.fragment_connect_printer.*
 import kotlinx.coroutines.delay
 import timber.log.Timber
 
-class ConnectPrinterFragment : BaseFragment(R.layout.fragment_connect_printer) {
+class ConnectPrinterFragment : BaseFragment() {
 
     override val viewModel: ConnectPrinterViewModel by injectViewModel()
-
     private var firstStateUpdate = true
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = FrameLayout(requireContext())
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
-            Timber.i("$state")
+        lifecycleScope.launchWhenCreated {
+            // Async inflate view
+            val lazyView = LayoutInflater.from(requireContext()).suspendedInflate(R.layout.fragment_connect_printer, view as ViewGroup, false)
+            TransitionManager.beginDelayedTransition(view)
+            view.addView(lazyView)
 
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                val views = listOf(buttonTurnOnPsu, buttonTurnOffPsu, textViewState, textViewSubState)
-                val duration = view.animate().duration
-                if (firstStateUpdate) {
-                    handleUiStateUpdate(state)
-                    firstStateUpdate = false
-                } else {
-                    views.forEach { it.animate().alpha(0f).start() }
-                    delay(duration)
-                    handleUiStateUpdate(state)
-                    views.forEach { it.animate().alpha(1f).start() }
+            // Subscribe to view state
+            viewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
+                Timber.i("$state")
+
+                viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                    val views = listOf(buttonTurnOnPsu, buttonTurnOffPsu, textViewState, textViewSubState)
+                    val duration = view.animate().duration
+                    if (firstStateUpdate) {
+                        handleUiStateUpdate(state)
+                        firstStateUpdate = false
+                    } else {
+                        views.forEach { it.animate().alpha(0f).start() }
+                        delay(duration)
+                        handleUiStateUpdate(state)
+                        views.forEach { it.animate().alpha(1f).start() }
+                    }
                 }
-            }
 
-            buttonOpenOctoprint.setOnClickListener {
-                viewModel.openWebInterface(it.context)
-            }
-        })
+                buttonOpenOctoprint.setOnClickListener {
+                    viewModel.openWebInterface(it.context)
+                }
+            })
+        }
     }
 
     private fun handleUiStateUpdate(state: ConnectPrinterViewModel.UiState) {

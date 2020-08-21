@@ -9,7 +9,7 @@ import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 
-abstract class BaseFragment(@LayoutRes layout: Int) : Fragment(layout) {
+abstract class BaseFragment(@LayoutRes layout: Int = 0) : Fragment(layout) {
 
     protected abstract val viewModel: BaseViewModel
 
