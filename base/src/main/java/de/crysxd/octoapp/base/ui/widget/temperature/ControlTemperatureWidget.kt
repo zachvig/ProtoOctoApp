@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
+import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import kotlinx.android.synthetic.main.view_temperature.view.*
@@ -20,8 +21,8 @@ class ControlTemperatureWidget(parent: Fragment) : OctoWidget(parent) {
 
     override fun getTitle(context: Context) = "Temperature"
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
-        inflater.inflate(R.layout.widget_temperature, container, false)
+    override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
+        inflater.suspendedInflate(R.layout.widget_temperature, container, false)
 
     override fun onViewCreated(view: View) {
         bedViewModel.temperature.observe(viewLifecycleOwner, Observer(this::onBedTemperatureChanged))

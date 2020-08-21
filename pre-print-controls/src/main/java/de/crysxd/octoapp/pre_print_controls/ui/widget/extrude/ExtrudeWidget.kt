@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
@@ -16,8 +17,8 @@ class ExtrudeWidget(parent: Fragment) : OctoWidget(parent) {
 
     override fun getTitle(context: Context) = "Extrude"
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
-        inflater.inflate(R.layout.widget_extrude, container, false)
+    override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
+        inflater.suspendedInflate(R.layout.widget_extrude, container, false)
 
     override fun onViewCreated(view: View) {
         buttonExtrude5.setOnClickListener { viewModel.extrude5mm() }

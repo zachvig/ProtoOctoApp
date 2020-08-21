@@ -4,8 +4,11 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.graphics.Typeface
 import android.os.Build
+import android.os.Handler
 import android.provider.Settings
+import androidx.core.content.res.ResourcesCompat
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.iid.FirebaseInstanceId
@@ -95,5 +98,16 @@ class OctoApp : Application() {
         // Do not enable if we are in a TestLab environment
         val testLabSetting = Settings.System.getString(contentResolver, "firebase.test.lab")
         Firebase.analytics.setAnalyticsCollectionEnabled("true" != testLabSetting && !BuildConfig.DEBUG)
+
+        // Pre-load fonts in background. This will allow us later to asyn inflate views as loading fonts will need a Handler
+        // After being loaded once, they are in cache
+        val handler = Handler()
+        val callback = object : ResourcesCompat.FontCallback() {
+            override fun onFontRetrievalFailed(reason: Int) = Unit
+            override fun onFontRetrieved(typeface: Typeface) = Unit
+        }
+        ResourcesCompat.getFont(this, R.font.roboto_medium, callback, handler)
+        ResourcesCompat.getFont(this, R.font.roboto_light, callback, handler)
+        ResourcesCompat.getFont(this, R.font.roboto_regular, callback, handler)
     }
 }
