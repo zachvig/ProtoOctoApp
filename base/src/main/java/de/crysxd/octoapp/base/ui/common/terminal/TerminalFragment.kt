@@ -1,9 +1,11 @@
 package de.crysxd.octoapp.base.ui.common.terminal
 
 import android.os.Bundle
+import android.text.InputType
 import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.view.children
@@ -19,6 +21,7 @@ import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.synthetic.main.fragment_terminal.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import java.util.*
 
 class TerminalFragment : Fragment(R.layout.fragment_terminal) {
 
@@ -52,6 +55,20 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
                 viewModel.selectedTerminalFilters = it.filter { it.second }.map { it.first }
                 initTerminal()
             }
+        }
+
+        // Gcode input
+        gcodeInput.setOnActionListener { sendGcodeFromInput() }
+        gcodeInput.editText.setOnEditorActionListener { _, _, _ -> sendGcodeFromInput(); true }
+        gcodeInput.editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+        gcodeInput.editText.imeOptions = EditorInfo.IME_ACTION_SEND
+    }
+
+    private fun sendGcodeFromInput() {
+        val input = gcodeInput.editText.text.toString().toUpperCase(Locale.ENGLISH)
+        if (input.isNotBlank()) {
+            viewModel.executeGcode(input)
+            gcodeInput.editText.text = null
         }
     }
 
