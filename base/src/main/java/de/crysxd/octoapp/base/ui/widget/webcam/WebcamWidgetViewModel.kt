@@ -13,6 +13,10 @@ import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.base.usecase.execute
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import de.crysxd.octoapp.octoprint.models.socket.Message.EventMessage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 
 
@@ -51,13 +55,19 @@ class WebcamWidgetViewModel(
                 }
 
                 // Open stream
-                emitSource(MjpegLiveData(webcamSettings.streamUrl).map {
-                    when (it) {
-                        is MjpegLiveData.MjpegSnapshot.Loading -> UiState.Loading
-                        is MjpegLiveData.MjpegSnapshot.Error -> UiState.Error(false, webcamSettings.streamUrl)
-                        is MjpegLiveData.MjpegSnapshot.Frame -> UiState.FrameReady(applyTransformations(it.frame, webcamSettings))
+                MjpegConnection(webcamSettings.streamUrl)
+                    .load()
+                    .map {
+                        when (it) {
+                            is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading
+                            is MjpegConnection.MjpegSnapshot.Error -> UiState.Error(false, webcamSettings.streamUrl)
+                            is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(applyTransformations(it.frame, webcamSettings))
+                        }
                     }
-                })
+                    .flowOn(Dispatchers.Default)
+                    .collect {
+                        emit(it)
+                    }
             } catch (e: Exception) {
                 Timber.e(e)
                 emit(UiState.Error(true))
@@ -68,26 +78,27 @@ class WebcamWidgetViewModel(
         uiStateMediator.addSource(liveData) { uiStateMediator.postValue(it) }
     }
 
-    private fun applyTransformations(frame: Bitmap, webcamSettings: WebcamSettings) = if (webcamSettings.flipV || webcamSettings.flipH || webcamSettings.rotate90) {
-        val matrix = Matrix()
+    private suspend fun applyTransformations(frame: Bitmap, webcamSettings: WebcamSettings) =
+        if (webcamSettings.flipV || webcamSettings.flipH || webcamSettings.rotate90) {
+            val matrix = Matrix()
 
-        if (webcamSettings.rotate90) {
-            matrix.postRotate(-90f)
+            if (webcamSettings.rotate90) {
+                matrix.postRotate(-90f)
+            }
+
+            matrix.postScale(
+                if (webcamSettings.flipH) -1f else 1f,
+                if (webcamSettings.flipV) -1f else 1f,
+                frame.width / 2f,
+                frame.height / 2f
+            )
+
+            val transformed = Bitmap.createBitmap(frame, 0, 0, frame.width, frame.height, matrix, true)
+            frame.recycle()
+            transformed
+        } else {
+            frame
         }
-
-        matrix.postScale(
-            if (webcamSettings.flipH) -1f else 1f,
-            if (webcamSettings.flipV) -1f else 1f,
-            frame.width / 2f,
-            frame.height / 2f
-        )
-
-        val transformed = Bitmap.createBitmap(frame, 0, 0, frame.width, frame.height, matrix, true)
-        frame.recycle()
-        transformed
-    } else {
-        frame
-    }
 
     sealed class UiState {
         object Loading : UiState()

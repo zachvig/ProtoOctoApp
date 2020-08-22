@@ -2,12 +2,15 @@ package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.lifecycle.LiveData
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.io.BufferedInputStream
 import java.io.IOException
 import java.net.HttpURLConnection
+import java.net.SocketException
 import java.net.URL
 import java.nio.charset.Charset
 import java.util.regex.Pattern
@@ -16,30 +19,13 @@ const val RECONNECT_TIMEOUT_MS = 1000L
 const val TOLERATED_FRAME_LOSS_STREAK = 4
 const val DEFAULT_HEADER_BOUNDARY = "[_a-zA-Z0-9]*boundary"
 
-class MjpegLiveData(private val streamUrl: String) : LiveData<MjpegLiveData.MjpegSnapshot>() {
+class MjpegConnection(private val streamUrl: String) {
 
-    private var loadJob: Job? = null
-
-    override fun onActive() {
-        super.onActive()
-        startLoad()
-        Timber.i("Active")
-    }
-
-    override fun onInactive() {
-        super.onInactive()
-        loadJob?.cancel()
-        Timber.i("Inactive")
-    }
-
-    private fun startLoad() {
-        loadJob?.cancel()
-        loadJob = load()
-    }
-
-    private fun load() = GlobalScope.launch(Dispatchers.IO) {
-        try {
-            postValue(MjpegSnapshot.Loading)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Suppress("BlockingMethodInNonBlockingContext")
+    fun load() = flow {
+        while (true) {
+            emit(MjpegSnapshot.Loading)
 
             // Connect
             val connection = connect()
@@ -51,11 +37,11 @@ class MjpegLiveData(private val streamUrl: String) : LiveData<MjpegLiveData.Mjpe
             val buffer = ByteArray(4096)
             var image = ByteArray(0)
             var lostFrameCount = 0
-            while (isActive) {
+            while (true) {
                 // Read data
                 val bufferLength = input.read(buffer)
                 if (bufferLength < 0) {
-                    cancel()
+                    throw SocketException("Socket closed")
                 }
 
                 // Append to image
@@ -78,9 +64,8 @@ class MjpegLiveData(private val streamUrl: String) : LiveData<MjpegLiveData.Mjpe
                     // Read bitmap
                     val outputImg = BitmapFactory.decodeByteArray(image, 0, image.size)
                     if (outputImg != null) {
-                        Timber.v("Frame ready")
                         lostFrameCount = 0
-                        postValue(MjpegSnapshot.Frame(outputImg))
+                        emit(MjpegSnapshot.Frame(outputImg))
                     } else {
                         lostFrameCount++
                         Timber.e("Lost frame due to decoding error (lostFrames=$lostFrameCount)")
@@ -96,15 +81,16 @@ class MjpegLiveData(private val streamUrl: String) : LiveData<MjpegLiveData.Mjpe
                     image = addByte(image, buffer, 0, bufferLength)
                 }
             }
-        } catch (e: Exception) {
-            postValue(MjpegSnapshot.Error)
-            Timber.e(e, "Error while loading stream")
-            delay(RECONNECT_TIMEOUT_MS)
-            startLoad()
         }
-    }.also {
-        it.invokeOnCompletion { Timber.i("Disconnected from $streamUrl") }
-    }
+    }.onCompletion {
+        Timber.i("Stopped stream")
+    }.onStart {
+        Timber.i("Starting stream")
+    }.retry {
+        Timber.e(it)
+        delay(RECONNECT_TIMEOUT_MS)
+        true
+    }.flowOn(Dispatchers.IO)
 
     private fun connect() = (URL(streamUrl).openConnection() as HttpURLConnection).also {
         it.doInput = true
