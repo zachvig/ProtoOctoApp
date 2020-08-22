@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.ui.common.terminal
 import android.os.Bundle
 import android.text.InputType
 import android.transition.TransitionManager
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -21,6 +22,7 @@ import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.synthetic.main.fragment_terminal.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import timber.log.Timber
 import java.util.*
 
 class TerminalFragment : Fragment(R.layout.fragment_terminal) {
@@ -63,13 +65,22 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
         gcodeInput.editText.setOnEditorActionListener { _, _, _ -> sendGcodeFromInput(); true }
         gcodeInput.editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
         gcodeInput.editText.imeOptions = EditorInfo.IME_ACTION_SEND
-        gcodeInput.editText.setOnFocusChangeListener { _, _ ->
+
+        var oldHeight = 0
+        recyclerView.viewTreeObserver.addOnGlobalLayoutListener {
             // If we are scrolled to the bottom right now, make sure to restore the position
             // after the keyboard is shown
             val force = wasScrolledToBottom
             requireView().doOnNextLayout {
                 scrollToBottom(force)
             }
+
+            // If keyboard hidden
+            if (oldHeight < recyclerView.height) {
+                gcodeInput.editText.clearFocus()
+                Timber.i("Keyboard hidden")
+            }
+            oldHeight = recyclerView.height
         }
     }
 
@@ -152,6 +163,12 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
             buttonListScrollView.doOnNextLayout {
                 buttonListScrollView.scrollTo(buttonList.width, 0)
             }
+        }
+        gcodeInput.editText.setOnKeyListener { _, i, _ ->
+            if (i == KeyEvent.KEYCODE_BACK) {
+                gcodeInput.editText.clearFocus()
+                true
+            } else false
         }
     }
 
