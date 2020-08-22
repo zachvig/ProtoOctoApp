@@ -27,7 +27,7 @@ import de.crysxd.octoapp.base.R as BaseR
 class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_controls) {
 
     override val viewModel: PrePrintControlsViewModel by injectViewModel()
-    private val adapter = OctoWidgetAdapter()
+    private val adapter by lazy { OctoWidgetAdapter(lifecycleScope) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -59,7 +59,7 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
             widgets.add(SendGcodeWidget(this@PrePrintControlsFragment))
 
             Timber.i("Installing widgets: ${widgets.map { it::class.java.simpleName }}")
-            adapter.setWidgets(widgets)
+            adapter.setWidgets(requireContext(), widgets)
         }
     }
 

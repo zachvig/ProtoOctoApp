@@ -51,16 +51,13 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             updateViewState()
         }
     var selectAllOnFocus: Boolean = false
+    var actionOnlyWithText: Boolean = false
 
     @Suppress("unused")
     val editText: AppCompatEditText by lazy { input }
 
     init {
         View.inflate(context, R.layout.view_octo_input_layout, this)
-
-        input.setOnFocusChangeListener { _, _ ->
-            updateViewState()
-        }
 
         input.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) = updateViewState()
@@ -76,6 +73,7 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             example = it.getString(R.styleable.OctoTextInputLayout_example)
             hintNormal = it.getString(R.styleable.OctoTextInputLayout_label)
             selectAllOnFocus = it.getBoolean(R.styleable.OctoTextInputLayout_selectAllOnFocus, false)
+            actionOnlyWithText = it.getBoolean(R.styleable.OctoTextInputLayout_actionOnlyWithText, false)
             input.setText(it.getString(R.styleable.OctoTextInputLayout_defaultInputValue))
             val iconDrawable = it.getResourceId(R.styleable.OctoTextInputLayout_icon, 0)
             if (iconDrawable > 0) {
@@ -108,6 +106,8 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
                     editText.setSelection(0, editText.length())
                 }
             }
+
+            updateViewState()
         }
     }
 
@@ -123,12 +123,14 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         } else {
             hintNormal
         }
+        val actionVisible = !editText.text.isNullOrBlank() || !actionOnlyWithText
 
         // Only animate if changes worth animation are detected
-        if (labelVisible != label.isVisible || hintText != input.hint) {
+        if (labelVisible != label.isVisible || hintText != input.hint || actionVisible != action.isVisible) {
             TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
             label.isVisible = labelVisible
             input.hint = hintText
+            action.isVisible = actionVisible
         }
     }
 

@@ -9,9 +9,11 @@ import android.widget.Button
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
+import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import kotlinx.android.synthetic.main.widget_gcode.*
 import kotlinx.android.synthetic.main.widget_gcode.view.*
@@ -22,8 +24,8 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
 
     override fun getTitle(context: Context) = "Send Gcode"
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
-        inflater.inflate(R.layout.widget_gcode, container, false)
+    override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
+        inflater.suspendedInflate(R.layout.widget_gcode, container, false)
 
     override fun onViewCreated(view: View) {
         (view as? ViewGroup)?.children?.filter {
@@ -35,7 +37,7 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
         }
 
         view.buttonOpenTerminal.setOnClickListener {
-            viewModel.sendGcodeCommand(it.context)
+            it.findNavController().navigate(R.id.action_open_terminal)
         }
 
         viewModel.gcodes.observe(viewLifecycleOwner, Observer(this::showGcodes))

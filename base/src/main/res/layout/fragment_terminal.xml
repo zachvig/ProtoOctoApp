@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <de.crysxd.octoapp.base.ui.common.OctoRecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/margin_2"
+        android:paddingBottom="@dimen/margin_2"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/buttonListScrollView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
+        android:id="@+id/gcodeInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_2"
+        android:layout_marginRight="@dimen/margin_2"
+        android:layout_marginBottom="@dimen/margin_2"
+        app:actionDrawable="@drawable/ic_round_send_24"
+        app:actionOnlyWithText="true"
+        app:label="@string/command"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <HorizontalScrollView
+        android:id="@+id/buttonListScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/margin_2"
+        android:paddingTop="@dimen/margin_2"
+        android:paddingBottom="@dimen/margin_2"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@+id/gcodeInput"
+        tools:ignore="RtlSymmetry">
+
+        <LinearLayout
+            android:id="@+id/buttonList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end">
+
+            <Button
+                android:id="@+id/buttonClear"
+                style="@style/OctoTheme.Widget.Button.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_1"
+                android:contentDescription="@string/cd_history"
+                android:drawableStart="@drawable/ic_round_clear_all_24"
+                android:drawablePadding="@dimen/margin_0" />
+
+            <Button
+                android:id="@+id/buttonToggleStyled"
+                style="@style/OctoTheme.Widget.Button.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_1"
+                android:contentDescription="@string/cd_turn_style_on_off"
+                android:drawableStart="@drawable/ic_round_brush_24" />
+
+            <Button
+                android:id="@+id/buttonFilters"
+                style="@style/OctoTheme.Widget.Button.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_1"
+                android:layout_marginEnd="@dimen/margin_2"
+                android:contentDescription="@string/cd_filter_terminal"
+                android:drawableStart="@drawable/ic_round_filter_alt_24"
+                android:textSize="20sp"
+                tools:text="1" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

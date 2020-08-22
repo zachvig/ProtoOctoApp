@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/margin_2"
+    android:layout_marginBottom="@dimen/margin_1"
+    android:background="@drawable/styled_terminal_end_background"
+    android:gravity="center_vertical"
+    android:importantForAccessibility="no"
+    tools:text="TextView" />

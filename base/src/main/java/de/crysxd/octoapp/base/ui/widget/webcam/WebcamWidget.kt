@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
+import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidgetViewModel.UiState
@@ -36,8 +37,8 @@ class WebcamWidget(
 
     override fun getTitle(context: Context) = context.getString(R.string.webcam)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
-        val view = inflater.inflate(R.layout.widget_webcam, container, false) as ViewGroup
+    override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+        val view = inflater.suspendedInflate(R.layout.widget_webcam, container, false) as ViewGroup
 
         // Do not use the card view in fullscreen
         return if (isFullscreen) {
