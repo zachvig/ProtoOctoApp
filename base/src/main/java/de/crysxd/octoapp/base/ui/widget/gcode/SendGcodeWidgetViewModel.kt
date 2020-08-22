@@ -1,28 +1,22 @@
 package de.crysxd.octoapp.base.ui.widget.gcode
 
-import android.content.Context
-import android.text.InputType
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.google.android.material.snackbar.Snackbar
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
+import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
-import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
-import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase.Response.RecordedResponse
 import de.crysxd.octoapp.base.usecase.GetGcodeShortcutsUseCase
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 class SendGcodeWidgetViewModel(
+    private val gcodeHistoryRepository: GcodeHistoryRepository,
     private val getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase,
     private val sendGcodeCommandUseCase: ExecuteGcodeCommandUseCase
 ) : BaseViewModel() {
@@ -36,6 +30,11 @@ class SendGcodeWidgetViewModel(
 
     private fun updateGcodes() = viewModelScope.launch(coroutineExceptionHandler) {
         mutableGcodes.postValue(getGcodeShortcutsUseCase.execute(Unit))
+    }
+
+    fun setFavorite(gcode: GcodeHistoryItem, favorite: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
+        gcodeHistoryRepository.setFavorite(gcode.command, favorite).join()
+        updateGcodes()
     }
 
     fun sendGcodeCommand(command: String, updateViewAfterDone: Boolean = false) = viewModelScope.launch(coroutineExceptionHandler) {
@@ -92,28 +91,6 @@ class SendGcodeWidgetViewModel(
 
         if (updateViewAfterDone) {
             updateGcodes()
-        }
-    }
-
-    fun sendGcodeCommand(context: Context) = viewModelScope.launch(coroutineExceptionHandler) {
-        val result = NavigationResultMediator.registerResultCallback<String?>()
-
-        navContoller.navigate(
-            R.id.action_enter_value,
-            EnterValueFragmentArgs(
-                title = context.getString(R.string.send_gcode),
-                hint = context.getString(R.string.gcode_one_command_per_line),
-                action = context.getString(R.string.send_gcode),
-                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS,
-                maxLines = 10,
-                resultId = result.first
-            ).toBundle()
-        )
-
-        withContext(Dispatchers.Default) {
-            result.second.asFlow().first()
-        }?.let {
-            sendGcodeCommand(it, true)
         }
     }
 }

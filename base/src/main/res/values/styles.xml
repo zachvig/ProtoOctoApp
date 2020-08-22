@@ -31,6 +31,11 @@
     <style name="OctoTheme.Widget.Button" parent="Widget.AppCompat.Button">
         <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Button</item>
         <item name="android:background">@drawable/bg_button</item>
+        <item name="android:paddingStart">@dimen/margin_2</item>
+        <item name="android:paddingEnd">@dimen/margin_2</item>
+        <item name="android:paddingTop">@dimen/margin_2</item>
+        <item name="android:paddingBottom">@dimen/margin_2</item>
+        <item name="android:drawablePadding">@dimen/margin_0</item>
     </style>
 
     <style name="OctoTheme.Widget.Button.Secondary">
@@ -47,10 +52,20 @@
         <item name="android:stateListAnimator">@null</item>
         <item name="android:minWidth">0dp</item>
         <item name="android:minHeight">0dp</item>
+        <item name="android:paddingTop">@dimen/margin_1</item>
+        <item name="android:paddingBottom">@dimen/margin_1</item>
         <item name="android:drawableTint" tools:targetApi="m">?android:attr/textColorPrimaryInverse</item>
     </style>
 
     <style name="OctoTheme.Widget.Button.Small.Secondary">
+        <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Button</item>
+        <item name="android:background">@drawable/bg_button_small_secondary</item>
+        <item name="android:textColor">@color/button_secondary_text_color</item>
+        <item name="android:drawableTint" tools:targetApi="m">@color/accent</item>
+
+    </style>
+
+    <style name="OctoTheme.Widget.Button.Small.Secondary.Pinned">
         <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Button</item>
         <item name="android:background">@drawable/bg_button_small_secondary</item>
         <item name="android:textColor">@color/button_secondary_text_color</item>

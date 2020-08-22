@@ -11,7 +11,10 @@ class GetGcodeShortcutsUseCase @Inject constructor(
     private val gcodeHistoryRepository: GcodeHistoryRepository
 ) : UseCase<Unit, List<GcodeHistoryItem>>() {
 
-    override suspend fun doExecute(param: Unit, timber: Timber.Tree) = gcodeHistoryRepository.getHistory().sortedWith(
-        compareBy({ it.isFavorite }, { Long.MAX_VALUE - it.lastUsed })
-    ).take(MAX_HISTORY_LENGTH)
+    override suspend fun doExecute(param: Unit, timber: Timber.Tree): List<GcodeHistoryItem> {
+        val history = gcodeHistoryRepository.getHistory()
+        val favs = history.filter { it.isFavorite }.sortedBy { it.command }
+        val others = history.filter { !it.isFavorite }.sortedByDescending { it.lastUsed }.take(MAX_HISTORY_LENGTH)
+        return listOf(favs, others).flatten()
+    }
 }
