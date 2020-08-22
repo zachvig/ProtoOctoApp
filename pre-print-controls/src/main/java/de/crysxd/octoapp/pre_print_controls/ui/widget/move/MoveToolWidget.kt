@@ -13,6 +13,7 @@ import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.applyCanvas
 import androidx.fragment.app.Fragment
+import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
@@ -33,8 +34,8 @@ class MoveToolWidget(parent: Fragment) : OctoWidget(parent) {
 
     override fun getTitle(context: Context) = "Move"
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
-        inflater.inflate(R.layout.widget_move_tool, container, false)
+    override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
+        inflater.suspendedInflate(R.layout.widget_move_tool, container, false)
 
     override fun onViewCreated(view: View) {
         initJogResolutionSeekBar()

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="action_enter_value" type="id" />
+    <item name="action_open_terminal" type="id" />
 
     <item name="enterAnim" type="anim">@anim/fragment_open_enter</item>
     <item name="exitAnim" type="anim">@anim/fragment_close_exit</item>

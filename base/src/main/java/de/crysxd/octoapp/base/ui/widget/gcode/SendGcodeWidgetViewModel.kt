@@ -9,22 +9,21 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.material.snackbar.Snackbar
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
-import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase.Response.RecordedResponse
+import de.crysxd.octoapp.base.usecase.GetGcodeShortcutsUseCase
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-const val MAX_HISTORY_LENGTH = 5
 
 class SendGcodeWidgetViewModel(
-    private val gcodeHistoryRepository: GcodeHistoryRepository,
+    private val getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase,
     private val sendGcodeCommandUseCase: ExecuteGcodeCommandUseCase
 ) : BaseViewModel() {
 
@@ -35,12 +34,8 @@ class SendGcodeWidgetViewModel(
         updateGcodes()
     }
 
-    private fun updateGcodes() {
-        mutableGcodes.postValue(
-            gcodeHistoryRepository.getHistory().sortedWith(
-                compareBy({ it.isFavorite }, { Long.MAX_VALUE - it.lastUsed })
-            ).take(MAX_HISTORY_LENGTH)
-        )
+    private fun updateGcodes() = viewModelScope.launch(coroutineExceptionHandler) {
+        mutableGcodes.postValue(getGcodeShortcutsUseCase.execute(Unit))
     }
 
     fun sendGcodeCommand(command: String, updateViewAfterDone: Boolean = false) = viewModelScope.launch(coroutineExceptionHandler) {

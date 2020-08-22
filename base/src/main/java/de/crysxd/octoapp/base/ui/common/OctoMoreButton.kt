@@ -9,7 +9,7 @@ import de.crysxd.octoapp.base.R
 class OctoMoreButton @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, style: Int = 0) : AppCompatImageButton(context, attrs, style) {
 
     init {
-        setImageResource(R.drawable.ic_baseline_more_vert_24)
+        setImageResource(R.drawable.ic_round_more_vert_24)
         setColorFilter(ContextCompat.getColor(context, R.color.button_more_foreground))
         setBackgroundResource(R.drawable.bg_button_more)
         outlineProvider = null

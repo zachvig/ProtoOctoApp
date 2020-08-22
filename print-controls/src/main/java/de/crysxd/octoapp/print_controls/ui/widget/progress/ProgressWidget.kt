@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidgetViewModel
@@ -38,8 +39,8 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
 
     override fun getTitle(context: Context) = context.getString(R.string.progress)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
-        inflater.inflate(R.layout.widget_progress, container, false)
+    override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
+        inflater.suspendedInflate(R.layout.widget_progress, container, false)
 
     override fun onViewCreated(view: View) {
         viewModel.printState.observe(viewLifecycleOwner, Observer {

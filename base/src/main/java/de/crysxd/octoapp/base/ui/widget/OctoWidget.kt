@@ -22,11 +22,11 @@ abstract class OctoWidget(val parent: Fragment) : LayoutContainer {
 
     abstract fun getTitle(context: Context): String?
 
-    abstract fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View
+    abstract suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View
 
     abstract fun onViewCreated(view: View)
 
-    fun getView(context: Context, container: ViewGroup): View {
+    suspend fun getView(context: Context, container: ViewGroup): View {
         return if (!::view.isInitialized) {
             view = onCreateView(LayoutInflater.from(context), container)
             onViewCreated(view)

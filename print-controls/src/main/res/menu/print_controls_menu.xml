@@ -12,11 +12,6 @@
         android:icon="@drawable/ic_round_open_in_browser_24" />
 
     <item
-        android:id="@+id/menuChangeFilament"
-        android:title="@string/change_filament"
-        android:icon="@drawable/ic_round_change_history_24" />
-
-    <item
         android:id="@+id/menuEmergencyStop"
         android:title="@string/emergency_stop"
         android:icon="@drawable/ic_round_cancel_24"/>

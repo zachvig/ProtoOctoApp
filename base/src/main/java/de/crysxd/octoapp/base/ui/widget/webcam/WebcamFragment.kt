@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 
 class WebcamFragment : Fragment() {
 
@@ -17,8 +18,10 @@ class WebcamFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val widget = WebcamWidget(this, true)
-        val widgetView = widget.getView(requireContext(), view as ViewGroup)
-        view.addView(widgetView)
+        lifecycleScope.launchWhenCreated {
+            val widget = WebcamWidget(this@WebcamFragment, true)
+            val widgetView = widget.getView(requireContext(), view as ViewGroup)
+            view.addView(widgetView)
+        }
     }
 }
