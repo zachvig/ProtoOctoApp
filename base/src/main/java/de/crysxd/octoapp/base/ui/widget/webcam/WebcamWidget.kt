@@ -36,6 +36,7 @@ class WebcamWidget(
     private var lastState: UiState? = null
 
     override fun getTitle(context: Context) = context.getString(R.string.webcam)
+    override fun getAnalyticsName() = "webcam"
 
     override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         val view = inflater.suspendedInflate(R.layout.widget_webcam, container, false) as ViewGroup
@@ -56,6 +57,7 @@ class WebcamWidget(
 
         // Fullscreen button
         view.imageButtonFullscreen.setOnClickListener {
+            recordInteraction()
             if (isFullscreen) {
                 parent.activity?.finish()
             } else {

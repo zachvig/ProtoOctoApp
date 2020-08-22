@@ -23,6 +23,7 @@ class TuneWidget(parent: Fragment) : OctoWidget(parent) {
     private val viewModel: TuneWidgetViewModel by injectViewModel(Injector.get().viewModelFactory())
 
     override fun getTitle(context: Context): String? = null
+    override fun getAnalyticsName() = "tune"
 
     override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
         inflater.suspendedInflate(R.layout.widget_tune, container, false)
@@ -42,6 +43,7 @@ class TuneWidget(parent: Fragment) : OctoWidget(parent) {
         })
 
         view.setOnClickListener {
+            recordInteraction()
             viewModel.uiState.value?.let { uiState ->
                 it.findNavController().navigate(
                     actionTunePrint(
