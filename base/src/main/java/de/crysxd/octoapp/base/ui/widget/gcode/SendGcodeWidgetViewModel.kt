@@ -77,14 +77,18 @@ class SendGcodeWidgetViewModel(
                     )
                 },
                 action = {
-                    postMessage(Message.DialogMessage {
-                        responses.map {
-                            listOf(
-                                listOf((it as? RecordedResponse)?.sendLine ?: ""),
-                                (it as? RecordedResponse)?.responseLines ?: emptyList()
-                            ).flatten().joinToString("\n")
-                        }.joinToString("\n\n")
-                    })
+                    postMessage(
+                        Message.DialogMessage(
+                            text = {
+                                responses.joinToString("\n\n") {
+                                    listOf(
+                                        listOf((it as? RecordedResponse)?.sendLine ?: ""),
+                                        (it as? RecordedResponse)?.responseLines ?: emptyList()
+                                    ).flatten().joinToString("\n")
+                                }
+                            }
+                        )
+                    )
                 },
                 actionText = { it.getString(R.string.show_logs) }
             )

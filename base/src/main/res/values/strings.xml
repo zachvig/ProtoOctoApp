@@ -63,6 +63,7 @@
     <string name="other">Other</string>
     <string name="open_terminal">Open Terminal</string>
     <string name="show_logs">Show logs</string>
+    <string name="error_cold_extrusion">The hotend is below the minimum temperature</string>
     <string name="cd_history">History</string>
     <string name="cd_turn_style_on_off">Turn style on/off</string>
     <string name="cd_filter_terminal">Filter Terminal</string>

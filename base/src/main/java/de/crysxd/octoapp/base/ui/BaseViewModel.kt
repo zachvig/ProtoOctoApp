@@ -48,7 +48,11 @@ abstract class BaseViewModel : ViewModel() {
         }
 
         data class DialogMessage(
-            val text: (Context) -> CharSequence
+            val text: (Context) -> CharSequence,
+            val positiveButton: (Context) -> CharSequence = { it.getString(android.R.string.ok) },
+            val neutralButton: (Context) -> CharSequence? = { null },
+            val positiveAction: (Context) -> Unit = {},
+            val neutralAction: (Context) -> Unit = {}
         ) : Message()
     }
 

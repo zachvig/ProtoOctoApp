@@ -34,4 +34,7 @@
     <small>Check out how <a href="https://www.youtube.com/watch?v=QB8MzoafnjY">Cura</a> and <a href="https://www.youtube.com/watch?v=V2PdG-Wx5Z0">Prusa Slicer</a> can store files in OctoPrint automatically.</small>
     ]]></string>
     <string name="empty">Empty</string>
+    <string name="error_cold_extrusion">Your hotend needs to be at %1$d℃ to extrude but it is only at %2$d℃</string>
+    <string name="heat_hotend">Heat hotend</string>
+    <string name="heating_hotend">Heating hotend to %d℃</string>
 </resources>
