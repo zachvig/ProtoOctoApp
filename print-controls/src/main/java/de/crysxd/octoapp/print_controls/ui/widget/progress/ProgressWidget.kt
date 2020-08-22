@@ -38,6 +38,7 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
     private var lastProgress: Float? = null
 
     override fun getTitle(context: Context) = context.getString(R.string.progress)
+    override fun getAnalyticsName() = "progress"
 
     override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
         inflater.suspendedInflate(R.layout.widget_progress, container, false)

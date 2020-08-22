@@ -33,6 +33,7 @@ class MoveToolWidget(parent: Fragment) : OctoWidget(parent) {
     }
 
     override fun getTitle(context: Context) = "Move"
+    override fun getAnalyticsName() = "move"
 
     override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
         inflater.suspendedInflate(R.layout.widget_move_tool, container, false)
@@ -43,14 +44,14 @@ class MoveToolWidget(parent: Fragment) : OctoWidget(parent) {
     }
 
     private fun initControlButtons() {
-        imageButtonHomeZ.setOnClickListener { viewModel.homeZAxis() }
-        imageButtonHomeXy.setOnClickListener { viewModel.homeXYAxis() }
-        imageButtonMoveXPositive.setOnClickListener { viewModel.jog(x = MoveToolWidgetViewModel.Direction.Positive) }
-        imageButtonMoveXNegative.setOnClickListener { viewModel.jog(x = MoveToolWidgetViewModel.Direction.Negative) }
-        imageButtonMoveYPositive.setOnClickListener { viewModel.jog(y = MoveToolWidgetViewModel.Direction.Positive) }
-        imageButtonMoveYNegative.setOnClickListener { viewModel.jog(y = MoveToolWidgetViewModel.Direction.Negative) }
-        imageButtonMoveZPositive.setOnClickListener { viewModel.jog(z = MoveToolWidgetViewModel.Direction.Positive) }
-        imageButtonMoveZNegative.setOnClickListener { viewModel.jog(z = MoveToolWidgetViewModel.Direction.Negative) }
+        imageButtonHomeZ.setOnClickListener { recordInteraction(); viewModel.homeZAxis() }
+        imageButtonHomeXy.setOnClickListener { recordInteraction(); viewModel.homeXYAxis() }
+        imageButtonMoveXPositive.setOnClickListener { recordInteraction(); viewModel.jog(x = MoveToolWidgetViewModel.Direction.Positive) }
+        imageButtonMoveXNegative.setOnClickListener { recordInteraction(); viewModel.jog(x = MoveToolWidgetViewModel.Direction.Negative) }
+        imageButtonMoveYPositive.setOnClickListener { recordInteraction(); viewModel.jog(y = MoveToolWidgetViewModel.Direction.Positive) }
+        imageButtonMoveYNegative.setOnClickListener { recordInteraction(); viewModel.jog(y = MoveToolWidgetViewModel.Direction.Negative) }
+        imageButtonMoveZPositive.setOnClickListener { recordInteraction(); viewModel.jog(z = MoveToolWidgetViewModel.Direction.Positive) }
+        imageButtonMoveZNegative.setOnClickListener { recordInteraction(); viewModel.jog(z = MoveToolWidgetViewModel.Direction.Negative) }
     }
 
     private fun initJogResolutionSeekBar() {

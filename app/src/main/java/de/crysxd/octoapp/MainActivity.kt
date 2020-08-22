@@ -61,6 +61,7 @@ class MainActivity : OctoActivity() {
                     R.id.connectPrinterFragment -> Firebase.analytics.logEvent("workspace_shown_connect", Bundle.EMPTY)
                     R.id.prePrintControlsFragment -> Firebase.analytics.logEvent("workspace_shown_pre_print", Bundle.EMPTY)
                     R.id.printControlsFragment -> Firebase.analytics.logEvent("workspace_shown_print", Bundle.EMPTY)
+                    R.id.terminalFragment -> Firebase.analytics.logEvent("workspace_shown_terminal", Bundle.EMPTY)
                 }
             }
         }

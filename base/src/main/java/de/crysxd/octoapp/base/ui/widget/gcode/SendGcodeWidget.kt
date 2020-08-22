@@ -23,6 +23,7 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
     val viewModel: SendGcodeWidgetViewModel by injectViewModel()
 
     override fun getTitle(context: Context) = "Send Gcode"
+    override fun getAnalyticsName() = "gcode"
 
     override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
         inflater.suspendedInflate(R.layout.widget_gcode, container, false)
@@ -37,6 +38,7 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
         }
 
         view.buttonOpenTerminal.setOnClickListener {
+            recordInteraction()
             it.findNavController().navigate(R.id.action_open_terminal)
         }
 
@@ -62,6 +64,7 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
             button.text = gcode.command
             gcodeList.addView(button, 0)
             button.setOnClickListener {
+                recordInteraction()
                 viewModel.sendGcodeCommand(button.text.toString())
             }
         }
