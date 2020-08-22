@@ -26,7 +26,6 @@ import timber.log.Timber
 class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
 
     override val viewModel: PrintControlsViewModel by injectViewModel()
-    private val adapter by lazy { OctoWidgetAdapter(lifecycleScope) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -63,7 +62,6 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
             }
         })
 
-        widgetsList.adapter = adapter
         viewModel.instanceInformation.observe(viewLifecycleOwner, Observer(this::installApplicableWidgets))
 
         buttonMore.setOnClickListener {
@@ -89,6 +87,9 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
 
     private fun installApplicableWidgets(instance: OctoPrintInstanceInformationV2?) {
         lifecycleScope.launchWhenCreated {
+            val adapter = OctoWidgetAdapter()
+            widgetsList.adapter = adapter
+
             val widgets = mutableListOf<OctoWidget>()
             widgets.add(ProgressWidget(this@PrintControlsFragment))
             widgets.add(ControlTemperatureWidget(this@PrintControlsFragment))

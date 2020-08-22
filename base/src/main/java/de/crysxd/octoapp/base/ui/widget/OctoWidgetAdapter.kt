@@ -9,11 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import kotlinx.android.synthetic.main.item_widget.view.*
-import kotlinx.coroutines.CoroutineScope
 
-class OctoWidgetAdapter(
-    private val coroutineScope: CoroutineScope
-) : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHolder>() {
+class OctoWidgetAdapter : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHolder>() {
 
     private var widgets: List<WidgetViewHolder> = emptyList()
 
@@ -53,5 +50,9 @@ class OctoWidgetAdapter(
 
     override fun onBindViewHolder(holder: WidgetViewHolder, position: Int) = Unit
 
-    class WidgetViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(context))
+    class WidgetViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(context)) {
+        init {
+            setIsRecyclable(false)
+        }
+    }
 }

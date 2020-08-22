@@ -27,7 +27,6 @@ import de.crysxd.octoapp.base.R as BaseR
 class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_controls) {
 
     override val viewModel: PrePrintControlsViewModel by injectViewModel()
-    private val adapter by lazy { OctoWidgetAdapter(lifecycleScope) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,13 +39,15 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
             MenuBottomSheet().show(childFragmentManager)
         }
 
-        widgetList.adapter = adapter
         viewModel.instanceInformation.observe(viewLifecycleOwner, Observer(this::installApplicableWidgets))
         (widgetList.layoutManager as? StaggeredGridLayoutManager)?.spanCount = resources.getInteger(BaseR.integer.widget_list_span_count)
     }
 
     private fun installApplicableWidgets(instance: OctoPrintInstanceInformationV2?) {
         lifecycleScope.launchWhenCreated {
+            val adapter = OctoWidgetAdapter()
+            widgetList.adapter = adapter
+
             val widgets = mutableListOf<OctoWidget>()
             widgets.add(ControlTemperatureWidget(this@PrePrintControlsFragment))
             widgets.add(MoveToolWidget(this@PrePrintControlsFragment))
