@@ -63,9 +63,20 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
                 ?: LayoutInflater.from(requireContext()).inflate(R.layout.widget_gcode_button, gcodeList, false) as Button
             button.text = gcode.command
             gcodeList.addView(button, 0)
+            button.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                if (gcode.isFavorite) {
+                    R.drawable.ic_round_push_pin_16
+                } else {
+                    0
+                }, 0, 0, 0
+            )
             button.setOnClickListener {
                 recordInteraction()
                 viewModel.sendGcodeCommand(button.text.toString())
+            }
+            button.setOnLongClickListener {
+                viewModel.setFavorite(gcode, !gcode.isFavorite)
+                true
             }
         }
     }

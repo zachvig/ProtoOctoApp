@@ -68,4 +68,6 @@
     <string name="cd_turn_style_on_off">Turn style on/off</string>
     <string name="cd_filter_terminal">Filter Terminal</string>
     <string name="command">Command</string>
+    <string name="toggle_favorite">Toggle favorite</string>
+    <string name="insert">Insert</string>
 </resources>
