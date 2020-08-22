@@ -30,7 +30,7 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
     private val viewModel: TerminalViewModel by injectViewModel(Injector.get().viewModelFactory())
     private var initialLayout = true
     private var observeSerialCommunicationsJob: Job? = null
-    private var adapter: PlainTerminalAdaper? = null
+    private var adapter: TerminalAdaper? = null
     private var wasScrolledToBottom = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,9 +70,11 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
         recyclerView.viewTreeObserver.addOnGlobalLayoutListener {
             // If we are scrolled to the bottom right now, make sure to restore the position
             // after the keyboard is shown
-            val force = wasScrolledToBottom
-            requireView().doOnNextLayout {
-                scrollToBottom(force)
+            if (oldHeight != recyclerView.height) {
+                val force = wasScrolledToBottom
+                this.view?.doOnNextLayout {
+                    scrollToBottom(force)
+                }
             }
 
             // If keyboard hidden
@@ -93,7 +95,7 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
     }
 
     private fun initTerminal() {
-        val adapter = PlainTerminalAdaper()
+        val adapter = StyledTerminalAdapter()
         recyclerView.adapter = adapter
         observeSerialCommunicationsJob?.cancel()
         observeSerialCommunicationsJob = lifecycleScope.launchWhenCreated {
@@ -118,7 +120,7 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
         adapter?.let {
             if (forced || !recyclerView.canScrollVertically(1)) {
                 wasScrolledToBottom = true
-                recyclerView.scrollToPosition(it.itemCount - 1)
+                recyclerView.scrollToPosition(it.getItemCount() - 1)
             }
         }
     }
