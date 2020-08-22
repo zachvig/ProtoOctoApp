@@ -24,7 +24,6 @@ class PlainTerminalAdaper : RecyclerView.Adapter<PlainTerminalAdaper.PlainSerial
     }
 
     fun appendItem(item: SerialCommunication) {
-        Timber.i("Append")
         serialCommunications.add(item)
         notifyItemInserted(itemCount - 1)
     }
