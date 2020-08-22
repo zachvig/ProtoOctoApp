@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.SerialCommunication
+import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
@@ -37,6 +38,7 @@ class TerminalViewModel(
     private val getTerminalFiltersUseCase: GetTerminalFiltersUseCase,
     octoPrintProvider: OctoPrintProvider,
     private val sharedPreferences: SharedPreferences,
+    private val gcodeHistoryRepository: GcodeHistoryRepository,
     private val gson: Gson
 ) : BaseViewModel() {
 
@@ -99,6 +101,11 @@ class TerminalViewModel(
 
     private fun updateGcodes() = viewModelScope.launch(coroutineExceptionHandler) {
         mutableGcodes.postValue(getGcodeShortcutsUseCase.execute(Unit))
+    }
+
+    fun setFavorite(gcode: GcodeHistoryItem, favorite: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
+        gcodeHistoryRepository.setFavorite(gcode.command, favorite).join()
+        updateGcodes()
     }
 
     private fun saveSelectedFilters() {
