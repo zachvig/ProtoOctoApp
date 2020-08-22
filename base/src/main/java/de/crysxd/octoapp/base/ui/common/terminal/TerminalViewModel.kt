@@ -28,6 +28,7 @@ import java.util.regex.Pattern
 
 
 const val KEY_SELECTED_TERMINAL_FILTERS = "selected_terminal_filters"
+const val KEY_STYLED_TERMINAL = "styled_terminal"
 
 class TerminalViewModel(
     private val getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase,
@@ -105,6 +106,10 @@ class TerminalViewModel(
     private fun loadSelectedFilters() = sharedPreferences.getString(KEY_SELECTED_TERMINAL_FILTERS, null)?.let {
         gson.fromJson<List<Settings.TerminalFilter>>(it, object : TypeToken<List<Settings.TerminalFilter?>>() {}.type)
     } ?: emptyList()
+
+    fun isStyledTerminalUsed() = sharedPreferences.getBoolean(KEY_STYLED_TERMINAL, true)
+
+    fun setStyledTerminalUsed(used: Boolean) = sharedPreferences.edit { putBoolean(KEY_STYLED_TERMINAL, used) }
 
     fun executeGcode(gcode: String) = viewModelScope.launch(coroutineExceptionHandler) {
         executeGcodeCommandUseCase.execute(

@@ -3,7 +3,6 @@ package de.crysxd.octoapp.base.ui.common.terminal
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.LayoutRes
-import androidx.recyclerview.widget.RecyclerView
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.models.SerialCommunication
 import de.crysxd.octoapp.base.ui.common.AutoBindViewHolder
@@ -12,7 +11,7 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.regex.Pattern
 
-class StyledTerminalAdapter : RecyclerView.Adapter<StyledTerminalAdapter.ViewHolder>(), TerminalAdaper {
+class StyledTerminalAdapter : TerminalAdapter<StyledTerminalAdapter.ViewHolder>() {
 
     private val serialCommunications = mutableListOf<Item>()
     private val commandStartRegex = Pattern.compile("^Send:\\s+(.*)$")

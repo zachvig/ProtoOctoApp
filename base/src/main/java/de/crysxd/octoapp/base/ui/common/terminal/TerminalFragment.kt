@@ -6,6 +6,7 @@ import android.transition.TransitionManager
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewTreeObserver
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.LinearLayout
@@ -30,14 +31,38 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
     private val viewModel: TerminalViewModel by injectViewModel(Injector.get().viewModelFactory())
     private var initialLayout = true
     private var observeSerialCommunicationsJob: Job? = null
-    private var adapter: TerminalAdaper? = null
+    private var adapter: TerminalAdapter<*>? = null
     private var wasScrolledToBottom = false
+    private var oldViewHeight = 0
+    private val onLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
+        // If we are scrolled to the bottom right now, make sure to restore the position
+        // after the keyboard is shown
+        if (oldViewHeight != recyclerView.height) {
+            val force = wasScrolledToBottom
+            this.view?.doOnNextLayout {
+                scrollToBottom(force)
+            }
+        }
+
+        // If keyboard hidden
+        if (oldViewHeight < recyclerView.height) {
+            gcodeInput.editText.clearFocus()
+            Timber.i("Keyboard hidden")
+        }
+        oldViewHeight = recyclerView.height
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // Terminal
-        initTerminal()
+        initTerminal(
+            if (viewModel.isStyledTerminalUsed()) {
+                StyledTerminalAdapter()
+            } else {
+                PlainTerminalAdaper()
+            }
+        )
         viewModel.terminalFilters.observe(viewLifecycleOwner, Observer {})
 
         // Shortcuts & Buttons
@@ -56,7 +81,16 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
                 availableFilters
             ) {
                 viewModel.selectedTerminalFilters = it.filter { it.second }.map { it.first }
-                initTerminal()
+                initTerminal(adapter ?: StyledTerminalAdapter())
+            }
+        }
+        buttonToggleStyled.setOnClickListener {
+            if (adapter is StyledTerminalAdapter) {
+                initTerminal(PlainTerminalAdaper())
+                viewModel.setStyledTerminalUsed(false)
+            } else {
+                initTerminal(StyledTerminalAdapter())
+                viewModel.setStyledTerminalUsed(true)
             }
         }
 
@@ -65,25 +99,6 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
         gcodeInput.editText.setOnEditorActionListener { _, _, _ -> sendGcodeFromInput(); true }
         gcodeInput.editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
         gcodeInput.editText.imeOptions = EditorInfo.IME_ACTION_SEND
-
-        var oldHeight = 0
-        recyclerView.viewTreeObserver.addOnGlobalLayoutListener {
-            // If we are scrolled to the bottom right now, make sure to restore the position
-            // after the keyboard is shown
-            if (oldHeight != recyclerView.height) {
-                val force = wasScrolledToBottom
-                this.view?.doOnNextLayout {
-                    scrollToBottom(force)
-                }
-            }
-
-            // If keyboard hidden
-            if (oldHeight < recyclerView.height) {
-                gcodeInput.editText.clearFocus()
-                Timber.i("Keyboard hidden")
-            }
-            oldHeight = recyclerView.height
-        }
     }
 
     private fun sendGcodeFromInput() {
@@ -94,8 +109,7 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
         }
     }
 
-    private fun initTerminal() {
-        val adapter = StyledTerminalAdapter()
+    private fun initTerminal(adapter: TerminalAdapter<*>) {
         recyclerView.adapter = adapter
         observeSerialCommunicationsJob?.cancel()
         observeSerialCommunicationsJob = lifecycleScope.launchWhenCreated {
@@ -111,6 +125,15 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
                 scrollToBottom()
             }
         }
+
+
+        buttonToggleStyled.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            if (adapter is StyledTerminalAdapter) {
+                R.drawable.ic_round_code_24
+            } else {
+                R.drawable.ic_round_brush_24
+            }, 0, 0, 0
+        )
 
         this.adapter = adapter
     }
@@ -177,5 +200,11 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
     override fun onStart() {
         super.onStart()
         recyclerView.setupWithToolbar(requireOctoActivity())
+        recyclerView.viewTreeObserver.addOnGlobalLayoutListener(onLayoutListener)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        recyclerView.viewTreeObserver.removeOnGlobalLayoutListener(onLayoutListener)
     }
 }
