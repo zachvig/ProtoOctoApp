@@ -25,7 +25,8 @@
         android:layout_marginRight="@dimen/margin_2"
         android:layout_marginBottom="@dimen/margin_2"
         app:actionDrawable="@drawable/ic_round_send_24"
-        app:label="Command"
+        app:actionOnlyWithText="true"
+        app:label="@string/command"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -74,10 +75,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_1"
                 android:layout_marginEnd="@dimen/margin_2"
-                android:textSize="20sp"
-                tools:text="1"
                 android:contentDescription="@string/cd_filter_terminal"
-                android:drawableStart="@drawable/ic_round_filter_alt_24" />
+                android:drawableStart="@drawable/ic_round_filter_alt_24"
+                android:textSize="20sp"
+                tools:text="1" />
 
         </LinearLayout>
 

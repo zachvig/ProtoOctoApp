@@ -9,6 +9,7 @@
         <attr name="example" format="string" />
         <attr name="defaultInputValue" format="string" />
         <attr name="actionDrawable" format="reference" />
+        <attr name="actionOnlyWithText" format="boolean" />
     </declare-styleable>
     <declare-styleable name="TemperatureView">
         <attr name="maxTemp" format="integer" />
