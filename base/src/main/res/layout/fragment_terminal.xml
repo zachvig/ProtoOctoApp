@@ -74,6 +74,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_1"
                 android:layout_marginEnd="@dimen/margin_2"
+                android:textSize="20sp"
+                tools:text="1"
                 android:contentDescription="@string/cd_filter_terminal"
                 android:drawableStart="@drawable/ic_round_filter_alt_24" />
 

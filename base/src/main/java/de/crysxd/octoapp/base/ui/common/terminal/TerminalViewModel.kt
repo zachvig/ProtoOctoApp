@@ -60,7 +60,9 @@ class TerminalViewModel(
 
         // Init terminal filters
         terminalFiltersMediator.addSource(liveData {
-            emit(getTerminalFiltersUseCase.execute(Unit))
+            val filters = getTerminalFiltersUseCase.execute(Unit)
+            upgradeSelectedFilters(filters)
+            emit(filters)
         }) { terminalFiltersMediator.postValue(it) }
 
         // Update terminal filters whenever settings are changed
@@ -69,7 +71,9 @@ class TerminalViewModel(
             .mapNotNull { it as? Event.MessageReceived }
             .filter { it.message is SettingsUpdated }
             .map {
-                getTerminalFiltersUseCase.execute(Unit)
+                val filters = getTerminalFiltersUseCase.execute(Unit)
+                upgradeSelectedFilters(filters)
+                filters
             }
             .asLiveData()
         ) { terminalFiltersMediator.postValue(it) }
@@ -100,6 +104,12 @@ class TerminalViewModel(
     private fun saveSelectedFilters() {
         sharedPreferences.edit {
             putString(KEY_SELECTED_TERMINAL_FILTERS, gson.toJson(selectedTerminalFilters))
+        }
+    }
+
+    private fun upgradeSelectedFilters(filters: List<Settings.TerminalFilter>) {
+        selectedTerminalFilters = loadSelectedFilters().map { filter ->
+            filters.firstOrNull { it.name == filter.name } ?: filter
         }
     }
 

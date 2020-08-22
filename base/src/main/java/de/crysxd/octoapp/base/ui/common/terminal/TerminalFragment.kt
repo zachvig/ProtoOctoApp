@@ -71,6 +71,7 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
             adapter?.clear()
             viewModel.clear()
         }
+        buttonFilters.text = viewModel.selectedTerminalFilters.size.toString()
         buttonFilters.setOnClickListener {
             val availableFilters = (viewModel.terminalFilters.value ?: emptyList()).map {
                 Pair(it, viewModel.selectedTerminalFilters.contains(it))
@@ -81,6 +82,7 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
                 availableFilters
             ) {
                 viewModel.selectedTerminalFilters = it.filter { it.second }.map { it.first }
+                buttonFilters.text = viewModel.selectedTerminalFilters.size.toString()
                 initTerminal(adapter ?: StyledTerminalAdapter())
             }
         }
