@@ -6,6 +6,7 @@ import android.view.View
 import androidx.annotation.Keep
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.snackbar.Snackbar
+import kotlin.math.min
 
 const val MAX_TIME_BETWEEN_STEPS = 300L
 
@@ -16,7 +17,7 @@ const val MAX_TIME_BETWEEN_STEPS = 300L
 class ShrinkBehavior constructor(context: Context? = null, attrs: AttributeSet? = null) :
     CoordinatorLayout.Behavior<View?>(context, attrs) {
 
-    private var lastShrink = 0L
+    private var lastShrink = 0f
 
     override fun layoutDependsOn(
         parent: CoordinatorLayout,
@@ -31,20 +32,21 @@ class ShrinkBehavior constructor(context: Context? = null, attrs: AttributeSet? 
         child: View,
         dependency: View
     ): Boolean {
-        val shrinkBy = Math.min(0f, dependency.translationY - dependency.height)
+        val shrinkBy = min(0f, dependency.translationY - dependency.height)
 
-        // The first shrink sometimes jumps to the end value before animating smoothly
-        // We skip the first shrink if it is not null
-        if ((System.currentTimeMillis() - lastShrink) < MAX_TIME_BETWEEN_STEPS || shrinkBy == 0f) {
-            child.setPadding(
-                child.paddingLeft,
-                child.paddingTop,
-                child.paddingRight,
-                -shrinkBy.toInt()
-            )
+        // Sometimes we get odd values, drop those frames so the view doesn't jump
+        if (shrinkBy == -dependency.height.toFloat() && lastShrink > -10) {
+            return true
         }
+        
+        child.setPadding(
+            child.paddingLeft,
+            child.paddingTop,
+            child.paddingRight,
+            -shrinkBy.toInt()
+        )
 
-        lastShrink = System.currentTimeMillis()
+        lastShrink = shrinkBy
         return true
     }
 
