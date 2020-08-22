@@ -83,7 +83,6 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
 
         override suspend fun onMenuItemSelected(id: Int): Boolean {
             when (id) {
-                R.id.menuChangeFilament -> viewModel.changeFilament()
                 R.id.menuItemTurnOffPsu -> viewModel.turnOffPsu()
                 else -> return false
             }
