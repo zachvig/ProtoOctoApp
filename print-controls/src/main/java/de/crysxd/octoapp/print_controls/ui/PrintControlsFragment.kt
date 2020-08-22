@@ -114,12 +114,6 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
             viewModel
 
             when (id) {
-                R.id.menuChangeFilament -> doAfterConfirmation(
-                    message = R.string.change_filament_confirmation_message,
-                    button = R.string.change_filament_confirmation_action
-                ) {
-                    viewModel.changeFilament()
-                }
                 R.id.menuCancelPrint -> doAfterConfirmation(
                     message = R.string.cancel_print_confirmation_message,
                     button = R.string.cancel_print_confirmation_action
