@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.ui
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -69,18 +70,34 @@ abstract class OctoActivity : AppCompatActivity() {
     }
 
     private fun showDialog(message: BaseViewModel.Message.DialogMessage) {
-        showDialog(message.text(this))
+        showDialog(
+            message = message.text(this),
+            positiveButton = message.positiveButton(this),
+            positiveAction = message.positiveAction,
+            neutralButton = message.neutralButton(this),
+            neutralAction = message.neutralAction
+        )
     }
 
     fun showDialog(e: Throwable) = showDialog(
         getString((e as? UserMessageException)?.userMessage ?: R.string.error_general)
     )
 
-    fun showDialog(message: CharSequence) {
+    fun showDialog(
+        message: CharSequence,
+        positiveButton: CharSequence = getString(android.R.string.ok),
+        positiveAction: (Context) -> Unit = {},
+        neutralButton: CharSequence? = null,
+        neutralAction: (Context) -> Unit = {}
+    ) {
         dialog?.dismiss()
-        dialog = AlertDialog.Builder(this)
-            .setMessage(message)
-            .setPositiveButton(android.R.string.ok, null)
-            .show()
+        dialog = AlertDialog.Builder(this).let { builder ->
+            builder.setMessage(message)
+            builder.setPositiveButton(positiveButton) { _, _ -> positiveAction(this) }
+            neutralButton?.let {
+                builder.setNeutralButton(it) { _, _ -> neutralAction(this) }
+            }
+            builder.show()
+        }
     }
 }

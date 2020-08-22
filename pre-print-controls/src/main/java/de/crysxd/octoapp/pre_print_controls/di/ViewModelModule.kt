@@ -46,15 +46,22 @@ open class ViewModelModule {
         octoPrintProvider: OctoPrintProvider,
         useCase1: HomePrintHeadUseCase,
         useCase2: JogPrintHeadUseCase
-    ): ViewModel = MoveToolWidgetViewModel(useCase1, useCase2, octoPrintProvider)
+    ): ViewModel = MoveToolWidgetViewModel(
+        useCase1,
+        useCase2,
+        octoPrintProvider
+    )
 
     @Provides
     @IntoMap
     @ViewModelKey(ExtrudeWidgetViewModel::class)
     open fun provideExtrudeWidgetViewModel(
-        octoPrintProvider: OctoPrintProvider,
+        setToolTargetTemperatureUseCase: SetToolTargetTemperatureUseCase,
         extrudeFilamentUseCase: ExtrudeFilamentUseCase
-    ): ViewModel = ExtrudeWidgetViewModel(octoPrintProvider, extrudeFilamentUseCase)
+    ): ViewModel = ExtrudeWidgetViewModel(
+        extrudeFilamentUseCase,
+        setToolTargetTemperatureUseCase
+    )
 
     @Provides
     @IntoMap
