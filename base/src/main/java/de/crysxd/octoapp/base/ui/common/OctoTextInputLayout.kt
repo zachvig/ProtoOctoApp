@@ -58,10 +58,6 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
     init {
         View.inflate(context, R.layout.view_octo_input_layout, this)
 
-        input.setOnFocusChangeListener { _, _ ->
-            updateViewState()
-        }
-
         input.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) = updateViewState()
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
@@ -108,6 +104,8 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
                     editText.setSelection(0, editText.length())
                 }
             }
+
+            updateViewState()
         }
     }
 
