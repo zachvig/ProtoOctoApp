@@ -4,22 +4,19 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.text.InputType
 import android.transition.TransitionManager
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewTreeObserver
+import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.view.children
 import androidx.core.view.doOnNextLayout
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
+import de.crysxd.octoapp.base.ui.common.AsyncFragment
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.synthetic.main.fragment_terminal.*
 import kotlinx.coroutines.Job
@@ -27,7 +24,7 @@ import kotlinx.coroutines.flow.collect
 import timber.log.Timber
 import java.util.*
 
-class TerminalFragment : Fragment(R.layout.fragment_terminal) {
+class TerminalFragment : AsyncFragment() {
 
     private val viewModel: TerminalViewModel by injectViewModel(Injector.get().viewModelFactory())
     private var initialLayout = true
@@ -53,9 +50,10 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
         oldViewHeight = recyclerView.height
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreateViewAsync(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
+        inflater.inflate(R.layout.fragment_terminal, container, false)
 
+    override fun onLazyViewCreated(view: View, savedInstanceState: Bundle?) {
         // Terminal
         initTerminal(
             if (viewModel.isStyledTerminalUsed()) {
@@ -218,12 +216,15 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
 
     override fun onStart() {
         super.onStart()
-        recyclerView.setupWithToolbar(requireOctoActivity())
-        recyclerView.viewTreeObserver.addOnGlobalLayoutListener(onLayoutListener)
+        lifecycleScope.launchWhenStarted {
+            awaitLazyView()
+            recyclerView.setupWithToolbar(requireOctoActivity())
+            recyclerView.viewTreeObserver.addOnGlobalLayoutListener(onLayoutListener)
+        }
     }
 
     override fun onStop() {
         super.onStop()
-        recyclerView.viewTreeObserver.removeOnGlobalLayoutListener(onLayoutListener)
+        recyclerView?.viewTreeObserver?.removeOnGlobalLayoutListener(onLayoutListener)
     }
 }
