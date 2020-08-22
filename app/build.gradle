@@ -15,8 +15,8 @@ android {
         applicationId "de.crysxd.octoapp"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 1200
-        versionName "1.2-alpha01"
+        versionCode 1201
+        versionName "1.2-beta01"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -91,3 +91,4 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
 }
+
