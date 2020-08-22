@@ -8,7 +8,7 @@ import de.crysxd.octoapp.base.ui.common.AutoBindViewHolder
 import kotlinx.android.synthetic.main.item_plain_serial_comm.*
 import timber.log.Timber
 
-class PlainTerminalAdaper : RecyclerView.Adapter<PlainTerminalAdaper.PlainSerialCommunicationViewHolder>() {
+class PlainTerminalAdaper : RecyclerView.Adapter<PlainTerminalAdaper.PlainSerialCommunicationViewHolder>(), TerminalAdaper {
 
     private val serialCommunications = mutableListOf<SerialCommunication>()
 
@@ -16,19 +16,19 @@ class PlainTerminalAdaper : RecyclerView.Adapter<PlainTerminalAdaper.PlainSerial
         setHasStableIds(true)
     }
 
-    fun initWithItems(items: List<SerialCommunication>) {
+    override fun initWithItems(items: List<SerialCommunication>) {
         Timber.i("Init with ${items.size} items")
         serialCommunications.clear()
         serialCommunications.addAll(items)
         notifyDataSetChanged()
     }
 
-    fun appendItem(item: SerialCommunication) {
+    override fun appendItem(item: SerialCommunication) {
         serialCommunications.add(item)
         notifyItemInserted(itemCount - 1)
     }
 
-    fun clear() {
+    override fun clear() {
         val count = serialCommunications.size
         serialCommunications.clear()
         notifyItemRangeRemoved(0, count)
