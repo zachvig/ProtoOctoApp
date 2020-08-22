@@ -63,7 +63,7 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
             gcodeList.addView(button, 0)
             button.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 if (gcode.isFavorite) {
-                    R.drawable.ic_round_push_pin_24
+                    R.drawable.ic_round_push_pin_16
                 } else {
                     0
                 }, 0, 0, 0

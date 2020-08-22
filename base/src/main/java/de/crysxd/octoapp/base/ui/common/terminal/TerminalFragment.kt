@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.ui.common.terminal
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.InputType
 import android.transition.TransitionManager
@@ -174,12 +175,28 @@ class TerminalFragment : Fragment(R.layout.fragment_terminal) {
             button.layoutParams = (button.layoutParams as LinearLayout.LayoutParams).also {
                 it.marginStart = requireContext().resources.getDimensionPixelSize(R.dimen.margin_1)
             }
+            button.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                if (gcode.isFavorite) {
+                    R.drawable.ic_round_push_pin_16
+                } else {
+                    0
+                }, 0, 0, 0
+            )
             buttonList.addView(button, 0)
             button.setOnClickListener {
                 viewModel.executeGcode(button.text.toString())
             }
             button.setOnLongClickListener {
-                gcodeInput.editText.setText(gcode.command)
+                val options = arrayOf(R.string.toggle_favorite, R.string.insert)
+                AlertDialog.Builder(requireContext())
+                    .setTitle(gcode.command)
+                    .setItems(options.map { getText(it) }.toTypedArray()) { _, i: Int ->
+                        when (options[i]) {
+                            R.string.toggle_favorite -> viewModel.setFavorite(gcode, !gcode.isFavorite)
+                            R.string.insert -> gcodeInput.editText.setText(gcode.command)
+                        }
+                    }
+                    .show()
                 true
             }
         }

@@ -86,7 +86,8 @@ open class ViewModelModule {
         serialCommunicationLogsRepository: SerialCommunicationLogsRepository,
         getTerminalFiltersUseCase: GetTerminalFiltersUseCase,
         octoPrintProvider: OctoPrintProvider,
-        sharedPreferences: SharedPreferences
+        sharedPreferences: SharedPreferences,
+        gcodeHistoryRepository: GcodeHistoryRepository
     ): ViewModel = TerminalViewModel(
         getGcodeShortcutsUseCase,
         executeGcodeCommandUseCase,
@@ -94,6 +95,7 @@ open class ViewModelModule {
         getTerminalFiltersUseCase,
         octoPrintProvider,
         sharedPreferences,
+        gcodeHistoryRepository,
         Gson()
     )
 }
