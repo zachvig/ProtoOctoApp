@@ -81,8 +81,6 @@ class PrintNotificationService : Service() {
                                     didSeePrintBeingActive = false
                                     Timber.i("Print done, showing notification")
                                     notificationManager.notify((3242..4637).random(), createCompletedNotification())
-                                } else {
-                                    didSeePrintBeingActive = true
                                 }
 
                                 Timber.i("Not printing, stopping self")
@@ -91,6 +89,7 @@ class PrintNotificationService : Service() {
                             }
 
                             // Update notification
+                            didSeePrintBeingActive = true
                             message.progress?.let {
                                 val progress = it.completion.toInt()
                                 val left = formatDurationUseCase.execute(it.printTimeLeft.toLong())
