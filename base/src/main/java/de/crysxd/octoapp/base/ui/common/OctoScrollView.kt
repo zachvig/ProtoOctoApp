@@ -49,6 +49,7 @@ class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: A
 
     init {
         setWillNotDraw(false)
+        isFillViewport = true
     }
 
     @Suppress("DEPRECATION")
