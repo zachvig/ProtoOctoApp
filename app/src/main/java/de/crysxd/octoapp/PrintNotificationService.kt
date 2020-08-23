@@ -34,6 +34,7 @@ class PrintNotificationService : Service() {
     private val notificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
     private val formatDurationUseCase: FormatDurationUseCase = Injector.get().formatDurationUseCase()
     private var lastEta: String = ""
+    private var didSeePrintBeingActive = false
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -76,9 +77,12 @@ class PrintNotificationService : Service() {
                             val flags = message.state?.flags
                             Timber.v(message.toString())
                             if (flags == null || !listOf(flags.printing, flags.paused, flags.pausing, flags.cancelling).any { it }) {
-                                if (message.progress?.completion?.toInt() == maxProgress) {
+                                if (message.progress?.completion?.toInt() == maxProgress && didSeePrintBeingActive) {
+                                    didSeePrintBeingActive = false
                                     Timber.i("Print done, showing notification")
                                     notificationManager.notify((3242..4637).random(), createCompletedNotification())
+                                } else {
+                                    didSeePrintBeingActive = true
                                 }
 
                                 Timber.i("Not printing, stopping self")
