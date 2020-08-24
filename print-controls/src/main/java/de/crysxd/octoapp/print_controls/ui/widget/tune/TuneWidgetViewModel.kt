@@ -3,17 +3,16 @@ package de.crysxd.octoapp.print_controls.ui.widget.tune
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
-import androidx.lifecycle.viewModelScope
+import de.crysxd.octoapp.base.livedata.PollingLiveData
 import de.crysxd.octoapp.base.models.SerialCommunication
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.retry
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -23,9 +22,10 @@ const val SETTINGS_POLLING_INITIAL_DELAY = 500L
 
 class TuneWidgetViewModel(
     serialCommunicationLogsRepository: SerialCommunicationLogsRepository,
-    executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase
+    private val executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase
 ) : BaseViewModel() {
 
+    private var updateJob: Job? = null
     private val uiStateMediator = MediatorLiveData<UiState>()
     val uiState = uiStateMediator.map { it }
 
@@ -44,6 +44,17 @@ class TuneWidgetViewModel(
     // "M107" -> M107 command to turn fan off
     private val fanSpeedPattern = Pattern.compile("(M106|M107)( S(\\d+))?")
 
+    val updateLiveData = PollingLiveData(interval = SETTINGS_POLLING_INTERVAL_MS) {
+        // Response is picked up from serial communications stream
+        delay(SETTINGS_POLLING_INITIAL_DELAY)
+        executeGcodeCommandUseCase.execute(
+            ExecuteGcodeCommandUseCase.Param(
+                command = GcodeCommand.Batch(arrayOf("M220", "M221")),
+                fromUser = false
+            )
+        )
+    }
+
     init {
         uiStateMediator.addSource(serialCommunicationLogsRepository.flow()
             .onEach {
@@ -54,24 +65,6 @@ class TuneWidgetViewModel(
         ) {}
 
         uiStateMediator.postValue(UiState())
-
-        viewModelScope.launch(coroutineExceptionHandler) {
-            // Give a little heads start for the rest of the UI to get ready
-            delay(SETTINGS_POLLING_INITIAL_DELAY)
-
-            while (isActive) {
-                // Query printer for current flow and feed rate. Response will be picked up from terminal stream
-                executeGcodeCommandUseCase.execute(
-                    ExecuteGcodeCommandUseCase.Param(
-                        command = GcodeCommand.Batch(arrayOf("M220", "M221")),
-                        fromUser = false
-                    )
-                )
-
-                // Delay before polling again
-                delay(SETTINGS_POLLING_INTERVAL_MS)
-            }
-        }
     }
 
     private fun extractValues(comm: SerialCommunication) {
