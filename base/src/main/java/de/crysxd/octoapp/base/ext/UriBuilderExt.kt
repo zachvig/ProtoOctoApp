@@ -3,7 +3,9 @@ package de.crysxd.octoapp.base.ext
 import android.net.Uri
 
 fun Uri.Builder.resolve(path: String?) = this.apply {
-    val (cleanedPath, query) = (path?.plus("?") ?: "?").split("?")
-    cleanedPath.split("/").forEach { appendPath(it) }
-    query(query)
+    when {
+        path == null -> Unit
+        path.startsWith("/") -> appendEncodedPath(path.substring(1))
+        else -> appendEncodedPath(path)
+    }
 }

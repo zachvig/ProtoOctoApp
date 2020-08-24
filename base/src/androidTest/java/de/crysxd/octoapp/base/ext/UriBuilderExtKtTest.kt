@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.ext
 
 import android.net.Uri
+import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class UriBuilderExtKtTest {
@@ -14,7 +15,7 @@ class UriBuilderExtKtTest {
             .resolve(extension)
             .build()
 
-        assert(uri.toString() == "http://my.octoprint/webcam?stream")
+        assertThat(uri.toString()).isEqualTo("http://my.octoprint/webcam?stream")
     }
 
     @Test
@@ -26,7 +27,7 @@ class UriBuilderExtKtTest {
             .resolve(extension)
             .build()
 
-        assert(uri.toString() == "http://my.octoprint/test/webcam?stream=123")
+        assertThat(uri.toString()).isEqualTo("http://my.octoprint/test/webcam?stream=123")
     }
 
     @Test
@@ -38,7 +39,7 @@ class UriBuilderExtKtTest {
             .resolve(extension)
             .build()
 
-        assert(uri.toString() == "http://my.octoprint/test/webcam?stream")
+        assertThat(uri.toString()).isEqualTo("http://my.octoprint/test/webcam?stream")
     }
 
     @Test
@@ -50,7 +51,7 @@ class UriBuilderExtKtTest {
             .resolve(extension)
             .build()
 
-        assert(uri.toString() == "http://my.octoprint/webcam?stream")
+        assertThat(uri.toString()).isEqualTo("http://my.octoprint/webcam?stream")
     }
 
     @Test
@@ -62,7 +63,7 @@ class UriBuilderExtKtTest {
             .resolve(extension)
             .build()
 
-        assert(uri.toString() == "http://my.octoprint/webcam")
+        assertThat(uri.toString()).isEqualTo("http://my.octoprint/webcam")
     }
 
     @Test
@@ -74,6 +75,42 @@ class UriBuilderExtKtTest {
             .resolve(extension)
             .build()
 
-        assert(uri.toString() == "http://my.octoprint/")
+        assertThat(uri.toString()).isEqualTo("http://my.octoprint")
+    }
+
+    @Test
+    fun test7() {
+        val base = "http://my.octoprint/test"
+        val extension = "/webcam/?stream=test"
+
+        val uri = Uri.parse(base).buildUpon()
+            .resolve(extension)
+            .build()
+
+        assertThat(uri.toString()).isEqualTo("http://my.octoprint/test/webcam/?stream=test")
+    }
+
+    @Test
+    fun test8() {
+        val base = "http://my.octoprint"
+        val extension = "/webcam?stream=true"
+
+        val uri = Uri.parse(base).buildUpon()
+            .resolve(extension)
+            .build()
+
+        assertThat(uri.toString()).isEqualTo("http://my.octoprint/webcam?stream=true")
+    }
+
+    @Test
+    fun test9() {
+        val base = "http://my.octoprint/"
+        val extension = null
+
+        val uri = Uri.parse(base).buildUpon()
+            .resolve(extension)
+            .build()
+
+        assertThat(uri.toString()).isEqualTo("http://my.octoprint/")
     }
 }
