@@ -71,6 +71,16 @@ class MainActivity : OctoActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        Timber.i("UI started")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Timber.i("UI stopped")
+    }
+
     private fun navigate(id: Int) {
         if (id != lastNavigation) {
             lastNavigation = id

@@ -54,5 +54,7 @@ class TuneWidget(parent: Fragment) : OctoWidget(parent) {
                 )
             }
         }
+
+        viewModel.updateLiveData.observe(viewLifecycleOwner, Observer { })
     }
 }
