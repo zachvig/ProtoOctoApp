@@ -19,6 +19,7 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.synthetic.main.item_menu.view.*
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -26,19 +27,21 @@ import timber.log.Timber
 abstract class MenuBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var adapter: MenuAdapter
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Timber.e(throwable)
+        requireOctoActivity().showDialog(throwable)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = RecyclerView(requireContext())
         view.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.window_background))
         view.layoutManager = LinearLayoutManager(requireContext())
         adapter = MenuAdapter(requireContext(), getMenuRes()) {
-            lifecycleScope.launch {
+            lifecycleScope.launch(exceptionHandler) {
                 dismiss()
                 if (!onMenuItemSelected(it)) {
                     onMenuItemSelectedBase(it)
                 }
-            }.invokeOnCompletion {
-                it?.let { Timber.e(it); requireOctoActivity().showDialog(it) }
             }
         }
         view.adapter = adapter
