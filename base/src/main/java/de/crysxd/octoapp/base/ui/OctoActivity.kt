@@ -14,6 +14,7 @@ import de.crysxd.octoapp.base.models.Event
 import de.crysxd.octoapp.base.models.exceptions.UserMessageException
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
+import kotlinx.coroutines.CancellationException
 
 abstract class OctoActivity : AppCompatActivity() {
 
@@ -79,9 +80,12 @@ abstract class OctoActivity : AppCompatActivity() {
         )
     }
 
-    fun showDialog(e: Throwable) = showDialog(
-        getString((e as? UserMessageException)?.userMessage ?: R.string.error_general)
-    )
+    fun showDialog(e: Throwable) {
+        // Safeguard that we don't show an error for cancellation exceptions
+        if (e !is CancellationException) {
+            showDialog(getString((e as? UserMessageException)?.userMessage ?: R.string.error_general))
+        }
+    }
 
     fun showDialog(
         message: CharSequence,
