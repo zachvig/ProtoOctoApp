@@ -1,8 +1,8 @@
 package de.crysxd.octoapp.pre_print_controls.ui.select_file
 
-import android.content.Context
-import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
+import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.text.method.LinkMovementMethod
@@ -10,12 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.applyCanvas
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import com.squareup.picasso.Transformation
 import de.crysxd.octoapp.base.ui.common.AutoBindViewHolder
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
@@ -169,8 +167,7 @@ class SelectFileAdapter(
                             holder.imageViewFileIcon.setImageDrawable(icon)
                             null
                         }
-                        !file.thumbnail.isNullOrBlank() -> picasso?.load(file.thumbnail)?.error(icon)
-                            ?.transform(TintThumbnailTransformation(holder.itemView.context))?.into(holder.imageViewFileIcon)
+                        !file.thumbnail.isNullOrBlank() -> picasso?.load(file.thumbnail)?.error(icon)?.into(holder.imageViewFileIcon)
                         else -> {
                             // Use Picasso as well to prevent the recycled view to get corrupted
                             // Picasso fails to load the image (as it is an empty path) so let's set it manually as well
@@ -261,31 +258,5 @@ class SelectFileAdapter(
         class ErrorViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_error)
         class LoadingViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_loading)
         class MarginViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_margin)
-    }
-
-    class TintThumbnailTransformation(val context: Context) : Transformation {
-        override fun key(): String = "tint-thumbnail"
-
-        override fun transform(source: Bitmap): Bitmap {
-            val destination = Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888)
-            destination.applyCanvas {
-                val cover = Rect(0, 0, width, height)
-
-                // Draw source with hard light filter (or multiply with a darker shade of the given color)
-                val drawable = BitmapDrawable(context.resources, source)
-                drawable.bounds = cover
-                val darkerColor = ContextCompat.getColor(context, R.color.thumbnail_tint)
-                drawable.colorFilter = PorterDuffColorFilter(darkerColor, PorterDuff.Mode.MULTIPLY)
-                drawable.draw(this)
-
-                // The alpha background is tinted too, apply mask
-                val paint = Paint()
-                paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_IN)
-                drawBitmap(source, null, cover, paint)
-            }
-
-            source.recycle()
-            return destination
-        }
     }
 }
