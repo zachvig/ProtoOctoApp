@@ -16,6 +16,7 @@
     <color name="primary_button_background">#2F6895</color>
     <color name="button_more_foreground">@color/white_translucent</color>
     <color name="thumbnail_tint">#10A101</color>
+    <color name="button_disabled">#393939</color>
 
     <color name="temperature_text">@color/white</color>
     <color name="swim_lines">#757FB5</color>

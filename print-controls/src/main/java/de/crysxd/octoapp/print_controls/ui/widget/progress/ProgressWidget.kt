@@ -49,7 +49,11 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
                 val progressPercent = it.progress?.completion ?: 0f
                 val progressPercentLayoutThreshold = 80f
                 val progress = progressPercent.toInt() / 100f
-                val progressText = requireContext().getString(R.string.x_percent, progress * 100f)
+                val progressText = if (it.state?.flags?.cancelling == true) {
+                    requireContext().getString(R.string.cancelling)
+                } else {
+                    requireContext().getString(R.string.x_percent, progress * 100f)
+                }
 
                 if (lastProgress != progress) {
                     TransitionManager.beginDelayedTransition(view as ViewGroup, InstantAutoTransition())
