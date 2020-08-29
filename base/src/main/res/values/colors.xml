@@ -24,6 +24,7 @@
     <color name="analysis_bad">@color/red</color>
     <color name="analysis_normal">@color/orange</color>
     <color name="analysis_good">@color/primary</color>
+    <color name="button_disabled">#eaeaea</color>
 
     <color name="snackbar_neutral">@color/light_grey</color>
     <color name="snackbar_positive">@color/primary</color>
