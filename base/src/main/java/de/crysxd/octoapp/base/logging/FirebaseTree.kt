@@ -25,7 +25,7 @@ class FirebaseTree(
 
                     FirebaseCrashlytics.getInstance().log("$tag | ${mask.mask(message)}")
 
-                    if (t != null && t != lastException) {
+                    if (shouldLog(t) && t != null) {
                         lastException = t
                         if (priority >= Log.ERROR) {
                             FirebaseCrashlytics.getInstance().recordException(t)
