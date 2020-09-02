@@ -72,7 +72,7 @@ class WebcamWidget(
             }
         )
 
-        applyAspectRatio()
+        applyAspectRatio(viewModel.getInitialAspectRatio())
     }
 
     private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(view.webcamContent, InstantAutoTransition())
@@ -140,11 +140,12 @@ class WebcamWidget(
         lastState = state
     }
 
-    private fun applyAspectRatio(aspectRation: String = "16:9") {
+    private fun applyAspectRatio(aspectRation: String) {
         ConstraintSet().also {
             it.clone(view.webcamContent)
             it.setDimensionRatio(
-                R.id.streamView, if (isFullscreen) {
+                R.id.streamView,
+                if (isFullscreen) {
                     null
                 } else {
                     aspectRation
