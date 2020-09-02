@@ -54,7 +54,7 @@
         <item name="android:minHeight">0dp</item>
         <item name="android:paddingTop">@dimen/margin_1</item>
         <item name="android:paddingBottom">@dimen/margin_1</item>
-        <item name="android:drawableTint" tools:targetApi="m">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:drawableTint" tools:targetApi="m">@color/white</item>
     </style>
 
     <style name="OctoTheme.Widget.Button.Small.Secondary">
