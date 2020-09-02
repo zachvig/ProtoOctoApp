@@ -19,9 +19,8 @@ import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message.EventMessage.SettingsUpdated
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -31,6 +30,7 @@ import java.util.regex.Pattern
 const val KEY_SELECTED_TERMINAL_FILTERS = "selected_terminal_filters"
 const val KEY_STYLED_TERMINAL = "styled_terminal"
 
+@Suppress("EXPERIMENTAL_API_USAGE")
 class TerminalViewModel(
     private val getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase,
     private val executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase,
@@ -52,8 +52,16 @@ class TerminalViewModel(
         }
 
     private var clearedFrom: Date = Date(0)
-    private val mutableGcodes = MutableLiveData<List<GcodeHistoryItem>>()
-    val gcodes = mutableGcodes.map { it }
+    private val gcodes = ConflatedBroadcastChannel<List<GcodeHistoryItem>>()
+    val uiState = octoPrintProvider.eventFlow("terminal")
+        .mapNotNull { it as? Event.MessageReceived }
+        .mapNotNull { (it.message as? de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage)?.state?.flags }
+        .map { it.pausing || it.cancelling || it.printing }
+        .combine(gcodes.asFlow()) { printing, gcodes ->
+            UiState(printing, gcodes)
+        }
+        .asLiveData()
+
 
     init {
         // Load gcode history and selected filters
@@ -100,7 +108,7 @@ class TerminalViewModel(
     }
 
     private fun updateGcodes() = viewModelScope.launch(coroutineExceptionHandler) {
-        mutableGcodes.postValue(getGcodeShortcutsUseCase.execute(Unit))
+        gcodes.offer(getGcodeShortcutsUseCase.execute(Unit))
     }
 
     fun setFavorite(gcode: GcodeHistoryItem, favorite: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
@@ -138,4 +146,9 @@ class TerminalViewModel(
         )
         updateGcodes()
     }
+
+    data class UiState(
+        val printing: Boolean,
+        val gcodes: List<GcodeHistoryItem>
+    )
 }

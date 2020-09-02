@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.ui.common.terminal
 import android.app.AlertDialog
 import android.os.Bundle
 import android.text.InputType
+import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.*
 import android.view.inputmethod.EditorInfo
@@ -10,6 +11,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.view.children
 import androidx.core.view.doOnNextLayout
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import de.crysxd.octoapp.base.R
@@ -65,7 +67,7 @@ class TerminalFragment : AsyncFragment() {
         viewModel.terminalFilters.observe(viewLifecycleOwner, Observer {})
 
         // Shortcuts & Buttons
-        viewModel.gcodes.observe(viewLifecycleOwner, Observer(this::showGcodeShortcuts))
+        viewModel.uiState.observe(viewLifecycleOwner, Observer(this::updateUi))
         buttonClear.setOnClickListener {
             adapter?.clear()
             viewModel.clear()
@@ -149,10 +151,22 @@ class TerminalFragment : AsyncFragment() {
         }
     }
 
-    private fun showGcodeShortcuts(gcodes: List<GcodeHistoryItem>) {
-        if (!initialLayout) {
-            TransitionManager.beginDelayedTransition(buttonList)
-        } else {
+    private fun updateUi(uiState: TerminalViewModel.UiState) {
+        val transition = AutoTransition()
+        transition.excludeTarget(recyclerView, true)
+        transition.excludeTarget(buttonListScrollView, true)
+        transition.addTarget(buttonList)
+        TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
+
+        showGcodes(if (uiState.printing) emptyList() else uiState.gcodes)
+        gcodeInput.isVisible = !uiState.printing
+        printingHint.isVisible = uiState.printing
+
+        initialLayout = false
+    }
+
+    private fun showGcodes(gcodes: List<GcodeHistoryItem>) {
+        if (initialLayout) {
             buttonList.children.forEach { it.tag = true }
         }
 
@@ -201,7 +215,6 @@ class TerminalFragment : AsyncFragment() {
 
         // Scroll to end of list the first time we populate the buttons
         if (initialLayout) {
-            initialLayout = false
             buttonListScrollView.doOnNextLayout {
                 buttonListScrollView.scrollTo(buttonList.width, 0)
             }
