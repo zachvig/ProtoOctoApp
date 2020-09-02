@@ -60,8 +60,14 @@ class WebcamWidgetViewModel(
                     .map {
                         when (it) {
                             is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading
-                            is MjpegConnection.MjpegSnapshot.Error -> UiState.Error(false, webcamSettings.streamUrl)
-                            is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(applyTransformations(it.frame, webcamSettings))
+                            is MjpegConnection.MjpegSnapshot.Error -> UiState.Error(
+                                isManualReconnect = false,
+                                streamUrl = webcamSettings.streamUrl
+                            )
+                            is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
+                                frame = applyTransformations(it.frame, webcamSettings),
+                                aspectRation = webcamSettings.streamRatio
+                            )
                         }
                     }
                     .flowOn(Dispatchers.Default)
@@ -103,7 +109,7 @@ class WebcamWidgetViewModel(
     sealed class UiState {
         object Loading : UiState()
         object WebcamNotConfigured : UiState()
-        data class FrameReady(val frame: Bitmap) : UiState()
+        data class FrameReady(val frame: Bitmap, val aspectRation: String) : UiState()
         data class Error(val isManualReconnect: Boolean, val streamUrl: String? = null) : UiState()
     }
 }
