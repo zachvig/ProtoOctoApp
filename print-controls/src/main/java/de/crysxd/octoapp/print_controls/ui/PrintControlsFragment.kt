@@ -6,6 +6,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.BaseFragment
@@ -121,6 +122,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
                 ) {
                     viewModel.cancelPrint()
                 }
+                R.id.menuOpenTerminal -> findNavController().navigate(R.id.action_open_terminal)
                 R.id.menuEmergencyStop -> doAfterConfirmation(
                     message = R.string.emergency_stop_confirmation_message,
                     button = R.string.emergency_stop_confirmation_action
