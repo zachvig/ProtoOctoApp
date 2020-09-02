@@ -72,17 +72,7 @@ class WebcamWidget(
             }
         )
 
-        // Aspect ratio
-        ConstraintSet().also {
-            it.clone(view.webcamContent)
-            it.setDimensionRatio(
-                R.id.streamView, if (isFullscreen) {
-                    null
-                } else {
-                    "16:9"
-                }
-            )
-        }.applyTo(view.webcamContent)
+        applyAspectRatio(viewModel.getInitialAspectRatio())
     }
 
     private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(view.webcamContent, InstantAutoTransition())
@@ -116,6 +106,8 @@ class WebcamWidget(
                 view.liveIndicator.isVisible = true
                 view.streamView.setImageBitmap(state.frame)
 
+                applyAspectRatio(state.aspectRation)
+
                 // Hide live indicator if no new frame arrives within 3s
                 // Show stalled indicator if no new frame arrives within 10s
                 hideLiveIndicatorJob?.cancel()
@@ -146,5 +138,19 @@ class WebcamWidget(
         }
 
         lastState = state
+    }
+
+    private fun applyAspectRatio(aspectRation: String) {
+        ConstraintSet().also {
+            it.clone(view.webcamContent)
+            it.setDimensionRatio(
+                R.id.streamView,
+                if (isFullscreen) {
+                    null
+                } else {
+                    aspectRation
+                }
+            )
+        }.applyTo(view.webcamContent)
     }
 }

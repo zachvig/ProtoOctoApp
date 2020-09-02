@@ -30,6 +30,7 @@ data class ConnectionResponse(
         OPERATIONAL,
         ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT,
         CONNECTION_ERROR,
+        DETECTING_SERIAL_CONNECTION,
         PRINTING,
         CANCELLING,
         FINISHING,
