@@ -4,12 +4,10 @@
     android:viewportWidth="376"
     android:viewportHeight="57">
     <path
-        android:fillAlpha="0.05"
-        android:fillColor="#3888C6"
+        android:fillColor="@color/input_background"
         android:pathData="M0,10C0,4.477 4.477,0 10,0H388C393.523,0 398,4.477 398,10V37C398,42.523 393.523,47 388,47H0V10Z" />
     <path
-        android:fillAlpha="0.05"
-        android:fillColor="#3888C6"
+        android:fillColor="@color/input_background"
         android:fillType="evenOdd"
         android:pathData="M16.135,47H0V57H10.757V52C10.757,49.239 13.165,47 16.135,47Z" />
 </vector>

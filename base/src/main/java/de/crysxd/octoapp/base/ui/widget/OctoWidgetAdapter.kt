@@ -9,40 +9,52 @@ import androidx.recyclerview.widget.RecyclerView
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import kotlinx.android.synthetic.main.item_widget.view.*
+import timber.log.Timber
 
 class OctoWidgetAdapter : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHolder>() {
 
-    private var widgets: List<WidgetViewHolder> = emptyList()
+    private var widgets: List<Pair<Int, WidgetViewHolder>> = emptyList()
+    private var dataSetId = 0
 
     init {
         setHasStableIds(true)
     }
 
     suspend fun setWidgets(context: Context, list: List<OctoWidget>) {
-        widgets = list.mapIndexed { i, it ->
-            onCreateAndBindViewHolder(context, it, i, list.size)
+        if (widgets.map { it.second.widgetClassName } == list.map { it::class.java.name }) {
+            Timber.i("Widgets not changed, skipping update")
+        } else {
+            dataSetId++
+
+            widgets = list.mapIndexed { i, it ->
+                onCreateAndBindViewHolder(context, it, i, list.size)
+            }.mapIndexed { index, widgetViewHolder ->
+                "$dataSetId:$index".hashCode() to widgetViewHolder
+            }
+
+            notifyDataSetChanged()
         }
-        notifyDataSetChanged()
     }
 
-    private suspend fun onCreateAndBindViewHolder(context: Context, widget: OctoWidget, position: Int, count: Int) = WidgetViewHolder(context).also { holder ->
-        LayoutInflater.from(context).suspendedInflate(R.layout.item_widget, holder.itemView as ViewGroup, true)
+    private suspend fun onCreateAndBindViewHolder(context: Context, widget: OctoWidget, position: Int, count: Int) =
+        WidgetViewHolder(context, widget::class.java.name).also { holder ->
+            LayoutInflater.from(context).suspendedInflate(R.layout.item_widget, holder.itemView as ViewGroup, true)
 
-        holder.itemView.textViewWidgetTitle.text = widget.getTitle(holder.itemView.context)
-        holder.itemView.textViewWidgetTitle.isVisible = holder.itemView.textViewWidgetTitle.text.isNotBlank()
-        holder.itemView.padding.isVisible = position < count - 1
+            holder.itemView.textViewWidgetTitle.text = widget.getTitle(holder.itemView.context)
+            holder.itemView.textViewWidgetTitle.isVisible = holder.itemView.textViewWidgetTitle.text.isNotBlank()
+            holder.itemView.padding.isVisible = position < count - 1
 
-        holder.itemView.widgetContainer.removeAllViews()
-        holder.itemView.widgetContainer.addView(widget.getView(context, holder.itemView.widgetContainer))
+            holder.itemView.widgetContainer.removeAllViews()
+            holder.itemView.widgetContainer.addView(widget.getView(context, holder.itemView.widgetContainer))
 
-        return holder
-    }
+            return holder
+        }
 
-    override fun getItemId(position: Int) = widgets[position]::class.java.canonicalName.hashCode().toLong()
+    override fun getItemId(position: Int) = widgets[position].second::class.java.canonicalName.hashCode().toLong()
 
-    override fun getItemViewType(position: Int) = position
+    override fun getItemViewType(position: Int) = widgets[position].first
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = widgets[viewType].also {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = widgets.first { it.first == viewType }.second.also {
         (it.itemView.parent as? ViewGroup)?.removeView(it.itemView)
     }
 
@@ -50,7 +62,7 @@ class OctoWidgetAdapter : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHolde
 
     override fun onBindViewHolder(holder: WidgetViewHolder, position: Int) = Unit
 
-    class WidgetViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(context)) {
+    class WidgetViewHolder(context: Context, val widgetClassName: String) : RecyclerView.ViewHolder(FrameLayout(context)) {
         init {
             setIsRecyclable(false)
         }
