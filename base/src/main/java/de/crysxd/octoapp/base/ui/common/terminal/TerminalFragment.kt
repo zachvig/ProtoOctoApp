@@ -19,6 +19,7 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.ui.common.AsyncFragment
+import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.synthetic.main.fragment_terminal.*
 import kotlinx.coroutines.Job
@@ -152,17 +153,18 @@ class TerminalFragment : AsyncFragment() {
     }
 
     private fun updateUi(uiState: TerminalViewModel.UiState) {
-        val transition = AutoTransition()
-        transition.excludeTarget(recyclerView, true)
-        transition.excludeTarget(buttonListScrollView, true)
-        transition.addTarget(buttonList)
-        TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
+        if (!initialLayout) {
+            val transition = AutoTransition()
+            transition.excludeTarget(recyclerView, true)
+            TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
+        }
 
         showGcodes(if (uiState.printing) emptyList() else uiState.gcodes)
         gcodeInput.isVisible = !uiState.printing
         printingHint.isVisible = uiState.printing
 
-        initialLayout = false
+        // We are not in initial layout anymore as soon as the gcode arrived
+        initialLayout = uiState.gcodes.isEmpty()
     }
 
     private fun showGcodes(gcodes: List<GcodeHistoryItem>) {
@@ -231,6 +233,7 @@ class TerminalFragment : AsyncFragment() {
         super.onStart()
         lifecycleScope.launchWhenStarted {
             awaitLazyView()
+            requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
             recyclerView.setupWithToolbar(requireOctoActivity())
             recyclerView.viewTreeObserver.addOnGlobalLayoutListener(onLayoutListener)
         }

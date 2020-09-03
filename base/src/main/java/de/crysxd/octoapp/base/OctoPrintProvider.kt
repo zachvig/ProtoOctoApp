@@ -11,6 +11,7 @@ import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -29,6 +30,7 @@ class OctoPrintProvider(
 
     private val octoPrintMutex = Mutex()
     private var octoPrintCache: Pair<OctoPrintInstanceInformationV2, OctoPrint>? = null
+    private val currentMessageChannel = ConflatedBroadcastChannel<Message.CurrentMessage>()
 
     @Deprecated("Use octoPrintFlow")
     val octoPrint: LiveData<OctoPrint?> = octoPrintFlow().asLiveData()
@@ -41,7 +43,10 @@ class OctoPrintProvider(
         // The passive event flow does not actively open a connection but piggy-backs other Flows
         GlobalScope.launch {
             passiveEventFlow()
-                .onEach { updateAnalyticsProfileWithEvents(it) }
+                .onEach {
+                    updateAnalyticsProfileWithEvents(it)
+                    ((it as? Event.MessageReceived)?.message as? Message.CurrentMessage)?.let(currentMessageChannel::offer)
+                }
                 .retry { delay(1000); true }
                 .collect()
         }
@@ -72,6 +77,8 @@ class OctoPrintProvider(
     fun passiveEventFlow() = octoPrintFlow()
         .flatMapLatest { it?.getEventWebSocket()?.passiveEventFlow() ?: emptyFlow() }
         .catch { e -> Timber.e(e) }
+
+    fun passiveCurrentMessageFlow() = currentMessageChannel.asFlow()
 
     fun eventFlow(tag: String) = octoPrintFlow()
         .flatMapLatest { it?.getEventWebSocket()?.eventFlow(tag) ?: emptyFlow() }

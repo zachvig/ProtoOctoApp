@@ -53,15 +53,14 @@ class TerminalViewModel(
 
     private var clearedFrom: Date = Date(0)
     private val gcodes = ConflatedBroadcastChannel<List<GcodeHistoryItem>>()
-    val uiState = octoPrintProvider.eventFlow("terminal")
-        .mapNotNull { it as? Event.MessageReceived }
-        .mapNotNull { (it.message as? de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage)?.state?.flags }
+    private val printStateFlow = octoPrintProvider.passiveCurrentMessageFlow()
+        .mapNotNull { it.state?.flags }
         .map { it.pausing || it.cancelling || it.printing }
-        .combine(gcodes.asFlow()) { printing, gcodes ->
+    val uiState = gcodes.asFlow()
+        .combine(printStateFlow) { gcodes, printing ->
             UiState(printing, gcodes)
         }
         .asLiveData()
-
 
     init {
         // Load gcode history and selected filters
