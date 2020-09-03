@@ -19,9 +19,19 @@
             app:popEnterAnim="@anim/popEnterAnim"
             app:popExitAnim="@anim/popExitAnim" />
 
+        <action
+            android:id="@+id/action_open_terminal"
+            app:destination="@id/terminal_nav_graph"
+            app:enterAnim="@anim/enterAnim"
+            app:exitAnim="@anim/exitAnim"
+            app:popEnterAnim="@anim/popEnterAnim"
+            app:popExitAnim="@anim/popExitAnim" />
+
     </fragment>
 
     <include app:graph="@navigation/enter_value_nav_graph" />
+
+    <include app:graph="@navigation/terminal_nav_graph" />
 
     <action
         android:id="@id/action_enter_value"

@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.ui.common.terminal
 import android.app.AlertDialog
 import android.os.Bundle
 import android.text.InputType
+import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.*
 import android.view.inputmethod.EditorInfo
@@ -10,6 +11,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.view.children
 import androidx.core.view.doOnNextLayout
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import de.crysxd.octoapp.base.R
@@ -17,6 +19,7 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.ui.common.AsyncFragment
+import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.synthetic.main.fragment_terminal.*
 import kotlinx.coroutines.Job
@@ -65,7 +68,7 @@ class TerminalFragment : AsyncFragment() {
         viewModel.terminalFilters.observe(viewLifecycleOwner, Observer {})
 
         // Shortcuts & Buttons
-        viewModel.gcodes.observe(viewLifecycleOwner, Observer(this::showGcodeShortcuts))
+        viewModel.uiState.observe(viewLifecycleOwner, Observer(this::updateUi))
         buttonClear.setOnClickListener {
             adapter?.clear()
             viewModel.clear()
@@ -149,10 +152,23 @@ class TerminalFragment : AsyncFragment() {
         }
     }
 
-    private fun showGcodeShortcuts(gcodes: List<GcodeHistoryItem>) {
+    private fun updateUi(uiState: TerminalViewModel.UiState) {
         if (!initialLayout) {
-            TransitionManager.beginDelayedTransition(buttonList)
-        } else {
+            val transition = AutoTransition()
+            transition.excludeTarget(recyclerView, true)
+            TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
+        }
+
+        showGcodes(if (uiState.printing) emptyList() else uiState.gcodes)
+        gcodeInput.isVisible = !uiState.printing
+        printingHint.isVisible = uiState.printing
+
+        // We are not in initial layout anymore as soon as the gcode arrived
+        initialLayout = uiState.gcodes.isEmpty()
+    }
+
+    private fun showGcodes(gcodes: List<GcodeHistoryItem>) {
+        if (initialLayout) {
             buttonList.children.forEach { it.tag = true }
         }
 
@@ -201,7 +217,6 @@ class TerminalFragment : AsyncFragment() {
 
         // Scroll to end of list the first time we populate the buttons
         if (initialLayout) {
-            initialLayout = false
             buttonListScrollView.doOnNextLayout {
                 buttonListScrollView.scrollTo(buttonList.width, 0)
             }
@@ -218,6 +233,7 @@ class TerminalFragment : AsyncFragment() {
         super.onStart()
         lifecycleScope.launchWhenStarted {
             awaitLazyView()
+            requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
             recyclerView.setupWithToolbar(requireOctoActivity())
             recyclerView.viewTreeObserver.addOnGlobalLayoutListener(onLayoutListener)
         }
