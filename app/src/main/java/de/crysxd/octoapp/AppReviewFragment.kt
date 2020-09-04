@@ -76,16 +76,18 @@ class AppReviewFragment : Fragment() {
         val manager = ReviewManagerFactory.create(requireContext())
         val request = manager.requestReviewFlow()
         request.addOnCompleteListener {
-            if (it.isSuccessful) {
-                // We got the ReviewInfo object
-                val reviewInfo = it.result
-                val flow = manager.launchReviewFlow(requireActivity(), reviewInfo)
-                flow.addOnCompleteListener { _ ->
-                    Timber.d("Review flow completed")
+            lifecycleScope.launchWhenCreated {
+                if (it.isSuccessful) {
+                    // We got the ReviewInfo object
+                    val reviewInfo = it.result
+                    val flow = manager.launchReviewFlow(requireActivity(), reviewInfo)
+                    flow.addOnCompleteListener { _ ->
+                        Timber.d("Review flow completed")
+                    }
+                } else {
+                    Timber.e("Review flow not successful")
+                    Timber.e(it.exception)
                 }
-            } else {
-                Timber.e("Review flow not successful")
-                Timber.e(it.exception)
             }
         }
     }
