@@ -59,7 +59,7 @@ android {
 play {
     serviceAccountCredentials = file("service-account.json")
     track = "beta"
-    userFraction = 1
+    userFraction = 0.2
     defaultToAppBundles = true
     resolutionStrategy = "ignore"
     updatePriority = 2
