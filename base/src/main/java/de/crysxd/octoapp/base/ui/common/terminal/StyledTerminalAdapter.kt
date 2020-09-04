@@ -24,10 +24,12 @@ class StyledTerminalAdapter : TerminalAdapter<StyledTerminalAdapter.ViewHolder>(
     }
 
     override suspend fun initWithItems(items: List<SerialCommunication>) {
-        withContext(Dispatchers.IO) {
-            serialCommunications.clear()
-            serialCommunications.addAll(items.flatMap(this@StyledTerminalAdapter::mapItem))
+        val new = withContext(Dispatchers.IO) {
+            items.flatMap(this@StyledTerminalAdapter::mapItem)
         }
+
+        serialCommunications.clear()
+        serialCommunications.addAll(new)
 
         notifyDataSetChanged()
     }
