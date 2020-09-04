@@ -40,6 +40,9 @@ test:
 build:
   stage: build
   needs: ["test"]
+  only: 
+    - tags
+    - /^release\/.*$/
   script:
     - ./gradlew assembleRelease
     - mkdir outputs

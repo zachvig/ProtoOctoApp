@@ -16,7 +16,7 @@ class OctoPrintRepository(
     private val checkOctoPrintInstanceInformationUseCase: CheckOctoPrintInstanceInformationUseCase
 ) {
 
-    val instanceInformationChannel = ConflatedBroadcastChannel<OctoPrintInstanceInformationV2?>(null)
+    private val instanceInformationChannel = ConflatedBroadcastChannel<OctoPrintInstanceInformationV2?>(null)
 
     @Deprecated("Use instanceInformationFlow()")
     val instanceInformation = instanceInformationChannel.asFlow().asLiveData()

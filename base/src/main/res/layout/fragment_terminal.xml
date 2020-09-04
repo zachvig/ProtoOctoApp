@@ -17,6 +17,20 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="0dp" />
 
+    <TextView
+        android:id="@+id/printingHint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/button_disabled"
+        android:paddingLeft="@dimen/margin_3"
+        android:paddingTop="@dimen/margin_2"
+        android:paddingRight="@dimen/margin_3"
+        android:paddingBottom="@dimen/margin_2"
+        android:text="@string/pause_the_print_to_send_commands"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="visible" />
+
     <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
         android:id="@+id/gcodeInput"
         android:layout_width="match_parent"
@@ -27,7 +41,7 @@
         app:actionDrawable="@drawable/ic_round_send_24"
         app:actionOnlyWithText="true"
         app:label="@string/command"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/printingHint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
