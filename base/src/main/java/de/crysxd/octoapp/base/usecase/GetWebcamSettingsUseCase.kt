@@ -15,7 +15,7 @@ class GetWebcamSettingsUseCase @Inject constructor(
         val octoPrint = octoPrintProvider.octoPrint()
         val raw = octoPrint.createSettingsApi().getSettings().webcam
         return raw.copy(
-            streamUrl = if (!raw.streamUrl.startsWith("http")) {
+            streamUrl = if (raw.streamUrl?.startsWith("http") == false) {
                 val url = Uri.parse(octoPrint.webUrl)
                     .buildUpon()
                     .resolve(raw.streamUrl)

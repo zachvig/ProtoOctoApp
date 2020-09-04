@@ -22,7 +22,7 @@ import timber.log.Timber
 private const val KEY_ASPECT_RATIO = "webcam_aspect_ration"
 
 class WebcamWidgetViewModel(
-    private val octoPrintProvider: OctoPrintProvider,
+    octoPrintProvider: OctoPrintProvider,
     private val getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
     private val sharedPreferences: SharedPreferences
 ) : BaseViewModel() {
@@ -51,14 +51,15 @@ class WebcamWidgetViewModel(
                 // Load settings
                 val webcamSettings = getWebcamSettingsUseCase.execute()
                 storeAspectRatio(webcamSettings.streamRatio)
+                val streamUrl = webcamSettings.streamUrl
 
                 // Check if webcam is configured
-                if (!webcamSettings.webcamEnabled || webcamSettings.streamUrl.isEmpty()) {
+                if (!webcamSettings.webcamEnabled || streamUrl.isNullOrBlank()) {
                     return@liveData emit(UiState.WebcamNotConfigured)
                 }
 
                 // Open stream
-                MjpegConnection(webcamSettings.streamUrl)
+                MjpegConnection(streamUrl)
                     .load()
                     .map {
                         when (it) {
