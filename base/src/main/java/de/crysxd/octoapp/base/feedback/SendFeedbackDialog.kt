@@ -56,10 +56,11 @@ class SendFeedbackDialog : DialogFragment() {
     override fun show(manager: FragmentManager, tag: String?) {
         // Take screenshot before dialog is shown
         lifecycleScope.launch {
-            screenshot = Injector.get().takeScreenshotUseCase().execute(requireOctoActivity())
-        }.invokeOnCompletion {
-            it?.let { Timber.e(it); requireOctoActivity().showDialog(it) }
-            super.show(manager, tag)
+            try {
+                screenshot = Injector.get().takeScreenshotUseCase().execute(requireOctoActivity())
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
         }
     }
 }
