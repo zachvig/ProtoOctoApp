@@ -42,7 +42,7 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
             it.findNavController().navigate(R.id.action_open_terminal)
         }
 
-        viewModel.gcodes.observe(viewLifecycleOwner, Observer(this::showGcodes))
+        viewModel.gcodes.observe(parent, Observer(this::showGcodes))
     }
 
     private fun showGcodes(gcodes: List<GcodeHistoryItem>) {

@@ -29,7 +29,7 @@ class TuneWidget(parent: Fragment) : OctoWidget(parent) {
         inflater.suspendedInflate(R.layout.widget_tune, container, false)
 
     override fun onViewCreated(view: View) {
-        viewModel.uiState.observe(viewLifecycleOwner, Observer {
+        viewModel.uiState.observe(parent, Observer {
             TransitionManager.beginDelayedTransition(view as ViewGroup)
 
             view.flowRate.isVisible = it.flowRate != null
@@ -55,6 +55,6 @@ class TuneWidget(parent: Fragment) : OctoWidget(parent) {
             }
         }
 
-        viewModel.updateLiveData.observe(viewLifecycleOwner, Observer { })
+        viewModel.updateLiveData.observe(parent, Observer { })
     }
 }

@@ -44,8 +44,8 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
         inflater.suspendedInflate(R.layout.widget_progress, container, false)
 
     override fun onViewCreated(view: View) {
-        viewModel.printState.observe(viewLifecycleOwner, Observer {
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewModel.printState.observe(parent, Observer {
+            parent.lifecycleScope.launchWhenStarted {
                 val progressPercent = it.progress?.completion ?: 0f
                 val progressPercentLayoutThreshold = 80f
                 val progress = progressPercent.toInt() / 100f

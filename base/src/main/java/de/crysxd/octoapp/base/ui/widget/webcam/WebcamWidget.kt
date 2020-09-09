@@ -52,7 +52,7 @@ class WebcamWidget(
     }
 
     override fun onViewCreated(view: View) {
-        viewModel.uiState.observe(viewLifecycleOwner, Observer(this::onUiStateChanged))
+        viewModel.uiState.observe(parent, Observer(this::onUiStateChanged))
         view.buttonReconnect.setOnClickListener { viewModel.connect() }
 
         // Fullscreen button
@@ -111,7 +111,7 @@ class WebcamWidget(
                 // Hide live indicator if no new frame arrives within 3s
                 // Show stalled indicator if no new frame arrives within 10s
                 hideLiveIndicatorJob?.cancel()
-                hideLiveIndicatorJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+                hideLiveIndicatorJob = parent.lifecycleScope.launchWhenCreated {
                     delay(NOT_LIVE_IF_NO_FRAME_FOR_MS)
                     beginDelayedTransition()
                     view.liveIndicator.isVisible = false

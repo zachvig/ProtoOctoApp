@@ -21,8 +21,6 @@ abstract class OctoWidget(val parent: Fragment) : LayoutContainer {
     override val containerView: View
         get() = view
 
-    protected val viewLifecycleOwner = parent.viewLifecycleOwner
-
     abstract fun getTitle(context: Context): String?
 
     abstract fun getAnalyticsName(): String
