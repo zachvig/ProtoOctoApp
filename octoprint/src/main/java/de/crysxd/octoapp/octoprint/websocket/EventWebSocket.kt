@@ -46,12 +46,7 @@ class EventWebSocket(
     fun start() {
         if (subscriberCount.get() > 0 && isConnected.compareAndSet(false, true)) {
             val request = Request.Builder()
-                .url(
-                    URI.create("$webUrl/")
-                        .resolve(".") // Remove // at the end
-                        .resolve("sockjs/websocket") // Add api/ to path
-                        .toURL()
-                )
+                .url(URI.create(webUrl).resolve("sockjs/websocket").toURL())
                 .build()
 
             httpClient.newBuilder()

@@ -24,10 +24,12 @@ import java.util.logging.Logger
 
 
 class OctoPrint(
-    val webUrl: String,
+    webUrl: String,
     private val apiKey: String,
     private val interceptors: List<Interceptor> = emptyList()
 ) {
+
+    val webUrl = "${webUrl.removeSuffix("/")}/"
 
     companion object {
         const val TESTED_SERVER_VERSION = "1.4.2"
@@ -67,15 +69,10 @@ class OctoPrint(
     fun createConnectionApi(): ConnectionApi.Wrapper =
         ConnectionApi.Wrapper((createRetrofit().create(ConnectionApi::class.java)))
 
-    fun getLogger() = Logger.getLogger("OctoPrint")
+    fun getLogger(): Logger = Logger.getLogger("OctoPrint")
 
     private fun createRetrofit() = Retrofit.Builder()
-        .baseUrl(
-            URI.create("$webUrl/")
-                .resolve(".") // Remove // at the end
-                .resolve("api/") // Add api/ to path
-                .toURL()
-        )
+        .baseUrl(URI.create(webUrl).resolve("api/").toURL())
         .addConverterFactory(GsonConverterFactory.create(createGsonWithTypeAdapters()))
         .client(createOkHttpClient())
         .build()
