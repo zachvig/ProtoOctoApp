@@ -61,6 +61,7 @@ class SendFeedbackDialog : DialogFragment() {
             } catch (e: Exception) {
                 Timber.e(e)
             }
+            super.show(manager, tag)
         }
     }
 }
