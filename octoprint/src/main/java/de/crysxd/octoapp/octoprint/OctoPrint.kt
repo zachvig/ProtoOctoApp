@@ -24,12 +24,12 @@ import java.util.logging.Logger
 
 
 class OctoPrint(
-    webUrl: String,
+    rawWebUrl: String,
     private val apiKey: String,
     private val interceptors: List<Interceptor> = emptyList()
 ) {
 
-    val webUrl = "${webUrl.removeSuffix("/")}/"
+    val webUrl = "${rawWebUrl.removeSuffix("/")}/"
 
     companion object {
         const val TESTED_SERVER_VERSION = "1.4.2"
