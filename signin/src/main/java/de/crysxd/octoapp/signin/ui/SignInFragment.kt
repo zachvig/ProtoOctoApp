@@ -25,6 +25,7 @@ import de.crysxd.octoapp.signin.models.SignInViewState
 import de.crysxd.octoapp.signin.usecases.SignInUseCase.Warning.NotAdmin
 import de.crysxd.octoapp.signin.usecases.SignInUseCase.Warning.TooNewServerVersion
 import kotlinx.android.synthetic.main.fragment_signin.*
+import timber.log.Timber
 
 class SignInFragment : BaseFragment(R.layout.fragment_signin) {
 
@@ -59,10 +60,12 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         val compact = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin_compact) }
 
         ViewCompactor(view as ViewGroup, reset = {
+            Timber.i("Reset")
             TransitionManager.beginDelayedTransition(requireView() as ViewGroup, InstantAutoTransition(quickTransition = true, explode = true))
             full.applyTo(constraintLayout)
             textViewTitle.setTextAppearanceCompat(R.style.OctoTheme_TextAppearance_Title_Large)
         }, compact = {
+            Timber.i("Compact $it")
             compact.applyTo(constraintLayout)
             textViewTitle.setTextAppearanceCompat(R.style.OctoTheme_TextAppearance_Title)
             false

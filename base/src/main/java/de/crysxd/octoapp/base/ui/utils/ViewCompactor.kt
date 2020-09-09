@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.base.ui.utils
 
-import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
 
@@ -13,7 +12,7 @@ class ViewCompactor(val view: ViewGroup, val reset: () -> Unit, val compact: (In
             val height = bottom - top
             val width = right - left
 
-            if (height != oldHeight || width != oldWidth) {
+            if (oldHeight != 0 && (height != oldHeight || width != oldWidth)) {
                 var round = -1
                 reset()
 
