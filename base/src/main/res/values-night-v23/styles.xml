@@ -3,7 +3,6 @@
 
     <style name="OctoTheme" parent="OctoTheme.Base">
         <item name="android:statusBarColor">@color/window_background</item>
-        <item name="android:navigationBarColor">@color/window_background</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>
