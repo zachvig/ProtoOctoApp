@@ -88,11 +88,13 @@ class MainActivity : OctoActivity() {
         }
     }
 
-    private fun onEventReceived(e: Event) {
-        when (e) {
-            is Event.Disconnected -> navigate(R.id.action_connect_printer)
-            is Event.MessageReceived -> onMessageReceived(e.message)
+    private fun onEventReceived(e: Event) = when (e) {
+        is Event.Disconnected -> {
+            e.exception?.let(this::showDialog)
+            navigate(R.id.action_connect_printer)
         }
+        is Event.MessageReceived -> onMessageReceived(e.message)
+        Event.Connected -> Unit
     }
 
     private fun onMessageReceived(e: Message) {
