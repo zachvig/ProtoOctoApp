@@ -5,6 +5,6 @@ import de.crysxd.octoapp.base.models.SerialCommunication
 
 abstract class TerminalAdapter<VH : RecyclerView.ViewHolder> : RecyclerView.Adapter<VH>() {
     abstract suspend fun initWithItems(items: List<SerialCommunication>)
-    abstract fun appendItem(item: SerialCommunication)
+    abstract suspend fun appendItem(item: SerialCommunication)
     abstract fun clear()
 }

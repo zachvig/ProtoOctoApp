@@ -5,6 +5,8 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.models.SerialCommunication
 import de.crysxd.octoapp.base.ui.common.AutoBindViewHolder
 import kotlinx.android.synthetic.main.item_plain_serial_comm.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class PlainTerminalAdaper : TerminalAdapter<PlainTerminalAdaper.PlainSerialCommunicationViewHolder>() {
@@ -19,12 +21,17 @@ class PlainTerminalAdaper : TerminalAdapter<PlainTerminalAdaper.PlainSerialCommu
         Timber.i("Init with ${items.size} items")
         serialCommunications.clear()
         serialCommunications.addAll(items)
-        notifyDataSetChanged()
+
+        withContext(Dispatchers.Main) {
+            notifyDataSetChanged()
+        }
     }
 
-    override fun appendItem(item: SerialCommunication) {
+    override suspend fun appendItem(item: SerialCommunication) {
         serialCommunications.add(item)
-        notifyItemInserted(itemCount - 1)
+        withContext(Dispatchers.Main) {
+            notifyItemInserted(itemCount - 1)
+        }
     }
 
     override fun clear() {

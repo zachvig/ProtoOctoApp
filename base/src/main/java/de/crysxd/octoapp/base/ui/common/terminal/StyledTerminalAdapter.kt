@@ -31,14 +31,18 @@ class StyledTerminalAdapter : TerminalAdapter<StyledTerminalAdapter.ViewHolder>(
         serialCommunications.clear()
         serialCommunications.addAll(new)
 
-        notifyDataSetChanged()
+        withContext(Dispatchers.Main) {
+            notifyDataSetChanged()
+        }
     }
 
-    override fun appendItem(item: SerialCommunication) {
+    override suspend fun appendItem(item: SerialCommunication) {
         Timber.i("Append ${item.content}")
         val items = mapItem(item)
         serialCommunications.addAll(items)
-        notifyItemInserted(itemCount - items.size)
+        withContext(Dispatchers.Main) {
+            notifyItemInserted(itemCount - items.size)
+        }
     }
 
     private fun mapItem(item: SerialCommunication): List<Item> {

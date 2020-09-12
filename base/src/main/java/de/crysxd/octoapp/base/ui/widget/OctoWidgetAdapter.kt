@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import kotlinx.android.synthetic.main.item_widget.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class OctoWidgetAdapter : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHolder>() {
@@ -32,7 +34,9 @@ class OctoWidgetAdapter : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHolde
                 "$dataSetId:$index".hashCode() to widgetViewHolder
             }
 
-            notifyDataSetChanged()
+            withContext(Dispatchers.Main) {
+                notifyDataSetChanged()
+            }
         }
     }
 
