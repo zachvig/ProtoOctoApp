@@ -1,6 +1,3 @@
 package de.crysxd.octoapp.octoprint.exceptions
 
-import java.io.IOException
-import java.lang.Exception
-
-class OctoPrintUnavailableException(e: Exception? = null) : OctoPrintException(e)
+class OctoPrintUnavailableException(e: Exception? = null) : OctoPrintException(e, e?.localizedMessage ?: e?.message ?: "Unable to connect to OctoPrint")

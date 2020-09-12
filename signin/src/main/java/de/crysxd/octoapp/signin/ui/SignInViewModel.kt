@@ -23,6 +23,7 @@ class SignInViewModel(
     private val signInUseCase: SignInUseCase
 ) : BaseViewModel() {
 
+    var failedSignInCounter = 0
     var invalidApiKeyInfoWasShown: Boolean = false
     private val mutableViewState = MutableLiveData<SignInViewState>()
     val viewState = Transformations.map(mutableViewState) { it }
@@ -37,12 +38,15 @@ class SignInViewModel(
                 when (val res = verifyUseCase.execute(upgradedInfo)) {
                     is SignInInformationValidationResult.ValidationOk -> {
                         mutableViewState.postValue(SignInViewState.Loading)
-                        val result = signInUseCase.execute(upgradedInfo)
-                        if (result is SignInUseCase.Result.Success) {
-                            mutableViewState.postValue(SignInViewState.SignInSuccess(result.octoPrintInstanceInformation, result.warnings))
-                        } else {
-                            mutableViewState.postValue(SignInViewState.SignInFailed)
-                        }
+                        mutableViewState.postValue(
+                            when (val result = signInUseCase.execute(upgradedInfo)) {
+                                is SignInUseCase.Result.Success -> {
+                                    failedSignInCounter = 0
+                                    SignInViewState.SignInSuccess(result.octoPrintInstanceInformation, result.warnings)
+                                }
+                                is SignInUseCase.Result.Failure -> SignInViewState.SignInFailed(result.exception, ++failedSignInCounter)
+                            }
+                        )
                     }
 
                     is SignInInformationValidationResult.ValidationFailed -> {

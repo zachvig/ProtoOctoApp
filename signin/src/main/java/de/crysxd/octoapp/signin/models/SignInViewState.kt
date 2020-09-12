@@ -7,6 +7,6 @@ sealed class SignInViewState {
     object Idle : SignInViewState()
     object Loading : SignInViewState()
     data class SignInInformationInvalid(val result: SignInInformationValidationResult.ValidationFailed) : SignInViewState()
-    object SignInFailed : SignInViewState()
+    data class SignInFailed(val exception: Exception, val failedAttempts: Int) : SignInViewState()
     data class SignInSuccess(val instanceInformation: OctoPrintInstanceInformationV2, val warnings: List<SignInUseCase.Warning>) : SignInViewState()
 }

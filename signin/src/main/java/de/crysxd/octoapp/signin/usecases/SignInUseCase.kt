@@ -50,7 +50,7 @@ class SignInUseCase(
         Result.Success(octoprintInstanceInformation, warnings)
     } catch (e: Exception) {
         Timber.e(e)
-        Result.Failure
+        Result.Failure(e)
     }
 
     sealed class Result {
@@ -59,7 +59,9 @@ class SignInUseCase(
             val warnings: List<Warning>
         ) : Result()
 
-        object Failure : Result()
+        data class Failure(
+            val exception: java.lang.Exception
+        ) : Result()
     }
 
     sealed class Warning {
