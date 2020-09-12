@@ -20,13 +20,20 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.net.URI
+import java.security.KeyStore
+import java.security.SecureRandom
 import java.util.logging.Logger
+import javax.net.ssl.KeyManagerFactory
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.X509TrustManager
 
 
 class OctoPrint(
     rawWebUrl: String,
     private val apiKey: String,
-    private val interceptors: List<Interceptor> = emptyList()
+    private val interceptors: List<Interceptor> = emptyList(),
+    private val keyStore: KeyStore?
 ) {
 
     val webUrl = "${rawWebUrl.removeSuffix("/")}/"
@@ -90,6 +97,21 @@ class OctoPrint(
         val logger = Logger.getLogger("OctoPrint/HTTP")
         logger.parent = getLogger()
         logger.useParentHandlers = true
+
+        keyStore?.let { ks ->
+            val customTrustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).also {
+                it.init(ks)
+            }
+            val x509TrustManager = customTrustManagerFactory.trustManagers.mapNotNull {
+                it as? X509TrustManager
+            }.first()
+
+            val sslContext = SSLContext.getInstance("SSL")
+            val keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
+            keyManagerFactory.init(keyStore, "pass".toCharArray())
+            sslContext.init(keyManagerFactory.keyManagers, customTrustManagerFactory.trustManagers, SecureRandom())
+            sslSocketFactory(sslContext.socketFactory, x509TrustManager)
+        }
 
         addInterceptor(createCatchAllInterceptor())
         addInterceptor(createAddHeaderInterceptor())

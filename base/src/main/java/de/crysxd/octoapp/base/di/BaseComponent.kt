@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import dagger.Component
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.SslKeyStoreHandler
 import de.crysxd.octoapp.base.di.modules.*
 import de.crysxd.octoapp.base.logging.FirebaseTree
 import de.crysxd.octoapp.base.logging.TimberCacheTree
@@ -21,7 +22,8 @@ import de.crysxd.octoapp.base.usecase.*
         OctoPrintModule::class,
         DataSourceModule::class,
         ViewModelModule::class,
-        FirebaseModule::class
+        FirebaseModule::class,
+        SslModule::class
     ]
 )
 interface BaseComponent {
@@ -30,6 +32,9 @@ interface BaseComponent {
     fun context(): Context
     fun app(): Application
     fun sharedPreferences(): SharedPreferences
+
+    // SslModule
+    fun sslKeyStoreHandler(): SslKeyStoreHandler
 
     // LoggingModule
     fun timberCacheTree(): TimberCacheTree
@@ -59,6 +64,7 @@ interface BaseComponent {
     fun formatDurationUseCase(): FormatDurationUseCase
     fun updateInstanceCapabilitiesUseCase(): UpdateInstanceCapabilitiesUseCase
     fun formatEtaUseCase(): FormatEtaUseCase
+    fun signOutUseCase(): SignOutUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

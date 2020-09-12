@@ -3,6 +3,7 @@ package de.crysxd.octoapp.signin.usecases
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.SslKeyStoreHandler
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.usecase.UseCase
@@ -14,15 +15,19 @@ import timber.log.Timber
 
 class SignInUseCase(
     private val octoprintRepository: OctoPrintRepository,
-    private val octoPrintProvider: OctoPrintProvider
+    private val octoPrintProvider: OctoPrintProvider,
+    private val sslKeyStoreHandler: SslKeyStoreHandler
 ) : UseCase<SignInInformation, SignInUseCase.Result>() {
 
     override suspend fun doExecute(param: SignInInformation, timber: Timber.Tree) = try {
-        val octoprintInstanceInformation = OctoPrintInstanceInformationV2(
-            param.webUrl,
-            param.apiKey
-        )
+        // Trust certificated
+        param.trustedCerts?.let {
+            timber.i("Trusting ${it.size} custom certificates")
+            sslKeyStoreHandler.storeCertificates(it)
+        }
 
+        // Create OctoPrint
+        val octoprintInstanceInformation = OctoPrintInstanceInformationV2(param.webUrl, param.apiKey)
         val octoprint = octoPrintProvider.createAdHocOctoPrint(octoprintInstanceInformation)
 
         // Test connection, will throw in case of faulty configuration

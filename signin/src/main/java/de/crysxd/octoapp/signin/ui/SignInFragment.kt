@@ -20,6 +20,7 @@ import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.ext.setTextAppearanceCompat
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.ui.utils.ViewCompactor
+import de.crysxd.octoapp.octoprint.exceptions.OctoPrintHttpsException
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.models.SignInInformation
@@ -28,6 +29,7 @@ import de.crysxd.octoapp.signin.usecases.SignInUseCase.Warning.NotAdmin
 import de.crysxd.octoapp.signin.usecases.SignInUseCase.Warning.TooNewServerVersion
 import kotlinx.android.synthetic.main.fragment_signin.*
 import timber.log.Timber
+import java.security.cert.Certificate
 
 class SignInFragment : BaseFragment(R.layout.fragment_signin) {
 
@@ -36,10 +38,10 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        buttonSignIn.setOnClickListener(this::signIn)
+        buttonSignIn.setOnClickListener { signIn() }
         inputApiKey.editText.setImeActionLabel(getString(R.string.sign_in), KeyEvent.KEYCODE_ENTER)
         inputApiKey.editText.setOnEditorActionListener { v, _, _ ->
-            signIn(v)
+            signIn()
             true
         }
 
@@ -77,21 +79,36 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
     private fun updateViewState(res: SignInViewState) {
         if (res is SignInViewState.SignInFailed && !res.shownToUser) {
             res.shownToUser = true
-            AlertDialog.Builder(requireContext())
-                .setMessage(res.exception.composeErrorMessage(requireContext(), R.string.error_unable_to_connect))
-                .setPositiveButton(android.R.string.ok, null)
-                .also {
-                    if (res.failedAttempts >= 3) {
-                        it.setNeutralButton(R.string.get_support) { _, _ ->
-                            Firebase.analytics.logEvent("support_from_sign_in_error", Bundle.EMPTY)
-                            SendFeedbackDialog().show(childFragmentManager, "sign-in-support")
+
+            // SSL error and we can "force trust" this server if user agrees
+            if (res.exception is OctoPrintHttpsException && res.exception.serverCertificates.isNotEmpty()) {
+                AlertDialog.Builder(requireContext())
+                    .setMessage(R.string.error_certificate_not_trusted)
+                    .setPositiveButton(R.string.trust_server_and_try_again) { _, _ ->
+                        signIn(res.exception.serverCertificates)
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
+            }
+
+            // Any other error
+            else {
+                AlertDialog.Builder(requireContext())
+                    .setMessage(res.exception.composeErrorMessage(requireContext(), R.string.error_unable_to_connect))
+                    .setPositiveButton(android.R.string.ok, null)
+                    .also {
+                        if (res.failedAttempts >= 3) {
+                            it.setNeutralButton(R.string.get_support) { _, _ ->
+                                Firebase.analytics.logEvent("support_from_sign_in_error", Bundle.EMPTY)
+                                SendFeedbackDialog().show(childFragmentManager, "sign-in-support")
+                            }
                         }
                     }
-                }
-                .setNegativeButton(R.string.show_details) { _, _ ->
-                    requireOctoActivity().showErrorDetailsDialog(res.exception)
-                }
-                .show()
+                    .setNegativeButton(R.string.show_details) { _, _ ->
+                        requireOctoActivity().showErrorDetailsDialog(res.exception)
+                    }
+                    .show()
+            }
         }
 
         if (res is SignInViewState.SignInInformationInvalid) {
@@ -137,11 +154,12 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         }
     }
 
-    private fun signIn(@Suppress("UNUSED_PARAMETER") view: View) {
+    private fun signIn(trustedCerts: List<Certificate>? = null) {
         viewModel.startSignIn(
             SignInInformation(
-                inputWebUrl.editText.text.toString(),
-                inputApiKey.editText.text.toString()
+                webUrl = inputWebUrl.editText.text.toString(),
+                apiKey = inputApiKey.editText.text.toString(),
+                trustedCerts = trustedCerts
             )
         )
     }
