@@ -49,20 +49,24 @@ class TemperatureView @JvmOverloads constructor(context: Context, attrs: Attribu
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
 
-        val largerSize = sqrt(((right - left).toDouble().pow(2.0) + (bottom - top).toDouble().pow(2))).toInt()
-        val rotated = Bitmap.createBitmap((right - left), (bottom - top), Bitmap.Config.ARGB_8888)
-        rotated.applyCanvas {
-            rotate((Math.random() * 360).toFloat(), width / 2f, height / 2f)
-            val xOverhang = largerSize - width
-            val yOverhang = largerSize - height
-            temperatureDrawable.setBounds(-xOverhang, -yOverhang, width + xOverhang, height + yOverhang)
-            temperatureDrawable.draw(this)
+        val layoutWidth = left - right
+        val layoutHeight = bottom - top
+
+        if (layoutWidth > 0 && layoutHeight > 0) {
+            val largerSize = sqrt(((right - left).toDouble().pow(2.0) + (bottom - top).toDouble().pow(2))).toInt()
+            val rotated = Bitmap.createBitmap(layoutWidth, layoutHeight, Bitmap.Config.ARGB_8888)
+            rotated.applyCanvas {
+                rotate((Math.random() * 360).toFloat(), width / 2f, height / 2f)
+                val xOverhang = largerSize - width
+                val yOverhang = largerSize - height
+                temperatureDrawable.setBounds(-xOverhang, -yOverhang, width + xOverhang, height + yOverhang)
+                temperatureDrawable.draw(this)
+            }
+
+            backgroundImageAnimated.setImageBitmap(rotated)
+            backgroundImage.setImageBitmap(rotated)
+
         }
-
-        backgroundImageAnimated.setImageBitmap(rotated)
-
-        backgroundImage.setImageBitmap(rotated)
-
     }
 
     fun setTemperature(temperature: PrinterState.ComponentTemperature?) {
