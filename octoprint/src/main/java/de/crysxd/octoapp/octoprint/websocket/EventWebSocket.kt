@@ -3,6 +3,7 @@ package de.crysxd.octoapp.octoprint.websocket
 import com.google.gson.Gson
 import de.crysxd.octoapp.octoprint.api.LoginApi
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketDysfunctionalException
+import de.crysxd.octoapp.octoprint.exceptions.WebSocketStalledException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketZombieException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
