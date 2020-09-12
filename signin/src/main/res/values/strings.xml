@@ -14,8 +14,9 @@
     <string name="loading">Loading…</string>
     <string name="welcome_to_octoapp">Welcome to OctoApp!</string>
     <string name="error_unable_to_connect"><![CDATA[
-    Unable to connect to OctoPrint with the provided information.<br/><br/><small><font color="#%1$06X">%2$s</font></small>
+        Unable to connect to OctoPrint with the provided information.<br/><br/><small><font color="#%1$06X">%2$s</font></small>
     ]]></string>
+    <string name="error_certificate_not_trusted"> Android does not trust the certificate provided by this server. This is usually the case for self signed certificates.\n\nDo you want to trust this server?</string>
     <string name="scan_the_qr_code">Scan the QR code</string>
     <string name="you_can_find_the_api_key_in_octoprint_s_settings_under_api">You can find the API key in OctoPrint\'s settings under API</string>
     <string name="you_can_find_the_api_key_in_octoprint_s_settings">You can find the API key in OctoPrint\'s settings</string>
@@ -28,4 +29,5 @@
     <string name="api_key_active_hint">API key — from the OctoPrint settings</string>
     <string name="error_api_cotains_illegal_characters">The API key contains illegal characters</string>
     <string name="error_enter_api_key">Please enter an API key</string>
+    <string name="trust_server_and_try_again">Trust server</string>
 </resources>

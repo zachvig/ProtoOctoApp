@@ -25,7 +25,8 @@ class OctoPrintProvider(
     private val timberHandler: TimberHandler,
     private val invalidApiKeyInterceptor: InvalidApiKeyInterceptor,
     private val octoPrintRepository: OctoPrintRepository,
-    private val analytics: FirebaseAnalytics
+    private val analytics: FirebaseAnalytics,
+    private val sslKeyStoreHandler: SslKeyStoreHandler
 ) {
 
     private val octoPrintMutex = Mutex()
@@ -102,7 +103,7 @@ class OctoPrintProvider(
     }
 
     fun createAdHocOctoPrint(it: OctoPrintInstanceInformationV2) =
-        OctoPrint(it.webUrl, it.apiKey, listOf(invalidApiKeyInterceptor)).also { octoPrint ->
+        OctoPrint(it.webUrl, it.apiKey, listOf(invalidApiKeyInterceptor), sslKeyStoreHandler.loadKeyStore()).also { octoPrint ->
             val logger = octoPrint.getLogger()
             logger.handlers.forEach { logger.removeHandler(it) }
             logger.addHandler(timberHandler)

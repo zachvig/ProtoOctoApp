@@ -32,9 +32,9 @@ class GenerateExceptionInterceptor : Interceptor {
         } catch (e: HttpException) {
             throw OctoPrintUnavailableException(e)
         } catch (e: SSLHandshakeException) {
-            throw OctoPrintHttpsException(e)
+            throw OctoPrintHttpsException(chain.request().url.toUrl(), e)
         } catch (e: CertPathValidatorException) {
-            throw OctoPrintHttpsException(e)
+            throw OctoPrintHttpsException(chain.request().url.toUrl(), e)
         }
     }
 }
