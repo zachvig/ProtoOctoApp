@@ -35,6 +35,9 @@ class WebcamWidget(
     private var hideLiveIndicatorJob: Job? = null
     private var lastState: UiState? = null
 
+    var externalLiveIndicator: View? = null
+    private val liveIndicator get() = externalLiveIndicator ?: view.liveIndicator
+
     override fun getTitle(context: Context) = context.getString(R.string.webcam)
     override fun getAnalyticsName() = "webcam"
 
@@ -84,9 +87,9 @@ class WebcamWidget(
 
         view.erroIndicator.isVisible = false
         view.errorIndicatorManual.isVisible = false
-        view.liveIndicator.isVisible = false
         view.streamStalledIndicator.isVisible = false
         view.notConfiguredIndicator.isVisible = false
+        liveIndicator.isVisible = false
 
         // Hide loading indicator in every state to prevent the animation to start over
 
@@ -103,7 +106,7 @@ class WebcamWidget(
             is UiState.FrameReady -> {
                 view.loadingIndicator.isVisible = false
 
-                view.liveIndicator.isVisible = true
+                liveIndicator.isVisible = true
                 view.streamView.setImageBitmap(state.frame)
 
                 applyAspectRatio(state.aspectRation)
@@ -114,7 +117,7 @@ class WebcamWidget(
                 hideLiveIndicatorJob = parent.lifecycleScope.launchWhenCreated {
                     delay(NOT_LIVE_IF_NO_FRAME_FOR_MS)
                     beginDelayedTransition()
-                    view.liveIndicator.isVisible = false
+                    liveIndicator.isVisible = false
 
                     delay(STALLED_IF_NO_FRAME_FOR_MS - NOT_LIVE_IF_NO_FRAME_FOR_MS)
                     beginDelayedTransition()
