@@ -5,6 +5,7 @@ import dagger.Module
 import dagger.Provides
 import de.crysxd.octoapp.base.InvalidApiKeyInterceptor
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.SslKeyStoreHandler
 import de.crysxd.octoapp.base.datasource.DataSource
 import de.crysxd.octoapp.base.di.BaseScope
 import de.crysxd.octoapp.base.logging.TimberHandler
@@ -34,8 +35,9 @@ open class OctoPrintModule {
         timberHandler: TimberHandler,
         invalidApiKeyInterceptor: InvalidApiKeyInterceptor,
         octoPrintRepository: OctoPrintRepository,
-        analytics: FirebaseAnalytics
-    ) = OctoPrintProvider(timberHandler, invalidApiKeyInterceptor, octoPrintRepository, analytics)
+        analytics: FirebaseAnalytics,
+        sslKeyStoreHandler: SslKeyStoreHandler
+    ) = OctoPrintProvider(timberHandler, invalidApiKeyInterceptor, octoPrintRepository, analytics, sslKeyStoreHandler)
 
     @BaseScope
     @Provides
