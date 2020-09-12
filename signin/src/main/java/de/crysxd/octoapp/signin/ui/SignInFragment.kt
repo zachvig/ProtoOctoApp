@@ -6,14 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.base.ext.composeGeneralErrorMessage
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
@@ -76,25 +75,21 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
     }
 
     private fun updateViewState(res: SignInViewState) {
-        if (res is SignInViewState.SignInFailed) {
+        if (res is SignInViewState.SignInFailed && !res.shownToUser) {
+            res.shownToUser = true
             AlertDialog.Builder(requireContext())
-                .setMessage(res.exception.composeMessage())
+                .setMessage(res.exception.composeGeneralErrorMessage(requireContext(), R.string.error_unable_to_connect))
                 .setPositiveButton(android.R.string.ok, null)
                 .also {
                     if (res.failedAttempts >= 3) {
                         it.setNeutralButton(R.string.get_support) { _, _ ->
+                            Firebase.analytics.logEvent("support_from_sign_in_error", Bundle.EMPTY)
                             SendFeedbackDialog().show(childFragmentManager, "sign-in-support")
                         }
                     }
                 }
                 .setNegativeButton(R.string.show_details) { _, _ ->
-                    AlertDialog.Builder(requireContext())
-                        .setMessage(res.exception.composeMessageStack())
-                        .setPositiveButton(android.R.string.ok, null)
-                        .setNeutralButton(R.string.get_support) { _, _ ->
-                            SendFeedbackDialog().show(childFragmentManager, "sign-in-support")
-                        }
-                        .show()
+                    requireOctoActivity().showErrorDetailsDialog(res.exception)
                 }
                 .show()
         }
@@ -162,29 +157,5 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
             viewModel.invalidApiKeyInfoWasShown = true
             requireOctoActivity().showDialog(requireContext().getString(R.string.error_api_key_reported_invalid))
         }
-    }
-
-    private fun Exception.composeMessage(): CharSequence = HtmlCompat.fromHtml(
-        getString(
-            R.string.error_unable_to_connect,
-            ContextCompat.getColor(requireContext(), R.color.light_text),
-            localizedMessage ?: cause?.localizedMessage ?: this::class.java.simpleName
-        ), HtmlCompat.FROM_HTML_MODE_LEGACY
-    )
-
-    private fun Exception.composeMessageStack(): CharSequence {
-        val messageBuilder = StringBuilder()
-        messageBuilder.append("<b>Error:</b> ")
-        messageBuilder.append(localizedMessage ?: this::class.java.simpleName)
-
-        var cause = cause
-        while (cause != null) {
-            messageBuilder.append("<br/><br/>")
-            messageBuilder.append("<b>Caused by:</b> ")
-            messageBuilder.append(cause.localizedMessage)
-            cause = cause.cause
-        }
-
-        return HtmlCompat.fromHtml(messageBuilder.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 }

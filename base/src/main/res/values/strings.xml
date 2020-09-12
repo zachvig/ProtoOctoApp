@@ -4,6 +4,9 @@
     <string name="updates_notification_channel" translatable="false">updates</string>
 
     <string name="error_general">Something went wrong! Please try again.</string>
+    <string name="error_general_with_details"><![CDATA[
+        Something went wrong! Please try again.<br/><br/><small><font color="#%1$06X">%2$s</font></small>
+    ]]></string>
     <string name="error_no_printer_connected">No printer is connected to OctoPrint</string>
     <string name="error_invalid_octoprint_instance_information">OctoPrint declined the API key</string>
     <string name="temperature_x">%1$s&#8239;°C</string>
@@ -71,4 +74,6 @@
     <string name="toggle_favorite">Toggle favorite</string>
     <string name="insert">Insert</string>
     <string name="pause_the_print_to_send_commands">Pause the print to send commands.</string>
+    <string name="get_support">Get support</string>
+    <string name="show_details">Show Details</string>
 </resources>

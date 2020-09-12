@@ -9,7 +9,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.ext.composeGeneralErrorMessage
+import de.crysxd.octoapp.base.ext.composeMessageStack
+import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.models.Event
 import de.crysxd.octoapp.base.models.exceptions.UserMessageException
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
@@ -83,9 +88,25 @@ abstract class OctoActivity : AppCompatActivity() {
     fun showDialog(e: Throwable) {
         // Safeguard that we don't show an error for cancellation exceptions
         if (e !is CancellationException) {
-            showDialog(getString((e as? UserMessageException)?.userMessage ?: R.string.error_general))
+            showDialog(
+                message = when (e) {
+                    is UserMessageException -> getString(e.userMessage)
+                    else -> e.composeGeneralErrorMessage(this)
+                },
+                neutralAction = { showErrorDetailsDialog(e) },
+                neutralButton = getString(R.string.show_details)
+            )
         }
     }
+
+    fun showErrorDetailsDialog(e: Throwable) = showDialog(
+        message = e.composeMessageStack(),
+        neutralAction = {
+            Firebase.analytics.logEvent("support_from_error_details", Bundle.EMPTY)
+            SendFeedbackDialog().show(supportFragmentManager, "get-support")
+        },
+        neutralButton = getString(R.string.get_support)
+    )
 
     fun showDialog(
         message: CharSequence,
