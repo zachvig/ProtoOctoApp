@@ -1,10 +1,11 @@
 package de.crysxd.octoapp.base.ui.widget.webcam
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -26,6 +27,9 @@ import java.util.concurrent.TimeUnit
 const val NOT_LIVE_IF_NO_FRAME_FOR_MS = 3000L
 const val STALLED_IF_NO_FRAME_FOR_MS = 5000L
 
+val CROPPED_SCALE_TYPE = ImageView.ScaleType.CENTER_CROP
+val FIT_SCALE_TYPE = ImageView.ScaleType.FIT_CENTER
+
 class WebcamWidget(
     parent: Fragment,
     private val isFullscreen: Boolean = false
@@ -41,8 +45,26 @@ class WebcamWidget(
     override fun getTitle(context: Context) = context.getString(R.string.webcam)
     override fun getAnalyticsName() = "webcam"
 
+    @SuppressLint("ClickableViewAccessibility")
     override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         val view = inflater.suspendedInflate(R.layout.widget_webcam, container, false) as ViewGroup
+
+        val streamView = view.streamView
+        streamView.scaleType = viewModel.getScaleType(isFullscreen, FIT_SCALE_TYPE)
+        val detector = GestureDetectorCompat(requireContext(), object : GestureDetector.SimpleOnGestureListener() {
+            override fun onDoubleTap(e: MotionEvent?): Boolean {
+                streamView.scaleType = when (streamView.scaleType) {
+                    FIT_SCALE_TYPE -> CROPPED_SCALE_TYPE
+                    else -> FIT_SCALE_TYPE
+                }
+                viewModel.storeScaleType(streamView.scaleType, isFullscreen)
+                return true
+            }
+        })
+        streamView.isClickable = true
+        streamView.setOnTouchListener { _, event ->
+            detector.onTouchEvent(event)
+        }
 
         // Do not use the card view in fullscreen
         return if (isFullscreen) {

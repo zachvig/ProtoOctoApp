@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.ui.widget.webcam
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.widget.ImageView
 import androidx.core.content.edit
 import androidx.lifecycle.*
 import de.crysxd.octoapp.base.OctoPrintProvider
@@ -20,6 +21,8 @@ import kotlinx.coroutines.flow.map
 import timber.log.Timber
 
 private const val KEY_ASPECT_RATIO = "webcam_aspect_ration"
+private const val KEY_SCALE_TYPE = "webcam_scale_type"
+private const val KEY_SCALE_TYPE_FULLSCREEN = "webcam_scale_type_fullscreen"
 
 class WebcamWidgetViewModel(
     octoPrintProvider: OctoPrintProvider,
@@ -87,6 +90,15 @@ class WebcamWidgetViewModel(
         previousSource = liveData
         uiStateMediator.addSource(liveData) { uiStateMediator.postValue(it) }
     }
+
+    fun storeScaleType(scaleType: ImageView.ScaleType, isFullscreen: Boolean) = sharedPreferences.edit {
+        putInt(if (isFullscreen) KEY_SCALE_TYPE_FULLSCREEN else KEY_SCALE_TYPE, scaleType.ordinal)
+    }
+
+    fun getScaleType(isFullscreen: Boolean, default: ImageView.ScaleType) = ImageView.ScaleType.values()[sharedPreferences.getInt(
+        if (isFullscreen) KEY_SCALE_TYPE_FULLSCREEN else KEY_SCALE_TYPE,
+        default.ordinal
+    )]
 
     private fun storeAspectRatio(aspectRatio: String) = sharedPreferences.edit {
         putString(KEY_ASPECT_RATIO, aspectRatio)
