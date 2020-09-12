@@ -57,6 +57,10 @@ class ConnectPrinterFragment : BaseFragment() {
                 buttonOpenOctoprint.setOnClickListener {
                     viewModel.openWebInterface(it.context)
                 }
+
+                buttonSignOut.setOnClickListener {
+                    viewModel.signOut()
+                }
             })
         }
     }
@@ -65,12 +69,16 @@ class ConnectPrinterFragment : BaseFragment() {
         buttonTurnOnPsu.isVisible = false
         buttonTurnOffPsu.isVisible = false
         buttonOpenOctoprint.isVisible = false
+        buttonSignOut.isVisible = false
 
         when (state) {
-            ConnectPrinterViewModel.UiState.OctoPrintNotAvailable -> showStatus(
-                R.string.octoprint_is_not_available,
-                R.string.check_your_network_connection
-            )
+            ConnectPrinterViewModel.UiState.OctoPrintNotAvailable -> {
+                buttonSignOut.isVisible = true
+                showStatus(
+                    R.string.octoprint_is_not_available,
+                    R.string.check_your_network_connection
+                )
+            }
 
             ConnectPrinterViewModel.UiState.OctoPrintStarting -> showStatus(
                 R.string.octoprint_is_starting_up

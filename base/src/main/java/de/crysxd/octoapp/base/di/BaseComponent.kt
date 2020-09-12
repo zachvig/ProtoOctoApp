@@ -59,6 +59,7 @@ interface BaseComponent {
     fun formatDurationUseCase(): FormatDurationUseCase
     fun updateInstanceCapabilitiesUseCase(): UpdateInstanceCapabilitiesUseCase
     fun formatEtaUseCase(): FormatEtaUseCase
+    fun signOutUseCase(): SignOutUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

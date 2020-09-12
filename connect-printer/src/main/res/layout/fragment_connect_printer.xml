@@ -98,5 +98,16 @@
         app:layout_constraintStart_toStartOf="@+id/textViewSubState"
         app:layout_constraintTop_toBottomOf="@+id/textViewSubState" />
 
+    <Button
+        android:id="@+id/buttonSignOut"
+        style="@style/OctoTheme.Widget.Button.Small.Secondary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_3"
+        android:text="Sign out"
+        app:layout_constraintEnd_toEndOf="@+id/textViewSubState"
+        app:layout_constraintStart_toStartOf="@+id/textViewSubState"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSubState" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
