@@ -6,6 +6,8 @@ import retrofit2.HttpException
 import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
+import java.security.cert.CertPathValidatorException
+import javax.net.ssl.SSLHandshakeException
 
 class GenerateExceptionInterceptor : Interceptor {
 
@@ -29,6 +31,10 @@ class GenerateExceptionInterceptor : Interceptor {
             throw OctoPrintUnavailableException(e)
         } catch (e: HttpException) {
             throw OctoPrintUnavailableException(e)
+        } catch (e: SSLHandshakeException) {
+            throw OctoPrintHttpsException(e)
+        } catch (e: CertPathValidatorException) {
+            throw OctoPrintHttpsException(e)
         }
     }
 }
