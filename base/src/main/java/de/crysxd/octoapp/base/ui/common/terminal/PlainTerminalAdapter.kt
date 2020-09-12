@@ -17,21 +17,16 @@ class PlainTerminalAdaper : TerminalAdapter<PlainTerminalAdaper.PlainSerialCommu
         setHasStableIds(true)
     }
 
-    override suspend fun initWithItems(items: List<SerialCommunication>) {
+    override suspend fun initWithItems(items: List<SerialCommunication>) = withContext(Dispatchers.Main) {
         Timber.i("Init with ${items.size} items")
         serialCommunications.clear()
         serialCommunications.addAll(items)
-
-        withContext(Dispatchers.Main) {
-            notifyDataSetChanged()
-        }
+        notifyDataSetChanged()
     }
 
-    override suspend fun appendItem(item: SerialCommunication) {
+    override suspend fun appendItem(item: SerialCommunication) = withContext(Dispatchers.Main) {
         serialCommunications.add(item)
-        withContext(Dispatchers.Main) {
-            notifyItemInserted(itemCount - 1)
-        }
+        notifyItemInserted(itemCount - 1)
     }
 
     override fun clear() {

@@ -28,21 +28,19 @@ class StyledTerminalAdapter : TerminalAdapter<StyledTerminalAdapter.ViewHolder>(
             items.flatMap(this@StyledTerminalAdapter::mapItem)
         }
 
-        serialCommunications.clear()
-        serialCommunications.addAll(new)
-
         withContext(Dispatchers.Main) {
+            serialCommunications.clear()
+            serialCommunications.addAll(new)
             notifyDataSetChanged()
         }
     }
 
-    override suspend fun appendItem(item: SerialCommunication) {
+    override suspend fun appendItem(item: SerialCommunication) = withContext(Dispatchers.Main) {
         Timber.i("Append ${item.content}")
         val items = mapItem(item)
         serialCommunications.addAll(items)
-        withContext(Dispatchers.Main) {
-            notifyItemInserted(itemCount - items.size)
-        }
+
+        notifyItemInserted(itemCount - items.size)
     }
 
     private fun mapItem(item: SerialCommunication): List<Item> {
