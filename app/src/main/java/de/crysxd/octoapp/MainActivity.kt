@@ -119,7 +119,11 @@ class MainActivity : OctoActivity() {
 
                 // We are printing
                 flags.printing || flags.paused || flags.pausing || flags.cancelling -> {
-                    startService(notificationServiceIntent)
+                    try {
+                        startService(notificationServiceIntent)
+                    } catch (e: IllegalStateException) {
+                        // User might have closed app just in time so we can't start the service
+                    }
                     R.id.action_printer_active
                 }
 
