@@ -4,6 +4,6 @@ import java.io.IOException
 
 open class OctoPrintException(
     cause: Throwable? = null,
-    userMessage: String? = null,
-    message: String? = userMessage
+    val userFacingMessage: String? = null,
+    message: String? = userFacingMessage
 ) : IOException(message, cause)

@@ -5,13 +5,19 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.models.exceptions.UserMessageException
+import de.crysxd.octoapp.octoprint.exceptions.OctoPrintException
 
-fun Throwable.composeGeneralErrorMessage(context: Context, @StringRes baseStringRes: Int = R.string.error_general_with_details): CharSequence = HtmlCompat.fromHtml(
-    context.getString(
-        baseStringRes,
-        ContextCompat.getColor(context, R.color.light_text),
-        localizedMessage ?: cause?.localizedMessage ?: this::class.java.simpleName
-    ), HtmlCompat.FROM_HTML_MODE_LEGACY
+fun Throwable.composeErrorMessage(context: Context, @StringRes baseStringRes: Int = R.string.error_general_with_details): CharSequence = HtmlCompat.fromHtml(
+    (this as? UserMessageException)?.userMessage?.let { context.getString(it) }?.htmlify()
+        ?: (this as? OctoPrintException)?.userFacingMessage?.htmlify()
+        ?: context.getString(
+            baseStringRes,
+            ContextCompat.getColor(context, R.color.light_text),
+            localizedMessage?.htmlify()
+                ?: cause?.localizedMessage?.htmlify()
+                ?: this::class.java.simpleName
+        ), HtmlCompat.FROM_HTML_MODE_LEGACY
 )
 
 fun Throwable.composeMessageStack(): CharSequence {
@@ -23,9 +29,11 @@ fun Throwable.composeMessageStack(): CharSequence {
     while (cause != null) {
         messageBuilder.append("<br/><br/>")
         messageBuilder.append("<b>Caused by:</b> ")
-        messageBuilder.append(cause.localizedMessage)
+        messageBuilder.append(cause.localizedMessage?.htmlify())
         cause = cause.cause
     }
 
     return HtmlCompat.fromHtml(messageBuilder.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
 }
+
+private fun CharSequence.htmlify() = this.replace(Regex("\n"), "<br/>")

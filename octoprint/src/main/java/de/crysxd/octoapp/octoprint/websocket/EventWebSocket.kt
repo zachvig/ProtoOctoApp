@@ -3,7 +3,6 @@ package de.crysxd.octoapp.octoprint.websocket
 import com.google.gson.Gson
 import de.crysxd.octoapp.octoprint.api.LoginApi
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketDysfunctionalException
-import de.crysxd.octoapp.octoprint.exceptions.WebSocketStalledException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketZombieException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
@@ -131,7 +130,7 @@ class EventWebSocket(
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             super.onMessage(webSocket, text)
-            logger.log(Level.FINEST, "Message received: ${text.substring(0, 128.coerceAtMost(text.length))} ")
+            /*logger.log(Level.FINEST, "Message received: ${text.substring(0, 128.coerceAtMost(text.length))} ")
 
             // Report disconnected after a delay. The delay is reset the next time we receive a message,
             // so the disconnect is propagated if we do not receive a message after a set delay
@@ -159,7 +158,7 @@ class EventWebSocket(
                 }
             } catch (e: Exception) {
                 logger.log(Level.SEVERE, "Error while parsing webs socket message", e)
-            }
+            }*/
         }
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {

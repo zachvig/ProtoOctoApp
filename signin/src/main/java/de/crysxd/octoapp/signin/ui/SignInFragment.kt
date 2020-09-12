@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
-import de.crysxd.octoapp.base.ext.composeGeneralErrorMessage
+import de.crysxd.octoapp.base.ext.composeErrorMessage
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
@@ -78,7 +78,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         if (res is SignInViewState.SignInFailed && !res.shownToUser) {
             res.shownToUser = true
             AlertDialog.Builder(requireContext())
-                .setMessage(res.exception.composeGeneralErrorMessage(requireContext(), R.string.error_unable_to_connect))
+                .setMessage(res.exception.composeErrorMessage(requireContext(), R.string.error_unable_to_connect))
                 .setPositiveButton(android.R.string.ok, null)
                 .also {
                     if (res.failedAttempts >= 3) {
