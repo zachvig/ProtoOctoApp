@@ -23,6 +23,7 @@ import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.*
 import java.util.regex.Pattern
 
@@ -69,9 +70,13 @@ class TerminalViewModel(
 
         // Init terminal filters
         terminalFiltersMediator.addSource(liveData {
-            val filters = getTerminalFiltersUseCase.execute(Unit)
-            upgradeSelectedFilters(filters)
-            emit(filters)
+            try {
+                val filters = getTerminalFiltersUseCase.execute(Unit)
+                upgradeSelectedFilters(filters)
+                emit(filters)
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
         }) { terminalFiltersMediator.postValue(it) }
 
         // Update terminal filters whenever settings are changed
@@ -84,6 +89,7 @@ class TerminalViewModel(
                 upgradeSelectedFilters(filters)
                 filters
             }
+            .catch { Timber.e(it) }
             .asLiveData()
         ) { terminalFiltersMediator.postValue(it) }
     }
