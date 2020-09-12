@@ -16,7 +16,7 @@ class OctoPrintHttpsException(
     cause: Throwable
 ) : OctoPrintException(
     cause = cause,
-    message = "HTTPS connection could not be established. Make sure you installed all required certificates on your phone."
+    userFacingMessage = "HTTPS connection could not be established. Make sure you installed all required certificates on your phone."
 ) {
 
     val serverCertificates: List<Certificate>

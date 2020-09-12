@@ -2,6 +2,9 @@ package de.crysxd.octoapp.octoprint.websocket
 
 import com.google.gson.Gson
 import de.crysxd.octoapp.octoprint.api.LoginApi
+import de.crysxd.octoapp.octoprint.exceptions.WebSocketDysfunctionalException
+import de.crysxd.octoapp.octoprint.exceptions.WebSocketStalledException
+import de.crysxd.octoapp.octoprint.exceptions.WebSocketZombieException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.*
@@ -116,8 +119,7 @@ class EventWebSocket(
 
             // Handle open event
             logger.log(Level.INFO, "Web socket open")
-            reportDisconnectedJob?.cancel()
-            reportDisconnectedJob = null
+            reportDisconnectedAfterDelay(WebSocketDysfunctionalException())
             dispatchEvent(Event.Connected)
 
             // In order to receive any messages on OctoPrint instances with authentication set up,
@@ -130,6 +132,10 @@ class EventWebSocket(
         override fun onMessage(webSocket: WebSocket, text: String) {
             super.onMessage(webSocket, text)
             logger.log(Level.FINEST, "Message received: ${text.substring(0, 128.coerceAtMost(text.length))} ")
+
+            // Report disconnected after a delay. The delay is reset the next time we receive a message,
+            // so the disconnect is propagated if we do not receive a message after a set delay
+            reportDisconnectedAfterDelay(WebSocketStalledException())
 
             // OkHttp sometimes leaks connections.
             // If we are no longer supposed to be connected, we crash the socket
@@ -152,7 +158,7 @@ class EventWebSocket(
                     dispatchEvent(Event.MessageReceived(message))
                 }
             } catch (e: Exception) {
-                logger.log(Level.SEVERE, "Error while parsing webs ocket message", e)
+                logger.log(Level.SEVERE, "Error while parsing webs socket message", e)
             }
         }
 
@@ -179,16 +185,16 @@ class EventWebSocket(
                 start()
             }
 
-            // If not yet done, schedule to dispatch the disconnected event
-            // This will be cancelled once connected
-            if (reportDisconnectedJob == null) {
-                reportDisconnectedJob = GlobalScope.launch {
-                    delay(RECONNECT_TIMEOUT_MS)
-                    dispatchEvent(Event.Disconnected(t))
-                }
+            reportDisconnectedAfterDelay(t)
+        }
+
+        private fun reportDisconnectedAfterDelay(throwable: Throwable?) {
+            reportDisconnectedJob?.cancel()
+            reportDisconnectedJob = GlobalScope.launch {
+                delay(RECONNECT_TIMEOUT_MS)
+                logger.log(Level.SEVERE, "Reporting disconnect", throwable)
+                dispatchEvent(Event.Disconnected(throwable))
             }
         }
     }
-
-    class WebSocketZombieException : Exception("Web socket was closed, but still received message")
 }

@@ -9,10 +9,10 @@
     ]]></string>
     <string name="error_no_printer_connected">No printer is connected to OctoPrint</string>
     <string name="error_invalid_octoprint_instance_information">OctoPrint declined the API key</string>
-    <string name="temperature_x">%1$s&#8239;°C</string>
-    <string name="target_x">%1$s&#8239;°C target</string>
+    <string name="temperature_x">%1$s\u2009°C</string>
+    <string name="target_x">%1$s\u2009°C target</string>
     <string name="target_off">Off</string>
-    <string name="target_x_offset_y">%1$s&#8239;°C (%2$s&#8239;°C offset)</string>
+    <string name="target_x_offset_y">%1$s\u2009°C (%2$s\u2009°C offset)</string>
     <string name="no_value_placeholder">--</string>
     <string name="set_temperature">Set temperature</string>
     <string name="cancel">Cancel</string>
@@ -57,6 +57,8 @@
     <string name="reconnect">Reconnect</string>
     <string name="webcam">Webcam</string>
     <string name="cd_live">Live</string>
+    <string name="pausing">Pausing…</string>
+    <string name="cancelling">Cancelling…</string>
     <string name="stream_stalled">Stream stalled</string>
     <string name="no_frames_since_xs">No frames since %ds</string>
     <string name="please_configure_your_webcam_in_octoprint">Please configure your webcam in Octoprint</string>
@@ -76,4 +78,8 @@
     <string name="pause_the_print_to_send_commands">Pause the print to send commands.</string>
     <string name="get_support">Get support</string>
     <string name="show_details">Show Details</string>
+    <string name="x_percent">%.0f\u2009%%</string>
+    <string name="x_percent_int">%d %%</string>
+    <string name="time_left_x">Time left: %s</string>
+    <string name="eta_x">ETA: %s</string>
 </resources>

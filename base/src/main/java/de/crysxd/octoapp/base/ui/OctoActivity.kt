@@ -12,11 +12,10 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.ext.composeGeneralErrorMessage
+import de.crysxd.octoapp.base.ext.composeErrorMessage
 import de.crysxd.octoapp.base.ext.composeMessageStack
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.models.Event
-import de.crysxd.octoapp.base.models.exceptions.UserMessageException
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
 import kotlinx.coroutines.CancellationException
@@ -89,10 +88,7 @@ abstract class OctoActivity : AppCompatActivity() {
         // Safeguard that we don't show an error for cancellation exceptions
         if (e !is CancellationException) {
             showDialog(
-                message = when (e) {
-                    is UserMessageException -> getString(e.userMessage)
-                    else -> e.composeGeneralErrorMessage(this)
-                },
+                message = e.composeErrorMessage(this),
                 neutralAction = { showErrorDetailsDialog(e) },
                 neutralButton = getString(R.string.show_details)
             )
