@@ -52,6 +52,7 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
             override fun onPageSelected(position: Int) = animateViewPagerHeight(calculateHeightForPage(position))
         })
 
+        noImageHint.isVisible = file.thumbnail == null
         picasso.observe(viewLifecycleOwner, {
             file.thumbnail?.let { url ->
                 it.load(url).into(imageViewPreview)

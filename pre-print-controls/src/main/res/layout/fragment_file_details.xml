@@ -16,16 +16,37 @@
         android:paddingTop="@dimen/common_view_top_padding"
         android:paddingRight="@dimen/margin_3">
 
-        <ImageView
-            android:id="@+id/imageViewPreview"
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin_2"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:importantForAccessibility="no"
-            android:scaleType="fitCenter"
-            tools:src="" />
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/noImageHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/margin_1"
+                android:gravity="center"
+                android:text="@string/no_preview_image_available"
+                app:drawableTopCompat="@drawable/ic_outline_image_not_supported_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <ImageView
+                android:id="@+id/imageViewPreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:importantForAccessibility="no"
+                android:scaleType="fitCenter"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="0dp"
+                tools:src="" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/textViewFileName"
