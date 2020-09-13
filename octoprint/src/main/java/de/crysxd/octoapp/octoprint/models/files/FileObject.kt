@@ -23,7 +23,9 @@ sealed class FileObject(
         ref: Reference?,
         size: Long,
         val thumbnail: String?,
-        val date: Long
+        val date: Long,
+        val gcodeAnalysis: GcodeAnalysis?,
+        val prints: PrintHistory?
     ) : FileObject(display, name, origin, path, type, typePath, size, ref), Serializable
 
     class Folder(
@@ -43,9 +45,44 @@ sealed class FileObject(
         val resource: String
     )
 
+    data class PrintHistory(
+        val failure: Int?,
+        val success: Int?,
+        val last: LastPrint?
+    ) {
+        data class LastPrint(
+            val date: Long,
+            val success: Boolean
+        )
+    }
+
+    data class GcodeAnalysis(
+        val dimensions: Dimensions?,
+        val estimatedPrintTime: Long?,
+        val filament: FilamentUse?,
+    ) {
+        data class Dimensions(
+            val depth: Double,
+            val height: Double,
+            val width: Double
+        )
+
+        data class FilamentUse(
+            val tool0: ToolInfo?,
+            val tool1: ToolInfo?,
+        ) {
+            data class ToolInfo(
+                val length: Double,
+                val volume: Double
+            )
+        }
+    }
+
     companion object {
+        const val FILE_ORIGIN_SD = "sdcard"
+        const val FILE_ORIGIN_LOCAL = "local"
         const val FILE_TYPE_FOLDER = "folder"
-        const val FILE_TYPE_MACHINE_CODE= "machinecode"
-        const val FILE_TYPE_MACHINE_CODE_GCODE= "gcode"
+        const val FILE_TYPE_MACHINE_CODE = "machinecode"
+        const val FILE_TYPE_MACHINE_CODE_GCODE = "gcode"
     }
 }

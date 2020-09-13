@@ -37,4 +37,20 @@
     <string name="error_cold_extrusion">Your hotend needs to be at %1$d℃ to extrude but it is only at %2$d℃</string>
     <string name="heat_hotend">Heat hotend</string>
     <string name="heating_hotend">Heating hotend to %d℃</string>
+    <string name="print_time">Print time</string>
+    <string name="model_size">Model size</string>
+    <string name="filament_use">Filament use</string>
+    <string name="location">Location</string>
+    <string name="file_location_sd_card">SD card</string>
+    <string name="file_location_local">Local</string>
+    <string name="file_location_unknown">Unknown</string>
+    <string name="path">Path</string>
+    <string name="size">Size</string>
+    <string name="uploaded">Uploaded</string>
+    <string name="last_print">Last print</string>
+    <string name="last_print_at_x_success">%s (success)</string>
+    <string name="last_print_at_x_failure">%s (failure)</string>
+    <string name="completed">Completed</string>
+    <string name="x_times">%d times</string>
+    <string name="failures">Failures</string>
 </resources>
