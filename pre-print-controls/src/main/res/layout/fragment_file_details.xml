@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/bg_preview_image"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/margin_3"
+        android:paddingTop="@dimen/common_view_top_padding"
+        android:paddingRight="@dimen/margin_3">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_2"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/noImageHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/margin_1"
+                android:gravity="center"
+                android:text="@string/no_preview_image_available"
+                app:drawableTopCompat="@drawable/ic_outline_image_not_supported_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <ImageView
+                android:id="@+id/imageViewPreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:importantForAccessibility="no"
+                android:scaleType="fitCenter"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="0dp"
+                tools:src="" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/textViewFileName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_2"
+            android:ellipsize="middle"
+            android:maxLines="2"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+            android:textColor="@color/normal_text"
+            tools:text="CE3_45e952b5-e965-483a-9e25-df4a4dbeeb10" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabSelectedTextColor="@color/dark_text"
+            app:tabTextAppearance="@style/OctoTheme.TextAppearance"
+            app:tabTextColor="@color/normal_text">
+
+            <!-- This tabs are only for the layout preview, will be created by the ViewPager! -->
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Print Info" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="File" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="History" />
+
+        </com.google.android.material.tabs.TabLayout>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout_height="200dp" />
+
+    <Button
+        android:id="@+id/buttonStartPrint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_2"
+        android:layout_marginRight="@dimen/margin_2"
+        android:layout_marginBottom="@dimen/margin_2"
+        android:text="@string/start_printing" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

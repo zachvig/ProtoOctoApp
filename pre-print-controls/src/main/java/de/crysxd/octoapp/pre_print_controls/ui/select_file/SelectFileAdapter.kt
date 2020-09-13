@@ -14,6 +14,7 @@ import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.ui.common.AutoBindViewHolder
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
@@ -23,7 +24,6 @@ import kotlinx.android.synthetic.main.list_item_no_files.view.*
 import kotlinx.android.synthetic.main.list_item_thumbnail_hint.view.*
 import kotlinx.android.synthetic.main.list_item_title.view.*
 import java.text.DateFormat
-import java.text.DecimalFormat
 import java.util.*
 
 class SelectFileAdapter(
@@ -151,7 +151,7 @@ class SelectFileAdapter(
                     holder.textViewDetail.text = holder.itemView.context.getString(
                         R.string.x_y,
                         dateTimeFormat.format(Date(file.date * 1000)),
-                        styleFileSize(file.size)
+                        file.size.asStyleFileSize()
                     )
                     holder.imageViewArrow.visibility = View.INVISIBLE
                     holder.textViewDetail.isVisible = true
@@ -216,18 +216,6 @@ class SelectFileAdapter(
 
         is ViewHolder.MarginViewHolder -> Unit
 
-    }
-
-    private fun styleFileSize(size: Long): String {
-        val kb = size / 1024f
-        val mb = kb / 1024f
-        val gb = mb / 1024f
-
-        return when {
-            gb > 1 -> DecimalFormat("#.## 'GiB'").format(gb)
-            mb > 1 -> DecimalFormat("#.# 'MiB'").format(mb)
-            else -> DecimalFormat("# 'kiB'").format(kb)
-        }
     }
 
     companion object {

@@ -14,6 +14,7 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.ViewModelFactory
 import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.pre_print_controls.ui.PrePrintControlsViewModel
+import de.crysxd.octoapp.pre_print_controls.ui.file_details.FileDetailsViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.select_file.SelectFileViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.widget.extrude.ExtrudeWidgetViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidgetViewModel
@@ -78,4 +79,12 @@ open class ViewModelModule {
         picasso
     )
 
+    @Provides
+    @IntoMap
+    @ViewModelKey(FileDetailsViewModel::class)
+    open fun provideFileDetailsViewModel(
+        startPrintJobUseCase: StartPrintJobUseCase
+    ): ViewModel = FileDetailsViewModel(
+        startPrintJobUseCase
+    )
 }
