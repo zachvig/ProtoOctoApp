@@ -17,6 +17,7 @@ import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.Injector
+import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 import kotlinx.android.synthetic.main.fragment_file_details.*
 import kotlinx.coroutines.runBlocking
 import java.text.DateFormat
@@ -25,6 +26,7 @@ import de.crysxd.octoapp.base.di.Injector as BaseInjector
 
 class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
 
+    private val viewModel: FileDetailsViewModel by injectViewModel(Injector.get().viewModelFactory())
     private val file by lazy { navArgs<FileDetailsFragmentArgs>().value.file }
     private val picasso by lazy { Injector.get().picasso() }
     private val adapter by lazy { Adapter(this, file) }
@@ -32,6 +34,8 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         textViewFileName.text = file.display
+
+        buttonStartPrint.setOnClickListener { viewModel.startPrint(file) }
 
         viewPager.adapter = adapter
         viewPager.offscreenPageLimit = adapter.itemCount
