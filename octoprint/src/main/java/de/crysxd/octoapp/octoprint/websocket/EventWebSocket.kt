@@ -28,6 +28,7 @@ const val PING_TIMEOUT_MS = 3000L
 const val CONNECTION_TIMEOUT_MS = 3000L
 const val RECONNECT_DELAY_MS = 1000L
 const val RECONNECT_TIMEOUT_MS = CONNECTION_TIMEOUT_MS + RECONNECT_DELAY_MS
+const val STALLED_TIMEOUT = RECONNECT_TIMEOUT_MS * 2
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class EventWebSocket(
@@ -135,10 +136,11 @@ class EventWebSocket(
 
             // Report disconnected after a delay. The delay is reset the next time we receive a message,
             // so the disconnect is propagated if we do not receive a message after a set delay
-            reportDisconnectedAfterDelay(WebSocketStalledException())
+            // This is only the case if we still receive pings but no messages (otherwise connecting fails)
+            reportDisconnectedAfterDelay(WebSocketStalledException(), STALLED_TIMEOUT)
 
             // OkHttp sometimes leaks connections.
-            // If we are no longer supposed to be connected, we crash the socket
+            // If we are no longer supposed to be cIncreonnected, we crash the socket
             if (!isConnected.get()) {
                 throw WebSocketZombieException()
             }
@@ -188,10 +190,10 @@ class EventWebSocket(
             reportDisconnectedAfterDelay(t)
         }
 
-        private fun reportDisconnectedAfterDelay(throwable: Throwable?) {
+        private fun reportDisconnectedAfterDelay(throwable: Throwable?, delay: Long = RECONNECT_TIMEOUT_MS) {
             reportDisconnectedJob?.cancel()
             reportDisconnectedJob = GlobalScope.launch {
-                delay(RECONNECT_TIMEOUT_MS)
+                delay(delay)
                 logger.log(Level.SEVERE, "Reporting disconnect", throwable)
                 dispatchEvent(Event.Disconnected(throwable))
             }
