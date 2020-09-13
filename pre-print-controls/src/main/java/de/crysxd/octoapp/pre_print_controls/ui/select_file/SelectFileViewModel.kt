@@ -14,6 +14,7 @@ import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
 import de.crysxd.octoapp.pre_print_controls.R
+import de.crysxd.octoapp.pre_print_controls.ui.file_details.FileDetailsFragmentArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -102,7 +103,7 @@ class SelectFileViewModel(
     fun selectFile(file: FileObject) = GlobalScope.launch(coroutineExceptionHandler) {
         when (file) {
             is FileObject.File -> {
-                startPrintJobUseCase.execute(file)
+                navContoller.navigate(R.id.action_show_file_details, FileDetailsFragmentArgs(file).toBundle())
             }
             is FileObject.Folder -> {
                 navContoller.navigate(R.id.action_open_folder, SelectFileFragmentArgs(file, showThumbnailHint).toBundle())
