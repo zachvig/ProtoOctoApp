@@ -41,9 +41,9 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
         viewPager.offscreenPageLimit = adapter.itemCount
         TabLayoutMediator(tabs, viewPager) { tab, position ->
             tab.text = when (position) {
-                adapter.positionPrintInfo -> "Print info"
-                adapter.positionFileInfo -> "File"
-                adapter.positionHistory -> "History"
+                adapter.positionPrintInfo -> getString(R.string.print_info)
+                adapter.positionFileInfo -> getString(R.string.file)
+                adapter.positionHistory -> getString(R.string.history)
                 else -> ""
             }
         }.attach()

@@ -53,4 +53,7 @@
     <string name="completed">Completed</string>
     <string name="x_times">%d times</string>
     <string name="failures">Failures</string>
+    <string name="print_info">Print info</string>
+    <string name="file">File</string>
+    <string name="history">History</string>
 </resources>
