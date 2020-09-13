@@ -84,7 +84,11 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
         private val formatDurationUseCase = BaseInjector.get().formatDurationUseCase()
         private val fragments = (0 until itemCount).map { doCreateFragment(it) }
 
-        override fun getItemCount() = 3
+        override fun getItemCount() = if (file.prints != null) {
+            3
+        } else {
+            2
+        }
 
         override fun createFragment(position: Int) = fragments[position]
 
