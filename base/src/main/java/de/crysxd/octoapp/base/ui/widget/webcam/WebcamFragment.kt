@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.ui.widget.webcam
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,22 @@ class WebcamFragment : Fragment(R.layout.fragment_webcam) {
             val widgetView = widget.getView(requireContext(), view as ViewGroup)
             widget.externalLiveIndicator = liveIndicator
             view.addView(widgetView, 0)
+
+            widget.uiState.observe(viewLifecycleOwner) {
+                if (it is WebcamWidgetViewModel.UiState.FrameReady) {
+                    val frameAspectRatio = it.frame.width / it.frame.height.toFloat()
+                    val screenAspectRatio = resources.displayMetrics.run { widthPixels / heightPixels.toFloat() }
+                    val orientation = resources.configuration.orientation
+
+                    requireActivity().requestedOrientation = if ((frameAspectRatio < 1 && screenAspectRatio > 1) || (frameAspectRatio > 1 && screenAspectRatio < 1)) {
+                        // Oh no! if we rotate the screen, the image would fit better!
+                        ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+                    } else {
+                        // Aspect ratio of screen and frame match, do not change
+                        requireActivity().requestedOrientation
+                    }
+                }
+            }
 
             Injector.get().octoPrintProvider().passiveCurrentMessageFlow().collectLatest { message ->
                 val flags = message.state?.flags
