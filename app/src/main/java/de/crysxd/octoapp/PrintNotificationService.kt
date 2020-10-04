@@ -101,7 +101,8 @@ class PrintNotificationService : Service() {
                                 if (message.progress?.completion?.toInt() == maxProgress && didSeePrintBeingActive) {
                                     didSeePrintBeingActive = false
                                     Timber.i("Print done, showing notification")
-                                    notificationManager.notify((3242..4637).random(), createCompletedNotification())
+                                    val name = message.job?.file?.display
+                                    notificationManager.notify((3242..4637).random(), createCompletedNotification(name))
                                 }
 
                                 Timber.i("Not printing, stopping self")
@@ -166,8 +167,13 @@ class PrintNotificationService : Service() {
         .setProgress(maxProgress, progress, false)
         .build()
 
-    private fun createCompletedNotification() = createNotificationBuilder()
+    private fun createCompletedNotification(name: String?) = createNotificationBuilder()
         .setContentTitle(getString(R.string.notification_print_done_title))
+        .apply {
+            name?.let {
+                setContentText(it)
+            }
+        }
         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
         .setOngoing(false)
         .build()
