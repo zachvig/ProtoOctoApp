@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.di.Injector
@@ -15,6 +16,7 @@ import de.crysxd.octoapp.base.ui.OctoActivity
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
 import de.crysxd.octoapp.base.usecase.execute
+import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.android.synthetic.main.activity_main.*
@@ -38,7 +40,7 @@ class MainActivity : OctoActivity() {
         val observer = Observer(this::onEventReceived)
         val events = ConnectPrinterInjector.get().octoprintProvider().eventFlow("MainActivity@events").asLiveData()
 
-        SignInInjector.get().octoprintRepository().instanceInformationFlow().asLiveData().observe(this, Observer {
+        SignInInjector.get().octoprintRepository().instanceInformationFlow().asLiveData().observe(this, {
             Timber.i("Instance information received")
             if (it != null) {
                 if (lastNavigation < 0) {
@@ -54,7 +56,9 @@ class MainActivity : OctoActivity() {
         lifecycleScope.launchWhenResumed {
             findNavController(R.id.mainNavController).addOnDestinationChangedListener { _, destination, _ ->
                 Timber.i("Navigated to ${destination.label}")
-                Firebase.analytics.setCurrentScreen(this@MainActivity, destination.label?.toString(), null)
+                Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, Bundle().apply {
+                    putString(FirebaseAnalytics.Param.SCREEN_NAME, destination.label?.toString())
+                })
 
                 when (destination.id) {
                     R.id.loginFragment -> Firebase.analytics.logEvent("workspace_shown_login", Bundle.EMPTY)
@@ -89,23 +93,27 @@ class MainActivity : OctoActivity() {
     }
 
     private fun onEventReceived(e: Event) = when (e) {
-        is Event.Disconnected -> {
+        // Only show errors if we are not already in disconnected screen. We still want to show the stall warning to indicate something is wrong
+        // as this might lead to the user being stuck
+        is Event.Disconnected -> if (lastNavigation != R.id.action_connect_printer || e.exception is WebSocketMaybeBrokenException) {
             e.exception?.let(this::showDialog)
             navigate(R.id.action_connect_printer)
+        } else {
+            // We are already in disconnect state, nothing to do
+            Timber.w("Socket disconnected but already in disconnected state (${e.exception}")
         }
         is Event.MessageReceived -> onMessageReceived(e.message)
         Event.Connected -> Unit
     }
 
-    private fun onMessageReceived(e: Message) {
-        when (e) {
-            is Message.CurrentMessage -> onCurrentMessageReceived(e)
-            is Message.EventMessage -> onEventMessageReceived(e)
-            is Message.ConnectedMessage -> {
-                // We are connected, let's update the available capabilities of the connect Octoprint
-                updateCapabilities()
-            }
+    private fun onMessageReceived(e: Message) = when (e) {
+        is Message.CurrentMessage -> onCurrentMessageReceived(e)
+        is Message.EventMessage -> onEventMessageReceived(e)
+        is Message.ConnectedMessage -> {
+            // We are connected, let's update the available capabilities of the connect Octoprint
+            updateCapabilities()
         }
+        else -> Unit
     }
 
     private fun onCurrentMessageReceived(e: Message.CurrentMessage) {
