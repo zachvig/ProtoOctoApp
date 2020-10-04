@@ -12,21 +12,30 @@ import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 const val ACTION_STOP = "stop"
+const val DISCONNECT_IF_NO_MESSAGE_FOR_MS = 60_000L
+const val RETRY_DELAY = 1_000L
+const val RETRY_COUNT = 3L
 
 class PrintNotificationService : Service() {
 
-    private val observer = Observer(this::onEventReceived)
-    private val liveData = Injector.get().octoPrintProvider().eventLiveData
+    private val coroutineJob = Job()
+    private var markDisconnectedJob: Job? = null
+    private val eventFlow = Injector.get().octoPrintProvider().eventFlow("notification-service")
     private val openAppRequestCode = 3249
     private val maxProgress = 100
     private val notificationId = 3249
@@ -41,7 +50,16 @@ class PrintNotificationService : Service() {
     override fun onCreate() {
         super.onCreate()
         Timber.i("Creating notification service")
-        liveData.observeForever(observer)
+        GlobalScope.launch(coroutineJob) {
+            eventFlow.onEach {
+                onEventReceived(it)
+            }.retry(RETRY_COUNT) {
+                delay(RETRY_DELAY)
+                true
+            }.catch {
+                Timber.e(it)
+            }.collect()
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel()
@@ -54,7 +72,7 @@ class PrintNotificationService : Service() {
         super.onDestroy()
         Timber.i("Destroying notification service")
         notificationManager.cancel(notificationId)
-        liveData.removeObserver(observer)
+        coroutineJob.cancel()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -73,6 +91,9 @@ class PrintNotificationService : Service() {
                     is Event.Connected -> createInitialNotification()
                     is Event.MessageReceived -> {
                         (event.message as? Message.CurrentMessage)?.let { message ->
+                            // Schedule transition into disconnected state if no message was received for a set timeout
+                            markDisconnectedAfterDelay()
+
                             // Check if still printing
                             val flags = message.state?.flags
                             Timber.v(message.toString())
@@ -80,7 +101,8 @@ class PrintNotificationService : Service() {
                                 if (message.progress?.completion?.toInt() == maxProgress && didSeePrintBeingActive) {
                                     didSeePrintBeingActive = false
                                     Timber.i("Print done, showing notification")
-                                    notificationManager.notify((3242..4637).random(), createCompletedNotification())
+                                    val name = message.job?.file?.display
+                                    notificationManager.notify((3242..4637).random(), createCompletedNotification(name))
                                 }
 
                                 Timber.i("Not printing, stopping self")
@@ -131,14 +153,27 @@ class PrintNotificationService : Service() {
         )
     }
 
+    private fun markDisconnectedAfterDelay() {
+        markDisconnectedJob?.cancel()
+        markDisconnectedJob = GlobalScope.launch(coroutineJob) {
+            delay(DISCONNECT_IF_NO_MESSAGE_FOR_MS)
+            notificationManager.notify(notificationId, createDisconnectedNotification())
+        }
+    }
+
     private fun createProgressNotification(progress: Int, title: String, status: String) = createNotificationBuilder()
         .setContentTitle(title)
         .setContentText(status)
         .setProgress(maxProgress, progress, false)
         .build()
 
-    private fun createCompletedNotification() = createNotificationBuilder()
+    private fun createCompletedNotification(name: String?) = createNotificationBuilder()
         .setContentTitle(getString(R.string.notification_print_done_title))
+        .apply {
+            name?.let {
+                setContentText(it)
+            }
+        }
         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
         .setOngoing(false)
         .build()
