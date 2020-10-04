@@ -39,6 +39,8 @@ class WebcamWidget(
     private var hideLiveIndicatorJob: Job? = null
     private var lastState: UiState? = null
 
+    val uiState get() = viewModel.uiState
+
     var externalLiveIndicator: View? = null
     private val liveIndicator get() = externalLiveIndicator ?: view.liveIndicator
 
