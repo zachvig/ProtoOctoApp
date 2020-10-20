@@ -148,7 +148,7 @@ class PrintNotificationService : Service() {
             NotificationChannel(
                 notificationChannelId,
                 getString(R.string.notification_channel_print_progress),
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             )
         )
     }
@@ -165,6 +165,8 @@ class PrintNotificationService : Service() {
         .setContentTitle(title)
         .setContentText(status)
         .setProgress(maxProgress, progress, false)
+        .setOngoing(true)
+        .setNotificationSilent()
         .build()
 
     private fun createCompletedNotification(name: String?) = createNotificationBuilder()
@@ -175,7 +177,6 @@ class PrintNotificationService : Service() {
             }
         }
         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-        .setOngoing(false)
         .build()
 
     private fun createDisconnectedNotification() = createNotificationBuilder()
@@ -195,21 +196,21 @@ class PrintNotificationService : Service() {
             ).build()
         )
         .setOngoing(false)
+        .setNotificationSilent()
         .build()
 
     private fun createInitialNotification() = createNotificationBuilder()
         .setContentTitle(getString(R.string.notification_printing_title))
         .setProgress(maxProgress, 0, true)
+        .setOngoing(true)
+        .setNotificationSilent()
         .build()
 
     private fun createNotificationBuilder() = NotificationCompat.Builder(this, notificationChannelId)
-        .setOngoing(true)
         .setColorized(true)
         .setColor(ContextCompat.getColor(this, R.color.primary_light))
         .setSmallIcon(R.drawable.ic_notification_default)
         .setContentIntent(createStartAppPendingIntent())
-        .setNotificationSilent()
-
 
     private fun createStartAppPendingIntent() = PendingIntent.getActivity(
         this,
