@@ -25,6 +25,7 @@ import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInViewState
+import de.crysxd.octoapp.signin.troubleshoot.TroubleShootingFragmentArgs
 import de.crysxd.octoapp.signin.usecases.SignInUseCase.Warning.NotAdmin
 import de.crysxd.octoapp.signin.usecases.SignInUseCase.Warning.TooNewServerVersion
 import kotlinx.android.synthetic.main.fragment_signin.*
@@ -104,8 +105,15 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
                             }
                         }
                     }
-                    .setNegativeButton(R.string.show_details) { _, _ ->
-                        requireOctoActivity().showErrorDetailsDialog(res.exception)
+                    .setNegativeButton("Start trouble shooting") { _, _ ->
+                        Firebase.analytics.logEvent("troubleshoot_sign_in", Bundle.EMPTY)
+                        findNavController().navigate(
+                            R.id.actionTroubleShoot,
+                            TroubleShootingFragmentArgs(
+                                baseUrl = res.baseUrl,
+                                apiKey = res.apiKey
+                            ).toBundle()
+                        )
                     }
                     .show()
             }

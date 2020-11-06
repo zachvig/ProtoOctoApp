@@ -16,7 +16,10 @@
             app:enterAnim="@anim/enterAnim"
             app:exitAnim="@anim/exitAnim"
             app:popEnterAnim="@anim/popEnterAnim"
-            app:popExitAnim="@anim/popExitAnim"/>
+            app:popExitAnim="@anim/popExitAnim" />
+        <action
+            android:id="@+id/actionTroubleShoot"
+            app:destination="@id/troubleShootingFragment" />
     </fragment>
 
     <fragment
@@ -24,5 +27,17 @@
         android:name="de.crysxd.octoapp.signin.ui.ReadQrCodeFragment"
         tools:layout="@layout/fragment_read_qr_code"
         android:label="ReadQrCodeFragment" />
+    <fragment
+        android:id="@+id/troubleShootingFragment"
+        android:name="de.crysxd.octoapp.signin.troubleshoot.TroubleShootingFragment"
+        android:label="TroubleShootingFragment"
+        tools:layout="@layout/fragment_trouble_shooting">>
+        <argument
+            android:name="baseUrl"
+            app:argType="android.net.Uri" />
+        <argument
+            android:name="apiKey"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

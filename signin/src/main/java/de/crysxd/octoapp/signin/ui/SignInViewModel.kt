@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.signin.ui
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -44,7 +45,12 @@ class SignInViewModel(
                                     failedSignInCounter = 0
                                     SignInViewState.SignInSuccess(result.octoPrintInstanceInformation, result.warnings)
                                 }
-                                is SignInUseCase.Result.Failure -> SignInViewState.SignInFailed(result.exception, ++failedSignInCounter)
+                                is SignInUseCase.Result.Failure -> SignInViewState.SignInFailed(
+                                    result.exception,
+                                    ++failedSignInCounter,
+                                    Uri.parse(upgradedInfo.webUrl),
+                                    upgradedInfo.apiKey
+                                )
                             }
                         )
                     }

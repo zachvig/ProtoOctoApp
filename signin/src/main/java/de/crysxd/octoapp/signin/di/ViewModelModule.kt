@@ -8,6 +8,7 @@ import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.ViewModelFactory
+import de.crysxd.octoapp.signin.troubleshoot.TroubleShootViewModel
 import de.crysxd.octoapp.signin.ui.SignInViewModel
 import de.crysxd.octoapp.signin.usecases.VerifySignInInformationUseCase
 import javax.inject.Provider
@@ -28,5 +29,11 @@ open class ViewModelModule {
         signInUseCase: de.crysxd.octoapp.signin.usecases.SignInUseCase
     ): ViewModel =
         SignInViewModel(octoPrintRepository, validateSignInInformationUseCase, signInUseCase)
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(TroubleShootViewModel::class)
+    open fun provideTroubleShootViewModel(): ViewModel =
+        TroubleShootViewModel()
 
 }
