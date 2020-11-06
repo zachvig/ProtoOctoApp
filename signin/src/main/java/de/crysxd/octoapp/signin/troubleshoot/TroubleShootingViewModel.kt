@@ -167,8 +167,8 @@ class TroubleShootViewModel : ViewModel() {
         } else {
             Firebase.analytics.logEvent("troubleshoot_failure_http_1", Bundle.EMPTY)
             TroubleShootingResult.Failure(
-                title = "Can connect to <b>$baseUrl</b> but received <b>$code</b> instead of <b>200</b>",
-                description = "The app was able to establish a connection to a server, but the server did not respond as expected.",
+                title = "Can connect but received <b>$code</b> instead of <b>200</b>",
+                description = "The app was able to establish a connection to <b>$baseUrl</b>, but the server did not respond as expected.",
                 suggestions = listOf(
                     "Try to open <a href=\"$baseUrl\">$baseUrl</a> in your phone's browser, OctoPrint should open",
                     "Check you provided the correct web URL, especially the <b>correct path</b> to OctoPrint if you use a reverse proxy",
@@ -181,8 +181,8 @@ class TroubleShootViewModel : ViewModel() {
     } catch (e: Exception) {
         Firebase.analytics.logEvent("troubleshoot_failure_http_2", Bundle.EMPTY)
         TroubleShootingResult.Failure(
-            title = "Can't connect to <b>${baseUrl}</b> because of an error",
-            description = "A unexpected error occured while trying to connect to the server (${e.message})",
+            title = "Can't connect because of an error",
+            description = "A unexpected error occurred while trying to connect to <b>$baseUrl</b> (${e.message})",
             suggestions = listOf(
                 "Try to open <a href=\"$baseUrl\">$baseUrl</a> in your phone's browser, OctoPrint should open",
                 "Check you provided the correct web URL",
