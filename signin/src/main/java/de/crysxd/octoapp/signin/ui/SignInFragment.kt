@@ -13,7 +13,6 @@ import androidx.transition.TransitionManager
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.ext.composeErrorMessage
-import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
@@ -98,14 +97,6 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
                 AlertDialog.Builder(requireContext())
                     .setMessage(res.exception.composeErrorMessage(requireContext(), R.string.error_unable_to_connect))
                     .setPositiveButton(android.R.string.ok, null)
-                    .also {
-                        if (res.failedAttempts >= 3) {
-                            it.setNeutralButton(R.string.get_support) { _, _ ->
-                                Firebase.analytics.logEvent("support_from_sign_in_error", Bundle.EMPTY)
-                                SendFeedbackDialog().show(childFragmentManager, "sign-in-support")
-                            }
-                        }
-                    }
                     .setNegativeButton("Start trouble shooting") { _, _ ->
                         Firebase.analytics.logEvent("troubleshoot_sign_in", Bundle.EMPTY)
                         inputWebUrl.editText.clearFocusAndHideSoftKeyboard()

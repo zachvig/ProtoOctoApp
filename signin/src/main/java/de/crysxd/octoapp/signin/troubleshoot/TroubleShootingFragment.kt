@@ -29,6 +29,11 @@ class TroubleShootingFragment : Fragment(R.layout.fragment_trouble_shooting) {
         val baseUrl = navArgs.baseUrl
         val apiKey = navArgs.apiKey
 
+        buttonMain.setOnLongClickListener {
+            SendFeedbackDialog().show(childFragmentManager, "send-feedback")
+            true
+        }
+
         viewModel.runTest(requireContext(), baseUrl, apiKey).observe(viewLifecycleOwner) {
             suggestionsContainer.removeAllViews()
             buttonMain.isVisible = false
@@ -69,7 +74,7 @@ class TroubleShootingFragment : Fragment(R.layout.fragment_trouble_shooting) {
                     buttonMain.setOnClickListener { viewModel.runTest(requireContext(), baseUrl, apiKey) }
                     buttonDetails.isVisible = it.exception != null
                     buttonDetails.setOnClickListener { _ ->
-                        requireOctoActivity().showErrorDetailsDialog(it.exception!!)
+                        it.exception?.let { e -> requireOctoActivity().showErrorDetailsDialog(e, false) }
                     }
                     buttonSupport.isVisible = it.offerSupport
                     buttonSupport.setOnClickListener {

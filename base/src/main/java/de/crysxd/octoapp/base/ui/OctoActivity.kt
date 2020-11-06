@@ -95,13 +95,17 @@ abstract class OctoActivity : AppCompatActivity() {
         }
     }
 
-    fun showErrorDetailsDialog(e: Throwable) = showDialog(
+    fun showErrorDetailsDialog(e: Throwable, offerSupport: Boolean = true) = showDialog(
         message = e.composeMessageStack(),
         neutralAction = {
             Firebase.analytics.logEvent("support_from_error_details", Bundle.EMPTY)
             SendFeedbackDialog().show(supportFragmentManager, "get-support")
         },
-        neutralButton = getString(R.string.get_support)
+        neutralButton = if (offerSupport) {
+            getString(R.string.get_support)
+        } else {
+            null
+        }
     )
 
     fun showDialog(
