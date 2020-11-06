@@ -38,16 +38,16 @@ class TroubleShootViewModel : ViewModel() {
                 val result =
                     runAtLeast {
                         troubleShootingResult.postValue(TroubleShootingResult.Running(1, 4, context.getString(R.string.step_1_description)))
-                        runDnsTest(context, baseUrl)
+                        runDnsTest(baseUrl)
                     } ?: runAtLeast {
                         troubleShootingResult.postValue(TroubleShootingResult.Running(2, 4, context.getString(R.string.step_2_description)))
-                        runHostReachableTest(context, baseUrl)
+                        runHostReachableTest(baseUrl)
                     } ?: runAtLeast {
                         troubleShootingResult.postValue(TroubleShootingResult.Running(3, 4, context.getString(R.string.step_3_description)))
-                        runPortOpenTest(context, baseUrl)
+                        runPortOpenTest(baseUrl)
                     } ?: runAtLeast {
                         troubleShootingResult.postValue(TroubleShootingResult.Running(4, 4, context.getString(R.string.step_4_description)))
-                        runConnectionTest(context, baseUrl)
+                        runConnectionTest(baseUrl)
                     } ?: TroubleShootingResult.Success
 
                 troubleShootingResult.postValue(result)
@@ -65,7 +65,7 @@ class TroubleShootViewModel : ViewModel() {
     }
 
 
-    private fun runDnsTest(context: Context, baseUrl: Uri) = try {
+    private fun runDnsTest(baseUrl: Uri) = try {
         Timber.i("Check 1: Resolving Host")
         Timber.i("Host: ${baseUrl.host}")
         InetAddress.getByName(baseUrl.host)
@@ -89,7 +89,7 @@ class TroubleShootViewModel : ViewModel() {
         )
     }
 
-    private fun runHostReachableTest(context: Context, baseUrl: Uri): TroubleShootingResult.Failure? {
+    private fun runHostReachableTest(baseUrl: Uri): TroubleShootingResult.Failure? {
         Timber.i("Check 2: Pinging Host")
 
         val host = baseUrl.host
@@ -122,7 +122,7 @@ class TroubleShootViewModel : ViewModel() {
         }
     }
 
-    private fun runPortOpenTest(context: Context, baseUrl: Uri): TroubleShootingResult.Failure? {
+    private fun runPortOpenTest(baseUrl: Uri): TroubleShootingResult.Failure? {
         Timber.i("Check 3: Connecting to Port")
 
         val port = when {
@@ -155,7 +155,7 @@ class TroubleShootViewModel : ViewModel() {
         }
     }
 
-    private fun runConnectionTest(context: Context, baseUrl: Uri) = try {
+    private fun runConnectionTest(baseUrl: Uri) = try {
         Timber.i("Check 4: HTTP connection")
 
         val connection = URL(baseUrl.toString()).openConnection() as HttpURLConnection
