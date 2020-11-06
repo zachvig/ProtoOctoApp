@@ -16,6 +16,7 @@ import de.crysxd.octoapp.base.ext.composeErrorMessage
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.ext.setTextAppearanceCompat
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
@@ -107,6 +108,8 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
                     }
                     .setNegativeButton("Start trouble shooting") { _, _ ->
                         Firebase.analytics.logEvent("troubleshoot_sign_in", Bundle.EMPTY)
+                        inputWebUrl.editText.clearFocusAndHideSoftKeyboard()
+                        inputApiKey.editText.clearFocusAndHideSoftKeyboard()
                         findNavController().navigate(
                             R.id.actionTroubleShoot,
                             TroubleShootingFragmentArgs(
