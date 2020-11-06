@@ -19,7 +19,7 @@ import java.net.InetAddress
 import java.net.Socket
 import java.net.URL
 
-private const val MIN_CHECK_DURATION_MS = 2000L
+private const val MIN_CHECK_DURATION_MS = 2500L
 private const val TIMEOUT_MS = 5000
 
 class TroubleShootViewModel : ViewModel() {
