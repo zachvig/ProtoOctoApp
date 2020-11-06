@@ -97,7 +97,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
                 AlertDialog.Builder(requireContext())
                     .setMessage(res.exception.composeErrorMessage(requireContext(), R.string.error_unable_to_connect))
                     .setPositiveButton(android.R.string.ok, null)
-                    .setNegativeButton("Start trouble shooting") { _, _ ->
+                    .setNegativeButton(R.string.trouble_shooting) { _, _ ->
                         Firebase.analytics.logEvent("troubleshoot_sign_in", Bundle.EMPTY)
                         inputWebUrl.editText.clearFocusAndHideSoftKeyboard()
                         inputApiKey.editText.clearFocusAndHideSoftKeyboard()
