@@ -62,7 +62,10 @@ class TroubleShootViewModel : ViewModel() {
 
 
     private fun runDnsTest(context: Context, baseUrl: Uri) = try {
+        Timber.i("Check 1: Resolving Host")
+        Timber.i("Host: ${baseUrl.host}")
         InetAddress.getByName(baseUrl.host)
+        Timber.i("Passed")
         null
     } catch (e: Exception) {
         Timber.e(e)
@@ -81,6 +84,8 @@ class TroubleShootViewModel : ViewModel() {
     }
 
     private fun runHostReachableTest(context: Context, baseUrl: Uri): TroubleShootingResult.Failure? {
+        Timber.i("Check 2: Pinging Host")
+
         val host = baseUrl.host
         val reachable = try {
             val address = InetAddress.getByName(host)
@@ -89,6 +94,8 @@ class TroubleShootViewModel : ViewModel() {
             Timber.e(e)
             false
         }
+
+        Timber.i("Host: $host")
 
         return if (!reachable) {
             TroubleShootingResult.Failure(
@@ -102,11 +109,14 @@ class TroubleShootViewModel : ViewModel() {
                 )
             )
         } else {
+            Timber.i("Passed")
             null
         }
     }
 
     private fun runPortOpenTest(context: Context, baseUrl: Uri): TroubleShootingResult.Failure? {
+        Timber.i("Check 3: Connecting to Port")
+
         val port = when {
             baseUrl.port > 0 -> baseUrl.port
             baseUrl.scheme == "http" -> 80
@@ -114,9 +124,12 @@ class TroubleShootViewModel : ViewModel() {
             else -> 80
         }
 
+        Timber.i("Port: $port")
+
         return try {
             val socket = Socket(baseUrl.host, port)
             socket.getOutputStream()
+            Timber.i("Passed")
             null
         } catch (e: Exception) {
             Timber.e(e)
@@ -133,10 +146,13 @@ class TroubleShootViewModel : ViewModel() {
     }
 
     private fun runConnectionTest(context: Context, baseUrl: Uri) = try {
+        Timber.i("Check 4: HTTP connection")
+
         val connection = URL(baseUrl.toString()).openConnection() as HttpURLConnection
         connection.connect()
         val code = connection.responseCode
         if (code == 200) {
+            Timber.i("Passed")
             null
         } else {
             TroubleShootingResult.Failure(
