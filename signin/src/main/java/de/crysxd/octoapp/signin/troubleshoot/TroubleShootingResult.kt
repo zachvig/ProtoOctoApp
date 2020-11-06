@@ -1,7 +1,13 @@
 package de.crysxd.octoapp.signin.troubleshoot
 
 sealed class TroubleShootingResult {
-    data class Running(val step: Int, val totalSteps: Int, val status: CharSequence) : TroubleShootingResult()
+    data class Running(val step: Int, val totalSteps: Int, val status: String) : TroubleShootingResult()
     object Success : TroubleShootingResult()
-    data class Failure(val text: CharSequence, val suggestions: List<CharSequence>, val offerSupport: Boolean = false) : TroubleShootingResult()
+    data class Failure(
+        val title: String,
+        val description: String,
+        val suggestions: List<String>,
+        val exception: Throwable? = null,
+        val offerSupport: Boolean = false
+    ) : TroubleShootingResult()
 }

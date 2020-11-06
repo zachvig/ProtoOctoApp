@@ -67,7 +67,9 @@ class TroubleShootViewModel : ViewModel() {
     } catch (e: Exception) {
         Timber.e(e)
         TroubleShootingResult.Failure(
-            text = "Can't resolve <b>${baseUrl.host}</b>",
+            title = "Can't resolve <b>${baseUrl.host}</b>",
+            description = "This indicates a configuration issue. The phone can't resolve a IP address for <b>${baseUrl.host}</b>, this is not influenced by any OctoPrint settings or the API key.",
+            exception = e,
             suggestions = listOf(
                 "Check <b>${baseUrl.host}</b> is correct",
                 "Check your WiFi is connected and if OctoPrint is on the local network",
@@ -90,11 +92,12 @@ class TroubleShootViewModel : ViewModel() {
 
         return if (!reachable) {
             TroubleShootingResult.Failure(
-                text = "Host <b>$host</b> is not reachable",
+                title = "Host <b>$host</b> is not reachable",
+                description = "This indicates a configuration issue. The phone can't reach <b>${baseUrl.host}</b>, this is not influenced by any OctoPrint settings or the API key.",
                 suggestions = listOf(
                     "Check <b>$host</b> is correct",
-                    "Check your WiFi is connected and if OctoPrint is on the local network",
-                    "Check your OctoPrint is turned on",
+                    "Check your <b>WiFi is connected</b> and if OctoPrint is on the local network",
+                    "Check your OctoPrint is <b>turned on</b>",
                     "Check you entered the correct host"
                 )
             )
@@ -118,11 +121,13 @@ class TroubleShootViewModel : ViewModel() {
         } catch (e: Exception) {
             Timber.e(e)
             TroubleShootingResult.Failure(
-                text = "Can connect to <b>${baseUrl.host}</b> but not to port <b>$port</b>",
+                title = "Can connect to <b>${baseUrl.host}</b> but not to port <b>$port</b>",
+                description = "The phone can connect to the host, but the port <b>$port</b> does not accept incoming connections.",
                 suggestions = listOf(
                     "Make sure <b>$port</b> is the correct port",
                     "If the port is not specified explicitly, 80 will be used for HTTP and 443 for HTTPS",
-                )
+                ),
+                exception = e
             )
         }
     }
@@ -135,9 +140,11 @@ class TroubleShootViewModel : ViewModel() {
             null
         } else {
             TroubleShootingResult.Failure(
-                text = "Can connect to <b>$baseUrl</b> but received <b>$code</b> instead of <b>200</b>",
+                title = "Can connect to <b>$baseUrl</b> but received <b>$code</b> instead of <b>200</b>",
+                description = "The app was able to establish a connection to a server, but the server did not respond as expected.",
                 suggestions = listOf(
-                    "Check you provided the correct web URL",
+                    "Try to open <a href=\"$baseUrl\">$baseUrl</a> in your phone's browser, OctoPrint should open",
+                    "Check you provided the correct web URL, especially the <b>correct path</b> to OctoPrint if you use a reverse proxy",
                     "Check any (reverse) proxy servers are correctly configured",
                     "Check your OctoPrint logs for errors",
                 ),
@@ -146,13 +153,15 @@ class TroubleShootViewModel : ViewModel() {
         }
     } catch (e: Exception) {
         TroubleShootingResult.Failure(
-            text = "Can't connect to <b>${baseUrl}</b> because of an error",
+            title = "Can't connect to <b>${baseUrl}</b> because of an error",
+            description = "A unexpected error occured while trying to connect to the server (${e.message})",
             suggestions = listOf(
+                "Try to open <a href=\"$baseUrl\">$baseUrl</a> in your phone's browser, OctoPrint should open",
                 "Check you provided the correct web URL",
-                "The host and port are reachable but the HTTP(s) connection failed because of: ${e.message}",
                 "Check any (reverse) proxy servers are correctly configured",
                 "Check your OctoPrint logs for errors",
             ),
+            exception = e,
             offerSupport = true
         )
     }

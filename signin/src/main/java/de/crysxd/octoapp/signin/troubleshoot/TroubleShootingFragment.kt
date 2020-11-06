@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.signin.troubleshoot
 
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +29,6 @@ class TroubleShootingFragment : Fragment(R.layout.fragment_trouble_shooting) {
 
         viewModel.runTest(requireContext(), baseUrl, apiKey).observe(viewLifecycleOwner) {
             suggestionsContainer.removeAllViews()
-            textViewSubState.isVisible = false
             buttonMain.isVisible = false
 
             TransitionManager.beginDelayedTransition(view as ViewGroup, InstantAutoTransition(explode = true))
@@ -40,20 +40,21 @@ class TroubleShootingFragment : Fragment(R.layout.fragment_trouble_shooting) {
 
                     textViewState.text = "Running Check ${it.step} of ${it.totalSteps}"
                     textViewSubState.text = it.status
-                    textViewSubState.isVisible = true
                 }
 
                 is TroubleShootingResult.Failure -> {
                     octoBackground.isVisible = false
                     octoView.isVisible = false
 
-                    textViewState.text = HtmlCompat.fromHtml(it.text.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    textViewState.text = HtmlCompat.fromHtml(it.title, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    textViewSubState.text = HtmlCompat.fromHtml(it.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
                     it.suggestions.map {
                         val v = TextView(requireContext())
                         v.text = HtmlCompat.fromHtml(it.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
                         v.compoundDrawablePadding = requireContext().resources.getDimensionPixelSize(R.dimen.margin_1)
                         v.updatePadding(bottom = requireContext().resources.getDimensionPixelSize(R.dimen.margin_1))
                         v.gravity = Gravity.START or Gravity.CENTER_VERTICAL
+                        v.movementMethod = LinkMovementMethod()
                         v.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_round_sentiment_satisfied_24, 0, 0, 0)
                         v
                     }.forEach {
@@ -70,7 +71,6 @@ class TroubleShootingFragment : Fragment(R.layout.fragment_trouble_shooting) {
 
                     textViewState.text = "All checks passed"
                     textViewSubState.text = "Your settings seem correct"
-                    textViewSubState.isVisible = true
                     buttonMain.text = "Go back"
                     buttonMain.isVisible = true
                     buttonMain.setOnClickListener { findNavController().popBackStack() }
