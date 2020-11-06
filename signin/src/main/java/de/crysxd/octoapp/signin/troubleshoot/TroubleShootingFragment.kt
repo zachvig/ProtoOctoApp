@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionManager
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
@@ -78,6 +80,7 @@ class TroubleShootingFragment : Fragment(R.layout.fragment_trouble_shooting) {
                     }
                     buttonSupport.isVisible = it.offerSupport
                     buttonSupport.setOnClickListener {
+                        Firebase.analytics.logEvent("troubleshoot_failure_support_trigger", Bundle.EMPTY)
                         SendFeedbackDialog().show(childFragmentManager, "send-feedback")
                     }
                 }
