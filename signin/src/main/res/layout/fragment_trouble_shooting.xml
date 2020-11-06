@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <de.crysxd.octoapp.base.ui.common.OctoBackgroundView
-        android:id="@+id/imageView"
+        android:id="@+id/octoBackground"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/octoView"
@@ -55,6 +55,15 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewState"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Checking if host is reachable" />
+
+    <LinearLayout
+        android:id="@+id/suggestionsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/margin_2"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/buttonMain"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSubState" />
 
     <Button
         android:id="@+id/buttonMain"
