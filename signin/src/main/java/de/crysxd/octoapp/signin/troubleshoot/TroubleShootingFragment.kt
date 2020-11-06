@@ -49,7 +49,7 @@ class TroubleShootingFragment : Fragment(R.layout.fragment_trouble_shooting) {
                     octoBackground.isVisible = true
                     octoView.isVisible = true
 
-                    textViewState.text = "Running Check ${it.step} of ${it.totalSteps}"
+                    textViewState.text = getString(R.string.running_check_x_of_y, it.step, it.totalSteps)
                     textViewSubState.text = it.status
                 }
 
@@ -71,7 +71,7 @@ class TroubleShootingFragment : Fragment(R.layout.fragment_trouble_shooting) {
                     }.forEach {
                         suggestionsContainer.addView(it)
                     }
-                    buttonMain.text = "Check again"
+                    buttonMain.text = getString(R.string.check_again)
                     buttonMain.isVisible = true
                     buttonMain.setOnClickListener { viewModel.runTest(requireContext(), baseUrl, apiKey) }
                     buttonDetails.isVisible = it.exception != null
@@ -89,9 +89,9 @@ class TroubleShootingFragment : Fragment(R.layout.fragment_trouble_shooting) {
                     octoBackground.isVisible = false
                     octoView.isVisible = false
 
-                    textViewState.text = "All checks passed"
-                    textViewSubState.text = "Your settings seem correct"
-                    buttonMain.text = "Go back"
+                    textViewState.text = getString(R.string.all_checks_passed)
+                    textViewSubState.text = getString(R.string.settings_seem_correct)
+                    buttonMain.text = getString(R.string.go_back)
                     buttonMain.isVisible = true
                     buttonMain.setOnClickListener { findNavController().popBackStack() }
                 }

@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.signin.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -36,16 +37,16 @@ class TroubleShootViewModel : ViewModel() {
 
                 val result =
                     runAtLeast {
-                        troubleShootingResult.postValue(TroubleShootingResult.Running(1, 4, "Trying to resolve host..."))
+                        troubleShootingResult.postValue(TroubleShootingResult.Running(1, 4, context.getString(R.string.step_1_description)))
                         runDnsTest(context, baseUrl)
                     } ?: runAtLeast {
-                        troubleShootingResult.postValue(TroubleShootingResult.Running(2, 4, "Trying to ping host..."))
+                        troubleShootingResult.postValue(TroubleShootingResult.Running(2, 4, context.getString(R.string.step_2_description)))
                         runHostReachableTest(context, baseUrl)
                     } ?: runAtLeast {
-                        troubleShootingResult.postValue(TroubleShootingResult.Running(3, 4, "Trying to connect to port..."))
+                        troubleShootingResult.postValue(TroubleShootingResult.Running(3, 4, context.getString(R.string.step_3_description)))
                         runPortOpenTest(context, baseUrl)
                     } ?: runAtLeast {
-                        troubleShootingResult.postValue(TroubleShootingResult.Running(4, 4, "Trying to connect to OctoPrint..."))
+                        troubleShootingResult.postValue(TroubleShootingResult.Running(4, 4, context.getString(R.string.step_4_description)))
                         runConnectionTest(context, baseUrl)
                     } ?: TroubleShootingResult.Success
 
@@ -83,6 +84,7 @@ class TroubleShootViewModel : ViewModel() {
                 "Check you entered the correct host",
                 "Check for misspelled IP addresses",
                 "Check your DNS settings",
+                "Try to open <a href=\"$baseUrl\">$baseUrl</a> in your phone's browser, OctoPrint should open",
             )
         )
     }
@@ -110,7 +112,8 @@ class TroubleShootViewModel : ViewModel() {
                     "Check <b>$host</b> is correct",
                     "Check your <b>WiFi is connected</b> and if OctoPrint is on the local network",
                     "Check your OctoPrint is <b>turned on</b>",
-                    "Check you entered the correct host"
+                    "Check you entered the correct host",
+                    "Try to open <a href=\"$baseUrl\">$baseUrl</a> in your phone's browser, OctoPrint should open",
                 )
             )
         } else {
@@ -145,6 +148,7 @@ class TroubleShootViewModel : ViewModel() {
                 suggestions = listOf(
                     "Make sure <b>$port</b> is the correct port",
                     "If the port is not specified explicitly, 80 will be used for HTTP and 443 for HTTPS",
+                    "Try to open <a href=\"$baseUrl\">$baseUrl</a> in your phone's browser, OctoPrint should open",
                 ),
                 exception = e
             )

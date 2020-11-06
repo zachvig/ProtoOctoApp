@@ -30,4 +30,13 @@
     <string name="error_api_cotains_illegal_characters">The API key contains illegal characters</string>
     <string name="error_enter_api_key">Please enter an API key</string>
     <string name="trust_server_and_try_again">Trust server</string>
+    <string name="go_back">Go back</string>
+    <string name="settings_seem_correct">Your settings seem correct</string>
+    <string name="all_checks_passed">All checks passed</string>
+    <string name="check_again">Check again</string>
+    <string name="running_check_x_of_y">Running Check %1$d of %2$d</string>
+    <string name="step_1_description">Trying to resolve host...</string>
+    <string name="step_2_description">Trying to ping host...</string>
+    <string name="step_3_description">Trying to connect to port...</string>
+    <string name="step_4_description">Trying to connect to OctoPrint...</string>
 </resources>
