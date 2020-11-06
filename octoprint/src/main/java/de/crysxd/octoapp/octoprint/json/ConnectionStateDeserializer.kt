@@ -21,6 +21,7 @@ class ConnectionStateDeserializer(
                 .replace(":", "")
 
             when {
+                string.startsWith("PRINTING") -> ConnectionResponse.ConnectionState.PRINTING
                 string.startsWith("ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT") -> ConnectionResponse.ConnectionState.ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT
                 string.startsWith("ERROR_CONNECTION_ERROR") -> ConnectionResponse.ConnectionState.CONNECTION_ERROR
                 string.contains("ERROR") -> ConnectionResponse.ConnectionState.UNKNOWN_ERROR
