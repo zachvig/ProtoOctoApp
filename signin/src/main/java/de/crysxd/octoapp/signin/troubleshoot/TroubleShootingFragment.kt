@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionManager
+import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.di.injectViewModel
@@ -30,6 +32,8 @@ class TroubleShootingFragment : Fragment(R.layout.fragment_trouble_shooting) {
         viewModel.runTest(requireContext(), baseUrl, apiKey).observe(viewLifecycleOwner) {
             suggestionsContainer.removeAllViews()
             buttonMain.isVisible = false
+            buttonSupport.isVisible = false
+            buttonDetails.isVisible = false
 
             TransitionManager.beginDelayedTransition(view as ViewGroup, InstantAutoTransition(explode = true))
 
@@ -50,7 +54,7 @@ class TroubleShootingFragment : Fragment(R.layout.fragment_trouble_shooting) {
                     textViewSubState.text = HtmlCompat.fromHtml(it.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
                     it.suggestions.map {
                         val v = TextView(requireContext())
-                        v.text = HtmlCompat.fromHtml(it.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
+                        v.text = HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
                         v.compoundDrawablePadding = requireContext().resources.getDimensionPixelSize(R.dimen.margin_1)
                         v.updatePadding(bottom = requireContext().resources.getDimensionPixelSize(R.dimen.margin_1))
                         v.gravity = Gravity.START or Gravity.CENTER_VERTICAL
@@ -63,6 +67,14 @@ class TroubleShootingFragment : Fragment(R.layout.fragment_trouble_shooting) {
                     buttonMain.text = "Check again"
                     buttonMain.isVisible = true
                     buttonMain.setOnClickListener { viewModel.runTest(requireContext(), baseUrl, apiKey) }
+                    buttonDetails.isVisible = it.exception != null
+                    buttonDetails.setOnClickListener { _ ->
+                        requireOctoActivity().showErrorDetailsDialog(it.exception!!)
+                    }
+                    buttonSupport.isVisible = it.offerSupport
+                    buttonSupport.setOnClickListener {
+                        SendFeedbackDialog().show(childFragmentManager, "send-feedback")
+                    }
                 }
 
                 TroubleShootingResult.Success -> {
