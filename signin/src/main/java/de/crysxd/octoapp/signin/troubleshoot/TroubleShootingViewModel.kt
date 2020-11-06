@@ -24,18 +24,27 @@ class TroubleShootViewModel : ViewModel() {
 
     fun runTest(context: Context, baseUrl: Uri, apiKey: String): LiveData<TroubleShootingResult> {
         if (troubleShootingResult.value !is TroubleShootingResult.Running) {
-            troubleShootingResult.postValue(TroubleShootingResult.Running(""))
+            troubleShootingResult.postValue(TroubleShootingResult.Running(0, 4, ""))
+
             viewModelScope.launch(Dispatchers.IO) {
                 Timber.i("Running checks")
                 Timber.i("Base URL: $baseUrl")
                 Timber.i("API key: $apiKey")
 
                 val result =
-                    runAtLeast { runDnsTest(context, baseUrl) } ?:           //
-                    runAtLeast { runHostReachableTest(context, baseUrl) } ?: //
-                    runAtLeast { runPortOpenTest(context, baseUrl) } ?:      //
-                    runAtLeast { runConnectionTest(context, baseUrl) }
-                    ?: TroubleShootingResult.Success
+                    runAtLeast {
+                        troubleShootingResult.postValue(TroubleShootingResult.Running(1, 4, "Trying to resolve host..."))
+                        runDnsTest(context, baseUrl)
+                    } ?: runAtLeast {
+                        troubleShootingResult.postValue(TroubleShootingResult.Running(2, 4, "Trying to ping host..."))
+                        runHostReachableTest(context, baseUrl)
+                    } ?: runAtLeast {
+                        troubleShootingResult.postValue(TroubleShootingResult.Running(3, 4, "Trying to connect to port..."))
+                        runPortOpenTest(context, baseUrl)
+                    } ?: runAtLeast {
+                        troubleShootingResult.postValue(TroubleShootingResult.Running(4, 4, "Trying to connect to OctoPrint..."))
+                        runConnectionTest(context, baseUrl)
+                    } ?: TroubleShootingResult.Success
 
                 troubleShootingResult.postValue(result)
             }
@@ -53,8 +62,6 @@ class TroubleShootViewModel : ViewModel() {
 
 
     private fun runDnsTest(context: Context, baseUrl: Uri) = try {
-        troubleShootingResult.postValue(TroubleShootingResult.Running("Step 1: Checking if DNS available..."))
-
         InetAddress.getByName(baseUrl.host)
         null
     } catch (e: Exception) {
@@ -72,8 +79,6 @@ class TroubleShootViewModel : ViewModel() {
     }
 
     private fun runHostReachableTest(context: Context, baseUrl: Uri): TroubleShootingResult.Failure? {
-        troubleShootingResult.postValue(TroubleShootingResult.Running("Step 2: Check if host is reachable..."))
-
         val host = baseUrl.host
         val reachable = try {
             val address = InetAddress.getByName(host)
@@ -99,14 +104,11 @@ class TroubleShootViewModel : ViewModel() {
     }
 
     private fun runPortOpenTest(context: Context, baseUrl: Uri): TroubleShootingResult.Failure? {
-        troubleShootingResult.postValue(TroubleShootingResult.Running("Step 3: Check if port is open..."))
-
         val port = when {
             baseUrl.port > 0 -> baseUrl.port
             baseUrl.scheme == "http" -> 80
             baseUrl.scheme == "https" -> 443
             else -> 80
-
         }
 
         return try {
@@ -125,37 +127,33 @@ class TroubleShootViewModel : ViewModel() {
         }
     }
 
-    private fun runConnectionTest(context: Context, baseUrl: Uri): TroubleShootingResult.Failure? {
-        troubleShootingResult.postValue(TroubleShootingResult.Running("Step 4: Trying to connect to OctoPrint..."))
-
-        return try {
-            val connection = URL(baseUrl.toString()).openConnection() as HttpURLConnection
-            connection.connect()
-            val code = connection.responseCode
-            if (code == 200) {
-                null
-            } else {
-                TroubleShootingResult.Failure(
-                    text = "Can connect to <b>$baseUrl</b> but received <b>$code</b> instead of <b>200</b>",
-                    suggestions = listOf(
-                        "Check you provided the correct web URL",
-                        "Check any (reverse) proxy servers are correctly configured",
-                        "Check your OctoPrint logs for errors",
-                    ),
-                    offerSupport = true
-                )
-            }
-        } catch (e: Exception) {
+    private fun runConnectionTest(context: Context, baseUrl: Uri) = try {
+        val connection = URL(baseUrl.toString()).openConnection() as HttpURLConnection
+        connection.connect()
+        val code = connection.responseCode
+        if (code == 200) {
+            null
+        } else {
             TroubleShootingResult.Failure(
-                text = "Can't connect to <b>${baseUrl}</b> because of an error",
+                text = "Can connect to <b>$baseUrl</b> but received <b>$code</b> instead of <b>200</b>",
                 suggestions = listOf(
                     "Check you provided the correct web URL",
-                    "The host and port are reachable but the HTTP(s) connection failed because of: ${e.message}",
                     "Check any (reverse) proxy servers are correctly configured",
                     "Check your OctoPrint logs for errors",
                 ),
                 offerSupport = true
             )
         }
+    } catch (e: Exception) {
+        TroubleShootingResult.Failure(
+            text = "Can't connect to <b>${baseUrl}</b> because of an error",
+            suggestions = listOf(
+                "Check you provided the correct web URL",
+                "The host and port are reachable but the HTTP(s) connection failed because of: ${e.message}",
+                "Check any (reverse) proxy servers are correctly configured",
+                "Check your OctoPrint logs for errors",
+            ),
+            offerSupport = true
+        )
     }
 }

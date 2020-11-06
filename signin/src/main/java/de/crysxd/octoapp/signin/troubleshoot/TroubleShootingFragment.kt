@@ -23,7 +23,7 @@ class TroubleShootingFragment : Fragment(R.layout.fragment_trouble_shooting) {
         viewModel.runTest(requireContext(), baseUrl, apiKey).observe(viewLifecycleOwner) {
             when (it) {
                 is TroubleShootingResult.Running -> {
-                    textViewState.text = "Running checks"
+                    textViewState.text = "Running Check ${it.step} of ${it.totalSteps}"
                     textViewSubState.text = it.status
                     buttonMain.isVisible = false
                 }
