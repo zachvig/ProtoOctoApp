@@ -49,7 +49,7 @@ class ConnectPrinterViewModel(
     }
 
     private val psuState = octoPrintProvider.eventFlow("connect")
-        .filterEventsForMessageType(PsuControlPluginMessage::class.java)
+        .filterEventsForMessageType<PsuControlPluginMessage>()
         .asLiveData()
 
     private val uiStateMediator = MediatorLiveData<UiState>()
