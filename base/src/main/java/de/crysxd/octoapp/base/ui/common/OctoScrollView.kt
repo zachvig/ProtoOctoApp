@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewPropertyAnimator
 import android.view.animation.DecelerateInterpolator
 import androidx.annotation.StyleRes
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.NestedScrollView
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.OctoActivity
@@ -17,10 +18,10 @@ import kotlin.math.roundToInt
 class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, @StyleRes defStyle: Int = 0) :
     NestedScrollView(context, attributeSet, defStyle) {
 
-    private lateinit var octoActivity: OctoActivity
-    private lateinit var initialState: OctoToolbar.State
+    private var octoActivity: OctoActivity? = null
+    private var initialState: OctoToolbar.State? = null
 
-    private val topShadowDrawable = context.resources.getDrawable(R.drawable.top_scroll_edge_shadow, context.theme)
+    private val topShadowDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.top_scroll_edge_shadow, context.theme)
     private var topShadowAlpha = 0f
         set(value) {
             field = value
@@ -33,7 +34,7 @@ class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: A
 
         override fun get(`object`: OctoScrollView) = `object`.topShadowAlpha
     }
-    private val bottomShadowDrawable = context.resources.getDrawable(R.drawable.bottom_scroll_edge_drawable, context.theme)
+    private val bottomShadowDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.bottom_scroll_edge_drawable, context.theme)
     private var bottomShadowAlpha = 0f
         set(value) {
             field = value
@@ -112,16 +113,18 @@ class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: A
             createAnimator(bottomShadowAlphaProperty, alphaBottom, duration).start()
         }
 
-        octoActivity.octoToolbar.state = if (scrollY < paddingTop / 3f) {
-            if (octoActivity.octoToolbar.state == OctoToolbar.State.Hidden) {
-                octoActivity.octo.animate().alpha(1f).start()
+        octoActivity?.let { activity ->
+            activity.octoToolbar.state = if (scrollY < paddingTop / 3f) {
+                if (activity.octoToolbar.state == OctoToolbar.State.Hidden) {
+                    activity.octo.animate().alpha(1f).start()
+                }
+                initialState ?: OctoToolbar.State.Hidden
+            } else {
+                if (activity.octoToolbar.state != OctoToolbar.State.Hidden) {
+                    activity.octo.animate().alpha(0f).start()
+                }
+                OctoToolbar.State.Hidden
             }
-            initialState
-        } else {
-            if (octoActivity.octoToolbar.state != OctoToolbar.State.Hidden) {
-                octoActivity.octo.animate().alpha(0f).start()
-            }
-            OctoToolbar.State.Hidden
         }
     }
 
