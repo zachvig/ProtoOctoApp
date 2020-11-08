@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Attempt to fix https://console.firebase.google.com/u/0/project/octoapp-4e438/crashlytics/app/android:de.crysxd.octoapp/issues/7ba59acd703cc677e2e27b29ce8dc840?time=last-thirty-days&sessionEventKey=5F9A1025019700010645247C54E00548_1467282545399669453 -->
+    <integer name="viewfinder_border_width">4</integer>
+    <integer name="viewfinder_border_length">60</integer>
+</resources>
