@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.logging
 
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigClientException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -41,6 +42,6 @@ class FirebaseTree(
     private fun shouldLog(t: Throwable?) = t != null &&
             t != lastException &&
             t !is IOException &&
-            t !is CancellationException
-
+            t !is CancellationException &&
+            t !is FirebaseRemoteConfigClientException
 }

@@ -82,7 +82,7 @@ sealed class Message {
 
         data class Connected(
             val baudrate: Int,
-            val port: String
+            val port: String?
         ) : EventMessage()
 
         class PrintStarted(

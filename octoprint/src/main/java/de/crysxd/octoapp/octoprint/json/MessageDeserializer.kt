@@ -41,7 +41,11 @@ class MessageDeserializer(
 
         "Connected" -> Message.EventMessage.Connected(
             o["payload"].asJsonObject["baudrate"].asInt,
-            o["payload"].asJsonObject["port"].asString
+            try {
+                o["payload"].asJsonObject["port"].asString
+            } catch (e: UnsupportedOperationException) {
+                null
+            }
         )
 
         "Disconnected" -> Message.EventMessage.Disconnected

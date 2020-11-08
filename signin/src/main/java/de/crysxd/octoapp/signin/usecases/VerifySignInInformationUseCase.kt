@@ -7,6 +7,7 @@ import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInInformationValidationResult
 import timber.log.Timber
+import java.net.URI
 
 class VerifySignInInformationUseCase(
     private val context: Context
@@ -26,6 +27,7 @@ class VerifySignInInformationUseCase(
     private fun verifyWebUrl(string: CharSequence) = try {
         require(string.startsWith("http://") || string.startsWith("https://")) { "Not starting with HTTP(s): $string" }
         requireNotNull(Uri.parse(string.toString())) { "Uri is null: $string" }
+        URI(string.toString())
         null
     } catch (e: Exception) {
         Timber.i("Validation error: ${e.message}")
