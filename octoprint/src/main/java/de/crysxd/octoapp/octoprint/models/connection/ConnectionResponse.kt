@@ -22,20 +22,19 @@ data class ConnectionResponse(
         val autoConnect: Boolean
     )
 
+    // This field is derived from a UI string and is not reliable!
+    // This should only be used for UI states etc but not for important decisions
     enum class ConnectionState {
-        CLOSED,
-        DETECTING_SERIAL_PORT,
-        DETECTING_BAUDRATE,
-        CONNECTING,
-        OPERATIONAL,
-        ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT,
-        CONNECTION_ERROR,
-        DETECTING_SERIAL_CONNECTION,
-        PRINTING,
-        CANCELLING,
-        FINISHING,
-        UNKNOWN_ERROR,
-        UNKNOWN,
+        MAYBE_DETECTING_SERIAL_PORT,
+        MAYBE_DETECTING_BAUDRATE,
+        MAYBE_CONNECTING,
+        MAYBE_OPERATIONAL,
+        MAYBE_ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT,
+        MAYBE_CONNECTION_ERROR,
+        MAYBE_DETECTING_SERIAL_CONNECTION,
+        MAYBE_PRINTING,
+        MAYBE_UNKNOWN_ERROR,
+        OTHER,
     }
 
     data class PrinterProfile(

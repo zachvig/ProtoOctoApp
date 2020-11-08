@@ -3,16 +3,13 @@ package de.crysxd.octoapp.connect_printer.ui
 import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.distinctUntilChanged
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.livedata.OctoTransformations.filterEventsForMessageType
+import de.crysxd.octoapp.base.ext.filterEventsForMessageType
 import de.crysxd.octoapp.base.livedata.OctoTransformations.map
 import de.crysxd.octoapp.base.livedata.PollingLiveData
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
@@ -22,7 +19,7 @@ import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase.Params
 import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintBootingException
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
-import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse.ConnectionState.ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT
+import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse.ConnectionState.MAYBE_ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT
 import de.crysxd.octoapp.octoprint.models.socket.Message.PsuControlPluginMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -32,7 +29,7 @@ import java.util.concurrent.TimeUnit
 
 
 class ConnectPrinterViewModel(
-    private val octoPrintProvider: OctoPrintProvider,
+    octoPrintProvider: OctoPrintProvider,
     private val turnOnPsuUseCase: TurnOnPsuUseCase,
     private val turnOffPsuUseCase: TurnOffPsuUseCase,
     private val cyclePsuUseCase: CyclePsuUseCase,
@@ -51,8 +48,9 @@ class ConnectPrinterViewModel(
         getPrinterConnectionUseCase.execute()
     }
 
-    private val psuState = octoPrintProvider.eventLiveData
+    private val psuState = octoPrintProvider.eventFlow("connect")
         .filterEventsForMessageType(PsuControlPluginMessage::class.java)
+        .asLiveData()
 
     private val uiStateMediator = MediatorLiveData<UiState>()
     val uiState = uiStateMediator.map { it }.distinctUntilChanged()
@@ -92,8 +90,8 @@ class ConnectPrinterViewModel(
                 Firebase.analytics.setUserProperty("psu_plugin_available", supportsPsuPlugin.toString())
 
                 if (supportsPsuPlugin) {
-                    octoPrintRepository.instanceInformation.value?.let {
-                        octoPrintRepository.storeOctoprintInstanceInformation(it.copy(supportsPsuPlugin = supportsPsuPlugin))
+                    octoPrintRepository.instanceInformationFlow().first().let {
+                        octoPrintRepository.storeOctoprintInstanceInformation(it?.copy(supportsPsuPlugin = supportsPsuPlugin))
                     }
                 }
             }
@@ -158,20 +156,20 @@ class ConnectPrinterViewModel(
             System.nanoTime() - lastConnectionAttempt > connectionTimeoutNs
 
     private fun isInErrorState(connectionResponse: ConnectionResponse) = listOf(
-        ConnectionResponse.ConnectionState.UNKNOWN_ERROR,
-        ConnectionResponse.ConnectionState.CONNECTION_ERROR
+        ConnectionResponse.ConnectionState.MAYBE_UNKNOWN_ERROR,
+        ConnectionResponse.ConnectionState.MAYBE_CONNECTION_ERROR
     ).contains(connectionResponse.current.state)
 
     private fun isPrinterConnecting(connectionResponse: ConnectionResponse) = listOf(
-        ConnectionResponse.ConnectionState.CONNECTING,
-        ConnectionResponse.ConnectionState.DETECTING_SERIAL_PORT,
-        ConnectionResponse.ConnectionState.DETECTING_SERIAL_CONNECTION,
-        ConnectionResponse.ConnectionState.DETECTING_BAUDRATE
+        ConnectionResponse.ConnectionState.MAYBE_CONNECTING,
+        ConnectionResponse.ConnectionState.MAYBE_DETECTING_SERIAL_PORT,
+        ConnectionResponse.ConnectionState.MAYBE_DETECTING_SERIAL_CONNECTION,
+        ConnectionResponse.ConnectionState.MAYBE_DETECTING_BAUDRATE
     ).contains(connectionResponse.current.state)
 
     private fun isPrinterConnected(connectionResponse: ConnectionResponse) = listOf(
-        ConnectionResponse.ConnectionState.OPERATIONAL,
-        ConnectionResponse.ConnectionState.PRINTING
+        ConnectionResponse.ConnectionState.MAYBE_OPERATIONAL,
+        ConnectionResponse.ConnectionState.MAYBE_PRINTING
     ).contains(connectionResponse.current.state)
 
     private fun autoConnect(connectionResponse: ConnectionResponse) = viewModelScope.launch(coroutineExceptionHandler) {
@@ -179,7 +177,7 @@ class ConnectPrinterViewModel(
             recordConnectionAttempt()
             Timber.i("Attempting auto connect")
             autoConnectPrinterUseCase.execute(
-                if (connectionResponse.current.state == ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT) {
+                if (connectionResponse.current.state == MAYBE_ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT) {
                     // TODO Ask user which port to select
                     val app = Injector.get().app()
                     Toast.makeText(app, app.getString(R.string.auto_selection_failed), Toast.LENGTH_SHORT).show()

@@ -21,15 +21,15 @@ class ConnectionStateDeserializer(
                 .replace(":", "")
 
             when {
-                string.startsWith("PRINTING") -> ConnectionResponse.ConnectionState.PRINTING
-                string.startsWith("ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT") -> ConnectionResponse.ConnectionState.ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT
-                string.startsWith("ERROR_CONNECTION_ERROR") -> ConnectionResponse.ConnectionState.CONNECTION_ERROR
-                string.contains("ERROR") -> ConnectionResponse.ConnectionState.UNKNOWN_ERROR
+                string.startsWith("PRINTING") -> ConnectionResponse.ConnectionState.MAYBE_PRINTING
+                string.startsWith("ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT") -> ConnectionResponse.ConnectionState.MAYBE_ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT
+                string.startsWith("ERROR_CONNECTION_ERROR") -> ConnectionResponse.ConnectionState.MAYBE_CONNECTION_ERROR
+                string.contains("ERROR") -> ConnectionResponse.ConnectionState.MAYBE_UNKNOWN_ERROR
                 else -> ConnectionResponse.ConnectionState.valueOf(string)
             }
         } catch (e: Exception) {
             logger.log(Level.SEVERE, "Unable to deserialize '$json'", e)
-            ConnectionResponse.ConnectionState.UNKNOWN
+            ConnectionResponse.ConnectionState.OTHER
         }
     }
 }
