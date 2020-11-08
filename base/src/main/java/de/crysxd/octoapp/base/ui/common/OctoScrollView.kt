@@ -140,14 +140,14 @@ class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: A
         super.onDrawForeground(canvas)
 
         if (topShadowAlpha > 0) {
-            topShadowDrawable.alpha = (topShadowAlpha * 255).roundToInt()
-            topShadowDrawable.setBounds(0, scrollY, width, scrollY + topShadowDrawable.intrinsicHeight)
-            topShadowDrawable.draw(canvas)
+            topShadowDrawable?.alpha = (topShadowAlpha * 255).roundToInt()
+            topShadowDrawable?.setBounds(0, scrollY, width, scrollY + topShadowDrawable.intrinsicHeight)
+            topShadowDrawable?.draw(canvas)
         }
         if (bottomShadowAlpha > 0) {
-            bottomShadowDrawable.alpha = (bottomShadowAlpha * 255).roundToInt()
-            bottomShadowDrawable.setBounds(0, scrollY + height - bottomShadowDrawable.intrinsicHeight, width, scrollY + height)
-            bottomShadowDrawable.draw(canvas)
+            bottomShadowDrawable?.alpha = (bottomShadowAlpha * 255).roundToInt()
+            bottomShadowDrawable?.setBounds(0, scrollY + height - bottomShadowDrawable.intrinsicHeight, width, scrollY + height)
+            bottomShadowDrawable?.draw(canvas)
         }
     }
 }
