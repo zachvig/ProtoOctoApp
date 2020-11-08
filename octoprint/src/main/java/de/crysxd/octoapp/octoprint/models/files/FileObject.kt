@@ -49,7 +49,7 @@ sealed class FileObject(
         val failure: Int?,
         val success: Int?,
         val last: LastPrint?
-    ) {
+    ) : Serializable {
         data class LastPrint(
             val date: Long,
             val success: Boolean
@@ -60,7 +60,7 @@ sealed class FileObject(
         val dimensions: Dimensions?,
         val estimatedPrintTime: Long?,
         val filament: FilamentUse?,
-    ) {
+    ) : Serializable {
         data class Dimensions(
             val depth: Double,
             val height: Double,
