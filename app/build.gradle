@@ -57,7 +57,7 @@ android {
 
 
 play {
-    serviceAccountCredentials = file("service-account.json")
+    serviceAccountCredentials.set(file("service-account.json"))
     track.set("beta")
     defaultToAppBundles.set(true)
     resolutionStrategy.set(ResolutionStrategy.IGNORE)
