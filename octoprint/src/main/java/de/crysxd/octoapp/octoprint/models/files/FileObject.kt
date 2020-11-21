@@ -11,7 +11,7 @@ sealed class FileObject(
     open val typePath: List<String>?,
     val size: Long,
     open val ref: Reference?
-) {
+) : Serializable {
 
     class File(
         display: String,
@@ -26,7 +26,7 @@ sealed class FileObject(
         val date: Long,
         val gcodeAnalysis: GcodeAnalysis?,
         val prints: PrintHistory?
-    ) : FileObject(display, name, origin, path, type, typePath, size, ref), Serializable
+    ) : FileObject(display, name, origin, path, type, typePath, size, ref)
 
     class Folder(
         display: String,
@@ -38,12 +38,12 @@ sealed class FileObject(
         ref: Reference,
         size: Long,
         val children: List<FileObject>?
-    ) : FileObject(display, name, origin, path, type, typePath, size, ref), Serializable
+    ) : FileObject(display, name, origin, path, type, typePath, size, ref)
 
     data class Reference(
         val download: String?,
         val resource: String
-    )
+    ) : Serializable
 
     data class PrintHistory(
         val failure: Int?,
@@ -65,12 +65,12 @@ sealed class FileObject(
             val depth: Double,
             val height: Double,
             val width: Double
-        )
+        ) : Serializable
 
         data class FilamentUse(
             val tool0: ToolInfo?,
             val tool1: ToolInfo?,
-        ) {
+        ) : Serializable {
             data class ToolInfo(
                 val length: Double,
                 val volume: Double
