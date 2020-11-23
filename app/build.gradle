@@ -8,6 +8,8 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.firebase.firebase-perf'
 
+import com.github.triplet.gradle.androidpublisher.ResolutionStrategy
+
 android {
     compileSdkVersion 29
 
@@ -62,7 +64,7 @@ play {
     defaultToAppBundles.set(true)
     resolutionStrategy.set(ResolutionStrategy.IGNORE)
     updatePriority.set(2)
-    userFraction.set(1.0)
+    userFraction.set(1.0d)
 }
 
 
