@@ -8,6 +8,8 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.firebase.firebase-perf'
 
+import com.github.triplet.gradle.androidpublisher.ResolutionStrategy
+
 android {
     compileSdkVersion 29
 
@@ -57,12 +59,12 @@ android {
 
 
 play {
-    serviceAccountCredentials = file("service-account.json")
-    track = "beta"
-    userFraction = 1
-    defaultToAppBundles = true
-    resolutionStrategy = "ignore"
-    updatePriority = 2
+    serviceAccountCredentials.set(file("service-account.json"))
+    track.set("beta")
+    defaultToAppBundles.set(true)
+    resolutionStrategy.set(ResolutionStrategy.IGNORE)
+    updatePriority.set(2)
+    userFraction.set(1.0d)
 }
 
 
