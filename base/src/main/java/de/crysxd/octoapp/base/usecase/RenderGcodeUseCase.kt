@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.usecase
 
 import android.graphics.*
 import androidx.core.graphics.applyCanvas
+import de.crysxd.octoapp.base.gcode.Gcode
 import de.crysxd.octoapp.base.gcode.Move
 import timber.log.Timber
 
@@ -47,8 +48,41 @@ class RenderGcodeUseCase : UseCase<RenderGcodeUseCase.Params, Unit>() {
                 it.color = Color.WHITE
             })
 
-            param.gcodeRenderContext.paths.forEach {
+            param.directions.extractMoves(param.gcode).forEach {
                 drawLines(it.points, it.offset, it.count, it.type.paint)
+            }
+        }
+    }
+
+    class GcodePath(
+        val points: FloatArray,
+        val offset: Int,
+        val count: Int,
+        val type: Move.Type
+    )
+
+    sealed class RenderDirections {
+        abstract fun extractMoves(gcode: Gcode): List<GcodePath>
+
+        data class ForFileLocation(val byte: Int) : RenderDirections() {
+            override fun extractMoves(gcode: Gcode): List<GcodePath> {
+                TODO("Not yet implemented")
+            }
+        }
+
+        data class ForLayerProgress(val layer: Int, val progress: Float) : RenderDirections() {
+            override fun extractMoves(gcode: Gcode): List<GcodePath> {
+                val layer = gcode.layers[layer]
+                val moveCount = layer.moveCount * progress
+                return layer.moves.map {
+                    val count = it.value.first.last { i -> i.positionInLayer <= moveCount }.positionInArray
+                    GcodePath(
+                        type = it.key,
+                        offset = 0,
+                        count = count,
+                        points = it.value.second
+                    )
+                }
             }
         }
     }
@@ -60,7 +94,8 @@ class RenderGcodeUseCase : UseCase<RenderGcodeUseCase.Params, Unit>() {
         }
 
     data class Params(
-        val gcodeRenderContext: RenderGcodePreparationUseCase.GcodeRenderContext,
+        val gcode: Gcode,
+        val directions: RenderDirections,
         val printBedSizeMm: PointF,
         val visibleRectMm: RectF,
         val bitmap: Bitmap,

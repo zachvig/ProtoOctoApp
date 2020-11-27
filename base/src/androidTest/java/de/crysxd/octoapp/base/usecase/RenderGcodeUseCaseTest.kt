@@ -18,19 +18,14 @@ class RenderGcodeUseCaseTest {
     fun testRender(): Unit = runBlocking {
         // Create bitmap
         val bitmap = Bitmap.createBitmap(1024, 1024, Bitmap.Config.ARGB_8888)
-        val prepareParams = RenderGcodePreparationUseCase.Params(
-            gcode = gcode,
-            directions = RenderGcodePreparationUseCase.RenderDirections.ForLayerProgress(
-                layer = 1,
-                progress = 1f
-            )
-        )
-        val context = RenderGcodePreparationUseCase().execute(prepareParams)
 
         measureTimeMillis {
             val renderParams = RenderGcodeUseCase.Params(
-                gcodeRenderContext = context,
-                printBedSizeMm = PointF(235f, 235f),
+                gcode = gcode,
+                directions = RenderGcodeUseCase.RenderDirections.ForLayerProgress(
+                    layer = 1,
+                    progress = 1f
+                ), printBedSizeMm = PointF(235f, 235f),
                 bitmap = bitmap,
                 visibleRectMm = RectF(0f, 0f, 235f, 235f)
             )
