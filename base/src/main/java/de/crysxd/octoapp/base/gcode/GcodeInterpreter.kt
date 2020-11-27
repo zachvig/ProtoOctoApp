@@ -56,9 +56,9 @@ abstract class GcodeInterpreter {
         matcherX.find()
         matcherY.find()
         matcherE.find()
-        val x = matcherX.groupOrDefault(1, "0").toFloat()
-        val y = matcherY.groupOrDefault(1, "0").toFloat()
-        val e = matcherE.groupOrDefault(1, "0").toFloat()
+        val x = matcherX.groupOrNull(1)?.toFloat() ?: return
+        val y = matcherY.groupOrNull(1)?.toFloat() ?: return
+        val e = matcherE.groupOrNull(1)?.toFloat() ?: 0f
 
         // Convert to absolute position
         val absoluteX = if (isAbsolutePositioningActive) {
@@ -108,9 +108,9 @@ abstract class GcodeInterpreter {
         lastPosition.y = move.to.y
     }
 
-    fun Matcher.groupOrDefault(index: Int, default: String) = if (matches() && groupCount() >= index) {
-        group(index) ?: default
+    fun Matcher.groupOrNull(index: Int) = if (matches() && groupCount() >= index) {
+        group(index)
     } else {
-        default
+        null
     }
 }
