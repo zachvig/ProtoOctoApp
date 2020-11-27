@@ -7,7 +7,7 @@ import java.util.regex.Pattern
 abstract class GcodeInterpreter {
 
     private var layers: MutableList<Layer> = mutableListOf()
-    private var moves: MutableList<Move> = mutableListOf()
+    private var moves = mutableMapOf<Move.Type, Pair<MutableList<Move>, MutableList<Float>>>()
     private val lastPosition: PointF = PointF(0f, 0f)
     private var isAbsolutePositioningActive = true
 
@@ -15,7 +15,7 @@ abstract class GcodeInterpreter {
 
     fun interpretFile(content: String): Gcode {
         layers.clear()
-        moves.clear()
+        initNewLayer()
 
         var positionInFile = 0
         content.split("\n").forEach {
@@ -80,13 +80,12 @@ abstract class GcodeInterpreter {
         }
 
         addMove(
-            Move(
-                from = PointF().also { it.x = lastPosition.x; it.y = lastPosition.y },
-                to = PointF().also { it.x = absoluteX; it.y = absoluteY },
-                type = type,
-                positionInFile = positionInFile,
-                positionInLayer = moves.size
-            )
+            type = type,
+            positionInFile = positionInFile,
+            fromX = lastPosition.x,
+            fromY = lastPosition.y,
+            toX = absoluteX,
+            toY = absoluteY
         )
     }
 
@@ -99,22 +98,44 @@ abstract class GcodeInterpreter {
     private fun isRelativePositioningCommand(line: String) = line.startsWith("G91", true)
 
     private fun startNewLayer() {
-        val types = moves.toList().distinctBy { it.type }.map { it.type }
-        val movesByType = types.map { type ->
-            Pair(type, moves.filter { it.type == type })
-        }.toMap()
+        layers.add(
+            Layer(
+                moves = moves.mapValues {
+                    Pair(it.value.first, it.value.second.toFloatArray())
+                },
+                moveCount = moves.map { it.value.first.size }.sum()
+            )
+        )
+        initNewLayer()
+    }
 
-        layers.add(Layer(moves = movesByType))
+    private fun initNewLayer() {
         moves.clear()
+        moves[Move.Type.Travel] = Pair(mutableListOf(), mutableListOf())
+        moves[Move.Type.Extrude] = Pair(mutableListOf(), mutableListOf())
     }
 
-    private fun addMove(move: Move) {
-        moves.add(move)
-        lastPosition.x = move.to.x
-        lastPosition.y = move.to.y
+    private fun addMove(type: Move.Type, positionInFile: Int, fromX: Float, fromY: Float, toX: Float, toY: Float) {
+        moves[type]?.let {
+            val move = Move(
+                positionInFile = positionInFile,
+                positionInLayer = moves.values.sumBy { i -> i.first.size },
+                positionInArray = it.second.size,
+                type = type
+            )
+
+            it.first.add(move)
+            it.second.add(fromX)
+            it.second.add(fromY)
+            it.second.add(toX)
+            it.second.add(toY)
+        }
+
+        lastPosition.x = toX
+        lastPosition.y = toY
     }
 
-    fun Matcher.groupOrNull(index: Int) = if (matches() && groupCount() >= index) {
+    private fun Matcher.groupOrNull(index: Int) = if (matches() && groupCount() >= index) {
         group(index)
     } else {
         null

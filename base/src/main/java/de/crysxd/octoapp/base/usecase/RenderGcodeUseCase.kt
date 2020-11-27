@@ -48,7 +48,7 @@ class RenderGcodeUseCase : UseCase<RenderGcodeUseCase.Params, Unit>() {
             })
 
             param.gcodeRenderContext.paths.forEach {
-                drawLines(it.points, 0, it.points.size, it.type.paint)
+                drawLines(it.points, it.offset, it.count, it.type.paint)
             }
         }
     }
