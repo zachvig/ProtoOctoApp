@@ -22,7 +22,7 @@ class RenderGcodeUseCaseTest {
             gcode = gcode,
             directions = RenderGcodePreparationUseCase.RenderDirections.ForLayerProgress(
                 layer = 1,
-                progress = 1f
+                progress = 0.5f
             )
         )
         val context = RenderGcodePreparationUseCase().execute(prepareParams)

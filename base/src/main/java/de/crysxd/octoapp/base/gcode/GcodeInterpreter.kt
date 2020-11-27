@@ -84,7 +84,8 @@ abstract class GcodeInterpreter {
                 from = PointF().also { it.x = lastPosition.x; it.y = lastPosition.y },
                 to = PointF().also { it.x = absoluteX; it.y = absoluteY },
                 type = type,
-                positionInFile = positionInFile
+                positionInFile = positionInFile,
+                positionInLayer = moves.size
             )
         )
     }
@@ -98,7 +99,12 @@ abstract class GcodeInterpreter {
     private fun isRelativePositioningCommand(line: String) = line.startsWith("G91", true)
 
     private fun startNewLayer() {
-        layers.add(Layer(moves.toList()))
+        val types = moves.toList().distinctBy { it.type }.map { it.type }
+        val movesByType = types.map { type ->
+            Pair(type, moves.filter { it.type == type })
+        }.toMap()
+
+        layers.add(Layer(moves = movesByType))
         moves.clear()
     }
 

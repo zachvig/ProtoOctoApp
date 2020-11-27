@@ -1,5 +1,5 @@
 package de.crysxd.octoapp.base.gcode
 
 data class Layer(
-    val moves: List<Move>
+    val moves: Map<Move.Type, List<Move>>
 )
