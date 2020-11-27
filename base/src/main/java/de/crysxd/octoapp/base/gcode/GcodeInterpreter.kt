@@ -81,10 +81,8 @@ abstract class GcodeInterpreter {
 
         addMove(
             Move(
-                fromX = lastPosition.x,
-                fromY = lastPosition.y,
-                toX = absoluteX,
-                toY = absoluteY,
+                from = PointF().also { it.x = lastPosition.x; it.y = lastPosition.y },
+                to = PointF().also { it.x = absoluteX; it.y = absoluteY },
                 type = type,
                 positionInFile = positionInFile
             )
@@ -106,8 +104,8 @@ abstract class GcodeInterpreter {
 
     private fun addMove(move: Move) {
         moves.add(move)
-        lastPosition.x = move.toX
-        lastPosition.y = move.toY
+        lastPosition.x = move.to.x
+        lastPosition.y = move.to.y
     }
 
     fun Matcher.groupOrDefault(index: Int, default: String) = if (matches() && groupCount() >= index) {

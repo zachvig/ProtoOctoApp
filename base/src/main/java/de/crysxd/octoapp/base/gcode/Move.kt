@@ -1,11 +1,11 @@
 package de.crysxd.octoapp.base.gcode
 
+import android.graphics.PointF
+
 data class Move(
     val positionInFile: Int,
-    val fromX: Float,
-    val toX: Float,
-    val fromY: Float,
-    val toY: Float,
+    val from: PointF,
+    val to: PointF,
     val type: Type
 ) {
     sealed class Type {
