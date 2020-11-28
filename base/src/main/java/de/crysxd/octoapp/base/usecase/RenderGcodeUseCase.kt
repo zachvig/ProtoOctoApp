@@ -2,8 +2,8 @@ package de.crysxd.octoapp.base.usecase
 
 import android.graphics.*
 import androidx.core.graphics.applyCanvas
-import de.crysxd.octoapp.base.gcode.Gcode
-import de.crysxd.octoapp.base.gcode.Move
+import de.crysxd.octoapp.base.gcode.parse.models.Gcode
+import de.crysxd.octoapp.base.gcode.parse.models.Move
 import timber.log.Timber
 
 class RenderGcodeUseCase : UseCase<RenderGcodeUseCase.Params, Unit>() {
@@ -42,13 +42,7 @@ class RenderGcodeUseCase : UseCase<RenderGcodeUseCase.Params, Unit>() {
             scale(totalFactor, totalFactor)
             translate(xOffset, yOffset)
 
-            // Background
-            drawRect(0f, 0f, param.bitmap.width.toFloat(), param.bitmap.height.toFloat(), Paint().also {
-                it.style = Paint.Style.FILL_AND_STROKE
-                it.color = Color.WHITE
-            })
-
-            param.directions.extractMoves(param.gcode).forEach {
+            param.paths.forEach {
                 drawLines(it.points, it.offset, it.count, it.type.paint)
             }
         }
@@ -75,7 +69,7 @@ class RenderGcodeUseCase : UseCase<RenderGcodeUseCase.Params, Unit>() {
                 val layer = gcode.layers[layer]
                 val moveCount = layer.moveCount * progress
                 return layer.moves.map {
-                    val count = it.value.first.last { i -> i.positionInLayer <= moveCount }.positionInArray
+                    val count = it.value.first.last { i -> i.positionInLayer <= moveCount }.positionInArray + 4
                     GcodePath(
                         type = it.key,
                         offset = 0,
@@ -94,8 +88,7 @@ class RenderGcodeUseCase : UseCase<RenderGcodeUseCase.Params, Unit>() {
         }
 
     data class Params(
-        val gcode: Gcode,
-        val directions: RenderDirections,
+        val paths: List<GcodePath>,
         val printBedSizeMm: PointF,
         val visibleRectMm: RectF,
         val bitmap: Bitmap,

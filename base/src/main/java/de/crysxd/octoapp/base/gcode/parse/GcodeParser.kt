@@ -1,10 +1,13 @@
-package de.crysxd.octoapp.base.gcode
+package de.crysxd.octoapp.base.gcode.parse
 
 import android.graphics.PointF
+import de.crysxd.octoapp.base.gcode.parse.models.Gcode
+import de.crysxd.octoapp.base.gcode.parse.models.Layer
+import de.crysxd.octoapp.base.gcode.parse.models.Move
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-abstract class GcodeInterpreter {
+abstract class GcodeParser {
 
     private var layers: MutableList<Layer> = mutableListOf()
     private var moves = mutableMapOf<Move.Type, Pair<MutableList<Move>, MutableList<Float>>>()

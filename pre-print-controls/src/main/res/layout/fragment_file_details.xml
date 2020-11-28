@@ -35,8 +35,8 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed" />
 
-            <ImageView
-                android:id="@+id/imageViewPreview"
+            <de.crysxd.octoapp.base.gcode.render.GcodeRenderView
+                android:id="@+id/renderView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"

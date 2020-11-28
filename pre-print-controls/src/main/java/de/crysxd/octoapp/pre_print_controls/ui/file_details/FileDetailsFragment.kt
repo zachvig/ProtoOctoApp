@@ -1,10 +1,13 @@
 package de.crysxd.octoapp.pre_print_controls.ui.file_details
 
+import android.graphics.PointF
+import android.graphics.RectF
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
@@ -12,6 +15,9 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import de.crysxd.octoapp.base.ext.asStyleFileSize
+import de.crysxd.octoapp.base.gcode.parse.CuraGcodeParser
+import de.crysxd.octoapp.base.gcode.render.GcodeRenderContextFactory
+import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.octoprint.models.files.FileObject
@@ -19,9 +25,14 @@ import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.Injector
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 import kotlinx.android.synthetic.main.fragment_file_details.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import timber.log.Timber
+import java.io.File
 import java.text.DateFormat
 import java.util.*
+import kotlin.system.measureTimeMillis
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
 
 class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
@@ -52,12 +63,32 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
             override fun onPageSelected(position: Int) = animateViewPagerHeight(calculateHeightForPage(position))
         })
 
-        noImageHint.isVisible = file.thumbnail == null
-        picasso.observe(viewLifecycleOwner, {
-            file.thumbnail?.let { url ->
-                it.load(url).into(imageViewPreview)
+        noImageHint.isVisible = false//file.thumbnail == null
+//        picasso.observe(viewLifecycleOwner, {
+//            file.thumbnail?.let { url ->
+//                it.load(url).into(imageViewPreview)
+//            }
+//        })
+
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            measureTimeMillis {
+                val context = withContext(Dispatchers.IO) {
+                    val gcode = File("/data/data/de.crysxd.octoapp/files/CE3_Green_box_engraved.gcode")
+                        .readText().let { CuraGcodeParser().interpretFile(it) }
+                    GcodeRenderContextFactory.ForLayerProgress(1, 1f)
+                        .extractMoves(gcode)
+                }
+
+                renderView.renderParams = GcodeRenderView.RenderParams(
+                    renderContext = context,
+                    printBedSizeMm = PointF(235f, 235f),
+                    extrusionWidthMm = 0.5f,
+                    visibleRectMm = RectF(100f, 100f, 150f, 150f)
+                )
+            }.let {
+                Timber.v("Preparing GcodeRenderView took ${it}ms")
             }
-        })
+        }
     }
 
     private fun animateViewPagerHeight(height: Int) {
