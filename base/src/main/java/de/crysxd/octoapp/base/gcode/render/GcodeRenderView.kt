@@ -7,6 +7,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -45,7 +46,7 @@ class GcodeRenderView @JvmOverloads constructor(
     private val extrudePaint = Paint().apply {
         style = Paint.Style.STROKE
         isAntiAlias = true
-        color = Color.BLACK
+        color = Color.LTGRAY
         strokeCap = Paint.Cap.ROUND
     }
 
@@ -161,15 +162,19 @@ class GcodeRenderView @JvmOverloads constructor(
         canvas.translate(xOffset, yOffset)
         canvas.scale(totalFactor, totalFactor)
 
+        // Draw background
+        params.background?.setBounds(0, 0, params.printBedSizeMm.x.toInt(), params.printBedSizeMm.y.toInt())
+        params.background?.draw(canvas)
+
         // Draw grid
-        val scaledGridPaintStrokeWidth = (gridPaint.strokeWidth / totalFactor) / 2f
-        canvas.drawRect(
-            scaledGridPaintStrokeWidth,
-            scaledGridPaintStrokeWidth,
-            params.printBedSizeMm.x - scaledGridPaintStrokeWidth,
-            params.printBedSizeMm.y - scaledGridPaintStrokeWidth,
-            gridPaint
-        )
+//        val scaledGridPaintStrokeWidth = (gridPaint.strokeWidth / totalFactor) / 2f
+//        canvas.drawRect(
+//            scaledGridPaintStrokeWidth,
+//            scaledGridPaintStrokeWidth,
+//            params.printBedSizeMm.x - scaledGridPaintStrokeWidth,
+//            params.printBedSizeMm.y - scaledGridPaintStrokeWidth,
+//            gridPaint
+//        )
 
         // Render Gcode
         params.renderContext.paths.forEach {
@@ -236,6 +241,7 @@ class GcodeRenderView @JvmOverloads constructor(
     data class RenderParams(
         val renderContext: GcodeRenderContext,
         val printBedSizeMm: PointF,
-        val extrusionWidthMm: Float = 0.5f
+        val extrusionWidthMm: Float = 0.5f,
+        val background: Drawable?
     )
 }
