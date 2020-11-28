@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <de.crysxd.octoapp.base.gcode.render.GcodeRenderView
+        android:id="@+id/renderView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/margin_3"
+        app:layout_constraintBottom_toTopOf="@+id/titleLayer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_input_shade_gradient"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/renderView" />
+
+    <SeekBar
+        android:id="@+id/layerProgressSeekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/layerSeekBar"
+        app:layout_constraintStart_toStartOf="@+id/titleLayerProgress" />
+
+    <SeekBar
+        android:id="@+id/layerSeekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_2"
+        android:layout_marginEnd="@dimen/margin_2"
+        android:layout_marginBottom="@dimen/margin_3"
+        android:max="4000"
+        android:progress="3"
+        app:layout_constraintBottom_toTopOf="@+id/titleLayerProgress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/titleLayer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_1"
+        android:text="Layer"
+        android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
+        app:layout_constraintBottom_toTopOf="@+id/layerSeekBar"
+        app:layout_constraintStart_toStartOf="@+id/layerSeekBar" />
+
+    <TextView
+        android:id="@+id/layerNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="5"
+        android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+        android:textColor="@color/light_text"
+        app:layout_constraintBottom_toBottomOf="@+id/titleLayer"
+        app:layout_constraintStart_toEndOf="@+id/titleLayer" />
+
+    <TextView
+        android:id="@+id/titleLayerProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_1"
+        android:text="Layer Progress"
+        android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
+        app:layout_constraintBottom_toTopOf="@+id/layerProgressSeekBar"
+        app:layout_constraintStart_toStartOf="@+id/layerSeekBar" />
+
+    <TextView
+        android:id="@+id/layerProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="65%"
+        android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+        android:textColor="@color/light_text"
+        app:layout_constraintBottom_toBottomOf="@+id/titleLayerProgress"
+        app:layout_constraintStart_toEndOf="@+id/titleLayerProgress" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

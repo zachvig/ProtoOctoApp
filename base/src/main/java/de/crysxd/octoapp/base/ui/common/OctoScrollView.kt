@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.util.Property
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewPropertyAnimator
 import android.view.animation.DecelerateInterpolator
@@ -20,6 +21,7 @@ class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: A
 
     private var octoActivity: OctoActivity? = null
     private var initialState: OctoToolbar.State? = null
+    var isUserInputEnabled = true
 
     private val topShadowDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.top_scroll_edge_shadow, context.theme)
     private var topShadowAlpha = 0f
@@ -52,6 +54,9 @@ class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: A
         setWillNotDraw(false)
         isFillViewport = true
     }
+
+    override fun onInterceptTouchEvent(ev: MotionEvent?) =
+        isUserInputEnabled && super.onInterceptTouchEvent(ev)
 
     @Suppress("DEPRECATION")
     fun setupWithToolbar(octoActivity: OctoActivity, bottomAction: View? = null) {

@@ -26,7 +26,7 @@ sealed class GcodeRenderContextFactory {
             val layer = gcode.layers[layer]
             val moveCount = layer.moveCount * progress
             val paths = layer.moves.map {
-                val count = it.value.first.last { i -> i.positionInLayer <= moveCount }.positionInArray + 4
+                val count = it.value.first.lastOrNull { i -> i.positionInLayer <= moveCount }?.let { i -> i.positionInArray + 4 } ?: 0
                 GcodePath(
                     type = it.key,
                     offset = 0,
