@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.pre_print_controls.ui.file_details
 
 import android.os.Bundle
+import android.transition.TransitionManager
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -9,19 +10,23 @@ import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.squareup.picasso.Callback
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.Injector
 import de.crysxd.octoapp.pre_print_controls.di.injectParentViewModel
+import de.crysxd.octoapp.pre_print_controls.ui.CropAlphaTransformation
 import kotlinx.android.synthetic.main.fragment_info_tab.*
 import java.text.DateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 class InfoTab : Fragment(R.layout.fragment_info_tab) {
 
@@ -38,8 +43,33 @@ class InfoTab : Fragment(R.layout.fragment_info_tab) {
             val file = viewModel.file
             val formatDurationUseCase = de.crysxd.octoapp.base.di.Injector.get().formatDurationUseCase()
 
-            printName.text = file.name
+            // Load preview image
+            file.thumbnail?.let {
+                Injector.get().picasso().observe(viewLifecycleOwner) { picasso ->
+                    picasso.load(it)
+                        .noFade()
+                        .transform(CropAlphaTransformation())
+                        .into(preview, object : Callback {
+                            override fun onError(e: Exception?) = Unit
+                            override fun onSuccess() {
+                                TransitionManager.beginDelayedTransition(view as ViewGroup)
+                                preview.isVisible = true
 
+                                // Limit to 16:9 at most
+                                preview.measure(
+                                    View.MeasureSpec.makeMeasureSpec(generatedContent.width, View.MeasureSpec.EXACTLY),
+                                    View.MeasureSpec.makeMeasureSpec((generatedContent.width * (9 / 16f)).roundToInt(), View.MeasureSpec.AT_MOST),
+                                )
+                                preview.updateLayoutParams {
+                                    height = preview.measuredHeight
+                                }
+                            }
+                        })
+                }
+            }
+
+            // Bind data
+            printName.text = file.name
             addTitle(R.string.print_info)
             addDetail(
                 label = R.string.print_time,
