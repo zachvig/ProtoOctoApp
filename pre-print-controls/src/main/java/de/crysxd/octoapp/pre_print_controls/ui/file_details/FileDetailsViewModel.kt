@@ -10,6 +10,8 @@ class FileDetailsViewModel(
     private val startPrintJobUseCase: StartPrintJobUseCase
 ) : BaseViewModel() {
 
+    lateinit var file: FileObject.File
+
     fun startPrint(file: FileObject.File) = viewModelScope.launch(coroutineExceptionHandler) {
         startPrintJobUseCase.execute(file)
     }

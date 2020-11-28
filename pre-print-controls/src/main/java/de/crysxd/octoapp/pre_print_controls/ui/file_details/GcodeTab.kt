@@ -11,6 +11,8 @@ import de.crysxd.octoapp.base.gcode.parse.CuraGcodeParser
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderContextFactory
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
 import de.crysxd.octoapp.pre_print_controls.R
+import de.crysxd.octoapp.pre_print_controls.di.Injector
+import de.crysxd.octoapp.pre_print_controls.di.injectParentViewModel
 import kotlinx.android.synthetic.main.fragment_gcode_tab.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,6 +23,8 @@ import kotlin.system.measureTimeMillis
 const val LAYER_PROGRESS_STEPS = 1000
 
 class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
+
+    private val viewModel: FileDetailsViewModel by injectParentViewModel(Injector.get().viewModelFactory())
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

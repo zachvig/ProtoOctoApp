@@ -23,11 +23,12 @@ import kotlinx.android.synthetic.main.fragment_file_details.*
 class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
 
     private val viewModel: FileDetailsViewModel by injectViewModel(Injector.get().viewModelFactory())
-    private val file by lazy { navArgs<FileDetailsFragmentArgs>().value.file }
     private val adapter by lazy { Adapter() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.file = navArgs<FileDetailsFragmentArgs>().value.file
 
         viewPager.adapter = adapter
         viewPager.offscreenPageLimit = adapter.itemCount
@@ -72,8 +73,8 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
 
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
         requireOctoActivity().octo.isVisible = true
         scrollView.setupWithToolbar(requireOctoActivity())
