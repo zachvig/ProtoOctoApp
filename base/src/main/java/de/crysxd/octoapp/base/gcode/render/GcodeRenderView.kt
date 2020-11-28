@@ -102,8 +102,8 @@ class GcodeRenderView @JvmOverloads constructor(
         val minXOffset = width - (params.printBedSizeMm.x * params.mmToPxFactor * zoom)
         val minYOffset = height - (params.printBedSizeMm.y * params.mmToPxFactor * zoom)
 
-        scrollOffset.x = scrollOffset.x.coerceIn(minXOffset, 0f)
-        scrollOffset.y = scrollOffset.y.coerceIn(minYOffset, 0f)
+        scrollOffset.x = scrollOffset.x.coerceAtLeast(minXOffset).coerceAtMost(0f)
+        scrollOffset.y = scrollOffset.y.coerceAtLeast(minYOffset).coerceAtMost(0f)
     }
 
     private fun animateZoom(focusX: Float, focusY: Float, newZoom: Float) {
