@@ -1,10 +1,18 @@
 package de.crysxd.octoapp.base.gcode.render
 
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
+import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.models.GcodePath
 import de.crysxd.octoapp.base.gcode.render.models.GcodeRenderContext
 
 sealed class GcodeRenderContextFactory {
+
+    protected val GcodePath.priority
+        get() = when (type) {
+            Move.Type.Travel -> 1
+            Move.Type.Extrude -> 0
+        }
+
     abstract fun extractMoves(gcode: Gcode): GcodeRenderContext
 
     data class ForFileLocation(val byte: Int) : GcodeRenderContextFactory() {
@@ -27,7 +35,7 @@ sealed class GcodeRenderContextFactory {
                 )
             }
 
-            return GcodeRenderContext(paths)
+            return GcodeRenderContext(paths.sortedBy { it.priority })
         }
     }
 }
