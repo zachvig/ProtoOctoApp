@@ -31,11 +31,16 @@ class RemoteGcodeFileDataSource(
 
         val gcode = measureTime("Parse file") {
             withContext(Dispatchers.Default) {
-                val parser = measureTime("  Find parser") {
-                    gcodeParses.firstOrNull { it.canParseFile(fileContent) }
-                }
-                measureTime("  Parsing gcode") {
-                    parser?.parseFile(fileContent)
+                try {
+                    val parser = measureTime("  Find parser") {
+                        gcodeParses.firstOrNull { it.canParseFile(fileContent) }
+                    }
+                    measureTime("  Parsing gcode") {
+                        parser?.parseFile(fileContent)
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    null
                 }
             }
         } ?: return@flow emit(GcodeFileDataSource.LoadState.Failed(IllegalStateException("Unable to parse file")))

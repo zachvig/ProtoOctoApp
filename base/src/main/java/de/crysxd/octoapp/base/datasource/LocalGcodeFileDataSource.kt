@@ -40,7 +40,7 @@ class LocalGcodeFileDataSource(
     }
 
     override fun canLoadFile(file: FileObject.File): Boolean =
-        getCacheEntry(file.cacheKey)?.localFile?.exists() == true
+        false//getCacheEntry(file.cacheKey)?.localFile?.exists() == true
 
     @Suppress("BlockingMethodInNonBlockingContext")
     override fun loadFile(file: FileObject.File): Flow<GcodeFileDataSource.LoadState> = flow {

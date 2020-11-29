@@ -5,8 +5,8 @@ import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.parse.models.Layer
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.utils.measureTime
+import timber.log.Timber
 import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 abstract class GcodeParser {
 
@@ -15,9 +15,6 @@ abstract class GcodeParser {
     private var moveCountInLayer = 0
     private val lastPosition: PointF = PointF(0f, 0f)
     private var isAbsolutePositioningActive = true
-    private val patternX = Pattern.compile("X(\\d+\\.?\\d*)")
-    private val patternY = Pattern.compile("Y(\\d+\\.?\\d*)")
-    private val patternE = Pattern.compile("E(\\d+\\.?\\d*)")
 
     abstract fun canParseFile(content: String): Boolean
 
@@ -32,7 +29,7 @@ abstract class GcodeParser {
 
         measureTime("Parsing lines") {
             lines.forEach {
-                interpretLine(it, positionInFile)
+                parseLine(it, positionInFile)
                 positionInFile += it.length
             }
         }
@@ -40,50 +37,47 @@ abstract class GcodeParser {
         return Gcode(layers.toList())
     }
 
-    private fun interpretLine(line: String, positionInFile: Int) {
+    private fun parseLine(line: String, positionInFile: Int) {
         if (isComment(line)) {
-            interpretComment(line)
+            parseComment(line)
         } else {
-            interpretCommand(line, positionInFile)
+            parseCommand(line, positionInFile)
         }
     }
 
     private fun isComment(line: String) = line.startsWith(";")
 
-    private fun interpretComment(line: String) = when {
+    private fun parseComment(line: String) = when {
         isLayerChange(line) -> startNewLayer()
         else -> Unit
     }
 
-    private fun interpretCommand(line: String, positionInFile: Int) = when {
+    private fun parseCommand(line: String, positionInFile: Int) = when {
         isAbsolutePositioningCommand(line) -> isAbsolutePositioningActive = true
         isRelativePositioningCommand(line) -> isAbsolutePositioningActive = false
         isMoveCommand(line) -> interpretMove(line, positionInFile)
         else -> Unit
     }
 
+    private fun extractValue(label: String, line: String): Float? {
+        try {
+            val start = line.indexOf(label)
+            if (start < 0) return null
+            val mappedStart = if (start < 0) return null else start + label.length
+            val end = line.indexOf(' ', startIndex = mappedStart)
+            val mappedEnd = if (end < 0) line.length else end
+            return line.substring(mappedStart until mappedEnd).toFloat()
+        } catch (e: NumberFormatException) {
+            Timber.e(e, "Failed to extract `$label` from `$line`")
+            throw e
+        }
+    }
+
     private fun interpretMove(line: String, positionInFile: Int) {
-        // Skip line if no X Y coordinates
-        if (!line.contains("X") || !line.contains("Y")) {
-            return
-        }
-
-        // Get positions
-        val matcherX = patternX.matcher(line)
-        val matcherY = patternY.matcher(line)
-        matcherX.find()
-        matcherY.find()
-        val x = matcherX.groupOrNull(1)?.toFloat() ?: return
-        val y = matcherY.groupOrNull(1)?.toFloat() ?: return
-
-        // Only fire Regex if E is contained in line (saves time on travel moves)
-        val e = if (line.contains("E")) {
-            val matcherE = patternE.matcher(line)
-            matcherE.find()
-            matcherE.groupOrNull(1)?.toFloat() ?: 0f
-        } else {
-            0f
-        }
+        // Get positions (don't use regex, it's slower)
+        val x = extractValue("X", line) ?: return
+        val y = extractValue("Y", line) ?: return
+        val e = extractValue("E", line) ?: return
 
         // Convert to absolute position
         val absoluteX = if (isAbsolutePositioningActive) {
