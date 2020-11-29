@@ -9,6 +9,7 @@ import de.crysxd.octoapp.octoprint.models.files.FileObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
@@ -33,24 +34,22 @@ class LocalGcodeFileDataSource(
     override fun canLoadFile(file: FileObject.File): Boolean = sharedPreferences.contains(file.cacheKey)
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    override fun loadFile(file: FileObject.File): Flow<GcodeFileDataSource.LoadState> = flow<GcodeFileDataSource.LoadState> {
-        withContext(Dispatchers.IO) {
-            try {
-                emit(GcodeFileDataSource.LoadState.Loading)
-                val cacheEntry = gson.fromJson(sharedPreferences.getString(file.cacheKey, null), CacheEntry::class.java)
+    override fun loadFile(file: FileObject.File): Flow<GcodeFileDataSource.LoadState> = flow {
+        try {
+            emit(GcodeFileDataSource.LoadState.Loading)
+            val cacheEntry = gson.fromJson(sharedPreferences.getString(file.cacheKey, null), CacheEntry::class.java)
 
-                val gcode = cacheEntry.localFile.inputStream().use {
-                    ObjectInputStream(it).readObject() as Gcode
-                }
-
-                emit(GcodeFileDataSource.LoadState.Ready(gcode))
-            } catch (e: Exception) {
-                sharedPreferences.edit().remove(file.cacheKey)
-                Timber.e(e)
-                emit(GcodeFileDataSource.LoadState.Failed(e))
+            val gcode = cacheEntry.localFile.inputStream().use {
+                ObjectInputStream(it).readObject() as Gcode
             }
+
+            emit(GcodeFileDataSource.LoadState.Ready(gcode))
+        } catch (e: Exception) {
+            sharedPreferences.edit().remove(file.cacheKey)
+            Timber.e(e)
+            emit(GcodeFileDataSource.LoadState.Failed(e))
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun cacheGcode(file: FileObject.File, gcode: Gcode) = withContext(Dispatchers.IO) {
