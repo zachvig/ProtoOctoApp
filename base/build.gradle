@@ -92,6 +92,11 @@ dependencies {
     api project(':octoprint')
 
     /*
+     * Serialization
+     */
+    implementation 'de.ruedigermoeller:fst:2.56'
+
+    /*
      * Preferences
      */
     api "androidx.preference:preference-ktx:1.1.1"

@@ -1,106 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <de.crysxd.octoapp.base.ui.common.OctoScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@drawable/bg_preview_image"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/margin_3"
-        android:paddingTop="@dimen/common_view_top_padding"
-        android:paddingRight="@dimen/margin_3">
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingTop="@dimen/common_view_top_padding">
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_2"
-            android:layout_weight="1">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/noImageHint"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawablePadding="@dimen/margin_1"
-                android:gravity="center"
-                android:text="@string/no_preview_image_available"
-                app:drawableTopCompat="@drawable/ic_outline_image_not_supported_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed" />
+                app:tabSelectedTextColor="@color/dark_text"
+                app:tabTextAppearance="@style/OctoTheme.TextAppearance"
+                app:tabTextColor="@color/normal_text">
 
-            <ImageView
-                android:id="@+id/imageViewPreview"
+                <!-- This tabs are only for the layout preview, will be created by the ViewPager! -->
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Info" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Gcode" />
+
+            </com.google.android.material.tabs.TabLayout>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:importantForAccessibility="no"
-                android:scaleType="fitCenter"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="0dp"
-                tools:src="" />
+                android:layout_height="match_parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <TextView
-            android:id="@+id/textViewFileName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_2"
-            android:ellipsize="middle"
-            android:maxLines="2"
-            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
-            android:textColor="@color/normal_text"
-            tools:text="CE3_45e952b5-e965-483a-9e25-df4a4dbeeb10" />
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabSelectedTextColor="@color/dark_text"
-            app:tabTextAppearance="@style/OctoTheme.TextAppearance"
-            app:tabTextColor="@color/normal_text">
+    </de.crysxd.octoapp.base.ui.common.OctoScrollView>
 
-            <!-- This tabs are only for the layout preview, will be created by the ViewPager! -->
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Print Info" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="File" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="History" />
-
-        </com.google.android.material.tabs.TabLayout>
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
+    <FrameLayout
+        android:id="@+id/bottomAction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:layout_height="200dp" />
+        android:layout_gravity="bottom"
+        android:clipToPadding="false"
+        android:paddingLeft="@dimen/margin_2"
+        android:paddingTop="@dimen/margin_2"
+        android:paddingRight="@dimen/margin_2"
+        android:paddingBottom="@dimen/margin_2"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <Button
-        android:id="@+id/buttonStartPrint"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_2"
-        android:layout_marginRight="@dimen/margin_2"
-        android:layout_marginBottom="@dimen/margin_2"
-        android:text="@string/start_printing" />
+        <Button
+            android:id="@+id/buttonStartPrint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/start_printing" />
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+        <de.crysxd.octoapp.base.ui.common.OctoMoreButton
+            android:id="@+id/buttonMore"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:elevation="10dp" />
+    </FrameLayout>
+
+</FrameLayout>

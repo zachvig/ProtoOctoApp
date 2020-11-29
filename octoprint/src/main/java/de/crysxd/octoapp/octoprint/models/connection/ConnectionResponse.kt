@@ -1,5 +1,7 @@
 package de.crysxd.octoapp.octoprint.models.connection
 
+import com.google.gson.annotations.SerializedName
+
 data class ConnectionResponse(
     val current: Connection,
     val options: ConnectionOptions
@@ -38,9 +40,29 @@ data class ConnectionResponse(
     }
 
     data class PrinterProfile(
-        val name: String,
-        val id: String
+        val id: String,
+        val model: String?,
+        val name: String?,
+        val volume: Volume?,
+        val extruder: Extruder?
     )
 
+    data class Volume(
+        val depth: Float,
+        val width: Float,
+        val height: Float,
+        val origin: Origin,
+    )
 
+    data class Extruder(
+        val nozzleDiameter: Float
+    )
+
+    enum class Origin {
+        @SerializedName("lowerleft")
+        LowerLeft,
+
+        @SerializedName("center")
+        Center
+    }
 }

@@ -27,6 +27,6 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
 
     private fun isWebcamSupported(settings: Settings) = settings.webcam.webcamEnabled
 
-    private fun isPsuControlSupported(settings: Settings) = settings.plugins.containsKey("psucontrol")
+    private fun isPsuControlSupported(settings: Settings) = settings.plugins.settings.containsKey("psucontrol")
 
 }

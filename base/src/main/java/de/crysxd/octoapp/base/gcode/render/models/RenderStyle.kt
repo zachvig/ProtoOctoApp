@@ -1,0 +1,10 @@
+package de.crysxd.octoapp.base.gcode.render.models
+
+import android.graphics.Paint
+import androidx.annotation.DrawableRes
+import de.crysxd.octoapp.base.gcode.parse.models.Move
+
+data class RenderStyle(
+    val paintPalette: (Move.Type) -> Paint,
+    @DrawableRes val background: Int
+)
