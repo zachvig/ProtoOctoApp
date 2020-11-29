@@ -87,4 +87,14 @@
         app:layout_constraintBottom_toBottomOf="@+id/titleLayerProgress"
         app:layout_constraintStart_toEndOf="@+id/titleLayerProgress" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/renderView"
+        app:layout_constraintEnd_toEndOf="@+id/renderView"
+        app:layout_constraintStart_toStartOf="@+id/renderView"
+        app:layout_constraintTop_toTopOf="@+id/renderView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

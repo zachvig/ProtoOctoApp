@@ -48,5 +48,5 @@ class RenderGcodeUseCaseTest {
 
 
     private val gcode = File("/data/data/de.crysxd.octoapp.base.test/cache/CE3_Green_box_engraved.gcode")
-        .readText().let { CuraGcodeParser().interpretFile(it) }
+        .readText().let { CuraGcodeParser().parseFile(it) }
 }

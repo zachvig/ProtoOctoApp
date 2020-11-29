@@ -14,9 +14,9 @@ abstract class GcodeParser {
     private val lastPosition: PointF = PointF(0f, 0f)
     private var isAbsolutePositioningActive = true
 
-    abstract fun canInterpretFile(content: String): Boolean
+    abstract fun canParseFile(content: String): Boolean
 
-    fun interpretFile(content: String): Gcode {
+    fun parseFile(content: String): Gcode {
         layers.clear()
         initNewLayer()
 
