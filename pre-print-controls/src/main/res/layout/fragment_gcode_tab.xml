@@ -16,6 +16,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
+        android:id="@+id/background"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/bg_input_shade_gradient"
@@ -88,36 +89,101 @@
         app:layout_constraintStart_toEndOf="@+id/titleLayerProgress"
         tools:text="65%" />
 
-    <LinearLayout
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:indeterminateBehavior="cycle"
+        android:max="100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/margin_1"
+        android:gravity="center"
+        android:text="Loading..."
+        android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+        android:textColor="@color/normal_text"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar"
+        app:layout_constraintEnd_toEndOf="@+id/progressBar"
+        app:layout_constraintStart_toStartOf="@+id/progressBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <androidx.constraintlayout.widget.Group
         android:id="@+id/progressOverlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/renderView"
-        app:layout_constraintEnd_toEndOf="@+id/renderView"
-        app:layout_constraintStart_toStartOf="@+id/renderView"
-        app:layout_constraintTop_toTopOf="@+id/renderView">
+        android:visibility="gone"
+        app:constraint_referenced_ids="progressBar,textView3"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar"
+        app:layout_constraintEnd_toEndOf="@+id/progressBar"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/progressBar"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="Loading..."
-            android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
-            android:textColor="@color/normal_text" />
+    <TextView
+        android:id="@+id/largeFileExplanation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_3"
+        android:layout_marginEnd="@dimen/margin_3"
+        android:layout_marginBottom="@dimen/margin_0"
+        android:gravity="center"
+        android:text="@string/this_file_exceeds_the_limit_for_mobile_downloads"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+        android:textColor="@color/dark_text"
+        app:layout_constraintBottom_toTopOf="@+id/largeFileExplanationDetail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_1"
-            android:indeterminate="true"
-            android:indeterminateBehavior="cycle"
-            android:max="100" />
+    <TextView
+        android:id="@+id/largeFileExplanationDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_3"
+        android:text="@string/you_can_change_this_limit_in_octoprint_settings"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
+        app:layout_constraintBottom_toTopOf="@+id/downloadLargeFile"
+        app:layout_constraintEnd_toEndOf="@+id/largeFileExplanation"
+        app:layout_constraintStart_toStartOf="@+id/largeFileExplanation"
+        app:layout_constraintTop_toBottomOf="@+id/largeFileExplanation" />
 
-    </LinearLayout>
+    <Button
+        android:id="@+id/downloadLargeFile"
+        style="@style/OctoTheme.Widget.Button.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/download_x"
+        app:layout_constraintBottom_toBottomOf="@+id/layerProgressSeekBar"
+        app:layout_constraintEnd_toEndOf="@+id/largeFileExplanation"
+        app:layout_constraintStart_toStartOf="@+id/largeFileExplanation"
+        app:layout_constraintTop_toBottomOf="@+id/largeFileExplanationDetail" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/largeFileOverlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="largeFileExplanation,largeFileExplanationDetail,downloadLargeFile" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/renderGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="titleLayer,layerNumber,layerProgress,titleLayerProgress,layerSeekBar,layerProgressSeekBar,background,renderView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

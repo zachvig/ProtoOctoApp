@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.flow
 class GcodeFileRepository(
     private val dataSources: GcodeFileDataSourceGroup
 ) {
-    fun loadFile(file: FileObject.File) = dataSources.dataSources.firstOrNull {
+    fun loadFile(file: FileObject.File, allowLargeFileDownloads: Boolean) = dataSources.dataSources.firstOrNull {
         it.canLoadFile(file)
-    }?.loadFile(file) ?: flow {
+    }?.loadFile(file, allowLargeFileDownloads) ?: flow {
         emit(GcodeFileDataSource.LoadState.Failed(IllegalStateException("No data source can load file")))
     }
 }

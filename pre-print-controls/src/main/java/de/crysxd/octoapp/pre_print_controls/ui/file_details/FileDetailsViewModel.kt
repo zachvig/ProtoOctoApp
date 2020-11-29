@@ -24,9 +24,9 @@ class FileDetailsViewModel(
         startPrintJobUseCase.execute(file)
     }
 
-    fun downloadGcode() = viewModelScope.launch {
+    fun downloadGcode(allowLargeFileDownloads: Boolean) = viewModelScope.launch {
         if (downloadChannel.valueOrNull == null) {
-            val flow = gcodeFileRepository.loadFile(file).onCompletion {
+            val flow = gcodeFileRepository.loadFile(file, allowLargeFileDownloads).onCompletion {
                 downloadChannel.offer(null)
             }
 

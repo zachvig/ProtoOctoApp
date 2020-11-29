@@ -44,7 +44,7 @@ class LocalGcodeFileDataSource(
         it.localFile.exists() && it.fileDate == file.date
     } == true
 
-    override fun loadFile(file: FileObject.File): Flow<GcodeFileDataSource.LoadState> = flow {
+    override fun loadFile(file: FileObject.File, allowLargeFileDownloads: Boolean): Flow<GcodeFileDataSource.LoadState> = flow {
         measureTime("Restore cache entry") {
             try {
                 emit(GcodeFileDataSource.LoadState.Loading(0f))

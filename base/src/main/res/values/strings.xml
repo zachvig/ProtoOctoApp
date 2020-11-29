@@ -83,4 +83,7 @@
     <string name="time_left_x">Time left: %s</string>
     <string name="eta_x">ETA: %s</string>
     <string name="never">Never</string>
+    <string name="you_can_change_this_limit_in_octoprint_settings">You can change this limit in OctoPrint settings</string>
+    <string name="this_file_exceeds_the_limit_for_mobile_downloads">This file exceeds the limit\nfor mobile downloads</string>
+    <string name="download_x">Download %s</string>
 </resources>

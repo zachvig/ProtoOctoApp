@@ -19,7 +19,11 @@ class RemoteGcodeFileDataSource(
 
     override fun canLoadFile(file: FileObject.File) = true
 
-    override fun loadFile(file: FileObject.File) = flow {
+    override fun loadFile(file: FileObject.File, allowLargeFileDownloads: Boolean) = flow {
+        if (!allowLargeFileDownloads && file.size > 1000) {
+            return@flow emit(GcodeFileDataSource.LoadState.FailedLargeFileDownloadRequired)
+        }
+
         emit(GcodeFileDataSource.LoadState.Loading(0f))
 
         val gcode = measureTime("Download and parse file") {

@@ -2,13 +2,16 @@ package de.crysxd.octoapp.pre_print_controls.ui.file_details
 
 import android.graphics.PointF
 import android.os.Bundle
+import android.transition.TransitionManager
 import android.view.View
+import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import de.crysxd.octoapp.base.datasource.GcodeFileDataSource
+import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderContextFactory
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
@@ -36,7 +39,10 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.downloadGcode()
+        viewModel.downloadGcode(false)
+
+        downloadLargeFile.text = getString(R.string.download_x, viewModel.file.size.asStyleFileSize())
+        downloadLargeFile.setOnClickListener { viewModel.downloadGcode(true) }
 
         // Prepare seekbars
         val seekBarListener = object : SeekBar.OnSeekBarChangeListener {
@@ -54,15 +60,17 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewModel.gcodeDownloadFlow.collectLatest {
                 try {
+                    TransitionManager.beginDelayedTransition(view as ViewGroup)
                     layerSeekBar.isEnabled = false
                     layerProgressSeekBar.isEnabled = false
+                    largeFileOverlay.isVisible = false
 
                     when (it) {
                         is GcodeFileDataSource.LoadState.Loading -> {
                             progressOverlay.isVisible = true
                             progressBar.progress = (it.progress * 100).roundToInt()
                             progressBar.isIndeterminate = it.progress == 0f
-                            Timber.i("Progress: ${it.progress}")
+                            Timber.v("Progress: ${it.progress}")
                         }
                         is GcodeFileDataSource.LoadState.Ready -> {
                             progressOverlay.isVisible = false
@@ -76,6 +84,11 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
                             progressOverlay.isVisible = false
                             requireOctoActivity().showDialog(it.exception)
                             Timber.i("Error :(")
+                        }
+
+                        is GcodeFileDataSource.LoadState.FailedLargeFileDownloadRequired -> {
+                            largeFileOverlay.isVisible = true
+                            Timber.i("Large download required")
                         }
                     }
                 } catch (e: Exception) {
@@ -112,6 +125,8 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
                     ).extractMoves(gcode)
                 }
 
+                TransitionManager.beginDelayedTransition(view as ViewGroup)
+                renderGroup.isVisible = true
                 renderView.renderParams = GcodeRenderView.RenderParams(
                     renderContext = context,
                     printBedSizeMm = PointF(235f, 235f),
