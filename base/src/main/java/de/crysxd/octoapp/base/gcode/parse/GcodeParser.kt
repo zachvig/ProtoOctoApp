@@ -19,7 +19,7 @@ class GcodeParser {
     private var layers: MutableList<Layer> = mutableListOf()
     private var moves = mutableMapOf<Move.Type, Pair<MutableList<Move>, MutableList<Float>>>()
     private var moveCountInLayer = 0
-    private val lastPosition: PointF = PointF(0f, 0f)
+    private var lastPosition: PointF? = null
     private var isAbsolutePositioningActive = true
 
     suspend fun parseFile(content: InputStream, totalSize: Long, progressUpdate: suspend (Float) -> Unit): Gcode {
@@ -91,12 +91,12 @@ class GcodeParser {
         val absoluteX = if (isAbsolutePositioningActive) {
             x
         } else {
-            lastPosition.x + x
+            (lastPosition?.x ?: 0f) + x
         }
         val absoluteY = if (isAbsolutePositioningActive) {
             y
         } else {
-            lastPosition.y + y
+            (lastPosition?.y ?: 0f) + y
         }
 
         // Get type
@@ -109,8 +109,8 @@ class GcodeParser {
         addMove(
             type = type,
             positionInFile = positionInFile,
-            fromX = lastPosition.x,
-            fromY = lastPosition.y,
+            fromX = lastPosition?.x ?: absoluteX,
+            fromY = lastPosition?.y ?: absoluteY,
             toX = absoluteX,
             toY = absoluteY
         )
@@ -160,8 +160,13 @@ class GcodeParser {
         }
 
         moveCountInLayer++
-        lastPosition.x = toX
-        lastPosition.y = toY
+
+        if (lastPosition == null) {
+            lastPosition = PointF(0f, 0f)
+        }
+
+        lastPosition?.x = toX
+        lastPosition?.y = toY
     }
 
     private fun Matcher.groupOrNull(index: Int) = if (groupCount() >= index) {
