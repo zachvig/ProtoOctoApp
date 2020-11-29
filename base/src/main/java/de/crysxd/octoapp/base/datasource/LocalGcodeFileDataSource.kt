@@ -49,7 +49,6 @@ class LocalGcodeFileDataSource(
                 val cacheEntry = gson.fromJson(sharedPreferences.getString(file.cacheKey, null), CacheEntry::class.java)
 
                 val gcode = cacheEntry.localFile.inputStream().use {
-                    // ObjectInputStream(it).readObject() as Gcode
                     fstConfig.decodeFromStream(it) as Gcode
                 }
 
@@ -77,7 +76,6 @@ class LocalGcodeFileDataSource(
 
         cacheRoot.mkdirs()
         cacheEntry.localFile.outputStream().use {
-            //  ObjectOutputStream(it).writeObject(gcode)
             fstConfig.encodeToStream(it, gcode)
         }
 
