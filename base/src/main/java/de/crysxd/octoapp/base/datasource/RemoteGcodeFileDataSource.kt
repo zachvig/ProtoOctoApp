@@ -4,6 +4,7 @@ import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.gcode.parse.GcodeParser
 import de.crysxd.octoapp.base.utils.measureTime
 import de.crysxd.octoapp.octoprint.models.files.FileObject
+import de.crysxd.octoapp.octoprint.models.settings.Settings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.flow
@@ -20,7 +21,11 @@ class RemoteGcodeFileDataSource(
     override fun canLoadFile(file: FileObject.File) = true
 
     override fun loadFile(file: FileObject.File, allowLargeFileDownloads: Boolean) = flow {
-        if (!allowLargeFileDownloads && file.size > 1000) {
+        val maxFileSize = octoPrintProvider.octoPrint().createSettingsApi()
+            .getSettings().plugins.settings.values.mapNotNull { it as? Settings.GcodeViewerSettings }
+            .firstOrNull()?.mobileSizeThreshold
+
+        if (maxFileSize != null && !allowLargeFileDownloads && file.size > maxFileSize) {
             return@flow emit(GcodeFileDataSource.LoadState.FailedLargeFileDownloadRequired)
         }
 

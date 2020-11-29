@@ -8,9 +8,11 @@ import de.crysxd.octoapp.octoprint.exceptions.OctoPrintException
 import de.crysxd.octoapp.octoprint.json.ConnectionStateDeserializer
 import de.crysxd.octoapp.octoprint.json.FileObjectDeserializer
 import de.crysxd.octoapp.octoprint.json.MessageDeserializer
+import de.crysxd.octoapp.octoprint.json.PluginSettingsDeserializer
 import de.crysxd.octoapp.octoprint.logging.LoggingInterceptorLogger
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import de.crysxd.octoapp.octoprint.models.files.FileObject
+import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.octoprint.websocket.EventWebSocket
 import okhttp3.Interceptor
@@ -92,6 +94,7 @@ class OctoPrint(
         .registerTypeAdapter(ConnectionResponse.ConnectionState::class.java, ConnectionStateDeserializer(getLogger()))
         .registerTypeAdapter(FileObject::class.java, FileObjectDeserializer(createBaseGson()))
         .registerTypeAdapter(Message::class.java, MessageDeserializer(getLogger(), createBaseGson()))
+        .registerTypeAdapter(Settings.PluginSettingsGroup::class.java, PluginSettingsDeserializer())
         .create()
 
     private fun createBaseGson(): Gson = GsonBuilder()
