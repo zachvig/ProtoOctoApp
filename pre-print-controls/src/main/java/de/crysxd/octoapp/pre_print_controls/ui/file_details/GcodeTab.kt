@@ -13,6 +13,7 @@ import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderContextFactory
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.utils.measureTime
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.Injector
 import de.crysxd.octoapp.pre_print_controls.di.injectParentViewModel
@@ -22,7 +23,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import kotlin.system.measureTimeMillis
 
 const val LAYER_PROGRESS_STEPS = 1000
 
@@ -98,7 +98,7 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
             layerNumber.text = layerSeekBar.progress.toString()
             layerProgress.text = String.format("%.0f %%", layerProgressPercent * 100)
 
-            measureTimeMillis {
+            measureTime("Prepare context") {
                 val context = withContext(Dispatchers.Default) {
                     GcodeRenderContextFactory.ForLayerProgress(
                         layer = layerSeekBar.progress,

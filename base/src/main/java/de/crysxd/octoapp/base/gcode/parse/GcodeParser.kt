@@ -4,6 +4,7 @@ import android.graphics.PointF
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.parse.models.Layer
 import de.crysxd.octoapp.base.gcode.parse.models.Move
+import de.crysxd.octoapp.base.utils.measureTime
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -11,8 +12,12 @@ abstract class GcodeParser {
 
     private var layers: MutableList<Layer> = mutableListOf()
     private var moves = mutableMapOf<Move.Type, Pair<MutableList<Move>, MutableList<Float>>>()
+    private var moveCountInLayer = 0
     private val lastPosition: PointF = PointF(0f, 0f)
     private var isAbsolutePositioningActive = true
+    private val patternX = Pattern.compile("X(\\d+\\.?\\d*)")
+    private val patternY = Pattern.compile("Y(\\d+\\.?\\d*)")
+    private val patternE = Pattern.compile("E(\\d+\\.?\\d*)")
 
     abstract fun canParseFile(content: String): Boolean
 
@@ -21,9 +26,15 @@ abstract class GcodeParser {
         initNewLayer()
 
         var positionInFile = 0
-        content.split("\n").forEach {
-            interpretLine(it, positionInFile)
-            positionInFile += it.length
+        val lines = measureTime("Splitting lines") {
+            content.split("\n")
+        }
+
+        measureTime("Parsing lines") {
+            lines.forEach {
+                interpretLine(it, positionInFile)
+                positionInFile += it.length
+            }
         }
 
         return Gcode(layers.toList())
@@ -52,16 +63,27 @@ abstract class GcodeParser {
     }
 
     private fun interpretMove(line: String, positionInFile: Int) {
+        // Skip line if no X Y coordinates
+        if (!line.contains("X") || !line.contains("Y")) {
+            return
+        }
+
         // Get positions
-        val matcherX = Pattern.compile(".*X(\\d+\\.?\\d*).*").matcher(line)
-        val matcherY = Pattern.compile(".*Y(\\d+\\.?\\d*).*").matcher(line)
-        val matcherE = Pattern.compile(".*E(\\d+\\.?\\d*).*").matcher(line)
+        val matcherX = patternX.matcher(line)
+        val matcherY = patternY.matcher(line)
         matcherX.find()
         matcherY.find()
-        matcherE.find()
         val x = matcherX.groupOrNull(1)?.toFloat() ?: return
         val y = matcherY.groupOrNull(1)?.toFloat() ?: return
-        val e = matcherE.groupOrNull(1)?.toFloat() ?: 0f
+
+        // Only fire Regex if E is contained in line (saves time on travel moves)
+        val e = if (line.contains("E")) {
+            val matcherE = patternE.matcher(line)
+            matcherE.find()
+            matcherE.groupOrNull(1)?.toFloat() ?: 0f
+        } else {
+            0f
+        }
 
         // Convert to absolute position
         val absoluteX = if (isAbsolutePositioningActive) {
@@ -114,6 +136,7 @@ abstract class GcodeParser {
 
     private fun initNewLayer() {
         moves.clear()
+        moveCountInLayer = 0
         moves[Move.Type.Travel] = Pair(mutableListOf(), mutableListOf())
         moves[Move.Type.Extrude] = Pair(mutableListOf(), mutableListOf())
     }
@@ -122,7 +145,7 @@ abstract class GcodeParser {
         moves[type]?.let {
             val move = Move(
                 positionInFile = positionInFile,
-                positionInLayer = moves.values.sumBy { i -> i.first.size },
+                positionInLayer = moveCountInLayer,
                 positionInArray = it.second.size,
                 type = type
             )
@@ -134,11 +157,12 @@ abstract class GcodeParser {
             it.second.add(toY)
         }
 
+        moveCountInLayer++
         lastPosition.x = toX
         lastPosition.y = toY
     }
 
-    private fun Matcher.groupOrNull(index: Int) = if (matches() && groupCount() >= index) {
+    private fun Matcher.groupOrNull(index: Int) = if (groupCount() >= index) {
         group(index)
     } else {
         null
