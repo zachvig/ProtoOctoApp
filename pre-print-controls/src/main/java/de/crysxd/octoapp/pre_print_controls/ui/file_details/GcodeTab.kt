@@ -50,6 +50,11 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
             override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
+                    // Show entire layer if layer is changed
+                    if (seekBar == layerSeekBar) {
+                        layerProgressSeekBar.progress = LAYER_PROGRESS_STEPS
+                    }
+
                     render()
                 }
             }
@@ -133,6 +138,7 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
                 }
 
                 TransitionManager.beginDelayedTransition(view as ViewGroup)
+                renderGroup.isVisible = true
                 renderView.renderParams = GcodeRenderView.RenderParams(
                     renderContext = context,
                     printBedSizeMm = PointF(235f, 235f),
