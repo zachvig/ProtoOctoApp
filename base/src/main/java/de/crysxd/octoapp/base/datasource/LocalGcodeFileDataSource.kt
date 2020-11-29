@@ -68,6 +68,9 @@ class LocalGcodeFileDataSource(
 
     @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun cacheGcode(file: FileObject.File, gcode: Gcode) = withContext(Dispatchers.IO) {
+        // Delete old file exists
+        getCacheEntry(file.cacheKey)?.localFile?.delete()
+
         Timber.i("Adding to cache: ${file.cacheKey}")
         val cacheEntry = CacheEntry(
             updatedAt = Date(),

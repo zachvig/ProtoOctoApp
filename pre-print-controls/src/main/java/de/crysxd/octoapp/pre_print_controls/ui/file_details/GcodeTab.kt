@@ -54,7 +54,6 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewModel.gcodeDownloadFlow.collectLatest {
                 try {
-                    Timber.i("Update: ${it::class.java}")
                     layerSeekBar.isEnabled = false
                     layerProgressSeekBar.isEnabled = false
 
@@ -70,10 +69,13 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
                             gcode = it.gcode
                             prepareGcodeRender(it.gcode)
                             render()
+                            Timber.i("Ready")
+
                         }
                         is GcodeFileDataSource.LoadState.Failed -> {
                             progressOverlay.isVisible = false
                             requireOctoActivity().showDialog(it.exception)
+                            Timber.i("Error :(")
                         }
                     }
                 } catch (e: Exception) {
