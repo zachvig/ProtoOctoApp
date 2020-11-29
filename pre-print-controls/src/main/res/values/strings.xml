@@ -58,4 +58,7 @@
     <string name="history">History</string>
     <string name="no_preview_image_available">No preview image available</string>
     <string name="unknown">Unknown</string>
+    <string name="layer">Layer</string>
+    <string name="loading">Loading…</string>
+    <string name="layer_progress">Layer Progress</string>
 </resources>

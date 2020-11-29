@@ -21,7 +21,7 @@ import de.crysxd.octoapp.base.gcode.render.models.GcodeRenderContext
 import timber.log.Timber
 import kotlin.system.measureTimeMillis
 
-private const val MIN_ZOOM = 0.9f
+private const val MIN_ZOOM = 1f
 private const val MAX_ZOOM = 10f
 private const val ZOOM_SPEED = 0.4f
 private const val DOUBLE_TAP_ZOOM = 5f
@@ -36,7 +36,7 @@ class GcodeRenderView @JvmOverloads constructor(
     private val scaleGestureDetector = ScaleGestureDetector(context, ScaleGestureListener())
 
     private var scrollOffset = PointF(0f, 0f)
-    private var zoom = 0.9f
+    private var zoom = 1f
     var renderParams: RenderParams? = null
         set(value) {
             field = value
@@ -57,14 +57,6 @@ class GcodeRenderView @JvmOverloads constructor(
         strokeCap = Paint.Cap.ROUND
     }
 
-    private val gridPaint = Paint().apply {
-        style = Paint.Style.STROKE
-        isAntiAlias = true
-        color = Color.LTGRAY
-        strokeWidth = 2 * (context.resources.displayMetrics.densityDpi / 160f)
-        strokeCap = Paint.Cap.ROUND
-    }
-
     private val Move.Type.paint
         get() = when (this) {
             Move.Type.Travel -> travelPaint
@@ -72,10 +64,10 @@ class GcodeRenderView @JvmOverloads constructor(
         }
 
     private val RenderParams.mmToPxFactor
-        get() = width / printBedSizeMm.x
+        get() = (width - paddingLeft - paddingRight) / printBedSizeMm.x
 
     private val RenderParams.pxToMmFactor
-        get() = printBedSizeMm.x / width
+        get() = printBedSizeMm.x / (width - paddingLeft - paddingRight)
 
     init {
         setWillNotDraw(false)
@@ -175,16 +167,6 @@ class GcodeRenderView @JvmOverloads constructor(
         // Draw background
         params.background?.setBounds(0, 0, params.printBedSizeMm.x.toInt(), params.printBedSizeMm.y.toInt())
         params.background?.draw(canvas)
-
-        // Draw grid
-//        val scaledGridPaintStrokeWidth = (gridPaint.strokeWidth / totalFactor) / 2f
-//        canvas.drawRect(
-//            scaledGridPaintStrokeWidth,
-//            scaledGridPaintStrokeWidth,
-//            params.printBedSizeMm.x - scaledGridPaintStrokeWidth,
-//            params.printBedSizeMm.y - scaledGridPaintStrokeWidth,
-//            gridPaint
-//        )
 
         // Render Gcode
         params.renderContext.paths.forEach {
