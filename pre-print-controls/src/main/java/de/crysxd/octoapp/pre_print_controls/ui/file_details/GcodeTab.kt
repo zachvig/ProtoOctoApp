@@ -57,10 +57,17 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
         layerSeekBar.setOnSeekBarChangeListener(seekBarListener)
         layerProgressSeekBar.setOnSeekBarChangeListener(seekBarListener)
 
+        var lastState: GcodeFileDataSource.LoadState? = null
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewModel.gcodeDownloadFlow.collectLatest {
                 try {
-                    TransitionManager.beginDelayedTransition(view as ViewGroup)
+                    // Animate changes between states
+                    val lastStateVal = lastState
+                    if (lastStateVal == null || it::class.java != lastStateVal::class.java) {
+                        lastState = it
+                        TransitionManager.beginDelayedTransition(view as ViewGroup)
+                    }
+
                     layerSeekBar.isEnabled = false
                     layerProgressSeekBar.isEnabled = false
                     largeFileOverlay.isVisible = false
@@ -126,7 +133,6 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
                 }
 
                 TransitionManager.beginDelayedTransition(view as ViewGroup)
-                renderGroup.isVisible = true
                 renderView.renderParams = GcodeRenderView.RenderParams(
                     renderContext = context,
                     printBedSizeMm = PointF(235f, 235f),
