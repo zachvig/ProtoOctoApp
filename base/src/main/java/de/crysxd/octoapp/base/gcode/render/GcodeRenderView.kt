@@ -24,7 +24,7 @@ import kotlin.system.measureTimeMillis
 
 private const val MIN_ZOOM = 1f
 private const val MAX_ZOOM = 10f
-private const val ZOOM_SPEED = 0.4f
+private const val ZOOM_SPEED = 0.2f
 private const val DOUBLE_TAP_ZOOM = 5f
 
 class GcodeRenderView @JvmOverloads constructor(
@@ -158,6 +158,7 @@ class GcodeRenderView @JvmOverloads constructor(
         style.paintPalette(Move.Type.Travel).strokeWidth = strokeWidth * 0.5f
 
         // Scale and transform so the desired are is visible
+        canvas.save()
         canvas.translate(xOffset, yOffset)
         canvas.scale(totalFactor, totalFactor)
 
@@ -169,6 +170,11 @@ class GcodeRenderView @JvmOverloads constructor(
             (backgroundHeight * params.pxToMmFactor).toInt()
         )
         printBed?.draw(canvas)
+
+        // Apply same scale but mirror vertically as view's origin is top left and printer's is bottom left
+        canvas.restore()
+        canvas.translate(xOffset, yOffset + printBedHeightPx)
+        canvas.scale(totalFactor, -totalFactor)
 
         // Render Gcode
         params.renderContext.paths.forEach {
