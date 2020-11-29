@@ -85,7 +85,7 @@ class GcodeParser {
         // Get positions (don't use regex, it's slower)
         val x = extractValue("X", line) ?: return
         val y = extractValue("Y", line) ?: return
-        val e = extractValue("E", line) ?: return
+        val e = extractValue("E", line) ?: 0f
 
         // Convert to absolute position
         val absoluteX = if (isAbsolutePositioningActive) {

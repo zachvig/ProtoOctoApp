@@ -145,8 +145,6 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
                     background = ContextCompat.getDrawable(requireContext(), R.drawable.gcode_background_creality),
                     extrusionWidthMm = 0.5f,
                 )
-
-                progressBar.isVisible = false
             }.let {
                 Timber.v("Preparing GcodeRenderView took ${it}ms")
             }
