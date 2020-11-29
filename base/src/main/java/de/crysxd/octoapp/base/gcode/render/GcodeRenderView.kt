@@ -194,7 +194,6 @@ class GcodeRenderView @JvmOverloads constructor(
             val zoomChange = detector.scaleFactor * ZOOM_SPEED * scaleDirection
             val newZoom = (zoom + zoomChange).coerceIn(MIN_ZOOM, MAX_ZOOM)
             zoom(detector.focusX, detector.focusY, newZoom)
-            Timber.i("Zoom: $zoomChange")
             invalidate()
             return true
         }
