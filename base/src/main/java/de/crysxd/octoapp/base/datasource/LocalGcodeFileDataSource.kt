@@ -4,20 +4,24 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.google.gson.Gson
+import de.crysxd.octoapp.base.BuildConfig
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
+import de.crysxd.octoapp.base.gcode.parse.models.Layer
+import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
+import org.nustaq.serialization.FSTConfiguration
 import timber.log.Timber
 import java.io.File
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
 import java.util.*
+import kotlin.system.measureTimeMillis
 
-private const val MAX_CACHE_SIZE = 16 * 1024 * 1024 // 16 MB
+
+private const val MAX_CACHE_SIZE = 128 * 1024 * 1024 // 128 MB
 
 class LocalGcodeFileDataSource(
     context: Context,
@@ -26,45 +30,58 @@ class LocalGcodeFileDataSource(
 ) : GcodeFileDataSource {
 
     private val cacheRoot = File(context.cacheDir, "gcode")
+    private val fstConfig = FSTConfiguration.createAndroidDefaultConfiguration()
 
     init {
-        cacheRoot.mkdirs()
+        fstConfig.registerClass(Gcode::class.java)
+        fstConfig.registerClass(Layer::class.java)
+        fstConfig.registerClass(Move::class.java)
+        fstConfig.registerClass(Move.Type::class.java)
     }
 
-    override fun canLoadFile(file: FileObject.File): Boolean = sharedPreferences.contains(file.cacheKey)
+    override fun canLoadFile(file: FileObject.File): Boolean =
+        getCacheEntry(file.cacheKey)?.localFile?.exists() == true
 
     @Suppress("BlockingMethodInNonBlockingContext")
     override fun loadFile(file: FileObject.File): Flow<GcodeFileDataSource.LoadState> = flow {
-        try {
-            emit(GcodeFileDataSource.LoadState.Loading)
-            val cacheEntry = gson.fromJson(sharedPreferences.getString(file.cacheKey, null), CacheEntry::class.java)
+        measureTimeMillis {
+            try {
+                emit(GcodeFileDataSource.LoadState.Loading)
+                val cacheEntry = gson.fromJson(sharedPreferences.getString(file.cacheKey, null), CacheEntry::class.java)
 
-            val gcode = cacheEntry.localFile.inputStream().use {
-                ObjectInputStream(it).readObject() as Gcode
+                val gcode = cacheEntry.localFile.inputStream().use {
+                    // ObjectInputStream(it).readObject() as Gcode
+                    fstConfig.decodeFromStream(it) as Gcode
+                }
+
+                emit(GcodeFileDataSource.LoadState.Ready(gcode))
+            } catch (e: Exception) {
+                // Cache most likely corrupted, clean out
+                kotlin.runCatching {
+                    sharedPreferences.edit { clear() }
+                    cacheRoot.listFiles()?.forEach { it.delete() }
+                }
+
+                Timber.e(e)
+                emit(GcodeFileDataSource.LoadState.Failed(e))
             }
-
-            emit(GcodeFileDataSource.LoadState.Ready(gcode))
-        } catch (e: Exception) {
-            // Cache most likely corrupted, clean out
-            kotlin.runCatching {
-                sharedPreferences.edit { clear() }
-                cacheRoot.listFiles()?.forEach { it.delete() }
-            }
-
-            Timber.e(e)
-            emit(GcodeFileDataSource.LoadState.Failed(e))
+        }.let {
+            Timber.i("Restored cache entry in ${it}ms")
         }
     }.flowOn(Dispatchers.IO)
 
     @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun cacheGcode(file: FileObject.File, gcode: Gcode) = withContext(Dispatchers.IO) {
+        Timber.i("Adding to cache: ${file.cacheKey}")
         val cacheEntry = CacheEntry(
             updatedAt = Date(),
             localFile = createCacheFile()
         )
 
+        cacheRoot.mkdirs()
         cacheEntry.localFile.outputStream().use {
-            ObjectOutputStream(it).writeObject(gcode)
+            //  ObjectOutputStream(it).writeObject(gcode)
+            fstConfig.encodeToStream(it, gcode)
         }
 
         sharedPreferences.edit {
@@ -76,20 +93,32 @@ class LocalGcodeFileDataSource(
 
     private suspend fun cleanUp() = withContext(Dispatchers.IO) {
         fun totalSize() = cacheRoot.listFiles()?.sumByDouble { it.length().toDouble() }?.toLong() ?: 0L
-        val cacheEntries = sharedPreferences.all.map {
-            Pair(it.key, gson.fromJson(it.value as String, CacheEntry::class.java))
+        val cacheEntries = sharedPreferences.all.keys.map {
+            Pair(it, getCacheEntry(it))
         }.sortedBy {
             it.second.updatedAt
         }.toMutableList()
 
         // Delete files until cache size is below max
         while (totalSize() > MAX_CACHE_SIZE) {
+            if (BuildConfig.DEBUG) {
+                Timber.i(
+                    "Total size exceeds maximum: %.2f / %.2f Mb",
+                    totalSize() / 1024f / 1024f,
+                    MAX_CACHE_SIZE / 1024f / 1024f
+                )
+            }
+
             val oldest = cacheEntries.removeAt(0)
+            Timber.i("Removing from cache: ${oldest.first}")
             sharedPreferences.edit { remove(oldest.first) }
             oldest.second.localFile.delete()
 
         }
     }
+
+    private fun getCacheEntry(cacheKey: String) =
+        gson.fromJson(sharedPreferences.getString(cacheKey, null), CacheEntry::class.java)
 
     private val FileObject.File.cacheKey get() = path
 
