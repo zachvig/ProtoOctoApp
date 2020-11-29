@@ -54,9 +54,11 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
             }
         })
 
-        view.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            viewPager.updateLayoutParams<ViewGroup.LayoutParams> {
-                height = view.height - tabs.height
+        view.addOnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+            if (left != oldLeft || right != oldRight || top != oldTop || bottom != oldBottom) {
+                viewPager.updateLayoutParams<ViewGroup.LayoutParams> {
+                    height = view.height - tabs.height
+                }
             }
         }
     }
