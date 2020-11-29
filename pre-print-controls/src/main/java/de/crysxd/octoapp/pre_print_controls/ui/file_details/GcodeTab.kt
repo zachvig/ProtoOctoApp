@@ -6,7 +6,6 @@ import android.transition.TransitionManager
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -15,7 +14,9 @@ import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderContextFactory
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
+import de.crysxd.octoapp.base.gcode.render.models.RenderStyle
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.usecase.GenerateRenderStyleUseCase
 import de.crysxd.octoapp.base.utils.measureTime
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.pre_print_controls.R
@@ -37,6 +38,7 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
     private var previousRenderJob: Job? = null
     private var gcode: Gcode? = null
     private var profile: PrinterProfiles.Profile? = null
+    private var renderStyle: RenderStyle? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -69,6 +71,7 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
             viewModel.gcodeDownloadFlow.collectLatest {
                 try {
                     profile = it.second ?: profile
+                    renderStyle = it.third
                     val downloadState = it.first
 
                     // Animate changes between states
@@ -146,9 +149,8 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
                     renderGroup.isVisible = true
                     renderView.renderParams = GcodeRenderView.RenderParams(
                         renderContext = context,
-                        renderStyle = viewModel.renderStyle,
+                        renderStyle = renderStyle ?: GenerateRenderStyleUseCase.defaultStyle,
                         printBedSizeMm = PointF(it.volume.width, it.volume.depth),
-                        background = ContextCompat.getDrawable(requireContext(), R.drawable.print_bed_ender),
                         extrusionWidthMm = it.extruder.nozzleDiameter,
                     )
                 }

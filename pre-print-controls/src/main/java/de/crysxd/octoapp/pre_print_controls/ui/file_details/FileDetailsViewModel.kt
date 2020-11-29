@@ -23,8 +23,7 @@ class FileDetailsViewModel(
 ) : BaseViewModel() {
 
     lateinit var file: FileObject.File
-    lateinit var renderStyle: RenderStyle
-        private set
+    private val renderStyleChannel = ConflatedBroadcastChannel<RenderStyle>(GenerateRenderStyleUseCase.defaultStyle)
     private val profileChannel = ConflatedBroadcastChannel<PrinterProfiles.Profile?>(null)
     private val downloadChannel = ConflatedBroadcastChannel<Flow<GcodeFileDataSource.LoadState>?>()
     val gcodeDownloadFlow = downloadChannel.asFlow().filterNotNull()
@@ -32,11 +31,15 @@ class FileDetailsViewModel(
             it
         }.combine(profileChannel.asFlow()) { download, profile ->
             Pair(download, profile)
+        }.combine(renderStyleChannel.asFlow()) { pair, style ->
+            Triple(pair.first, pair.second, style)
         }
 
     init {
         viewModelScope.launch {
-            renderStyle = generateRenderStyleUseCase.execute(Unit)
+            renderStyleChannel.offer(generateRenderStyleUseCase.execute(Unit))
+        }
+        viewModelScope.launch {
             val profile = getCurrentPrinterProfileUseCase.execute(Unit)
             profileChannel.offer(profile)
         }

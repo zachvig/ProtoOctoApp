@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.minus
 import de.crysxd.octoapp.base.BuildConfig
 import de.crysxd.octoapp.base.gcode.parse.models.Move
@@ -37,8 +38,12 @@ class GcodeRenderView @JvmOverloads constructor(
 
     private var scrollOffset = PointF(0f, 0f)
     private var zoom = 1f
+    private var printBed: Drawable? = null
     var renderParams: RenderParams? = null
         set(value) {
+            printBed = value?.let {
+                ContextCompat.getDrawable(context, it.renderStyle.background)
+            }
             field = value
             invalidate()
         }
@@ -129,7 +134,7 @@ class GcodeRenderView @JvmOverloads constructor(
 
         // Calc offsets, center render if smaller than view
         val backgroundWidth = paddedWidth.toFloat()
-        val backgroundHeight = params.background?.let {
+        val backgroundHeight = printBed?.let {
             it.intrinsicHeight * (backgroundWidth / it.intrinsicWidth)
         } ?: paddedHeight.toFloat()
         val totalFactor = params.mmToPxFactor * zoom
@@ -157,13 +162,13 @@ class GcodeRenderView @JvmOverloads constructor(
         canvas.scale(totalFactor, totalFactor)
 
         // Draw background
-        params.background?.setBounds(
+        printBed?.setBounds(
             0,
             0,
             (backgroundWidth * params.pxToMmFactor).toInt(),
             (backgroundHeight * params.pxToMmFactor).toInt()
         )
-        params.background?.draw(canvas)
+        printBed?.draw(canvas)
 
         // Render Gcode
         params.renderContext.paths.forEach {
@@ -231,6 +236,5 @@ class GcodeRenderView @JvmOverloads constructor(
         val renderStyle: RenderStyle,
         val printBedSizeMm: PointF,
         val extrusionWidthMm: Float = 0.5f,
-        val background: Drawable?
     )
 }
