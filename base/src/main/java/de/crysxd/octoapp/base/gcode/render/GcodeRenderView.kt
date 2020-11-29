@@ -4,8 +4,6 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -18,7 +16,9 @@ import androidx.core.graphics.minus
 import de.crysxd.octoapp.base.BuildConfig
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.models.GcodeRenderContext
+import de.crysxd.octoapp.base.gcode.render.models.RenderStyle
 import timber.log.Timber
+import kotlin.math.max
 import kotlin.system.measureTimeMillis
 
 private const val MIN_ZOOM = 1f
@@ -43,31 +43,17 @@ class GcodeRenderView @JvmOverloads constructor(
             invalidate()
         }
 
-    private val extrudePaint = Paint().apply {
-        style = Paint.Style.STROKE
-        isAntiAlias = true
-        color = Color.LTGRAY
-        strokeCap = Paint.Cap.ROUND
-    }
+    private val paddedHeight
+        get() = height - paddingTop - paddingBottom
 
-    private val travelPaint = Paint().apply {
-        style = Paint.Style.STROKE
-        isAntiAlias = true
-        color = Color.GREEN
-        strokeCap = Paint.Cap.ROUND
-    }
-
-    private val Move.Type.paint
-        get() = when (this) {
-            Move.Type.Travel -> travelPaint
-            Move.Type.Extrude -> extrudePaint
-        }
+    private val paddedWidth
+        get() = width - paddingLeft - paddingRight
 
     private val RenderParams.mmToPxFactor
-        get() = (width - paddingLeft - paddingRight) / printBedSizeMm.x
+        get() = paddedWidth / printBedSizeMm.x
 
     private val RenderParams.pxToMmFactor
-        get() = printBedSizeMm.x / (width - paddingLeft - paddingRight)
+        get() = printBedSizeMm.x / paddedWidth
 
     init {
         setWillNotDraw(false)
@@ -136,41 +122,52 @@ class GcodeRenderView @JvmOverloads constructor(
 
         // Skip draw without params
         val params = renderParams ?: return
+        val style = params.renderStyle
 
         // Enforce scroll limits
         enforceScrollLimits(params)
 
         // Calc offsets, center render if smaller than view
+        val backgroundWidth = paddedWidth.toFloat()
+        val backgroundHeight = params.background?.let {
+            it.intrinsicHeight * (backgroundWidth / it.intrinsicWidth)
+        } ?: paddedHeight.toFloat()
         val totalFactor = params.mmToPxFactor * zoom
         val printBedWidthPx = params.printBedSizeMm.x * totalFactor
         val printBedHeightPx = params.printBedSizeMm.y * totalFactor
         val xOffset = if (printBedWidthPx < width) {
-            ((width - printBedWidthPx) / 2)
+            ((width - max(printBedWidthPx, backgroundWidth)) / 2)
         } else {
             scrollOffset.x
         }
         val yOffset = if (printBedHeightPx < height) {
-            ((height - printBedHeightPx) / 2)
+            ((height - max(printBedHeightPx, backgroundHeight)) / 2)
         } else {
             scrollOffset.y
         }
 
         // Calc line width and do not use less than 2px after the totalFactor is applied
         // Then divide by total as Canvas will apply scale later on the GPU
-        extrudePaint.strokeWidth = (params.extrusionWidthMm * totalFactor * 0.8f).coerceAtLeast(2f) / totalFactor
-        travelPaint.strokeWidth = extrudePaint.strokeWidth * 0.5f
+        val strokeWidth = (params.extrusionWidthMm * totalFactor * 0.8f).coerceAtLeast(2f) / totalFactor
+        style.paintPalette(Move.Type.Extrude).strokeWidth = strokeWidth
+        style.paintPalette(Move.Type.Travel).strokeWidth = strokeWidth * 0.5f
 
         // Scale and transform so the desired are is visible
         canvas.translate(xOffset, yOffset)
         canvas.scale(totalFactor, totalFactor)
 
         // Draw background
-        params.background?.setBounds(0, 0, params.printBedSizeMm.x.toInt(), params.printBedSizeMm.y.toInt())
+        params.background?.setBounds(
+            0,
+            0,
+            (backgroundWidth * params.pxToMmFactor).toInt(),
+            (backgroundHeight * params.pxToMmFactor).toInt()
+        )
         params.background?.draw(canvas)
 
         // Render Gcode
         params.renderContext.paths.forEach {
-            canvas.drawLines(it.points, it.offset, it.count, it.type.paint)
+            canvas.drawLines(it.points, it.offset, it.count, style.paintPalette(it.type))
         }
     }.let {
         if (BuildConfig.DEBUG) {
@@ -231,6 +228,7 @@ class GcodeRenderView @JvmOverloads constructor(
 
     data class RenderParams(
         val renderContext: GcodeRenderContext,
+        val renderStyle: RenderStyle,
         val printBedSizeMm: PointF,
         val extrusionWidthMm: Float = 0.5f,
         val background: Drawable?

@@ -32,6 +32,7 @@ class OctoPrintProvider(
     private val octoPrintMutex = Mutex()
     private var octoPrintCache: Pair<OctoPrintInstanceInformationV2, OctoPrint>? = null
     private val currentMessageChannel = ConflatedBroadcastChannel<Message.CurrentMessage>()
+    private val firmwareDataMessageChannel = ConflatedBroadcastChannel<Message.EventMessage.FirmwareData>()
 
     @Deprecated("Use octoPrintFlow")
     val octoPrint: LiveData<OctoPrint?> = octoPrintFlow().asLiveData()
@@ -47,6 +48,7 @@ class OctoPrintProvider(
                 .onEach {
                     updateAnalyticsProfileWithEvents(it)
                     ((it as? Event.MessageReceived)?.message as? Message.CurrentMessage)?.let(currentMessageChannel::offer)
+                    ((it as? Event.MessageReceived)?.message as? Message.EventMessage.FirmwareData)?.let(firmwareDataMessageChannel::offer)
                 }
                 .retry { delay(1000); true }
                 .collect()
@@ -80,6 +82,8 @@ class OctoPrintProvider(
         .catch { e -> Timber.e(e) }
 
     fun passiveCurrentMessageFlow() = currentMessageChannel.asFlow()
+
+    fun passiveFirmwareDataMessageFlow() = firmwareDataMessageChannel.asFlow()
 
     fun eventFlow(tag: String) = octoPrintFlow()
         .flatMapLatest { it?.getEventWebSocket()?.eventFlow(tag) ?: emptyFlow() }

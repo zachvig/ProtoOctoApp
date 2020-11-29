@@ -146,8 +146,9 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
                     renderGroup.isVisible = true
                     renderView.renderParams = GcodeRenderView.RenderParams(
                         renderContext = context,
+                        renderStyle = viewModel.renderStyle,
                         printBedSizeMm = PointF(it.volume.width, it.volume.depth),
-                        background = ContextCompat.getDrawable(requireContext(), R.drawable.gcode_background_creality),
+                        background = ContextCompat.getDrawable(requireContext(), R.drawable.print_bed_ender),
                         extrusionWidthMm = it.extruder.nozzleDiameter,
                     )
                 }
