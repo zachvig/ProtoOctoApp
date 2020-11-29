@@ -11,7 +11,7 @@ interface GcodeFileDataSource {
     fun loadFile(file: FileObject.File): Flow<LoadState>
 
     sealed class LoadState {
-        object Loading : LoadState()
+        data class Loading(val progress: Float) : LoadState()
         data class Ready(val gcode: Gcode) : LoadState()
         data class Failed(val exception: Exception) : LoadState()
     }

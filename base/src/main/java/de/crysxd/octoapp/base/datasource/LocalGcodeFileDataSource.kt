@@ -45,7 +45,7 @@ class LocalGcodeFileDataSource(
     override fun loadFile(file: FileObject.File): Flow<GcodeFileDataSource.LoadState> = flow {
         measureTime("Restore cache entry") {
             try {
-                emit(GcodeFileDataSource.LoadState.Loading)
+                emit(GcodeFileDataSource.LoadState.Loading(0f))
                 val cacheEntry = gson.fromJson(sharedPreferences.getString(file.cacheKey, null), CacheEntry::class.java)
 
                 val gcode = cacheEntry.localFile.inputStream().use {

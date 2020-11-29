@@ -7,6 +7,7 @@ import de.crysxd.octoapp.base.gcode.parse.models.Move
 import timber.log.Timber
 import java.io.InputStream
 import java.util.regex.Matcher
+import kotlin.math.roundToInt
 
 val NEW_LAYER_MARKERS = arrayOf(
     ";LAYER:",
@@ -21,14 +22,24 @@ class GcodeParser {
     private val lastPosition: PointF = PointF(0f, 0f)
     private var isAbsolutePositioningActive = true
 
-    fun parseFile(content: InputStream): Gcode {
+    suspend fun parseFile(content: InputStream, totalSize: Long, progressUpdate: suspend (Float) -> Unit): Gcode {
         layers.clear()
         initNewLayer()
         var positionInFile = 0
+        var lastUpdatePercent = 0
 
-        content.reader().forEachLine {
-            parseLine(it, positionInFile)
-            positionInFile += it.length
+        content.reader().useLines { lines ->
+            lines.iterator().forEach {
+                parseLine(it, positionInFile)
+                positionInFile += it.length
+
+                val progress = (positionInFile / totalSize.toFloat())
+                val percent = (progress * 100).roundToInt()
+                if (lastUpdatePercent != percent) {
+                    progressUpdate(progress)
+                    lastUpdatePercent = percent
+                }
+            }
         }
 
         return Gcode(layers.toList())

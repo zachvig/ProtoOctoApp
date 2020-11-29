@@ -23,6 +23,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import kotlin.math.roundToInt
 
 const val LAYER_PROGRESS_STEPS = 1000
 
@@ -58,17 +59,20 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
                     layerProgressSeekBar.isEnabled = false
 
                     when (it) {
-                        GcodeFileDataSource.LoadState.Loading -> {
-                            progressBar.isVisible = true
+                        is GcodeFileDataSource.LoadState.Loading -> {
+                            progressOverlay.isVisible = true
+                            progressBar.progress = (it.progress * 100).roundToInt()
+                            progressBar.isIndeterminate = it.progress == 0f
+                            Timber.i("Progress: ${it.progress}")
                         }
                         is GcodeFileDataSource.LoadState.Ready -> {
-                            progressBar.isVisible = false
+                            progressOverlay.isVisible = false
                             gcode = it.gcode
                             prepareGcodeRender(it.gcode)
                             render()
                         }
                         is GcodeFileDataSource.LoadState.Failed -> {
-                            progressBar.isVisible = false
+                            progressOverlay.isVisible = false
                             requireOctoActivity().showDialog(it.exception)
                         }
                     }

@@ -20,12 +20,14 @@ class RemoteGcodeFileDataSource(
     override fun canLoadFile(file: FileObject.File) = true
 
     override fun loadFile(file: FileObject.File) = flow {
-        emit(GcodeFileDataSource.LoadState.Loading)
+        emit(GcodeFileDataSource.LoadState.Loading(0f))
 
         val gcode = measureTime("Download and parse file") {
             try {
                 octoPrintProvider.octoPrint().createFilesApi().downloadFile(file)?.use {
-                    gcodeParser.parseFile(it)
+                    gcodeParser.parseFile(it, file.size) { progress ->
+                        emit(GcodeFileDataSource.LoadState.Loading(progress))
+                    }
                 }
             } catch (e: Exception) {
                 Timber.e(e)

@@ -88,14 +88,36 @@
         app:layout_constraintStart_toEndOf="@+id/titleLayerProgress"
         tools:text="65%" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
+    <LinearLayout
+        android:id="@+id/progressOverlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@+id/renderView"
         app:layout_constraintEnd_toEndOf="@+id/renderView"
         app:layout_constraintStart_toStartOf="@+id/renderView"
-        app:layout_constraintTop_toTopOf="@+id/renderView" />
+        app:layout_constraintTop_toTopOf="@+id/renderView">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Loading..."
+            android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+            android:textColor="@color/normal_text" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_1"
+            android:indeterminate="true"
+            android:indeterminateBehavior="cycle"
+            android:max="100" />
+
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
