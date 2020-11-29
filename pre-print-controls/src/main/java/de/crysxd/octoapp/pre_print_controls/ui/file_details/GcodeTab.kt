@@ -68,54 +68,42 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-            val gcode = withContext(Dispatchers.IO) {
-                File("/data/data/de.crysxd.octoapp/files/CE3_Green_box_engraved.gcode")
-                    .readText().let { CuraGcodeParser().interpretFile(it) }
-            }
+//        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+//            val gcode = withContext(Dispatchers.IO) {
+//                File("/data/data/de.crysxd.octoapp/files/CE3_Green_box_engraved.gcode")
+//                    .readText().let { CuraGcodeParser().interpretFile(it) }
+//            }
+//
+//            fun render() {
+//                viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+//                    val layerProgressPercent = layerProgressSeekBar.progress / LAYER_PROGRESS_STEPS.toFloat()
+//                    layerNumber.text = layerSeekBar.progress.toString()
+//                    layerProgress.text = String.format("%.0f %%", layerProgressPercent * 100)
+//
+//                    measureTimeMillis {
+//                        val context = withContext(Dispatchers.Default) {
+//                            GcodeRenderContextFactory.ForLayerProgress(
+//                                layer = layerSeekBar.progress,
+//                                progress = layerProgressPercent
+//                            ).extractMoves(gcode)
+//                        }
+//
+//                        renderView.renderParams = GcodeRenderView.RenderParams(
+//                            renderContext = context,
+//                            printBedSizeMm = PointF(235f, 235f),
+//                            background = ContextCompat.getDrawable(requireContext(), R.drawable.gcode_background_creality),
+//                            extrusionWidthMm = 0.5f,
+//                        )
+//                    }.let {
+//                        Timber.v("Preparing GcodeRenderView took ${it}ms")
+//                    }
+//                }
+//            }
+//
 
-            fun render() {
-                viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-                    val layerProgressPercent = layerProgressSeekBar.progress / LAYER_PROGRESS_STEPS.toFloat()
-                    layerNumber.text = layerSeekBar.progress.toString()
-                    layerProgress.text = String.format("%.0f %%", layerProgressPercent * 100)
-
-                    measureTimeMillis {
-                        val context = withContext(Dispatchers.Default) {
-                            GcodeRenderContextFactory.ForLayerProgress(
-                                layer = layerSeekBar.progress,
-                                progress = layerProgressPercent
-                            ).extractMoves(gcode)
-                        }
-
-                        renderView.renderParams = GcodeRenderView.RenderParams(
-                            renderContext = context,
-                            printBedSizeMm = PointF(235f, 235f),
-                            background = ContextCompat.getDrawable(requireContext(), R.drawable.gcode_background_creality),
-                            extrusionWidthMm = 0.5f,
-                        )
-                    }.let {
-                        Timber.v("Preparing GcodeRenderView took ${it}ms")
-                    }
-                }
-            }
-
-            val seekBarListener = object : SeekBar.OnSeekBarChangeListener {
-                override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-                override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) = render()
-            }
-
-            layerSeekBar.max = gcode.layers.size - 1
-            layerProgressSeekBar.max = LAYER_PROGRESS_STEPS
-            layerSeekBar.progress = gcode.layers.size
-            layerProgressSeekBar.progress = LAYER_PROGRESS_STEPS
-
-            layerSeekBar.setOnSeekBarChangeListener(seekBarListener)
-            layerProgressSeekBar.setOnSeekBarChangeListener(seekBarListener)
-
-            render()
-        }
+//
+//            render()
+//        }
     }
 
     private fun prepareGcodeRender(gcode: Gcode) {
