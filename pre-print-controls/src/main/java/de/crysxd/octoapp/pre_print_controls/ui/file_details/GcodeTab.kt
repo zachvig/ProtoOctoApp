@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.fragment_gcode_tab.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import kotlin.system.measureTimeMillis
@@ -31,6 +30,7 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
 
     private val viewModel: FileDetailsViewModel by injectParentViewModel(Injector.get().viewModelFactory())
     private var previousRenderJob: Job? = null
+    private var gcode: Gcode? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,69 +41,42 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
         val seekBarListener = object : SeekBar.OnSeekBarChangeListener {
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) = render()
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    render()
+                }
+            }
         }
         layerSeekBar.setOnSeekBarChangeListener(seekBarListener)
         layerProgressSeekBar.setOnSeekBarChangeListener(seekBarListener)
 
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewModel.gcodeDownloadFlow.collectLatest {
-                layerSeekBar.isEnabled = false
-                layerProgressSeekBar.isEnabled = false
+                try {
+                    Timber.i("Update: ${it::class.java}")
+                    layerSeekBar.isEnabled = false
+                    layerProgressSeekBar.isEnabled = false
 
-                when (it) {
-                    GcodeFileDataSource.LoadState.Loading -> {
-                        progressBar.isVisible = true
+                    when (it) {
+                        GcodeFileDataSource.LoadState.Loading -> {
+                            progressBar.isVisible = true
+                        }
+                        is GcodeFileDataSource.LoadState.Ready -> {
+                            progressBar.isVisible = false
+                            gcode = it.gcode
+                            prepareGcodeRender(it.gcode)
+                            render()
+                        }
+                        is GcodeFileDataSource.LoadState.Failed -> {
+                            progressBar.isVisible = false
+                            requireOctoActivity().showDialog(it.exception)
+                        }
                     }
-                    is GcodeFileDataSource.LoadState.Ready -> {
-                        progressBar.isVisible = false
-                        prepareGcodeRender(it.gcode)
-                        render()
-                    }
-                    is GcodeFileDataSource.LoadState.Failed -> {
-                        progressBar.isVisible = false
-                        requireOctoActivity().showDialog(it.exception)
-                    }
+                } catch (e: Exception) {
+                    Timber.e(e)
                 }
             }
         }
-
-//        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-//            val gcode = withContext(Dispatchers.IO) {
-//                File("/data/data/de.crysxd.octoapp/files/CE3_Green_box_engraved.gcode")
-//                    .readText().let { CuraGcodeParser().interpretFile(it) }
-//            }
-//
-//            fun render() {
-//                viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-//                    val layerProgressPercent = layerProgressSeekBar.progress / LAYER_PROGRESS_STEPS.toFloat()
-//                    layerNumber.text = layerSeekBar.progress.toString()
-//                    layerProgress.text = String.format("%.0f %%", layerProgressPercent * 100)
-//
-//                    measureTimeMillis {
-//                        val context = withContext(Dispatchers.Default) {
-//                            GcodeRenderContextFactory.ForLayerProgress(
-//                                layer = layerSeekBar.progress,
-//                                progress = layerProgressPercent
-//                            ).extractMoves(gcode)
-//                        }
-//
-//                        renderView.renderParams = GcodeRenderView.RenderParams(
-//                            renderContext = context,
-//                            printBedSizeMm = PointF(235f, 235f),
-//                            background = ContextCompat.getDrawable(requireContext(), R.drawable.gcode_background_creality),
-//                            extrusionWidthMm = 0.5f,
-//                        )
-//                    }.let {
-//                        Timber.v("Preparing GcodeRenderView took ${it}ms")
-//                    }
-//                }
-//            }
-//
-
-//
-//            render()
-//        }
     }
 
     private fun prepareGcodeRender(gcode: Gcode) {
@@ -119,8 +92,7 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
         previousRenderJob?.cancel()
         previousRenderJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             progressBar.isVisible = true
-            val currentGcode = (viewModel.gcodeDownloadFlow.firstOrNull() as? GcodeFileDataSource.LoadState.Ready)?.gcode
-                ?: return@launchWhenCreated
+            val gcode = gcode ?: return@launchWhenCreated
 
             val layerProgressPercent = layerProgressSeekBar.progress / LAYER_PROGRESS_STEPS.toFloat()
             layerNumber.text = layerSeekBar.progress.toString()
@@ -131,7 +103,7 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
                     GcodeRenderContextFactory.ForLayerProgress(
                         layer = layerSeekBar.progress,
                         progress = layerProgressPercent
-                    ).extractMoves(currentGcode)
+                    ).extractMoves(gcode)
                 }
 
                 renderView.renderParams = GcodeRenderView.RenderParams(

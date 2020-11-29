@@ -8,8 +8,7 @@ data class Move(
     val positionInArray: Int,
     val type: Type
 ) : Serializable {
-    sealed class Type : Serializable {
-        object Travel : Type()
-        object Extrude : Type()
+    enum class Type {
+        Travel, Extrude
     }
 }

@@ -45,7 +45,12 @@ class LocalGcodeFileDataSource(
 
             emit(GcodeFileDataSource.LoadState.Ready(gcode))
         } catch (e: Exception) {
-            sharedPreferences.edit().remove(file.cacheKey)
+            // Cache most likely corrupted, clean out
+            kotlin.runCatching {
+                sharedPreferences.edit { clear() }
+                cacheRoot.listFiles()?.forEach { it.delete() }
+            }
+
             Timber.e(e)
             emit(GcodeFileDataSource.LoadState.Failed(e))
         }
