@@ -8,6 +8,7 @@ import de.crysxd.octoapp.base.BuildConfig
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.parse.models.Layer
 import de.crysxd.octoapp.base.gcode.parse.models.Move
+import de.crysxd.octoapp.base.utils.measureTime
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +19,6 @@ import org.nustaq.serialization.FSTConfiguration
 import timber.log.Timber
 import java.io.File
 import java.util.*
-import kotlin.system.measureTimeMillis
 
 
 private const val MAX_CACHE_SIZE = 128 * 1024 * 1024 // 128 MB
@@ -40,11 +40,10 @@ class LocalGcodeFileDataSource(
     }
 
     override fun canLoadFile(file: FileObject.File): Boolean =
-        false//getCacheEntry(file.cacheKey)?.localFile?.exists() == true
+        getCacheEntry(file.cacheKey)?.localFile?.exists() == true
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     override fun loadFile(file: FileObject.File): Flow<GcodeFileDataSource.LoadState> = flow {
-        measureTimeMillis {
+        measureTime("Restore cache entry") {
             try {
                 emit(GcodeFileDataSource.LoadState.Loading)
                 val cacheEntry = gson.fromJson(sharedPreferences.getString(file.cacheKey, null), CacheEntry::class.java)
@@ -65,8 +64,6 @@ class LocalGcodeFileDataSource(
                 Timber.e(e)
                 emit(GcodeFileDataSource.LoadState.Failed(e))
             }
-        }.let {
-            Timber.i("Restored cache entry in ${it}ms")
         }
     }.flowOn(Dispatchers.IO)
 

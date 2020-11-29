@@ -122,7 +122,7 @@ class OctoPrint(
         addInterceptor(GenerateExceptionInterceptor())
         addInterceptor(
             HttpLoggingInterceptor(LoggingInterceptorLogger(logger))
-                .setLevel(HttpLoggingInterceptor.Level.BODY)
+                .setLevel(HttpLoggingInterceptor.Level.HEADERS)
         )
         this@OctoPrint.interceptors.forEach { addInterceptor(it) }
     }.build()

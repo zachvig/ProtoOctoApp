@@ -7,8 +7,7 @@ import dagger.Module
 import dagger.Provides
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.datasource.*
-import de.crysxd.octoapp.base.gcode.parse.CuraGcodeParser
-import de.crysxd.octoapp.base.gcode.parse.PrusaSlicerGcodeParser
+import de.crysxd.octoapp.base.gcode.parse.GcodeParser
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 
@@ -28,13 +27,8 @@ class DataSourceModule {
         context: Context,
         octoPrintProvider: OctoPrintProvider
     ): GcodeFileDataSourceGroup {
-        val parsers = listOf(
-            CuraGcodeParser(),
-            PrusaSlicerGcodeParser()
-        )
         val local = LocalGcodeFileDataSource(context, Gson(), context.getSharedPreferences("gcode_cache_index", Context.MODE_PRIVATE))
-        val remote = RemoteGcodeFileDataSource(parsers, local, octoPrintProvider)
-
+        val remote = RemoteGcodeFileDataSource(GcodeParser(), local, octoPrintProvider)
         return GcodeFileDataSourceGroup(listOf(local, remote))
     }
 }

@@ -4,11 +4,16 @@ import android.graphics.PointF
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.parse.models.Layer
 import de.crysxd.octoapp.base.gcode.parse.models.Move
-import de.crysxd.octoapp.base.utils.measureTime
 import timber.log.Timber
+import java.io.InputStream
 import java.util.regex.Matcher
 
-abstract class GcodeParser {
+val NEW_LAYER_MARKERS = arrayOf(
+    ";LAYER:",
+    ";AFTER_LAYER_CHANGE"
+)
+
+class GcodeParser {
 
     private var layers: MutableList<Layer> = mutableListOf()
     private var moves = mutableMapOf<Move.Type, Pair<MutableList<Move>, MutableList<Float>>>()
@@ -16,22 +21,14 @@ abstract class GcodeParser {
     private val lastPosition: PointF = PointF(0f, 0f)
     private var isAbsolutePositioningActive = true
 
-    abstract fun canParseFile(content: String): Boolean
-
-    fun parseFile(content: String): Gcode {
+    fun parseFile(content: InputStream): Gcode {
         layers.clear()
         initNewLayer()
-
         var positionInFile = 0
-        val lines = measureTime("Splitting lines") {
-            content.split("\n")
-        }
 
-        measureTime("Parsing lines") {
-            lines.forEach {
-                parseLine(it, positionInFile)
-                positionInFile += it.length
-            }
+        content.reader().forEachLine {
+            parseLine(it, positionInFile)
+            positionInFile += it.length
         }
 
         return Gcode(layers.toList())
@@ -108,7 +105,7 @@ abstract class GcodeParser {
         )
     }
 
-    abstract fun isLayerChange(line: String): Boolean
+    private fun isLayerChange(line: String) = NEW_LAYER_MARKERS.any { line.contains(it) }
 
     private fun isMoveCommand(line: String) = line.startsWith("G1", true) || line.startsWith("G0", true)
 
