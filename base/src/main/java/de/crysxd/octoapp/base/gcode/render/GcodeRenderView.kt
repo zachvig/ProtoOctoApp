@@ -21,7 +21,7 @@ import de.crysxd.octoapp.base.gcode.render.models.GcodeRenderContext
 import timber.log.Timber
 import kotlin.system.measureTimeMillis
 
-private const val MIN_ZOOM = 1f
+private const val MIN_ZOOM = 0.9f
 private const val MAX_ZOOM = 10f
 private const val ZOOM_SPEED = 0.4f
 private const val DOUBLE_TAP_ZOOM = 5f
@@ -36,7 +36,7 @@ class GcodeRenderView @JvmOverloads constructor(
     private val scaleGestureDetector = ScaleGestureDetector(context, ScaleGestureListener())
 
     private var scrollOffset = PointF(0f, 0f)
-    private var zoom = 1f
+    private var zoom = 0.9f
     var renderParams: RenderParams? = null
         set(value) {
             field = value
@@ -148,10 +148,20 @@ class GcodeRenderView @JvmOverloads constructor(
         // Enforce scroll limits
         enforceScrollLimits(params)
 
-        // Extracts moves and translate to bitmap coordinate system
+        // Calc offsets, center render if smaller than view
         val totalFactor = params.mmToPxFactor * zoom
-        val xOffset = scrollOffset.x
-        val yOffset = scrollOffset.y
+        val printBedWidthPx = params.printBedSizeMm.x * totalFactor
+        val printBedHeightPx = params.printBedSizeMm.y * totalFactor
+        val xOffset = if (printBedWidthPx < width) {
+            ((width - printBedWidthPx) / 2)
+        } else {
+            scrollOffset.x
+        }
+        val yOffset = if (printBedHeightPx < height) {
+            ((height - printBedHeightPx) / 2)
+        } else {
+            scrollOffset.y
+        }
 
         // Calc line width and do not use less than 2px after the totalFactor is applied
         // Then divide by total as Canvas will apply scale later on the GPU
