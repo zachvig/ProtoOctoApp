@@ -17,6 +17,7 @@ import de.crysxd.octoapp.base.gcode.render.GcodeRenderContextFactory
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.utils.measureTime
+import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.Injector
 import de.crysxd.octoapp.pre_print_controls.di.injectParentViewModel
@@ -35,6 +36,7 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
     private val viewModel: FileDetailsViewModel by injectParentViewModel(Injector.get().viewModelFactory())
     private var previousRenderJob: Job? = null
     private var gcode: Gcode? = null
+    private var profile: PrinterProfiles.Profile? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -66,10 +68,13 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewModel.gcodeDownloadFlow.collectLatest {
                 try {
+                    profile = it.second ?: profile
+                    val downloadState = it.first
+
                     // Animate changes between states
                     val lastStateVal = lastState
                     if (lastStateVal == null || it::class.java != lastStateVal::class.java) {
-                        lastState = it
+                        lastState = downloadState
                         TransitionManager.beginDelayedTransition(view as ViewGroup)
                     }
 
@@ -77,24 +82,24 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
                     layerProgressSeekBar.isEnabled = false
                     largeFileOverlay.isVisible = false
 
-                    when (it) {
+                    when (downloadState) {
                         is GcodeFileDataSource.LoadState.Loading -> {
                             progressOverlay.isVisible = true
-                            progressBar.progress = (it.progress * 100).roundToInt()
-                            progressBar.isIndeterminate = it.progress == 0f
-                            Timber.v("Progress: ${it.progress}")
+                            progressBar.progress = (downloadState.progress * 100).roundToInt()
+                            progressBar.isIndeterminate = downloadState.progress == 0f
+                            Timber.v("Progress: ${downloadState.progress}")
                         }
                         is GcodeFileDataSource.LoadState.Ready -> {
                             progressOverlay.isVisible = false
-                            gcode = it.gcode
-                            prepareGcodeRender(it.gcode)
+                            gcode = downloadState.gcode
+                            prepareGcodeRender(downloadState.gcode)
                             render()
                             Timber.i("Ready")
 
                         }
                         is GcodeFileDataSource.LoadState.Failed -> {
                             progressOverlay.isVisible = false
-                            requireOctoActivity().showDialog(it.exception)
+                            requireOctoActivity().showDialog(downloadState.exception)
                             Timber.i("Error :(")
                         }
 
@@ -137,13 +142,15 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
                 }
 
                 TransitionManager.beginDelayedTransition(view as ViewGroup)
-                renderGroup.isVisible = true
-                renderView.renderParams = GcodeRenderView.RenderParams(
-                    renderContext = context,
-                    printBedSizeMm = PointF(235f, 235f),
-                    background = ContextCompat.getDrawable(requireContext(), R.drawable.gcode_background_creality),
-                    extrusionWidthMm = 0.5f,
-                )
+                profile?.let {
+                    renderGroup.isVisible = true
+                    renderView.renderParams = GcodeRenderView.RenderParams(
+                        renderContext = context,
+                        printBedSizeMm = PointF(it.volume.width, it.volume.depth),
+                        background = ContextCompat.getDrawable(requireContext(), R.drawable.gcode_background_creality),
+                        extrusionWidthMm = it.extruder.nozzleDiameter,
+                    )
+                }
             }.let {
                 Timber.v("Preparing GcodeRenderView took ${it}ms")
             }

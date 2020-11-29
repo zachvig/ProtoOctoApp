@@ -63,6 +63,9 @@ class OctoPrint(
     fun createSettingsApi(): SettingsApi =
         createRetrofit().create(SettingsApi::class.java)
 
+    fun createPrinterProfileApi(): PrinterProfileApi =
+        createRetrofit().create(PrinterProfileApi::class.java)
+
     fun createJobApi(): JobApi.Wrapper =
         JobApi.Wrapper(createRetrofit().create(JobApi::class.java), webSocket)
 

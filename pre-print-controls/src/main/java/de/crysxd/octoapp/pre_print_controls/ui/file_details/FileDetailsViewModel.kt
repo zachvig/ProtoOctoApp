@@ -4,21 +4,37 @@ import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.datasource.GcodeFileDataSource
 import de.crysxd.octoapp.base.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.usecase.GetCurrentPrinterProfileUseCase
 import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
 import de.crysxd.octoapp.octoprint.models.files.FileObject
+import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class FileDetailsViewModel(
+    private val getCurrentPrinterProfileUseCase: GetCurrentPrinterProfileUseCase,
     private val startPrintJobUseCase: StartPrintJobUseCase,
     private val gcodeFileRepository: GcodeFileRepository
 ) : BaseViewModel() {
 
     lateinit var file: FileObject.File
+    private val profileChannel = ConflatedBroadcastChannel<PrinterProfiles.Profile?>(null)
     private val downloadChannel = ConflatedBroadcastChannel<Flow<GcodeFileDataSource.LoadState>?>()
-    val gcodeDownloadFlow = downloadChannel.asFlow().filterNotNull().flatMapLatest { it }
+    val gcodeDownloadFlow = downloadChannel.asFlow().filterNotNull()
+        .flatMapLatest {
+            it
+        }.combine(profileChannel.asFlow()) { download, profile ->
+            Pair(download, profile)
+        }
+
+    init {
+        viewModelScope.launch {
+            val profile = getCurrentPrinterProfileUseCase.execute(Unit)
+            profileChannel.offer(profile)
+        }
+    }
 
     fun startPrint() = viewModelScope.launch(coroutineExceptionHandler) {
         startPrintJobUseCase.execute(file)

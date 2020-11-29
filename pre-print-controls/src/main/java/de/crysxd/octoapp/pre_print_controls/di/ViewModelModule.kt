@@ -85,8 +85,10 @@ open class ViewModelModule {
     @ViewModelKey(FileDetailsViewModel::class)
     open fun provideFileDetailsViewModel(
         startPrintJobUseCase: StartPrintJobUseCase,
+        getCurrentPrinterProfileUseCase: GetCurrentPrinterProfileUseCase,
         gcodeFileRepository: GcodeFileRepository,
     ): ViewModel = FileDetailsViewModel(
+        getCurrentPrinterProfileUseCase,
         startPrintJobUseCase,
         gcodeFileRepository
     )
