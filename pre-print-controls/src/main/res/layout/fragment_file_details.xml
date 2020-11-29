@@ -1,46 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<de.crysxd.octoapp.base.ui.common.OctoScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/scrollView"
-    android:clipToPadding="false"
-    android:fillViewport="true"
-    android:paddingTop="@dimen/common_view_top_padding">
+    android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <de.crysxd.octoapp.base.ui.common.OctoScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingTop="@dimen/common_view_top_padding">
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabSelectedTextColor="@color/dark_text"
-            app:tabTextAppearance="@style/OctoTheme.TextAppearance"
-            app:tabTextColor="@color/normal_text">
+            android:orientation="vertical">
 
-            <!-- This tabs are only for the layout preview, will be created by the ViewPager! -->
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="Info" />
+                app:tabSelectedTextColor="@color/dark_text"
+                app:tabTextAppearance="@style/OctoTheme.TextAppearance"
+                app:tabTextColor="@color/normal_text">
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Gcode" />
+                <!-- This tabs are only for the layout preview, will be created by the ViewPager! -->
 
-        </com.google.android.material.tabs.TabLayout>
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Info" />
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Gcode" />
+
+            </com.google.android.material.tabs.TabLayout>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    </de.crysxd.octoapp.base.ui.common.OctoScrollView>
+
+    <FrameLayout
+        android:id="@+id/bottomAction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:clipToPadding="false"
+        android:paddingLeft="@dimen/margin_2"
+        android:paddingTop="@dimen/margin_2"
+        android:paddingRight="@dimen/margin_2"
+        android:paddingBottom="@dimen/margin_2"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/buttonStartPrint"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:text="@string/start_printing" />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+        <de.crysxd.octoapp.base.ui.common.OctoMoreButton
+            android:id="@+id/buttonMore"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:elevation="10dp" />
+    </FrameLayout>
 
-</de.crysxd.octoapp.base.ui.common.OctoScrollView>
+</FrameLayout>

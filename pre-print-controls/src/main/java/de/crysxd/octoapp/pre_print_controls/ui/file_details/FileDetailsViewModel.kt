@@ -20,7 +20,7 @@ class FileDetailsViewModel(
     private val downloadChannel = ConflatedBroadcastChannel<Flow<GcodeFileDataSource.LoadState>?>()
     val gcodeDownloadFlow = downloadChannel.asFlow().filterNotNull().flatMapLatest { it }
 
-    fun startPrint(file: FileObject.File) = viewModelScope.launch(coroutineExceptionHandler) {
+    fun startPrint() = viewModelScope.launch(coroutineExceptionHandler) {
         startPrintJobUseCase.execute(file)
     }
 

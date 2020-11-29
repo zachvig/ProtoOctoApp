@@ -30,6 +30,10 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
 
         viewModel.file = navArgs<FileDetailsFragmentArgs>().value.file
 
+        buttonStartPrint.setOnClickListener {
+            viewModel.startPrint()
+        }
+
         viewPager.adapter = adapter
         viewPager.offscreenPageLimit = adapter.itemCount
         viewPager.isUserInputEnabled = false
@@ -49,6 +53,7 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                bottomAction.animate().translationY(if (position == 0) 0f else bottomAction.height.toFloat()).start()
                 scrollView.smoothScrollTo(0, if (position == 0) 0 else Int.MAX_VALUE)
                 scrollView.isUserInputEnabled = position == 0
             }
