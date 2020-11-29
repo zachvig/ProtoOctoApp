@@ -39,8 +39,10 @@ class LocalGcodeFileDataSource(
         fstConfig.registerClass(Move.Type::class.java)
     }
 
-    override fun canLoadFile(file: FileObject.File): Boolean =
-        getCacheEntry(file.cacheKey)?.localFile?.exists() == true
+    override fun canLoadFile(file: FileObject.File): Boolean = getCacheEntry(file.cacheKey)?.let {
+        // Cache hit if the file exists and the file was not changed at the server since it was cached
+        it.localFile.exists() && it.fileDate == file.date
+    } == true
 
     override fun loadFile(file: FileObject.File): Flow<GcodeFileDataSource.LoadState> = flow {
         measureTime("Restore cache entry") {
@@ -73,7 +75,8 @@ class LocalGcodeFileDataSource(
 
         Timber.i("Adding to cache: ${file.cacheKey}")
         val cacheEntry = CacheEntry(
-            updatedAt = Date(),
+            cachedAt = Date(),
+            fileDate = file.date,
             localFile = createCacheFile()
         )
 
@@ -94,7 +97,7 @@ class LocalGcodeFileDataSource(
         val cacheEntries = sharedPreferences.all.keys.map {
             Pair(it, getCacheEntry(it))
         }.sortedBy {
-            it.second.updatedAt
+            it.second.cachedAt
         }.toMutableList()
 
         // Delete files until cache size is below max
@@ -123,7 +126,8 @@ class LocalGcodeFileDataSource(
     private fun createCacheFile() = File(cacheRoot, UUID.randomUUID().toString())
 
     data class CacheEntry(
-        val updatedAt: Date,
+        val cachedAt: Date,
+        val fileDate: Long,
         val localFile: File,
     )
 }
