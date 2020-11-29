@@ -122,7 +122,6 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
     private fun render() {
         previousRenderJob?.cancel()
         previousRenderJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-            progressBar.isVisible = true
             val gcode = gcode ?: return@launchWhenCreated
 
             val layerProgressPercent = layerProgressSeekBar.progress / LAYER_PROGRESS_STEPS.toFloat()
