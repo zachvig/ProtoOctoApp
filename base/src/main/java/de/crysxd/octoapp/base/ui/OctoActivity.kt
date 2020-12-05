@@ -19,6 +19,7 @@ import de.crysxd.octoapp.base.models.Event
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
 import kotlinx.coroutines.CancellationException
+import timber.log.Timber
 
 abstract class OctoActivity : AppCompatActivity() {
 
@@ -115,6 +116,7 @@ abstract class OctoActivity : AppCompatActivity() {
         neutralButton: CharSequence? = null,
         neutralAction: (Context) -> Unit = {}
     ) {
+        Timber.i("Showing dialog: [message=$message, positiveButton=$positiveButton, neutralButton=$neutralButton")
         dialog?.dismiss()
         dialog = AlertDialog.Builder(this).let { builder ->
             builder.setMessage(message)
