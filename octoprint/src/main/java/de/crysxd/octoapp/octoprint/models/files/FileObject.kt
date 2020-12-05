@@ -53,7 +53,7 @@ sealed class FileObject(
         data class LastPrint(
             val date: Long,
             val success: Boolean
-        )
+        ) : Serializable
     }
 
     data class GcodeAnalysis(
@@ -74,7 +74,7 @@ sealed class FileObject(
             data class ToolInfo(
                 val length: Double,
                 val volume: Double
-            )
+            ) : Serializable
         }
     }
 
