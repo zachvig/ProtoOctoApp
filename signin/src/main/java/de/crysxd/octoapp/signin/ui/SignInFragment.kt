@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -80,6 +81,13 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
     private fun updateViewState(res: SignInViewState) {
         if (res is SignInViewState.SignInFailed && !res.shownToUser) {
             res.shownToUser = true
+            Firebase.analytics.logEvent(
+                "sign_in_failure",
+                bundleOf(
+                    "reason_messsage" to res.exception.message,
+                    "reason" to res.exception::class.java.simpleName
+                )
+            )
 
             // SSL error and we can "force trust" this server if user agrees
             if (res.exception is OctoPrintHttpsException && res.exception.serverCertificates.isNotEmpty()) {
@@ -114,6 +122,13 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         }
 
         if (res is SignInViewState.SignInInformationInvalid) {
+            Firebase.analytics.logEvent(
+                "sign_in_invalid_input",
+                bundleOf(
+                    "api_key_invalid" to (res.result.apiKeyErrorMessage != null),
+                    "web_url_invalid" to (res.result.webUrlErrorMessage != null),
+                )
+            )
             inputWebUrl.error = res.result.webUrlErrorMessage
             inputApiKey.error = res.result.apiKeyErrorMessage
         } else {
@@ -132,6 +147,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         @Suppress("ControlFlowWithEmptyBody")
         if (res is SignInViewState.SignInSuccess) {
             buttonSignIn.isEnabled = false
+            Firebase.analytics.logEvent("sign_in_success", Bundle.EMPTY)
 
             // Show warning dialog if
             if (res.warnings.isNotEmpty()) {
