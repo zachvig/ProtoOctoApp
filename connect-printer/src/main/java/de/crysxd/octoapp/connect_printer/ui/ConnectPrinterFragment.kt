@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.ui.BaseFragment
@@ -30,14 +29,14 @@ class ConnectPrinterFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lifecycleScope.launchWhenCreated {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             // Async inflate view
             val lazyView = LayoutInflater.from(requireContext()).suspendedInflate(R.layout.fragment_connect_printer, view as ViewGroup, false)
             TransitionManager.beginDelayedTransition(view)
             view.addView(lazyView)
 
             // Subscribe to view state
-            viewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
+            viewModel.uiState.observe(viewLifecycleOwner, { state ->
                 Timber.i("$state")
 
                 viewLifecycleOwner.lifecycleScope.launchWhenStarted {

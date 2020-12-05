@@ -4,7 +4,6 @@ import android.os.Handler
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -34,7 +33,7 @@ class PollingLiveData<T>(
             postValue(Result.Failure(e))
         }
 
-        if (this.isActive) {
+        if (this@PollingLiveData.hasActiveObservers()) {
             handler.postDelayed(runnable, interval)
         }
     }
