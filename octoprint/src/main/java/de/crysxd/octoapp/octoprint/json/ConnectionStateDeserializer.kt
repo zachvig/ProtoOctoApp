@@ -15,13 +15,13 @@ class ConnectionStateDeserializer(
 
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ConnectionResponse.ConnectionState {
         return try {
-            val string = json.asString
+            val string = "MAYBE_" + json.asString
                 .toUpperCase(Locale.ENGLISH)
                 .replace(" ", "_")
                 .replace(":", "")
 
             when {
-                string.startsWith("PRINTING") -> ConnectionResponse.ConnectionState.MAYBE_PRINTING
+                string.contains("PRINTING") -> ConnectionResponse.ConnectionState.MAYBE_PRINTING
                 string.startsWith("ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT") -> ConnectionResponse.ConnectionState.MAYBE_ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT
                 string.startsWith("ERROR_CONNECTION_ERROR") -> ConnectionResponse.ConnectionState.MAYBE_CONNECTION_ERROR
                 string.contains("ERROR") -> ConnectionResponse.ConnectionState.MAYBE_UNKNOWN_ERROR
