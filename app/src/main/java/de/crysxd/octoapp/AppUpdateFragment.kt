@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallException
 import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallErrorCode
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
@@ -33,7 +35,7 @@ class AppUpdateFragment : Fragment() {
         appUpdateInfoTask.addOnCompleteListener { result ->
             Timber.i("App update info: $result")
 
-            if (result.exception != null) {
+            if (result.exception != null && (result.exception as? InstallException)?.errorCode != InstallErrorCode.ERROR_APP_NOT_OWNED) {
                 Timber.e(result.exception)
             } else {
                 val appUpdateInfo = result.result
