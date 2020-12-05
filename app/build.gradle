@@ -60,11 +60,11 @@ android {
 
 play {
     serviceAccountCredentials.set(file("service-account.json"))
-    track.set("beta")
+    track.set("production")
     defaultToAppBundles.set(true)
     resolutionStrategy.set(ResolutionStrategy.IGNORE)
     updatePriority.set(2)
-    userFraction.set(1.0d)
+    userFraction.set(0.1d)
 }
 
 
