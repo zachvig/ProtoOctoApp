@@ -1,6 +1,7 @@
 package de.crysxd.octoapp
 
 import android.os.Bundle
+import android.os.RemoteException
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,7 +36,10 @@ class AppUpdateFragment : Fragment() {
         appUpdateInfoTask.addOnCompleteListener { result ->
             Timber.i("App update info: $result")
 
-            if (result.exception != null && (result.exception as? InstallException)?.errorCode != InstallErrorCode.ERROR_APP_NOT_OWNED) {
+            if (result.exception != null &&
+                (result.exception as? InstallException)?.errorCode != InstallErrorCode.ERROR_APP_NOT_OWNED &&
+                result.exception !is RemoteException
+            ) {
                 Timber.e(result.exception)
             } else {
                 val appUpdateInfo = result.result
