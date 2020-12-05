@@ -3,10 +3,7 @@ package de.crysxd.octoapp.connect_printer.ui
 import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -56,7 +53,7 @@ class ConnectPrinterViewModel(
         .asLiveData()
 
     private val uiStateMediator = MediatorLiveData<UiState>()
-    val uiState = uiStateMediator.map { it }
+    val uiState = uiStateMediator.map { it }.distinctUntilChanged()
 
     init {
         uiStateMediator.addSource(availableSerialConnections) { updateUiState() }
