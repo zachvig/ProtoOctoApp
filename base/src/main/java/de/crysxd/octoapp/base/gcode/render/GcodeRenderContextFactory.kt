@@ -17,7 +17,18 @@ sealed class GcodeRenderContextFactory {
 
     data class ForFileLocation(val byte: Int) : GcodeRenderContextFactory() {
         override fun extractMoves(gcode: Gcode): GcodeRenderContext {
-            TODO("Not yet implemented")
+            val layer = gcode.layers.last { it.positionInFile <= byte }
+            val paths = layer.moves.map {
+                val count = it.value.first.count { i -> i.positionInFile <= byte }
+                GcodePath(
+                    type = it.key,
+                    offset = 0,
+                    count = count,
+                    points = it.value.second
+                )
+            }
+
+            return GcodeRenderContext(paths.sortedBy { it.priority })
         }
     }
 

@@ -16,11 +16,13 @@ class GcodeParser {
     private var lastPosition: PointF? = null
     private var lastPositionZ = 0f
     private var lastExtrusionZ = 0f
+    private var lastLayerChangeAtPositionInFile = 0
     private var isAbsolutePositioningActive = true
 
     suspend fun parseFile(content: InputStream, totalSize: Long, progressUpdate: suspend (Float) -> Unit): Gcode {
         layers.clear()
         initNewLayer()
+        lastLayerChangeAtPositionInFile = 0
         var positionInFile = 0
         var lastUpdatePercent = 0
 
@@ -104,7 +106,7 @@ class GcodeParser {
         if (e > 0) {
             // If the Z changed since the last extrusion, we have a new layer
             if (absoluteZ != lastExtrusionZ) {
-                startNewLayer()
+                startNewLayer(positionInFile)
             }
 
             // Update last extrusion Z height
@@ -129,7 +131,7 @@ class GcodeParser {
 
     private fun isRelativePositioningCommand(line: String) = line.startsWith("G91", true)
 
-    private fun startNewLayer() {
+    private fun startNewLayer(positionInFile: Int) {
         // Only add layer if we have any extrusion moves
         if (moves[Move.Type.Extrude]?.first?.isNotEmpty() == true) {
             layers.add(
@@ -138,9 +140,12 @@ class GcodeParser {
                     moves = moves.mapValues {
                         Pair(it.value.first, it.value.second.toFloatArray())
                     },
-                    moveCount = moves.map { it.value.first.size }.sum()
+                    moveCount = moves.map { it.value.first.size }.sum(),
+                    positionInFile = lastLayerChangeAtPositionInFile
                 )
             )
+
+            lastLayerChangeAtPositionInFile = positionInFile
         }
         initNewLayer()
     }

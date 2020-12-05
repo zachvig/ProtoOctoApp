@@ -40,8 +40,7 @@ class FileDetailsViewModel(
             renderStyleChannel.offer(generateRenderStyleUseCase.execute(Unit))
         }
         viewModelScope.launch {
-            val profile = getCurrentPrinterProfileUseCase.execute(Unit)
-            profileChannel.offer(profile)
+            profileChannel.offer(getCurrentPrinterProfileUseCase.execute(Unit))
         }
     }
 
