@@ -21,6 +21,8 @@
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
+                android:background="?android:attr/windowBackground"
+                android:elevation="0.1dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:tabSelectedTextColor="@color/dark_text"

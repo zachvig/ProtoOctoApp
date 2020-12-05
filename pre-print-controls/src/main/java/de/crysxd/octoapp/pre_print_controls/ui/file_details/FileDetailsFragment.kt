@@ -51,19 +51,41 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
             }
         }.attach()
 
+        fun update() {
+            val position = viewPager.currentItem
+            viewPager.updateLayoutParams {
+                height = if (position == 0) {
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                } else {
+                    view.height - tabs.height
+                }
+            }
+
+            scrollView.isUserInputEnabled = position == 0
+            scrollView.isBottomActionAnimationEnabled = false
+            scrollView.smoothScrollTo(0, if (position == 0) 0 else Int.MAX_VALUE)
+            bottomAction.animate().translationY(if (position == 0) 0f else bottomAction.height.toFloat()).withEndAction {
+                scrollView.isBottomActionAnimationEnabled = position == 0
+            }.start()
+
+            val toolbarTranslation = if (position == 0) 0f else -requireOctoActivity().octoToolbar.bottom.toFloat()
+            requireOctoActivity().octoToolbar.animate().also {
+                it.duration = 150
+            }.translationY(toolbarTranslation).start()
+            requireOctoActivity().octo.animate().also {
+                it.duration = 150
+            }.translationY(toolbarTranslation).start()
+        }
+
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                bottomAction.animate().translationY(if (position == 0) 0f else bottomAction.height.toFloat()).start()
-                scrollView.smoothScrollTo(0, if (position == 0) 0 else Int.MAX_VALUE)
-                scrollView.isUserInputEnabled = position == 0
+                update()
             }
         })
 
         view.addOnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
             if (left != oldLeft || right != oldRight || top != oldTop || bottom != oldBottom) {
-                viewPager.updateLayoutParams<ViewGroup.LayoutParams> {
-                    height = view.height - tabs.height
-                }
+                update()
             }
         }
     }
@@ -84,6 +106,12 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
         super.onResume()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
         requireOctoActivity().octo.isVisible = true
-        scrollView.setupWithToolbar(requireOctoActivity())
+        scrollView.setupWithToolbar(requireOctoActivity(), bottomAction, tabs)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        requireOctoActivity().octoToolbar.translationY = 0f
+        requireOctoActivity().octo.translationY = 0f
     }
 }

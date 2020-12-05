@@ -2,13 +2,13 @@ package de.crysxd.octoapp.pre_print_controls.ui.file_details
 
 import android.graphics.PointF
 import android.os.Bundle
-import android.transition.TransitionManager
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.datasource.GcodeFileDataSource
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
@@ -28,6 +28,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
 const val LAYER_PROGRESS_STEPS = 1000
@@ -131,15 +132,18 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
         previousRenderJob?.cancel()
         previousRenderJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             val gcode = gcode ?: return@launchWhenCreated
+            val selectedLayer = layerSeekBar.progress
+            val layerHeightMm = DecimalFormat("0.0#").format(gcode.layers[selectedLayer].zHeight)
 
             val layerProgressPercent = layerProgressSeekBar.progress / LAYER_PROGRESS_STEPS.toFloat()
             layerNumber.text = layerSeekBar.progress.toString()
+            layerHeight.text = getString(R.string.x_mm, layerHeightMm)
             layerProgress.text = String.format("%.0f %%", layerProgressPercent * 100)
 
             measureTime("Prepare context") {
                 val context = withContext(Dispatchers.Default) {
                     GcodeRenderContextFactory.ForLayerProgress(
-                        layer = layerSeekBar.progress,
+                        layer = selectedLayer,
                         progress = layerProgressPercent
                     ).extractMoves(gcode)
                 }

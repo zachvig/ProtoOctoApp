@@ -34,7 +34,10 @@ class CropAlphaTransformation : Transformation {
                 maxX - minX + 1,
                 maxY - minY + 1
             )
-            source.recycle()
+
+            if (source != result) {
+                source.recycle()
+            }
             return result
         }
     }
