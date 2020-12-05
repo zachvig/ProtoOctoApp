@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.ui.common
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
@@ -22,8 +23,10 @@ class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: A
     private var octoActivity: OctoActivity? = null
     private var initialState: OctoToolbar.State? = null
     var isUserInputEnabled = true
+    var isBottomActionAnimationEnabled = true
 
     private val topShadowDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.top_scroll_edge_shadow, context.theme)
+    private var topViewHeight = 0
     private var topShadowAlpha = 0f
         set(value) {
             field = value
@@ -55,38 +58,49 @@ class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: A
         isFillViewport = true
     }
 
-    override fun onInterceptTouchEvent(ev: MotionEvent?) =
-        isUserInputEnabled && super.onInterceptTouchEvent(ev)
+    override fun onInterceptTouchEvent(ev: MotionEvent?) = isUserInputEnabled && super.onInterceptTouchEvent(ev)
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(ev: MotionEvent?) = isUserInputEnabled && super.onTouchEvent(ev)
 
     @Suppress("DEPRECATION")
-    fun setupWithToolbar(octoActivity: OctoActivity, bottomAction: View? = null) {
+    fun setupWithToolbar(octoActivity: OctoActivity, bottomAction: View? = null, topView: View? = null) {
         initialState = octoActivity.octoToolbar.state
         this.octoActivity = octoActivity
         var animatedOut: Boolean? = null
         var ongoingAnimation: ViewPropertyAnimator? = null
 
         setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+            topView?.let {
+                val topViewOffset = (it.top.toFloat() - (scrollY - paddingTop).coerceAtLeast(0)).coerceAtMost(0f)
+                topView.translationY = -topViewOffset
+            }
+
+            // If we have a top view, draw shadow beneath it
+            topViewHeight = topView?.let { it.y + it.height + paddingTop }?.toInt() ?: scrollY
 
             val overhang = getContentHeight() - (scrollY + height - paddingTop - paddingBottom) - (bottomAction?.height ?: 0)
             val scrollingDown = oldScrollY < scrollY
-            if (overhang < 0f) {
-                animatedOut = null
+            if (isBottomActionAnimationEnabled) {
+                if (overhang < 0f) {
+                    animatedOut = null
 
-                // Cancel ongoing animations and set manually
-                ongoingAnimation?.cancel()
-                bottomAction?.translationY = (bottomAction?.height ?: 0) + overhang.toFloat()
+                    // Cancel ongoing animations and set manually
+                    ongoingAnimation?.cancel()
+                    bottomAction?.translationY = (bottomAction?.height ?: 0) + overhang.toFloat()
 
-            } else if (scrollingDown) {
-                if (animatedOut != true) {
-                    animatedOut = true
-                    ongoingAnimation = bottomAction?.animate()?.translationY(bottomAction.height.toFloat())
-                    ongoingAnimation?.start()
-                }
-            } else {
-                if (animatedOut != false) {
-                    animatedOut = false
-                    ongoingAnimation = bottomAction?.animate()?.translationY(0f)
-                    ongoingAnimation?.start()
+                } else if (scrollingDown) {
+                    if (animatedOut != true) {
+                        animatedOut = true
+                        ongoingAnimation = bottomAction?.animate()?.translationY(bottomAction.height.toFloat())
+                        ongoingAnimation?.start()
+                    }
+                } else {
+                    if (animatedOut != false) {
+                        animatedOut = false
+                        ongoingAnimation = bottomAction?.animate()?.translationY(0f)
+                        ongoingAnimation?.start()
+                    }
                 }
             }
 
@@ -146,7 +160,7 @@ class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: A
 
         if (topShadowAlpha > 0) {
             topShadowDrawable?.alpha = (topShadowAlpha * 255).roundToInt()
-            topShadowDrawable?.setBounds(0, scrollY, width, scrollY + topShadowDrawable.intrinsicHeight)
+            topShadowDrawable?.setBounds(0, topViewHeight, width, topViewHeight + topShadowDrawable.intrinsicHeight)
             topShadowDrawable?.draw(canvas)
         }
         if (bottomShadowAlpha > 0) {
