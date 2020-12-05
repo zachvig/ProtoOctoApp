@@ -6,13 +6,7 @@ import de.crysxd.octoapp.base.gcode.parse.models.Layer
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import timber.log.Timber
 import java.io.InputStream
-import java.util.regex.Matcher
 import kotlin.math.roundToInt
-
-val NEW_LAYER_MARKERS = arrayOf(
-    ";LAYER:",
-    ";AFTER_LAYER_CHANGE"
-)
 
 class GcodeParser {
 
@@ -20,6 +14,8 @@ class GcodeParser {
     private var moves = mutableMapOf<Move.Type, Pair<MutableList<Move>, MutableList<Float>>>()
     private var moveCountInLayer = 0
     private var lastPosition: PointF? = null
+    private var lastPositionZ = 0f
+    private var lastExtrusionZ = 0f
     private var isAbsolutePositioningActive = true
 
     suspend fun parseFile(content: InputStream, totalSize: Long, progressUpdate: suspend (Float) -> Unit): Gcode {
@@ -45,22 +41,7 @@ class GcodeParser {
         return Gcode(layers.toList())
     }
 
-    private fun parseLine(line: String, positionInFile: Int) {
-        if (isComment(line)) {
-            parseComment(line)
-        } else {
-            parseCommand(line, positionInFile)
-        }
-    }
-
-    private fun isComment(line: String) = line.startsWith(";")
-
-    private fun parseComment(line: String) = when {
-        isLayerChange(line) -> startNewLayer()
-        else -> Unit
-    }
-
-    private fun parseCommand(line: String, positionInFile: Int) = when {
+    private fun parseLine(line: String, positionInFile: Int) = when {
         isAbsolutePositioningCommand(line) -> isAbsolutePositioningActive = true
         isRelativePositioningCommand(line) -> isAbsolutePositioningActive = false
         isMoveCommand(line) -> interpretMove(line, positionInFile)
@@ -83,20 +64,31 @@ class GcodeParser {
 
     private fun interpretMove(line: String, positionInFile: Int) {
         // Get positions (don't use regex, it's slower)
-        val x = extractValue("X", line) ?: return
-        val y = extractValue("Y", line) ?: return
+        val x = extractValue("X", line)
+        val y = extractValue("Y", line)
+        val z = extractValue("Z", line) ?: lastPositionZ
         val e = extractValue("E", line) ?: 0f
 
         // Convert to absolute position
-        val absoluteX = if (isAbsolutePositioningActive) {
-            x
+        // X and Y might be null. If so, we use the last known position as there was no movement
+        val absoluteX = x?.let {
+            if (isAbsolutePositioningActive) {
+                it
+            } else {
+                (lastPosition?.x ?: 0f) + it
+            }
+        } ?: lastPosition?.x ?: 0f
+        val absoluteY = y?.let {
+            if (isAbsolutePositioningActive) {
+                it
+            } else {
+                (lastPosition?.y ?: 0f) + it
+            }
+        } ?: lastPosition?.y ?: 0f
+        val absoluteZ = if (isAbsolutePositioningActive) {
+            z
         } else {
-            (lastPosition?.x ?: 0f) + x
-        }
-        val absoluteY = if (isAbsolutePositioningActive) {
-            y
-        } else {
-            (lastPosition?.y ?: 0f) + y
+            lastExtrusionZ + z
         }
 
         // Get type
@@ -105,6 +97,21 @@ class GcodeParser {
         } else {
             Move.Type.Extrude
         }
+
+        // Check if a new layer was started
+        // A layer is started when we extrude (positive e, negative is retraction)
+        // on a height which is different from the last height we extruded at
+        if (e > 0) {
+            // If the Z changed since the last extrusion, we have a new layer
+            if (absoluteZ != lastExtrusionZ) {
+                startNewLayer()
+            }
+
+            // Update last extrusion Z height
+            lastExtrusionZ = absoluteZ
+        }
+
+        lastPositionZ = absoluteZ
 
         addMove(
             type = type,
@@ -116,8 +123,6 @@ class GcodeParser {
         )
     }
 
-    private fun isLayerChange(line: String) = NEW_LAYER_MARKERS.any { line.contains(it) }
-
     private fun isMoveCommand(line: String) = line.startsWith("G1", true) || line.startsWith("G0", true)
 
     private fun isAbsolutePositioningCommand(line: String) = line.startsWith("G90", true)
@@ -125,14 +130,17 @@ class GcodeParser {
     private fun isRelativePositioningCommand(line: String) = line.startsWith("G91", true)
 
     private fun startNewLayer() {
-        layers.add(
-            Layer(
-                moves = moves.mapValues {
-                    Pair(it.value.first, it.value.second.toFloatArray())
-                },
-                moveCount = moves.map { it.value.first.size }.sum()
+        // Only add layer if we have any extrusion moves
+        if (moves[Move.Type.Extrude]?.first?.isNotEmpty() == true) {
+            layers.add(
+                Layer(
+                    moves = moves.mapValues {
+                        Pair(it.value.first, it.value.second.toFloatArray())
+                    },
+                    moveCount = moves.map { it.value.first.size }.sum()
+                )
             )
-        )
+        }
         initNewLayer()
     }
 
@@ -167,11 +175,5 @@ class GcodeParser {
 
         lastPosition?.x = toX
         lastPosition?.y = toY
-    }
-
-    private fun Matcher.groupOrNull(index: Int) = if (groupCount() >= index) {
-        group(index)
-    } else {
-        null
     }
 }
