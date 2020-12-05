@@ -134,6 +134,7 @@ class GcodeParser {
         if (moves[Move.Type.Extrude]?.first?.isNotEmpty() == true) {
             layers.add(
                 Layer(
+                    zHeight = lastExtrusionZ,
                     moves = moves.mapValues {
                         Pair(it.value.first, it.value.second.toFloatArray())
                     },

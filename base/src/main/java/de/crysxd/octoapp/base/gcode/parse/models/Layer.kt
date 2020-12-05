@@ -4,5 +4,6 @@ import java.io.Serializable
 
 data class Layer(
     val moves: Map<Move.Type, Pair<List<Move>, FloatArray>>,
-    val moveCount: Int
+    val moveCount: Int,
+    val zHeight: Float
 ) : Serializable

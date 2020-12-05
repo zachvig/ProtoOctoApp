@@ -33,14 +33,14 @@
         android:layout_marginBottom="@dimen/margin_3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/layerSeekBar"
-        app:layout_constraintStart_toStartOf="@+id/titleLayerProgress" />
+        app:layout_constraintStart_toStartOf="@+id/layerSeekBar" />
 
     <SeekBar
         android:id="@+id/layerSeekBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_2"
-        android:layout_marginEnd="@dimen/margin_2"
+        android:layout_marginStart="@dimen/margin_1"
+        android:layout_marginEnd="@dimen/margin_1"
         android:layout_marginBottom="@dimen/margin_3"
         android:max="4000"
         android:progress="3"
@@ -56,13 +56,15 @@
         android:text="@string/layer"
         android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
         app:layout_constraintBottom_toTopOf="@+id/layerSeekBar"
-        app:layout_constraintStart_toStartOf="@+id/layerSeekBar" />
+        android:layout_marginStart="@dimen/margin_2"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/layerNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
+        android:minWidth="100dp"
         android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
         android:textColor="@color/light_text"
         app:layout_constraintBottom_toBottomOf="@+id/titleLayer"
@@ -77,7 +79,7 @@
         android:text="@string/layer_progress"
         android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
         app:layout_constraintBottom_toTopOf="@+id/layerProgressSeekBar"
-        app:layout_constraintStart_toStartOf="@+id/layerSeekBar" />
+        app:layout_constraintStart_toStartOf="@+id/titleLayer" />
 
     <TextView
         android:id="@+id/layerProgress"
@@ -178,13 +180,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:constraint_referenced_ids="largeFileExplanation,largeFileExplanationDetail,downloadLargeFile" />
+        app:constraint_referenced_ids="largeFileExplanation,largeFileExplanationDetail,downloadLargeFile"
+        tools:visibility="gone" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/renderGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="titleLayer,layerNumber,layerProgress,titleLayerProgress,layerSeekBar,layerProgressSeekBar,background,renderView" />
+        app:constraint_referenced_ids="titleLayer,layerHeight,layerNumber,layerProgress,titleLayerProgress,layerSeekBar,layerProgressSeekBar,background,renderView"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/layerHeight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_2"
+        android:gravity="end"
+        android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+        android:textColor="@color/light_text"
+        app:layout_constraintBottom_toBottomOf="@+id/layerNumber"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/layerNumber"
+        tools:text="12.2 mm" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
