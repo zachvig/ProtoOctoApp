@@ -1,7 +1,6 @@
 package de.crysxd.octoapp.signin.usecases
 
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.SslKeyStoreHandler
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
@@ -42,9 +41,8 @@ class SignInUseCase(
         // Get version info
         val version = octoprint.createVersionApi().getVersion()
         Timber.i("Connected to ${version.serverVersionText}")
-        Firebase.analytics.setUserProperty("octoprint_api_version", version.apiVersion)
-        Firebase.analytics.setUserProperty("octoprint_server_version", version.severVersion)
-        Firebase.analytics.setUserProperty("octoprint_server_admin", isAdmin.toString())
+        OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.OctoPrintVersion, version.severVersion)
+        OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.UserIsAdmin, isAdmin.toString())
 
         // Check for warnings
         val testedVersion = OctoPrint.TESTED_SERVER_VERSION

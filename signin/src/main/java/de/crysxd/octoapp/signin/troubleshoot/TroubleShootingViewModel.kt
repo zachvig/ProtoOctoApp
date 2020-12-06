@@ -2,13 +2,11 @@ package de.crysxd.octoapp.signin.troubleshoot
 
 import android.content.Context
 import android.net.Uri
-import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.signin.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -73,7 +71,7 @@ class TroubleShootViewModel : ViewModel() {
         null
     } catch (e: Exception) {
         Timber.e(e)
-        Firebase.analytics.logEvent("troubleshoot_failure_dns", Bundle.EMPTY)
+        OctoAnalytics.logEvent(OctoAnalytics.Event.TroubleShootDnsFailure)
         TroubleShootingResult.Failure(
             title = "Can't resolve <b>${baseUrl.host}</b>",
             description = "This indicates a configuration issue. The phone can't resolve a IP address for <b>${baseUrl.host}</b>, this is not influenced by any OctoPrint settings or the API key.",
@@ -104,7 +102,7 @@ class TroubleShootViewModel : ViewModel() {
         Timber.i("Host: $host")
 
         return if (!reachable) {
-            Firebase.analytics.logEvent("troubleshoot_failure_host", Bundle.EMPTY)
+            OctoAnalytics.logEvent(OctoAnalytics.Event.TroubleShootHostFailure)
             TroubleShootingResult.Failure(
                 title = "Host <b>$host</b> is not reachable",
                 description = "This indicates a configuration issue. The phone can't reach <b>${baseUrl.host}</b>, this is not influenced by any OctoPrint settings or the API key.",
@@ -141,7 +139,7 @@ class TroubleShootViewModel : ViewModel() {
             null
         } catch (e: Exception) {
             Timber.e(e)
-            Firebase.analytics.logEvent("troubleshoot_failure_port", Bundle.EMPTY)
+            OctoAnalytics.logEvent(OctoAnalytics.Event.TroubleShootPortFailure)
             TroubleShootingResult.Failure(
                 title = "Can connect to <b>${baseUrl.host}</b> but not to port <b>$port</b>",
                 description = "The phone can connect to the host, but the port <b>$port</b> does not accept incoming connections.",
@@ -165,7 +163,7 @@ class TroubleShootViewModel : ViewModel() {
             Timber.i("Passed")
             null
         } else {
-            Firebase.analytics.logEvent("troubleshoot_failure_http_1", Bundle.EMPTY)
+            OctoAnalytics.logEvent(OctoAnalytics.Event.TroubleShootHttp1Failure)
             TroubleShootingResult.Failure(
                 title = "Can connect but received <b>$code</b> instead of <b>200</b>",
                 description = "The app was able to establish a connection to <b>$baseUrl</b>, but the server did not respond as expected.",
@@ -179,7 +177,7 @@ class TroubleShootViewModel : ViewModel() {
             )
         }
     } catch (e: Exception) {
-        Firebase.analytics.logEvent("troubleshoot_failure_http_2", Bundle.EMPTY)
+        OctoAnalytics.logEvent(OctoAnalytics.Event.TroubleShootHttp2Failure)
         TroubleShootingResult.Failure(
             title = "Can't connect because of an error",
             description = "A unexpected error occurred while trying to connect to <b>$baseUrl</b> (${e.message})",

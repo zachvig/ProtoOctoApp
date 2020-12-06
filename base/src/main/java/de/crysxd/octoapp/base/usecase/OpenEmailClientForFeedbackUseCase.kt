@@ -112,6 +112,7 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor() : UseCase<OpenEmai
         val intent = Intent(Intent.ACTION_SEND).also {
             it.type = "message/rfc822"
             it.putExtra(Intent.EXTRA_SUBJECT, subject)
+            it.putExtra(Intent.EXTRA_TEXT, param.message)
             it.putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
 
             if (fileCount > 0) {
@@ -127,6 +128,7 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor() : UseCase<OpenEmai
         val sendPhoneInfo: Boolean,
         val sendLogs: Boolean,
         val sendOctoPrintInfo: Boolean,
-        val screenshot: Bitmap?
+        val screenshot: Bitmap?,
+        val message: String
     )
 }

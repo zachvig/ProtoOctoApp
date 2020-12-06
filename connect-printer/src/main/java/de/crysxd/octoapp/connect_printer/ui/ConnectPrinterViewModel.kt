@@ -1,12 +1,11 @@
 package de.crysxd.octoapp.connect_printer.ui
 
 import android.content.Context
-import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.*
-import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.filterEventsForMessageType
@@ -86,8 +85,6 @@ class ConnectPrinterViewModel(
                 Timber.d("ConnectionResult: $connectionResult")
                 Timber.d("PsuState: $psuState")
                 Timber.d("PsuCycled: $psuCyclingState")
-
-                Firebase.analytics.setUserProperty("psu_plugin_available", supportsPsuPlugin.toString())
 
                 if (supportsPsuPlugin) {
                     octoPrintRepository.instanceInformationFlow().first().let {
@@ -181,7 +178,7 @@ class ConnectPrinterViewModel(
                     // TODO Ask user which port to select
                     val app = Injector.get().app()
                     Toast.makeText(app, app.getString(R.string.auto_selection_failed), Toast.LENGTH_SHORT).show()
-                    Firebase.analytics.logEvent("auto_connect_failed", Bundle.EMPTY)
+                    OctoAnalytics.logEvent(OctoAnalytics.Event.PrinterAutoConnectFailed)
                     Params(connectionResponse.options.ports.first())
                 } else {
                     Params()

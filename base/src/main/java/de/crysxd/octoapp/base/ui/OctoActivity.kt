@@ -9,8 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ext.composeErrorMessage
 import de.crysxd.octoapp.base.ext.composeMessageStack
@@ -99,7 +98,7 @@ abstract class OctoActivity : AppCompatActivity() {
     fun showErrorDetailsDialog(e: Throwable, offerSupport: Boolean = true) = showDialog(
         message = e.composeMessageStack(),
         neutralAction = {
-            Firebase.analytics.logEvent("support_from_error_details", Bundle.EMPTY)
+            OctoAnalytics.logEvent(OctoAnalytics.Event.SupportFromErrorDetails)
             SendFeedbackDialog().show(supportFragmentManager, "get-support")
         },
         neutralButton = if (offerSupport) {

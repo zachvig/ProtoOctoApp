@@ -99,6 +99,11 @@ class OctoPrintProvider(
                 analytics.setUserProperty("printer_machine_type", data.machineType)
                 analytics.setUserProperty("printer_extruder_count", data.extruderCount.toString())
             }
+
+            event is Event.MessageReceived && event.message is Message.ConnectedMessage -> {
+                OctoAnalytics.logEvent(OctoAnalytics.Event.OctoprintConnected)
+                OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.OctoPrintVersion, (event.message as Message.ConnectedMessage).version)
+            }
         }
     }
 

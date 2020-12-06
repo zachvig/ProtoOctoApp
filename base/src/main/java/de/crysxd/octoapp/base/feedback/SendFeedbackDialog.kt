@@ -37,14 +37,20 @@ class SendFeedbackDialog : DialogFragment() {
         }
 
         buttonOpenEmail.setOnClickListener {
-            viewModel.sendFeedback(
-                context = it.context,
-                sendPhoneInfo = checkboxPhoneInformation.isChecked,
-                sendOctoPrintInfo = checkboxOctoprintInformation.isChecked,
-                sendLogs = checkboxLogs.isChecked,
-                sendScreenshot = checkboxScreenshot.isChecked
-            )
-            dismissAllowingStateLoss()
+            messageInput.error = if (messageInput.editText!!.text.isEmpty()) {
+                "Please enter a message"
+            } else {
+                viewModel.sendFeedback(
+                    context = it.context,
+                    message = messageInput.editText!!.text.toString(),
+                    sendPhoneInfo = checkboxPhoneInformation.isChecked,
+                    sendOctoPrintInfo = checkboxOctoprintInformation.isChecked,
+                    sendLogs = checkboxLogs.isChecked,
+                    sendScreenshot = checkboxScreenshot.isChecked
+                )
+                dismissAllowingStateLoss()
+                null
+            }
         }
 
         // Fix sizing of dialog

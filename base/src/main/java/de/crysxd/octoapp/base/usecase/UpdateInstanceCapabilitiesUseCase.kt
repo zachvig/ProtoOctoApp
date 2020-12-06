@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.usecase
 
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.models.settings.Settings
@@ -20,6 +21,8 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             supportsPsuPlugin = isPsuControlSupported(settings)
         )
 
+        OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.PsuPluginAvailable, isPsuControlSupported(settings).toString())
+        OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.WebCamAvailable, isWebcamSupported(settings).toString())
         timber.i("Updated capabilities: $updated")
 
         octoPrintRepository.storeOctoprintInstanceInformation(updated)
