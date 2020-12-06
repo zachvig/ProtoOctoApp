@@ -48,7 +48,7 @@
     <string name="give_feedback">Give Feedback</string>
     <string name="screenshot_of_current_screen">Screenshot of current screen</string>
     <string name="app_logs">App logs</string>
-    <string name="thank_you_for_sending_feedback_please_select_what_should_be_included_in_your_message">Thank you for sending feedback. Please select what should be included in your message:</string>
+    <string name="thank_you_for_sending_feedback_please_select_what_should_be_included_in_your_message">Thank you for sending feedback. Please enter a message and select what should be attached.</string>
     <string name="send_feedback">Send Feedback</string>
     <string name="open_email">Open Email</string>
     <string name="updates_notification_channel_name">Updates</string>
@@ -82,4 +82,5 @@
     <string name="x_percent_int">%d %%</string>
     <string name="time_left_x">Time left: %s</string>
     <string name="eta_x">ETA: %s</string>
+    <string name="message">Message</string>
 </resources>
