@@ -3,7 +3,6 @@ package de.crysxd.octoapp.connect_printer.ui
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.*
-import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -86,8 +85,6 @@ class ConnectPrinterViewModel(
                 Timber.d("ConnectionResult: $connectionResult")
                 Timber.d("PsuState: $psuState")
                 Timber.d("PsuCycled: $psuCyclingState")
-
-                Firebase.analytics.setUserProperty("psu_plugin_available", supportsPsuPlugin.toString())
 
                 if (supportsPsuPlugin) {
                     octoPrintRepository.instanceInformationFlow().first().let {

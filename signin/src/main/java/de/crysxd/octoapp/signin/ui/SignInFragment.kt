@@ -41,7 +41,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
 
         buttonSignIn.setOnClickListener { signIn() }
         inputApiKey.editText.setImeActionLabel(getString(R.string.sign_in), KeyEvent.KEYCODE_ENTER)
-        inputApiKey.editText.setOnEditorActionListener { v, _, _ ->
+        inputApiKey.editText.setOnEditorActionListener { _, _, _ ->
             signIn()
             true
         }

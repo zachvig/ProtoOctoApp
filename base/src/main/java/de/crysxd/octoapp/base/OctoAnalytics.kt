@@ -19,7 +19,10 @@ object OctoAnalytics {
     }
 
     sealed class UserProperty(val name: String) {
-        object OctoPrintVersion : UserProperty("octoprint_version")
+        object OctoPrintVersion : UserProperty("octoprint_server_version")
+        object UserIsAdmin : UserProperty("octoprint_server_admin")
+        object PsuPluginAvailable : UserProperty("psu_plugin_available")
+        object WebCamAvailable : UserProperty("webcam_available")
     }
 
     sealed class Event(val name: String) {
