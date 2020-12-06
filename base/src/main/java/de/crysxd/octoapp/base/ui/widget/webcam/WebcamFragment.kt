@@ -39,17 +39,25 @@ class WebcamFragment : Fragment(R.layout.fragment_webcam) {
 
             Injector.get().octoPrintProvider().passiveCurrentMessageFlow().collectLatest { message ->
                 val flags = message.state?.flags
-                textViewProgress.text = when {
-                    flags?.pausing == true -> getString(R.string.pausing)
-                    flags?.cancelling == true -> getString(R.string.pausing)
-                    flags?.printing == true && message.progress?.completion != null -> getString(R.string.x_percent, message.progress?.completion)
-                    else -> ""
-                }
-                textViewTimeLeft.text = message.progress?.printTimeLeft?.toLong()?.let {
-                    getString(R.string.time_left_x, Injector.get().formatDurationUseCase().execute(it))
-                }
-                textViewEta.text = message.progress?.printTimeLeft?.let {
-                    getString(R.string.eta_x, Injector.get().formatEtaUseCase().execute(it))
+                val printActive = listOf(flags?.paused, flags?.pausing, flags?.printing, flags?.cancelling).any { it == true }
+
+                if (printActive) {
+                    textViewProgress.text = when {
+                        flags?.pausing == true -> getString(R.string.pausing)
+                        flags?.cancelling == true -> getString(R.string.pausing)
+                        flags?.printing == true && message.progress?.completion != null -> getString(R.string.x_percent, message.progress?.completion)
+                        else -> ""
+                    }
+                    textViewTimeLeft.text = message.progress?.printTimeLeft?.toLong()?.let {
+                        getString(R.string.time_left_x, Injector.get().formatDurationUseCase().execute(it))
+                    }
+                    textViewEta.text = message.progress?.printTimeLeft?.let {
+                        getString(R.string.eta_x, Injector.get().formatEtaUseCase().execute(it))
+                    }
+                } else {
+                    textViewProgress.text = ""
+                    textViewTimeLeft.text = ""
+                    textViewEta.text = ""
                 }
             }
         }
