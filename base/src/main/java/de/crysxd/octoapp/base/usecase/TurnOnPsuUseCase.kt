@@ -1,8 +1,6 @@
 package de.crysxd.octoapp.base.usecase
 
-import android.os.Bundle
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
 import timber.log.Timber
 import javax.inject.Inject
@@ -12,7 +10,7 @@ class TurnOnPsuUseCase @Inject constructor(
 ) : UseCase<Unit, Unit>() {
 
     override suspend fun doExecute(param: Unit, timber: Timber.Tree) {
-        Firebase.analytics.logEvent("psu_turned_on", Bundle.EMPTY)
+        OctoAnalytics.logEvent(OctoAnalytics.Event.PsuTurnedOn)
         octoPrintProvider.octoPrint().createPsuApi().turnPsuOn()
     }
 }

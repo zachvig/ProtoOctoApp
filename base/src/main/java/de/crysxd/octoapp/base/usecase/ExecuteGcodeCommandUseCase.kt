@@ -1,9 +1,9 @@
 package de.crysxd.octoapp.base.usecase
 
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.analytics.ktx.logEvent
+import androidx.core.os.bundleOf
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
@@ -100,11 +100,9 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
         )
 
         if (fromUser) {
-            Firebase.analytics.logEvent("gcode_send") {
-                param("command", command)
-            }
-            gcodeHistoryRepository.recordGcodeSend(command)
+            OctoAnalytics.logEvent(OctoAnalytics.Event.GcodeSent, bundleOf("command" to command))
         }
+        gcodeHistoryRepository.recordGcodeSend(command)
     }
 
     sealed class Response {

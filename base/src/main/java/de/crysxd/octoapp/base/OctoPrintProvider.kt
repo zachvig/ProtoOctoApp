@@ -3,7 +3,9 @@ package de.crysxd.octoapp.base
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
+import com.google.firebase.ktx.Firebase
 import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
@@ -98,6 +100,11 @@ class OctoPrintProvider(
                 analytics.setUserProperty("printer_firmware_name", data.firmwareName)
                 analytics.setUserProperty("printer_machine_type", data.machineType)
                 analytics.setUserProperty("printer_extruder_count", data.extruderCount.toString())
+            }
+
+            event is Event.MessageReceived && event.message is Message.ConnectedMessage -> {
+                OctoAnalytics.logEvent(OctoAnalytics.Event.OctoprintConnected)
+                Firebase.analytics.setUserProperty("octoprint_server_version", (event.message as Message.ConnectedMessage).version)
             }
         }
     }

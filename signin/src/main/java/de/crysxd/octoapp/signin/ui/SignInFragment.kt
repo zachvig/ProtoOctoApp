@@ -11,8 +11,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.ext.composeErrorMessage
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
@@ -58,7 +57,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         })
 
         inputApiKey.setOnActionListener {
-            Firebase.analytics.logEvent("qr_code_login", Bundle.EMPTY)
+            OctoAnalytics.logEvent(OctoAnalytics.Event.QrCodeStarted)
             findNavController().navigate(R.id.actionReadQrCode)
         }
 
@@ -81,8 +80,8 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
     private fun updateViewState(res: SignInViewState) {
         if (res is SignInViewState.SignInFailed && !res.shownToUser) {
             res.shownToUser = true
-            Firebase.analytics.logEvent(
-                "sign_in_failure",
+            OctoAnalytics.logEvent(
+                OctoAnalytics.Event.SignInFailed,
                 bundleOf(
                     "reason_messsage" to res.exception.message,
                     "reason" to res.exception::class.java.simpleName
@@ -106,7 +105,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
                     .setMessage(res.exception.composeErrorMessage(requireContext(), R.string.error_unable_to_connect))
                     .setPositiveButton(android.R.string.ok, null)
                     .setNegativeButton(R.string.trouble_shooting) { _, _ ->
-                        Firebase.analytics.logEvent("troubleshoot_sign_in", Bundle.EMPTY)
+                        OctoAnalytics.logEvent(OctoAnalytics.Event.TroubleShootFromSignIn)
                         inputWebUrl.editText.clearFocusAndHideSoftKeyboard()
                         inputApiKey.editText.clearFocusAndHideSoftKeyboard()
                         findNavController().navigate(
@@ -122,11 +121,14 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         }
 
         if (res is SignInViewState.SignInInformationInvalid) {
-            Firebase.analytics.logEvent(
-                "sign_in_invalid_input",
+            OctoAnalytics.logEvent(
+                OctoAnalytics.Event.SignInInvalidInput,
                 bundleOf(
                     "api_key_invalid" to (res.result.apiKeyErrorMessage != null),
                     "web_url_invalid" to (res.result.webUrlErrorMessage != null),
+                    "api_key_error" to res.result.apiKeyErrorMessage,
+                    "web_url_error" to res.result.webUrlErrorMessage,
+                    "web_url_input" to inputWebUrl.editText.text.toString(),
                 )
             )
             inputWebUrl.error = res.result.webUrlErrorMessage
@@ -147,7 +149,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         @Suppress("ControlFlowWithEmptyBody")
         if (res is SignInViewState.SignInSuccess) {
             buttonSignIn.isEnabled = false
-            Firebase.analytics.logEvent("sign_in_success", Bundle.EMPTY)
+            OctoAnalytics.logEvent(OctoAnalytics.Event.SignInSuccess)
 
             // Show warning dialog if
             if (res.warnings.isNotEmpty()) {

@@ -11,9 +11,7 @@ import com.google.android.play.core.install.InstallException
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallErrorCode
 import com.google.android.play.core.install.model.UpdateAvailability
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.base.OctoAnalytics
 import timber.log.Timber
 
 class AppUpdateFragment : Fragment() {
@@ -45,12 +43,12 @@ class AppUpdateFragment : Fragment() {
                 val appUpdateInfo = result.result
 
                 if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
-                    Firebase.analytics.logEvent("app_update_available", Bundle.EMPTY)
+                    OctoAnalytics.logEvent(OctoAnalytics.Event.AppUpdateAvailable)
                     Timber.i("App update info: $appUpdateInfo")
 
                     if (appUpdateInfo.updatePriority() >= minUpdatePriority && appUpdateInfo.isUpdateTypeAllowed(appUpdateType)) activity?.let {
                         Timber.i("Requesting app update")
-                        FirebaseAnalytics.getInstance(requireContext()).logEvent("app_update_presented", Bundle.EMPTY)
+                        OctoAnalytics.logEvent(OctoAnalytics.Event.AppUpdatePresented)
 
                         // Request the update
                         appUpdateManager.startUpdateFlowForResult(

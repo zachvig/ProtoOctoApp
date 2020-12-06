@@ -42,7 +42,6 @@ class SignInUseCase(
         // Get version info
         val version = octoprint.createVersionApi().getVersion()
         Timber.i("Connected to ${version.serverVersionText}")
-        Firebase.analytics.setUserProperty("octoprint_api_version", version.apiVersion)
         Firebase.analytics.setUserProperty("octoprint_server_version", version.severVersion)
         Firebase.analytics.setUserProperty("octoprint_server_admin", isAdmin.toString())
 
