@@ -7,8 +7,8 @@ data class ConnectionResponse(
 
     data class Connection(
         val state: ConnectionState,
-        val port: String,
-        val baudrate: Int,
+        val port: String?,
+        val baudrate: Int?,
         val printerProfile: String
     )
 
@@ -29,6 +29,7 @@ data class ConnectionResponse(
         MAYBE_DETECTING_BAUDRATE,
         MAYBE_CONNECTING,
         MAYBE_OPERATIONAL,
+        MAYBE_CLOSED,
         MAYBE_ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT,
         MAYBE_CONNECTION_ERROR,
         MAYBE_DETECTING_SERIAL_CONNECTION,
