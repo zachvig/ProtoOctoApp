@@ -104,9 +104,6 @@ class ConnectPrinterViewModel(
                     isPsuBeingCycled(psuCyclingState) ->
                         UiState.PrinterPsuCycling
 
-                    isPrinterConnected(connectionResult) ->
-                        UiState.PrinterConnected
-
                     isNoPrinterAvailable(connectionResult) ->
                         UiState.WaitingForPrinterToComeOnline(psuState?.isPsuOn)
 
@@ -115,6 +112,9 @@ class ConnectPrinterViewModel(
 
                     isPrinterConnecting(connectionResult) ->
                         UiState.PrinterConnecting
+
+                    isPrinterConnected(connectionResult) ->
+                        UiState.PrinterConnected
 
                     else -> {
                         // Printer ready to connect
@@ -164,10 +164,8 @@ class ConnectPrinterViewModel(
         ConnectionResponse.ConnectionState.MAYBE_DETECTING_BAUDRATE
     ).contains(connectionResponse.current.state)
 
-    private fun isPrinterConnected(connectionResponse: ConnectionResponse) = listOf(
-        ConnectionResponse.ConnectionState.MAYBE_OPERATIONAL,
-        ConnectionResponse.ConnectionState.MAYBE_PRINTING
-    ).contains(connectionResponse.current.state)
+    private fun isPrinterConnected(connectionResponse: ConnectionResponse) = connectionResponse.current.port != null ||
+            connectionResponse.current.baudrate != null
 
     private fun autoConnect(connectionResponse: ConnectionResponse) = viewModelScope.launch(coroutineExceptionHandler) {
         if (connectionResponse.options.ports.isNotEmpty() && !didJustAttemptToConnect() && !isPrinterConnecting(connectionResponse)) {
