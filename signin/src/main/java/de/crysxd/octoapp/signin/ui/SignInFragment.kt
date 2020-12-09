@@ -195,5 +195,20 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
             viewModel.invalidApiKeyInfoWasShown = true
             requireOctoActivity().showDialog(requireContext().getString(R.string.error_api_key_reported_invalid))
         }
+
+        val knownSignInInfo = viewModel.getKnownSignInInfo()
+        val labels = knownSignInInfo.map { info -> info.webUrl }.toTypedArray()
+        buttonMore.isVisible = knownSignInInfo.isNotEmpty()
+        buttonMore.setOnClickListener {
+            AlertDialog.Builder(it.context)
+                .setItems(labels) { _, position ->
+                    val info = knownSignInInfo[position]
+                    inputWebUrl.editText.setText(info.webUrl)
+                    inputApiKey.editText.setText(info.apiKey)
+                    viewModel.completeSignIn(info)
+                }
+                .setTitle("Reconnect to:")
+                .show()
+        }
     }
 }

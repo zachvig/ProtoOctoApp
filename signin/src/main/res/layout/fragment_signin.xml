@@ -89,19 +89,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewSubTitle" />
 
-    <Button
-        android:id="@+id/buttonSignIn"
+    <FrameLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_2"
         android:layout_marginEnd="@dimen/margin_2"
         android:layout_marginBottom="@dimen/margin_2"
-        android:text="@string/sign_in_to_octoprint"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inputApiKey"
-        app:layout_constraintVertical_bias="1" />
+        app:layout_constraintVertical_bias="1">
+
+        <Button
+            android:id="@+id/buttonSignIn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_in_to_octoprint" />
+
+        <de.crysxd.octoapp.base.ui.common.OctoMoreButton
+            android:id="@+id/buttonMore"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:elevation="10dp" />
+
+    </FrameLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

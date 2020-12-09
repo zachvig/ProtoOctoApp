@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.signin.di
 
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.Module
@@ -26,9 +27,14 @@ open class ViewModelModule {
     open fun provideSignInViewModel(
         octoPrintRepository: OctoPrintRepository,
         validateSignInInformationUseCase: VerifySignInInformationUseCase,
-        signInUseCase: de.crysxd.octoapp.signin.usecases.SignInUseCase
-    ): ViewModel =
-        SignInViewModel(octoPrintRepository, validateSignInInformationUseCase, signInUseCase)
+        signInUseCase: de.crysxd.octoapp.signin.usecases.SignInUseCase,
+        sharedPreferences: SharedPreferences
+    ): ViewModel = SignInViewModel(
+        octoPrintRepository,
+        validateSignInInformationUseCase,
+        signInUseCase,
+        sharedPreferences
+    )
 
     @Provides
     @IntoMap
