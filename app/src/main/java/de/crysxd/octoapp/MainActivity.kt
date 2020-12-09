@@ -1,5 +1,6 @@
 package de.crysxd.octoapp
 
+import android.app.NotificationManager
 import android.content.Intent
 import android.os.Bundle
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -50,6 +51,7 @@ class MainActivity : OctoActivity() {
             } else {
                 navigate(R.id.action_sign_in_required)
                 stopService(notificationServiceIntent)
+                (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).cancel(PrintNotificationService.NOTIFICATION_ID)
                 events.removeObserver(observer)
             }
         })

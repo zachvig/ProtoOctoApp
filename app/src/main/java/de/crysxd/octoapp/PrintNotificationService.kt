@@ -33,12 +33,15 @@ const val RETRY_COUNT = 3L
 
 class PrintNotificationService : Service() {
 
+    companion object {
+        const val NOTIFICATION_ID = 3249
+    }
+
     private val coroutineJob = Job()
     private var markDisconnectedJob: Job? = null
     private val eventFlow = Injector.get().octoPrintProvider().eventFlow("notification-service")
     private val openAppRequestCode = 3249
     private val maxProgress = 100
-    private val notificationId = 3249
     private val notificationChannelId = "print_progress"
     private val notificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
     private val formatDurationUseCase: FormatDurationUseCase = Injector.get().formatDurationUseCase()
@@ -65,13 +68,13 @@ class PrintNotificationService : Service() {
             createNotificationChannel()
         }
 
-        startForeground(notificationId, createInitialNotification())
+        startForeground(NOTIFICATION_ID, createInitialNotification())
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Timber.i("Destroying notification service")
-        notificationManager.cancel(notificationId)
+        notificationManager.cancel(NOTIFICATION_ID)
         coroutineJob.cancel()
     }
 
@@ -134,7 +137,7 @@ class PrintNotificationService : Service() {
                     else -> null
                 }?.let {
                     Timber.d("Updating notification")
-                    notificationManager.notify(notificationId, it)
+                    notificationManager.notify(NOTIFICATION_ID, it)
                 }
             } catch (e: Exception) {
                 Timber.e(e)
@@ -157,7 +160,7 @@ class PrintNotificationService : Service() {
         markDisconnectedJob?.cancel()
         markDisconnectedJob = GlobalScope.launch(coroutineJob) {
             delay(DISCONNECT_IF_NO_MESSAGE_FOR_MS)
-            notificationManager.notify(notificationId, createDisconnectedNotification())
+            notificationManager.notify(NOTIFICATION_ID, createDisconnectedNotification())
         }
     }
 
