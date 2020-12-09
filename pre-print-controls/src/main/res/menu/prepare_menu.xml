@@ -7,6 +7,11 @@
         android:title="@string/give_feedback" />
 
     <item
+        android:id="@id/menuSignOut"
+        android:icon="@drawable/ic_round_login_24"
+        android:title="@string/sign_out" />
+
+    <item
         android:id="@id/menuOpenOctoprint"
         android:title="@string/open_octoprint"
         android:icon="@drawable/ic_round_open_in_browser_24" />

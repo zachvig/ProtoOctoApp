@@ -18,6 +18,7 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.usecase.execute
 import kotlinx.android.synthetic.main.item_menu.view.*
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
@@ -60,6 +61,7 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
     private suspend fun onMenuItemSelectedBase(@IdRes id: Int) = when (id) {
         R.id.menuOpenOctoprint -> Injector.get().openOctoPrintWebUseCase().execute(requireContext())
         R.id.menuGiveFeedback -> SendFeedbackDialog().show(requireActivity().supportFragmentManager, "send-feedback")
+        R.id.menuSignOut -> Injector.get().signOutUseCase().execute()
         else -> Unit
     }
 

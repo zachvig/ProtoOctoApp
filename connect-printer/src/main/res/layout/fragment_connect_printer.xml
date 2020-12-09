@@ -88,25 +88,29 @@
         tools:text="@string/error_no_printer_connected" />
 
     <Button
-        android:id="@+id/buttonOpenOctoprint"
-        style="@style/OctoTheme.Widget.Button.Small.Secondary"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_3"
-        android:text="@string/open_octoprint"
-        app:layout_constraintEnd_toEndOf="@+id/textViewSubState"
-        app:layout_constraintStart_toStartOf="@+id/textViewSubState"
-        app:layout_constraintTop_toBottomOf="@+id/textViewSubState" />
-
-    <Button
         android:id="@+id/buttonSignOut"
         style="@style/OctoTheme.Widget.Button.Small.Secondary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_3"
-        android:text="Sign out"
-        app:layout_constraintEnd_toEndOf="@+id/textViewSubState"
-        app:layout_constraintStart_toStartOf="@+id/textViewSubState"
+        android:text="@string/sign_out"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/buttonOpenOctoprint"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSubState" />
+
+    <Button
+        android:id="@+id/buttonOpenOctoprint"
+        style="@style/OctoTheme.Widget.Button.Small.Secondary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_3"
+        android:layout_marginEnd="@dimen/margin_2"
+        android:text="@string/open_octoprint"
+        app:layout_constraintEnd_toStartOf="@+id/buttonSignOut"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewSubState" />
 
 

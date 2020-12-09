@@ -90,6 +90,7 @@ class ConnectPrinterFragment : BaseFragment() {
                 buttonTurnOffPsu.setOnClickListener {
                     viewModel.togglePsu()
                 }
+                buttonSignOut.isVisible = true
                 buttonTurnOnPsu.isVisible = state.psuIsOn == false
                 buttonTurnOffPsu.isVisible = state.psuIsOn == true
                 buttonTurnOnPsu.text = getString(R.string.turn_psu_on)
@@ -111,6 +112,7 @@ class ConnectPrinterFragment : BaseFragment() {
             is ConnectPrinterViewModel.UiState.PrinterOffline -> {
                 buttonOpenOctoprint.isVisible = true
                 buttonTurnOnPsu.isVisible = true
+                buttonSignOut.isVisible = true
                 buttonTurnOnPsu.setOnClickListener {
                     if (state.psuSupported) {
                         viewModel.cyclePsu()
