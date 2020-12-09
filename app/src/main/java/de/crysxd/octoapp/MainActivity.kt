@@ -49,6 +49,7 @@ class MainActivity : OctoActivity() {
                 events.observe(this, observer)
             } else {
                 navigate(R.id.action_sign_in_required)
+                stopService(notificationServiceIntent)
                 events.removeObserver(observer)
             }
         })
