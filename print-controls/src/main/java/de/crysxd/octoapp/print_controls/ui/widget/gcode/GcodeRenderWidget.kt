@@ -89,13 +89,15 @@ class GcodeRenderWidget(parent: Fragment) : OctoWidget(parent) {
     }
 
     private fun render(gcode: Gcode, renderData: GcodeRenderWidgetViewModel.RenderData) = parent.viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-        measureTime("Prepare context") {
-            val context = withContext(Dispatchers.Default) {
+        val context = measureTime("Prepare context") {
+            withContext(Dispatchers.Default) {
                 GcodeRenderContextFactory.ForFileLocation(
                     byte = renderData.printInfo.printedBytes.toInt()
                 ).extractMoves(gcode)
             }
+        }
 
+        measureTime("Render") {
             view.renderGroup.isVisible = true
             view.renderView.renderParams = GcodeRenderView.RenderParams(
                 renderContext = context,

@@ -29,7 +29,7 @@ class GcodeParser {
         content.reader().useLines { lines ->
             lines.iterator().forEach {
                 parseLine(it, positionInFile)
-                positionInFile += it.length
+                positionInFile += it.length + 1
 
                 val progress = (positionInFile / totalSize.toFloat())
                 val percent = (progress * 100).roundToInt()
