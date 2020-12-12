@@ -38,10 +38,18 @@ class GcodeRenderWidget(parent: Fragment) : OctoWidget(parent) {
     override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
         inflater.inflate(R.layout.widget_gcode_render, container, false)
 
+    override fun onResume() {
+        super.onResume()
+        parent.viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            viewModel.renderData.collectLatest {
+                updateView(it)
+            }
+        }
+    }
+
     override fun onViewCreated(view: View) {
         updateView(null)
-
-        parent.viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+        parent.viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             val file = viewModel.file.first()
             viewModel.downloadGcode(file, false)
             view.downloadLargeFile.setOnClickListener { viewModel.downloadGcode(file, true) }

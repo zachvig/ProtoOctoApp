@@ -13,10 +13,11 @@ import kotlinx.coroutines.flow.collectLatest
 
 class WebcamFragment : Fragment(R.layout.fragment_webcam) {
 
+    val widget = WebcamWidget(this@WebcamFragment, true)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launchWhenCreated {
-            val widget = WebcamWidget(this@WebcamFragment, true)
             val widgetView = widget.getView(requireContext(), view as ViewGroup)
             widget.externalLiveIndicator = liveIndicator
             view.addView(widgetView, 0)
@@ -53,5 +54,10 @@ class WebcamFragment : Fragment(R.layout.fragment_webcam) {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        widget.onResume()
     }
 }

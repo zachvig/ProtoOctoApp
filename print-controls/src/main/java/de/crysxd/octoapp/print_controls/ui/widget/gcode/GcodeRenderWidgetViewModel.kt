@@ -46,7 +46,7 @@ class GcodeRenderWidgetViewModel(
         Triple(style, i12.first, i12.second)
     }.combine(printInfo) { i123, info ->
         RenderData(i123.first, i123.second, i123.third, info)
-    }
+    }.debounce(100L)
 
     init {
         viewModelScope.launch {
@@ -58,12 +58,7 @@ class GcodeRenderWidgetViewModel(
     }
 
     fun downloadGcode(file: FileObject.File, allowLargeFileDownloads: Boolean) = viewModelScope.launch {
-        if (downloadChannel.valueOrNull == null) {
-            val flow = gcodeFileRepository.loadFile(file, allowLargeFileDownloads).onCompletion {
-                downloadChannel.offer(null)
-            }
-            downloadChannel.offer(flow)
-        }
+        downloadChannel.offer(gcodeFileRepository.loadFile(file, allowLargeFileDownloads))
     }
 
     data class PrintInfo(
