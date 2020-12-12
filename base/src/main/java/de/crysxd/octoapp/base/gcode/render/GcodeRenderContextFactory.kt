@@ -5,7 +5,6 @@ import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.models.GcodePath
 import de.crysxd.octoapp.base.gcode.render.models.GcodeRenderContext
-import timber.log.Timber
 
 sealed class GcodeRenderContextFactory {
 
@@ -24,7 +23,6 @@ sealed class GcodeRenderContextFactory {
             val paths = layer.moves.map {
                 val move = it.value.first.lastOrNull { i -> i.positionInFile <= byte }
                 val count = move?.let { i -> i.positionInArray + 4 } ?: 0
-                Timber.i("${it.key}: $count")
                 val path = GcodePath(
                     type = it.key,
                     offset = 0,

@@ -68,7 +68,7 @@ class GcodeRenderWidget(parent: Fragment) : OctoWidget(parent) {
             }
 
             view.imageButtonFullscreen.setOnClickListener {
-                it.findNavController().navigate(R.id.action_show_fullscreen_gcode, GcodePreviewFragmentArgs(file).toBundle())
+                it.findNavController().navigate(R.id.action_show_fullscreen_gcode, GcodePreviewFragmentArgs(file, true).toBundle())
             }
 
             view.downloadLargeFile.text = requireContext().getString(R.string.download_x, file.size.asStyleFileSize())

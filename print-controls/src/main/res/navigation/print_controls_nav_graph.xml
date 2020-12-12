@@ -76,6 +76,10 @@
             android:name="file"
             app:argType="de.crysxd.octoapp.octoprint.models.files.FileObject$File" />
 
+        <argument
+            android:name="standaloneScreen"
+            app:argType="boolean" />
+
     </fragment>
 
 </navigation>

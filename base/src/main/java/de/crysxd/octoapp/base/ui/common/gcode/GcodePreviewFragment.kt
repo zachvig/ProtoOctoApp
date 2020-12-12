@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
@@ -15,6 +16,7 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
+import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import kotlinx.android.synthetic.main.fragment_gcode_render.*
@@ -26,6 +28,7 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
 
     companion object {
         private const val ARG_FILE = "file"
+        private const val ARG_STANDALONE_SCREEN = "standaloneScreen"
         private const val LAYER_PROGRESS_STEPS = 1000
 
         fun createForFile(file: FileObject.File) = GcodePreviewFragment().apply {
@@ -34,6 +37,7 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
     }
 
     private val file get() = requireArguments().getSerializable(ARG_FILE) as FileObject.File
+    private val isStandaloneScreen get() = requireArguments().getBoolean(ARG_STANDALONE_SCREEN)
     private val viewModel: GcodePreviewViewModel by injectViewModel(Injector.get().viewModelFactory())
     private val seekBarListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
@@ -66,8 +70,21 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
         layerSeekBar.setOnSeekBarChangeListener(seekBarListener)
         layerProgressSeekBar.setOnSeekBarChangeListener(seekBarListener)
 
+        if (isStandaloneScreen) {
+            renderView.updatePadding(top = requireContext().resources.getDimensionPixelSize(R.dimen.common_view_top_padding))
+        }
+
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewModel.viewState.observe(viewLifecycleOwner, ::updateViewState)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        if (isStandaloneScreen) {
+            requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
+            requireOctoActivity().octo.isVisible = false
         }
     }
 
@@ -88,7 +105,7 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
             is GcodePreviewViewModel.ViewState.DataReady -> {
                 loadingGroup.isVisible = false
                 render(state)
-                Timber.i("Ready")
+                Timber.v("Ready")
 
             }
             is GcodePreviewViewModel.ViewState.Error -> {
