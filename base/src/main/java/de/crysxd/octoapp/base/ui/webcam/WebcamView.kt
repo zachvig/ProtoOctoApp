@@ -106,7 +106,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                     errorState.isVisible = true
                     reconnectingState.isVisible = false
                     liveIndicator.isVisible = false
-                    errorDescription.text = "Unable to play ${state.uri} (${error.message})"
+                    errorDescription.text = context.getString(R.string.error_video_playback, state.uri, error.message)
                 }
 
                 override fun onLoadCompleted(eventTime: AnalyticsListener.EventTime, loadEventInfo: LoadEventInfo, mediaLoadData: MediaLoadData) {
