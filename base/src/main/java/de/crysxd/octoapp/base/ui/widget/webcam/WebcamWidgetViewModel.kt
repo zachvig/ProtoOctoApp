@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.ui.widget.webcam
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.net.Uri
 import android.widget.ImageView
 import androidx.core.content.edit
 import androidx.lifecycle.*
@@ -62,25 +63,29 @@ class WebcamWidgetViewModel(
                 }
 
                 // Open stream
-                MjpegConnection(streamUrl)
-                    .load()
-                    .map {
-                        when (it) {
-                            is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading
-                            is MjpegConnection.MjpegSnapshot.Error -> UiState.Error(
-                                isManualReconnect = false,
-                                streamUrl = webcamSettings.streamUrl
-                            )
-                            is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
-                                frame = applyTransformations(it.frame, webcamSettings),
-                                aspectRation = webcamSettings.streamRatio
-                            )
+                if (streamUrl.endsWith(".m3u") || streamUrl.endsWith(".m3u8")) {
+                    emit(UiState.HlsStreamReady(Uri.parse(streamUrl), webcamSettings.streamRatio))
+                } else {
+                    MjpegConnection(streamUrl)
+                        .load()
+                        .map {
+                            when (it) {
+                                is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading
+                                is MjpegConnection.MjpegSnapshot.Error -> UiState.Error(
+                                    isManualReconnect = false,
+                                    streamUrl = webcamSettings.streamUrl
+                                )
+                                is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
+                                    frame = applyTransformations(it.frame, webcamSettings),
+                                    aspectRation = webcamSettings.streamRatio
+                                )
+                            }
                         }
-                    }
-                    .flowOn(Dispatchers.Default)
-                    .collect {
-                        emit(it)
-                    }
+                        .flowOn(Dispatchers.Default)
+                        .collect {
+                            emit(it)
+                        }
+                }
             } catch (e: Exception) {
                 Timber.e(e)
                 emit(UiState.Error(true))
@@ -132,6 +137,7 @@ class WebcamWidgetViewModel(
         object Loading : UiState()
         object WebcamNotConfigured : UiState()
         data class FrameReady(val frame: Bitmap, val aspectRation: String) : UiState()
+        data class HlsStreamReady(val uri: Uri, val aspectRation: String) : UiState()
         data class Error(val isManualReconnect: Boolean, val streamUrl: String? = null) : UiState()
     }
 }

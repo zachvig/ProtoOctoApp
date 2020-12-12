@@ -8,7 +8,7 @@
     android:layout_gravity="center"
     tools:parentTag="android.widget.FrameLayout">
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/playingState"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -16,23 +16,27 @@
         <ImageView
             android:id="@+id/mjpegSurface"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             android:importantForAccessibility="no" />
 
         <SurfaceView
             android:id="@+id/hlsSurface"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/liveIndicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="top|end"
             android:layout_margin="@dimen/margin_1"
             android:contentDescription="@string/cd_live"
             android:src="@drawable/ic_live"
-            android:visibility="gone" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/imageButtonFullscreen"
@@ -43,9 +47,11 @@
             android:contentDescription="@string/fullscreen"
             android:padding="@dimen/margin_1"
             android:tint="@color/text_colored_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_round_fullscreen_24" />
 
-    </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/reconnectingState"
@@ -54,7 +60,7 @@
         android:background="@color/black_translucent"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
@@ -84,10 +90,10 @@
         android:layout_height="match_parent"
         android:layout_margin="@dimen/margin_2"
         android:gravity="center"
+        android:visibility="gone"
         android:text="@string/please_configure_your_webcam_in_octoprint"
         android:textAppearance="@style/OctoTheme.TextAppearance.Title"
         android:textColor="@color/text_colored_background"
-        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -115,7 +121,7 @@
             android:textColor="@color/text_colored_background" />
 
         <TextView
-            android:id="@+id/streamUrl2"
+            android:id="@+id/errorDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_2"
@@ -172,11 +178,12 @@
 
     </LinearLayout>
 
-    <ProgressBar
+    <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/loadingState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:visibility="gone"
         android:indeterminateTint="@color/text_colored_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

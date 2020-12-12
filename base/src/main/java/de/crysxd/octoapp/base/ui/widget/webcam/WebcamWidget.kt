@@ -38,6 +38,7 @@ class WebcamWidget(
     override fun onViewCreated(view: View) {
         applyAspectRatio(viewModel.getInitialAspectRatio())
         webcamView.coroutineScope = parent.viewLifecycleOwner.lifecycleScope
+        webcamView.onResetConnection = viewModel::connect
         viewModel.uiState.observe(parent, ::onUiStateChanged)
     }
 
@@ -45,7 +46,14 @@ class WebcamWidget(
         webcamView.state = when (state) {
             Loading -> WebcamView.WebcamState.Loading
             UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
-            is UiState.FrameReady -> WebcamView.WebcamState.MjpegFrameReady(state.frame)
+            is UiState.FrameReady -> {
+                applyAspectRatio(state.aspectRation)
+                WebcamView.WebcamState.MjpegFrameReady(state.frame)
+            }
+            is UiState.HlsStreamReady -> {
+                applyAspectRatio(state.aspectRation)
+                WebcamView.WebcamState.HlsStreamReady(state.uri)
+            }
             is Error -> if (state.isManualReconnect) {
                 WebcamView.WebcamState.Error {
                     viewModel.connect()
