@@ -85,8 +85,7 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
         syncButtonSeparator.isVisible = isStandaloneScreen
         syncButton.setOnClickListener {
             (viewModel.viewState.value as? GcodePreviewViewModel.ViewState.DataReady)?.let { currentState ->
-                val isLive = currentState.fromUser != true
-                if (isLive) {
+                if (currentState.isLive) {
                     pushSeekBarValuesToViewModel()
                 } else {
                     viewModel.useLiveProgress()
@@ -161,20 +160,20 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
 
         layerSeekBar.max = state.renderContext.layerCount - 1
         layerProgressSeekBar.max = LAYER_PROGRESS_STEPS
-        if (state.fromUser != true) {
+        if (state.isLive) {
             layerSeekBar.progress = state.renderContext.layerNumber
             layerProgressSeekBar.progress = (state.renderContext.layerProgress * LAYER_PROGRESS_STEPS).roundToInt()
         }
 
         syncButton.setImageResource(
-            if (state.fromUser != true) {
+            if (state.isLive) {
                 R.drawable.ic_round_sync_disabled_24
             } else {
                 R.drawable.ic_round_sync_24
             }
         )
 
-        live.isVisible = state.fromUser != true
+        live.isVisible = state.isLive
         hideLiveJob?.cancel()
         hideLiveJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             delay(NOT_LIVE_IF_NO_UPDATE_FOR_MS)
@@ -194,4 +193,6 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
             extrusionWidthMm = state.printerProfile.extruder.nozzleDiameter,
         )
     }
+
+    private val GcodePreviewViewModel.ViewState.DataReady?.isLive get() = this?.fromUser != null && !fromUser
 }
