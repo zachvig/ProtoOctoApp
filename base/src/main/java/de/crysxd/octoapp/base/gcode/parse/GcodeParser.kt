@@ -40,6 +40,9 @@ class GcodeParser {
             }
         }
 
+        // Flush last layer
+        startNewLayer(positionInFile)
+
         return Gcode(layers.toList())
     }
 

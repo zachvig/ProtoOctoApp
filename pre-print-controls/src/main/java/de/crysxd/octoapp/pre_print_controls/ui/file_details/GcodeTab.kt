@@ -136,7 +136,7 @@ class GcodeTab : Fragment(R.layout.fragment_gcode_tab) {
             val layerHeightMm = DecimalFormat("0.0#").format(gcode.layers[selectedLayer].zHeight)
 
             val layerProgressPercent = layerProgressSeekBar.progress / LAYER_PROGRESS_STEPS.toFloat()
-            layerNumber.text = layerSeekBar.progress.toString()
+            layerNumber.text = (layerSeekBar.progress + 1).toString()
             layerHeight.text = getString(R.string.x_mm, layerHeightMm)
             layerProgress.text = String.format("%.0f %%", layerProgressPercent * 100)
 
