@@ -9,10 +9,13 @@ import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.feedback.SendFeedbackViewModel
+import de.crysxd.octoapp.base.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.BaseViewModelFactory
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
+import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
 import de.crysxd.octoapp.base.ui.common.terminal.TerminalViewModel
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlBedTemperatureWidgetViewModel
@@ -102,5 +105,22 @@ open class ViewModelModule {
         sharedPreferences,
         gcodeHistoryRepository,
         Gson()
+    )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(GcodePreviewViewModel::class)
+    open fun provideGcodePreviewViewModel(
+        octoPrintProvider: OctoPrintProvider,
+        octoPrintRepository: OctoPrintRepository,
+        generateRenderStyleUseCase: GenerateRenderStyleUseCase,
+        getCurrentPrinterProfileUseCase: GetCurrentPrinterProfileUseCase,
+        gcodeFileRepository: GcodeFileRepository
+    ): ViewModel = GcodePreviewViewModel(
+        octoPrintRepository = octoPrintRepository,
+        octoPrintProvider = octoPrintProvider,
+        generateRenderStyleUseCase = generateRenderStyleUseCase,
+        getCurrentPrinterProfileUseCase = getCurrentPrinterProfileUseCase,
+        gcodeFileRepository = gcodeFileRepository
     )
 }

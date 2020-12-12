@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/input_background"
+    app:cardCornerRadius="@dimen/common_corner_radius"
+    app:cardElevation="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="H,16:9"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <!-- RENDER -->
+
+
+        <de.crysxd.octoapp.base.gcode.render.GcodeRenderView
+            android:id="@+id/renderView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="@dimen/margin_2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="H,1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:background="#f00"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp" />
+
+        <TextView
+            android:id="@+id/layerTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_2"
+            android:text="@string/layer"
+            android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+            app:layout_constraintBottom_toTopOf="@+id/layer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/renderView"
+            app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+        <TextView
+            android:id="@+id/layer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Label"
+            app:layout_constraintBottom_toTopOf="@+id/layerProgressTitle"
+            app:layout_constraintEnd_toEndOf="@+id/layerTitle"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/layerTitle"
+            app:layout_constraintTop_toBottomOf="@+id/layerTitle"
+            app:layout_goneMarginTop="@dimen/margin_0"
+            tools:text="16 of 234" />
+
+        <TextView
+            android:id="@+id/layerProgressTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_1"
+            android:text="@string/layer_progress"
+            android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+            app:layout_constraintBottom_toTopOf="@+id/layerPorgess"
+            app:layout_constraintEnd_toEndOf="@+id/layerTitle"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/layerTitle"
+            app:layout_constraintTop_toBottomOf="@+id/layer"
+            app:layout_goneMarginTop="@dimen/margin_0" />
+
+        <TextView
+            android:id="@+id/layerPorgess"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Label"
+            app:layout_constraintBottom_toTopOf="@+id/view2"
+            app:layout_constraintEnd_toEndOf="@+id/layerTitle"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/layerTitle"
+            app:layout_constraintTop_toBottomOf="@+id/layerProgressTitle"
+            tools:text="45%" />
+
+        <ImageButton
+            android:id="@+id/imageButtonFullscreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/OctoTheme.Widget.Button.Image"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_round_fullscreen_24"
+            app:layout_constraintBottom_toBottomOf="@+id/view2"
+            app:layout_constraintEnd_toEndOf="@+id/view2"
+            app:tint="?attr/colorAccent" />
+
+        <ImageView
+            android:id="@+id/liveIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_1"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_live"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- END RENDER -->
+        <!-- LOADING -->
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:indeterminateBehavior="cycle"
+            android:max="100"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/loadingText" />
+
+        <TextView
+            android:id="@+id/loadingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/margin_1"
+            android:gravity="center"
+            android:text="@string/loading"
+            android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+            android:textColor="@color/normal_text"
+            app:layout_constraintBottom_toTopOf="@+id/progressBar"
+            app:layout_constraintEnd_toEndOf="@+id/progressBar"
+            app:layout_constraintStart_toStartOf="@+id/progressBar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+
+        <!-- END LOADING-->
+        <!-- LARGE FILE -->
+
+
+        <TextView
+            android:id="@+id/largeFileExplanation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_3"
+            android:layout_marginEnd="@dimen/margin_3"
+            android:layout_marginBottom="@dimen/margin_0"
+            android:gravity="center"
+            android:text="@string/this_file_exceeds_the_limit_for_mobile_downloads"
+            android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+            android:textColor="@color/dark_text"
+            app:layout_constraintBottom_toTopOf="@+id/largeFileExplanationDetail"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <TextView
+            android:id="@+id/largeFileExplanationDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_3"
+            android:text="@string/you_can_change_this_limit_in_octoprint_settings"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
+            app:layout_constraintBottom_toTopOf="@+id/downloadLargeFile"
+            app:layout_constraintEnd_toEndOf="@+id/largeFileExplanation"
+            app:layout_constraintStart_toStartOf="@+id/largeFileExplanation"
+            app:layout_constraintTop_toBottomOf="@+id/largeFileExplanation" />
+
+        <Button
+            android:id="@+id/downloadLargeFile"
+            style="@style/OctoTheme.Widget.Button.Small.Secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/download_x"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/largeFileExplanation"
+            app:layout_constraintStart_toStartOf="@+id/largeFileExplanation"
+            app:layout_constraintTop_toBottomOf="@+id/largeFileExplanationDetail" />
+
+
+        <!-- END LARGE FILE -->
+        <!-- ERROR -->
+
+
+        <TextView
+            android:id="@+id/errorTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_3"
+            android:layout_marginEnd="@dimen/margin_3"
+            android:layout_marginBottom="@dimen/margin_0"
+            android:gravity="center"
+            android:text="@string/error_unable_to_load_gcode"
+            android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+            android:textColor="@color/dark_text"
+            app:layout_constraintBottom_toTopOf="@+id/reloadButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <Button
+            android:id="@+id/reloadButton"
+            style="@style/OctoTheme.Widget.Button.Small.Secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_2"
+            android:text="@string/try_again"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/errorTitle"
+            app:layout_constraintStart_toStartOf="@+id/errorTitle"
+            app:layout_constraintTop_toBottomOf="@+id/errorTitle" />
+
+
+        <!-- ERROR -->
+
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/progressOverlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="progressBar,loadingText" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/largeFileOverlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:constraint_referenced_ids="largeFileExplanation,largeFileExplanationDetail,downloadLargeFile"
+            tools:visibility="gone" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/renderGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="renderView,layerTitle,layer,layerPorgess,layerProgressTitle,liveIndicator,imageButtonFullscreen"
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/errorGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="errorTitle,reloadButton"
+            tools:visibility="gone" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

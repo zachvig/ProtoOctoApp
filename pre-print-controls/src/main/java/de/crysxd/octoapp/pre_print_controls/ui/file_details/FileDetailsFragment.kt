@@ -14,7 +14,9 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewFragment
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.Injector
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
@@ -23,12 +25,13 @@ import kotlinx.android.synthetic.main.fragment_file_details.*
 class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
 
     private val viewModel: FileDetailsViewModel by injectViewModel(Injector.get().viewModelFactory())
-    private val adapter by lazy { Adapter() }
+    private val file by lazy { navArgs<FileDetailsFragmentArgs>().value.file }
+    private val adapter by lazy { Adapter(file) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.file = navArgs<FileDetailsFragmentArgs>().value.file
+        viewModel.file = file
 
         buttonStartPrint.setOnClickListener {
             viewModel.startPrint()
@@ -40,10 +43,10 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
         TabLayoutMediator(tabs, viewPager) { tab, position ->
             tab.text = when (adapter.createFragment(position)) {
                 is InfoTab -> "Info"
-                is GcodeTab -> {
+                is GcodePreviewFragment -> {
                     val builder = SpannableStringBuilder("Preview")
                     builder.append("   ")
-                    val span = ImageSpan(requireContext(), R.drawable.ic_beta)
+                    val span = ImageSpan(requireContext(), R.drawable.ic_new)
                     builder.setSpan(span, builder.length - 1, builder.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
                     builder
                 }
@@ -63,7 +66,9 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
 
             scrollView.isUserInputEnabled = position == 0
             scrollView.isBottomActionAnimationEnabled = false
-            scrollView.smoothScrollTo(0, if (position == 0) 0 else Int.MAX_VALUE)
+            scrollView.post {
+                scrollView.smoothScrollTo(0, if (position == 0) 0 else Int.MAX_VALUE)
+            }
             bottomAction.animate().translationY(if (position == 0) 0f else bottomAction.height.toFloat()).withEndAction {
                 scrollView.isBottomActionAnimationEnabled = position == 0
             }.start()
@@ -90,10 +95,10 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
         }
     }
 
-    inner class Adapter : FragmentStateAdapter(this@FileDetailsFragment) {
+    inner class Adapter(file: FileObject.File) : FragmentStateAdapter(this@FileDetailsFragment) {
         private val fragments = listOf(
             InfoTab(),
-            GcodeTab()
+            GcodePreviewFragment.createForFile(file)
         )
 
         override fun getItemCount() = fragments.size

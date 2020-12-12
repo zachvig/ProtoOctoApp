@@ -8,6 +8,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
+import de.crysxd.octoapp.base.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.ViewModelFactory
@@ -15,6 +16,7 @@ import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidgetViewModel
 import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.print_controls.ui.PrintControlsViewModel
 import de.crysxd.octoapp.print_controls.ui.widget.TuneFragmentViewModel
+import de.crysxd.octoapp.print_controls.ui.widget.gcode.GcodeRenderWidgetViewModel
 import de.crysxd.octoapp.print_controls.ui.widget.tune.TuneWidgetViewModel
 import javax.inject.Provider
 
@@ -71,5 +73,22 @@ open class ViewModelModule {
     ): ViewModel = TuneFragmentViewModel(
         sharedPreferences,
         tunePrintUseCase
+    )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(GcodeRenderWidgetViewModel::class)
+    fun provideGcodeRenderWidgetViewModel(
+        octoPrintRepository: OctoPrintRepository,
+        octoPrintProvider: OctoPrintProvider,
+        generateRenderStyleUseCase: GenerateRenderStyleUseCase,
+        getCurrentPrinterProfileUseCase: GetCurrentPrinterProfileUseCase,
+        gcodeFileRepository: GcodeFileRepository
+    ): ViewModel = GcodeRenderWidgetViewModel(
+        octoPrintProvider = octoPrintProvider,
+        generateRenderStyleUseCase = generateRenderStyleUseCase,
+        getCurrentPrinterProfileUseCase = getCurrentPrinterProfileUseCase,
+        gcodeFileRepository = gcodeFileRepository,
+        octoPrintRepository = octoPrintRepository,
     )
 }

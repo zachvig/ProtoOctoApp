@@ -158,7 +158,11 @@ class MainActivity : OctoActivity() {
         navigate(
             when {
                 e is Message.EventMessage.Disconnected -> R.id.action_connect_printer
-                e is Message.EventMessage.Connected -> R.id.action_printer_connected
+                e is Message.EventMessage.Connected -> {
+                    // New printer connected, let's update capabilities
+                    updateCapabilities()
+                    R.id.action_printer_connected
+                }
                 e is Message.EventMessage.PrinterStateChanged &&
                         e.stateId == Message.EventMessage.PrinterStateChanged.PrinterState.OPERATIONAL -> R.id.action_printer_connected
                 e is Message.EventMessage.PrintStarted -> R.id.action_printer_active

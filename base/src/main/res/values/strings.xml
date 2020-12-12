@@ -84,7 +84,16 @@
     <string name="eta_x">ETA: %s</string>
     <string name="message">Message</string>
     <string name="never">Never</string>
+    <string name="loading">Loading…</string>
     <string name="you_can_change_this_limit_in_octoprint_settings">You can change this limit in OctoPrint settings</string>
     <string name="this_file_exceeds_the_limit_for_mobile_downloads">This file exceeds the limit\nfor mobile downloads</string>
     <string name="download_x">Download %s</string>
+    <string name="error_unable_to_load_gcode">Something went wrong, unable to load Gcode</string>
+    <string name="try_again">Try again</string>
+    <string name="layer">Layer</string>
+    <string name="layer_progress">Layer Progress</string>
+    <string name="cd_next_layer">Next Layer</string>
+    <string name="cd_sync_with_print_progress">Sync with print progress</string>
+    <string name="cd_previous_layer">Previous Layer</string>
+    <string name="x_of_y">%1$d of %2$d</string>
 </resources>

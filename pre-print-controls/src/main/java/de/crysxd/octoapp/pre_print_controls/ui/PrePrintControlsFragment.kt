@@ -72,6 +72,11 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
         widgetListScroller.setupWithToolbar(requireOctoActivity(), bottomAction)
     }
 
+    override fun onResume() {
+        super.onResume()
+        adapter.dispatchResume()
+    }
+
     class MenuBottomSheet : de.crysxd.octoapp.base.ui.common.MenuBottomSheet() {
 
         private val viewModel: PrePrintControlsViewModel by injectParentViewModel()

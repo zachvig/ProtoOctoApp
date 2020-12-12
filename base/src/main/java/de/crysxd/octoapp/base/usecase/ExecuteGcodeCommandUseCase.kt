@@ -43,7 +43,7 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
     private suspend fun executeAndRecordResponse(command: GcodeCommand.Single, fromUser: Boolean, timber: Timber.Tree) = withContext(Dispatchers.Default) {
         val readJob = async {
             var sendLineFound = false
-            val sendLinePattern = Pattern.compile(Firebase.remoteConfig.getString("gcode_response_send_line_pattern").replace("%%COMMAND%%", command.command))
+            val sendLinePattern = Pattern.compile("^Send:.*%%COMMAND%%.*".replace("%%COMMAND%%", command.command))
             val responseEndLinePattern = Pattern.compile(Firebase.remoteConfig.getString("gcode_response_end_line_pattern"))
             val spamMessagePattern = Pattern.compile(Firebase.remoteConfig.getString("gcode_response_spam_pattern"))
 
@@ -59,6 +59,9 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
                     // Skip until send line was found
                     if (!sendLineFound) {
                         sendLineFound = sendLinePattern.matcher(it).matches()
+                        if (sendLineFound) {
+                            timber.v("Send line was found: $it")
+                        }
                         sendLineFound
                     } else {
                         true
@@ -69,7 +72,7 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
                 }
                 .toList()
 
-            timber.v("Recorded response for ${command.command}: ${list}")
+            timber.v("Recorded response for ${command.command}: $list")
             Response.RecordedResponse(
                 sendLine = list.first(),
                 responseLines = list.subList(1, list.size)

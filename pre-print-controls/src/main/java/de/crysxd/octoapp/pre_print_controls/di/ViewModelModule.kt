@@ -84,11 +84,13 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(FileDetailsViewModel::class)
     open fun provideFileDetailsViewModel(
+        octoPrintRepository: OctoPrintRepository,
         startPrintJobUseCase: StartPrintJobUseCase,
         getCurrentPrinterProfileUseCase: GetCurrentPrinterProfileUseCase,
         generateRenderStyleUseCase: GenerateRenderStyleUseCase,
         gcodeFileRepository: GcodeFileRepository,
     ): ViewModel = FileDetailsViewModel(
+        octoPrintRepository,
         getCurrentPrinterProfileUseCase,
         generateRenderStyleUseCase,
         startPrintJobUseCase,

@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.datasource.GcodeFileDataSource
 import de.crysxd.octoapp.base.gcode.render.models.RenderStyle
 import de.crysxd.octoapp.base.repository.GcodeFileRepository
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.GenerateRenderStyleUseCase
 import de.crysxd.octoapp.base.usecase.GetCurrentPrinterProfileUseCase
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class FileDetailsViewModel(
+    private val octoPrintRepository: OctoPrintRepository,
     private val getCurrentPrinterProfileUseCase: GetCurrentPrinterProfileUseCase,
     private val generateRenderStyleUseCase: GenerateRenderStyleUseCase,
     private val startPrintJobUseCase: StartPrintJobUseCase,
@@ -31,17 +33,14 @@ class FileDetailsViewModel(
             it
         }.combine(profileChannel.asFlow()) { download, profile ->
             Pair(download, profile)
-        }.combine(renderStyleChannel.asFlow()) { pair, style ->
+        }.combine(octoPrintRepository.instanceInformationFlow()) { pair, info ->
+            val style = generateRenderStyleUseCase.execute(info)
             Triple(pair.first, pair.second, style)
         }
 
     init {
         viewModelScope.launch {
-            renderStyleChannel.offer(generateRenderStyleUseCase.execute(Unit))
-        }
-        viewModelScope.launch {
-            val profile = getCurrentPrinterProfileUseCase.execute(Unit)
-            profileChannel.offer(profile)
+            profileChannel.offer(getCurrentPrinterProfileUseCase.execute(Unit))
         }
     }
 
