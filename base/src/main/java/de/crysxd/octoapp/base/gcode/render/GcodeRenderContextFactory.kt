@@ -46,6 +46,7 @@ sealed class GcodeRenderContextFactory {
                 printHeadPosition = printHeadPosition,
                 paths = paths.map { it.second }.sortedBy { it.priority },
                 layerCount = gcode.layers.size,
+                layerZHeight = layer.zHeight,
                 layerNumber = gcode.layers.indexOf(layer),
                 layerProgress = paths.sumBy { it.second.count } / layer.moves.values.sumBy { it.second.size }.toFloat()
             )
@@ -71,6 +72,8 @@ sealed class GcodeRenderContextFactory {
                 printHeadPosition = null,
                 layerNumber = this.layer + 1,
                 layerCount = gcode.layers.size,
+                layerZHeight = layer.zHeight,
+
                 layerProgress = progress
             )
         }

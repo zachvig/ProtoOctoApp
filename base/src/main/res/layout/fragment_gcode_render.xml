@@ -9,8 +9,8 @@
         android:id="@+id/renderView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:padding="@dimen/margin_2"
         android:layout_marginBottom="@dimen/margin_3"
+        android:padding="@dimen/margin_2"
         app:layout_constraintBottom_toTopOf="@+id/titleLayer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,11 +52,11 @@
         android:id="@+id/titleLayer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_2"
         android:layout_marginBottom="@dimen/margin_1"
         android:text="@string/layer"
         android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
         app:layout_constraintBottom_toTopOf="@+id/layerSeekBar"
-        android:layout_marginStart="@dimen/margin_2"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -103,10 +103,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/progressText" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/progressText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -121,18 +121,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.3"
         app:layout_constraintVertical_chainStyle="packed" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/progressOverlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="progressBar,textView3"
-        app:layout_constraintBottom_toTopOf="@+id/progressBar"
-        app:layout_constraintEnd_toEndOf="@+id/progressBar"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/progressBar"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/largeFileExplanation"
@@ -175,21 +163,35 @@
         app:layout_constraintStart_toStartOf="@+id/largeFileExplanation"
         app:layout_constraintTop_toBottomOf="@+id/largeFileExplanationDetail" />
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/largeFileOverlay"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/errorText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:constraint_referenced_ids="largeFileExplanation,largeFileExplanationDetail,downloadLargeFile"
-        tools:visibility="gone" />
+        android:layout_marginStart="@dimen/margin_3"
+        android:layout_marginEnd="@dimen/margin_3"
+        android:layout_marginBottom="@dimen/margin_0"
+        android:gravity="center"
+        android:text="@string/error_unable_to_load_gcode"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+        android:textColor="@color/dark_text"
+        app:layout_constraintBottom_toTopOf="@+id/retryButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/renderGroup"
+    <Button
+        android:id="@+id/retryButton"
+        style="@style/OctoTheme.Widget.Button.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="titleLayer,layerHeight,layerNumber,layerProgress,titleLayerProgress,layerSeekBar,layerProgressSeekBar,background,renderView"
-        tools:visibility="visible" />
+        android:layout_marginTop="@dimen/margin_2"
+        android:text="@string/try_again"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/errorText"
+        app:layout_constraintStart_toStartOf="@+id/errorText"
+        app:layout_constraintTop_toBottomOf="@+id/errorText" />
 
     <TextView
         android:id="@+id/layerHeight"
@@ -203,5 +205,37 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/layerNumber"
         tools:text="12.2 mm" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/largeFileGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="largeFileExplanation,largeFileExplanationDetail,downloadLargeFile"
+        tools:visibility="gone" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/loadingGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="progressBar,progressText"
+        tools:visibility="gone" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/errorGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="errorText,retryButton"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/renderGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="titleLayer,layerHeight,layerNumber,layerProgress,titleLayerProgress,layerSeekBar,layerProgressSeekBar,background,renderView"
+        tools:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -89,4 +89,6 @@
     <string name="download_x">Download %s</string>
     <string name="error_unable_to_load_gcode">Something went wrong, unable to load Gcode</string>
     <string name="try_again">Try again</string>
+    <string name="layer">Layer</string>
+    <string name="layer_progress">Layer Progress</string>
 </resources>
