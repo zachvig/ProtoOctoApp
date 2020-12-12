@@ -31,7 +31,6 @@ class WebcamFragment : Fragment(R.layout.fragment_webcam) {
         webcamView.onNativeAspectRatioChanged = { width, height ->
             val frameAspectRatio = width / height.toFloat()
             val screenAspectRatio = resources.displayMetrics.run { widthPixels / heightPixels.toFloat() }
-            val orientation = resources.configuration.orientation
 
             requireActivity().requestedOrientation = if ((frameAspectRatio < 1 && screenAspectRatio > 1) || (frameAspectRatio > 1 && screenAspectRatio < 1)) {
                 // Oh no! if we rotate the screen, the image would fit better!
