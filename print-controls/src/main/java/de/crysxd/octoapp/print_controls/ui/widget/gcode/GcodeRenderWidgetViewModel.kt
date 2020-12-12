@@ -66,9 +66,9 @@ class GcodeRenderWidgetViewModel(
     )
 
     data class RenderData(
-        val renderStyle: RenderStyle,
+        val renderStyle: RenderStyle? = null,
         val gcode: GcodeFileDataSource.LoadState,
-        val printerProfile: PrinterProfiles.Profile,
-        val printInfo: PrintInfo
+        val printerProfile: PrinterProfiles.Profile? = null,
+        val printInfo: PrintInfo? = null
     )
 }

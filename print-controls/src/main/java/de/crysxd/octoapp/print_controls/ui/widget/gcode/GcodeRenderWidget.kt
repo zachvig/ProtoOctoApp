@@ -59,7 +59,12 @@ class GcodeRenderWidget(parent: Fragment) : OctoWidget(parent) {
             val file = viewModel.file.first()
             viewModel.downloadGcode(file, false)
             view.downloadLargeFile.text = requireContext().getString(R.string.download_x, file.size.asStyleFileSize())
-            view.downloadLargeFile.setOnClickListener { viewModel.downloadGcode(file, true) }
+            view.downloadLargeFile.setOnClickListener {
+                viewModel.downloadGcode(file, true)
+                updateView(
+                    GcodeRenderWidgetViewModel.RenderData(gcode = GcodeFileDataSource.LoadState.Loading(0f))
+                )
+            }
         }
 
         parent.viewLifecycleOwner.lifecycleScope.launchWhenCreated {
@@ -100,6 +105,8 @@ class GcodeRenderWidget(parent: Fragment) : OctoWidget(parent) {
     }
 
     private fun render(gcode: Gcode, renderData: GcodeRenderWidgetViewModel.RenderData) = parent.viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+        renderData.printInfo ?: return@launchWhenCreated
+
         val context = measureTime("Prepare context") {
             withContext(Dispatchers.Default) {
                 GcodeRenderContextFactory.ForFileLocation(
@@ -118,6 +125,10 @@ class GcodeRenderWidget(parent: Fragment) : OctoWidget(parent) {
                 delay(NOT_LIVE_IF_NO_UPDATE_FOR_MS)
                 view.liveIndicator.isVisible = false
             }
+
+            renderData.renderStyle ?: return@launchWhenCreated
+            renderData.printerProfile ?: return@launchWhenCreated
+
             view.renderView.renderParams = GcodeRenderView.RenderParams(
                 renderContext = context,
                 renderStyle = renderData.renderStyle,

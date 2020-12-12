@@ -156,7 +156,7 @@
             android:layout_marginBottom="@dimen/margin_0"
             android:gravity="center"
             android:text="@string/this_file_exceeds_the_limit_for_mobile_downloads"
-            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+            android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
             android:textColor="@color/dark_text"
             app:layout_constraintBottom_toTopOf="@+id/largeFileExplanationDetail"
             app:layout_constraintEnd_toEndOf="parent"
@@ -179,7 +179,7 @@
 
         <Button
             android:id="@+id/downloadLargeFile"
-            style="@style/OctoTheme.Widget.Button.Small"
+            style="@style/OctoTheme.Widget.Button.Small.Secondary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/download_x"
@@ -205,7 +205,7 @@
             android:layout_height="wrap_content"
             android:visibility="visible"
             app:constraint_referenced_ids="largeFileExplanation,largeFileExplanationDetail,downloadLargeFile"
-            tools:visibility="gone" />
+            tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/renderGroup"
@@ -213,7 +213,7 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             app:constraint_referenced_ids="renderView,layerTitle,layer,layerPorgess,layerProgressTitle,liveIndicator,imageButtonFullscreen"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
