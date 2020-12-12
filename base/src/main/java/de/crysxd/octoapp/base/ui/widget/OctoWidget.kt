@@ -1,14 +1,12 @@
 package de.crysxd.octoapp.base.ui.widget
 
 import android.content.Context
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -53,6 +51,6 @@ abstract class OctoWidget(val parent: Fragment) : LayoutContainer {
     fun requireContext() = parent.requireContext()
 
     protected fun recordInteraction() {
-        Firebase.analytics.logEvent("widget_${getAnalyticsName()}_interaction", Bundle.EMPTY)
+        OctoAnalytics.logEvent(OctoAnalytics.Event.WidgetInteraction(getAnalyticsName()))
     }
 }

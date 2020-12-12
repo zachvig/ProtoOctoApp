@@ -17,8 +17,8 @@ android {
         applicationId "de.crysxd.octoapp"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 1401
-        versionName "1.4-beta02"
+        versionCode 1403
+        versionName "1.4-beta04"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -64,7 +64,7 @@ play {
     defaultToAppBundles.set(true)
     resolutionStrategy.set(ResolutionStrategy.IGNORE)
     updatePriority.set(2)
-    userFraction.set(1.0d)
+    userFraction.set(0.1d)
 }
 
 

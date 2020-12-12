@@ -1,12 +1,11 @@
 package de.crysxd.octoapp.connect_printer.ui
 
 import android.content.Context
-import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.*
-import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.filterEventsForMessageType
@@ -87,8 +86,6 @@ class ConnectPrinterViewModel(
                 Timber.d("PsuState: $psuState")
                 Timber.d("PsuCycled: $psuCyclingState")
 
-                Firebase.analytics.setUserProperty("psu_plugin_available", supportsPsuPlugin.toString())
-
                 if (supportsPsuPlugin) {
                     octoPrintRepository.instanceInformationFlow().first().let {
                         octoPrintRepository.storeOctoprintInstanceInformation(it?.copy(supportsPsuPlugin = supportsPsuPlugin))
@@ -107,9 +104,6 @@ class ConnectPrinterViewModel(
                     isPsuBeingCycled(psuCyclingState) ->
                         UiState.PrinterPsuCycling
 
-                    isPrinterConnected(connectionResult) ->
-                        UiState.PrinterConnected
-
                     isNoPrinterAvailable(connectionResult) ->
                         UiState.WaitingForPrinterToComeOnline(psuState?.isPsuOn)
 
@@ -118,6 +112,9 @@ class ConnectPrinterViewModel(
 
                     isPrinterConnecting(connectionResult) ->
                         UiState.PrinterConnecting
+
+                    isPrinterConnected(connectionResult) ->
+                        UiState.PrinterConnected
 
                     else -> {
                         // Printer ready to connect
@@ -167,10 +164,8 @@ class ConnectPrinterViewModel(
         ConnectionResponse.ConnectionState.MAYBE_DETECTING_BAUDRATE
     ).contains(connectionResponse.current.state)
 
-    private fun isPrinterConnected(connectionResponse: ConnectionResponse) = listOf(
-        ConnectionResponse.ConnectionState.MAYBE_OPERATIONAL,
-        ConnectionResponse.ConnectionState.MAYBE_PRINTING
-    ).contains(connectionResponse.current.state)
+    private fun isPrinterConnected(connectionResponse: ConnectionResponse) = connectionResponse.current.port != null ||
+            connectionResponse.current.baudrate != null
 
     private fun autoConnect(connectionResponse: ConnectionResponse) = viewModelScope.launch(coroutineExceptionHandler) {
         if (connectionResponse.options.ports.isNotEmpty() && !didJustAttemptToConnect() && !isPrinterConnecting(connectionResponse)) {
@@ -181,7 +176,7 @@ class ConnectPrinterViewModel(
                     // TODO Ask user which port to select
                     val app = Injector.get().app()
                     Toast.makeText(app, app.getString(R.string.auto_selection_failed), Toast.LENGTH_SHORT).show()
-                    Firebase.analytics.logEvent("auto_connect_failed", Bundle.EMPTY)
+                    OctoAnalytics.logEvent(OctoAnalytics.Event.PrinterAutoConnectFailed)
                     Params(connectionResponse.options.ports.first())
                 } else {
                     Params()

@@ -1,8 +1,6 @@
 package de.crysxd.octoapp.base.usecase
 
-import android.os.Bundle
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import timber.log.Timber
@@ -13,7 +11,7 @@ class EmergencyStopUseCase @Inject constructor(
 ) : UseCase<Unit, Unit>() {
 
     override suspend fun doExecute(param: Unit, timber: Timber.Tree) {
-        Firebase.analytics.logEvent("emergency_stop_triggered_by_app", Bundle.EMPTY)
+        OctoAnalytics.logEvent(OctoAnalytics.Event.EmergencyStopTriggeredByApp)
         octoPrintProvider.octoPrint().createPrinterApi().executeGcodeCommand(GcodeCommand.Single("M112"))
     }
 }

@@ -1,8 +1,6 @@
 package de.crysxd.octoapp.base.usecase
 
-import android.os.Bundle
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.models.files.FileCommand
 import de.crysxd.octoapp.octoprint.models.files.FileObject
@@ -14,7 +12,7 @@ class StartPrintJobUseCase @Inject constructor(
 ) : UseCase<FileObject.File, Unit>() {
 
     override suspend fun doExecute(param: FileObject.File, timber: Timber.Tree) {
-        Firebase.analytics.logEvent("print_started_by_app", Bundle.EMPTY)
+        OctoAnalytics.logEvent(OctoAnalytics.Event.PrintStartedByApp)
         octoPrintProvider.octoPrint().createFilesApi().executeFileCommand(param, FileCommand.SelectFile(true))
     }
 }

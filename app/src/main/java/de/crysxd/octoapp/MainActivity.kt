@@ -3,13 +3,13 @@ package de.crysxd.octoapp
 import android.content.Intent
 import android.os.Bundle
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.OctoActivity
@@ -56,16 +56,14 @@ class MainActivity : OctoActivity() {
         lifecycleScope.launchWhenResumed {
             findNavController(R.id.mainNavController).addOnDestinationChangedListener { _, destination, _ ->
                 Timber.i("Navigated to ${destination.label}")
-                Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, Bundle().apply {
-                    putString(FirebaseAnalytics.Param.SCREEN_NAME, destination.label?.toString())
-                })
+                OctoAnalytics.logEvent(OctoAnalytics.Event.ScreenShown, bundleOf(FirebaseAnalytics.Param.SCREEN_NAME to destination.label?.toString()))
 
                 when (destination.id) {
-                    R.id.loginFragment -> Firebase.analytics.logEvent("workspace_shown_login", Bundle.EMPTY)
-                    R.id.connectPrinterFragment -> Firebase.analytics.logEvent("workspace_shown_connect", Bundle.EMPTY)
-                    R.id.prePrintControlsFragment -> Firebase.analytics.logEvent("workspace_shown_pre_print", Bundle.EMPTY)
-                    R.id.printControlsFragment -> Firebase.analytics.logEvent("workspace_shown_print", Bundle.EMPTY)
-                    R.id.terminalFragment -> Firebase.analytics.logEvent("workspace_shown_terminal", Bundle.EMPTY)
+                    R.id.loginFragment -> OctoAnalytics.logEvent(OctoAnalytics.Event.LoginWorkspaceShown)
+                    R.id.connectPrinterFragment -> OctoAnalytics.logEvent(OctoAnalytics.Event.ConnectWorkspaceShown)
+                    R.id.prePrintControlsFragment -> OctoAnalytics.logEvent(OctoAnalytics.Event.PrePrintWorkspaceShown)
+                    R.id.printControlsFragment -> OctoAnalytics.logEvent(OctoAnalytics.Event.PrintWorkspaceShown)
+                    R.id.terminalFragment -> OctoAnalytics.logEvent(OctoAnalytics.Event.TerminalWorkspaceShown)
                 }
             }
         }

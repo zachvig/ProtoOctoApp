@@ -1,13 +1,10 @@
 package de.crysxd.octoapp.signin.ui
 
 import android.net.Uri
-import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
@@ -73,7 +70,7 @@ class SignInViewModel(
 
     fun completeSignIn(instanceInformation: OctoPrintInstanceInformationV2) {
         // Save instance information, MainActivity will navigate away
-        Firebase.analytics.logEvent(FirebaseAnalytics.Event.LOGIN, Bundle.EMPTY)
+        OctoAnalytics.logEvent(OctoAnalytics.Event.Login)
         octoPrintRepository.storeOctoprintInstanceInformation(instanceInformation)
     }
 

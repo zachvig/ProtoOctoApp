@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.usecase
 
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
@@ -31,6 +32,14 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                 m115Response = m115.await()
             )
 
+            OctoAnalytics.setUserProperty(
+                OctoAnalytics.UserProperty.PsuPluginAvailable,
+                isPsuControlSupported(settings.await()).toString()
+            )
+            OctoAnalytics.setUserProperty(
+                OctoAnalytics.UserProperty.WebCamAvailable,
+                isWebcamSupported(settings.await()).toString()
+            )
             timber.i("Updated capabilities: $updated")
 
             if (updated != current) {

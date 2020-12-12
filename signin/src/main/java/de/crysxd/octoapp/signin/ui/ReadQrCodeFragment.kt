@@ -12,8 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.signin.R
 import kotlinx.android.synthetic.main.fragment_read_qr_code.*
 
@@ -31,7 +30,7 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code) {
         super.onViewCreated(view, savedInstanceState)
 
         scannerView.setResultHandler {
-            Firebase.analytics.logEvent("qr_code_login_completed", Bundle.EMPTY)
+            OctoAnalytics.logEvent(OctoAnalytics.Event.QrCodeCompleted)
             findNavController().previousBackStackEntry?.savedStateHandle?.set(RESULT_API_KEY, it.text)
             findNavController().popBackStack()
         }

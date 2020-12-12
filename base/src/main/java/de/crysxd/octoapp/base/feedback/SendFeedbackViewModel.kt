@@ -15,6 +15,7 @@ class SendFeedbackViewModel(
 
     fun sendFeedback(
         context: Context,
+        message: String,
         sendPhoneInfo: Boolean,
         sendOctoPrintInfo: Boolean,
         sendLogs: Boolean,
@@ -29,6 +30,7 @@ class SendFeedbackViewModel(
 
         sendFeedbackUseCase.execute(
             OpenEmailClientForFeedbackUseCase.Params(
+                message = message,
                 context = context,
                 sendPhoneInfo = sendPhoneInfo,
                 sendOctoPrintInfo = sendOctoPrintInfo,
