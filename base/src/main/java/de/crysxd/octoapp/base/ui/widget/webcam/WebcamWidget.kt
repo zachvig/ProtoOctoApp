@@ -5,13 +5,13 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.ext.suspendedInflate
-import de.crysxd.octoapp.base.ui.webcam.WebcamView
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState.Error
@@ -40,6 +40,17 @@ class WebcamWidget(
         webcamView.coroutineScope = parent.viewLifecycleOwner.lifecycleScope
         webcamView.onResetConnection = viewModel::connect
         webcamView.onFullscreenClicked = ::openFullscreen
+        webcamView.onScaleToFillChanged = {
+            viewModel.storeScaleType(
+                if (webcamView.scaleToFill) {
+                    ImageView.ScaleType.CENTER_CROP
+                } else {
+                    ImageView.ScaleType.FIT_CENTER
+                },
+                isFullscreen = false
+            )
+        }
+        webcamView.scaleToFill = viewModel.getScaleType(isFullscreen = false, ImageView.ScaleType.FIT_CENTER) != ImageView.ScaleType.FIT_CENTER
         viewModel.uiState.observe(parent, ::onUiStateChanged)
     }
 

@@ -16,7 +16,7 @@
         android:layout_gravity="center"
         android:outlineProvider="background">
 
-        <de.crysxd.octoapp.base.ui.webcam.WebcamView
+        <de.crysxd.octoapp.base.ui.widget.webcam.WebcamView
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:id="@+id/webcamView"
