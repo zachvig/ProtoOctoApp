@@ -143,7 +143,6 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                     Timber.v("onLoadStarted")
                     if (!hlsPlayer.isPlaying) {
                         loadingState.show()
-                        usedLiveIndicator?.isVisible = false
                     }
                 }
             })
