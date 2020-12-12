@@ -27,6 +27,14 @@
             app:popEnterAnim="@anim/popEnterAnim"
             app:popExitAnim="@anim/popExitAnim" />
 
+        <action
+            android:id="@+id/action_show_fullscreen_gcode"
+            app:destination="@id/gcodePreviewFragment"
+            app:enterAnim="@anim/enterAnim"
+            app:exitAnim="@anim/exitAnim"
+            app:popEnterAnim="@anim/popEnterAnim"
+            app:popExitAnim="@anim/popExitAnim" />
+
     </fragment>
 
     <include app:graph="@navigation/enter_value_nav_graph" />
@@ -56,6 +64,17 @@
         <argument
             android:name="currentFanSpeed"
             app:argType="integer" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/gcodePreviewFragment"
+        android:name="de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewFragment"
+        android:label="GcodePreviewFragment"
+        tools:layout="@layout/fragment_gcode_render">
+
+        <argument
+            android:name="file"
+            app:argType="de.crysxd.octoapp.octoprint.models.files.FileObject$File" />
 
     </fragment>
 

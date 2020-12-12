@@ -8,12 +8,14 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.datasource.GcodeFileDataSource
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderContextFactory
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
+import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewFragmentArgs
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.utils.measureTime
 import de.crysxd.octoapp.print_controls.R
@@ -63,6 +65,10 @@ class GcodeRenderWidget(parent: Fragment) : OctoWidget(parent) {
 
             view.reloadButton.setOnClickListener {
                 viewModel.downloadGcode(file, true)
+            }
+
+            view.imageButtonFullscreen.setOnClickListener {
+                it.findNavController().navigate(R.id.action_show_fullscreen_gcode, GcodePreviewFragmentArgs(file).toBundle())
             }
 
             view.downloadLargeFile.text = requireContext().getString(R.string.download_x, file.size.asStyleFileSize())

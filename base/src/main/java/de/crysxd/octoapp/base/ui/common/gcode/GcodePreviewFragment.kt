@@ -110,18 +110,18 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
             return
         }
 
+        layerSeekBar.max = state.renderContext.layerCount - 1
+        layerProgressSeekBar.max = LAYER_PROGRESS_STEPS
+        if (state.fromUser != true) {
+            layerSeekBar.progress = state.renderContext.layerNumber
+            layerProgressSeekBar.progress = (state.renderContext.layerProgress * LAYER_PROGRESS_STEPS).roundToInt()
+        }
+
         val layerHeightMm = DecimalFormat("0.0#").format(state.renderContext.layerZHeight)
         val layerProgressPercent = layerProgressSeekBar.progress / LAYER_PROGRESS_STEPS.toFloat()
         layerNumber.text = (layerSeekBar.progress + 1).toString()
         layerHeight.text = getString(R.string.x_mm, layerHeightMm)
         layerProgress.text = String.format("%.0f %%", layerProgressPercent * 100)
-
-        layerSeekBar.max = state.renderContext.layerCount - 1
-        layerProgressSeekBar.max = LAYER_PROGRESS_STEPS
-        if (state.fromUser != true) {
-            layerSeekBar.progress = state.renderContext.layerNumber
-            layerProgressSeekBar.progress = ((state.renderContext.layerProgress) / LAYER_PROGRESS_STEPS).roundToInt()
-        }
 
         renderView.renderParams = GcodeRenderView.RenderParams(
             renderContext = state.renderContext,
