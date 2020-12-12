@@ -91,4 +91,7 @@
     <string name="try_again">Try again</string>
     <string name="layer">Layer</string>
     <string name="layer_progress">Layer Progress</string>
+    <string name="cd_next_layer">Next Layer</string>
+    <string name="cd_sync_with_print_progress">Sync with print progress</string>
+    <string name="cd_previous_layer">Previous Layer</string>
 </resources>

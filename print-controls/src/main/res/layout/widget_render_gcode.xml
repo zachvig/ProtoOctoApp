@@ -92,9 +92,8 @@
             android:id="@+id/imageButtonFullscreen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            style="@style/OctoTheme.Widget.Button.Image"
             android:importantForAccessibility="no"
-            android:padding="@dimen/margin_1"
             android:src="@drawable/ic_round_fullscreen_24"
             app:layout_constraintBottom_toBottomOf="@+id/view2"
             app:layout_constraintEnd_toEndOf="@+id/view2"
@@ -248,7 +247,7 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             app:constraint_referenced_ids="renderView,layerTitle,layer,layerPorgess,layerProgressTitle,liveIndicator,imageButtonFullscreen"
-            tools:visibility="gone" />
+            tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/errorGroup"
@@ -256,7 +255,7 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             app:constraint_referenced_ids="errorTitle,reloadButton"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

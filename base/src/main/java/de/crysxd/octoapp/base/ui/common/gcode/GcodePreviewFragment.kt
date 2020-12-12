@@ -20,9 +20,13 @@ import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import kotlinx.android.synthetic.main.fragment_gcode_render.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.text.DecimalFormat
 import kotlin.math.roundToInt
+
+const val NOT_LIVE_IF_NO_UPDATE_FOR_MS = 3000L
 
 class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
 
@@ -36,23 +40,16 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
         }
     }
 
+    private var hideLiveJob: Job? = null
     private val file get() = requireArguments().getSerializable(ARG_FILE) as FileObject.File
     private val isStandaloneScreen get() = requireArguments().getBoolean(ARG_STANDALONE_SCREEN)
     private val viewModel: GcodePreviewViewModel by injectViewModel(Injector.get().viewModelFactory())
     private val seekBarListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
         override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
-        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+        override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
             if (fromUser) {
-                // Show entire layer if layer is changed
-                if (seekBar == layerSeekBar) {
-                    layerProgressSeekBar.progress = LAYER_PROGRESS_STEPS
-                }
-
-                viewModel.useManualProgress(
-                    layer = layerSeekBar.progress,
-                    progress = layerProgressSeekBar.progress / LAYER_PROGRESS_STEPS.toFloat()
-                )
+                pushSeekBarValuesToViewModel(seekBar)
             }
         }
     }
@@ -70,13 +67,48 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
         layerSeekBar.setOnSeekBarChangeListener(seekBarListener)
         layerProgressSeekBar.setOnSeekBarChangeListener(seekBarListener)
 
+        nextLayerButton.setOnClickListener {
+            layerSeekBar.progress = layerSeekBar.progress + 1
+            pushSeekBarValuesToViewModel(layerSeekBar)
+        }
+
+        previousLayerButton.setOnClickListener {
+            layerSeekBar.progress = layerSeekBar.progress - 1
+            pushSeekBarValuesToViewModel(layerSeekBar)
+        }
+
         if (isStandaloneScreen) {
             renderView.updatePadding(top = requireContext().resources.getDimensionPixelSize(R.dimen.common_view_top_padding))
+        }
+
+        syncButton.isVisible = isStandaloneScreen
+        syncButtonSeparator.isVisible = isStandaloneScreen
+        syncButton.setOnClickListener {
+            (viewModel.viewState.value as? GcodePreviewViewModel.ViewState.DataReady)?.let { currentState ->
+                val isLive = currentState.fromUser != true
+                if (isLive) {
+                    pushSeekBarValuesToViewModel()
+                } else {
+                    viewModel.useLiveProgress()
+                }
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewModel.viewState.observe(viewLifecycleOwner, ::updateViewState)
         }
+    }
+
+    private fun pushSeekBarValuesToViewModel(seekBar: SeekBar? = null) {
+        // Show entire layer if layer is changed
+        if (seekBar == layerSeekBar) {
+            layerProgressSeekBar.progress = LAYER_PROGRESS_STEPS
+        }
+
+        viewModel.useManualProgress(
+            layer = layerSeekBar.progress,
+            progress = layerProgressSeekBar.progress / LAYER_PROGRESS_STEPS.toFloat()
+        )
     }
 
     override fun onStart() {
@@ -132,6 +164,21 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
         if (state.fromUser != true) {
             layerSeekBar.progress = state.renderContext.layerNumber
             layerProgressSeekBar.progress = (state.renderContext.layerProgress * LAYER_PROGRESS_STEPS).roundToInt()
+        }
+
+        syncButton.setImageResource(
+            if (state.fromUser != true) {
+                R.drawable.ic_round_sync_disabled_24
+            } else {
+                R.drawable.ic_round_sync_24
+            }
+        )
+
+        live.isVisible = state.fromUser != true
+        hideLiveJob?.cancel()
+        hideLiveJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            delay(NOT_LIVE_IF_NO_UPDATE_FOR_MS)
+            live.isVisible = false
         }
 
         val layerHeightMm = DecimalFormat("0.0#").format(state.renderContext.layerZHeight)

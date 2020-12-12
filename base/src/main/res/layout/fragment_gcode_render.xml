@@ -26,6 +26,66 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/renderView" />
 
+    <ImageView
+        android:id="@+id/live"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_2"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_live"
+        app:layout_constraintEnd_toEndOf="@+id/renderControls"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/renderControls"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_1"
+        android:background="@drawable/bg_button_small"
+        android:orientation="vertical"
+        android:padding="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/renderView"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/nextLayerButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cd_next_layer"
+            android:src="@drawable/ic_round_keyboard_arrow_up_24"
+            android:tint="@color/white" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white_translucent_2" />
+
+        <ImageButton
+            android:id="@+id/syncButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cd_sync_with_print_progress"
+            android:src="@drawable/ic_round_sync_24"
+            android:tint="@color/white" />
+
+        <View
+            android:id="@+id/syncButtonSeparator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white_translucent_2" />
+
+        <ImageButton
+            android:id="@+id/previousLayerButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cd_previous_layer"
+            android:src="@drawable/ic_round_keyboard_arrow_down_24"
+            android:tint="@color/white"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </LinearLayout>
+
+
     <SeekBar
         android:id="@+id/layerProgressSeekBar"
         android:layout_width="0dp"
@@ -228,14 +288,14 @@
         android:layout_height="wrap_content"
         android:visibility="visible"
         app:constraint_referenced_ids="errorText,retryButton"
-        tools:visibility="visible" />
+        tools:visibility="gone" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/renderGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="titleLayer,layerHeight,layerNumber,layerProgress,titleLayerProgress,layerSeekBar,layerProgressSeekBar,background,renderView"
-        tools:visibility="gone" />
+        app:constraint_referenced_ids="titleLayer,layerHeight,layerNumber,layerProgress,titleLayerProgress,layerSeekBar,layerProgressSeekBar,background,renderView,renderControls,live"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
