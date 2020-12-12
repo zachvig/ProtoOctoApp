@@ -44,7 +44,10 @@ sealed class GcodeRenderContextFactory {
 
             return GcodeRenderContext(
                 printHeadPosition = printHeadPosition,
-                paths = paths.map { it.second }.sortedBy { it.priority }
+                paths = paths.map { it.second }.sortedBy { it.priority },
+                layerCount = gcode.layers.size,
+                layerNumber = gcode.layers.indexOf(layer),
+                layerProgress = paths.sumBy { it.second.count } / layer.moves.values.sumBy { it.second.size }.toFloat()
             )
         }
     }
@@ -63,7 +66,13 @@ sealed class GcodeRenderContextFactory {
                 )
             }
 
-            return GcodeRenderContext(paths = paths.sortedBy { it.priority }, null)
+            return GcodeRenderContext(
+                paths = paths.sortedBy { it.priority },
+                printHeadPosition = null,
+                layerNumber = this.layer + 1,
+                layerCount = gcode.layers.size,
+                layerProgress = progress
+            )
         }
     }
 }

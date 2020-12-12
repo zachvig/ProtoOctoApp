@@ -34,4 +34,6 @@
     <string name="flow_rate_label">Flow Rate (%)</string>
     <string name="feed_rate_label_active">Feed rate as number (100 is default)</string>
     <string name="feed_rate_label">Feed Rate (%)</string>
+    <string name="layer_progress">Layer Progress</string>
+    <string name="layer">Layer</string>
 </resources>

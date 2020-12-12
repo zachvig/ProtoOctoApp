@@ -19,24 +19,29 @@ import de.crysxd.octoapp.base.utils.measureTime
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.Injector
 import de.crysxd.octoapp.print_controls.di.injectViewModel
-import kotlinx.android.synthetic.main.widget_gcode_render.view.*
+import kotlinx.android.synthetic.main.widget_render_gcode.view.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import kotlin.math.roundToInt
 
+const val NOT_LIVE_IF_NO_UPDATE_FOR_MS = 3000L
+
 class GcodeRenderWidget(parent: Fragment) : OctoWidget(parent) {
 
     private val viewModel: GcodeRenderWidgetViewModel by injectViewModel(Injector.get().viewModelFactory())
+    private var hideLiveIndicatorJob: Job? = null
 
     override fun getTitle(context: Context) = "Gcode"
 
     override fun getAnalyticsName() = "gcode"
 
     override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
-        inflater.inflate(R.layout.widget_gcode_render, container, false)
+        inflater.inflate(R.layout.widget_render_gcode, container, false)
 
     override fun onResume() {
         super.onResume()
@@ -67,11 +72,7 @@ class GcodeRenderWidget(parent: Fragment) : OctoWidget(parent) {
 
         view.progressOverlay.isVisible = renderData == null || renderData.gcode is GcodeFileDataSource.LoadState.Loading
         view.largeFileOverlay.isVisible = renderData?.gcode is GcodeFileDataSource.LoadState.FailedLargeFileDownloadRequired
-        view.renderView.visibility = if (renderData?.gcode is GcodeFileDataSource.LoadState.Ready) {
-            View.VISIBLE
-        } else {
-            View.INVISIBLE
-        }
+        view.renderView.isVisible = renderData?.gcode is GcodeFileDataSource.LoadState.Ready
 
         renderData ?: return let {
             view.progressBar.isIndeterminate = true
@@ -107,6 +108,14 @@ class GcodeRenderWidget(parent: Fragment) : OctoWidget(parent) {
 
         measureTime("Render") {
             view.renderGroup.isVisible = true
+            view.layer.text = context.layerNumber.toString()
+            view.layerPorgess.text = requireContext().getString(R.string.x_percent_int, (context.layerProgress * 100).toInt())
+            view.liveIndicator.isVisible = true
+            hideLiveIndicatorJob?.cancel()
+            hideLiveIndicatorJob = parent.viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+                delay(NOT_LIVE_IF_NO_UPDATE_FOR_MS)
+                view.liveIndicator.isVisible = false
+            }
             view.renderView.renderParams = GcodeRenderView.RenderParams(
                 renderContext = context,
                 renderStyle = renderData.renderStyle,
