@@ -34,8 +34,11 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
     private val hlsPlayer by lazy { SimpleExoPlayer.Builder(context).build() }
     private var playerInitialized = false
+
     lateinit var coroutineScope: LifecycleCoroutineScope
     private var hideLiveIndicatorJob: Job? = null
+
+
     var state: WebcamState = WebcamState.Loading
         set(value) {
             field = value
@@ -43,11 +46,27 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         }
 
     var onResetConnection: () -> Unit = {}
+    var onFullscreenClicked: () -> Unit = {}
+    var fullscreenIconResource: Int
+        get() = 0
+        set(value) {
+            imageButtonFullscreen.setImageResource(value)
+        }
+    var onNativeAspectRatioChanged: (width: Int, height: Int) -> Unit = { _, _ -> }
+    var usedLiveIndicator: View? = null
+        set(value) {
+            field = value
+            if (value != liveIndicator) {
+                liveIndicator.isVisible = false
+            }
+        }
 
     init {
         View.inflate(context, R.layout.view_webcam, this)
         applyState()
+        usedLiveIndicator = liveIndicator
         buttonReconnect.setOnClickListener { onResetConnection() }
+        imageButtonFullscreen.setOnClickListener { onFullscreenClicked() }
     }
 
     private fun applyState() {
@@ -67,7 +86,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         playingState.isVisible = true
         hlsSurface.isVisible = true
         mjpegSurface.isVisible = false
-        liveIndicator.isVisible = true
+        usedLiveIndicator?.isVisible = true
         loadingState.hide()
         hlsPlayer.setVideoSurfaceHolder(hlsSurface.holder)
         hlsPlayer.setMediaItem(MediaItem.fromUri(state.uri))
@@ -81,6 +100,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             hlsPlayer.addVideoListener(object : VideoListener {
                 override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int, pixelWidthHeightRatio: Float) {
                     super.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio)
+                    onNativeAspectRatioChanged(width, height)
                     hlsSurface.updateLayoutParams<ConstraintLayout.LayoutParams> {
                         this.dimensionRatio = "H,$width:$height"
                     }
@@ -95,7 +115,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                         errorState.isVisible = false
                         reconnectingState.isVisible = false
                         loadingState.hide()
-                        liveIndicator.isVisible = true
+                        usedLiveIndicator?.isVisible = true
                     }
                 }
 
@@ -105,7 +125,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                     loadingState.hide()
                     errorState.isVisible = true
                     reconnectingState.isVisible = false
-                    liveIndicator.isVisible = false
+                    usedLiveIndicator?.isVisible = false
                     errorDescription.text = context.getString(R.string.error_video_playback, state.uri, error.message)
                 }
 
@@ -113,7 +133,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                     super.onLoadCompleted(eventTime, loadEventInfo, mediaLoadData)
                     Timber.v("onLoadCompleted")
                     loadingState.hide()
-                    liveIndicator.isVisible = true
+                    usedLiveIndicator?.isVisible = true
                     reconnectingState.isVisible = false
                     errorState.isVisible = false
                 }
@@ -123,7 +143,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                     Timber.v("onLoadStarted")
                     if (!hlsPlayer.isPlaying) {
                         loadingState.show()
-                        liveIndicator.isVisible = false
+                        usedLiveIndicator?.isVisible = false
                     }
                 }
             })
@@ -134,9 +154,11 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         playingState.isVisible = true
         hlsSurface.isVisible = false
         mjpegSurface.isVisible = true
-        liveIndicator.isVisible = true
+        usedLiveIndicator?.isVisible = true
         loadingState.hide()
         mjpegSurface.setImageBitmap(state.frame)
+
+        onNativeAspectRatioChanged(state.frame.width, state.frame.height)
 
         // Hide live indicator if no new frame arrives within 3s
         // Show stalled indicator if no new frame arrives within 10s
@@ -144,7 +166,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         hideLiveIndicatorJob = coroutineScope.launchWhenCreated {
             delay(NOT_LIVE_IF_NO_FRAME_FOR_MS)
             beginDelayedTransition()
-            liveIndicator.isVisible = false
+            usedLiveIndicator?.isVisible = false
 
             delay(STALLED_IF_NO_FRAME_FOR_MS - NOT_LIVE_IF_NO_FRAME_FOR_MS)
             beginDelayedTransition()
@@ -160,7 +182,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         object Loading : WebcamState()
         object Reconnecting : WebcamState()
         object NotConfigured : WebcamState()
-        data class Error(val retry: () -> Unit) : WebcamState()
+        object Error : WebcamState()
         data class HlsStreamReady(val uri: Uri) : WebcamState()
         data class MjpegFrameReady(val frame: Bitmap) : WebcamState()
     }

@@ -13,9 +13,9 @@ import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import de.crysxd.octoapp.base.ui.webcam.WebcamView
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
-import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidgetViewModel.UiState
-import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidgetViewModel.UiState.Error
-import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidgetViewModel.UiState.Loading
+import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState
+import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState.Error
+import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState.Loading
 import kotlinx.android.synthetic.main.widget_webcam.*
 import kotlinx.android.synthetic.main.widget_webcam.view.*
 
@@ -26,7 +26,7 @@ class WebcamWidget(
     parent: Fragment,
     private val isFullscreen: Boolean = false
 ) : OctoWidget(parent) {
-    private val viewModel: WebcamWidgetViewModel by injectViewModel()
+    private val viewModel: WebcamViewModel by injectViewModel()
 
     override fun getTitle(context: Context) = context.getString(R.string.webcam)
     override fun getAnalyticsName() = "webcam"
@@ -39,6 +39,7 @@ class WebcamWidget(
         applyAspectRatio(viewModel.getInitialAspectRatio())
         webcamView.coroutineScope = parent.viewLifecycleOwner.lifecycleScope
         webcamView.onResetConnection = viewModel::connect
+        webcamView.onFullscreenClicked = ::openFullscreen
         viewModel.uiState.observe(parent, ::onUiStateChanged)
     }
 
@@ -55,13 +56,15 @@ class WebcamWidget(
                 WebcamView.WebcamState.HlsStreamReady(state.uri)
             }
             is Error -> if (state.isManualReconnect) {
-                WebcamView.WebcamState.Error {
-                    viewModel.connect()
-                }
+                WebcamView.WebcamState.Error
             } else {
                 WebcamView.WebcamState.Reconnecting
             }
         }
+    }
+
+    private fun openFullscreen() {
+        FullscreenWebcamActivity.start(parent.requireActivity())
     }
 
     private fun applyAspectRatio(aspectRation: String) {

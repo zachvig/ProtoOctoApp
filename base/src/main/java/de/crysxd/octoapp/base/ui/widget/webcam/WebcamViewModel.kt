@@ -25,7 +25,7 @@ private const val KEY_ASPECT_RATIO = "webcam_aspect_ration"
 private const val KEY_SCALE_TYPE = "webcam_scale_type"
 private const val KEY_SCALE_TYPE_FULLSCREEN = "webcam_scale_type_fullscreen"
 
-class WebcamWidgetViewModel(
+class WebcamViewModel(
     octoPrintProvider: OctoPrintProvider,
     private val getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
     private val sharedPreferences: SharedPreferences

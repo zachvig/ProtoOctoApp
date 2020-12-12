@@ -20,7 +20,7 @@ import de.crysxd.octoapp.base.ui.common.terminal.TerminalViewModel
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlBedTemperatureWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlToolTemperatureWidgetViewModel
-import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidgetViewModel
+import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel
 import de.crysxd.octoapp.base.usecase.*
 import javax.inject.Provider
 
@@ -74,12 +74,12 @@ open class ViewModelModule {
 
     @Provides
     @IntoMap
-    @ViewModelKey(WebcamWidgetViewModel::class)
+    @ViewModelKey(WebcamViewModel::class)
     open fun provideWebcamWidgetViewModel(
         octoPrintProvider: OctoPrintProvider,
         getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
         sharedPreferences: SharedPreferences
-    ): ViewModel = WebcamWidgetViewModel(
+    ): ViewModel = WebcamViewModel(
         octoPrintProvider,
         getWebcamSettingsUseCase,
         sharedPreferences
