@@ -129,7 +129,7 @@ class GcodeRenderWidget(parent: Fragment) : OctoWidget(parent) {
 
         measureTime("Render") {
             view.renderGroup.isVisible = true
-            view.layer.text = context.layerNumber.toString()
+            view.layer.text = requireContext().getString(R.string.x_of_y, context.layerNumber, context.layerCount)
             view.layerPorgess.text = requireContext().getString(R.string.x_percent_int, (context.layerProgress * 100).toInt())
             view.liveIndicator.isVisible = true
             hideLiveIndicatorJob?.cancel()
