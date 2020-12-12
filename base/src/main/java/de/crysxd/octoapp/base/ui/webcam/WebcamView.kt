@@ -1,9 +1,15 @@
 package de.crysxd.octoapp.base.ui.webcam
 
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.PointF
 import android.net.Uri
 import android.util.AttributeSet
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.View
 import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -30,7 +36,26 @@ import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
+
+private const val MIN_ZOOM = 1f
+private const val MAX_ZOOM = 10f
+private const val ZOOM_SPEED = 0.2f
+private const val DOUBLE_TAP_ZOOM = 5f
+
+
 class WebcamView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, defStyle: Int = 0) : FrameLayout(context, attributeSet, defStyle) {
+
+    private val gestureDetector = GestureDetector(context, GestureListener())
+    private val scaleGestureDetector = ScaleGestureDetector(context, ScaleGestureListener())
+    private var scrollOffset = PointF(0f, 0f)
+    private var zoom
+        get() = hlsSurface.scaleX
+        set(value) {
+            hlsSurface.scaleX = value
+            hlsSurface.scaleY = value
+            mjpegSurface.scaleX = value
+            mjpegSurface.scaleY = value
+        }
 
     private val hlsPlayer by lazy { SimpleExoPlayer.Builder(context).build() }
     private var playerInitialized = false
@@ -67,6 +92,15 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         usedLiveIndicator = liveIndicator
         buttonReconnect.setOnClickListener { onResetConnection() }
         imageButtonFullscreen.setOnClickListener { onFullscreenClicked() }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        scaleGestureDetector.onTouchEvent(event)
+        if (!scaleGestureDetector.isInProgress) {
+            gestureDetector.onTouchEvent(event)
+        }
+        return true
     }
 
     private fun applyState() {
@@ -177,6 +211,28 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
     private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
 
+    private fun limitScrollRange() {
+        val scaledSurfaceWidth = hlsSurface.width * zoom
+        val scaledSurfaceHeight = hlsSurface.height * zoom
+        val maxX = ((scaledSurfaceWidth - width) * 0.5f).coerceAtLeast(0f)
+        val minX = -maxX
+        val maxY = ((scaledSurfaceHeight - height) * 0.5f).coerceAtLeast(0f)
+        val minY = -maxY
+        Timber.i("zoom=$zoom x=${hlsSurface.translationX} y=${hlsSurface.translationY} minY=$minY maxY=$maxY")
+
+        if (hlsSurface.translationX > maxX) {
+            hlsSurface.translationX = maxX
+        } else if (hlsSurface.translationX < minX) {
+            hlsSurface.translationX = minX
+        }
+
+        if (hlsSurface.translationY > maxY) {
+            hlsSurface.translationY = maxY
+        } else if (hlsSurface.translationY < minY) {
+            hlsSurface.translationY = minY
+        }
+    }
+
     sealed class WebcamState {
         object Loading : WebcamState()
         object Reconnecting : WebcamState()
@@ -184,5 +240,63 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         object Error : WebcamState()
         data class HlsStreamReady(val uri: Uri) : WebcamState()
         data class MjpegFrameReady(val frame: Bitmap) : WebcamState()
+    }
+
+    inner class ScaleGestureListener : ScaleGestureDetector.OnScaleGestureListener {
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
+            // Check if we increase or decrease zoom
+//            val scaleDirection = if (detector.previousSpan > detector.currentSpan) -1f else 1f
+//            val zoomChange = detector.scaleFactor * ZOOM_SPEED * scaleDirection
+//            val newZoom = (zoom + zoomChange).coerceIn(MIN_ZOOM, MAX_ZOOM)
+//            zoom(detector.focusX, detector.focusY, newZoom)
+//            invalidate()
+            return true
+        }
+
+        override fun onScaleBegin(detector: ScaleGestureDetector) = true
+
+        override fun onScaleEnd(detector: ScaleGestureDetector) = Unit
+    }
+
+    inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
+        override fun onDown(e: MotionEvent) = true
+
+        override fun onShowPress(e: MotionEvent) = Unit
+
+        override fun onSingleTapUp(e: MotionEvent) = false
+
+        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+//            renderParams?.let {
+//                scrollOffset.x -= distanceX
+//                scrollOffset.y -= distanceY
+//                invalidate()
+//            }
+
+            hlsSurface.translationX -= distanceX
+            hlsSurface.translationY -= distanceY
+            mjpegSurface.translationX = hlsSurface.translationX
+            mjpegSurface.translationY = hlsSurface.translationY
+            limitScrollRange()
+
+            return true
+        }
+
+        override fun onDoubleTap(e: MotionEvent): Boolean {
+            val newZoom = if (zoom > 1) {
+                1f
+            } else {
+                DOUBLE_TAP_ZOOM
+            }
+
+            ObjectAnimator.ofFloat(this@WebcamView, "zoom", zoom, newZoom).also {
+                it.addUpdateListener { limitScrollRange() }
+            }.start()
+            return true
+        }
+
+        override fun onLongPress(e: MotionEvent?) = Unit
+
+        override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float) = false
+
     }
 }
