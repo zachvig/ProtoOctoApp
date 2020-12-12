@@ -5,13 +5,11 @@ import android.graphics.Paint
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.models.RenderStyle
-import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import timber.log.Timber
 import javax.inject.Inject
 
-class GenerateRenderStyleUseCase @Inject constructor(
-    private val executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase
-) : UseCase<Unit, RenderStyle>() {
+class GenerateRenderStyleUseCase @Inject constructor() : UseCase<OctoPrintInstanceInformationV2?, RenderStyle>() {
 
     companion object {
         private val extrudePaint = Paint().apply {
@@ -47,18 +45,9 @@ class GenerateRenderStyleUseCase @Inject constructor(
         )
     }
 
-    override suspend fun doExecute(param: Unit, timber: Timber.Tree): RenderStyle = try {
-        // Request firmware info from printer
-        val response = executeGcodeCommandUseCase.execute(
-            ExecuteGcodeCommandUseCase.Param(
-                command = GcodeCommand.Single("M115"),
-                fromUser = false,
-                recordResponse = true
-            )
-        ).firstOrNull() as? ExecuteGcodeCommandUseCase.Response.RecordedResponse
-
+    override suspend fun doExecute(param: OctoPrintInstanceInformationV2?, timber: Timber.Tree): RenderStyle = try {
         // Combine info to one string
-        val info = response?.responseLines?.joinToString("") ?: ""
+        val info = param?.m115Response ?: ""
 
         // Set background based on machine type (somewhere in info)
         val backgroundRes = when {

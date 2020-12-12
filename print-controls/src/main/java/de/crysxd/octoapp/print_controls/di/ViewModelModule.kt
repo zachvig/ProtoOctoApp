@@ -79,6 +79,7 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(GcodeRenderWidgetViewModel::class)
     fun provideGcodeRenderWidgetViewModel(
+        octoPrintRepository: OctoPrintRepository,
         octoPrintProvider: OctoPrintProvider,
         generateRenderStyleUseCase: GenerateRenderStyleUseCase,
         getCurrentPrinterProfileUseCase: GetCurrentPrinterProfileUseCase,
@@ -87,6 +88,7 @@ open class ViewModelModule {
         octoPrintProvider = octoPrintProvider,
         generateRenderStyleUseCase = generateRenderStyleUseCase,
         getCurrentPrinterProfileUseCase = getCurrentPrinterProfileUseCase,
-        gcodeFileRepository = gcodeFileRepository
+        gcodeFileRepository = gcodeFileRepository,
+        octoPrintRepository = octoPrintRepository,
     )
 }
