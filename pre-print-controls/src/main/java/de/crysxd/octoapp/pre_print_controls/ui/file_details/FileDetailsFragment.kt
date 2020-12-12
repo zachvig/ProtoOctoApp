@@ -66,7 +66,9 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
 
             scrollView.isUserInputEnabled = position == 0
             scrollView.isBottomActionAnimationEnabled = false
-            scrollView.smoothScrollTo(0, if (position == 0) 0 else Int.MAX_VALUE)
+            scrollView.post {
+                scrollView.smoothScrollTo(0, if (position == 0) 0 else Int.MAX_VALUE)
+            }
             bottomAction.animate().translationY(if (position == 0) 0f else bottomAction.height.toFloat()).withEndAction {
                 scrollView.isBottomActionAnimationEnabled = position == 0
             }.start()
