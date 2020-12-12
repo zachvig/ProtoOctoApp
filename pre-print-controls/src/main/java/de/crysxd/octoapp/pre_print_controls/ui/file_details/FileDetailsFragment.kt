@@ -46,7 +46,7 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
                 is GcodePreviewFragment -> {
                     val builder = SpannableStringBuilder("Preview")
                     builder.append("   ")
-                    val span = ImageSpan(requireContext(), R.drawable.ic_beta)
+                    val span = ImageSpan(requireContext(), R.drawable.ic_new)
                     builder.setSpan(span, builder.length - 1, builder.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
                     builder
                 }
