@@ -14,7 +14,6 @@ import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderContextFactory
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.utils.measureTime
 import de.crysxd.octoapp.print_controls.R
@@ -55,9 +54,17 @@ class GcodeRenderWidget(parent: Fragment) : OctoWidget(parent) {
 
     override fun onViewCreated(view: View) {
         updateView(null)
+
+
         parent.viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             val file = viewModel.file.first()
+
             viewModel.downloadGcode(file, false)
+
+            view.reloadButton.setOnClickListener {
+                viewModel.downloadGcode(file, true)
+            }
+
             view.downloadLargeFile.text = requireContext().getString(R.string.download_x, file.size.asStyleFileSize())
             view.downloadLargeFile.setOnClickListener {
                 viewModel.downloadGcode(file, true)
@@ -79,7 +86,8 @@ class GcodeRenderWidget(parent: Fragment) : OctoWidget(parent) {
 
         view.progressOverlay.isVisible = renderData == null || renderData.gcode is GcodeFileDataSource.LoadState.Loading
         view.largeFileOverlay.isVisible = renderData?.gcode is GcodeFileDataSource.LoadState.FailedLargeFileDownloadRequired
-        view.renderView.isVisible = renderData?.gcode is GcodeFileDataSource.LoadState.Ready
+        view.renderGroup.isVisible = renderData?.gcode is GcodeFileDataSource.LoadState.Ready
+        view.errorGroup.isVisible = renderData?.gcode is GcodeFileDataSource.LoadState.Failed
 
         renderData ?: return let {
             view.progressBar.isIndeterminate = true
@@ -98,9 +106,7 @@ class GcodeRenderWidget(parent: Fragment) : OctoWidget(parent) {
                 render(renderData.gcode.gcode, renderData)
             }
 
-            is GcodeFileDataSource.LoadState.Failed -> {
-                parent.requireOctoActivity().showDialog(renderData.gcode.exception)
-            }
+            is GcodeFileDataSource.LoadState.Failed -> Unit
         }
     }
 
