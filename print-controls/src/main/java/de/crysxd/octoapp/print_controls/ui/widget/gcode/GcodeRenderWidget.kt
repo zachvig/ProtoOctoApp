@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.datasource.GcodeFileDataSource
+import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderContextFactory
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
@@ -57,6 +58,7 @@ class GcodeRenderWidget(parent: Fragment) : OctoWidget(parent) {
         parent.viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             val file = viewModel.file.first()
             viewModel.downloadGcode(file, false)
+            view.downloadLargeFile.text = requireContext().getString(R.string.download_x, file.size.asStyleFileSize())
             view.downloadLargeFile.setOnClickListener { viewModel.downloadGcode(file, true) }
         }
 
