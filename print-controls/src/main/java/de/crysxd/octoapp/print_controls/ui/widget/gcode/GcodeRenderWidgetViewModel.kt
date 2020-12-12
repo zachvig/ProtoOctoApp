@@ -14,6 +14,7 @@ import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class GcodeRenderWidgetViewModel(
@@ -48,7 +49,9 @@ class GcodeRenderWidgetViewModel(
         Triple(style, i12.first, i12.second)
     }.combine(printInfo) { i123, info ->
         RenderData(i123.first, i123.second, i123.third, info)
-    }.debounce(100L)
+    }.shareIn(viewModelScope, SharingStarted.Lazily).catch {
+        Timber.e(it)
+    }
 
     init {
         viewModelScope.launch {
