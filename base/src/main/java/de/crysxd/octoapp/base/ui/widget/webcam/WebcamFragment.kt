@@ -3,12 +3,12 @@ package de.crysxd.octoapp.base.ui.widget.webcam
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
-import de.crysxd.octoapp.base.ui.webcam.WebcamView
 import kotlinx.android.synthetic.main.fragment_webcam.*
 import kotlinx.coroutines.flow.collectLatest
 
@@ -23,6 +23,17 @@ class WebcamFragment : Fragment(R.layout.fragment_webcam) {
         webcamView.onResetConnection = viewModel::connect
         webcamView.fullscreenIconResource = R.drawable.ic_round_fullscreen_exit_24
         webcamView.usedLiveIndicator = externalLiveIndicator
+        webcamView.onScaleToFillChanged = {
+            viewModel.storeScaleType(
+                if (webcamView.scaleToFill) {
+                    ImageView.ScaleType.CENTER_CROP
+                } else {
+                    ImageView.ScaleType.FIT_CENTER
+                },
+                isFullscreen = true
+            )
+        }
+        webcamView.scaleToFill = viewModel.getScaleType(isFullscreen = true, ImageView.ScaleType.FIT_CENTER) != ImageView.ScaleType.FIT_CENTER
         webcamView.onFullscreenClicked = {
             requireActivity().finish()
         }

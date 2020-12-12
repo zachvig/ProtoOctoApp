@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:background="#000">
 
-    <de.crysxd.octoapp.base.ui.webcam.WebcamView
+    <de.crysxd.octoapp.base.ui.widget.webcam.WebcamView
         android:id="@+id/webcamView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
