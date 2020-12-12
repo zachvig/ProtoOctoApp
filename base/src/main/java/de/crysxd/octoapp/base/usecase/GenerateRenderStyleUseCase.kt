@@ -28,7 +28,15 @@ class GenerateRenderStyleUseCase @Inject constructor(
             strokeCap = Paint.Cap.ROUND
         }
 
+        private val printHeadPaint = Paint().apply {
+            style = Paint.Style.FILL
+            isAntiAlias = true
+            color = Color.RED
+            strokeCap = Paint.Cap.ROUND
+        }
+
         val defaultStyle = RenderStyle(
+            printHeadPaint = printHeadPaint,
             paintPalette = {
                 when (it) {
                     Move.Type.Travel -> travelPaint
@@ -64,6 +72,7 @@ class GenerateRenderStyleUseCase @Inject constructor(
 
         // Create style
         RenderStyle(
+            printHeadPaint = printHeadPaint,
             paintPalette = {
                 when (it) {
                     Move.Type.Travel -> travelPaint

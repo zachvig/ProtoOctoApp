@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.gcode.render
 
+import android.graphics.PointF
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.models.GcodePath
@@ -19,23 +20,32 @@ sealed class GcodeRenderContextFactory {
     data class ForFileLocation(val byte: Int) : GcodeRenderContextFactory() {
         override fun extractMoves(gcode: Gcode): GcodeRenderContext {
             val layer = gcode.layers.last { it.positionInFile <= byte }
-            val layerNumber = gcode.layers.indexOf(layer)
-            Timber.i("Layer #${layerNumber + 1}")
-            Timber.i("Bytes printed: $byte")
-            Timber.i("Layer start at byte: ${layer.positionInFile}")
-            Timber.i("Layer end at byte: ${gcode.layers.getOrNull(layerNumber + 1)?.positionInFile}")
+
             val paths = layer.moves.map {
-                val count = it.value.first.lastOrNull { i -> i.positionInFile <= byte }?.let { i -> i.positionInArray + 4 } ?: 0
+                val move = it.value.first.lastOrNull { i -> i.positionInFile <= byte }
+                val count = move?.let { i -> i.positionInArray + 4 } ?: 0
                 Timber.i("${it.key}: $count")
-                GcodePath(
+                val path = GcodePath(
                     type = it.key,
                     offset = 0,
                     count = count,
                     points = it.value.second
                 )
+                Pair(move, path)
             }
-            Timber.i("======")
-            return GcodeRenderContext(paths.sortedBy { it.priority })
+
+            val printHeadPosition = paths.mapNotNull { it.first }.maxByOrNull { it.positionInFile }?.let {
+                layer.moves[it.type]?.let { moves ->
+                    val x = moves.second[it.positionInArray + 2]
+                    val y = moves.second[it.positionInArray + 3]
+                    PointF(x, y)
+                }
+            }
+
+            return GcodeRenderContext(
+                printHeadPosition = printHeadPosition,
+                paths = paths.map { it.second }.sortedBy { it.priority }
+            )
         }
     }
 
@@ -53,7 +63,7 @@ sealed class GcodeRenderContextFactory {
                 )
             }
 
-            return GcodeRenderContext(paths.sortedBy { it.priority })
+            return GcodeRenderContext(paths = paths.sortedBy { it.priority }, null)
         }
     }
 }
