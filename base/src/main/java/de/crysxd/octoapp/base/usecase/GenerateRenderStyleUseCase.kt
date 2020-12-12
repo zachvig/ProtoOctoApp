@@ -53,9 +53,14 @@ class GenerateRenderStyleUseCase @Inject constructor() : UseCase<OctoPrintInstan
         val backgroundRes = when {
             info.contains("charlotte", ignoreCase = true) -> R.drawable.print_bed_ender
             info.contains("skr-mini-e3", ignoreCase = true) -> R.drawable.print_bed_ender
+            info.contains("skr_mini_e3", ignoreCase = true) -> R.drawable.print_bed_ender
             info.contains("ender", ignoreCase = true) -> R.drawable.print_bed_ender
             info.contains("creality", ignoreCase = true) -> R.drawable.print_bed_creality
+            info.contains("cr-", ignoreCase = true) -> R.drawable.print_bed_creality
             info.contains("prusa", ignoreCase = true) -> R.drawable.print_bed_prusa
+            info.contains("anycubic", ignoreCase = true) -> R.drawable.print_bed_anycubic
+            info.contains("artillery", ignoreCase = true) -> R.drawable.print_bed_artillery
+            info.contains("sidewinder", ignoreCase = true) -> R.drawable.print_bed_artillery
             else -> R.drawable.print_bed_generic
         }
 
