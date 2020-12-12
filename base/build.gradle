@@ -57,6 +57,12 @@ dependencies {
     api "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
     /*
+     * HLS webcam streams
+     */
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.12.2'
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.12.2'
+
+    /*
      * Firebase
      */
     api 'com.google.firebase:firebase-auth-ktx:20.0.0'

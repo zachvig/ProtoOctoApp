@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/webcamContent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    tools:parentTag="android.widget.FrameLayout">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/playingState"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/mjpegSurface"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:importantForAccessibility="no" />
+
+        <SurfaceView
+            android:id="@+id/hlsSurface"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/liveIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_1"
+            android:contentDescription="@string/cd_live"
+            android:src="@drawable/ic_live"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/imageButtonFullscreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/fullscreen"
+            android:padding="@dimen/margin_1"
+            android:tint="@color/text_colored_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_round_fullscreen_24" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/reconnectingState"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_translucent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/reconnecting"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+            android:textColor="@color/text_colored_background" />
+
+        <TextView
+            android:id="@+id/streamUrl1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_2"
+            android:layout_marginTop="@dimen/margin_0"
+            android:layout_marginRight="@dimen/margin_2"
+            android:gravity="center"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Label"
+            android:textColor="@color/text_colored_background"
+            tools:text="http://mywebcam.com/stream" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/notConfiguredState"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/margin_2"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="@string/please_configure_your_webcam_in_octoprint"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+        android:textColor="@color/text_colored_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/errorState"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_translucent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/connection_failed"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+            android:textColor="@color/text_colored_background" />
+
+        <TextView
+            android:id="@+id/errorDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_2"
+            android:layout_marginTop="@dimen/margin_0"
+            android:layout_marginRight="@dimen/margin_2"
+            android:layout_marginBottom="@dimen/margin_2"
+            android:gravity="center"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Label"
+            android:textColor="@color/text_colored_background"
+            tools:text="http://mywebcam.com/stream" />
+
+        <Button
+            android:id="@+id/buttonReconnect"
+            style="@style/OctoTheme.Widget.Button.Small.Secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reconnect"
+            android:textColor="@color/text_colored_background" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/streamStalledIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_translucent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/margin_0"
+            android:gravity="center"
+            android:text="@string/stream_stalled"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+            android:textColor="@color/text_colored_background" />
+
+        <TextView
+            android:id="@+id/streamStalledIndicatorDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textAppearance="@style/OctoTheme.TextAppearance"
+            android:textColor="@color/text_colored_background"
+            tools:text="@string/no_frames_since_xs" />
+
+    </LinearLayout>
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/loadingState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:indeterminateTint="@color/text_colored_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</merge>
