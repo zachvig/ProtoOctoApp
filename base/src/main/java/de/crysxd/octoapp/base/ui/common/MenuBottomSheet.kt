@@ -15,6 +15,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
@@ -135,7 +137,11 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
         override fun onBindViewHolder(holder: MenuItemViewHolder, position: Int) {
             val item = menuItems[position]
             holder.itemView.imageViewIcon.setImageDrawable(item.icon)
-            holder.itemView.textViewTitle.text = item.title
+            holder.itemView.textViewTitle.text = if (item.itemId == R.id.menuSupportOctoApp) {
+                Firebase.remoteConfig.getString("purchase_screen_launch_cta")
+            } else {
+                item.title
+            }
             holder.itemView.setOnClickListener { callback(item.itemId) }
         }
     }

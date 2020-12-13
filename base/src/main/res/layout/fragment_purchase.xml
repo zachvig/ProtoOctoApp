@@ -98,9 +98,9 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_3"
                     android:gravity="center"
-                    android:text="Thank you for\nsupporting OctoApp!"
                     android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
-                    android:textColor="@color/dark_text" />
+                    android:textColor="@color/dark_text"
+                    tools:text="Thank you for\nsupporting OctoApp!" />
 
                 <TextView
                     android:id="@+id/description"
@@ -108,28 +108,30 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin_2"
                     android:gravity="center"
-                    android:text="@string/purchase_expalainer"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/title" />
+                    app:layout_constraintTop_toBottomOf="@+id/title"
+                    tools:text="Description" />
 
                 <TextView
+                    android:id="@+id/featureList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin_3"
+                    android:layout_marginVertical="@dimen/margin_2"
                     android:gravity="center"
-                    android:text="Gcode viewer\nMTL webcam streams"
                     android:textAppearance="@style/OctoTheme.TextAppearance.Title"
                     app:layout_constraintTop_toBottomOf="@+id/description"
-                    tools:layout_editor_absoluteX="118dp" />
+                    tools:text="Gcode viewer\nMTL webcam streams" />
 
                 <TextView
+                    android:id="@+id/moreFeatures"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin_3"
                     android:layout_marginTop="@dimen/margin_0"
                     android:gravity="center"
-                    android:text="and much more to come!" />
+                    tools:text="and much more to come!" />
 
             </LinearLayout>
 

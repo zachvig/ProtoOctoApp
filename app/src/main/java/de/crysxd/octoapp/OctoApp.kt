@@ -56,7 +56,7 @@ class OctoApp : Application() {
         // Setup RemoteConfig
         Firebase.remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
         Firebase.remoteConfig.setConfigSettingsAsync(remoteConfigSettings {
-            minimumFetchIntervalInSeconds = 3600
+            minimumFetchIntervalInSeconds = if (BuildConfig.DEBUG) 10 else 3600
         })
         Firebase.remoteConfig.fetchAndActivate().addOnCompleteListener {
             it.exception?.let(Timber::e)
