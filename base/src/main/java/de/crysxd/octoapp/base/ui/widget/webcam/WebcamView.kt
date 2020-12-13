@@ -20,10 +20,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Renderer
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.LoadEventInfo
 import com.google.android.exoplayer2.source.MediaLoadData
@@ -148,6 +145,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         playingState.isVisible = true
         hlsSurface.isVisible = true
         mjpegSurface.isVisible = false
+        liveIndicator.isVisible = false
         usedLiveIndicator?.isVisible = true
         hlsPlayer.setVideoSurfaceHolder(hlsSurface.holder)
         hlsPlayer.setMediaItem(MediaItem.fromUri(state.uri))
@@ -169,6 +167,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 override fun onIsPlayingChanged(eventTime: AnalyticsListener.EventTime, isPlaying: Boolean) {
                     super.onIsPlayingChanged(eventTime, isPlaying)
                     Timber.v("onIsPlayingChanged: $isPlaying")
+                    liveIndicator.isVisible = isPlaying
                     if (isPlaying) {
                         errorState.isVisible = false
                         reconnectingState.isVisible = false
@@ -190,7 +189,9 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 override fun onLoadCompleted(eventTime: AnalyticsListener.EventTime, loadEventInfo: LoadEventInfo, mediaLoadData: MediaLoadData) {
                     super.onLoadCompleted(eventTime, loadEventInfo, mediaLoadData)
                     Timber.v("onLoadCompleted")
-                    loadingState.isVisible = false
+                    if (hlsPlayer.isPlaying) {
+                        loadingState.isVisible = false
+                    }
                     usedLiveIndicator?.isVisible = true
                     reconnectingState.isVisible = false
                     errorState.isVisible = false
