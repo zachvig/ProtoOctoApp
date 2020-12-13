@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:background="#000">
 
+    <de.crysxd.octoapp.base.ui.widget.webcam.WebcamView
+        android:id="@+id/webcamView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -51,10 +56,12 @@
             tools:text="ETA 14:45" />
 
         <ImageView
-            android:id="@+id/liveIndicator"
+            android:id="@+id/externalLiveIndicator"
+            android:importantForAccessibility="no"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_live"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/textViewProgress"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/textViewProgress"

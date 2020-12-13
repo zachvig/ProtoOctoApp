@@ -31,11 +31,14 @@ abstract class OctoWidget(val parent: Fragment) : LayoutContainer {
         return if (!::view.isInitialized) {
             view = onCreateView(LayoutInflater.from(context), container)
             onViewCreated(view)
+            onResume()
             view
         } else {
             view
         }
     }
+
+    open fun onResume() = Unit
 
     fun setupBaseViewModel(baseViewModel: BaseViewModel) {
         if (parent is BaseFragment) {

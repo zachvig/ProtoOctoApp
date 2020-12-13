@@ -2,176 +2,87 @@ package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.view.GestureDetectorCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.ext.suspendedInflate
-import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
-import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidgetViewModel.UiState
-import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidgetViewModel.UiState.Error
-import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidgetViewModel.UiState.Loading
+import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState
+import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState.Error
+import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState.Loading
+import kotlinx.android.synthetic.main.widget_webcam.*
 import kotlinx.android.synthetic.main.widget_webcam.view.*
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import java.util.concurrent.TimeUnit
 
 const val NOT_LIVE_IF_NO_FRAME_FOR_MS = 3000L
 const val STALLED_IF_NO_FRAME_FOR_MS = 5000L
-
-val CROPPED_SCALE_TYPE = ImageView.ScaleType.CENTER_CROP
-val FIT_SCALE_TYPE = ImageView.ScaleType.FIT_CENTER
 
 class WebcamWidget(
     parent: Fragment,
     private val isFullscreen: Boolean = false
 ) : OctoWidget(parent) {
-
-    private val viewModel: WebcamWidgetViewModel by injectViewModel()
-    private var hideLiveIndicatorJob: Job? = null
-    private var lastState: UiState? = null
-
-    val uiState get() = viewModel.uiState
-
-    var externalLiveIndicator: View? = null
-    private val liveIndicator get() = externalLiveIndicator ?: view.liveIndicator
+    private val viewModel: WebcamViewModel by injectViewModel()
 
     override fun getTitle(context: Context) = context.getString(R.string.webcam)
     override fun getAnalyticsName() = "webcam"
 
     @SuppressLint("ClickableViewAccessibility")
-    override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
-        val view = inflater.suspendedInflate(R.layout.widget_webcam, container, false) as ViewGroup
+    override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup) = inflater.suspendedInflate(R.layout.widget_webcam, container, false) as ViewGroup
 
-        val streamView = view.streamView
-        streamView.scaleType = viewModel.getScaleType(isFullscreen, FIT_SCALE_TYPE)
-        val detector = GestureDetectorCompat(requireContext(), object : GestureDetector.SimpleOnGestureListener() {
-            override fun onDoubleTap(e: MotionEvent?): Boolean {
-                streamView.scaleType = when (streamView.scaleType) {
-                    FIT_SCALE_TYPE -> CROPPED_SCALE_TYPE
-                    else -> FIT_SCALE_TYPE
-                }
-                viewModel.storeScaleType(streamView.scaleType, isFullscreen)
-                return true
-            }
-        })
-        streamView.isClickable = true
-        streamView.setOnTouchListener { _, event ->
-            detector.onTouchEvent(event)
-        }
-
-        // Do not use the card view in fullscreen
-        return if (isFullscreen) {
-            val webcamContent = view.webcamContent
-            view.removeView(webcamContent)
-            webcamContent
-        } else {
-            view
-        }
-    }
 
     override fun onViewCreated(view: View) {
-        viewModel.uiState.observe(parent, Observer(this::onUiStateChanged))
-        view.buttonReconnect.setOnClickListener { viewModel.connect() }
-
-        // Fullscreen button
-        view.imageButtonFullscreen.setOnClickListener {
-            recordInteraction()
-            if (isFullscreen) {
-                parent.activity?.finish()
-            } else {
-                FullscreenWebcamActivity.start(parent.requireActivity())
-            }
-        }
-        view.imageButtonFullscreen.setImageResource(
-            if (isFullscreen) {
-                R.drawable.ic_round_fullscreen_exit_24
-            } else {
-                R.drawable.ic_round_fullscreen_24
-            }
-        )
-
         applyAspectRatio(viewModel.getInitialAspectRatio())
+        webcamView.coroutineScope = parent.viewLifecycleOwner.lifecycleScope
+        webcamView.onResetConnection = viewModel::connect
+        webcamView.onFullscreenClicked = ::openFullscreen
+        webcamView.onScaleToFillChanged = {
+            viewModel.storeScaleType(
+                if (webcamView.scaleToFill) {
+                    ImageView.ScaleType.CENTER_CROP
+                } else {
+                    ImageView.ScaleType.FIT_CENTER
+                },
+                isFullscreen = false
+            )
+        }
+        webcamView.scaleToFill = viewModel.getScaleType(isFullscreen = false, ImageView.ScaleType.FIT_CENTER) != ImageView.ScaleType.FIT_CENTER
+        viewModel.uiState.observe(parent, ::onUiStateChanged)
     }
 
-    private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(view.webcamContent, InstantAutoTransition())
-
     private fun onUiStateChanged(state: UiState) {
-        if (lastState == null || state::class != lastState!!::class) {
-            beginDelayedTransition()
-        }
-
-        view.erroIndicator.isVisible = false
-        view.errorIndicatorManual.isVisible = false
-        view.streamStalledIndicator.isVisible = false
-        view.notConfiguredIndicator.isVisible = false
-        liveIndicator.isVisible = false
-
-        // Hide loading indicator in every state to prevent the animation to start over
-
-        when (state) {
-            Loading -> {
-                view.loadingIndicator.isVisible = true
-            }
-
-            UiState.WebcamNotConfigured -> {
-                view.loadingIndicator.isVisible = false
-                view.notConfiguredIndicator.isVisible = true
-            }
-
+        webcamView.state = when (state) {
+            Loading -> WebcamView.WebcamState.Loading
+            UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
             is UiState.FrameReady -> {
-                view.loadingIndicator.isVisible = false
-
-                liveIndicator.isVisible = true
-                view.streamView.setImageBitmap(state.frame)
-
                 applyAspectRatio(state.aspectRation)
-
-                // Hide live indicator if no new frame arrives within 3s
-                // Show stalled indicator if no new frame arrives within 10s
-                hideLiveIndicatorJob?.cancel()
-                hideLiveIndicatorJob = parent.lifecycleScope.launchWhenCreated {
-                    delay(NOT_LIVE_IF_NO_FRAME_FOR_MS)
-                    beginDelayedTransition()
-                    liveIndicator.isVisible = false
-
-                    delay(STALLED_IF_NO_FRAME_FOR_MS - NOT_LIVE_IF_NO_FRAME_FOR_MS)
-                    beginDelayedTransition()
-                    val seconds = TimeUnit.MILLISECONDS.toSeconds(STALLED_IF_NO_FRAME_FOR_MS)
-                    view.streamStalledIndicatorDetail.text = requireContext().getString(R.string.no_frames_since_xs, seconds)
-                    view.streamStalledIndicator.isVisible = true
-                }
+                WebcamView.WebcamState.MjpegFrameReady(state.frame)
             }
-
-            is Error -> {
-                hideLiveIndicatorJob?.cancel()
-
-                view.loadingIndicator.isVisible = false
-
-                view.streamUrl1.text = state.streamUrl
-                view.streamUrl2.text = state.streamUrl
-
-                view.erroIndicator.isVisible = !state.isManualReconnect
-                view.errorIndicatorManual.isVisible = state.isManualReconnect
+            is UiState.HlsStreamReady -> {
+                applyAspectRatio(state.aspectRation)
+                WebcamView.WebcamState.HlsStreamReady(state.uri)
+            }
+            is Error -> if (state.isManualReconnect) {
+                WebcamView.WebcamState.Error
+            } else {
+                WebcamView.WebcamState.Reconnecting
             }
         }
+    }
 
-        lastState = state
+    private fun openFullscreen() {
+        FullscreenWebcamActivity.start(parent.requireActivity())
     }
 
     private fun applyAspectRatio(aspectRation: String) {
         ConstraintSet().also {
             it.clone(view.webcamContent)
             it.setDimensionRatio(
-                R.id.streamView,
+                R.id.webcamView,
                 if (isFullscreen) {
                     null
                 } else {

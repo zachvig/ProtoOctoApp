@@ -5,6 +5,7 @@ import androidx.annotation.DrawableRes
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 
 data class RenderStyle(
+    val printHeadPaint: Paint,
     val paintPalette: (Move.Type) -> Paint,
     @DrawableRes val background: Int
 )

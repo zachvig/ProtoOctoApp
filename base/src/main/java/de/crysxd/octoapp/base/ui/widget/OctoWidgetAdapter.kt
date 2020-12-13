@@ -22,6 +22,10 @@ class OctoWidgetAdapter : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHolde
         setHasStableIds(true)
     }
 
+    fun dispatchResume() {
+        widgets.forEach { it.second.widget.onResume() }
+    }
+
     suspend fun setWidgets(context: Context, list: List<OctoWidget>) {
         if (widgets.map { it.second.widgetClassName } == list.map { it::class.java.name }) {
             Timber.i("Widgets not changed, skipping update")
@@ -41,7 +45,7 @@ class OctoWidgetAdapter : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHolde
     }
 
     private suspend fun onCreateAndBindViewHolder(context: Context, widget: OctoWidget, position: Int, count: Int) =
-        WidgetViewHolder(context, widget::class.java.name).also { holder ->
+        WidgetViewHolder(context, widget::class.java.name, widget).also { holder ->
             LayoutInflater.from(context).suspendedInflate(R.layout.item_widget, holder.itemView as ViewGroup, true)
 
             holder.itemView.textViewWidgetTitle.text = widget.getTitle(holder.itemView.context)
@@ -66,7 +70,7 @@ class OctoWidgetAdapter : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHolde
 
     override fun onBindViewHolder(holder: WidgetViewHolder, position: Int) = Unit
 
-    class WidgetViewHolder(context: Context, val widgetClassName: String) : RecyclerView.ViewHolder(FrameLayout(context)) {
+    class WidgetViewHolder(context: Context, val widgetClassName: String, val widget: OctoWidget) : RecyclerView.ViewHolder(FrameLayout(context)) {
         init {
             setIsRecyclable(false)
         }

@@ -15,6 +15,7 @@ import android.view.animation.DecelerateInterpolator
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.minus
 import de.crysxd.octoapp.base.BuildConfig
+import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.models.GcodeRenderContext
 import de.crysxd.octoapp.base.gcode.render.models.RenderStyle
@@ -36,6 +37,7 @@ class GcodeRenderView @JvmOverloads constructor(
     private val gestureDetector = GestureDetector(context, GestureListener())
     private val scaleGestureDetector = ScaleGestureDetector(context, ScaleGestureListener())
 
+    private val minPrintHeadDiameter = resources.getDimension(R.dimen.gcode_render_view_print_head_size)
     private var scrollOffset = PointF(0f, 0f)
     private var zoom = 1f
     private var printBed: Drawable? = null
@@ -179,6 +181,21 @@ class GcodeRenderView @JvmOverloads constructor(
         // Render Gcode
         params.renderContext.paths.forEach {
             canvas.drawLines(it.points, it.offset, it.count, style.paintPalette(it.type))
+        }
+
+        // Tool position
+        params.renderContext.printHeadPosition?.let {
+            val actualRadius = params.extrusionWidthMm * 3
+            val minRadius = minPrintHeadDiameter / totalFactor
+            val radius = max(actualRadius, minRadius)
+            canvas.drawOval(
+                it.x - radius,
+                it.y - radius,
+                it.x + radius,
+                it.y + radius,
+                style.printHeadPaint
+            )
+
         }
     }.let {
         if (BuildConfig.DEBUG) {

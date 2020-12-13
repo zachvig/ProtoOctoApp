@@ -25,7 +25,7 @@ sealed class Message {
 
         data class ProgressInformation(
             val completion: Float,
-            val fileOps: Long,
+            val filepos: Long,
             val printTime: Int,
             val printTimeLeft: Int,
             val printTimeLeftOrigin: String

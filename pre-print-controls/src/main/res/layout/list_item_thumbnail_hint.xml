@@ -49,7 +49,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_1"
             android:layout_marginEnd="@dimen/margin_2"
-            android:layout_marginBottom="@dimen/margin_1"
             android:text="@string/learn_more"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
