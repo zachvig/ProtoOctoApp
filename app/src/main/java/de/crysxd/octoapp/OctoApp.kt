@@ -15,6 +15,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import de.crysxd.octoapp.base.billing.BillingManager
 import timber.log.Timber
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
 import de.crysxd.octoapp.connect_printer.di.Injector as ConnectPrintInjector
@@ -73,6 +74,9 @@ class OctoApp : Application() {
                 )
             )
         }
+
+        // Setup Billing
+        BillingManager.initBilling(this)
 
         // Setup FCM
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->

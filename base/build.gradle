@@ -73,6 +73,12 @@ dependencies {
     api 'com.google.firebase:firebase-messaging:21.0.0'
 
     /*
+     * Billing
+     */
+    implementation "com.android.billingclient:billing:$billing_version"
+    implementation "com.android.billingclient:billing-ktx:$billing_version"
+
+    /*
      * Test
      */
     testImplementation 'junit:junit:4.13'
