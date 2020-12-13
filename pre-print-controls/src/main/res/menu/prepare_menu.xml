@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+
+    <item
+        android:id="@id/menuSupportOctoApp"
+        android:icon="@drawable/ic_round_favorite_24"
+        android:title="@string/support_octoapp" />
+
     <item
         android:id="@id/menuGiveFeedback"
         android:icon="@drawable/ic_round_feedback_24"

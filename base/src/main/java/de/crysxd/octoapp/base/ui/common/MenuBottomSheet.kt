@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -60,6 +61,7 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
     private suspend fun onMenuItemSelectedBase(@IdRes id: Int) = when (id) {
         R.id.menuOpenOctoprint -> Injector.get().openOctoPrintWebUseCase().execute(requireContext())
         R.id.menuGiveFeedback -> SendFeedbackDialog().show(requireActivity().supportFragmentManager, "send-feedback")
+        R.id.menuSupportOctoApp -> findNavController().navigate(R.id.action_show_purchase_flow)
         else -> Unit
     }
 

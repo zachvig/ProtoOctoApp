@@ -2,7 +2,7 @@
 <defaultsMap>
     <entry>
         <key>contact_email</key>
-        <value>octoapp.for.octoprint@gmail.com</value>
+        <value>hello@octoapp.eu</value>
     </entry>
     <entry>
         <key>printer_connection_timeout_sec</key>
@@ -30,6 +30,14 @@
     </entry>
     <entry>
         <key>gcode_response_send_line_pattern</key>
-        <value>^Send:.*%%COMMAND%%</value>
+        <value>^Send:.*%%COMMAND%%.*</value>
+    </entry>
+    <entry>
+        <key>available_subscription_sku_id</key>
+        <value></value>
+    </entry>
+    <entry>
+        <key>available_purchase_sku_id</key>
+        <value></value>
     </entry>
 </defaultsMap>
