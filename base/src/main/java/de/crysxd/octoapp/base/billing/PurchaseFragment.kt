@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.AppBarLayout
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
@@ -45,9 +46,15 @@ class PurchaseFragment : Fragment(R.layout.fragment_purchase), InsetAwareScreen 
         featureList.movementMethod = LinkMovementMethod()
         moreFeatures.movementMethod = LinkMovementMethod()
 
+        var eventSent = false
         appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
             val collapseProgress = verticalOffset.absoluteValue / appBar.totalScrollRange.toFloat()
             val availableHeight = (scrollView.height - scrollContent.height - scrollContent.paddingTop) / 2
+
+            if (!eventSent && verticalOffset != 0) {
+                eventSent = true
+                OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenScroll)
+            }
 
             // Top padding should be at least as much as bottom padding
             val minPaddingTop = scrollContent.paddingBottom

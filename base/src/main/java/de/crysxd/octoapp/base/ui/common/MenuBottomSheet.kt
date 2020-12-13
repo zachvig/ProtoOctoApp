@@ -8,6 +8,7 @@ import android.widget.PopupMenu
 import androidx.annotation.IdRes
 import androidx.annotation.MenuRes
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.get
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
@@ -63,7 +65,10 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
     private suspend fun onMenuItemSelectedBase(@IdRes id: Int) = when (id) {
         R.id.menuOpenOctoprint -> Injector.get().openOctoPrintWebUseCase().execute(requireContext())
         R.id.menuGiveFeedback -> SendFeedbackDialog().show(requireActivity().supportFragmentManager, "send-feedback")
-        R.id.menuSupportOctoApp -> findNavController().navigate(R.id.action_show_purchase_flow)
+        R.id.menuSupportOctoApp -> {
+            OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "more_menu"))
+            findNavController().navigate(R.id.action_show_purchase_flow)
+        }
         else -> Unit
     }
 

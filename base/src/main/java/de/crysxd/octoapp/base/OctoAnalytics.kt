@@ -65,5 +65,12 @@ object OctoAnalytics {
         object PrePrintWorkspaceShown : Event("workspace_shown_pre_print")
         object PrintWorkspaceShown : Event("workspace_shown_print")
         object TerminalWorkspaceShown : Event("workspace_shown_terminal")
+
+        object PurchaseScreenScroll : Event("purchase_screen_scroll")
+        object PurchaseScreenOpen : Event("purchase_screen_open")
+        object PurchaseOptionsShown : Event("purchase_options_shown")
+        object PurchaseOptionSelected : Event("purchase_option_selected")
+        object PurchaseFlowCompleted : Event("purchase_billing_flow_completed")
+        object PurchaseFlowCancelled : Event("purchase_billing_flow_cancelled")
     }
 }
