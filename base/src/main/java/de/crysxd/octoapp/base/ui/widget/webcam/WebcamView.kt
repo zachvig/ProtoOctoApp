@@ -209,22 +209,27 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     }
 
     private fun displayMjpegFrame(state: WebcamState.MjpegFrameReady) {
-        coroutineScope.launchWhenCreated {
-            // Do not update frame if a transition is active
-            if (transitionActive) {
-                Timber.i("Drop frame, transition active")
-                return@launchWhenCreated
-            }
-
-            playingState.isVisible = true
-            hlsSurface.isVisible = false
-            mjpegSurface.isVisible = true
-            usedLiveIndicator?.isVisible = true
-            loadingState.isVisible = false
-
-            mjpegSurface.setImageBitmap(state.frame)
-            applyAspectRatio(state.frame.width, state.frame.height)
+        // Do not update frame if a transition is active
+        if (transitionActive) {
+            Timber.i("Drop frame, transition active")
+            return
         }
+
+        // Some important view state changed? Animate!
+        if (loadingState.isVisible || streamStalledIndicator.isVisible || usedLiveIndicator?.isVisible == false) {
+            beginDelayedTransition()
+        }
+
+        playingState.isVisible = true
+        hlsSurface.isVisible = false
+        mjpegSurface.isVisible = true
+        usedLiveIndicator?.isVisible = true
+        loadingState.isVisible = false
+        liveIndicator.isVisible = true
+        streamStalledIndicator.isVisible = false
+
+        mjpegSurface.setImageBitmap(state.frame)
+        applyAspectRatio(state.frame.width, state.frame.height)
 
         // Hide live indicator if no new frame arrives within 3s
         // Show stalled indicator if no new frame arrives within 10s
@@ -264,45 +269,53 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     })
 
     private fun zoom(newZoom: Float, focusX: Float, focusY: Float) {
-        val targetOnVideoX = (translationX + focusX) / hlsSurface.scaleX
-        val targetOnVideoY = (translationX + focusY) / hlsSurface.scaleY
-        val targetOnVideoXAfter = (translationX + focusX) / newZoom
-        val targetOnVideoYAfter = (translationX + focusY) / newZoom
-        val additionalScrollX = targetOnVideoX - targetOnVideoXAfter
-        val additionalScrollY = targetOnVideoY - targetOnVideoYAfter
+        fun View.zoomInternal(newZoom: Float, focusX: Float, focusY: Float) {
+            val targetOnVideoX = (translationX + focusX) / scaleX
+            val targetOnVideoY = (translationX + focusY) / scaleY
+            val targetOnVideoXAfter = (translationX + focusX) / newZoom
+            val targetOnVideoYAfter = (translationX + focusY) / newZoom
+            val additionalScrollX = targetOnVideoX - targetOnVideoXAfter
+            val additionalScrollY = targetOnVideoY - targetOnVideoYAfter
 
-        hlsSurface.scaleX = newZoom
-        hlsSurface.scaleY = newZoom
-        mjpegSurface.scaleX = hlsSurface.scaleX
-        mjpegSurface.scaleY = hlsSurface.scaleY
+            scaleX = newZoom
+            scaleY = newZoom
+            translationX += additionalScrollX
+            translationY += additionalScrollY
+        }
 
-        hlsSurface.translationX += additionalScrollX
-        hlsSurface.translationY += additionalScrollY
-        mjpegSurface.translationX = hlsSurface.translationX
-        mjpegSurface.translationY = hlsSurface.translationY
+        hlsSurface.zoomInternal(newZoom, focusX, focusY)
+        mjpegSurface.zoomInternal(newZoom, focusX, focusY)
 
         limitScrollRange()
     }
 
     private fun limitScrollRange() {
-        val scaledSurfaceWidth = hlsSurface.width * hlsSurface.scaleX
-        val scaledSurfaceHeight = hlsSurface.height * hlsSurface.scaleY
-        val maxX = ((scaledSurfaceWidth - width) * 0.5f).coerceAtLeast(0f)
-        val minX = -maxX
-        val maxY = ((scaledSurfaceHeight - height) * 0.5f).coerceAtLeast(0f)
-        val minY = -maxY
+        fun View.limitScrollRangeInternal() {
+            // height is not reliable for MJPEG, so we calculate it based on the reliable width
+            val scaledSurfaceWidth = width * scaleX
+            val scaledSurfaceHeight = nativeAspectRation?.let {
+                scaledSurfaceWidth * (it.y / it.x.toFloat())
+            } ?: height * scaleY
+            val maxX = ((scaledSurfaceWidth - this@WebcamView.width) * 0.5f).coerceAtLeast(0f)
+            val minX = -maxX
+            val maxY = ((scaledSurfaceHeight - this@WebcamView.height) * 0.5f).coerceAtLeast(0f)
+            val minY = -maxY
 
-        if (hlsSurface.translationX > maxX) {
-            hlsSurface.translationX = maxX
-        } else if (hlsSurface.translationX < minX) {
-            hlsSurface.translationX = minX
+            if (translationX > maxX) {
+                translationX = maxX
+            } else if (translationX < minX) {
+                translationX = minX
+            }
+
+            if (translationY > maxY) {
+                translationY = maxY
+            } else if (translationY < minY) {
+                translationY = minY
+            }
         }
 
-        if (hlsSurface.translationY > maxY) {
-            hlsSurface.translationY = maxY
-        } else if (hlsSurface.translationY < minY) {
-            hlsSurface.translationY = minY
-        }
+        hlsSurface.limitScrollRangeInternal()
+        mjpegSurface.limitScrollRangeInternal()
     }
 
     sealed class WebcamState {
@@ -348,16 +361,19 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             hlsSurface.translationX -= distanceX
             hlsSurface.translationY -= distanceY
-            mjpegSurface.translationX = hlsSurface.translationX
-            mjpegSurface.translationY = hlsSurface.translationY
+            mjpegSurface.translationX -= distanceX
+            mjpegSurface.translationY -= distanceY
             limitScrollRange()
             return true
         }
 
         override fun onDoubleTap(e: MotionEvent): Boolean {
             beginDelayedTransition()
-            zoom(newZoom = 1f, focusX = 0f, focusY = 0f)
-            scaleToFill = !scaleToFill
+            if (mjpegSurface.scaleX > 1) {
+                zoom(newZoom = 1f, focusX = 0f, focusY = 0f)
+            } else {
+                scaleToFill = !scaleToFill
+            }
             return true
         }
 
