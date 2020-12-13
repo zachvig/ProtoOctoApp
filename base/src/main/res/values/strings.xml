@@ -98,8 +98,6 @@
     <string name="x_of_y">%1$d of %2$d</string>
     <string name="error_video_playback">Unable to play %1$s (%s)</string>
     <string name="purchase_expalainer"><![CDATA[
-    Creating OctoApp and supporting all of you takes a lot of my time. To be able to continue this effort, I decided to make more advanced features exclusive for my supporters. <a>Read more</a?<bar/><br/>  I will never start showing ads in this app nor will I take away features that are already available. You are all first class users.<br/><br/>
-Following features will be unlocked:
-    ]]></string>
+    Creating OctoApp and supporting all of you takes a lot of my time. To be able to continue this effort, I decided to make more advanced features exclusive for my supporters. <a><u>Read more</a></u><br/><br/><b>I will never start showing ads in this app nor will I take away features that are already available.</b><br/><br/>Following features will be unlocked:<br/>]]></string>
     <string name="support_octoapp">Support OctoApp</string>
 </resources>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<de.crysxd.octoapp.FeedbackTriggerCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
@@ -21,7 +21,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_3"
+        android:paddingTop="@dimen/margin_3"
         app:layout_constraintTop_toTopOf="parent" />
 
     <de.crysxd.octoapp.base.ui.common.OctoView
@@ -43,4 +43,4 @@
         app:layout_behavior=".base.ui.common.ShrinkBehavior"
         app:navGraph="@navigation/main_nav_graph" />
 
-</de.crysxd.octoapp.FeedbackTriggerCoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

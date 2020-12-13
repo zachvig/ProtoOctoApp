@@ -1,76 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?android:attr/windowBackground"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:scrimVisibleHeightTrigger="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.7">
+
+                <View
+                    android:id="@+id/imageViewStatusBackground"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/purchase_header_status_scrim"
+                    android:importantForAccessibility="no"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:importantForAccessibility="no"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/purchase_header_main" />
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="53dp"
+                android:layout_height="43dp"
+                android:layout_gravity="bottom|center"
+                android:background="@drawable/purchase_header_octo_background"
+                app:layout_collapseMode="pin">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/margin_0"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/octo_base" />
+
+            </FrameLayout>
+
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <de.crysxd.octoapp.base.ui.common.OctoScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/common_view_top_padding">
+        android:fillViewport="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:importantForAccessibility="no"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/purchase_header" />
-
-            <TextView
-                android:id="@+id/textView2"
+            <LinearLayout
+                android:id="@+id/scrollContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_3"
-                android:gravity="center"
-                android:text="Thank you for\nsupporting OctoApp!"
-                android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
-                android:textColor="@color/dark_text" />
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/common_view_top_padding"
+                tools:ignore="UselessParent">
 
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin_3"
-                android:text="@string/purchase_expalainer"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_3"
+                    android:gravity="center"
+                    android:text="Thank you for\nsupporting OctoApp!"
+                    android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
+                    android:textColor="@color/dark_text" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin_3"
-                android:layout_marginTop="@dimen/margin_3"
-                android:gravity="center"
-                android:text="Gcode viewer\nMTL webcam streams"
-                android:textAppearance="@style/OctoTheme.TextAppearance.Title"
-                app:layout_constraintTop_toBottomOf="@+id/textView3"
-                tools:layout_editor_absoluteX="118dp" />
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_2"
+                    android:gravity="center"
+                    android:text="@string/purchase_expalainer"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/title" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin_3"
-                android:layout_marginTop="@dimen/margin_0"
-                android:gravity="center"
-                android:text="and much more to come!" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_3"
+                    android:gravity="center"
+                    android:text="Gcode viewer\nMTL webcam streams"
+                    android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+                    app:layout_constraintTop_toBottomOf="@+id/description"
+                    tools:layout_editor_absoluteX="118dp" />
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_3"
+                    android:layout_marginTop="@dimen/margin_0"
+                    android:gravity="center"
+                    android:text="and much more to come!" />
+
+            </LinearLayout>
+
+        </FrameLayout>
 
     </de.crysxd.octoapp.base.ui.common.OctoScrollView>
+
+    <View
+        android:id="@+id/statusBarScrim"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/status_bar_scrim" />
 
     <Button
         android:layout_width="match_parent"
@@ -79,5 +150,4 @@
         android:layout_margin="@dimen/margin_2"
         android:text="@string/support_octoapp" />
 
-
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
