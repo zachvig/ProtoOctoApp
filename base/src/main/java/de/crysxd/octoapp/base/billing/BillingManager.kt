@@ -2,6 +2,9 @@ package de.crysxd.octoapp.base.billing
 
 import android.content.Context
 import com.android.billingclient.api.*
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -62,9 +65,11 @@ object BillingManager {
         try {
             Timber.i("Updating SKU")
 
-            val subscriptionSkuIds = "support_sub_duration_1,support_sub_duration_2,support_sub_duration_3"
-            val purchaseSkuIds = "support_infinite"
+            Tasks.await(Firebase.remoteConfig.fetchAndActivate())
+            val subscriptionSkuIds = Firebase.remoteConfig.getString("available_subscription_sku_id")
+            val purchaseSkuIds = Firebase.remoteConfig.getString("available_purchase_sku_id")
             fun String.splitSkuIds() = split(",").map { it.trim() }
+            Timber.i("Fetching SKU: subscriptions=$subscriptionSkuIds purchases=$purchaseSkuIds")
 
             val subscriptions = async {
                 fetchSku(
@@ -93,6 +98,10 @@ object BillingManager {
     }
 
     private suspend fun fetchSku(params: SkuDetailsParams): List<SkuDetails> {
+        if (params.skusList.isEmpty()) {
+            return emptyList()
+        }
+
         val result = billingClient?.querySkuDetails(params)
         if (result?.billingResult?.responseCode == BillingClient.BillingResponseCode.OK) {
             return result.skuDetailsList ?: emptyList()
