@@ -16,7 +16,7 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
     RecyclerView(context, attributeSet, defStyle) {
 
     private var calculatedScrollY = 0
-    private lateinit var octoActivity: OctoActivity
+    private var octoActivity: OctoActivity? = null
     private lateinit var initialState: OctoToolbar.State
 
     private val topShadowDrawable = context.resources.getDrawable(R.drawable.top_scroll_edge_shadow, context.theme)
@@ -89,16 +89,18 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
             createAnimator(bottomShadowAlphaProperty, alphaBottom, duration).start()
         }
 
-        octoActivity.octoToolbar.state = if (calculatedScrollY < paddingTop / 3f) {
-            if (octoActivity.octoToolbar.state == OctoToolbar.State.Hidden) {
-                octoActivity.octo.animate().alpha(1f).start()
+        octoActivity?.let {
+            it.octoToolbar.state = if (calculatedScrollY < paddingTop / 3f) {
+                if (it.octoToolbar.state == OctoToolbar.State.Hidden) {
+                    it.octo.animate().alpha(1f).start()
+                }
+                initialState
+            } else {
+                if (it.octoToolbar.state != OctoToolbar.State.Hidden) {
+                    it.octo.animate().alpha(0f).start()
+                }
+                OctoToolbar.State.Hidden
             }
-            initialState
-        } else {
-            if (octoActivity.octoToolbar.state != OctoToolbar.State.Hidden) {
-                octoActivity.octo.animate().alpha(0f).start()
-            }
-            OctoToolbar.State.Hidden
         }
     }
 

@@ -61,7 +61,7 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
         gcodes.reversed().forEach { gcode ->
             val button = removedViews.firstOrNull { it.text.toString() == gcode.command }
                 ?: LayoutInflater.from(requireContext()).inflate(R.layout.widget_gcode_button, gcodeList, false) as Button
-            button.text = gcode.command
+            button.text = gcode.label ?: gcode.command
             gcodeList.addView(button, 0)
             button.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 if (gcode.isFavorite) {

@@ -33,7 +33,7 @@ class SendGcodeWidgetViewModel(
     }
 
     fun setFavorite(gcode: GcodeHistoryItem, favorite: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
-        gcodeHistoryRepository.setFavorite(gcode.command, favorite).join()
+        gcodeHistoryRepository.setFavorite(gcode.command, favorite)
         updateGcodes()
     }
 

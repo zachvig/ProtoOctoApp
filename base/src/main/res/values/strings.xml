@@ -97,4 +97,7 @@
     <string name="cd_previous_layer">Previous Layer</string>
     <string name="x_of_y">%1$d of %2$d</string>
     <string name="error_video_playback">Unable to play %1$s (%s)</string>
+    <string name="set_lebel">Set label</string>
+    <string name="clear_lebel">Clear label</string>
+    <string name="remove_shortcut">Remove shortcut</string>
 </resources>

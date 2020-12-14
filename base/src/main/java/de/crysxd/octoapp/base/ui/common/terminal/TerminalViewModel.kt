@@ -1,16 +1,20 @@
 package de.crysxd.octoapp.base.ui.common.terminal
 
 import android.content.SharedPreferences
+import android.text.InputType
 import androidx.core.content.edit
 import androidx.lifecycle.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.SerialCommunication
 import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
+import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.GetGcodeShortcutsUseCase
 import de.crysxd.octoapp.base.usecase.GetTerminalFiltersUseCase
@@ -118,8 +122,32 @@ class TerminalViewModel(
     }
 
     fun setFavorite(gcode: GcodeHistoryItem, favorite: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
-        gcodeHistoryRepository.setFavorite(gcode.command, favorite).join()
+        gcodeHistoryRepository.setFavorite(gcode.command, favorite)
         updateGcodes()
+    }
+
+    fun updateLabel(gcode: GcodeHistoryItem) = viewModelScope.launch {
+        val result = NavigationResultMediator.registerResultCallback<String?>()
+
+        navContoller.navigate(
+            R.id.action_enter_value,
+            EnterValueFragmentArgs(
+                title = "Enter label",
+                hint = "Label for ${gcode.command}",
+                action = "Set label",
+                resultId = result.first,
+                value = gcode.label,
+                inputType = InputType.TYPE_CLASS_TEXT,
+                selectAll = true
+            ).toBundle()
+        )
+
+        withContext(Dispatchers.Default) {
+            result.second.asFlow().first()
+        }?.let { label ->
+            gcodeHistoryRepository.setLabelForGcode(command = gcode.command, label = label)
+            updateGcodes()
+        }
     }
 
     private fun saveSelectedFilters() {
@@ -150,6 +178,16 @@ class TerminalViewModel(
                 recordResponse = false
             )
         )
+        updateGcodes()
+    }
+
+    fun clearLabel(gcode: GcodeHistoryItem) = viewModelScope.launch(coroutineExceptionHandler) {
+        gcodeHistoryRepository.setLabelForGcode(gcode.command, null)
+        updateGcodes()
+    }
+
+    fun remove(gcode: GcodeHistoryItem) = viewModelScope.launch(coroutineExceptionHandler) {
+        gcodeHistoryRepository.removeEntry(gcode.command)
         updateGcodes()
     }
 

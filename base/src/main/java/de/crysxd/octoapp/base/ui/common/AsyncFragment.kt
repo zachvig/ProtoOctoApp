@@ -5,16 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
+import de.crysxd.octoapp.base.ui.BaseFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-abstract class AsyncFragment : Fragment() {
+abstract class AsyncFragment : BaseFragment() {
 
     private var viewCreationJob: Job? = null
     private val lazyContainer: ViewGroup by lazy { FrameLayout(requireContext()) }

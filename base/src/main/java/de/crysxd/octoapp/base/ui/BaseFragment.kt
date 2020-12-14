@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -13,6 +14,7 @@ abstract class BaseFragment(@LayoutRes layout: Int = 0) : Fragment(layout) {
 
     protected abstract val viewModel: BaseViewModel
 
+    @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -21,6 +23,7 @@ abstract class BaseFragment(@LayoutRes layout: Int = 0) : Fragment(layout) {
         requireOctoActivity().observerMessageEvents(viewModel.messages)
     }
 
+    @CallSuper
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
