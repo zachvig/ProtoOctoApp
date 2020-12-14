@@ -53,6 +53,11 @@ class OctoWidgetAdapter : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHolde
             holder.itemView.textViewWidgetTitle.isVisible = holder.itemView.textViewWidgetTitle.text.isNotBlank()
             holder.itemView.padding.isVisible = position < count - 1
             holder.itemView.imageButtonSettings.visibility = if (widget.hasSettings()) View.VISIBLE else View.INVISIBLE
+            holder.itemView.imageButtonSettings.setOnClickListener {
+                if (widget.hasSettings()) {
+                    widget.showSettings()
+                }
+            }
 
             holder.itemView.widgetContainer.removeAllViews()
             holder.itemView.widgetContainer.addView(widget.getView(context, holder.itemView.widgetContainer))
