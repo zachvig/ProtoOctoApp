@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.ui.widget
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
@@ -51,6 +52,7 @@ class OctoWidgetAdapter : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHolde
             holder.itemView.textViewWidgetTitle.text = widget.getTitle(holder.itemView.context)
             holder.itemView.textViewWidgetTitle.isVisible = holder.itemView.textViewWidgetTitle.text.isNotBlank()
             holder.itemView.padding.isVisible = position < count - 1
+            holder.itemView.imageButtonSettings.visibility = if (widget.hasSettings()) View.VISIBLE else View.INVISIBLE
 
             holder.itemView.widgetContainer.removeAllViews()
             holder.itemView.widgetContainer.addView(widget.getView(context, holder.itemView.widgetContainer))

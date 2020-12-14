@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.pre_print_controls.ui.widget.move
 
+import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.HomePrintHeadUseCase
@@ -31,6 +32,10 @@ class MoveToolWidgetViewModel(
                 z.applyToDistance(jogResolution)
             )
         )
+    }
+
+    fun showSettings() = viewModelScope.launch(coroutineExceptionHandler) {
+
     }
 
     sealed class Direction(val multiplier: Float) {
