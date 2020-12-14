@@ -185,7 +185,7 @@ class TerminalFragment : BaseFragment(R.layout.fragment_terminal) {
 
         // Add new views
         gcodes.forEach { gcode ->
-            val button = removedViews.firstOrNull { it.text.toString() == gcode.command }
+            val button = removedViews.firstOrNull { it.text.toString() == gcode.name }
                 ?: LayoutInflater.from(requireContext()).inflate(R.layout.widget_gcode_button, buttonList, false) as Button
             button.text = gcode.name
             button.layoutParams = (button.layoutParams as LinearLayout.LayoutParams).also {
@@ -205,7 +205,7 @@ class TerminalFragment : BaseFragment(R.layout.fragment_terminal) {
             button.setOnLongClickListener {
                 val options = arrayOf(R.string.toggle_favorite, R.string.insert, R.string.set_lebel, R.string.clear_lebel, R.string.remove_shortcut)
                 AlertDialog.Builder(requireContext())
-                    .setTitle(gcode.command)
+                    .setTitle(gcode.oneLineCommand)
                     .setItems(options.map { getText(it) }.toTypedArray()) { _, i: Int ->
                         when (options[i]) {
                             R.string.toggle_favorite -> viewModel.setFavorite(gcode, !gcode.isFavorite)

@@ -56,7 +56,7 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
 
         // Add new views
         gcodes.reversed().forEach { gcode ->
-            val button = removedViews.firstOrNull { it.text.toString() == gcode.command }
+            val button = removedViews.firstOrNull { it.text.toString() == gcode.name }
                 ?: LayoutInflater.from(requireContext()).inflate(R.layout.widget_gcode_button, gcodeList, false) as Button
             button.text = gcode.name
             gcodeList.addView(button, 0)
