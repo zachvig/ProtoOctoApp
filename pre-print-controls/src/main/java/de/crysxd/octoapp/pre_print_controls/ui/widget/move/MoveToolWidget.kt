@@ -34,6 +34,10 @@ class MoveToolWidget(parent: Fragment) : OctoWidget(parent) {
 
     override fun getTitle(context: Context) = "Move"
     override fun getAnalyticsName() = "move"
+    override fun hasSettings() = true
+    override fun showSettings() {
+        viewModel.showSettings(requireContext())
+    }
 
     override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
         inflater.suspendedInflate(R.layout.widget_move_tool, container, false)

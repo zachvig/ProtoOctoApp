@@ -2,7 +2,9 @@ package de.crysxd.octoapp.base.repository
 
 import de.crysxd.octoapp.base.datasource.DataSource
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class GcodeHistoryRepository(
@@ -25,7 +27,7 @@ class GcodeHistoryRepository(
         })
     }
 
-    fun recordGcodeSend(command: String) = GlobalScope.launch(Dispatchers.IO) {
+    suspend fun recordGcodeSend(command: String) = withContext(Dispatchers.IO) {
         Timber.d("Record gcode send: $command")
         supervisorScope {
             val current = getHistory()

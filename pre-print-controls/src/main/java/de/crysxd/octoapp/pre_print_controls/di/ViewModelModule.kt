@@ -8,7 +8,6 @@ import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
@@ -45,13 +44,13 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(MoveToolWidgetViewModel::class)
     open fun provideMoveToolControlsViewModel(
-        octoPrintProvider: OctoPrintProvider,
+        sharedPreferences: SharedPreferences,
         useCase1: HomePrintHeadUseCase,
         useCase2: JogPrintHeadUseCase
     ): ViewModel = MoveToolWidgetViewModel(
         useCase1,
         useCase2,
-        octoPrintProvider
+        sharedPreferences
     )
 
     @Provides

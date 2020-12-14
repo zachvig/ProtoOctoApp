@@ -174,7 +174,7 @@ class TerminalViewModel(
     fun executeGcode(gcode: String) = viewModelScope.launch(coroutineExceptionHandler) {
         executeGcodeCommandUseCase.execute(
             ExecuteGcodeCommandUseCase.Param(
-                command = GcodeCommand.Batch(gcode.split("\n").toTypedArray()),
+                command = GcodeCommand.Batch(gcode.split("\n").filter { it.isNotBlank() }.map { it.trim() }.toTypedArray()),
                 fromUser = true,
                 recordResponse = false
             )
