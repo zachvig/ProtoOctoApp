@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.ui.common.terminal
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.text.InputType
 import androidx.core.content.edit
@@ -126,15 +127,15 @@ class TerminalViewModel(
         updateGcodes()
     }
 
-    fun updateLabel(gcode: GcodeHistoryItem) = viewModelScope.launch {
+    fun updateLabel(context: Context, gcode: GcodeHistoryItem) = viewModelScope.launch {
         val result = NavigationResultMediator.registerResultCallback<String?>()
 
         navContoller.navigate(
             R.id.action_enter_value,
             EnterValueFragmentArgs(
-                title = "Enter label",
-                hint = "Label for ${gcode.command}",
-                action = "Set label",
+                title = context.getString(R.string.enter_label),
+                hint = context.getString(R.string.label_for_x, gcode.command),
+                action = context.getString(R.string.set_lebel),
                 resultId = result.first,
                 value = gcode.label,
                 inputType = InputType.TYPE_CLASS_TEXT,

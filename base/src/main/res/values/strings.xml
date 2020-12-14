@@ -100,4 +100,6 @@
     <string name="set_lebel">Set label</string>
     <string name="clear_lebel">Clear label</string>
     <string name="remove_shortcut">Remove shortcut</string>
+    <string name="enter_label">Enter label</string>
+    <string name="label_for_x">Label for %s</string>
 </resources>
