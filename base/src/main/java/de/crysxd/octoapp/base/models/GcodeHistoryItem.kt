@@ -6,4 +6,9 @@ data class GcodeHistoryItem(
     val isFavorite: Boolean = false,
     val usageCount: Int = 0,
     val label: String? = null
-)
+) {
+
+    val oneLineCommand get() = command.replace("\n", " | ")
+    val name get() = label ?: oneLineCommand
+
+}

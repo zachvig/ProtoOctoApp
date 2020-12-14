@@ -101,9 +101,10 @@ class TerminalFragment : BaseFragment(R.layout.fragment_terminal) {
 
         // Gcode input
         gcodeInput.setOnActionListener { sendGcodeFromInput() }
-        gcodeInput.editText.setOnEditorActionListener { _, _, _ -> sendGcodeFromInput(); true }
         gcodeInput.editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
-        gcodeInput.editText.imeOptions = EditorInfo.IME_ACTION_SEND
+        gcodeInput.editText.maxLines = 100
+        gcodeInput.editText.isSingleLine = false
+        gcodeInput.editText.imeOptions = EditorInfo.IME_ACTION_UNSPECIFIED
     }
 
     private fun sendGcodeFromInput() {
@@ -186,7 +187,7 @@ class TerminalFragment : BaseFragment(R.layout.fragment_terminal) {
         gcodes.forEach { gcode ->
             val button = removedViews.firstOrNull { it.text.toString() == gcode.command }
                 ?: LayoutInflater.from(requireContext()).inflate(R.layout.widget_gcode_button, buttonList, false) as Button
-            button.text = gcode.label ?: gcode.command
+            button.text = gcode.name
             button.layoutParams = (button.layoutParams as LinearLayout.LayoutParams).also {
                 it.marginStart = requireContext().resources.getDimensionPixelSize(R.dimen.margin_1)
             }
@@ -209,7 +210,7 @@ class TerminalFragment : BaseFragment(R.layout.fragment_terminal) {
                         when (options[i]) {
                             R.string.toggle_favorite -> viewModel.setFavorite(gcode, !gcode.isFavorite)
                             R.string.insert -> gcodeInput.editText.setText(gcode.command)
-                            R.string.set_lebel -> viewModel.updateLabel(gcode)
+                            R.string.set_lebel -> viewModel.updateLabel(requireContext(), gcode)
                             R.string.clear_lebel -> viewModel.clearLabel(gcode)
                             R.string.remove_shortcut -> viewModel.remove(gcode)
                         }

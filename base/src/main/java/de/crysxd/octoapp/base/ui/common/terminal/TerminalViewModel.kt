@@ -134,11 +134,11 @@ class TerminalViewModel(
             R.id.action_enter_value,
             EnterValueFragmentArgs(
                 title = context.getString(R.string.enter_label),
-                hint = context.getString(R.string.label_for_x, gcode.command),
+                hint = context.getString(R.string.label_for_x, gcode.oneLineCommand),
                 action = context.getString(R.string.set_lebel),
                 resultId = result.first,
                 value = gcode.label,
-                inputType = InputType.TYPE_CLASS_TEXT,
+                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES,
                 selectAll = true
             ).toBundle()
         )
@@ -174,7 +174,7 @@ class TerminalViewModel(
     fun executeGcode(gcode: String) = viewModelScope.launch(coroutineExceptionHandler) {
         executeGcodeCommandUseCase.execute(
             ExecuteGcodeCommandUseCase.Param(
-                command = GcodeCommand.Single(gcode),
+                command = GcodeCommand.Batch(gcode.split("\n").toTypedArray()),
                 fromUser = true,
                 recordResponse = false
             )
