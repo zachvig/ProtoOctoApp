@@ -18,7 +18,7 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
-import de.crysxd.octoapp.base.ui.common.AsyncFragment
+import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.synthetic.main.fragment_terminal.*
@@ -27,9 +27,9 @@ import kotlinx.coroutines.flow.collect
 import timber.log.Timber
 import java.util.*
 
-class TerminalFragment : AsyncFragment() {
+class TerminalFragment : BaseFragment(R.layout.fragment_terminal) {
 
-    private val viewModel: TerminalViewModel by injectViewModel(Injector.get().viewModelFactory())
+    override val viewModel: TerminalViewModel by injectViewModel(Injector.get().viewModelFactory())
     private var initialLayout = true
     private var observeSerialCommunicationsJob: Job? = null
     private var adapter: TerminalAdapter<*>? = null
@@ -53,10 +53,11 @@ class TerminalFragment : AsyncFragment() {
         oldViewHeight = recyclerView.height
     }
 
-    override fun onCreateViewAsync(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-        inflater.inflate(R.layout.fragment_terminal, container, false)
 
-    override fun onLazyViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initialLayout = true
+
         // Terminal
         initTerminal(
             if (viewModel.isStyledTerminalUsed()) {
@@ -65,7 +66,7 @@ class TerminalFragment : AsyncFragment() {
                 PlainTerminalAdaper()
             }
         )
-        viewModel.terminalFilters.observe(viewLifecycleOwner, Observer {})
+        viewModel.terminalFilters.observe(viewLifecycleOwner, {})
 
         // Shortcuts & Buttons
         viewModel.uiState.observe(viewLifecycleOwner, Observer(this::updateUi))
@@ -100,9 +101,10 @@ class TerminalFragment : AsyncFragment() {
 
         // Gcode input
         gcodeInput.setOnActionListener { sendGcodeFromInput() }
-        gcodeInput.editText.setOnEditorActionListener { _, _, _ -> sendGcodeFromInput(); true }
         gcodeInput.editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
-        gcodeInput.editText.imeOptions = EditorInfo.IME_ACTION_SEND
+        gcodeInput.editText.maxLines = 100
+        gcodeInput.editText.isSingleLine = false
+        gcodeInput.editText.imeOptions = EditorInfo.IME_ACTION_UNSPECIFIED
     }
 
     private fun sendGcodeFromInput() {
@@ -116,7 +118,7 @@ class TerminalFragment : AsyncFragment() {
     private fun initTerminal(adapter: TerminalAdapter<*>) {
         recyclerView.adapter = adapter
         observeSerialCommunicationsJob?.cancel()
-        observeSerialCommunicationsJob = lifecycleScope.launchWhenCreated {
+        observeSerialCommunicationsJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             val (old, flow) = viewModel.observeSerialCommunication()
 
             // Add all items we have so far and scroll to bottom
@@ -183,9 +185,9 @@ class TerminalFragment : AsyncFragment() {
 
         // Add new views
         gcodes.forEach { gcode ->
-            val button = removedViews.firstOrNull { it.text.toString() == gcode.command }
+            val button = removedViews.firstOrNull { it.text.toString() == gcode.name }
                 ?: LayoutInflater.from(requireContext()).inflate(R.layout.widget_gcode_button, buttonList, false) as Button
-            button.text = gcode.command
+            button.text = gcode.name
             button.layoutParams = (button.layoutParams as LinearLayout.LayoutParams).also {
                 it.marginStart = requireContext().resources.getDimensionPixelSize(R.dimen.margin_1)
             }
@@ -198,16 +200,19 @@ class TerminalFragment : AsyncFragment() {
             )
             buttonList.addView(button, 0)
             button.setOnClickListener {
-                viewModel.executeGcode(button.text.toString())
+                viewModel.executeGcode(gcode.command)
             }
             button.setOnLongClickListener {
-                val options = arrayOf(R.string.toggle_favorite, R.string.insert)
+                val options = arrayOf(R.string.toggle_favorite, R.string.insert, R.string.set_lebel, R.string.clear_lebel, R.string.remove_shortcut)
                 AlertDialog.Builder(requireContext())
-                    .setTitle(gcode.command)
+                    .setTitle(gcode.oneLineCommand)
                     .setItems(options.map { getText(it) }.toTypedArray()) { _, i: Int ->
                         when (options[i]) {
                             R.string.toggle_favorite -> viewModel.setFavorite(gcode, !gcode.isFavorite)
                             R.string.insert -> gcodeInput.editText.setText(gcode.command)
+                            R.string.set_lebel -> viewModel.updateLabel(requireContext(), gcode)
+                            R.string.clear_lebel -> viewModel.clearLabel(gcode)
+                            R.string.remove_shortcut -> viewModel.remove(gcode)
                         }
                     }
                     .show()
@@ -229,18 +234,15 @@ class TerminalFragment : AsyncFragment() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        lifecycleScope.launchWhenStarted {
-            awaitLazyView()
-            requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
-            recyclerView.setupWithToolbar(requireOctoActivity())
-            recyclerView.viewTreeObserver.addOnGlobalLayoutListener(onLayoutListener)
-        }
+    override fun onResume() {
+        super.onResume()
+        requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
+        recyclerView.setupWithToolbar(requireOctoActivity())
+        recyclerView.viewTreeObserver.addOnGlobalLayoutListener(onLayoutListener)
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
         recyclerView?.viewTreeObserver?.removeOnGlobalLayoutListener(onLayoutListener)
     }
 }

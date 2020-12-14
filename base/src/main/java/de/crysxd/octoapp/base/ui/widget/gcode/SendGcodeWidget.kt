@@ -29,20 +29,17 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
         inflater.suspendedInflate(R.layout.widget_gcode, container, false)
 
     override fun onViewCreated(view: View) {
-        (view as? ViewGroup)?.children?.filter {
-            it is Button && it != view.buttonOpenTerminal
-        }?.map {
-            it as Button
-        }?.forEach {
-            it.setOnClickListener { _ -> viewModel.sendGcodeCommand(it.text.toString()) }
-        }
-
         view.buttonOpenTerminal.setOnClickListener {
             recordInteraction()
             it.findNavController().navigate(R.id.action_open_terminal)
         }
 
         viewModel.gcodes.observe(parent, Observer(this::showGcodes))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.updateGcodes()
     }
 
     private fun showGcodes(gcodes: List<GcodeHistoryItem>) {
@@ -59,9 +56,9 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
 
         // Add new views
         gcodes.reversed().forEach { gcode ->
-            val button = removedViews.firstOrNull { it.text.toString() == gcode.command }
+            val button = removedViews.firstOrNull { it.text.toString() == gcode.name }
                 ?: LayoutInflater.from(requireContext()).inflate(R.layout.widget_gcode_button, gcodeList, false) as Button
-            button.text = gcode.command
+            button.text = gcode.name
             gcodeList.addView(button, 0)
             button.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 if (gcode.isFavorite) {
@@ -72,7 +69,7 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
             )
             button.setOnClickListener {
                 recordInteraction()
-                viewModel.sendGcodeCommand(button.text.toString())
+                viewModel.sendGcodeCommand(gcode.command)
             }
             button.setOnLongClickListener {
                 viewModel.setFavorite(gcode, !gcode.isFavorite)

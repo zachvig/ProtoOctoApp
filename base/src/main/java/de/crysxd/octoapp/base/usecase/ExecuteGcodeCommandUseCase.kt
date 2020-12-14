@@ -25,19 +25,32 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
     private val serialCommunicationLogsRepository: SerialCommunicationLogsRepository
 ) : UseCase<ExecuteGcodeCommandUseCase.Param, List<ExecuteGcodeCommandUseCase.Response>>() {
 
-    override suspend fun doExecute(param: Param, timber: Timber.Tree) = if (param.recordResponse) {
-        when (param.command) {
-            is GcodeCommand.Single -> listOf(param.command)
-            is GcodeCommand.Batch -> param.command.commands.map { GcodeCommand.Single(it) }
-        }.map {
-            executeAndRecordResponse(it, param.fromUser, timber)
+    override suspend fun doExecute(param: Param, timber: Timber.Tree): List<ExecuteGcodeCommandUseCase.Response> {
+        val result = if (param.recordResponse) {
+            when (param.command) {
+                is GcodeCommand.Single -> listOf(param.command)
+                is GcodeCommand.Batch -> param.command.commands.map { GcodeCommand.Single(it) }
+            }.map {
+                executeAndRecordResponse(it, param.fromUser, timber)
+            }
+        } else {
+            execute(param.command, param.fromUser, timber)
+            when (param.command) {
+                is GcodeCommand.Single -> listOf(Response.DroppedResponse)
+                is GcodeCommand.Batch -> param.command.commands.map { Response.DroppedResponse }
+            }
         }
-    } else {
-        execute(param.command, param.fromUser, timber)
-        when (param.command) {
-            is GcodeCommand.Single -> listOf(Response.DroppedResponse)
-            is GcodeCommand.Batch -> param.command.commands.map { Response.DroppedResponse }
+
+        if (param.fromUser) {
+            gcodeHistoryRepository.recordGcodeSend(
+                when (param.command) {
+                    is GcodeCommand.Single -> param.command.command
+                    is GcodeCommand.Batch -> param.command.commands.joinToString("\n")
+                }
+            )
         }
+
+        return result
     }
 
     private suspend fun executeAndRecordResponse(command: GcodeCommand.Single, fromUser: Boolean, timber: Timber.Tree) = withContext(Dispatchers.Default) {
@@ -105,7 +118,6 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
         if (fromUser) {
             OctoAnalytics.logEvent(OctoAnalytics.Event.GcodeSent, bundleOf("command" to command))
         }
-        gcodeHistoryRepository.recordGcodeSend(command)
     }
 
     sealed class Response {

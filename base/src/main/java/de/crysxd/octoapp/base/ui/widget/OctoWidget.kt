@@ -19,6 +19,10 @@ abstract class OctoWidget(val parent: Fragment) : LayoutContainer {
     override val containerView: View
         get() = view
 
+    open fun hasSettings() = false
+
+    open fun showSettings() = Unit
+
     abstract fun getTitle(context: Context): String?
 
     abstract fun getAnalyticsName(): String
