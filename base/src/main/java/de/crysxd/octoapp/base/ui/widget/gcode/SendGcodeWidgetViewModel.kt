@@ -14,6 +14,7 @@ import de.crysxd.octoapp.base.usecase.GetGcodeShortcutsUseCase
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import kotlinx.coroutines.launch
 
+const val COMMAND_SEPARATOR = ":"
 
 class SendGcodeWidgetViewModel(
     private val gcodeHistoryRepository: GcodeHistoryRepository,
@@ -28,7 +29,7 @@ class SendGcodeWidgetViewModel(
         updateGcodes()
     }
 
-    private fun updateGcodes() = viewModelScope.launch(coroutineExceptionHandler) {
+    fun updateGcodes() = viewModelScope.launch(coroutineExceptionHandler) {
         mutableGcodes.postValue(getGcodeShortcutsUseCase.execute(Unit))
     }
 

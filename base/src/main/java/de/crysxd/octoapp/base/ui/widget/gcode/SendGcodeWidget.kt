@@ -45,6 +45,11 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
         viewModel.gcodes.observe(parent, Observer(this::showGcodes))
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.updateGcodes()
+    }
+
     private fun showGcodes(gcodes: List<GcodeHistoryItem>) {
         TransitionManager.beginDelayedTransition(gcodeList)
 
