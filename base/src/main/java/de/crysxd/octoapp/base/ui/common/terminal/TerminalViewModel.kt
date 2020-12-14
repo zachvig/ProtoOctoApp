@@ -61,6 +61,7 @@ class TerminalViewModel(
         .combine(printStateFlow) { gcodes, printing ->
             UiState(printing, gcodes)
         }
+        .distinctUntilChanged()
         .asLiveData()
 
     init {
