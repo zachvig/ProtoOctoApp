@@ -41,6 +41,7 @@
         app:actionDrawable="@drawable/ic_round_send_24"
         app:actionOnlyWithText="true"
         app:label="@string/command"
+        app:labelActive="@string/one_gcode_per_line"
         app:layout_constraintBottom_toTopOf="@+id/printingHint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="wrap"
