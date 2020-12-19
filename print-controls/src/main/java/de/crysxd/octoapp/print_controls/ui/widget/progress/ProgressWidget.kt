@@ -61,7 +61,6 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
                 ConstraintSet().apply {
                     clone(view as ConstraintLayout)
                     constrainPercentWidth(R.id.progressBar, progress)
-                    centerVertically(R.id.textViewProgressPercent, R.id.progressBar)
                     clear(R.id.textViewProgressPercent, ConstraintSet.END)
                     clear(R.id.textViewProgressPercent, ConstraintSet.START)
                     connect(
