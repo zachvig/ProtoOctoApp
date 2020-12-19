@@ -34,15 +34,18 @@
     <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
         android:id="@+id/gcodeInput"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginLeft="@dimen/margin_2"
         android:layout_marginRight="@dimen/margin_2"
         android:layout_marginBottom="@dimen/margin_2"
         app:actionDrawable="@drawable/ic_round_send_24"
         app:actionOnlyWithText="true"
         app:label="@string/command"
+        app:labelActive="@string/one_gcode_per_line"
         app:layout_constraintBottom_toTopOf="@+id/printingHint"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintHeight_max="200dp"
         app:layout_constraintStart_toStartOf="parent" />
 
     <HorizontalScrollView
@@ -61,14 +64,17 @@
             android:id="@+id/buttonList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end">
+            android:layout_gravity="end"
+            android:divider="@drawable/margin_1_divider"
+            android:paddingStart="@dimen/margin_1"
+            android:paddingEnd="@dimen/margin_2"
+            android:showDividers="middle">
 
             <Button
                 android:id="@+id/buttonClear"
                 style="@style/OctoTheme.Widget.Button.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_1"
                 android:contentDescription="@string/cd_history"
                 android:drawableStart="@drawable/ic_round_clear_all_24"
                 android:drawablePadding="@dimen/margin_0" />
@@ -78,7 +84,6 @@
                 style="@style/OctoTheme.Widget.Button.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_1"
                 android:contentDescription="@string/cd_turn_style_on_off"
                 android:drawableStart="@drawable/ic_round_brush_24" />
 
@@ -87,8 +92,6 @@
                 style="@style/OctoTheme.Widget.Button.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_1"
-                android:layout_marginEnd="@dimen/margin_2"
                 android:contentDescription="@string/cd_filter_terminal"
                 android:drawableStart="@drawable/ic_round_filter_alt_24"
                 android:textSize="20sp"

@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/OctoTheme.Widget.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="@dimen/margin_2"
     android:layout_marginTop="@dimen/margin_2"
     android:layout_marginRight="@dimen/margin_2"
-    android:layout_marginBottom="@dimen/margin_3"
-    app:cardBackgroundColor="@color/input_background"
-    app:cardCornerRadius="@dimen/common_corner_radius"
-    app:cardElevation="0dp">
+    android:layout_marginBottom="@dimen/margin_3">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -35,7 +33,7 @@
             android:layout_height="wrap_content"
             android:importantForAccessibility="no"
             android:scaleType="center"
-            android:tint="?android:attr/colorPrimary"
+            app:tint="?android:attr/colorPrimary"
             app:layout_constraintBottom_toBottomOf="@+id/textView"
             app:layout_constraintEnd_toStartOf="@+id/textView"
             app:layout_constraintStart_toStartOf="parent"

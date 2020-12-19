@@ -32,16 +32,19 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
 
     companion object {
         private const val ARG_FILE = "file"
+        private const val ARG_USE_LIVE = "useLive"
         private const val ARG_STANDALONE_SCREEN = "standaloneScreen"
         private const val LAYER_PROGRESS_STEPS = 1000
 
-        fun createForFile(file: FileObject.File) = GcodePreviewFragment().apply {
-            arguments = bundleOf(ARG_FILE to file)
+        fun createForFile(file: FileObject.File, useLive: Boolean) = GcodePreviewFragment().apply {
+            arguments = bundleOf(ARG_FILE to file, ARG_USE_LIVE to useLive)
         }
     }
 
+    private var forceUpdateSlidersOnNext = false
     private var hideLiveJob: Job? = null
     private val file get() = requireArguments().getSerializable(ARG_FILE) as FileObject.File
+    private val useLive get() = requireArguments().getBoolean(ARG_USE_LIVE, true)
     private val isStandaloneScreen get() = requireArguments().getBoolean(ARG_STANDALONE_SCREEN)
     private val viewModel: GcodePreviewViewModel by injectViewModel(Injector.get().viewModelFactory())
     private val seekBarListener = object : SeekBar.OnSeekBarChangeListener {
@@ -58,7 +61,12 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.downloadGcode(file, false)
-        viewModel.useLiveProgress()
+        if (useLive) {
+            viewModel.useLiveProgress()
+        } else {
+            viewModel.useManualProgress(0, 1f)
+            forceUpdateSlidersOnNext = true
+        }
 
         downloadLargeFile.setOnClickListener { viewModel.downloadGcode(file, true) }
         retryButton.setOnClickListener { viewModel.downloadGcode(file, true) }
@@ -160,7 +168,8 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
 
         layerSeekBar.max = state.renderContext.layerCount - 1
         layerProgressSeekBar.max = LAYER_PROGRESS_STEPS
-        if (state.isLive) {
+        if (state.isLive || forceUpdateSlidersOnNext) {
+            forceUpdateSlidersOnNext = false
             layerSeekBar.progress = state.renderContext.layerNumber
             layerProgressSeekBar.progress = (state.renderContext.layerProgress * LAYER_PROGRESS_STEPS).roundToInt()
         }

@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.flexbox.FlexboxLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/gcodeList"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:alignContent="flex_start"
-    app:alignItems="flex_start"
-    app:dividerDrawable="@drawable/flow_divider"
-    app:flexWrap="wrap"
-    app:showDivider="middle">
+    android:orientation="vertical">
 
-    <Button
-        android:id="@+id/buttonOpenTerminal"
-        style="@style/OctoTheme.Widget.Button.Small"
-        android:layout_width="wrap_content"
+    <ViewStub
+        android:id="@+id/tutorialStub"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/open_terminal" />
+        android:layout="@layout/widget_gcode_tutorial" />
 
-</com.google.android.flexbox.FlexboxLayout>
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/gcodeList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:alignContent="flex_start"
+        app:alignItems="flex_start"
+        app:dividerDrawable="@drawable/flow_divider"
+        app:flexWrap="wrap"
+        app:showDivider="middle">
+
+        <Button
+            android:id="@+id/buttonOpenTerminal"
+            style="@style/OctoTheme.Widget.Button.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/open_terminal" />
+
+    </com.google.android.flexbox.FlexboxLayout>
+
+</LinearLayout>

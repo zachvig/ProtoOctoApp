@@ -11,17 +11,16 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.transition.Transition
 import androidx.transition.TransitionManager
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Renderer
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.LoadEventInfo
 import com.google.android.exoplayer2.source.MediaLoadData
@@ -50,18 +49,24 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     lateinit var coroutineScope: LifecycleCoroutineScope
     private var hideLiveIndicatorJob: Job? = null
 
+    private var transitionActive = false
     private var nativeAspectRation: Point? = null
     var scaleToFill: Boolean = false
         set(value) {
             field = value
             onScaleToFillChanged()
+            mjpegSurface.scaleType = if (scaleToFill) {
+                ImageView.ScaleType.CENTER_CROP
+            } else {
+                ImageView.ScaleType.FIT_CENTER
+            }
             nativeAspectRation?.let { applyAspectRatio(it.x, it.y) }
         }
 
     var state: WebcamState = WebcamState.Loading
         set(value) {
+            applyState(oldState = field, newState = value)
             field = value
-            applyState()
         }
 
     var onResetConnection: () -> Unit = {}
@@ -83,7 +88,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
     init {
         View.inflate(context, R.layout.view_webcam, this)
-        applyState()
+        applyState(null, state)
         usedLiveIndicator = liveIndicator
         buttonReconnect.setOnClickListener { onResetConnection() }
         imageButtonFullscreen.setOnClickListener { onFullscreenClicked() }
@@ -98,28 +103,40 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         return true
     }
 
-    private fun applyState() {
-        beginDelayedTransition()
-        children.forEach { it.isVisible = false }
-        when (val localState = state) {
-            WebcamState.Loading -> loadingState.show()
-            WebcamState.NotConfigured -> notConfiguredState.isVisible = true
-            WebcamState.Reconnecting -> reconnectingState.isVisible = true
-            is WebcamState.Error -> errorState.isVisible = true
-            is WebcamState.HlsStreamReady -> displayHlsStream(localState)
-            is WebcamState.MjpegFrameReady -> displayMjpegFrame(localState)
+    private fun applyState(oldState: WebcamState?, newState: WebcamState) {
+        if (oldState == null || oldState::class != newState::class) {
+            beginDelayedTransition()
+            children.filter { it != loadingState }.forEach { it.isVisible = false }
+        }
+
+        //  Timber.i("State: $newState")
+
+        when (newState) {
+            WebcamState.Loading -> loadingState.isVisible = true
+            WebcamState.NotConfigured -> {
+                loadingState.isVisible = false
+                notConfiguredState.isVisible = true
+            }
+            WebcamState.Reconnecting -> {
+                loadingState.isVisible = false
+                reconnectingState.isVisible = true
+            }
+            is WebcamState.Error -> {
+                loadingState.isVisible = false
+                errorState.isVisible = true
+            }
+            is WebcamState.HlsStreamReady -> displayHlsStream(newState)
+            is WebcamState.MjpegFrameReady -> displayMjpegFrame(newState)
         }
     }
 
     private fun applyAspectRatio(width: Int, height: Int) {
         nativeAspectRation = Point(width, height)
 
-        Timber.i("Scale: $scaleToFill")
         hlsSurface.updateLayoutParams<ConstraintLayout.LayoutParams> {
             this.dimensionRatio = if (scaleToFill) null else "H,$width:$height"
         }
         hlsPlayer.videoScalingMode = Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
-        mjpegSurface.layoutParams = hlsSurface.layoutParams
 
         onNativeAspectRatioChanged(width, height)
     }
@@ -128,12 +145,12 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         playingState.isVisible = true
         hlsSurface.isVisible = true
         mjpegSurface.isVisible = false
-        usedLiveIndicator?.isVisible = true
-        loadingState.hide()
+        usedLiveIndicator?.isVisible = false
         hlsPlayer.setVideoSurfaceHolder(hlsSurface.holder)
         hlsPlayer.setMediaItem(MediaItem.fromUri(state.uri))
         hlsPlayer.prepare()
         hlsPlayer.play()
+        hideLiveIndicatorJob?.cancel()
 
         if (!playerInitialized) {
             playerInitialized = true
@@ -149,10 +166,11 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 override fun onIsPlayingChanged(eventTime: AnalyticsListener.EventTime, isPlaying: Boolean) {
                     super.onIsPlayingChanged(eventTime, isPlaying)
                     Timber.v("onIsPlayingChanged: $isPlaying")
+                    usedLiveIndicator?.isVisible = isPlaying
                     if (isPlaying) {
                         errorState.isVisible = false
                         reconnectingState.isVisible = false
-                        loadingState.hide()
+                        loadingState.isVisible = false
                         usedLiveIndicator?.isVisible = true
                     }
                 }
@@ -160,7 +178,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 override fun onPlayerError(eventTime: AnalyticsListener.EventTime, error: ExoPlaybackException) {
                     super.onPlayerError(eventTime, error)
                     Timber.v("onPlayerError")
-                    loadingState.hide()
+                    loadingState.isVisible = false
                     errorState.isVisible = true
                     reconnectingState.isVisible = false
                     usedLiveIndicator?.isVisible = false
@@ -170,7 +188,9 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 override fun onLoadCompleted(eventTime: AnalyticsListener.EventTime, loadEventInfo: LoadEventInfo, mediaLoadData: MediaLoadData) {
                     super.onLoadCompleted(eventTime, loadEventInfo, mediaLoadData)
                     Timber.v("onLoadCompleted")
-                    loadingState.hide()
+                    if (hlsPlayer.isPlaying) {
+                        loadingState.isVisible = false
+                    }
                     usedLiveIndicator?.isVisible = true
                     reconnectingState.isVisible = false
                     errorState.isVisible = false
@@ -180,7 +200,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                     super.onLoadStarted(eventTime, loadEventInfo, mediaLoadData)
                     Timber.v("onLoadStarted")
                     if (!hlsPlayer.isPlaying) {
-                        loadingState.show()
+                        loadingState.isVisible = true
                     }
                 }
             })
@@ -188,13 +208,25 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     }
 
     private fun displayMjpegFrame(state: WebcamState.MjpegFrameReady) {
+        // Do not update frame if a transition is active
+        if (transitionActive) {
+            Timber.i("Drop frame, transition active")
+            return
+        }
+
+        // Some important view state changed? Animate!
+        if (loadingState.isVisible || streamStalledIndicator.isVisible || usedLiveIndicator?.isVisible == false) {
+            beginDelayedTransition()
+        }
+
         playingState.isVisible = true
         hlsSurface.isVisible = false
         mjpegSurface.isVisible = true
         usedLiveIndicator?.isVisible = true
-        loadingState.hide()
-        mjpegSurface.setImageBitmap(state.frame)
+        loadingState.isVisible = false
+        streamStalledIndicator.isVisible = false
 
+        mjpegSurface.setImageBitmap(state.frame)
         applyAspectRatio(state.frame.width, state.frame.height)
 
         // Hide live indicator if no new frame arrives within 3s
@@ -213,48 +245,75 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         }
     }
 
-    private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
+    private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(this, InstantAutoTransition().also {
+        it.addListener(object : Transition.TransitionListener {
+            override fun onTransitionStart(transition: Transition) {
+                transitionActive = true
+            }
+
+            override fun onTransitionEnd(transition: Transition) {
+                transitionActive = false
+            }
+
+            override fun onTransitionCancel(transition: Transition) {
+                transitionActive = false
+            }
+
+            override fun onTransitionPause(transition: Transition) = Unit
+
+            override fun onTransitionResume(transition: Transition) = Unit
+
+        })
+    })
 
     private fun zoom(newZoom: Float, focusX: Float, focusY: Float) {
-        val targetOnVideoX = (translationX + focusX) / hlsSurface.scaleX
-        val targetOnVideoY = (translationX + focusY) / hlsSurface.scaleY
-        val targetOnVideoXAfter = (translationX + focusX) / newZoom
-        val targetOnVideoYAfter = (translationX + focusY) / newZoom
-        val additionalScrollX = targetOnVideoX - targetOnVideoXAfter
-        val additionalScrollY = targetOnVideoY - targetOnVideoYAfter
+        fun View.zoomInternal(newZoom: Float, focusX: Float, focusY: Float) {
+            val targetOnVideoX = (translationX + focusX) / scaleX
+            val targetOnVideoY = (translationX + focusY) / scaleY
+            val targetOnVideoXAfter = (translationX + focusX) / newZoom
+            val targetOnVideoYAfter = (translationX + focusY) / newZoom
+            val additionalScrollX = targetOnVideoX - targetOnVideoXAfter
+            val additionalScrollY = targetOnVideoY - targetOnVideoYAfter
 
-        hlsSurface.scaleX = newZoom
-        hlsSurface.scaleY = newZoom
-        mjpegSurface.scaleX = hlsSurface.scaleX
-        mjpegSurface.scaleY = hlsSurface.scaleY
+            scaleX = newZoom
+            scaleY = newZoom
+            translationX += additionalScrollX
+            translationY += additionalScrollY
+        }
 
-        hlsSurface.translationX += additionalScrollX
-        hlsSurface.translationY += additionalScrollY
-        mjpegSurface.translationX = hlsSurface.translationX
-        mjpegSurface.translationY = hlsSurface.translationY
+        hlsSurface.zoomInternal(newZoom, focusX, focusY)
+        mjpegSurface.zoomInternal(newZoom, focusX, focusY)
 
         limitScrollRange()
     }
 
     private fun limitScrollRange() {
-        val scaledSurfaceWidth = hlsSurface.width * hlsSurface.scaleX
-        val scaledSurfaceHeight = hlsSurface.height * hlsSurface.scaleY
-        val maxX = ((scaledSurfaceWidth - width) * 0.5f).coerceAtLeast(0f)
-        val minX = -maxX
-        val maxY = ((scaledSurfaceHeight - height) * 0.5f).coerceAtLeast(0f)
-        val minY = -maxY
+        fun View.limitScrollRangeInternal() {
+            // height is not reliable for MJPEG, so we calculate it based on the reliable width
+            val scaledSurfaceWidth = width * scaleX
+            val scaledSurfaceHeight = nativeAspectRation?.let {
+                scaledSurfaceWidth * (it.y / it.x.toFloat())
+            } ?: height * scaleY
+            val maxX = ((scaledSurfaceWidth - this@WebcamView.width) * 0.5f).coerceAtLeast(0f)
+            val minX = -maxX
+            val maxY = ((scaledSurfaceHeight - this@WebcamView.height) * 0.5f).coerceAtLeast(0f)
+            val minY = -maxY
 
-        if (hlsSurface.translationX > maxX) {
-            hlsSurface.translationX = maxX
-        } else if (hlsSurface.translationX < minX) {
-            hlsSurface.translationX = minX
+            if (translationX > maxX) {
+                translationX = maxX
+            } else if (translationX < minX) {
+                translationX = minX
+            }
+
+            if (translationY > maxY) {
+                translationY = maxY
+            } else if (translationY < minY) {
+                translationY = minY
+            }
         }
 
-        if (hlsSurface.translationY > maxY) {
-            hlsSurface.translationY = maxY
-        } else if (hlsSurface.translationY < minY) {
-            hlsSurface.translationY = minY
-        }
+        hlsSurface.limitScrollRangeInternal()
+        mjpegSurface.limitScrollRangeInternal()
     }
 
     sealed class WebcamState {
@@ -300,16 +359,19 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             hlsSurface.translationX -= distanceX
             hlsSurface.translationY -= distanceY
-            mjpegSurface.translationX = hlsSurface.translationX
-            mjpegSurface.translationY = hlsSurface.translationY
+            mjpegSurface.translationX -= distanceX
+            mjpegSurface.translationY -= distanceY
             limitScrollRange()
             return true
         }
 
         override fun onDoubleTap(e: MotionEvent): Boolean {
             beginDelayedTransition()
-            zoom(newZoom = 1f, focusX = 0f, focusY = 0f)
-            scaleToFill = !scaleToFill
+            if (mjpegSurface.scaleX > 1) {
+                zoom(newZoom = 1f, focusX = 0f, focusY = 0f)
+            } else {
+                scaleToFill = !scaleToFill
+            }
             return true
         }
 

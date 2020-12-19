@@ -98,7 +98,7 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
     inner class Adapter(file: FileObject.File) : FragmentStateAdapter(this@FileDetailsFragment) {
         private val fragments = listOf(
             InfoTab(),
-            GcodePreviewFragment.createForFile(file)
+            GcodePreviewFragment.createForFile(file, false)
         )
 
         override fun getItemCount() = fragments.size

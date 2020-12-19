@@ -3,49 +3,53 @@ package de.crysxd.octoapp.base.repository
 import de.crysxd.octoapp.base.datasource.DataSource
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.supervisorScope
-import timber.log.Timber
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.withContext
 
+@Suppress("EXPERIMENTAL_API_USAGE")
 class GcodeHistoryRepository(
     private val dataSource: DataSource<List<GcodeHistoryItem>>
 ) {
 
     private val defaults = listOf("M500", "G28", "G29").map { GcodeHistoryItem(it) }
+    private val historyChannel = ConflatedBroadcastChannel(defaults)
+    val history get() = historyChannel.asFlow()
 
-    fun getHistory() = dataSource.get().let {
-        if (it.isNullOrEmpty()) defaults else it
+    init {
+        pushUpdateToChannel()
     }
 
-    fun recordGcodeSend(command: String) = GlobalScope.launch(Dispatchers.IO) {
-        Timber.d("Record gcode send: $command")
-        supervisorScope {
-            val current = getHistory()
-            val oldItem = getHistory().firstOrNull { it.command == command } ?: GcodeHistoryItem(command)
-            val updated = current.toMutableList().also {
-                it.remove(oldItem)
-                it.add(
-                    oldItem.copy(
-                        usageCount = oldItem.usageCount + 1,
-                        lastUsed = System.currentTimeMillis()
-                    )
-                )
+    private fun pushUpdateToChannel() {
+        historyChannel.offer(dataSource.get()?.sortedByDescending { it.lastUsed } ?: defaults)
+    }
+
+    private suspend fun updateHistoryForCommand(command: String, update: (GcodeHistoryItem) -> GcodeHistoryItem?) = withContext(Dispatchers.IO) {
+        val updated = (dataSource.get() ?: defaults).mapNotNull {
+            if (it.command == command) {
+                update(it)
+            } else {
+                it
             }
-
-            dataSource.store(updated)
         }
+
+        dataSource.store(updated)
+        pushUpdateToChannel()
     }
 
-    fun setFavorite(command: String, favorite: Boolean) = GlobalScope.launch(Dispatchers.IO) {
-        supervisorScope {
-            dataSource.store(getHistory().map {
-                if (it.command == command) {
-                    it.copy(isFavorite = favorite)
-                } else {
-                    it
-                }
-            })
-        }
+    suspend fun setLabelForGcode(command: String, label: String?) = updateHistoryForCommand(command) {
+        it.copy(label = label)
+    }
+
+    suspend fun recordGcodeSend(command: String) = updateHistoryForCommand(command) {
+        it.copy(usageCount = it.usageCount + 1, lastUsed = System.currentTimeMillis())
+    }
+
+    suspend fun setFavorite(command: String, favorite: Boolean) = updateHistoryForCommand(command) {
+        it.copy(isFavorite = favorite)
+    }
+
+    suspend fun removeEntry(command: String) = updateHistoryForCommand(command) {
+        null
     }
 }

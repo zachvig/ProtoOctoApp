@@ -1,30 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="@dimen/margin_2"
     android:layout_marginRight="@dimen/margin_2"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/margin_3">
 
     <TextView
         android:id="@+id/textViewWidgetTitle"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
-        android:layout_marginEnd="@dimen/margin_2"
-        android:layout_marginBottom="@dimen/margin_2"
         android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
+        app:layout_constraintBottom_toBottomOf="@+id/imageButtonSettings"
+        app:layout_constraintEnd_toStartOf="@+id/imageButtonSettings"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="Widget title" />
+
+    <ImageButton
+        android:id="@+id/imageButtonSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_2"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cd_settings"
+        android:padding="0dp"
+        android:scaleType="fitEnd"
+        android:src="@drawable/ic_round_settings_24"
+        android:tint="@color/light_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
         android:id="@+id/widgetContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_2"
+        app:layout_constraintTop_toBottomOf="@id/textViewWidgetTitle" />
 
     <View
         android:id="@+id/padding"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/margin_3" />
+        android:layout_height="@dimen/margin_3"
+        app:layout_constraintTop_toBottomOf="@id/imageButtonSettings" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

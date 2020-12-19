@@ -3,22 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_2"
+        android:layout_marginStart="@dimen/margin_4"
         android:layout_marginTop="@dimen/margin_2"
-        android:layout_marginEnd="@dimen/margin_3"
+        android:layout_marginEnd="@dimen/margin_4"
         android:layout_marginBottom="@dimen/margin_2"
         android:textAppearance="@style/OctoTheme.TextAppearance.Button"
-        android:textColor="?android:attr/textColorPrimary"
+        android:textColor="@color/normal_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageViewIcon"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="TextView" />
 
@@ -30,10 +29,10 @@
         android:layout_marginTop="@dimen/margin_1"
         android:layout_marginBottom="@dimen/margin_1"
         android:importantForAccessibility="no"
-        android:tint="?android:attr/textColorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/normal_text"
         tools:src="@drawable/ic_qr_code_scanner_24px" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

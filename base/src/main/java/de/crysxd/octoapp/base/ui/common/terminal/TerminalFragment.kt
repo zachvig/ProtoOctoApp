@@ -1,15 +1,14 @@
 package de.crysxd.octoapp.base.ui.common.terminal
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.text.InputType
 import android.transition.AutoTransition
 import android.transition.TransitionManager
-import android.view.*
+import android.view.KeyEvent
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.LinearLayout
-import androidx.core.view.children
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
@@ -18,8 +17,9 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
-import de.crysxd.octoapp.base.ui.common.AsyncFragment
+import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.common.gcodeshortcut.GcodeShortcutLayoutManager
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.synthetic.main.fragment_terminal.*
 import kotlinx.coroutines.Job
@@ -27,14 +27,15 @@ import kotlinx.coroutines.flow.collect
 import timber.log.Timber
 import java.util.*
 
-class TerminalFragment : AsyncFragment() {
+class TerminalFragment : BaseFragment(R.layout.fragment_terminal) {
 
-    private val viewModel: TerminalViewModel by injectViewModel(Injector.get().viewModelFactory())
+    override val viewModel: TerminalViewModel by injectViewModel(Injector.get().viewModelFactory())
     private var initialLayout = true
     private var observeSerialCommunicationsJob: Job? = null
     private var adapter: TerminalAdapter<*>? = null
     private var wasScrolledToBottom = false
     private var oldViewHeight = 0
+    private lateinit var shortcutLayoutManager: GcodeShortcutLayoutManager
     private val onLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
         // If we are scrolled to the bottom right now, make sure to restore the position
         // after the keyboard is shown
@@ -53,10 +54,11 @@ class TerminalFragment : AsyncFragment() {
         oldViewHeight = recyclerView.height
     }
 
-    override fun onCreateViewAsync(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-        inflater.inflate(R.layout.fragment_terminal, container, false)
 
-    override fun onLazyViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initialLayout = true
+
         // Terminal
         initTerminal(
             if (viewModel.isStyledTerminalUsed()) {
@@ -65,7 +67,7 @@ class TerminalFragment : AsyncFragment() {
                 PlainTerminalAdaper()
             }
         )
-        viewModel.terminalFilters.observe(viewLifecycleOwner, Observer {})
+        viewModel.terminalFilters.observe(viewLifecycleOwner, {})
 
         // Shortcuts & Buttons
         viewModel.uiState.observe(viewLifecycleOwner, Observer(this::updateUi))
@@ -98,11 +100,26 @@ class TerminalFragment : AsyncFragment() {
             }
         }
 
+        shortcutLayoutManager = GcodeShortcutLayoutManager(
+            layout = buttonList,
+            scroller = buttonListScrollView,
+            onInsert = ::insertGcode,
+            onClicked = { viewModel.executeGcode(it.command) },
+            childFragmentManager = childFragmentManager
+        )
+
         // Gcode input
         gcodeInput.setOnActionListener { sendGcodeFromInput() }
-        gcodeInput.editText.setOnEditorActionListener { _, _, _ -> sendGcodeFromInput(); true }
         gcodeInput.editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
-        gcodeInput.editText.imeOptions = EditorInfo.IME_ACTION_SEND
+        gcodeInput.editText.maxLines = 100
+        gcodeInput.editText.isSingleLine = false
+        gcodeInput.editText.imeOptions = EditorInfo.IME_ACTION_UNSPECIFIED
+        gcodeInput.editText.setOnKeyListener { _, i, _ ->
+            if (i == KeyEvent.KEYCODE_BACK) {
+                gcodeInput.editText.clearFocus()
+                true
+            } else false
+        }
     }
 
     private fun sendGcodeFromInput() {
@@ -116,7 +133,7 @@ class TerminalFragment : AsyncFragment() {
     private fun initTerminal(adapter: TerminalAdapter<*>) {
         recyclerView.adapter = adapter
         observeSerialCommunicationsJob?.cancel()
-        observeSerialCommunicationsJob = lifecycleScope.launchWhenCreated {
+        observeSerialCommunicationsJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             val (old, flow) = viewModel.observeSerialCommunication()
 
             // Add all items we have so far and scroll to bottom
@@ -129,7 +146,6 @@ class TerminalFragment : AsyncFragment() {
                 scrollToBottom()
             }
         }
-
 
         buttonToggleStyled.setCompoundDrawablesRelativeWithIntrinsicBounds(
             if (adapter is StyledTerminalAdapter) {
@@ -159,7 +175,7 @@ class TerminalFragment : AsyncFragment() {
             TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
         }
 
-        showGcodes(if (uiState.printing) emptyList() else uiState.gcodes)
+        shortcutLayoutManager.showGcodes(if (uiState.printing) emptyList() else uiState.gcodes)
         gcodeInput.isVisible = !uiState.printing
         printingHint.isVisible = uiState.printing
 
@@ -167,80 +183,19 @@ class TerminalFragment : AsyncFragment() {
         initialLayout = uiState.gcodes.isEmpty()
     }
 
-    private fun showGcodes(gcodes: List<GcodeHistoryItem>) {
-        if (initialLayout) {
-            buttonList.children.forEach { it.tag = true }
-        }
-
-        // Remove all old views except the predefined buttons (those have tag == true)
-        val removedViews = mutableListOf<Button>()
-        buttonList.children.toList().forEach {
-            if (it.tag != true) {
-                buttonList.removeView(it)
-                removedViews.add(it as Button)
-            }
-        }
-
-        // Add new views
-        gcodes.forEach { gcode ->
-            val button = removedViews.firstOrNull { it.text.toString() == gcode.command }
-                ?: LayoutInflater.from(requireContext()).inflate(R.layout.widget_gcode_button, buttonList, false) as Button
-            button.text = gcode.command
-            button.layoutParams = (button.layoutParams as LinearLayout.LayoutParams).also {
-                it.marginStart = requireContext().resources.getDimensionPixelSize(R.dimen.margin_1)
-            }
-            button.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                if (gcode.isFavorite) {
-                    R.drawable.ic_round_push_pin_16
-                } else {
-                    0
-                }, 0, 0, 0
-            )
-            buttonList.addView(button, 0)
-            button.setOnClickListener {
-                viewModel.executeGcode(button.text.toString())
-            }
-            button.setOnLongClickListener {
-                val options = arrayOf(R.string.toggle_favorite, R.string.insert)
-                AlertDialog.Builder(requireContext())
-                    .setTitle(gcode.command)
-                    .setItems(options.map { getText(it) }.toTypedArray()) { _, i: Int ->
-                        when (options[i]) {
-                            R.string.toggle_favorite -> viewModel.setFavorite(gcode, !gcode.isFavorite)
-                            R.string.insert -> gcodeInput.editText.setText(gcode.command)
-                        }
-                    }
-                    .show()
-                true
-            }
-        }
-
-        // Scroll to end of list the first time we populate the buttons
-        if (initialLayout) {
-            buttonListScrollView.doOnNextLayout {
-                buttonListScrollView.scrollTo(buttonList.width, 0)
-            }
-        }
-        gcodeInput.editText.setOnKeyListener { _, i, _ ->
-            if (i == KeyEvent.KEYCODE_BACK) {
-                gcodeInput.editText.clearFocus()
-                true
-            } else false
-        }
+    private fun insertGcode(gcode: GcodeHistoryItem) {
+        gcodeInput.editText.setText(gcode.command)
     }
 
-    override fun onStart() {
-        super.onStart()
-        lifecycleScope.launchWhenStarted {
-            awaitLazyView()
-            requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
-            recyclerView.setupWithToolbar(requireOctoActivity())
-            recyclerView.viewTreeObserver.addOnGlobalLayoutListener(onLayoutListener)
-        }
+    override fun onResume() {
+        super.onResume()
+        requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
+        recyclerView.setupWithToolbar(requireOctoActivity())
+        recyclerView.viewTreeObserver.addOnGlobalLayoutListener(onLayoutListener)
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
         recyclerView?.viewTreeObserver?.removeOnGlobalLayoutListener(onLayoutListener)
     }
 }

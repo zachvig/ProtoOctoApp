@@ -24,10 +24,8 @@
                 android:id="@+id/dataHint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_3"
-                app:cardBackgroundColor="@color/input_background"
-                app:cardCornerRadius="@dimen/common_corner_radius"
-                app:cardElevation="0dp">
+                style="@style/OctoTheme.Widget.Card"
+                android:layout_marginBottom="@dimen/margin_3">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"

@@ -27,8 +27,9 @@ class DataSourceModule {
         context: Context,
         octoPrintProvider: OctoPrintProvider
     ): GcodeFileDataSourceGroup {
+        val memory = MemoryGcodeFileDataSource()
         val local = LocalGcodeFileDataSource(context, Gson(), context.getSharedPreferences("gcode_cache_index", Context.MODE_PRIVATE))
-        val remote = RemoteGcodeFileDataSource(GcodeParser(), local, octoPrintProvider)
-        return GcodeFileDataSourceGroup(listOf(local, remote))
+        val remote = RemoteGcodeFileDataSource(GcodeParser(), octoPrintProvider)
+        return GcodeFileDataSourceGroup(listOf(memory, local, remote))
     }
 }

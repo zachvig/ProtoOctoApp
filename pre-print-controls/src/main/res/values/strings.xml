@@ -60,4 +60,7 @@
     <string name="unknown">Unknown</string>
     <string name="layer">Layer</string>
     <string name="layer_progress">Layer Progress</string>
+    <string name="move_settings">Move Settings</string>
+    <string name="z_feedrate_mm_min">Z feedrate (mm/min)</string>
+    <string name="update_settings">Update settings</string>
 </resources>

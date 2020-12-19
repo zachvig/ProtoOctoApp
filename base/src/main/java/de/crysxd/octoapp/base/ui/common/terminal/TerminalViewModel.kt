@@ -19,7 +19,6 @@ import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message.EventMessage.SettingsUpdated
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -53,19 +52,19 @@ class TerminalViewModel(
         }
 
     private var clearedFrom: Date = Date(0)
-    private val gcodes = ConflatedBroadcastChannel<List<GcodeHistoryItem>>()
     private val printStateFlow = octoPrintProvider.passiveCurrentMessageFlow()
         .mapNotNull { it.state?.flags }
         .map { it.pausing || it.cancelling || it.printing }
-    val uiState = gcodes.asFlow()
-        .combine(printStateFlow) { gcodes, printing ->
-            UiState(printing, gcodes)
-        }
-        .asLiveData()
+    val uiState = flow {
+        emit(getGcodeShortcutsUseCase.execute(Unit))
+    }.flatMapLatest {
+        it
+    }.combine(printStateFlow) { gcodes, printing ->
+        UiState(printing, gcodes)
+    }.distinctUntilChanged().asLiveData()
 
     init {
         // Load gcode history and selected filters
-        updateGcodes()
         loadSelectedFilters()
 
         // Init terminal filters
@@ -112,15 +111,6 @@ class TerminalViewModel(
         }
     }
 
-    private fun updateGcodes() = viewModelScope.launch(coroutineExceptionHandler) {
-        gcodes.offer(getGcodeShortcutsUseCase.execute(Unit))
-    }
-
-    fun setFavorite(gcode: GcodeHistoryItem, favorite: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
-        gcodeHistoryRepository.setFavorite(gcode.command, favorite).join()
-        updateGcodes()
-    }
-
     private fun saveSelectedFilters() {
         sharedPreferences.edit {
             putString(KEY_SELECTED_TERMINAL_FILTERS, gson.toJson(selectedTerminalFilters))
@@ -144,12 +134,11 @@ class TerminalViewModel(
     fun executeGcode(gcode: String) = viewModelScope.launch(coroutineExceptionHandler) {
         executeGcodeCommandUseCase.execute(
             ExecuteGcodeCommandUseCase.Param(
-                command = GcodeCommand.Single(gcode),
+                command = GcodeCommand.Batch(gcode.split("\n").filter { it.isNotBlank() }.map { it.trim() }.toTypedArray()),
                 fromUser = true,
                 recordResponse = false
             )
         )
-        updateGcodes()
     }
 
     data class UiState(

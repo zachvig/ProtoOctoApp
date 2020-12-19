@@ -51,7 +51,7 @@ class GcodeRenderWidgetViewModel(
         RenderData(i123.first, i123.second, i123.third, info)
     }.shareIn(viewModelScope, SharingStarted.Lazily).catch {
         Timber.e(it)
-    }
+    }.distinctUntilChanged()
 
     init {
         viewModelScope.launch {
