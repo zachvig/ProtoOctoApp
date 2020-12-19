@@ -63,14 +63,17 @@
             android:id="@+id/buttonList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end">
+            android:layout_gravity="end"
+            android:divider="@drawable/margin_1_divider"
+            android:paddingStart="@dimen/margin_1"
+            android:paddingEnd="@dimen/margin_2"
+            android:showDividers="middle">
 
             <Button
                 android:id="@+id/buttonClear"
                 style="@style/OctoTheme.Widget.Button.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_1"
                 android:contentDescription="@string/cd_history"
                 android:drawableStart="@drawable/ic_round_clear_all_24"
                 android:drawablePadding="@dimen/margin_0" />
@@ -80,7 +83,6 @@
                 style="@style/OctoTheme.Widget.Button.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_1"
                 android:contentDescription="@string/cd_turn_style_on_off"
                 android:drawableStart="@drawable/ic_round_brush_24" />
 
@@ -89,8 +91,6 @@
                 style="@style/OctoTheme.Widget.Button.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_1"
-                android:layout_marginEnd="@dimen/margin_2"
                 android:contentDescription="@string/cd_filter_terminal"
                 android:drawableStart="@drawable/ic_round_filter_alt_24"
                 android:textSize="20sp"
