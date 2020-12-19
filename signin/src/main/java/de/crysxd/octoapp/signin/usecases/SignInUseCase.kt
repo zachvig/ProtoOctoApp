@@ -7,6 +7,7 @@ import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.usecase.UseCase
 import de.crysxd.octoapp.octoprint.OctoPrint
+import de.crysxd.octoapp.octoprint.exceptions.InvalidApiKeyException
 import de.crysxd.octoapp.octoprint.models.login.LoginResponse
 import de.crysxd.octoapp.signin.models.SignInInformation
 import timber.log.Timber
@@ -30,7 +31,17 @@ class SignInUseCase(
         val octoprint = octoPrintProvider.createAdHocOctoPrint(octoprintInstanceInformation)
 
         // Test connection, will throw in case of faulty configuration
-        val response = octoprint.createLoginApi().passiveLogin()
+        val response = try {
+            octoprint.createLoginApi().passiveLogin()
+        } catch (e: KotlinNullPointerException) {
+            // We received a 204. Retrofit is weird.
+            Timber.w(e)
+            throw InvalidApiKeyException()
+        }
+
+        if (response.session == null) {
+            throw InvalidApiKeyException()
+        }
         val isAdmin = response.groups?.contains(LoginResponse.GROUP_ADMINS) == true
 
         // Test that the API key is actually valid. On instances without authentication
