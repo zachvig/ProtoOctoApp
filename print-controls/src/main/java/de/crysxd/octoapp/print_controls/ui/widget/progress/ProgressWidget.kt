@@ -11,7 +11,6 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.di.Injector
@@ -44,7 +43,7 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
         inflater.suspendedInflate(R.layout.widget_progress, container, false)
 
     override fun onViewCreated(view: View) {
-        viewModel.printState.observe(parent, Observer {
+        viewModel.printState.observe(parent, {
             parent.lifecycleScope.launchWhenStarted {
                 val progressPercent = it.progress?.completion ?: 0f
                 val progressPercentLayoutThreshold = 80f
@@ -73,6 +72,16 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
                             ConstraintSet.START
                         },
                         R.id.progressBar,
+                        ConstraintSet.END
+                    )
+                    connect(
+                        R.id.textViewProgressPercent,
+                        if (progressPercent > progressPercentLayoutThreshold) {
+                            ConstraintSet.START
+                        } else {
+                            ConstraintSet.END
+                        },
+                        R.id.parent,
                         ConstraintSet.END
                     )
                 }.applyTo(view as ConstraintLayout)
