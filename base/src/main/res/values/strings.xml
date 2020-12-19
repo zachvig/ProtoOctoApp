@@ -106,5 +106,5 @@
     <string name="hide">Hide</string>
     <string name="shortcut_tutorial_line1">Long-press shortcuts to get more options</string>
     <string name="shortcut_tutorial_line2">Shortcuts are automatically added when you send commands in terminal</string>
-    <string name="one_gcode_per_line">One GCode command per line</string>
+    <string name="one_gcode_per_line">One Gcode command per line</string>
 </resources>
