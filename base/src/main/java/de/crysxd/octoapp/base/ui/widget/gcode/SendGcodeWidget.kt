@@ -46,6 +46,6 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
 
     private fun showGcodes(gcodes: List<GcodeHistoryItem>) {
         TransitionManager.beginDelayedTransition(gcodeList)
-        layoutManager.showGcodes(gcodes)
+        layoutManager.showGcodes(gcodes.reversed())
     }
 }
