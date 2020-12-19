@@ -53,9 +53,7 @@ class GcodeShortcutLayoutManager(
                 onClicked(gcode)
             }
             button.setOnLongClickListener {
-                onInsert?.let {
-                    GcodeShortcutEditBottomSheet.createForCommand(gcode, it).show(childFragmentManager)
-                }
+                GcodeShortcutEditBottomSheet.createForCommand(gcode, onInsert).show(childFragmentManager)
                 true
             }
         }
