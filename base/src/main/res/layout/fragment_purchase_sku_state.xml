@@ -4,34 +4,26 @@
     android:id="@+id/skuState"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:divider="@drawable/margin_1_divider"
     android:orientation="vertical"
-    android:showDividers="middle"
     tools:ignore="UselessParent">
 
-    <View
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@color/red" />
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin_3"
+        android:gravity="center"
+        android:text="High Eight! Thanks for your support!\nYou rock!"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+        android:textColor="@color/dark_text" />
 
-    <View
+    <LinearLayout
+        android:id="@+id/skuList"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@color/red" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@color/red" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@color/red" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@color/red" />
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_2"
+        android:layout_marginBottom="@dimen/margin_2"
+        android:divider="@drawable/margin_1_divider"
+        android:orientation="vertical"
+        android:showDividers="middle" />
 
 </LinearLayout>

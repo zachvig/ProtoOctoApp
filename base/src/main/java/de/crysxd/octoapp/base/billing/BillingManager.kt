@@ -10,7 +10,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -110,7 +109,5 @@ object BillingManager {
         }
     }
 
-    fun billingFlow(context: Context) = billingChannel.asFlow().onStart {
-        initBilling(context)
-    }
+    fun billingFlow() = billingChannel.asFlow()
 }
