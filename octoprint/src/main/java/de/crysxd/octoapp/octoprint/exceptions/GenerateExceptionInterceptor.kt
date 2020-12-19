@@ -7,6 +7,7 @@ import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.security.cert.CertPathValidatorException
+import java.util.regex.Pattern
 import javax.net.ssl.SSLHandshakeException
 
 class GenerateExceptionInterceptor : Interceptor {
@@ -23,9 +24,10 @@ class GenerateExceptionInterceptor : Interceptor {
                 101 -> response
                 in 200..204 -> response
                 409 -> throw PrinterNotOperationalException(response.request.url)
+                401 -> throw generate401Exception(response)
                 403 -> throw InvalidApiKeyException(response.request.url)
                 in 501..599 -> throw OctoPrintBootingException()
-                else -> throw OctoPrintApiException(response.request.url, response.code, response.body?.string() ?: "<empty>")
+                else -> throw generateGenericException(response)
             }
         } catch (e: ConnectException) {
             throw OctoPrintUnavailableException(e)
@@ -37,4 +39,19 @@ class GenerateExceptionInterceptor : Interceptor {
             throw OctoPrintHttpsException(chain.request().url.toUrl(), e)
         }
     }
+
+    private fun generate401Exception(response: Response): IOException {
+        val authHeader = response.headers["WWW-Authenticate"]
+        return authHeader?.let {
+            val realmMatcher = Pattern.compile("realm=\"([^\"]*)\"").matcher(it)
+            if (realmMatcher.find()) {
+                BasicAuthRequiredException(realmMatcher.group(1))
+            } else {
+                BasicAuthRequiredException("no message")
+            }
+        } ?: generateGenericException(response)
+    }
+
+    private fun generateGenericException(response: Response): IOException =
+        OctoPrintApiException(response.request.url, response.code, response.body?.string() ?: "<empty>")
 }
