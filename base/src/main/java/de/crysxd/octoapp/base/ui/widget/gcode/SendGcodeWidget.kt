@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
@@ -33,13 +32,11 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
             recordInteraction()
             it.findNavController().navigate(R.id.action_open_terminal)
         }
-
-        viewModel.gcodes.observe(parent, Observer(this::showGcodes))
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.updateGcodes()
+        viewModel.gcodes.observe(parent.viewLifecycleOwner, ::showGcodes)
     }
 
     private fun showGcodes(gcodes: List<GcodeHistoryItem>) {

@@ -1,7 +1,6 @@
 package de.crysxd.octoapp.base.ui.widget.gcode
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.material.snackbar.Snackbar
 import de.crysxd.octoapp.base.R
@@ -12,30 +11,27 @@ import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase.Response.RecordedResponse
 import de.crysxd.octoapp.base.usecase.GetGcodeShortcutsUseCase
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
-const val COMMAND_SEPARATOR = ":"
-
+@Suppress("EXPERIMENTAL_API_USAGE")
 class SendGcodeWidgetViewModel(
     private val gcodeHistoryRepository: GcodeHistoryRepository,
     private val getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase,
     private val sendGcodeCommandUseCase: ExecuteGcodeCommandUseCase
 ) : BaseViewModel() {
 
-    private val mutableGcodes = MutableLiveData<List<GcodeHistoryItem>>()
-    val gcodes = mutableGcodes.map { it }
+    val gcodes = flow {
+        emit(getGcodeShortcutsUseCase.execute(Unit))
+    }.flatMapLatest {
+        it
+    }.distinctUntilChanged().asLiveData()
 
-    init {
-        updateGcodes()
-    }
-
-    fun updateGcodes() = viewModelScope.launch(coroutineExceptionHandler) {
-        mutableGcodes.postValue(getGcodeShortcutsUseCase.execute(Unit))
-    }
 
     fun setFavorite(gcode: GcodeHistoryItem, favorite: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
         gcodeHistoryRepository.setFavorite(gcode.command, favorite)
-        updateGcodes()
     }
 
     fun sendGcodeCommand(command: String, updateViewAfterDone: Boolean = false) = viewModelScope.launch(coroutineExceptionHandler) {
@@ -93,9 +89,5 @@ class SendGcodeWidgetViewModel(
                 actionText = { it.getString(R.string.show_logs) }
             )
         )
-
-        if (updateViewAfterDone) {
-            updateGcodes()
-        }
     }
 }
