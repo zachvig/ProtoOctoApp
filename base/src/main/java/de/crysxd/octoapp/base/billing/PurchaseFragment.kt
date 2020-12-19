@@ -4,11 +4,14 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.View
+import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
+import androidx.transition.TransitionManager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -17,8 +20,13 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import kotlinx.android.synthetic.main.fragment_purchase.*
+import kotlinx.android.synthetic.main.fragment_purchase_init_state.*
+import kotlinx.android.synthetic.main.fragment_purchase_sku_state.*
+import timber.log.Timber
 import kotlin.math.absoluteValue
+import kotlin.math.max
 
 class PurchaseFragment : Fragment(R.layout.fragment_purchase), InsetAwareScreen {
 
@@ -46,30 +54,52 @@ class PurchaseFragment : Fragment(R.layout.fragment_purchase), InsetAwareScreen 
         featureList.movementMethod = LinkMovementMethod()
         moreFeatures.movementMethod = LinkMovementMethod()
 
+        val backPressedCallback = object : OnBackPressedCallback(false) {
+            override fun handleOnBackPressed() {
+                startDelayedTransition()
+                initState.isVisible = true
+                buttonSupport.isVisible = true
+                skuState?.isVisible = false
+                appBar.setExpanded(true)
+                isEnabled = false
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
+
+        buttonSupport.setOnClickListener {
+            startDelayedTransition()
+            buttonSupport.isVisible = false
+            initState.isVisible = false
+            skuStateStub?.isVisible = true
+            skuState.isVisible = true
+            appBar.setExpanded(true)
+            backPressedCallback.isEnabled = true
+        }
+
         var eventSent = false
         appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
-            val collapseProgress = verticalOffset.absoluteValue / appBar.totalScrollRange.toFloat()
-            val availableHeight = (scrollView.height - scrollContent.height - scrollContent.paddingTop) / 2
+            appBar.post {
+                val collapseProgress = verticalOffset.absoluteValue / appBar.totalScrollRange.toFloat()
+                val content = if (initState.isVisible) initState else skuState
+                val availableHeight = (scrollView.height - (content.height - (content.paddingTop + content.paddingBottom))) / 2
 
-            if (!eventSent && verticalOffset != 0) {
-                eventSent = true
-                OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenScroll)
-            }
+                if (!eventSent && verticalOffset != 0) {
+                    eventSent = true
+                    OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenScroll)
+                }
 
-            // Top padding should be at least as much as bottom padding
-            val minPaddingTop = scrollContent.paddingBottom
+                // Top padding should be at least as much as bottom padding
+                val top = max(content.paddingBottom, availableHeight)
+                Timber.i("$top ${top * collapseProgress}")
 
-            // If we don't need to scroll, center content while scrolling
-            // If we need to scroll, fade in the top padding
-            if (availableHeight > minPaddingTop) {
-                scrollContent.translationY = availableHeight * collapseProgress
-            } else {
-                scrollContent.updatePadding(
-                    top = (minPaddingTop * collapseProgress).toInt()
+                contentWrapper.updatePadding(
+                    top = (top * collapseProgress).toInt()
                 )
             }
         })
     }
+
+    private fun startDelayedTransition() = TransitionManager.beginDelayedTransition(view as ViewGroup, InstantAutoTransition(explode = true))
 
     override fun onStart() {
         super.onStart()

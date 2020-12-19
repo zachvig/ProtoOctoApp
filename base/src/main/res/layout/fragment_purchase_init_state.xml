@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/initState"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/common_view_top_padding"
+    tools:ignore="UselessParent">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_3"
+        android:gravity="center"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
+        android:textColor="@color/dark_text"
+        tools:text="Thank you for\nsupporting OctoApp!" />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_2"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        tools:text="Description" />
+
+    <TextView
+        android:id="@+id/featureList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_3"
+        android:layout_marginVertical="@dimen/margin_2"
+        android:gravity="center"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+        app:layout_constraintTop_toBottomOf="@+id/description"
+        tools:text="Gcode viewer\nMTL webcam streams" />
+
+    <TextView
+        android:id="@+id/moreFeatures"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_3"
+        android:layout_marginTop="@dimen/margin_0"
+        android:gravity="center"
+        tools:text="and much more to come!" />
+
+</LinearLayout>
