@@ -15,7 +15,12 @@ class TakeScreenshotUseCase @Inject constructor() : UseCase<Activity, Bitmap>() 
         val bitmap = Bitmap.createBitmap(rootView.width, rootView.height, Bitmap.Config.ARGB_8888)
         bitmap.eraseColor(param.window.statusBarColor)
         bitmap.applyCanvas {
-            rootView.draw(this)
+            try {
+                rootView.draw(this)
+            } catch (e: Exception) {
+                // Well...no screenshot then
+                Timber.w(e)
+            }
         }
 
         return bitmap
