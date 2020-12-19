@@ -85,7 +85,7 @@ class GcodePreviewViewModel(
         true
     }.catch { e ->
         emit(ViewState.Error(e))
-    }.flowOn(Dispatchers.Default)
+    }
 
     val viewState = merge(manualViewStateChannel.asFlow(), internalViewState)
         .asLiveData(viewModelScope.coroutineContext)
