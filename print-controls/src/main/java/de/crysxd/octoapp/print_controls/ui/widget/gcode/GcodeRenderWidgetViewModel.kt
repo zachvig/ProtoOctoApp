@@ -12,6 +12,7 @@ import de.crysxd.octoapp.base.usecase.GetCurrentPrinterProfileUseCase
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -50,6 +51,12 @@ class GcodeRenderWidgetViewModel(
     }.combine(printInfo) { i123, info ->
         RenderData(i123.first, i123.second, i123.third, info)
     }.shareIn(viewModelScope, SharingStarted.Lazily).catch {
+        Timber.e(it)
+    }.retry(3) {
+        delay(500L)
+        true
+    }.catch {
+        emit(RenderData(gcode = GcodeFileDataSource.LoadState.Failed(it)))
         Timber.e(it)
     }.distinctUntilChanged()
 
