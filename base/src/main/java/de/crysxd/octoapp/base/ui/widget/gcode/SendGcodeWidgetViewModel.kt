@@ -1,11 +1,11 @@
 package de.crysxd.octoapp.base.ui.widget.gcode
 
+import android.content.SharedPreferences
+import androidx.core.content.edit
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.material.snackbar.Snackbar
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.models.GcodeHistoryItem
-import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase.Response.RecordedResponse
@@ -18,11 +18,12 @@ import kotlinx.coroutines.launch
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class SendGcodeWidgetViewModel(
-    private val gcodeHistoryRepository: GcodeHistoryRepository,
+    private val sharedPreferences: SharedPreferences,
     private val getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase,
     private val sendGcodeCommandUseCase: ExecuteGcodeCommandUseCase
 ) : BaseViewModel() {
 
+    private val tutorialHiddenPreferenceKey = "gcode_shortcut_tutorial_hidden5"
     val gcodes = flow {
         emit(getGcodeShortcutsUseCase.execute(Unit))
     }.flatMapLatest {
@@ -30,11 +31,11 @@ class SendGcodeWidgetViewModel(
     }.distinctUntilChanged().asLiveData()
 
 
-    fun setFavorite(gcode: GcodeHistoryItem, favorite: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
-        gcodeHistoryRepository.setFavorite(gcode.command, favorite)
-    }
+    fun isTutorialHidden() = sharedPreferences.getBoolean(tutorialHiddenPreferenceKey, false)
 
-    fun sendGcodeCommand(command: String, updateViewAfterDone: Boolean = false) = viewModelScope.launch(coroutineExceptionHandler) {
+    fun markTutorialHidden() = sharedPreferences.edit { putBoolean(tutorialHiddenPreferenceKey, true) }
+
+    fun sendGcodeCommand(command: String) = viewModelScope.launch(coroutineExceptionHandler) {
         val gcodeCommand = GcodeCommand.Batch(command.split("\n").toTypedArray())
 
         postMessage(

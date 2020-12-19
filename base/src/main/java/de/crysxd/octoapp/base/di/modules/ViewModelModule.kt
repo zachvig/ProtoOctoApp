@@ -52,13 +52,13 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(SendGcodeWidgetViewModel::class)
     open fun provideSendGcodeWidgetViewModel(
-        getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase,
+        sharedPreferences: SharedPreferences,
         useCase: ExecuteGcodeCommandUseCase,
-        gcodeHistoryRepository: GcodeHistoryRepository
+        getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase
     ): ViewModel = SendGcodeWidgetViewModel(
-        gcodeHistoryRepository,
-        getGcodeShortcutsUseCase,
-        useCase
+        sharedPreferences = sharedPreferences,
+        getGcodeShortcutsUseCase = getGcodeShortcutsUseCase,
+        sendGcodeCommandUseCase = useCase
     )
 
     @Provides

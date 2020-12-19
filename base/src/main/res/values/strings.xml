@@ -103,4 +103,7 @@
     <string name="enter_label">Enter label</string>
     <string name="label_for_x">Label for %s</string>
     <string name="cd_settings">Settings</string>
+    <string name="hide">Hide</string>
+    <string name="shortcut_tutorial_line1">Long-press shortcuts to get more options</string>
+    <string name="shortcut_tutorial_line2">Shortcuts are automatically added when you send commands in terminal</string>
 </resources>
