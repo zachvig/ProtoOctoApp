@@ -101,6 +101,10 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
 
     private fun populateSkuState(state: PurchaseViewModel.ViewState.SkuSelectionState) {
         skuList.removeAllViews()
+        skuTitle.text = HtmlCompat.fromHtml(
+            Firebase.remoteConfig.getString("sku_list_title"),
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        )
         state.billingData.availableSku.forEach {
             val view = View.inflate(requireContext(), R.layout.fragment_purchase_sku_state_option, null)
             view.price.text = it.price
@@ -118,7 +122,7 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
     }
 
     private fun populateInitState() {
-        title.text = HtmlCompat.fromHtml(
+        purchaseTitle.text = HtmlCompat.fromHtml(
             Firebase.remoteConfig.getString("purchase_screen_title"),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
@@ -135,7 +139,7 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
 
-        title.movementMethod = LinkMovementMethod()
+        purchaseTitle.movementMethod = LinkMovementMethod()
         description.movementMethod = LinkMovementMethod()
         featureList.movementMethod = LinkMovementMethod()
         moreFeatures.movementMethod = LinkMovementMethod()

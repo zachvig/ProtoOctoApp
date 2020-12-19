@@ -8,13 +8,14 @@
     tools:ignore="UselessParent">
 
     <TextView
+        android:id="@+id/skuTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/margin_3"
+        android:layout_margin="@dimen/margin_3"
         android:gravity="center"
-        android:text="High Eight! Thanks for your support!\nYou rock!"
         android:textAppearance="@style/OctoTheme.TextAppearance.Title"
-        android:textColor="@color/dark_text" />
+        android:textColor="@color/dark_text"
+        tools:text="High Eight! Thanks for your support! You rock!" />
 
     <LinearLayout
         android:id="@+id/skuList"
@@ -22,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_2"
         android:layout_marginBottom="@dimen/margin_2"
-        android:divider="@drawable/margin_1_divider"
+        android:divider="@drawable/margin_2_divider"
         android:orientation="vertical"
         android:showDividers="middle" />
 
