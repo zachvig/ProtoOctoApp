@@ -4,17 +4,14 @@ import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.SslKeyStoreHandler
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.usecase.UseCase
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.exceptions.InvalidApiKeyException
-import de.crysxd.octoapp.octoprint.models.login.LoginResponse
 import de.crysxd.octoapp.signin.models.SignInInformation
 import timber.log.Timber
 
 
 class SignInUseCase(
-    private val octoprintRepository: OctoPrintRepository,
     private val octoPrintProvider: OctoPrintProvider,
     private val sslKeyStoreHandler: SslKeyStoreHandler
 ) : UseCase<SignInInformation, SignInUseCase.Result>() {
@@ -42,7 +39,6 @@ class SignInUseCase(
         if (response.session == null) {
             throw InvalidApiKeyException()
         }
-        val isAdmin = response.groups?.contains(LoginResponse.GROUP_ADMINS) == true
 
         // Test that the API key is actually valid. On instances without authentication
         // the login endpoint accepts any API key but other endpoints do not
@@ -53,12 +49,10 @@ class SignInUseCase(
         val version = octoprint.createVersionApi().getVersion()
         Timber.i("Connected to ${version.serverVersionText}")
         OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.OctoPrintVersion, version.severVersion)
-        OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.UserIsAdmin, isAdmin.toString())
 
         // Check for warnings
         val testedVersion = OctoPrint.TESTED_SERVER_VERSION
         val warnings = mutableListOf<Warning>()
-        if (!isAdmin) warnings.add(Warning.NotAdmin)
         if (version.severVersion > testedVersion) warnings.add(Warning.TooNewServerVersion(testedVersion, version.severVersion))
 
         Result.Success(octoprintInstanceInformation, warnings)
@@ -80,6 +74,5 @@ class SignInUseCase(
 
     sealed class Warning {
         data class TooNewServerVersion(val testedOnVersion: String, val serverVersion: String) : Warning()
-        object NotAdmin : Warning()
     }
 }

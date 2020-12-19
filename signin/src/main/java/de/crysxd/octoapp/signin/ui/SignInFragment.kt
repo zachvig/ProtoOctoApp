@@ -27,7 +27,6 @@ import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInViewState
 import de.crysxd.octoapp.signin.troubleshoot.TroubleShootingFragmentArgs
-import de.crysxd.octoapp.signin.usecases.SignInUseCase.Warning.NotAdmin
 import de.crysxd.octoapp.signin.usecases.SignInUseCase.Warning.TooNewServerVersion
 import kotlinx.android.synthetic.main.fragment_signin.*
 import timber.log.Timber
@@ -162,7 +161,6 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
                 val message = res.warnings.joinToString("\n") {
                     val text = when (it) {
                         is TooNewServerVersion -> getString(R.string.warning_server_version_too_new, it.testedOnVersion, it.serverVersion)
-                        is NotAdmin -> getString(R.string.warning_no_admin_rights)
                     }
 
                     "⚠️ $text"
