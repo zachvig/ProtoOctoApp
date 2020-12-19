@@ -23,7 +23,7 @@ class SendGcodeWidgetViewModel(
     private val sendGcodeCommandUseCase: ExecuteGcodeCommandUseCase
 ) : BaseViewModel() {
 
-    private val tutorialHiddenPreferenceKey = "gcode_shortcut_tutorial_hidden5"
+    private val tutorialHiddenPreferenceKey = "gcode_shortcut_tutorial_hidden"
     val gcodes = flow {
         emit(getGcodeShortcutsUseCase.execute(Unit))
     }.flatMapLatest {
