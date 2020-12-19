@@ -88,7 +88,7 @@ class MessageDeserializer(
     private fun mapPrinterStateId(id: String) = try {
         Message.EventMessage.PrinterStateChanged.PrinterState.valueOf(id.toUpperCase(Locale.ENGLISH))
     } catch (e: Exception) {
-        logger.log(Level.WARNING, "Unable to map printer state '$id'", e)
+        logger.log(Level.WARNING, "Unable to map printer state '$id'")
         Message.EventMessage.PrinterStateChanged.PrinterState.OTHER
     }
 }
