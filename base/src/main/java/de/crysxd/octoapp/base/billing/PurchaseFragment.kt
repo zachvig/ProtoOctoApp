@@ -81,7 +81,7 @@ class PurchaseFragment : Fragment(R.layout.fragment_purchase), InsetAwareScreen 
             appBar.post {
                 val collapseProgress = verticalOffset.absoluteValue / appBar.totalScrollRange.toFloat()
                 val content = if (initState.isVisible) initState else skuState
-                val availableHeight = (scrollView.height - (content.height - (content.paddingTop + content.paddingBottom))) / 2
+                val availableHeight = (scrollView.height - content.height - content.paddingTop - content.paddingBottom) / 2
 
                 if (!eventSent && verticalOffset != 0) {
                     eventSent = true
@@ -92,7 +92,7 @@ class PurchaseFragment : Fragment(R.layout.fragment_purchase), InsetAwareScreen 
                 val top = max(content.paddingBottom, availableHeight)
                 Timber.i("$top ${top * collapseProgress}")
 
-                contentWrapper.updatePadding(
+                content.updatePadding(
                     top = (top * collapseProgress).toInt()
                 )
             }
