@@ -20,6 +20,7 @@ import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.ext.setTextAppearanceCompat
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.ui.utils.ViewCompactor
+import de.crysxd.octoapp.octoprint.exceptions.BasicAuthRequiredException
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintHttpsException
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.di.injectViewModel
@@ -30,6 +31,7 @@ import de.crysxd.octoapp.signin.usecases.SignInUseCase.Warning.NotAdmin
 import de.crysxd.octoapp.signin.usecases.SignInUseCase.Warning.TooNewServerVersion
 import kotlinx.android.synthetic.main.fragment_signin.*
 import timber.log.Timber
+import java.net.URL
 import java.security.cert.Certificate
 
 class SignInFragment : BaseFragment(R.layout.fragment_signin) {
@@ -87,6 +89,10 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
                     "reason" to res.exception::class.java.simpleName
                 )
             )
+
+            if (res.exception is BasicAuthRequiredException) {
+                res.exception.enrichUserMessageWithUrl(URL(res.baseUrl.toString()))
+            }
 
             // SSL error and we can "force trust" this server if user agrees
             if (res.exception is OctoPrintHttpsException && res.exception.serverCertificates.isNotEmpty()) {
