@@ -16,6 +16,7 @@ import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.BaseViewModelFactory
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
+import de.crysxd.octoapp.base.ui.common.gcodeshortcut.GcodeShortcutEditViewModel
 import de.crysxd.octoapp.base.ui.common.terminal.TerminalViewModel
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlBedTemperatureWidgetViewModel
@@ -122,5 +123,15 @@ open class ViewModelModule {
         generateRenderStyleUseCase = generateRenderStyleUseCase,
         getCurrentPrinterProfileUseCase = getCurrentPrinterProfileUseCase,
         gcodeFileRepository = gcodeFileRepository
+    )
+
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(GcodeShortcutEditViewModel::class)
+    open fun provideGcodeShortcutEditViewModel(
+        gcodeHistoryRepository: GcodeHistoryRepository
+    ): ViewModel = GcodeShortcutEditViewModel(
+        gcodeHistoryRepository = gcodeHistoryRepository
     )
 }

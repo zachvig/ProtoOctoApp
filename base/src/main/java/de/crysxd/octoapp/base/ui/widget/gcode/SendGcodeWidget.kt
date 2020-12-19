@@ -12,6 +12,7 @@ import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
+import de.crysxd.octoapp.base.ui.common.gcodeshortcut.GcodeShortcutEditBottomSheet
 import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import kotlinx.android.synthetic.main.widget_gcode.*
@@ -69,7 +70,7 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
                 viewModel.sendGcodeCommand(gcode.command)
             }
             button.setOnLongClickListener {
-                viewModel.setFavorite(gcode, !gcode.isFavorite)
+                GcodeShortcutEditBottomSheet.createForCommand(gcode).show(parent.childFragmentManager)
                 true
             }
         }

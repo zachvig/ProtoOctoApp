@@ -73,7 +73,7 @@
     <string name="cd_turn_style_on_off">Turn style on/off</string>
     <string name="cd_filter_terminal">Filter Terminal</string>
     <string name="command">Command</string>
-    <string name="toggle_favorite">Toggle favorite</string>
+    <string name="toggle_favorite">Toggle pinned</string>
     <string name="insert">Insert</string>
     <string name="pause_the_print_to_send_commands">Pause the print to send commands.</string>
     <string name="get_support">Get Support</string>

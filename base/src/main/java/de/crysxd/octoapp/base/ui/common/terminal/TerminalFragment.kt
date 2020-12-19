@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.base.ui.common.terminal
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.text.InputType
 import android.transition.AutoTransition
@@ -20,6 +19,7 @@ import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.common.gcodeshortcut.GcodeShortcutEditBottomSheet
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.synthetic.main.fragment_terminal.*
 import kotlinx.coroutines.Job
@@ -203,19 +203,7 @@ class TerminalFragment : BaseFragment(R.layout.fragment_terminal) {
                 viewModel.executeGcode(gcode.command)
             }
             button.setOnLongClickListener {
-                val options = arrayOf(R.string.toggle_favorite, R.string.insert, R.string.set_lebel, R.string.clear_lebel, R.string.remove_shortcut)
-                AlertDialog.Builder(requireContext())
-                    .setTitle(gcode.oneLineCommand)
-                    .setItems(options.map { getText(it) }.toTypedArray()) { _, i: Int ->
-                        when (options[i]) {
-                            R.string.toggle_favorite -> viewModel.setFavorite(gcode, !gcode.isFavorite)
-                            R.string.insert -> gcodeInput.editText.setText(gcode.command)
-                            R.string.set_lebel -> viewModel.updateLabel(requireContext(), gcode)
-                            R.string.clear_lebel -> viewModel.clearLabel(gcode)
-                            R.string.remove_shortcut -> viewModel.remove(gcode)
-                        }
-                    }
-                    .show()
+                GcodeShortcutEditBottomSheet.createForCommand(gcode, ::insertGcode).show(childFragmentManager)
                 true
             }
         }
@@ -232,6 +220,10 @@ class TerminalFragment : BaseFragment(R.layout.fragment_terminal) {
                 true
             } else false
         }
+    }
+
+    private fun insertGcode(gcode: GcodeHistoryItem) {
+        gcodeInput.editText.setText(gcode.command)
     }
 
     override fun onResume() {
