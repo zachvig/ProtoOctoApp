@@ -8,6 +8,7 @@ import de.crysxd.octoapp.base.utils.LongDuration
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.toList
 import org.json.JSONObject
 import timber.log.Timber
@@ -48,7 +49,7 @@ class PurchaseViewModel : BaseViewModel() {
         } else {
             viewState
         }
-    }.asLiveData()
+    }.distinctUntilChanged().asLiveData()
 
     fun moveToSkuListState() {
         viewStateChannel.offer(ViewState.SkuSelectionState())

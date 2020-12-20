@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.firebase.ktx.Firebase
@@ -30,6 +31,7 @@ import kotlinx.android.synthetic.main.fragment_purchase_init_state.*
 import kotlinx.android.synthetic.main.fragment_purchase_sku_state.*
 import kotlinx.android.synthetic.main.fragment_purchase_sku_state_option.view.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.absoluteValue
 
 class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScreen {
@@ -110,6 +112,9 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
                 getString(R.string.free_trial_x, it)
             }
             view.details.isVisible = !view.details.text.isNullOrBlank()
+            view.buttonSelect.setOnClickListener {
+                BillingManager.purchase(requireActivity(), details)
+            }
             view.badge.setImageResource(
                 when (state.badges[details.sku]) {
                     PurchaseViewModel.Badge.NoBadge -> 0
@@ -155,6 +160,13 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
         requireOctoActivity().octo.isVisible = false
+
+        lifecycleScope.launchWhenStarted {
+            // Billing completed, pop back stack and return
+            BillingManager.billingEventFlow().collectLatest {
+                findNavController().popBackStack()
+            }
+        }
     }
 
     override fun handleInsets(insets: Rect) {

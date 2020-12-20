@@ -1,24 +1,32 @@
 package de.crysxd.octoapp.base.billing
 
+import android.app.Activity
 import android.content.Context
 import com.android.billingclient.api.*
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 object BillingManager {
 
+    private val pendingPurchases = mutableListOf<Purchase>()
+    private val billingEventChannel = ConflatedBroadcastChannel<BillingEvent>()
     private val billingChannel = ConflatedBroadcastChannel(BillingData())
     private val purchasesUpdateListener = PurchasesUpdatedListener { billingResult, purchases ->
-        // To be implemented in a later section.
+        Timber.i("On purchase updated: $billingResult $purchases")
+        if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
+            GlobalScope.launch {
+                handlePurchases(purchases)
+            }
+        } else if (billingResult.responseCode != BillingClient.BillingResponseCode.USER_CANCELED) {
+            logError("Purchase flow failed", billingResult)
+        }
     }
 
     private var billingClient: BillingClient? = null
@@ -43,6 +51,7 @@ object BillingManager {
                     if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                         // The BillingClient is ready. You can query purchases here.
                         updateSku()
+                        queryPurchases()
                         billingChannel.update {
                             it.copy(billingAvailable = true)
                         }
@@ -105,9 +114,105 @@ object BillingManager {
         if (result?.billingResult?.responseCode == BillingClient.BillingResponseCode.OK) {
             return result.skuDetailsList ?: emptyList()
         } else {
-            throw Exception("SKU update failed for $params: ${result?.billingResult?.debugMessage} (${result?.billingResult?.responseCode})")
+            logError("SKU update failed for $params", result?.billingResult)
+            return emptyList()
         }
     }
 
-    fun billingFlow() = billingChannel.asFlow()
+    fun billingFlow() = billingChannel.asFlow().distinctUntilChanged()
+    fun billingEventFlow() = billingEventChannel.asFlow()
+
+    fun purchase(activity: Activity, skuDetails: SkuDetails): Boolean {
+        val flowParams = BillingFlowParams.newBuilder()
+            .setSkuDetails(skuDetails)
+            .build()
+
+        val billingResult = billingClient?.launchBillingFlow(activity, flowParams)
+        return if (billingResult?.responseCode == BillingClient.BillingResponseCode.OK) {
+            true
+        } else {
+            logError("Unable to launch billing flow", billingResult)
+            false
+        }
+    }
+
+    private suspend fun handlePurchases(purchases: List<Purchase>): Unit {
+        Timber.i("Handling ${purchases.size} purchases")
+        try {
+            purchases.forEach { purchase ->
+                var sendPurchaseEvent = false
+                if (!purchase.isAcknowledged) {
+                    val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
+                        .setPurchaseToken(purchase.purchaseToken)
+                    val billingResult = withContext(Dispatchers.IO) {
+                        billingClient!!.acknowledgePurchase(acknowledgePurchaseParams.build())
+                    }
+                    if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
+                        logError("Failed to acknowledge purchase ${purchase.orderId}", billingResult)
+                    } else {
+                        Timber.i("Confirmed purchase ${purchase.orderId}")
+                    }
+                    sendPurchaseEvent = true
+                }
+
+                if (sendPurchaseEvent) {
+                    billingEventChannel.offer(BillingEvent.PurchaseCompleted)
+                }
+            }
+
+            val premiumActive = purchases.any {
+                Purchase.PurchaseState.PURCHASED == it.purchaseState
+            }
+            billingChannel.update {
+                it.copy(isPremiumActive = premiumActive)
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
+    private fun reattemptPurchaseHandling(purchases: List<Purchase>) {
+        Timber.i("Reattempting purchase handling")
+        pendingPurchases.clear()
+        pendingPurchases.addAll(purchases)
+    }
+
+    private fun logError(description: String, billingResult: BillingResult?) {
+        Timber.e(Exception("$description. responseCode=${billingResult?.responseCode} message=${billingResult?.debugMessage}"))
+    }
+
+    private fun queryPurchases() = GlobalScope.launch(Dispatchers.IO) {
+
+        suspend fun queryPurchases(@BillingClient.SkuType type: String) {
+            val purchaseResult = billingClient?.queryPurchases(type)
+            if (purchaseResult?.billingResult?.responseCode != BillingClient.BillingResponseCode.OK) {
+                logError("Unable to query purchases", purchaseResult?.billingResult)
+            } else purchaseResult.purchasesList?.let {
+                handlePurchases(it)
+            }
+        }
+
+        try {
+            if (billingClient?.isReady == true) {
+                Timber.i("Querying purchases")
+                queryPurchases(BillingClient.SkuType.INAPP)
+                queryPurchases(BillingClient.SkuType.SUBS)
+            } else {
+                Timber.i("Billing client not ready, skipping purchase query")
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
+    fun onResume() = GlobalScope.launch {
+        Timber.i("Resuming billing")
+
+        if (pendingPurchases.isNotEmpty()) {
+            handlePurchases(pendingPurchases)
+            pendingPurchases.clear()
+        }
+
+        queryPurchases()
+    }
 }
