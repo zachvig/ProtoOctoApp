@@ -80,8 +80,8 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <FrameLayout
-            android:layout_width="match_parent"
             android:id="@+id/contentWrapper"
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <include layout="@layout/fragment_purchase_init_state" />

@@ -10,6 +10,7 @@ import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
+import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.firebase.ktx.Firebase
@@ -27,9 +28,9 @@ import kotlinx.android.synthetic.main.fragment_purchase.*
 import kotlinx.android.synthetic.main.fragment_purchase_init_state.*
 import kotlinx.android.synthetic.main.fragment_purchase_sku_state.*
 import kotlinx.android.synthetic.main.fragment_purchase_sku_state_option.view.*
+import kotlinx.coroutines.delay
 import timber.log.Timber
 import kotlin.math.absoluteValue
-import kotlin.math.max
 
 class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScreen {
 
@@ -51,23 +52,16 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
 
         var eventSent = false
         appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
-            appBar.post {
-                val collapseProgress = verticalOffset.absoluteValue / appBar.totalScrollRange.toFloat()
-                val content = if (initState.isVisible) initState else skuState
-                val availableHeight = (scrollView.height - content.height - content.paddingTop - content.paddingBottom) / 2
+            val collapseProgress = verticalOffset.absoluteValue / appBar.totalScrollRange.toFloat()
+            val content = listOf<View?>(initState, skuState).firstOrNull { it?.isVisible == true }
+            val padding = statusBarScrim.height + requireContext().resources.getDimension(R.dimen.margin_4)
+            content?.updatePadding(top = (padding * collapseProgress).toInt())
 
-                if (!eventSent && verticalOffset != 0) {
-                    eventSent = true
-                    OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenScroll)
-                }
+            Timber.i("padding=$padding progress=$collapseProgress top=${(padding * collapseProgress).toInt()}")
 
-                // Top padding should be at least as much as bottom padding
-                val top = max(content.paddingBottom, availableHeight)
-                Timber.i("$top ${top * collapseProgress}")
-
-                content.updatePadding(
-                    top = (top * collapseProgress).toInt()
-                )
+            if (!eventSent && verticalOffset != 0) {
+                eventSent = true
+                OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenScroll)
             }
         })
 
@@ -75,31 +69,36 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
     }
 
     private fun moveToState(state: PurchaseViewModel.ViewState) {
-        TransitionManager.beginDelayedTransition(view as ViewGroup, InstantAutoTransition(explode = true))
-
-        initState?.isVisible = false
-        skuState?.isVisible = false
-        buttonSupport.isVisible = state is PurchaseViewModel.ViewState.InitState
-        backPressedCallback.isEnabled = state != PurchaseViewModel.ViewState.InitState
-
-        when (state) {
-            PurchaseViewModel.ViewState.InitState -> {
-                skuList?.removeAllViews()
-                initState?.isVisible = true
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            val fullyExpanded = (appBar.height - appBar.bottom) == 0
+            if (!fullyExpanded) {
+                appBar.setExpanded(true)
+                delay(300)
             }
 
-            is PurchaseViewModel.ViewState.SkuSelectionState -> {
-                skuStateStub?.isVisible = true
-                skuState?.isVisible = true
-                populateSkuState(state)
+            TransitionManager.beginDelayedTransition(view as ViewGroup, InstantAutoTransition(explode = true))
+            initState?.isVisible = false
+            skuState?.isVisible = false
+            buttonSupport.isVisible = state is PurchaseViewModel.ViewState.InitState
+            backPressedCallback.isEnabled = state != PurchaseViewModel.ViewState.InitState
+
+            when (state) {
+                PurchaseViewModel.ViewState.InitState -> {
+                    skuList?.removeAllViews()
+                    initState?.isVisible = true
+                }
+
+                is PurchaseViewModel.ViewState.SkuSelectionState -> {
+                    skuStateStub?.isVisible = true
+                    skuState?.isVisible = true
+                    populateSkuState(state)
+                }
             }
         }
-
-        appBar.setExpanded(true)
-
     }
 
     private fun populateSkuState(state: PurchaseViewModel.ViewState.SkuSelectionState) {
+        skuState.updatePadding(top = 0)
         skuList.removeAllViews()
         skuTitle.text = HtmlCompat.fromHtml(
             Firebase.remoteConfig.getString("sku_list_title"),
@@ -122,6 +121,8 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
     }
 
     private fun populateInitState() {
+        initState.updatePadding(top = 0)
+
         purchaseTitle.text = HtmlCompat.fromHtml(
             Firebase.remoteConfig.getString("purchase_screen_title"),
             HtmlCompat.FROM_HTML_MODE_LEGACY
