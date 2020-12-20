@@ -27,18 +27,24 @@ class AppUpdateFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         // Returns an intent object that you use to check for an update.
-        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+        val appUpdateInfoTask = try {
+            appUpdateManager.appUpdateInfo
+        } catch (e: Exception) {
+            Timber.w("Unable to connect to PlayStore")
+            null
+        }
 
         // Checks that the platform will allow the specified type of update.
         Timber.i("Requesting app update info")
-        appUpdateInfoTask.addOnCompleteListener { result ->
+        appUpdateInfoTask?.addOnCompleteListener { result ->
             Timber.i("App update info: $result")
 
-            if (result.exception != null &&
-                (result.exception as? InstallException)?.errorCode != InstallErrorCode.ERROR_APP_NOT_OWNED &&
-                result.exception !is RemoteException
-            ) {
-                Timber.e(result.exception)
+            if (result.exception != null) {
+                if ((result.exception as? InstallException)?.errorCode != InstallErrorCode.ERROR_APP_NOT_OWNED && result.exception !is RemoteException) {
+                    Timber.e(result.exception)
+                } else {
+                    Timber.w(result.exception)
+                }
             } else {
                 val appUpdateInfo = result.result
 

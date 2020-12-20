@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Point
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.GestureDetector
@@ -145,8 +146,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         playingState.isVisible = true
         hlsSurface.isVisible = true
         mjpegSurface.isVisible = false
-        liveIndicator.isVisible = false
-        usedLiveIndicator?.isVisible = true
+        usedLiveIndicator?.isVisible = false
         hlsPlayer.setVideoSurfaceHolder(hlsSurface.holder)
         hlsPlayer.setMediaItem(MediaItem.fromUri(state.uri))
         hlsPlayer.prepare()
@@ -167,7 +167,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 override fun onIsPlayingChanged(eventTime: AnalyticsListener.EventTime, isPlaying: Boolean) {
                     super.onIsPlayingChanged(eventTime, isPlaying)
                     Timber.v("onIsPlayingChanged: $isPlaying")
-                    liveIndicator.isVisible = isPlaying
+                    usedLiveIndicator?.isVisible = isPlaying
                     if (isPlaying) {
                         errorState.isVisible = false
                         reconnectingState.isVisible = false
@@ -225,10 +225,11 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         mjpegSurface.isVisible = true
         usedLiveIndicator?.isVisible = true
         loadingState.isVisible = false
-        liveIndicator.isVisible = true
         streamStalledIndicator.isVisible = false
 
+        val old = mjpegSurface.drawable as? BitmapDrawable
         mjpegSurface.setImageBitmap(state.frame)
+        old?.bitmap?.recycle()
         applyAspectRatio(state.frame.width, state.frame.height)
 
         // Hide live indicator if no new frame arrives within 3s

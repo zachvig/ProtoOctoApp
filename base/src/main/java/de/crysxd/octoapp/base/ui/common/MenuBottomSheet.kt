@@ -9,9 +9,9 @@ import androidx.annotation.IdRes
 import androidx.annotation.MenuRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import de.crysxd.octoapp.base.R
@@ -19,6 +19,7 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.execute
+import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet.*
 import kotlinx.android.synthetic.main.item_menu.view.*
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
@@ -33,10 +34,12 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
         requireOctoActivity().showDialog(throwable)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = RecyclerView(requireContext())
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
+        inflater.inflate(R.layout.fragment_menu_bottom_sheet, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         view.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.window_background))
-        view.layoutManager = LinearLayoutManager(requireContext())
         adapter = MenuAdapter(requireContext(), getMenuRes()) {
             lifecycleScope.launch(exceptionHandler) {
                 dismiss()
@@ -45,8 +48,7 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
                 }
             }
         }
-        view.adapter = adapter
-        return view
+        menuRecycler.adapter = adapter
     }
 
     @MenuRes
@@ -54,6 +56,11 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
 
     fun setMenuItemVisibility(@IdRes id: Int, visible: Boolean) {
         adapter.setMenuItemVisibility(id, visible)
+    }
+
+    fun setTitle(title: CharSequence) {
+        menuTitle.text = title
+        menuTitle.isVisible = true
     }
 
     abstract suspend fun onMenuItemSelected(@IdRes id: Int): Boolean

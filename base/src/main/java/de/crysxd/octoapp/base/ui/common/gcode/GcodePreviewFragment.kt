@@ -170,7 +170,7 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
         layerProgressSeekBar.max = LAYER_PROGRESS_STEPS
         if (state.isLive || forceUpdateSlidersOnNext) {
             forceUpdateSlidersOnNext = false
-            layerSeekBar.progress = state.renderContext.layerNumber - 1
+            layerSeekBar.progress = state.renderContext.layerNumber
             layerProgressSeekBar.progress = (state.renderContext.layerProgress * LAYER_PROGRESS_STEPS).roundToInt()
         }
 

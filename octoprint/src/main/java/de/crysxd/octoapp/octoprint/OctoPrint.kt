@@ -41,7 +41,7 @@ class OctoPrint(
     val webUrl = "${rawWebUrl.removeSuffix("/")}/"
 
     companion object {
-        const val TESTED_SERVER_VERSION = "1.5.1"
+        const val TESTED_SERVER_VERSION = "1.5.2"
     }
 
     private val webSocket = EventWebSocket(

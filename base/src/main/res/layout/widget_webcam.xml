@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/OctoTheme.Widget.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clipToPadding="true"
-    android:elevation="0dp"
-    app:cardBackgroundColor="@color/black"
-    app:cardCornerRadius="@dimen/common_corner_radius"
-    app:cardElevation="0dp">
+    app:cardBackgroundColor="@color/black">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/webcamContent"
@@ -17,12 +15,12 @@
         android:outlineProvider="background">
 
         <de.crysxd.octoapp.base.ui.widget.webcam.WebcamView
+            android:id="@+id/webcamView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:id="@+id/webcamView"
+            app:layout_constraintDimensionRatio="H,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintDimensionRatio="H,16:9"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

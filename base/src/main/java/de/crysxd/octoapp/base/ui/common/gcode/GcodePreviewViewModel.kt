@@ -15,7 +15,6 @@ import de.crysxd.octoapp.base.usecase.GetCurrentPrinterProfileUseCase
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.octoprint.models.socket.Message
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -60,6 +59,11 @@ class GcodePreviewViewModel(
                     )
                 }
             }
+        }.retry(3) {
+            delay(500L)
+            true
+        }.catch {
+            emit(ViewState.Error(it))
         }
 
     private val internalViewState: Flow<ViewState> = combine(renderContextFlow, renderStyleFlow, printerProfileFlow) { s1, s2, s3 ->
@@ -85,7 +89,7 @@ class GcodePreviewViewModel(
         true
     }.catch { e ->
         emit(ViewState.Error(e))
-    }.flowOn(Dispatchers.Default)
+    }
 
     val viewState = merge(manualViewStateChannel.asFlow(), internalViewState)
         .asLiveData(viewModelScope.coroutineContext)

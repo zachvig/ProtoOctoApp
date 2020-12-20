@@ -69,7 +69,7 @@ class LocalGcodeFileDataSource(
     }.flowOn(Dispatchers.IO)
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    suspend fun cacheGcode(file: FileObject.File, gcode: Gcode) = withContext(Dispatchers.IO) {
+    override suspend fun cacheGcode(file: FileObject.File, gcode: Gcode) = withContext(Dispatchers.IO) {
         // Delete old file exists
         getCacheEntry(file.cacheKey)?.localFile?.delete()
 

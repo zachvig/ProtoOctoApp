@@ -10,10 +10,12 @@ interface GcodeFileDataSource {
 
     fun loadFile(file: FileObject.File, allowLargeFileDownloads: Boolean): Flow<LoadState>
 
+    suspend fun cacheGcode(file: FileObject.File, gcode: Gcode)
+
     sealed class LoadState {
         data class Loading(val progress: Float) : LoadState()
         object FailedLargeFileDownloadRequired : LoadState()
         data class Ready(val gcode: Gcode) : LoadState()
-        data class Failed(val exception: Exception) : LoadState()
+        data class Failed(val exception: Throwable) : LoadState()
     }
 }

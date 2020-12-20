@@ -1,21 +1,16 @@
 package de.crysxd.octoapp.base.ui.common.terminal
 
-import android.content.Context
 import android.content.SharedPreferences
-import android.text.InputType
 import androidx.core.content.edit
 import androidx.lifecycle.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.SerialCommunication
 import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
-import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
-import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.GetGcodeShortcutsUseCase
 import de.crysxd.octoapp.base.usecase.GetTerminalFiltersUseCase
@@ -24,7 +19,6 @@ import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message.EventMessage.SettingsUpdated
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -58,20 +52,19 @@ class TerminalViewModel(
         }
 
     private var clearedFrom: Date = Date(0)
-    private val gcodes = ConflatedBroadcastChannel<List<GcodeHistoryItem>>()
     private val printStateFlow = octoPrintProvider.passiveCurrentMessageFlow()
         .mapNotNull { it.state?.flags }
         .map { it.pausing || it.cancelling || it.printing }
-    val uiState = gcodes.asFlow()
-        .combine(printStateFlow) { gcodes, printing ->
-            UiState(printing, gcodes)
-        }
-        .distinctUntilChanged()
-        .asLiveData()
+    val uiState = flow {
+        emit(getGcodeShortcutsUseCase.execute(Unit))
+    }.flatMapLatest {
+        it
+    }.combine(printStateFlow) { gcodes, printing ->
+        UiState(printing, gcodes)
+    }.distinctUntilChanged().asLiveData()
 
     init {
         // Load gcode history and selected filters
-        updateGcodes()
         loadSelectedFilters()
 
         // Init terminal filters
@@ -118,39 +111,6 @@ class TerminalViewModel(
         }
     }
 
-    private fun updateGcodes() = viewModelScope.launch(coroutineExceptionHandler) {
-        gcodes.offer(getGcodeShortcutsUseCase.execute(Unit))
-    }
-
-    fun setFavorite(gcode: GcodeHistoryItem, favorite: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
-        gcodeHistoryRepository.setFavorite(gcode.command, favorite)
-        updateGcodes()
-    }
-
-    fun updateLabel(context: Context, gcode: GcodeHistoryItem) = viewModelScope.launch {
-        val result = NavigationResultMediator.registerResultCallback<String?>()
-
-        navContoller.navigate(
-            R.id.action_enter_value,
-            EnterValueFragmentArgs(
-                title = context.getString(R.string.enter_label),
-                hint = context.getString(R.string.label_for_x, gcode.oneLineCommand),
-                action = context.getString(R.string.set_lebel),
-                resultId = result.first,
-                value = gcode.label,
-                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES,
-                selectAll = true
-            ).toBundle()
-        )
-
-        withContext(Dispatchers.Default) {
-            result.second.asFlow().first()
-        }?.let { label ->
-            gcodeHistoryRepository.setLabelForGcode(command = gcode.command, label = label)
-            updateGcodes()
-        }
-    }
-
     private fun saveSelectedFilters() {
         sharedPreferences.edit {
             putString(KEY_SELECTED_TERMINAL_FILTERS, gson.toJson(selectedTerminalFilters))
@@ -179,17 +139,6 @@ class TerminalViewModel(
                 recordResponse = false
             )
         )
-        updateGcodes()
-    }
-
-    fun clearLabel(gcode: GcodeHistoryItem) = viewModelScope.launch(coroutineExceptionHandler) {
-        gcodeHistoryRepository.setLabelForGcode(gcode.command, null)
-        updateGcodes()
-    }
-
-    fun remove(gcode: GcodeHistoryItem) = viewModelScope.launch(coroutineExceptionHandler) {
-        gcodeHistoryRepository.removeEntry(gcode.command)
-        updateGcodes()
     }
 
     data class UiState(
