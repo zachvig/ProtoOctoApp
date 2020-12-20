@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menuToggleFavorite"
+        android:icon="@drawable/ic_round_push_pin_24"
+        android:title="@string/toggle_favorite" />
+
+    <item
+        android:id="@+id/menuInsert"
+        android:icon="@drawable/ic_baseline_content_paste_24"
+        android:title="@string/insert" />
+
+    <item
+        android:id="@+id/menuSetLabel"
+        android:icon="@drawable/ic_round_label_24"
+        android:title="@string/set_lebel" />
+
+    <item
+        android:id="@+id/menuClearLabel"
+        android:icon="@drawable/ic_round_label_off_24"
+        android:title="@string/clear_lebel" />
+
+    <item
+        android:id="@+id/menuRemove"
+        android:icon="@drawable/ic_round_delete_24"
+        android:title="@string/remove_shortcut" />
+
+</menu>

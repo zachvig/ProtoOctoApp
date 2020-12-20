@@ -4,10 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clipToPadding="true"
-    android:elevation="0dp"
-    app:cardCornerRadius="@dimen/common_corner_radius"
-    app:cardElevation="0dp">
+    style="@style/OctoTheme.Widget.Card">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -82,7 +79,7 @@
             android:layout_marginTop="@dimen/margin_1"
             android:background="@drawable/bg_card_button"
             android:padding="@dimen/margin_1"
-            android:text="Set"
+            android:text="@string/set"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewTarget" />

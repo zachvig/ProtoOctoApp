@@ -1,44 +1,41 @@
 package de.crysxd.octoapp.base.ui.widget.gcode
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
+import android.content.SharedPreferences
+import androidx.core.content.edit
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.material.snackbar.Snackbar
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.models.GcodeHistoryItem
-import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase.Response.RecordedResponse
 import de.crysxd.octoapp.base.usecase.GetGcodeShortcutsUseCase
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
-const val COMMAND_SEPARATOR = ":"
-
+@Suppress("EXPERIMENTAL_API_USAGE")
 class SendGcodeWidgetViewModel(
-    private val gcodeHistoryRepository: GcodeHistoryRepository,
+    private val sharedPreferences: SharedPreferences,
     private val getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase,
     private val sendGcodeCommandUseCase: ExecuteGcodeCommandUseCase
 ) : BaseViewModel() {
 
-    private val mutableGcodes = MutableLiveData<List<GcodeHistoryItem>>()
-    val gcodes = mutableGcodes.map { it }
+    private val tutorialHiddenPreferenceKey = "gcode_shortcut_tutorial_hidden"
+    val gcodes = flow {
+        emit(getGcodeShortcutsUseCase.execute(Unit))
+    }.flatMapLatest {
+        it
+    }.distinctUntilChanged().asLiveData()
 
-    init {
-        updateGcodes()
-    }
 
-    fun updateGcodes() = viewModelScope.launch(coroutineExceptionHandler) {
-        mutableGcodes.postValue(getGcodeShortcutsUseCase.execute(Unit))
-    }
+    fun isTutorialHidden() = sharedPreferences.getBoolean(tutorialHiddenPreferenceKey, false)
 
-    fun setFavorite(gcode: GcodeHistoryItem, favorite: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
-        gcodeHistoryRepository.setFavorite(gcode.command, favorite)
-        updateGcodes()
-    }
+    fun markTutorialHidden() = sharedPreferences.edit { putBoolean(tutorialHiddenPreferenceKey, true) }
 
-    fun sendGcodeCommand(command: String, updateViewAfterDone: Boolean = false) = viewModelScope.launch(coroutineExceptionHandler) {
+    fun sendGcodeCommand(command: String) = viewModelScope.launch(coroutineExceptionHandler) {
         val gcodeCommand = GcodeCommand.Batch(command.split("\n").toTypedArray())
 
         postMessage(
@@ -93,9 +90,5 @@ class SendGcodeWidgetViewModel(
                 actionText = { it.getString(R.string.show_logs) }
             )
         )
-
-        if (updateViewAfterDone) {
-            updateGcodes()
-        }
     }
 }

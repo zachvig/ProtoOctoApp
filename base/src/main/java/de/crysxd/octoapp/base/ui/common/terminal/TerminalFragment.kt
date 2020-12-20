@@ -1,15 +1,14 @@
 package de.crysxd.octoapp.base.ui.common.terminal
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.text.InputType
 import android.transition.AutoTransition
 import android.transition.TransitionManager
-import android.view.*
+import android.view.KeyEvent
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.LinearLayout
-import androidx.core.view.children
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
@@ -20,6 +19,7 @@ import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.common.gcodeshortcut.GcodeShortcutLayoutManager
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.synthetic.main.fragment_terminal.*
 import kotlinx.coroutines.Job
@@ -35,6 +35,7 @@ class TerminalFragment : BaseFragment(R.layout.fragment_terminal) {
     private var adapter: TerminalAdapter<*>? = null
     private var wasScrolledToBottom = false
     private var oldViewHeight = 0
+    private lateinit var shortcutLayoutManager: GcodeShortcutLayoutManager
     private val onLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
         // If we are scrolled to the bottom right now, make sure to restore the position
         // after the keyboard is shown
@@ -99,12 +100,26 @@ class TerminalFragment : BaseFragment(R.layout.fragment_terminal) {
             }
         }
 
+        shortcutLayoutManager = GcodeShortcutLayoutManager(
+            layout = buttonList,
+            scroller = buttonListScrollView,
+            onInsert = ::insertGcode,
+            onClicked = { viewModel.executeGcode(it.command) },
+            childFragmentManager = childFragmentManager
+        )
+
         // Gcode input
         gcodeInput.setOnActionListener { sendGcodeFromInput() }
         gcodeInput.editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
         gcodeInput.editText.maxLines = 100
         gcodeInput.editText.isSingleLine = false
         gcodeInput.editText.imeOptions = EditorInfo.IME_ACTION_UNSPECIFIED
+        gcodeInput.editText.setOnKeyListener { _, i, _ ->
+            if (i == KeyEvent.KEYCODE_BACK) {
+                gcodeInput.editText.clearFocus()
+                true
+            } else false
+        }
     }
 
     private fun sendGcodeFromInput() {
@@ -131,7 +146,6 @@ class TerminalFragment : BaseFragment(R.layout.fragment_terminal) {
                 scrollToBottom()
             }
         }
-
 
         buttonToggleStyled.setCompoundDrawablesRelativeWithIntrinsicBounds(
             if (adapter is StyledTerminalAdapter) {
@@ -161,7 +175,7 @@ class TerminalFragment : BaseFragment(R.layout.fragment_terminal) {
             TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
         }
 
-        showGcodes(if (uiState.printing) emptyList() else uiState.gcodes)
+        shortcutLayoutManager.showGcodes(if (uiState.printing) emptyList() else uiState.gcodes)
         gcodeInput.isVisible = !uiState.printing
         printingHint.isVisible = uiState.printing
 
@@ -169,69 +183,8 @@ class TerminalFragment : BaseFragment(R.layout.fragment_terminal) {
         initialLayout = uiState.gcodes.isEmpty()
     }
 
-    private fun showGcodes(gcodes: List<GcodeHistoryItem>) {
-        if (initialLayout) {
-            buttonList.children.forEach { it.tag = true }
-        }
-
-        // Remove all old views except the predefined buttons (those have tag == true)
-        val removedViews = mutableListOf<Button>()
-        buttonList.children.toList().forEach {
-            if (it.tag != true) {
-                buttonList.removeView(it)
-                removedViews.add(it as Button)
-            }
-        }
-
-        // Add new views
-        gcodes.forEach { gcode ->
-            val button = removedViews.firstOrNull { it.text.toString() == gcode.name }
-                ?: LayoutInflater.from(requireContext()).inflate(R.layout.widget_gcode_button, buttonList, false) as Button
-            button.text = gcode.name
-            button.layoutParams = (button.layoutParams as LinearLayout.LayoutParams).also {
-                it.marginStart = requireContext().resources.getDimensionPixelSize(R.dimen.margin_1)
-            }
-            button.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                if (gcode.isFavorite) {
-                    R.drawable.ic_round_push_pin_16
-                } else {
-                    0
-                }, 0, 0, 0
-            )
-            buttonList.addView(button, 0)
-            button.setOnClickListener {
-                viewModel.executeGcode(gcode.command)
-            }
-            button.setOnLongClickListener {
-                val options = arrayOf(R.string.toggle_favorite, R.string.insert, R.string.set_lebel, R.string.clear_lebel, R.string.remove_shortcut)
-                AlertDialog.Builder(requireContext())
-                    .setTitle(gcode.oneLineCommand)
-                    .setItems(options.map { getText(it) }.toTypedArray()) { _, i: Int ->
-                        when (options[i]) {
-                            R.string.toggle_favorite -> viewModel.setFavorite(gcode, !gcode.isFavorite)
-                            R.string.insert -> gcodeInput.editText.setText(gcode.command)
-                            R.string.set_lebel -> viewModel.updateLabel(requireContext(), gcode)
-                            R.string.clear_lebel -> viewModel.clearLabel(gcode)
-                            R.string.remove_shortcut -> viewModel.remove(gcode)
-                        }
-                    }
-                    .show()
-                true
-            }
-        }
-
-        // Scroll to end of list the first time we populate the buttons
-        if (initialLayout) {
-            buttonListScrollView.doOnNextLayout {
-                buttonListScrollView.scrollTo(buttonList.width, 0)
-            }
-        }
-        gcodeInput.editText.setOnKeyListener { _, i, _ ->
-            if (i == KeyEvent.KEYCODE_BACK) {
-                gcodeInput.editText.clearFocus()
-                true
-            } else false
-        }
+    private fun insertGcode(gcode: GcodeHistoryItem) {
+        gcodeInput.editText.setText(gcode.command)
     }
 
     override fun onResume() {
