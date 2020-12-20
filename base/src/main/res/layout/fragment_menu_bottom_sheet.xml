@@ -18,6 +18,12 @@
         tools:text="TextView"
         tools:visibility="visible" />
 
+    <ViewStub
+        android:id="@+id/premiumHeaderStub"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout="@layout/fragment_menu_bottom_sheet_premium_header" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/menuRecycler"
         android:layout_width="match_parent"

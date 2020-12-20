@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/premiumHeader"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_input"
+        android:gravity="center"
+        android:text="Thank you for supporting OctoApp!"
+        android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle" />
+
+</FrameLayout>

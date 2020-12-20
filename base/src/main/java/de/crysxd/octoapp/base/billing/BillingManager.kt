@@ -138,9 +138,23 @@ object BillingManager {
     private suspend fun handlePurchases(purchases: List<Purchase>): Unit {
         Timber.i("Handling ${purchases.size} purchases")
         try {
+            // Check if premium is active
+            val premiumActive = purchases.any {
+                Purchase.PurchaseState.PURCHASED == it.purchaseState
+            }
+            billingChannel.update {
+                it.copy(isPremiumActive = premiumActive)
+            }
+
+            // Activate purchases
             purchases.forEach { purchase ->
-                var sendPurchaseEvent = false
+                var purchaseEventSent = false
                 if (!purchase.isAcknowledged) {
+                    if (!purchaseEventSent) {
+                        purchaseEventSent = true
+                        billingEventChannel.offer(BillingEvent.PurchaseCompleted)
+                    }
+
                     val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
                         .setPurchaseToken(purchase.purchaseToken)
                     val billingResult = withContext(Dispatchers.IO) {
@@ -151,20 +165,10 @@ object BillingManager {
                     } else {
                         Timber.i("Confirmed purchase ${purchase.orderId}")
                     }
-                    sendPurchaseEvent = true
-                }
-
-                if (sendPurchaseEvent) {
-                    billingEventChannel.offer(BillingEvent.PurchaseCompleted)
                 }
             }
 
-            val premiumActive = purchases.any {
-                Purchase.PurchaseState.PURCHASED == it.purchaseState
-            }
-            billingChannel.update {
-                it.copy(isPremiumActive = premiumActive)
-            }
+
         } catch (e: Exception) {
             Timber.e(e)
         }
