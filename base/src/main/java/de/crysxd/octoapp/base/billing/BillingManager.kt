@@ -15,7 +15,6 @@ import timber.log.Timber
 @Suppress("EXPERIMENTAL_API_USAGE")
 object BillingManager {
 
-    private val pendingPurchases = mutableListOf<Purchase>()
     private val billingEventChannel = ConflatedBroadcastChannel<BillingEvent>()
     private val billingChannel = ConflatedBroadcastChannel(BillingData())
     private val purchasesUpdateListener = PurchasesUpdatedListener { billingResult, purchases ->
@@ -171,32 +170,31 @@ object BillingManager {
         }
     }
 
-    private fun reattemptPurchaseHandling(purchases: List<Purchase>) {
-        Timber.i("Reattempting purchase handling")
-        pendingPurchases.clear()
-        pendingPurchases.addAll(purchases)
-    }
-
     private fun logError(description: String, billingResult: BillingResult?) {
         Timber.e(Exception("$description. responseCode=${billingResult?.responseCode} message=${billingResult?.debugMessage}"))
     }
 
     private fun queryPurchases() = GlobalScope.launch(Dispatchers.IO) {
-
-        suspend fun queryPurchases(@BillingClient.SkuType type: String) {
+        suspend fun queryPurchases(@BillingClient.SkuType type: String): List<Purchase> {
             val purchaseResult = billingClient?.queryPurchases(type)
             if (purchaseResult?.billingResult?.responseCode != BillingClient.BillingResponseCode.OK) {
                 logError("Unable to query purchases", purchaseResult?.billingResult)
             } else purchaseResult.purchasesList?.let {
-                handlePurchases(it)
+                return it
             }
+
+            return emptyList()
         }
 
         try {
             if (billingClient?.isReady == true) {
                 Timber.i("Querying purchases")
-                queryPurchases(BillingClient.SkuType.INAPP)
-                queryPurchases(BillingClient.SkuType.SUBS)
+                val purchases = listOf(
+                    queryPurchases(BillingClient.SkuType.INAPP),
+                    queryPurchases(BillingClient.SkuType.SUBS)
+                ).flatten()
+                Timber.i("Found ${purchases.size} purchases")
+                handlePurchases(purchases)
             } else {
                 Timber.i("Billing client not ready, skipping purchase query")
             }
@@ -207,12 +205,6 @@ object BillingManager {
 
     fun onResume() = GlobalScope.launch {
         Timber.i("Resuming billing")
-
-        if (pendingPurchases.isNotEmpty()) {
-            handlePurchases(pendingPurchases)
-            pendingPurchases.clear()
-        }
-
         queryPurchases()
     }
 }
