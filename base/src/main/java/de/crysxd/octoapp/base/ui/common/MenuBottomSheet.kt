@@ -14,19 +14,20 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet.*
 import kotlinx.android.synthetic.main.item_menu.view.*
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -54,6 +55,12 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
             }
         }
         menuRecycler.adapter = adapter
+
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            BillingManager.billingFlow().collectLatest {
+                setMenuItemVisibility(R.id.menuSupportOctoApp, it.isBillingAvailable && !it.isPremiumActive)
+            }
+        }
     }
 
     @MenuRes

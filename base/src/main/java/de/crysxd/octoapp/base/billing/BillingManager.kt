@@ -52,7 +52,7 @@ object BillingManager {
                         updateSku()
                         queryPurchases()
                         billingChannel.update {
-                            it.copy(billingAvailable = true)
+                            it.copy(isBillingAvailable = true)
                         }
                     }
                 }
@@ -61,7 +61,7 @@ object BillingManager {
                     Timber.i("Billing disconnected")
                     billingClient = null
                     billingChannel.update {
-                        it.copy(billingAvailable = false)
+                        it.copy(isBillingAvailable = false)
                     }
                 }
             })
