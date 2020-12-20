@@ -142,8 +142,11 @@ object BillingManager {
             val premiumActive = purchases.any {
                 Purchase.PurchaseState.PURCHASED == it.purchaseState
             }
+            val fromSubscription = purchases.any {
+                Purchase.PurchaseState.PURCHASED == it.purchaseState && it.sku.contains("_sub_")
+            }
             billingChannel.update {
-                it.copy(isPremiumActive = premiumActive)
+                it.copy(isPremiumActive = premiumActive, isPremiumFromSubscription = fromSubscription)
             }
 
             // Activate purchases

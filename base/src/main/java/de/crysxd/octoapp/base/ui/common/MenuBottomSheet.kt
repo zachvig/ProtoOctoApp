@@ -1,6 +1,8 @@
 package de.crysxd.octoapp.base.ui.common
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.*
@@ -26,6 +28,7 @@ import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet.*
 import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet_premium_header.*
+import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet_premium_header.view.*
 import kotlinx.android.synthetic.main.item_menu.view.*
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.collectLatest
@@ -64,6 +67,21 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
                 val showHeader = adapter.containsMenuItem(R.id.menuSupportOctoApp) && it.isPremiumActive
                 premiumHeaderStub?.isVisible = showHeader
                 premiumHeader?.isVisible = showHeader
+                premiumHeader?.chevron?.isVisible = it.isPremiumFromSubscription
+                if (it.isPremiumFromSubscription) {
+                    premiumHeader?.setOnClickListener {
+                        try {
+                            startActivity(
+                                Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse("https://play.google.com/store/account/subscriptions?package=${requireContext().packageName}")
+                                )
+                            )
+                        } catch (e: Exception) {
+                            Timber.e(e)
+                        }
+                    }
+                }
             }
         }
     }
@@ -133,7 +151,7 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
             inflateMenu()
         }
 
-        fun containsMenuItem(@IdRes id: Int) = menuItems.any { it.itemId == id }
+        fun containsMenuItem(@IdRes id: Int) = getMenuItems().any { it.itemId == id }
 
         fun setMenuItemVisibility(@IdRes id: Int, visible: Boolean) {
             if (visible) {
@@ -145,16 +163,22 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
             inflateMenu()
         }
 
-        fun inflateMenu() {
+        private fun inflateMenu() {
             val menu = PopupMenu(context, null).menu
             MenuInflater(context).inflate(menuRes, menu)
             menuItems.clear()
-            menuItems.addAll((0.until(menu.size())).map { i ->
-                menu[i]
-            }.filter {
+            menuItems.addAll(getMenuItems().filter {
                 !hiddenItems.contains(it.itemId) && it.isVisible
             })
             notifyDataSetChanged()
+        }
+
+        private fun getMenuItems(): List<MenuItem> {
+            val menu = PopupMenu(context, null).menu
+            MenuInflater(context).inflate(menuRes, menu)
+            return (0.until(menu.size())).map { i ->
+                menu[i]
+            }
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MenuItemViewHolder(parent)
