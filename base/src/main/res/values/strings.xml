@@ -124,4 +124,5 @@
         <item quantity="one">One year</item>
         <item quantity="other">%d years</item>
     </plurals>
+    <string name="free_trial_x">Free trial: %s</string>
 </resources>

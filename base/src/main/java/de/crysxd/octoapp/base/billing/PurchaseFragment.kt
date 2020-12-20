@@ -24,6 +24,7 @@ import de.crysxd.octoapp.base.ui.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
+import de.crysxd.octoapp.base.utils.LongDuration
 import kotlinx.android.synthetic.main.fragment_purchase.*
 import kotlinx.android.synthetic.main.fragment_purchase_init_state.*
 import kotlinx.android.synthetic.main.fragment_purchase_sku_state.*
@@ -101,12 +102,16 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
             Firebase.remoteConfig.getString("sku_list_title"),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
-        state.billingData.availableSku.forEach {
+        state.billingData.availableSku.forEach { details ->
             val view = View.inflate(requireContext(), R.layout.fragment_purchase_sku_state_option, null)
-            view.price.text = it.price
-            view.buttonSelect.text = state.names.getOrElse(it.sku) { it.title }
+            view.price.text = details.price
+            view.buttonSelect.text = state.names.getOrElse(details.sku) { details.title }
+            view.details.text = LongDuration.parse(details.freeTrialPeriod)?.format(requireContext())?.let {
+                getString(R.string.free_trial_x, it)
+            }
+            view.details.isVisible = !view.details.text.isNullOrBlank()
             view.badge.setImageResource(
-                when (state.badges[it.sku]) {
+                when (state.badges[details.sku]) {
                     PurchaseViewModel.Badge.NoBadge -> 0
                     PurchaseViewModel.Badge.Popular -> R.drawable.ic_badge_popular
                     PurchaseViewModel.Badge.BestValue -> R.drawable.ic_badge_best_value

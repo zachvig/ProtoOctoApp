@@ -10,20 +10,34 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="150dp">
 
         <TextView
             android:id="@+id/price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/margin_2"
-            android:text="6 Euro"
             android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
             android:textColor="@color/dark_text"
-            app:layout_constraintBottom_toTopOf="@id/buttonSelect"
+            app:layout_constraintBottom_toTopOf="@+id/details"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="6 Euro" />
+
+        <TextView
+            android:id="@+id/details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Label"
+            android:textColor="@color/normal_text"
+            app:layout_constraintBottom_toTopOf="@+id/buttonSelect"
+            app:layout_constraintEnd_toEndOf="@+id/price"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/price"
+            app:layout_constraintTop_toBottomOf="@+id/price"
+            tools:text="1 week free trial" />
 
         <Button
             android:id="@+id/buttonSelect"
@@ -31,8 +45,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_card_button"
-            android:text="Support for 1 month"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="Support for 1 month" />
 
         <ImageView
             android:id="@+id/badge"
