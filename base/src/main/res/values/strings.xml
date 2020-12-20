@@ -125,4 +125,8 @@
         <item quantity="other">%d years</item>
     </plurals>
     <string name="free_trial_x">Free trial: %s</string>
+    <string name="purchase_dialog_title">Thank you!</string>
+    <string name="purchase_dialog_subtitle">All features have been unlocked</string>
+    <string name="purchase_dialog_text">Your support allows me to continue the development of OctoApp! If you have any suggestions, issues or thoughts, please reach out to %s at any time!</string>
+    <string name="purchase_dialog_button">Back to the app</string>
 </resources>

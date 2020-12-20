@@ -17,6 +17,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.billing.BillingEvent
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.billing.PurchaseConfirmationDialog
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.OctoActivity
@@ -27,6 +28,7 @@ import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
@@ -124,9 +126,10 @@ class MainActivity : OctoActivity() {
         BillingManager.onResume()
         lifecycleScope.launchWhenResumed {
             BillingManager.billingEventFlow().collectLatest {
+                delay(300L)
                 it.consume { event ->
                     when (event) {
-                        BillingEvent.PurchaseCompleted -> showDialog(message = "Thanks for supporting OctoApp! You rock!", positiveButton = "Ok")
+                        BillingEvent.PurchaseCompleted -> PurchaseConfirmationDialog().show(supportFragmentManager, "purchase-confirmation")
                     }
                 }
             }

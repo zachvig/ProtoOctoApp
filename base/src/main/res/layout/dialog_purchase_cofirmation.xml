@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/imageView2"
+        layout="@layout/purchase_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:importantForAccessibility="no"
+        android:src="@drawable/purchase_header_main"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <SurfaceView
+        android:id="@+id/backgroundSurface"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+
+    <View
+        android:id="@+id/backgroundSurfaceOverlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/window_background"
+        app:layout_constraintBottom_toBottomOf="@id/backgroundSurface"
+        app:layout_constraintEnd_toEndOf="@id/backgroundSurface"
+        app:layout_constraintStart_toStartOf="@id/backgroundSurface"
+        app:layout_constraintTop_toTopOf="@id/backgroundSurface" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_3"
+        android:layout_marginTop="@dimen/margin_3"
+        android:gravity="center"
+        android:text="@string/purchase_dialog_title"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title.Large"
+        android:textColor="@color/dark_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_3"
+        android:layout_marginTop="@dimen/margin_3"
+        android:background="@drawable/bg_input"
+        android:gravity="center"
+        android:padding="@dimen/margin_2"
+        android:text="@string/purchase_dialog_subtitle"
+        android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+        android:textColor="@color/primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_3"
+        android:layout_marginTop="@dimen/margin_2"
+        android:gravity="center"
+        android:text="@string/purchase_dialog_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_2"
+        android:layout_marginTop="@dimen/margin_3"
+        android:layout_marginBottom="@dimen/margin_2"
+        android:text="@string/purchase_dialog_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/content" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

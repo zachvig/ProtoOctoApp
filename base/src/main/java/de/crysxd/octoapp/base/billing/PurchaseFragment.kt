@@ -30,6 +30,7 @@ import kotlinx.android.synthetic.main.fragment_purchase.*
 import kotlinx.android.synthetic.main.fragment_purchase_init_state.*
 import kotlinx.android.synthetic.main.fragment_purchase_sku_state.*
 import kotlinx.android.synthetic.main.fragment_purchase_sku_state_option.view.*
+import kotlinx.android.synthetic.main.purchase_header.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.absoluteValue

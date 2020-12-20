@@ -74,4 +74,8 @@
         <key>sku_list_title</key>
         <value>High Eight! Thanks for your support! You rock!</value>
     </entry>
+    <entry>
+        <key>purchase_confirmation_background_video</key>
+        <value></value>
+    </entry>
 </defaultsMap>
