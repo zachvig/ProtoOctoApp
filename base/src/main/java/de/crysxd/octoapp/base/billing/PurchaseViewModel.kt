@@ -4,6 +4,7 @@ import androidx.lifecycle.asLiveData
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.utils.LongDuration
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combine
@@ -19,8 +20,7 @@ class PurchaseViewModel : BaseViewModel() {
             viewState.copy(
                 billingData = billingData.copy(
                     availableSku = billingData.availableSku.sortedBy { details ->
-                        // This is rough....but does the job for P1M, P6M and P1Y
-                        details.subscriptionPeriod.takeUnless { it.isNotEmpty() }?.reversed() ?: "ZZZ"
+                        LongDuration.parse(details.subscriptionPeriod)?.inSeconds() ?: Long.MAX_VALUE
                     }
                 ),
                 names = try {

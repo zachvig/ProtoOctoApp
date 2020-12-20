@@ -29,7 +29,6 @@ import kotlinx.android.synthetic.main.fragment_purchase_init_state.*
 import kotlinx.android.synthetic.main.fragment_purchase_sku_state.*
 import kotlinx.android.synthetic.main.fragment_purchase_sku_state_option.view.*
 import kotlinx.coroutines.delay
-import timber.log.Timber
 import kotlin.math.absoluteValue
 
 class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScreen {
@@ -56,8 +55,6 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
             val content = listOf<View?>(initState, skuState).firstOrNull { it?.isVisible == true }
             val padding = statusBarScrim.height + requireContext().resources.getDimension(R.dimen.margin_4)
             content?.updatePadding(top = (padding * collapseProgress).toInt())
-
-            Timber.i("padding=$padding progress=$collapseProgress top=${(padding * collapseProgress).toInt()}")
 
             if (!eventSent && verticalOffset != 0) {
                 eventSent = true

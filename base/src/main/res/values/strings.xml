@@ -108,4 +108,20 @@
     <string name="shortcut_tutorial_line2">Shortcuts are automatically added when you send commands in terminal</string>
     <string name="one_gcode_per_line">One Gcode command per line</string>
     <string name="support_octoapp">Support OctoApp</string>
+    <plurals name="x_days">
+        <item quantity="one">One day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="x_weeks">
+        <item quantity="one">One week</item>
+        <item quantity="other">%d weeks</item>
+    </plurals>
+    <plurals name="x_months">
+        <item quantity="one">One month</item>
+        <item quantity="other">%d months</item>
+    </plurals>
+    <plurals name="x_years">
+        <item quantity="one">One year</item>
+        <item quantity="other">%d years</item>
+    </plurals>
 </resources>
