@@ -16,6 +16,6 @@ interface GcodeFileDataSource {
         data class Loading(val progress: Float) : LoadState()
         object FailedLargeFileDownloadRequired : LoadState()
         data class Ready(val gcode: Gcode) : LoadState()
-        data class Failed(val exception: Exception) : LoadState()
+        data class Failed(val exception: Throwable) : LoadState()
     }
 }

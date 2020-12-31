@@ -63,7 +63,7 @@ class GcodeParser {
             return line.substring(mappedStart until mappedEnd).toFloat()
         } catch (e: NumberFormatException) {
             Timber.e(e, "Failed to extract `$label` from `$line`")
-            throw e
+            return 0f
         }
     }
 

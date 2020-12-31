@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Point
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.GestureDetector
@@ -226,7 +227,9 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         loadingState.isVisible = false
         streamStalledIndicator.isVisible = false
 
+        val old = mjpegSurface.drawable as? BitmapDrawable
         mjpegSurface.setImageBitmap(state.frame)
+        old?.bitmap?.recycle()
         applyAspectRatio(state.frame.width, state.frame.height)
 
         // Hide live indicator if no new frame arrives within 3s

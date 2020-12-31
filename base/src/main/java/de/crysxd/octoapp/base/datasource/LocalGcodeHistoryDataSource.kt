@@ -21,8 +21,12 @@ class LocalGcodeHistoryDataSource(
         }
     }
 
-    override fun get(): List<GcodeHistoryItem> = gson.fromJson(
-        sharedPreferences.getString(KEY, "[]"),
-        object : TypeToken<List<GcodeHistoryItem>>() {}.type
-    ) ?: emptyList()
+    override fun get(): List<GcodeHistoryItem>? = if (sharedPreferences.contains(KEY)) {
+        gson.fromJson(
+            sharedPreferences.getString(KEY, "[]"),
+            object : TypeToken<List<GcodeHistoryItem>>() {}.type
+        )
+    } else {
+        null
+    }
 }
