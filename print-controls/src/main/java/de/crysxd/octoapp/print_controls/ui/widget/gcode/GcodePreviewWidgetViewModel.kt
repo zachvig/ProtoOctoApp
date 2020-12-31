@@ -52,11 +52,12 @@ class GcodePreviewWidgetViewModel(
         octoPrintRepository.instanceInformationFlow(),
         printInfo
     ) { enabled, download, profile, instanceInfo, printInfo ->
+        val style = generateRenderStyleUseCase.execute(instanceInfo)
         when {
-            !enabled -> RenderData(featureEnabled = false)
+            !enabled -> RenderData(renderStyle = style, featureEnabled = false)
             else -> RenderData(
                 featureEnabled = true,
-                renderStyle = generateRenderStyleUseCase.execute(instanceInfo),
+                renderStyle = style,
                 gcode = download,
                 printerProfile = profile,
                 printInfo = printInfo
