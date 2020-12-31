@@ -9,12 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.applyCanvas
+import androidx.core.os.bundleOf
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.transition.TransitionManager
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.datasource.GcodeFileDataSource
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
@@ -165,7 +167,8 @@ class GcodePreviewWidget(parent: Fragment) : OctoWidget(parent) {
         }
 
         view.buttonEnable.setOnClickListener {
-
+            OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "gcode_live"))
+            it.findNavController().navigate(R.id.action_show_purchase_flow)
         }
     }
 
