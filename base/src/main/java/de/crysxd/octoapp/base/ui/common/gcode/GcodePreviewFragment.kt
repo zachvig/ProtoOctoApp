@@ -16,7 +16,7 @@ import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.di.injectViewModel
+import de.crysxd.octoapp.base.di.injectActivityViewModel
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
@@ -49,7 +49,7 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
     private val file get() = requireArguments().getSerializable(ARG_FILE) as FileObject.File
     private val useLive get() = requireArguments().getBoolean(ARG_USE_LIVE, true)
     private val isStandaloneScreen get() = requireArguments().getBoolean(ARG_STANDALONE_SCREEN)
-    private val viewModel: GcodePreviewViewModel by injectViewModel(Injector.get().viewModelFactory())
+    private val viewModel: GcodePreviewViewModel by injectActivityViewModel(Injector.get().viewModelFactory())
     private val seekBarListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
         override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
@@ -62,6 +62,8 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.downloadGcode(file, false)
 
         if (useLive) {
             viewModel.useLiveProgress()
@@ -136,9 +138,6 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
 
     override fun onResume() {
         super.onResume()
-        if (viewModel.viewState.value !is GcodePreviewViewModel.ViewState.DataReady) {
-            viewModel.downloadGcode(file, false)
-        }
     }
 
     private fun updateViewState(state: GcodePreviewViewModel.ViewState) {

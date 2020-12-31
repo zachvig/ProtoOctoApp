@@ -20,6 +20,7 @@ import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class GcodePreviewViewModel(
@@ -30,7 +31,11 @@ class GcodePreviewViewModel(
     private val gcodeFileRepository: GcodeFileRepository
 ) : ViewModel() {
 
-    private val featureEnabledChannel = ConflatedBroadcastChannel<Boolean>()
+    init {
+        Timber.i("New instance")
+    }
+
+    private var filePendingToLoad: FileObject.File? = null
     private val gcodeChannel = ConflatedBroadcastChannel<Flow<GcodeFileDataSource.LoadState>?>()
     private val contextFactoryChannel = ConflatedBroadcastChannel<(Message.CurrentMessage) -> Pair<GcodeRenderContextFactory, Boolean>>()
     private val manualViewStateChannel = ConflatedBroadcastChannel<ViewState>(ViewState.Loading())
@@ -41,6 +46,21 @@ class GcodePreviewViewModel(
     private val printerProfileFlow = flow {
         emit(getCurrentPrinterProfileUseCase.execute(Unit))
     }
+
+    private val featureEnabledFlow: Flow<Boolean> = BillingManager.billingFlow().map {
+        val enabled = BillingManager.isFeatureEnabled("gcode_preview")
+        Timber.i("Feature enabled: $enabled")
+        enabled
+    }.onEach {
+        filePendingToLoad?.let {
+            filePendingToLoad = null
+            downloadGcode(it, true)
+        }
+    }
+
+    val activeFile = octoPrintProvider.passiveCurrentMessageFlow().mapNotNull {
+        it.job?.file ?: return@mapNotNull null
+    }.distinctUntilChangedBy { it.path }.asLiveData()
 
     private val renderContextFlow: Flow<ViewState> = gcodeChannel.asFlow().filterNotNull().flatMapLatest { it }
         .combine(octoPrintProvider.passiveCurrentMessageFlow()) { gcodeState, currentMessage ->
@@ -68,7 +88,7 @@ class GcodePreviewViewModel(
         }.distinctUntilChanged()
 
     private val internalViewState: Flow<ViewState> =
-        combine(featureEnabledChannel.asFlow(), renderContextFlow, renderStyleFlow, printerProfileFlow) { featureEnabled, s1, renderStyle, printerProfile ->
+        combine(featureEnabledFlow, renderContextFlow, renderStyleFlow, printerProfileFlow) { featureEnabled, s1, renderStyle, printerProfile ->
             when {
                 !featureEnabled -> ViewState.FeatureDisabled(renderStyle)
                 s1 is ViewState.DataReady -> s1.copy(renderStyle = renderStyle, printerProfile = printerProfile)
@@ -87,11 +107,11 @@ class GcodePreviewViewModel(
     fun downloadGcode(file: FileObject.File, allowLargeFileDownloads: Boolean) = viewModelScope.launch {
         gcodeChannel.offer(flowOf(GcodeFileDataSource.LoadState.Loading(0f)))
 
-        if (BillingManager.isFeatureEnabled("gcode_preview")) {
-            featureEnabledChannel.offer(true)
+        if (featureEnabledFlow.first()) {
             gcodeChannel.offer(gcodeFileRepository.loadFile(file, allowLargeFileDownloads))
         } else {
-            featureEnabledChannel.offer(false)
+            // Feature currently disabled. Store the file to be loaded once the feature got enabled.
+            filePendingToLoad = file
         }
     }
 
