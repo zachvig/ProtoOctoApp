@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
@@ -174,6 +175,10 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
 
             is GcodePreviewViewModel.ViewState.FeatureDisabled -> {
                 loadingGroup.isVisible = false
+                preview.setImageResource(state.renderStyle.background)
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    preview.foreground = ContextCompat.getDrawable(requireContext(), R.drawable.gcode_preview)
+                }
                 Timber.i("Feature disabled")
             }
         }

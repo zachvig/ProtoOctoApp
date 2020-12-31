@@ -30,15 +30,16 @@ class GcodePreviewViewModel(
     private val gcodeFileRepository: GcodeFileRepository
 ) : ViewModel() {
 
+    private val featureEnabledChannel = ConflatedBroadcastChannel<Boolean>()
     private val gcodeChannel = ConflatedBroadcastChannel<Flow<GcodeFileDataSource.LoadState>?>()
     private val contextFactoryChannel = ConflatedBroadcastChannel<(Message.CurrentMessage) -> Pair<GcodeRenderContextFactory, Boolean>>()
     private val manualViewStateChannel = ConflatedBroadcastChannel<ViewState>(ViewState.Loading())
-    private val renderStyleFlow: Flow<ViewState> = octoPrintRepository.instanceInformationFlow().map {
-        ViewState.DataReady(renderStyle = generateRenderStyleUseCase.execute(it))
+    private val renderStyleFlow = octoPrintRepository.instanceInformationFlow().map {
+        generateRenderStyleUseCase.execute(it)
     }
 
-    private val printerProfileFlow: Flow<ViewState> = flow {
-        emit(ViewState.DataReady(printerProfile = getCurrentPrinterProfileUseCase.execute(Unit)))
+    private val printerProfileFlow = flow {
+        emit(getCurrentPrinterProfileUseCase.execute(Unit))
     }
 
     private val renderContextFlow: Flow<ViewState> = gcodeChannel.asFlow().filterNotNull().flatMapLatest { it }
@@ -67,23 +68,11 @@ class GcodePreviewViewModel(
         }.distinctUntilChanged()
 
     private val internalViewState: Flow<ViewState> =
-        combine(renderContextFlow, renderStyleFlow, printerProfileFlow) { s1, s2, s3 ->
-            val all = listOf(s1, s2, s3)
-            val error = all.mapNotNull { it as? ViewState.Error }.firstOrNull()
-            val loadingProgress = all.mapNotNull { it as? ViewState.Loading }.minByOrNull { it.progress }
-
+        combine(featureEnabledChannel.asFlow(), renderContextFlow, renderStyleFlow, printerProfileFlow) { featureEnabled, s1, renderStyle, printerProfile ->
             when {
-                error != null -> error
-                all.any { it is ViewState.LargeFileDownloadRequired } -> ViewState.LargeFileDownloadRequired
-                loadingProgress != null -> ViewState.Loading(loadingProgress.progress)
-                else /* All success*/ -> all.map { it as ViewState.DataReady }.reduce { o1, o2 ->
-                    ViewState.DataReady(
-                        renderStyle = o1.renderStyle ?: o2.renderStyle,
-                        renderContext = o1.renderContext ?: o2.renderContext,
-                        printerProfile = o1.printerProfile ?: o2.printerProfile,
-                        fromUser = o1.fromUser ?: o2.fromUser,
-                    )
-                }
+                !featureEnabled -> ViewState.FeatureDisabled(renderStyle)
+                s1 is ViewState.DataReady -> s1.copy(renderStyle = renderStyle, printerProfile = printerProfile)
+                else -> s1
             }
         }.retry(3) {
             delay(500L)
@@ -96,11 +85,13 @@ class GcodePreviewViewModel(
         .asLiveData(viewModelScope.coroutineContext)
 
     fun downloadGcode(file: FileObject.File, allowLargeFileDownloads: Boolean) = viewModelScope.launch {
+        gcodeChannel.offer(flowOf(GcodeFileDataSource.LoadState.Loading(0f)))
+
         if (BillingManager.isFeatureEnabled("gcode_preview")) {
-            manualViewStateChannel.offer(ViewState.Loading())
+            featureEnabledChannel.offer(true)
             gcodeChannel.offer(gcodeFileRepository.loadFile(file, allowLargeFileDownloads))
         } else {
-            manualViewStateChannel.offer(ViewState.FeatureDisabled)
+            featureEnabledChannel.offer(false)
         }
     }
 
@@ -124,7 +115,7 @@ class GcodePreviewViewModel(
 
     sealed class ViewState {
         data class Loading(val progress: Float = 0f) : ViewState()
-        object FeatureDisabled : ViewState()
+        data class FeatureDisabled(val renderStyle: RenderStyle) : ViewState()
         object LargeFileDownloadRequired : ViewState()
         data class Error(val exception: Throwable) : ViewState()
         data class DataReady(

@@ -276,7 +276,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/print_bed_ender" />
+        tools:foreground="@drawable/gcode_preview"
+        tools:srcCompat="@drawable/print_bed_ender" />
 
     <TextView
         android:id="@+id/textViewDisbaledDescription"
@@ -284,7 +285,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_3"
         android:gravity="center"
-        android:text="This feature allows you to preview Gcode before starting to print and observe the progress live during printing."
+        android:text="@string/gcode_preview_description"
         app:layout_constraintBottom_toTopOf="@+id/buttonEnableFeature"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -296,7 +297,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_2"
         android:gravity="center"
-        android:text="Gcode Preview"
+        android:text="@string/gcode_preview"
         android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
         android:textColor="@color/dark_text"
         app:layout_constraintBottom_toTopOf="@+id/textViewDisbaledDescription"
@@ -312,7 +313,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_2"
-        android:text="Enable Gcode Preview"
+        android:text="@string/enable_gcode_preview"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

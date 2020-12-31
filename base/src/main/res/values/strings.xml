@@ -131,4 +131,7 @@
     <string name="purchase_dialog_button">Back to the app</string>
     <string name="billing_unsupported_title">Only supported for apps from Google Play</string>
     <string name="billing_unsupported_detail">Only apps downlaoded from Google Play can activate features. Please reach out to hello@octoapp.eu!</string>
+    <string name="enable_gcode_preview">Enable Gcode Preview</string>
+    <string name="gcode_preview">Gcode Preview</string>
+    <string name="gcode_preview_description">This feature allows you to preview Gcode before starting to print and observe the progress live during printing.</string>
 </resources>
