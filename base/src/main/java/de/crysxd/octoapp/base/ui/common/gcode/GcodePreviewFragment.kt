@@ -10,7 +10,9 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
@@ -60,7 +62,6 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.downloadGcode(file, false)
         if (useLive) {
             viewModel.useLiveProgress()
         } else {
@@ -101,6 +102,11 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
             }
         }
 
+        buttonEnableFeature.setOnClickListener {
+            OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "gcode_preview"))
+            findNavController().navigate(R.id.action_show_purchase_flow)
+        }
+
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewModel.viewState.observe(viewLifecycleOwner, ::updateViewState)
         }
@@ -127,12 +133,18 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.downloadGcode(file, false)
+    }
+
     private fun updateViewState(state: GcodePreviewViewModel.ViewState) {
         TransitionManager.beginDelayedTransition(view as ViewGroup)
 
         renderGroup.isVisible = state is GcodePreviewViewModel.ViewState.DataReady
         largeFileGroup.isVisible = state is GcodePreviewViewModel.ViewState.LargeFileDownloadRequired
         errorGroup.isVisible = state is GcodePreviewViewModel.ViewState.Error
+        featureDisabledGroup.isVisible = state is GcodePreviewViewModel.ViewState.FeatureDisabled
 
         when (state) {
             is GcodePreviewViewModel.ViewState.Loading -> {
@@ -156,6 +168,11 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
             is GcodePreviewViewModel.ViewState.LargeFileDownloadRequired -> {
                 loadingGroup.isVisible = false
                 Timber.i("Large download required")
+            }
+
+            is GcodePreviewViewModel.ViewState.FeatureDisabled -> {
+                loadingGroup.isVisible = false
+                Timber.i("Feature disabled")
             }
         }
     }

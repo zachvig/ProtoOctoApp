@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
@@ -88,6 +89,7 @@ open class ViewModelModule {
         octoPrintProvider = octoPrintProvider,
         generateRenderStyleUseCase = generateRenderStyleUseCase,
         getCurrentPrinterProfileUseCase = getCurrentPrinterProfileUseCase,
+        billingManager = BillingManager,
         gcodeFileRepository = gcodeFileRepository,
         octoPrintRepository = octoPrintRepository,
     )

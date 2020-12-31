@@ -110,11 +110,11 @@ object BillingManager {
         }
 
         val result = billingClient?.querySkuDetails(params)
-        if (result?.billingResult?.responseCode == BillingClient.BillingResponseCode.OK) {
-            return result.skuDetailsList ?: emptyList()
+        return if (result?.billingResult?.responseCode == BillingClient.BillingResponseCode.OK) {
+            result.skuDetailsList ?: emptyList()
         } else {
             logError("SKU update failed for $params", result?.billingResult)
-            return emptyList()
+            emptyList()
         }
     }
 

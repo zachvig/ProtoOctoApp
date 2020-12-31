@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.datasource.GcodeFileDataSource
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderContextFactory
 import de.crysxd.octoapp.base.gcode.render.models.GcodeRenderContext
@@ -32,7 +33,6 @@ class GcodePreviewViewModel(
     private val gcodeChannel = ConflatedBroadcastChannel<Flow<GcodeFileDataSource.LoadState>?>()
     private val contextFactoryChannel = ConflatedBroadcastChannel<(Message.CurrentMessage) -> Pair<GcodeRenderContextFactory, Boolean>>()
     private val manualViewStateChannel = ConflatedBroadcastChannel<ViewState>(ViewState.Loading())
-
     private val renderStyleFlow: Flow<ViewState> = octoPrintRepository.instanceInformationFlow().map {
         ViewState.DataReady(renderStyle = generateRenderStyleUseCase.execute(it))
     }
@@ -64,32 +64,34 @@ class GcodePreviewViewModel(
             true
         }.catch {
             emit(ViewState.Error(it))
-        }
+        }.distinctUntilChanged()
 
-    private val internalViewState: Flow<ViewState> = combine(renderContextFlow, renderStyleFlow, printerProfileFlow) { s1, s2, s3 ->
-        val all = listOf(s1, s2, s3)
-        val error = all.mapNotNull { it as? ViewState.Error }.firstOrNull()
-        val loadingProgress = all.mapNotNull { it as? ViewState.Loading }.minByOrNull { it.progress }
+    private val internalViewState: Flow<ViewState> =
+        combine(BillingManager.billingFlow(), renderContextFlow, renderStyleFlow, printerProfileFlow) { billing, s1, s2, s3 ->
+            val all = listOf(s1, s2, s3)
+            val error = all.mapNotNull { it as? ViewState.Error }.firstOrNull()
+            val loadingProgress = all.mapNotNull { it as? ViewState.Loading }.minByOrNull { it.progress }
 
-        when {
-            error != null -> error
-            all.any { it is ViewState.LargeFileDownloadRequired } -> ViewState.LargeFileDownloadRequired
-            loadingProgress != null -> ViewState.Loading(loadingProgress.progress)
-            else /* All success*/ -> all.map { it as ViewState.DataReady }.reduce { o1, o2 ->
-                ViewState.DataReady(
-                    renderStyle = o1.renderStyle ?: o2.renderStyle,
-                    renderContext = o1.renderContext ?: o2.renderContext,
-                    printerProfile = o1.printerProfile ?: o2.printerProfile,
-                    fromUser = o1.fromUser ?: o2.fromUser,
-                )
+            when {
+                !billing.isPremiumActive -> ViewState.FeatureDisabled
+                error != null -> error
+                all.any { it is ViewState.LargeFileDownloadRequired } -> ViewState.LargeFileDownloadRequired
+                loadingProgress != null -> ViewState.Loading(loadingProgress.progress)
+                else /* All success*/ -> all.map { it as ViewState.DataReady }.reduce { o1, o2 ->
+                    ViewState.DataReady(
+                        renderStyle = o1.renderStyle ?: o2.renderStyle,
+                        renderContext = o1.renderContext ?: o2.renderContext,
+                        printerProfile = o1.printerProfile ?: o2.printerProfile,
+                        fromUser = o1.fromUser ?: o2.fromUser,
+                    )
+                }
             }
+        }.retry(3) {
+            delay(500L)
+            true
+        }.catch { e ->
+            emit(ViewState.Error(e))
         }
-    }.retry(3) {
-        delay(500L)
-        true
-    }.catch { e ->
-        emit(ViewState.Error(e))
-    }
 
     val viewState = merge(manualViewStateChannel.asFlow(), internalViewState)
         .asLiveData(viewModelScope.coroutineContext)
@@ -119,6 +121,7 @@ class GcodePreviewViewModel(
 
     sealed class ViewState {
         data class Loading(val progress: Float = 0f) : ViewState()
+        object FeatureDisabled : ViewState()
         object LargeFileDownloadRequired : ViewState()
         data class Error(val exception: Throwable) : ViewState()
         data class DataReady(
