@@ -129,4 +129,6 @@
     <string name="purchase_dialog_subtitle">All features have been unlocked</string>
     <string name="purchase_dialog_text">Your support allows me to continue the development of OctoApp! If you have any suggestions, issues or thoughts, please reach out to %s at any time!</string>
     <string name="purchase_dialog_button">Back to the app</string>
+    <string name="billing_unsupported_title">Only supported for apps from Google Play</string>
+    <string name="billing_unsupported_detail">Only apps downlaoded from Google Play can activate features. Please reach out to hello@octoapp.eu!</string>
 </resources>

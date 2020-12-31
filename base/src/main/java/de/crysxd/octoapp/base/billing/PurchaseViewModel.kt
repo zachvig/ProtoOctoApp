@@ -13,12 +13,14 @@ import kotlinx.coroutines.flow.toList
 import org.json.JSONObject
 import timber.log.Timber
 
+@Suppress("EXPERIMENTAL_API_USAGE")
 class PurchaseViewModel : BaseViewModel() {
 
     private val viewStateChannel = ConflatedBroadcastChannel<ViewState>(ViewState.InitState)
     val viewState = BillingManager.billingFlow().combine(viewStateChannel.asFlow()) { billingData, viewState ->
-        if (viewState is ViewState.SkuSelectionState) {
-            viewState.copy(
+        when {
+            !billingData.isBillingAvailable -> ViewState.Unsupported
+            viewState is ViewState.SkuSelectionState -> viewState.copy(
                 billingData = billingData.copy(
                     availableSku = billingData.availableSku.sortedBy { details ->
                         LongDuration.parse(details.subscriptionPeriod)?.inSeconds() ?: Long.MAX_VALUE
@@ -46,8 +48,7 @@ class PurchaseViewModel : BaseViewModel() {
                     emptyMap()
                 }
             )
-        } else {
-            viewState
+            else -> viewState
         }
     }.distinctUntilChanged().asLiveData()
 
@@ -61,6 +62,7 @@ class PurchaseViewModel : BaseViewModel() {
 
     sealed class ViewState {
         object InitState : ViewState()
+        object Unsupported : ViewState()
         data class SkuSelectionState(
             val billingData: BillingData = BillingData(),
             val names: Map<String, String> = emptyMap(),

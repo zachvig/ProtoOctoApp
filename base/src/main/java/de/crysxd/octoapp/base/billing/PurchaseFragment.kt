@@ -30,6 +30,7 @@ import kotlinx.android.synthetic.main.fragment_purchase.*
 import kotlinx.android.synthetic.main.fragment_purchase_init_state.*
 import kotlinx.android.synthetic.main.fragment_purchase_sku_state.*
 import kotlinx.android.synthetic.main.fragment_purchase_sku_state_option.view.*
+import kotlinx.android.synthetic.main.fragment_purchase_unsupported_state.*
 import kotlinx.android.synthetic.main.purchase_header.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -80,10 +81,15 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
             TransitionManager.beginDelayedTransition(view as ViewGroup, InstantAutoTransition(explode = true))
             initState?.isVisible = false
             skuState?.isVisible = false
+            unsupportedPlatformState?.isVisible = false
             buttonSupport.isVisible = state is PurchaseViewModel.ViewState.InitState
             backPressedCallback.isEnabled = state != PurchaseViewModel.ViewState.InitState
 
             when (state) {
+                PurchaseViewModel.ViewState.Unsupported -> {
+                    unsupportedPlatformStub?.isVisible = true
+                    unsupportedPlatformState?.isVisible = true
+                }
                 PurchaseViewModel.ViewState.InitState -> {
                     skuList?.removeAllViews()
                     initState?.isVisible = true

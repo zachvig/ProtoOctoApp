@@ -41,6 +41,12 @@
             <include layout="@layout/fragment_purchase_init_state" />
 
             <ViewStub
+                android:id="@+id/unsupportedPlatformStub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout="@layout/fragment_purchase_unsupported_state" />
+
+            <ViewStub
                 android:id="@+id/skuStateStub"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/unsupportedPlatformState"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:ignore="UselessParent">
+
+    <TextView
+        android:id="@+id/unsupportedTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_3"
+        android:gravity="center"
+        android:text="@string/billing_unsupported_title"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+        android:textColor="@color/dark_text" />
+
+    <TextView
+        android:id="@+id/unsupportedDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_3"
+        android:gravity="center"
+        android:text="@string/billing_unsupported_detail"
+        android:textAppearance="@style/OctoTheme.TextAppearance"
+        android:textColor="@color/dark_text" />
+
+</LinearLayout>

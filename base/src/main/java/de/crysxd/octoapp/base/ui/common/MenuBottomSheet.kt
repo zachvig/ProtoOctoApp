@@ -62,7 +62,7 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
 
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             BillingManager.billingFlow().collectLatest {
-                setMenuItemVisibility(R.id.menuSupportOctoApp, it.isBillingAvailable && !it.isPremiumActive)
+                setMenuItemVisibility(R.id.menuSupportOctoApp, !it.isPremiumActive)
 
                 val showHeader = adapter.containsMenuItem(R.id.menuSupportOctoApp) && it.isPremiumActive
                 premiumHeaderStub?.isVisible = showHeader
