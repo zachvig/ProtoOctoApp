@@ -2,7 +2,7 @@ package de.crysxd.octoapp.base.gcode.render.models
 
 import android.graphics.PointF
 
-class GcodeRenderContext(
+data class GcodeRenderContext(
     val paths: List<GcodePath>,
     val printHeadPosition: PointF?,
     val layerCount: Int,
