@@ -127,7 +127,7 @@ class OctoPrint(
         it.proceed(
             it.request().newBuilder()
                 .addHeader("X-Api-Key", apiKey)
-                .addHeader("Accept-Encoding", "application/json")
+                .addHeader("Accept", "application/json")
                 .build()
         )
     }
