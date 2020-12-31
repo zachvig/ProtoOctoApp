@@ -83,13 +83,14 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
             skuState?.isVisible = false
             unsupportedPlatformState?.isVisible = false
             buttonSupport.isVisible = state is PurchaseViewModel.ViewState.InitState
-            backPressedCallback.isEnabled = state != PurchaseViewModel.ViewState.InitState
+            backPressedCallback.isEnabled = !listOf(PurchaseViewModel.ViewState.InitState, PurchaseViewModel.ViewState.Unsupported).contains(state)
 
             when (state) {
                 PurchaseViewModel.ViewState.Unsupported -> {
                     unsupportedPlatformStub?.isVisible = true
                     unsupportedPlatformState?.isVisible = true
                 }
+
                 PurchaseViewModel.ViewState.InitState -> {
                     skuList?.removeAllViews()
                     initState?.isVisible = true
