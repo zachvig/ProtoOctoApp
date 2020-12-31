@@ -78,4 +78,8 @@
         <key>purchase_confirmation_background_video</key>
         <value></value>
     </entry>
+    <entry>
+        <key>premium_features</key>
+        <value>gcode_preview,hls_webcam</value>
+    </entry>
 </defaultsMap>

@@ -67,13 +67,12 @@ class GcodePreviewViewModel(
         }.distinctUntilChanged()
 
     private val internalViewState: Flow<ViewState> =
-        combine(BillingManager.billingFlow(), renderContextFlow, renderStyleFlow, printerProfileFlow) { billing, s1, s2, s3 ->
+        combine(renderContextFlow, renderStyleFlow, printerProfileFlow) { s1, s2, s3 ->
             val all = listOf(s1, s2, s3)
             val error = all.mapNotNull { it as? ViewState.Error }.firstOrNull()
             val loadingProgress = all.mapNotNull { it as? ViewState.Loading }.minByOrNull { it.progress }
 
             when {
-                !billing.isPremiumActive -> ViewState.FeatureDisabled
                 error != null -> error
                 all.any { it is ViewState.LargeFileDownloadRequired } -> ViewState.LargeFileDownloadRequired
                 loadingProgress != null -> ViewState.Loading(loadingProgress.progress)
@@ -97,8 +96,12 @@ class GcodePreviewViewModel(
         .asLiveData(viewModelScope.coroutineContext)
 
     fun downloadGcode(file: FileObject.File, allowLargeFileDownloads: Boolean) = viewModelScope.launch {
-        manualViewStateChannel.offer(ViewState.Loading())
-        gcodeChannel.offer(gcodeFileRepository.loadFile(file, allowLargeFileDownloads))
+        if (BillingManager.isFeatureEnabled("gcode_preview")) {
+            manualViewStateChannel.offer(ViewState.Loading())
+            gcodeChannel.offer(gcodeFileRepository.loadFile(file, allowLargeFileDownloads))
+        } else {
+            manualViewStateChannel.offer(ViewState.FeatureDisabled)
+        }
     }
 
     fun useLiveProgress() {

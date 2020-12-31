@@ -98,6 +98,7 @@ object BillingManager {
 
             val allSku = listOf(subscriptions.await(), purchases.await()).flatten()
             Timber.i("Updated SKU: $allSku")
+            Timber.i("Premium features: ${Firebase.remoteConfig.getString("premium_features")}")
             billingChannel.update { it.copy(availableSku = allSku) }
         } catch (e: Exception) {
             Timber.e(e)
@@ -209,6 +210,12 @@ object BillingManager {
             Timber.e(e)
         }
     }
+
+    fun isFeatureEnabled(feature: String) = !Firebase.remoteConfig.getString("premium_features")
+        .split(",")
+        .map {
+            it.trim()
+        }.contains(feature) || billingChannel.valueOrNull?.isPremiumActive == true
 
     fun onResume() = GlobalScope.launch {
         Timber.i("Resuming billing")

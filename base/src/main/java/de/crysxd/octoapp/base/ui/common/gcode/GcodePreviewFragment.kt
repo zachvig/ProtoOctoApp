@@ -135,7 +135,9 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
 
     override fun onResume() {
         super.onResume()
-        viewModel.downloadGcode(file, false)
+        if (viewModel.viewState.value !is GcodePreviewViewModel.ViewState.DataReady) {
+            viewModel.downloadGcode(file, false)
+        }
     }
 
     private fun updateViewState(state: GcodePreviewViewModel.ViewState) {
