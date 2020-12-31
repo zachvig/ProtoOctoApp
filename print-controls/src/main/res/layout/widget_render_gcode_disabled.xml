@@ -27,7 +27,7 @@
 
     <TextView
         android:id="@+id/title"
-        style="@style/OctoTheme.TextAppearance.Title"
+        style="@style/OctoTheme.TextAppearance.SubTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_2"
