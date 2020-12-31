@@ -7,7 +7,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
@@ -17,7 +16,7 @@ import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidgetViewModel
 import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.print_controls.ui.PrintControlsViewModel
 import de.crysxd.octoapp.print_controls.ui.widget.TuneFragmentViewModel
-import de.crysxd.octoapp.print_controls.ui.widget.gcode.GcodeRenderWidgetViewModel
+import de.crysxd.octoapp.print_controls.ui.widget.gcode.GcodePreviewWidgetViewModel
 import de.crysxd.octoapp.print_controls.ui.widget.tune.TuneWidgetViewModel
 import javax.inject.Provider
 
@@ -78,18 +77,17 @@ open class ViewModelModule {
 
     @Provides
     @IntoMap
-    @ViewModelKey(GcodeRenderWidgetViewModel::class)
+    @ViewModelKey(GcodePreviewWidgetViewModel::class)
     fun provideGcodeRenderWidgetViewModel(
         octoPrintRepository: OctoPrintRepository,
         octoPrintProvider: OctoPrintProvider,
         generateRenderStyleUseCase: GenerateRenderStyleUseCase,
         getCurrentPrinterProfileUseCase: GetCurrentPrinterProfileUseCase,
         gcodeFileRepository: GcodeFileRepository
-    ): ViewModel = GcodeRenderWidgetViewModel(
+    ): ViewModel = GcodePreviewWidgetViewModel(
         octoPrintProvider = octoPrintProvider,
         generateRenderStyleUseCase = generateRenderStyleUseCase,
         getCurrentPrinterProfileUseCase = getCurrentPrinterProfileUseCase,
-        billingManager = BillingManager,
         gcodeFileRepository = gcodeFileRepository,
         octoPrintRepository = octoPrintRepository,
     )
