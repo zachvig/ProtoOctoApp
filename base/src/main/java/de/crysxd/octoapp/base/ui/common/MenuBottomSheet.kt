@@ -1,6 +1,8 @@
 package de.crysxd.octoapp.base.ui.common
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.*
@@ -8,19 +10,28 @@ import android.widget.PopupMenu
 import androidx.annotation.IdRes
 import androidx.annotation.MenuRes
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet.*
+import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet_premium_header.*
+import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet_premium_header.view.*
 import kotlinx.android.synthetic.main.item_menu.view.*
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -48,6 +59,31 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
             }
         }
         menuRecycler.adapter = adapter
+
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            BillingManager.billingFlow().collectLatest {
+                setMenuItemVisibility(R.id.menuSupportOctoApp, !it.isPremiumActive)
+
+                val showHeader = adapter.containsMenuItem(R.id.menuSupportOctoApp) && it.isPremiumActive
+                premiumHeaderStub?.isVisible = showHeader
+                premiumHeader?.isVisible = showHeader
+                premiumHeader?.chevron?.isVisible = it.isPremiumFromSubscription
+                if (it.isPremiumFromSubscription) {
+                    premiumHeader?.setOnClickListener {
+                        try {
+                            startActivity(
+                                Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse("https://play.google.com/store/account/subscriptions?package=${requireContext().packageName}")
+                                )
+                            )
+                        } catch (e: Exception) {
+                            Timber.e(e)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @MenuRes
@@ -67,6 +103,10 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
     private suspend fun onMenuItemSelectedBase(@IdRes id: Int) = when (id) {
         R.id.menuOpenOctoprint -> Injector.get().openOctoPrintWebUseCase().execute(requireContext())
         R.id.menuGiveFeedback -> SendFeedbackDialog().show(requireActivity().supportFragmentManager, "send-feedback")
+        R.id.menuSupportOctoApp -> {
+            OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "more_menu"))
+            findNavController().navigate(R.id.action_show_purchase_flow)
+        }
         else -> Unit
     }
 
@@ -111,6 +151,8 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
             inflateMenu()
         }
 
+        fun containsMenuItem(@IdRes id: Int) = getMenuItems().any { it.itemId == id }
+
         fun setMenuItemVisibility(@IdRes id: Int, visible: Boolean) {
             if (visible) {
                 hiddenItems.remove(id)
@@ -121,16 +163,22 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
             inflateMenu()
         }
 
-        fun inflateMenu() {
+        private fun inflateMenu() {
             val menu = PopupMenu(context, null).menu
             MenuInflater(context).inflate(menuRes, menu)
             menuItems.clear()
-            menuItems.addAll((0.until(menu.size())).map { i ->
-                menu[i]
-            }.filter {
+            menuItems.addAll(getMenuItems().filter {
                 !hiddenItems.contains(it.itemId) && it.isVisible
             })
             notifyDataSetChanged()
+        }
+
+        private fun getMenuItems(): List<MenuItem> {
+            val menu = PopupMenu(context, null).menu
+            MenuInflater(context).inflate(menuRes, menu)
+            return (0.until(menu.size())).map { i ->
+                menu[i]
+            }
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MenuItemViewHolder(parent)
@@ -140,7 +188,11 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
         override fun onBindViewHolder(holder: MenuItemViewHolder, position: Int) {
             val item = menuItems[position]
             holder.itemView.imageViewIcon.setImageDrawable(item.icon)
-            holder.itemView.textViewTitle.text = item.title
+            holder.itemView.textViewTitle.text = if (item.itemId == R.id.menuSupportOctoApp) {
+                Firebase.remoteConfig.getString("purchase_screen_launch_cta")
+            } else {
+                item.title
+            }
             holder.itemView.setOnClickListener { callback(item.itemId) }
         }
     }

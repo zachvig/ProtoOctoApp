@@ -20,7 +20,7 @@
         android:visibility="gone"
         tools:visibility="visible" />
 
-    <de.crysxd.octoapp.FeedbackTriggerCoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -41,7 +41,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_3"
+            android:paddingTop="@dimen/margin_3"
             app:layout_constraintTop_toTopOf="parent" />
 
         <de.crysxd.octoapp.base.ui.common.OctoView
@@ -63,6 +63,6 @@
             app:layout_behavior=".base.ui.common.ShrinkBehavior"
             app:navGraph="@navigation/main_nav_graph" />
 
-    </de.crysxd.octoapp.FeedbackTriggerCoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </LinearLayout>

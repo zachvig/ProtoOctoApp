@@ -266,6 +266,66 @@
         app:layout_constraintStart_toEndOf="@+id/layerNumber"
         tools:text="12.2 mm" />
 
+    <ImageView
+        android:id="@+id/preview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_2"
+        android:adjustViewBounds="true"
+        android:importantForAccessibility="no"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:foreground="@drawable/gcode_preview"
+        tools:srcCompat="@drawable/print_bed_ender" />
+
+    <TextView
+        android:id="@+id/textViewDisbaledDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_3"
+        android:gravity="center"
+        android:text="@string/gcode_preview_description"
+        app:layout_constraintBottom_toTopOf="@+id/buttonEnableFeature"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewDisabledTitle" />
+
+    <TextView
+        android:id="@+id/textViewDisabledTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_2"
+        android:gravity="center"
+        android:text="@string/gcode_preview"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
+        android:textColor="@color/dark_text"
+        app:layout_constraintBottom_toTopOf="@+id/textViewDisbaledDescription"
+
+        app:layout_constraintEnd_toEndOf="@+id/textViewDisbaledDescription"
+        app:layout_constraintStart_toStartOf="@+id/textViewDisbaledDescription"
+        app:layout_constraintTop_toBottomOf="@+id/preview"
+        app:layout_constraintVertical_bias="0.33"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <Button
+        android:id="@+id/buttonEnableFeature"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_2"
+        android:text="@string/enable_gcode_preview"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/featureDisabledGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="preview,textViewDisabledTitle,textViewDisbaledDescription,buttonEnableFeature"
+        tools:visibility="visible" />
+
     <androidx.constraintlayout.widget.Group
         android:id="@+id/largeFileGroup"
         android:layout_width="wrap_content"
@@ -296,6 +356,6 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         app:constraint_referenced_ids="titleLayer,layerHeight,layerNumber,layerProgress,titleLayerProgress,layerSeekBar,layerProgressSeekBar,background,renderView,renderControls,live"
-        tools:visibility="visible" />
+        tools:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

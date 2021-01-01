@@ -1,11 +1,16 @@
 package de.crysxd.octoapp
 
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
@@ -13,8 +18,11 @@ import androidx.navigation.findNavController
 import androidx.transition.TransitionManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.billing.BillingEvent
+import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.billing.PurchaseConfirmationDialog
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
+import de.crysxd.octoapp.base.ui.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.OctoActivity
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
@@ -24,6 +32,8 @@ import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
@@ -70,10 +80,38 @@ class MainActivity : OctoActivity() {
                     R.id.terminalFragment -> OctoAnalytics.logEvent(OctoAnalytics.Event.TerminalWorkspaceShown)
                 }
             }
-        }
 
-        coordinator.onFeedbackTriggeredListener = {
-            SendFeedbackDialog().show(supportFragmentManager, "send-feedback")
+            val lastInsets = Rect()
+            supportFragmentManager.findFragmentById(R.id.mainNavController)?.childFragmentManager?.registerFragmentLifecycleCallbacks(
+                object : FragmentManager.FragmentLifecycleCallbacks() {
+                    override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
+                        super.onFragmentResumed(fm, f)
+                        if (f is InsetAwareScreen) {
+                            f.handleInsets(lastInsets)
+                        } else {
+                            f.view?.updatePadding(
+                                top = lastInsets.top,
+                                bottom = lastInsets.bottom,
+                                left = lastInsets.left,
+                                right = lastInsets.right
+                            )
+                        }
+                    }
+                },
+                false
+            )
+
+            // Listen for inset changes and store them
+            window.decorView.setOnApplyWindowInsetsListener { _, insets ->
+                Timber.i("Insets updated $insets")
+                lastInsets.top = insets.stableInsetTop
+                lastInsets.left = insets.stableInsetLeft
+                lastInsets.bottom = insets.stableInsetBottom
+                lastInsets.right = insets.stableInsetRight
+                toolbar.updateLayoutParams<CoordinatorLayout.LayoutParams> { topMargin = lastInsets.top }
+                octo.updateLayoutParams<CoordinatorLayout.LayoutParams> { topMargin = lastInsets.top }
+                insets.consumeStableInsets()
+            }
         }
     }
 
@@ -85,6 +123,21 @@ class MainActivity : OctoActivity() {
     override fun onStop() {
         super.onStop()
         Timber.i("UI stopped")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        BillingManager.onResume()
+        lifecycleScope.launchWhenResumed {
+            BillingManager.billingEventFlow().collectLatest {
+                delay(300L)
+                it.consume { event ->
+                    when (event) {
+                        BillingEvent.PurchaseCompleted -> PurchaseConfirmationDialog().show(supportFragmentManager, "purchase-confirmation")
+                    }
+                }
+            }
+        }
     }
 
     private fun navigate(id: Int) {

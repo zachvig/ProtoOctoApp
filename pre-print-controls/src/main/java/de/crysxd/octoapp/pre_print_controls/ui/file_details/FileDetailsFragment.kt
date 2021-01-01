@@ -26,7 +26,6 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
 
     private val viewModel: FileDetailsViewModel by injectViewModel(Injector.get().viewModelFactory())
     private val file by lazy { navArgs<FileDetailsFragmentArgs>().value.file }
-    private val adapter by lazy { Adapter(file) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,6 +36,7 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
             viewModel.startPrint()
         }
 
+        val adapter = Adapter(file)
         viewPager.adapter = adapter
         viewPager.offscreenPageLimit = adapter.itemCount
         viewPager.isUserInputEnabled = false
@@ -112,6 +112,7 @@ class FileDetailsFragment : Fragment(R.layout.fragment_file_details) {
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
         requireOctoActivity().octo.isVisible = true
         scrollView.setupWithToolbar(requireOctoActivity(), bottomAction, tabs)
+        viewPager.currentItem = 0
     }
 
     override fun onPause() {
