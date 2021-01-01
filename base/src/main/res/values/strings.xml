@@ -276,7 +276,7 @@
     <string name="widget_extrude">Extrude</string>
     <string name="less_than_a_minute">less than a minute</string>
     <string name="x_hours_y_mins">%1$02d:%2$02d h</string>
-    <string name="x_mins">%2$d h</string>
+    <string name="x_mins">%2$d mins</string>
     <string name="widget_gcode_send">Send Gcode</string>
     <string name="cant_zoom_in_fit_mode">Can\'t zoom in fit mode. Double tap to reset</string>
     <string name="file_details_tab_info">Info</string>
@@ -285,4 +285,17 @@
     <string name="widget_gcode_preview">Gcode</string>
     <string name="no_wifi_warning_long">Your phone is not connected to WiFi. In many cases, OctoPrint is only available over WiFi.</string>
     <string name="sign_in_manual_link">Learn how to sign in</string>
+    <string name="app_name">OctoApp</string>
+    <string name="notification_channel_print_progress">Printing…</string>
+    <string name="notification_pausing_title">Pausing…</string>
+    <string name="notification_paused_title">Paused</string>
+    <string name="notification_cancelling_title">Cancelling…</string>
+    <string name="notification_printing_title">Printing…</string>
+    <string name="notification_printing_message">%1$d%% completed, %2$s left</string>
+    <string name="notification_printing_lost_connection_message">Reconnecting…</string>
+    <string name="notification_print_done_title">Print completed</string>
+    <string name="close">Close</string>
+    <string name="print_eta_x">ETA: %s</string>
+    <string name="capabilities_validation_error">Couldn\'t verify your servers capabilities. Some features of the app might not work as expected.</string>
+    <string name="connection_lost_reconnecting">Connection lost, reconnecting…</string>
 </resources>
