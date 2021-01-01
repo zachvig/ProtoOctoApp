@@ -57,7 +57,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
         inputWebUrl.editText.setText(preFill.webUrl)
         inputApiKey.editText.setText(preFill.apiKey)
 
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(ReadQrCodeFragment.RESULT_API_KEY)?.observe(viewLifecycleOwner, Observer {
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(ReadQrCodeFragment.RESULT_API_KEY)?.observe(viewLifecycleOwner, {
             inputApiKey.editText.setText(it)
         })
 
