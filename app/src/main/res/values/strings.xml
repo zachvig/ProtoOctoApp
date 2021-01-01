@@ -11,5 +11,5 @@
     <string name="close">Close</string>
     <string name="print_eta_x">ETA: %s</string>
     <string name="capabilities_validation_error">Couldn\'t verify your servers capabilities. Some features of the app might not work as expected.</string>
-    <string name="connection_lost_reconnecting">Connection lost, reconnecting...</string>
+    <string name="connection_lost_reconnecting">Connection lost, reconnecting…</string>
 </resources>

@@ -15,7 +15,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.transition.*
+import androidx.transition.ChangeBounds
+import androidx.transition.Explode
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.billing.BillingEvent
@@ -98,9 +101,6 @@ class MainActivity : OctoActivity() {
                 lastInsets.left = insets.stableInsetLeft
                 lastInsets.bottom = insets.stableInsetBottom
                 lastInsets.right = insets.stableInsetRight
-
-                // For some odd reason root gets the paddings applied.....
-                root.post { root.setPadding(0, 0, 0, 0) }
 
                 insets.consumeStableInsets()
             }
@@ -240,22 +240,26 @@ class MainActivity : OctoActivity() {
     }
 
     private fun setDisconnectedMessageVisible(visible: Boolean) {
-        // Let disconnect message fill status bar background
-        disconnectedMessage.updatePadding(top = disconnectedMessage.paddingBottom + lastInsets.top)
+        if (disconnectedMessage.isVisible == visible) return
 
-        TransitionManager.beginDelayedTransition(root, TransitionSet().apply {
+        // Let disconnect message fill status bar background and measure height
+        disconnectedMessage.updatePadding(
+            top = disconnectedMessage.paddingBottom + lastInsets.top,
+        )
+        disconnectedMessage.measure(
+            View.MeasureSpec.makeMeasureSpec(coordinatorLayout.width, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+        )
+        val height = disconnectedMessage.measuredHeight
+
+        TransitionManager.beginDelayedTransition(coordinatorLayout, TransitionSet().apply {
             addTransition(Explode())
             addTransition(ChangeBounds())
-            addTransition(Fade())
-            excludeChildren(coordinatorLayout, true)
+            findCurrentScreen()?.view?.let {
+                excludeChildren(it, true)
+            }
         })
-
-        // Use light status bar while disconnect message is shown
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            disconnectedMessage.systemUiVisibility = disconnectedMessage.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        }
-
-        findCurrentScreen()?.let { applyInsetsToScreen(it, 0.takeIf { visible }) }
+        findCurrentScreen()?.let { applyInsetsToScreen(it, height.takeIf { visible }) }
         disconnectedMessage.isVisible = visible
     }
 
