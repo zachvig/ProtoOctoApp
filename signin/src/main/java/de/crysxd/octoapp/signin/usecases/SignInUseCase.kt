@@ -1,11 +1,12 @@
 package de.crysxd.octoapp.signin.usecases
 
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.SslKeyStoreHandler
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.usecase.UseCase
-import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.exceptions.InvalidApiKeyException
 import de.crysxd.octoapp.signin.models.SignInInformation
 import timber.log.Timber
@@ -51,7 +52,7 @@ class SignInUseCase(
         OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.OctoPrintVersion, version.severVersion)
 
         // Check for warnings
-        val testedVersion = OctoPrint.TESTED_SERVER_VERSION
+        val testedVersion = Firebase.remoteConfig.getString("tested_octoprint_version")
         val warnings = mutableListOf<Warning>()
         if (version.severVersion > testedVersion) warnings.add(Warning.TooNewServerVersion(testedVersion, version.severVersion))
 
