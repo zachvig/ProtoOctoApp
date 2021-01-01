@@ -41,6 +41,9 @@ object OctoAnalytics {
         object QrCodeStarted : Event("qr_code_login")
         object SignInFailed : Event("sign_in_failure")
         object SignInInvalidInput : Event("sign_in_invalid_input")
+        object SignInNoWifiWarningShown : Event("sign_in_no_wifi")
+        object SignInNoWifiWarningTapped : Event("sign_in_no_wifi_tapped")
+        object SignInHelpOpened : Event("sign_in_help_opened")
         object SignInSuccess : Event("sign_in_success")
         object Login : Event(FirebaseAnalytics.Event.LOGIN)
 

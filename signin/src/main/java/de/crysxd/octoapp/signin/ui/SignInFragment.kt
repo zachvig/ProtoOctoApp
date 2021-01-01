@@ -1,18 +1,24 @@
 package de.crysxd.octoapp.signin.ui
 
+import android.annotation.SuppressLint
 import android.graphics.Rect
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.composeErrorMessage
@@ -44,15 +50,22 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
     private val networkViewModel: NetworkStateViewModel by injectViewModel(Injector.get().viewModelFactory())
     private var viewCompactor: ViewCompactor? = null
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        var noWifiLogged = false
         networkViewModel.networkState.observe(viewLifecycleOwner) {
-            Timber.i("network alpha: ${if (it !is NetworkStateViewModel.NetworkState.WifiConnected) 1f else 0f}")
+            Timber.i("Network status: $it")
+            if (!noWifiLogged && it !is NetworkStateViewModel.NetworkState.WifiConnected) {
+                noWifiLogged = true
+                OctoAnalytics.logEvent(OctoAnalytics.Event.SignInNoWifiWarningShown)
+            }
             inputWebUrl.actionTint = null
             inputWebUrl.actionIcon = if (it !is NetworkStateViewModel.NetworkState.WifiConnected) R.drawable.ic_wifi_unavailable else 0
             inputWebUrl.setOnActionListener {
-                requireOctoActivity().showDialog(R.string.no_wifi_warning_long)
+                OctoAnalytics.logEvent(OctoAnalytics.Event.SignInNoWifiWarningTapped)
+                requireOctoActivity().showDialog(getString(R.string.no_wifi_warning_long))
             }
         }
 
@@ -62,6 +75,18 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
             signIn()
             true
         }
+
+        manual.text = HtmlCompat.fromHtml(
+            "<a href=\"${Firebase.remoteConfig.getString("help_url_sign_in")}\">${getString(R.string.sign_in_manual_link)}</a>",
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        )
+        manual.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                OctoAnalytics.logEvent(OctoAnalytics.Event.SignInHelpOpened)
+            }
+            false
+        }
+        manual.movementMethod = LinkMovementMethod()
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer(this::updateViewState))
 
