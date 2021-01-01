@@ -28,7 +28,7 @@ class ConnectionStateDeserializer(
                 else -> try {
                     ConnectionResponse.ConnectionState.valueOf(string)
                 } catch (e: Exception) {
-                    logger.log(Level.WARNING, "Unable to deserialize '$json'", e)
+                    logger.log(Level.FINE, "Unable to deserialize '$json'", e)
                     ConnectionResponse.ConnectionState.OTHER
                 }
             }
