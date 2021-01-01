@@ -101,22 +101,25 @@ class MainActivity : OctoActivity() {
                 lastInsets.left = insets.stableInsetLeft
                 lastInsets.bottom = insets.stableInsetBottom
                 lastInsets.right = insets.stableInsetRight
-
+                applyInsetsToCurrentScreen()
                 insets.consumeStableInsets()
             }
         }
     }
 
+    private fun applyInsetsToCurrentScreen() = findCurrentScreen()?.let { applyInsetsToScreen(it) }
+
     private fun findCurrentScreen() = supportFragmentManager.findFragmentById(R.id.mainNavController)?.childFragmentManager?.fragments?.firstOrNull()
 
     private fun applyInsetsToScreen(screen: Fragment, topOverwrite: Int? = null) {
-        toolbar.updateLayoutParams<CoordinatorLayout.LayoutParams> { topMargin = topOverwrite ?: lastInsets.top }
-        octo.updateLayoutParams<CoordinatorLayout.LayoutParams> { topMargin = topOverwrite ?: lastInsets.top }
+        val disconnectHeight = disconnectedMessage.height.takeIf { disconnectedMessage.isVisible }
+        toolbar.updateLayoutParams<CoordinatorLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
+        octo.updateLayoutParams<CoordinatorLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
 
         if (screen is InsetAwareScreen) {
             screen.handleInsets(
                 Rect(
-                    topOverwrite ?: lastInsets.top,
+                    topOverwrite ?: disconnectHeight ?: lastInsets.top,
                     lastInsets.bottom,
                     lastInsets.left,
                     lastInsets.right
@@ -124,7 +127,7 @@ class MainActivity : OctoActivity() {
             )
         } else {
             screen.view?.updatePadding(
-                top = topOverwrite ?: lastInsets.top,
+                top = topOverwrite ?: disconnectHeight ?: lastInsets.top,
                 bottom = lastInsets.bottom,
                 left = lastInsets.left,
                 right = lastInsets.right
