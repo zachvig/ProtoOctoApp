@@ -52,7 +52,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
             inputWebUrl.actionTint = null
             inputWebUrl.actionIcon = if (it !is NetworkStateViewModel.NetworkState.WifiConnected) R.drawable.ic_wifi_unavailable else 0
             inputWebUrl.setOnActionListener {
-                requireOctoActivity().showDialog("Your phone is not connected to WiFi. In many cases, OctoPrint is only available over WiFi.")
+                requireOctoActivity().showDialog(R.string.no_wifi_warning_long)
             }
         }
 

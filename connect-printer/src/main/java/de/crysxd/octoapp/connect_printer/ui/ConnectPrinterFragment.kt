@@ -9,7 +9,9 @@ import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
+import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.BaseFragment
+import de.crysxd.octoapp.base.ui.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.ext.suspendedInflate
@@ -21,6 +23,7 @@ import timber.log.Timber
 
 class ConnectPrinterFragment : BaseFragment() {
 
+    private val networkViewModel: NetworkStateViewModel by injectViewModel(Injector.get().viewModelFactory())
     override val viewModel: ConnectPrinterViewModel by injectViewModel()
     private var firstStateUpdate = true
 
@@ -34,6 +37,11 @@ class ConnectPrinterFragment : BaseFragment() {
             val lazyView = LayoutInflater.from(requireContext()).suspendedInflate(R.layout.fragment_connect_printer, view as ViewGroup, false)
             TransitionManager.beginDelayedTransition(view)
             view.addView(lazyView)
+
+            // Subscribe to network state
+            networkViewModel.networkState.observe(viewLifecycleOwner) {
+                noWifiWarning.isVisible = it !is NetworkStateViewModel.NetworkState.WifiConnected
+            }
 
             // Subscribe to view state
             viewModel.uiState.observe(viewLifecycleOwner, { state ->
