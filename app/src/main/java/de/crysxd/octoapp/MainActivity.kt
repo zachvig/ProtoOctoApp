@@ -127,10 +127,10 @@ class MainActivity : OctoActivity() {
         if (screen is InsetAwareScreen) {
             screen.handleInsets(
                 Rect(
-                    topOverwrite ?: disconnectHeight ?: lastInsets.top,
-                    lastInsets.bottom,
                     lastInsets.left,
-                    lastInsets.right
+                    topOverwrite ?: disconnectHeight ?: lastInsets.top,
+                    lastInsets.right,
+                    lastInsets.bottom,
                 )
             )
         } else {
