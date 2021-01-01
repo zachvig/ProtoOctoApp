@@ -3,10 +3,10 @@ package de.crysxd.octoapp
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
+import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
@@ -15,7 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.transition.TransitionManager
+import androidx.transition.*
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.billing.BillingEvent
@@ -26,7 +26,6 @@ import de.crysxd.octoapp.base.ui.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.OctoActivity
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
-import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.usecase.execute
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.models.socket.Event
@@ -41,6 +40,7 @@ import de.crysxd.octoapp.signin.di.Injector as SignInInjector
 class MainActivity : OctoActivity() {
 
     private var lastNavigation = -1
+    private val lastInsets = Rect()
     private val notificationServiceIntent by lazy { Intent(this, PrintNotificationService::class.java) }
 
     override val octoToolbar: OctoToolbar by lazy { toolbar }
@@ -81,21 +81,11 @@ class MainActivity : OctoActivity() {
                 }
             }
 
-            val lastInsets = Rect()
             supportFragmentManager.findFragmentById(R.id.mainNavController)?.childFragmentManager?.registerFragmentLifecycleCallbacks(
                 object : FragmentManager.FragmentLifecycleCallbacks() {
                     override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
                         super.onFragmentResumed(fm, f)
-                        if (f is InsetAwareScreen) {
-                            f.handleInsets(lastInsets)
-                        } else {
-                            f.view?.updatePadding(
-                                top = lastInsets.top,
-                                bottom = lastInsets.bottom,
-                                left = lastInsets.left,
-                                right = lastInsets.right
-                            )
-                        }
+                        applyInsetsToScreen(f)
                     }
                 },
                 false
@@ -108,10 +98,37 @@ class MainActivity : OctoActivity() {
                 lastInsets.left = insets.stableInsetLeft
                 lastInsets.bottom = insets.stableInsetBottom
                 lastInsets.right = insets.stableInsetRight
-                toolbar.updateLayoutParams<CoordinatorLayout.LayoutParams> { topMargin = lastInsets.top }
-                octo.updateLayoutParams<CoordinatorLayout.LayoutParams> { topMargin = lastInsets.top }
+
+                // For some odd reason root gets the paddings applied.....
+                root.post { root.setPadding(0, 0, 0, 0) }
+
                 insets.consumeStableInsets()
             }
+        }
+    }
+
+    private fun findCurrentScreen() = supportFragmentManager.findFragmentById(R.id.mainNavController)?.childFragmentManager?.fragments?.firstOrNull()
+
+    private fun applyInsetsToScreen(screen: Fragment, topOverwrite: Int? = null) {
+        toolbar.updateLayoutParams<CoordinatorLayout.LayoutParams> { topMargin = topOverwrite ?: lastInsets.top }
+        octo.updateLayoutParams<CoordinatorLayout.LayoutParams> { topMargin = topOverwrite ?: lastInsets.top }
+
+        if (screen is InsetAwareScreen) {
+            screen.handleInsets(
+                Rect(
+                    topOverwrite ?: lastInsets.top,
+                    lastInsets.bottom,
+                    lastInsets.left,
+                    lastInsets.right
+                )
+            )
+        } else {
+            screen.view?.updatePadding(
+                top = topOverwrite ?: lastInsets.top,
+                bottom = lastInsets.bottom,
+                left = lastInsets.left,
+                right = lastInsets.right
+            )
         }
     }
 
@@ -223,11 +240,22 @@ class MainActivity : OctoActivity() {
     }
 
     private fun setDisconnectedMessageVisible(visible: Boolean) {
-        TransitionManager.beginDelayedTransition(root, InstantAutoTransition().also {
-            it.excludeChildren(coordinatorLayout, true)
+        // Let disconnect message fill status bar background
+        disconnectedMessage.updatePadding(top = disconnectedMessage.paddingBottom + lastInsets.top)
+
+        TransitionManager.beginDelayedTransition(root, TransitionSet().apply {
+            addTransition(Explode())
+            addTransition(ChangeBounds())
+            addTransition(Fade())
+            excludeChildren(coordinatorLayout, true)
         })
 
-        disconnectedMessage.updatePadding()
+        // Use light status bar while disconnect message is shown
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            disconnectedMessage.systemUiVisibility = disconnectedMessage.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        }
+
+        findCurrentScreen()?.let { applyInsetsToScreen(it, 0.takeIf { visible }) }
         disconnectedMessage.isVisible = visible
     }
 
