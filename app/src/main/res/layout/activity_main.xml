@@ -1,46 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<de.crysxd.octoapp.FeedbackTriggerCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/coordinator"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/updateChecker"
-        android:name="de.crysxd.octoapp.AppUpdateFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/reviewRequestTrigger"
-        android:name="de.crysxd.octoapp.AppReviewFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <de.crysxd.octoapp.base.ui.common.OctoToolbar
-        android:id="@+id/toolbar"
+    <TextView
+        android:id="@+id/disconnectedMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_3"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="@color/color_error"
+        android:gravity="center"
+        android:padding="@dimen/margin_1"
+        android:text="Connection lost, reconnecting..."
+        android:textAppearance="@style/OctoTheme.TextAppearance"
+        android:textColor="@color/white_translucent"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
-    <de.crysxd.octoapp.base.ui.common.OctoView
-        android:id="@+id/toolbarOctoView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:rotation="270"
-        android:translationX="60dp" />
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/mainNavController"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <de.crysxd.octoapp.FeedbackTriggerCoordinatorLayout
+        android:id="@+id/coordinator"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        app:layout_anchor="@+id/updateChecker"
-        app:layout_anchorGravity="center"
-        app:layout_behavior=".base.ui.common.ShrinkBehavior"
-        app:navGraph="@navigation/main_nav_graph" />
+        android:layout_height="match_parent">
 
-</de.crysxd.octoapp.FeedbackTriggerCoordinatorLayout>
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/updateChecker"
+            android:name="de.crysxd.octoapp.AppUpdateFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/reviewRequestTrigger"
+            android:name="de.crysxd.octoapp.AppReviewFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <de.crysxd.octoapp.base.ui.common.OctoToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_3"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <de.crysxd.octoapp.base.ui.common.OctoView
+            android:id="@+id/toolbarOctoView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:rotation="270"
+            android:translationX="60dp" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/mainNavController"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:layout_anchor="@+id/updateChecker"
+            app:layout_anchorGravity="center"
+            app:layout_behavior=".base.ui.common.ShrinkBehavior"
+            app:navGraph="@navigation/main_nav_graph" />
+
+    </de.crysxd.octoapp.FeedbackTriggerCoordinatorLayout>
+
+</LinearLayout>

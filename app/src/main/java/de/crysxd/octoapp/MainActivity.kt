@@ -4,10 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.transition.TransitionManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.di.Injector
@@ -15,6 +18,7 @@ import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.OctoActivity
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
+import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.usecase.execute
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.models.socket.Event
@@ -93,15 +97,20 @@ class MainActivity : OctoActivity() {
     private fun onEventReceived(e: Event) = when (e) {
         // Only show errors if we are not already in disconnected screen. We still want to show the stall warning to indicate something is wrong
         // as this might lead to the user being stuck
-        is Event.Disconnected -> if (lastNavigation != R.id.action_connect_printer || e.exception is WebSocketMaybeBrokenException) {
-            e.exception?.let(this::showDialog)
-            navigate(R.id.action_connect_printer)
-        } else {
-            // We are already in disconnect state, nothing to do
-            Timber.w("Socket disconnected but already in disconnected state (${e.exception}")
+        is Event.Disconnected -> {
+            Timber.w("Connection lost")
+            when (e.exception) {
+                is WebSocketMaybeBrokenException -> e.exception?.let(this::showDialog)
+                else -> setDisconnectedMessageVisible(!listOf(R.id.action_connect_printer, R.id.action_sign_in_required).contains(lastNavigation))
+            }
         }
+
+        Event.Connected -> {
+            Timber.w("Connection restored")
+            setDisconnectedMessageVisible(false)
+        }
+
         is Event.MessageReceived -> onMessageReceived(e.message)
-        Event.Connected -> Unit
     }
 
     private fun onMessageReceived(e: Message) = when (e) {
@@ -141,8 +150,7 @@ class MainActivity : OctoActivity() {
                     R.id.action_printer_connected
                 }
 
-                // This is a special case where all flags are false. This may happen after an emergency stop of the printer. Go to connect.
-                !flags.operational && !flags.paused && !flags.cancelling && !flags.closedOrError && !flags.error && !flags.printing && !flags.pausing -> {
+                !flags.operational && !flags.paused && !flags.cancelling && !flags.printing && !flags.pausing -> {
                     stopService(notificationServiceIntent)
                     R.id.action_connect_printer
                 }
@@ -153,27 +161,21 @@ class MainActivity : OctoActivity() {
         )
     }
 
-    private fun onEventMessageReceived(e: Message.EventMessage) {
-        Timber.tag("navigation").v(e.toString())
-        navigate(
-            when {
-                e is Message.EventMessage.Disconnected -> R.id.action_connect_printer
-                e is Message.EventMessage.Connected -> {
-                    // New printer connected, let's update capabilities
-                    updateCapabilities()
-                    R.id.action_printer_connected
-                }
-                e is Message.EventMessage.PrinterStateChanged &&
-                        e.stateId == Message.EventMessage.PrinterStateChanged.PrinterState.OPERATIONAL -> R.id.action_printer_connected
-                e is Message.EventMessage.PrintStarted -> R.id.action_printer_active
-                e is Message.EventMessage.SettingsUpdated -> {
-                    // Settings changed, let's update capabilities to see whether something changed
-                    updateCapabilities()
-                    lastNavigation
-                }
-                else -> lastNavigation
-            }
-        )
+    private fun onEventMessageReceived(e: Message.EventMessage) = when (e) {
+        is Message.EventMessage.Connected, is Message.EventMessage.SettingsUpdated -> {
+            // New printer connected or settings updated, let's update capabilities
+            updateCapabilities()
+        }
+        else -> Unit
+    }
+
+    private fun setDisconnectedMessageVisible(visible: Boolean) {
+        TransitionManager.beginDelayedTransition(root, InstantAutoTransition().also {
+            it.excludeChildren(coordinatorLayout, true)
+        })
+
+        disconnectedMessage.updatePadding()
+        disconnectedMessage.isVisible = visible
     }
 
     private fun updateCapabilities() {

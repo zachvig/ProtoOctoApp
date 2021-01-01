@@ -43,6 +43,7 @@ class EventWebSocket(
     private var reportDisconnectedJob: Job? = null
     private var webSocket: WebSocket? = null
     private var isConnected = AtomicBoolean(false)
+    private var isOpen = false
     private var lastCurrentMessage: Message.CurrentMessage? = null
     private val channel = BroadcastChannel<Event>(15)
     private val subscriberCount = AtomicInteger(0)
@@ -117,6 +118,7 @@ class EventWebSocket(
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
+            isOpen = true
 
             // Handle open event
             logger.log(Level.INFO, "Web socket open")
@@ -167,6 +169,7 @@ class EventWebSocket(
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             super.onClosed(webSocket, code, reason)
             handleClosure()
+            isOpen = false
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
@@ -177,6 +180,7 @@ class EventWebSocket(
             } else {
                 logger.log(Level.WARNING, "Web socket was forcefully closed")
             }
+            isOpen = false
         }
 
         private fun reconnect(t: Throwable? = null) {
@@ -187,7 +191,10 @@ class EventWebSocket(
                 start()
             }
 
-            reportDisconnectedAfterDelay(t)
+            reportDisconnectedAfterDelay(
+                throwable = t,
+                delay = if (isOpen) RECONNECT_TIMEOUT_MS else 0
+            )
         }
 
         private fun reportDisconnectedAfterDelay(throwable: Throwable?, delay: Long = RECONNECT_TIMEOUT_MS) {
