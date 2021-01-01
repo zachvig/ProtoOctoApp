@@ -25,7 +25,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 const val PING_TIMEOUT_MS = 10000L
-const val CONNECTION_TIMEOUT_MS = 10000L
+const val CONNECTION_TIMEOUT_MS = 5000L
 const val RECONNECT_DELAY_MS = 1000L
 const val RECONNECT_TIMEOUT_MS = CONNECTION_TIMEOUT_MS + RECONNECT_DELAY_MS
 const val STALLED_TIMEOUT = RECONNECT_TIMEOUT_MS * 3
