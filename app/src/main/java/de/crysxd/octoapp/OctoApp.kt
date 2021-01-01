@@ -15,6 +15,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import de.crysxd.octoapp.base.billing.BillingManager
 import timber.log.Timber
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
 import de.crysxd.octoapp.connect_printer.di.Injector as ConnectPrintInjector
@@ -55,7 +56,7 @@ class OctoApp : Application() {
         // Setup RemoteConfig
         Firebase.remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
         Firebase.remoteConfig.setConfigSettingsAsync(remoteConfigSettings {
-            minimumFetchIntervalInSeconds = 3600
+            minimumFetchIntervalInSeconds = if (BuildConfig.DEBUG) 10 else 3600
         })
         Firebase.remoteConfig.fetchAndActivate().addOnCompleteListener {
             it.exception?.let(Timber::e)
@@ -73,6 +74,9 @@ class OctoApp : Application() {
                 )
             )
         }
+
+        // Setup Billing
+        BillingManager.initBilling(this)
 
         // Setup FCM
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->

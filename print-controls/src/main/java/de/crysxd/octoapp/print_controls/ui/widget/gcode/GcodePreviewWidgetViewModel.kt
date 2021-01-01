@@ -1,8 +1,10 @@
 package de.crysxd.octoapp.print_controls.ui.widget.gcode
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.datasource.GcodeFileDataSource
 import de.crysxd.octoapp.base.gcode.render.models.RenderStyle
 import de.crysxd.octoapp.base.repository.GcodeFileRepository
@@ -18,7 +20,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
-class GcodeRenderWidgetViewModel(
+class GcodePreviewWidgetViewModel(
     octoPrintProvider: OctoPrintProvider,
     octoPrintRepository: OctoPrintRepository,
     generateRenderStyleUseCase: GenerateRenderStyleUseCase,
@@ -26,7 +28,9 @@ class GcodeRenderWidgetViewModel(
     private val gcodeFileRepository: GcodeFileRepository
 ) : ViewModel() {
 
-    private val downloadChannel = ConflatedBroadcastChannel<Flow<GcodeFileDataSource.LoadState>?>()
+    private val featureEnabledChannel = ConflatedBroadcastChannel<Boolean>()
+    private val downloadChannel = ConflatedBroadcastChannel<Flow<GcodeFileDataSource.LoadState>>()
+    private val downloadFlow = downloadChannel.asFlow().flatMapLatest { it }
     private val printerProfileChannel = ConflatedBroadcastChannel<PrinterProfiles.Profile>()
 
     private val printInfo = octoPrintProvider.passiveCurrentMessageFlow().map {
@@ -41,24 +45,31 @@ class GcodeRenderWidgetViewModel(
         old.path != new.path
     }
 
-    val renderData = downloadChannel.asFlow().filterNotNull().flatMapLatest {
-        it
-    }.combine(printerProfileChannel.asFlow()) { i1, i2 ->
-        Pair(i1, i2)
-    }.combine(octoPrintRepository.instanceInformationFlow()) { i12, info ->
-        val style = generateRenderStyleUseCase.execute(info)
-        Triple(style, i12.first, i12.second)
-    }.combine(printInfo) { i123, info ->
-        RenderData(i123.first, i123.second, i123.third, info)
-    }.shareIn(viewModelScope, SharingStarted.Lazily).catch {
-        Timber.e(it)
-    }.retry(3) {
+    val renderData = combine(
+        featureEnabledChannel.asFlow(),
+        downloadFlow,
+        printerProfileChannel.asFlow(),
+        octoPrintRepository.instanceInformationFlow(),
+        printInfo
+    ) { enabled, download, profile, instanceInfo, printInfo ->
+        val style = generateRenderStyleUseCase.execute(instanceInfo)
+        when {
+            !enabled -> RenderData(renderStyle = style, featureEnabled = false)
+            else -> RenderData(
+                featureEnabled = true,
+                renderStyle = style,
+                gcode = download,
+                printerProfile = profile,
+                printInfo = printInfo
+            )
+        }
+    }.distinctUntilChanged().retry(3) {
         delay(500L)
         true
     }.catch {
-        emit(RenderData(gcode = GcodeFileDataSource.LoadState.Failed(it)))
+        emit(RenderData(gcode = GcodeFileDataSource.LoadState.Failed(it), featureEnabled = true))
         Timber.e(it)
-    }.distinctUntilChanged()
+    }.asLiveData()
 
     init {
         viewModelScope.launch {
@@ -67,7 +78,14 @@ class GcodeRenderWidgetViewModel(
     }
 
     fun downloadGcode(file: FileObject.File, allowLargeFileDownloads: Boolean) = viewModelScope.launch {
-        downloadChannel.offer(gcodeFileRepository.loadFile(file, allowLargeFileDownloads))
+        downloadChannel.offer(flowOf(GcodeFileDataSource.LoadState.Loading(0f)))
+
+        if (BillingManager.isFeatureEnabled("gcode_preview")) {
+            featureEnabledChannel.offer(true)
+            downloadChannel.offer(gcodeFileRepository.loadFile(file, allowLargeFileDownloads))
+        } else {
+            featureEnabledChannel.offer(false)
+        }
     }
 
     data class PrintInfo(
@@ -76,8 +94,9 @@ class GcodeRenderWidgetViewModel(
     )
 
     data class RenderData(
+        val featureEnabled: Boolean,
         val renderStyle: RenderStyle? = null,
-        val gcode: GcodeFileDataSource.LoadState,
+        val gcode: GcodeFileDataSource.LoadState? = null,
         val printerProfile: PrinterProfiles.Profile? = null,
         val printInfo: PrintInfo? = null
     )

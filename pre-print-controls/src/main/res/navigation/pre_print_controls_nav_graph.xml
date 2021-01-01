@@ -5,6 +5,14 @@
     android:id="@+id/pre_print_controls_nav_graph"
     app:startDestination="@id/prePrintControlsFragment">
 
+    <action
+        android:id="@+id/action_show_purchase_flow"
+        app:destination="@id/purchase_flow_nav_graph"
+        app:enterAnim="@anim/enterAnim"
+        app:exitAnim="@anim/exitAnim"
+        app:popEnterAnim="@anim/popEnterAnim"
+        app:popExitAnim="@anim/popExitAnim" />
+
     <fragment
         android:id="@+id/prePrintControlsFragment"
         android:name="de.crysxd.octoapp.pre_print_controls.ui.PrePrintControlsFragment"
@@ -60,8 +68,8 @@
     </fragment>
 
     <include app:graph="@navigation/terminal_nav_graph" />
-
     <include app:graph="@navigation/enter_value_nav_graph" />
+    <include app:graph="@navigation/purchase_flow_nav_graph" />
 
     <action
         android:id="@id/action_enter_value"
@@ -75,7 +83,7 @@
         android:id="@+id/fileDetailsFragment"
         android:name="de.crysxd.octoapp.pre_print_controls.ui.file_details.FileDetailsFragment"
         android:label="FileDetailsFragment"
-        tools:layout="@layout/fragment_file_details">
+        tools:layout="@layout/fragment_info_tab">
         <argument
             android:name="file"
             app:argType="de.crysxd.octoapp.octoprint.models.files.FileObject$File" />

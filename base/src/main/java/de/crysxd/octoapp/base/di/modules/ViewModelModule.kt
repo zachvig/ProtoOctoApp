@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.billing.PurchaseViewModel
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.feedback.SendFeedbackViewModel
 import de.crysxd.octoapp.base.repository.GcodeFileRepository
@@ -133,5 +134,12 @@ open class ViewModelModule {
         gcodeHistoryRepository: GcodeHistoryRepository
     ): ViewModel = GcodeShortcutEditViewModel(
         gcodeHistoryRepository = gcodeHistoryRepository
+    )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(PurchaseViewModel::class)
+    open fun providePurchaseViewModel(
+    ): ViewModel = PurchaseViewModel(
     )
 }

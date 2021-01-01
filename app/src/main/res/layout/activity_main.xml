@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<de.crysxd.octoapp.FeedbackTriggerCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
@@ -21,7 +22,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_3"
+        android:paddingTop="@dimen/margin_3"
         app:layout_constraintTop_toTopOf="parent" />
 
     <de.crysxd.octoapp.base.ui.common.OctoView
@@ -43,4 +44,30 @@
         app:layout_behavior=".base.ui.common.ShrinkBehavior"
         app:navGraph="@navigation/main_nav_graph" />
 
-</de.crysxd.octoapp.FeedbackTriggerCoordinatorLayout>
+    <LinearLayout
+        android:id="@+id/disconnectedMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_error"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/margin_1"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ProgressBar
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="8dp"
+            android:indeterminateTint="@color/white_translucent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/connection_lost_reconnecting"
+            android:textAppearance="@style/OctoTheme.TextAppearance"
+            android:textColor="@color/white_translucent" />
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

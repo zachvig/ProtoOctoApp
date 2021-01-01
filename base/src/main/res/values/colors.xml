@@ -40,5 +40,6 @@
     <color name="black_translucent">#B4000000</color>
     <color name="black_translucent_2">#1A000000</color>
     <color name="white_translucent">#B5FFFFFF</color>
+    <color name="status_bar_scrim">#80FFFFFF</color>
     <color name="white_translucent_2">#2AFFFFFF</color>
 </resources>

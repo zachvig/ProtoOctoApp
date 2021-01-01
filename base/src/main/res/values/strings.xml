@@ -107,4 +107,33 @@
     <string name="shortcut_tutorial_line1">Long-press shortcuts to get more options</string>
     <string name="shortcut_tutorial_line2">Shortcuts are automatically added when you send commands in terminal</string>
     <string name="one_gcode_per_line">One Gcode command per line</string>
+    <string name="support_octoapp">Support OctoApp</string>
+    <plurals name="x_days">
+        <item quantity="one">One day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="x_weeks">
+        <item quantity="one">One week</item>
+        <item quantity="other">%d weeks</item>
+    </plurals>
+    <plurals name="x_months">
+        <item quantity="one">One month</item>
+        <item quantity="other">%d months</item>
+    </plurals>
+    <plurals name="x_years">
+        <item quantity="one">One year</item>
+        <item quantity="other">%d years</item>
+    </plurals>
+    <string name="free_trial_x">Free trial: %s</string>
+    <string name="purchase_dialog_title">Thank you!</string>
+    <string name="purchase_dialog_subtitle">All features have been unlocked</string>
+    <string name="purchase_dialog_text">Your support allows me to continue the development of OctoApp! If you have any suggestions, issues or thoughts, please reach out to %s at any time!</string>
+    <string name="purchase_dialog_button">Back to the app</string>
+    <string name="billing_unsupported_title">Only supported for apps from Google Play</string>
+    <string name="billing_unsupported_detail">Only apps downlaoded from Google Play can activate features. Please reach out to hello@octoapp.eu!</string>
+    <string name="enable_gcode_preview">Enable Gcode Preview</string>
+    <string name="enable">Enable</string>
+    <string name="gcode_preview">Gcode Preview</string>
+    <string name="gcode_preview_live">Live Gcode Preview</string>
+    <string name="gcode_preview_description">This feature allows you to preview Gcode before starting to print and observe the progress live during printing.</string>
 </resources>

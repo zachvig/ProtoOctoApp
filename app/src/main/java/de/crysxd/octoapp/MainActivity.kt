@@ -1,17 +1,31 @@
 package de.crysxd.octoapp
 
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
+import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.transition.ChangeBounds
+import androidx.transition.Explode
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.billing.BillingEvent
+import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.billing.PurchaseConfirmationDialog
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
+import de.crysxd.octoapp.base.ui.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.OctoActivity
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
@@ -20,13 +34,18 @@ import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
 
+const val KEY_LAST_NAVIGATION = "lastNavigation"
+
 class MainActivity : OctoActivity() {
 
     private var lastNavigation = -1
+    private val lastInsets = Rect()
     private val notificationServiceIntent by lazy { Intent(this, PrintNotificationService::class.java) }
 
     override val octoToolbar: OctoToolbar by lazy { toolbar }
@@ -40,6 +59,7 @@ class MainActivity : OctoActivity() {
         val observer = Observer(this::onEventReceived)
         val events = ConnectPrinterInjector.get().octoprintProvider().eventFlow("MainActivity@events").asLiveData()
 
+        lastNavigation = savedInstanceState?.getInt(KEY_LAST_NAVIGATION, lastNavigation) ?: lastNavigation
         SignInInjector.get().octoprintRepository().instanceInformationFlow().asLiveData().observe(this, {
             Timber.i("Instance information received")
             if (it != null) {
@@ -66,10 +86,60 @@ class MainActivity : OctoActivity() {
                     R.id.terminalFragment -> OctoAnalytics.logEvent(OctoAnalytics.Event.TerminalWorkspaceShown)
                 }
             }
-        }
 
-        coordinator.onFeedbackTriggeredListener = {
-            SendFeedbackDialog().show(supportFragmentManager, "send-feedback")
+            supportFragmentManager.findFragmentById(R.id.mainNavController)?.childFragmentManager?.registerFragmentLifecycleCallbacks(
+                object : FragmentManager.FragmentLifecycleCallbacks() {
+                    override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
+                        super.onFragmentResumed(fm, f)
+                        applyInsetsToScreen(f)
+                    }
+                },
+                false
+            )
+
+            // Listen for inset changes and store them
+            window.decorView.setOnApplyWindowInsetsListener { _, insets ->
+                Timber.i("Insets updated $insets")
+                lastInsets.top = insets.stableInsetTop
+                lastInsets.left = insets.stableInsetLeft
+                lastInsets.bottom = insets.stableInsetBottom
+                lastInsets.right = insets.stableInsetRight
+                applyInsetsToCurrentScreen()
+                insets.consumeStableInsets()
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_LAST_NAVIGATION, lastNavigation)
+    }
+
+    private fun applyInsetsToCurrentScreen() = findCurrentScreen()?.let { applyInsetsToScreen(it) }
+
+    private fun findCurrentScreen() = supportFragmentManager.findFragmentById(R.id.mainNavController)?.childFragmentManager?.fragments?.firstOrNull()
+
+    private fun applyInsetsToScreen(screen: Fragment, topOverwrite: Int? = null) {
+        val disconnectHeight = disconnectedMessage.height.takeIf { disconnectedMessage.isVisible }
+        toolbar.updateLayoutParams<CoordinatorLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
+        octo.updateLayoutParams<CoordinatorLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
+
+        if (screen is InsetAwareScreen) {
+            screen.handleInsets(
+                Rect(
+                    lastInsets.left,
+                    topOverwrite ?: disconnectHeight ?: lastInsets.top,
+                    lastInsets.right,
+                    lastInsets.bottom,
+                )
+            )
+        } else {
+            screen.view?.updatePadding(
+                top = topOverwrite ?: disconnectHeight ?: lastInsets.top,
+                bottom = lastInsets.bottom,
+                left = lastInsets.left,
+                right = lastInsets.right
+            )
         }
     }
 
@@ -83,6 +153,21 @@ class MainActivity : OctoActivity() {
         Timber.i("UI stopped")
     }
 
+    override fun onResume() {
+        super.onResume()
+        BillingManager.onResume()
+        lifecycleScope.launchWhenResumed {
+            BillingManager.billingEventFlow().collectLatest {
+                delay(300L)
+                it.consume { event ->
+                    when (event) {
+                        BillingEvent.PurchaseCompleted -> PurchaseConfirmationDialog().show(supportFragmentManager, "purchase-confirmation")
+                    }
+                }
+            }
+        }
+    }
+
     private fun navigate(id: Int) {
         if (id != lastNavigation) {
             lastNavigation = id
@@ -93,15 +178,20 @@ class MainActivity : OctoActivity() {
     private fun onEventReceived(e: Event) = when (e) {
         // Only show errors if we are not already in disconnected screen. We still want to show the stall warning to indicate something is wrong
         // as this might lead to the user being stuck
-        is Event.Disconnected -> if (lastNavigation != R.id.action_connect_printer || e.exception is WebSocketMaybeBrokenException) {
-            e.exception?.let(this::showDialog)
-            navigate(R.id.action_connect_printer)
-        } else {
-            // We are already in disconnect state, nothing to do
-            Timber.w("Socket disconnected but already in disconnected state (${e.exception}")
+        is Event.Disconnected -> {
+            Timber.w("Connection lost")
+            when (e.exception) {
+                is WebSocketMaybeBrokenException -> e.exception?.let(this::showDialog)
+                else -> setDisconnectedMessageVisible(!listOf(R.id.action_connect_printer, R.id.action_sign_in_required).contains(lastNavigation))
+            }
         }
+
+        Event.Connected -> {
+            Timber.w("Connection restored")
+            setDisconnectedMessageVisible(false)
+        }
+
         is Event.MessageReceived -> onMessageReceived(e.message)
-        Event.Connected -> Unit
     }
 
     private fun onMessageReceived(e: Message) = when (e) {
@@ -141,8 +231,7 @@ class MainActivity : OctoActivity() {
                     R.id.action_printer_connected
                 }
 
-                // This is a special case where all flags are false. This may happen after an emergency stop of the printer. Go to connect.
-                !flags.operational && !flags.paused && !flags.cancelling && !flags.closedOrError && !flags.error && !flags.printing && !flags.pausing -> {
+                !flags.operational && !flags.paused && !flags.cancelling && !flags.printing && !flags.pausing -> {
                     stopService(notificationServiceIntent)
                     R.id.action_connect_printer
                 }
@@ -153,27 +242,36 @@ class MainActivity : OctoActivity() {
         )
     }
 
-    private fun onEventMessageReceived(e: Message.EventMessage) {
-        Timber.tag("navigation").v(e.toString())
-        navigate(
-            when {
-                e is Message.EventMessage.Disconnected -> R.id.action_connect_printer
-                e is Message.EventMessage.Connected -> {
-                    // New printer connected, let's update capabilities
-                    updateCapabilities()
-                    R.id.action_printer_connected
-                }
-                e is Message.EventMessage.PrinterStateChanged &&
-                        e.stateId == Message.EventMessage.PrinterStateChanged.PrinterState.OPERATIONAL -> R.id.action_printer_connected
-                e is Message.EventMessage.PrintStarted -> R.id.action_printer_active
-                e is Message.EventMessage.SettingsUpdated -> {
-                    // Settings changed, let's update capabilities to see whether something changed
-                    updateCapabilities()
-                    lastNavigation
-                }
-                else -> lastNavigation
-            }
+    private fun onEventMessageReceived(e: Message.EventMessage) = when (e) {
+        is Message.EventMessage.Connected, is Message.EventMessage.SettingsUpdated -> {
+            // New printer connected or settings updated, let's update capabilities
+            updateCapabilities()
+        }
+        else -> Unit
+    }
+
+    private fun setDisconnectedMessageVisible(visible: Boolean) {
+        if (disconnectedMessage.isVisible == visible) return
+
+        // Let disconnect message fill status bar background and measure height
+        disconnectedMessage.updatePadding(
+            top = disconnectedMessage.paddingBottom + lastInsets.top,
         )
+        disconnectedMessage.measure(
+            View.MeasureSpec.makeMeasureSpec(coordinatorLayout.width, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+        )
+        val height = disconnectedMessage.measuredHeight
+
+        TransitionManager.beginDelayedTransition(coordinatorLayout, TransitionSet().apply {
+            addTransition(Explode())
+            addTransition(ChangeBounds())
+            findCurrentScreen()?.view?.let {
+                excludeChildren(it, true)
+            }
+        })
+        findCurrentScreen()?.let { applyInsetsToScreen(it, height.takeIf { visible }) }
+        disconnectedMessage.isVisible = visible
     }
 
     private fun updateCapabilities() {

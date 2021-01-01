@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
-import de.crysxd.octoapp.print_controls.di.Injector
 
 /**
  * For Actvities, allows declarations like
@@ -21,6 +20,12 @@ inline fun <reified VM : ViewModel> FragmentActivity.injectViewModel(provider: V
 
 internal inline fun <reified VM : ViewModel> OctoWidget.injectViewModel(provider: ViewModelProvider.Factory = Injector.get().viewModelFactory()) = lazy {
     val vm = ViewModelProvider(this.parent, provider)[VM::class.java]
+    (vm as? BaseViewModel)?.let { this.setupBaseViewModel(it) }
+    vm
+}
+
+internal inline fun <reified VM : ViewModel> OctoWidget.injectActivityViewModel(provider: ViewModelProvider.Factory = Injector.get().viewModelFactory()) = lazy {
+    val vm = ViewModelProvider(this.parent.requireActivity(), provider)[VM::class.java]
     (vm as? BaseViewModel)?.let { this.setupBaseViewModel(it) }
     vm
 }

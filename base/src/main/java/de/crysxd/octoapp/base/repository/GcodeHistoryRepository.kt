@@ -17,7 +17,9 @@ class GcodeHistoryRepository(
     val history get() = historyChannel.asFlow()
 
     init {
+        dataSource.store(dataSource.get() ?: defaults)
         pushUpdateToChannel()
+
     }
 
     private fun pushUpdateToChannel() {
@@ -25,15 +27,11 @@ class GcodeHistoryRepository(
     }
 
     private suspend fun updateHistoryForCommand(command: String, update: (GcodeHistoryItem) -> GcodeHistoryItem?) = withContext(Dispatchers.IO) {
-        val updated = (dataSource.get() ?: defaults).mapNotNull {
-            if (it.command == command) {
-                update(it)
-            } else {
-                it
-            }
-        }
-
-        dataSource.store(updated)
+        val history = (dataSource.get()?.toMutableList() ?: defaults.toMutableList())
+        val old = history.firstOrNull { it.command == command } ?: GcodeHistoryItem(command)
+        history.remove(old)
+        update(old)?.let(history::add)
+        dataSource.store(history)
         pushUpdateToChannel()
     }
 
