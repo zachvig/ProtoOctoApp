@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.signin.ui
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
@@ -8,12 +9,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.ext.composeErrorMessage
 import de.crysxd.octoapp.base.ui.BaseFragment
+import de.crysxd.octoapp.base.ui.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -33,9 +36,10 @@ import timber.log.Timber
 import java.net.URL
 import java.security.cert.Certificate
 
-class SignInFragment : BaseFragment(R.layout.fragment_signin) {
+class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen {
 
     override val viewModel: SignInViewModel by injectViewModel()
+    private var viewCompactor: ViewCompactor? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -63,18 +67,36 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         }
 
         val full = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin) }
-        val compact = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin_compact) }
+        val compact0 = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin) }
+        val compact1 = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin) }
+        val compact2 = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin_compact) }
+        compact0.setMargin(R.id.octoView, ConstraintSet.TOP, requireContext().resources.getDimension(R.dimen.margin_5).toInt())
+        compact1.setMargin(R.id.octoView, ConstraintSet.TOP, requireContext().resources.getDimension(R.dimen.margin_4).toInt())
 
-        ViewCompactor(view as ViewGroup, reset = {
+        viewCompactor = ViewCompactor(view as ViewGroup, reset = {
             Timber.i("Reset")
             TransitionManager.beginDelayedTransition(requireView() as ViewGroup, InstantAutoTransition(quickTransition = true, explode = true))
             full.applyTo(constraintLayout)
             textViewTitle.setTextAppearanceCompat(R.style.OctoTheme_TextAppearance_Title_Large)
         }, compact = {
             Timber.i("Compact $it")
-            compact.applyTo(constraintLayout)
-            textViewTitle.setTextAppearanceCompat(R.style.OctoTheme_TextAppearance_Title)
-            false
+
+            when (it) {
+                0 -> {
+                    compact0.applyTo(constraintLayout)
+                    true
+                }
+                1 -> {
+                    compact1.applyTo(constraintLayout)
+                    true
+                }
+                2 -> {
+                    compact2.applyTo(constraintLayout)
+                    textViewTitle.setTextAppearanceCompat(R.style.OctoTheme_TextAppearance_Title)
+                    false
+                }
+                else -> false
+            }
         })
     }
 
@@ -199,5 +221,15 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
             viewModel.invalidApiKeyInfoWasShown = true
             requireOctoActivity().showDialog(requireContext().getString(R.string.error_api_key_reported_invalid))
         }
+    }
+
+    override fun handleInsets(insets: Rect) {
+        requireView().updatePadding(
+            top = insets.top,
+            left = insets.left,
+            right = insets.right,
+            bottom = insets.bottom,
+        )
+        viewCompactor?.notifyChanged()
     }
 }
