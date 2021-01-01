@@ -100,10 +100,10 @@ class MainActivity : OctoActivity() {
             // Listen for inset changes and store them
             window.decorView.setOnApplyWindowInsetsListener { _, insets ->
                 Timber.i("Insets updated $insets")
-                lastInsets.top = insets.stableInsetTop
-                lastInsets.left = insets.stableInsetLeft
-                lastInsets.bottom = insets.stableInsetBottom
-                lastInsets.right = insets.stableInsetRight
+                lastInsets.top = insets.systemWindowInsetTop
+                lastInsets.left = insets.systemWindowInsetLeft
+                lastInsets.bottom = insets.systemWindowInsetBottom
+                lastInsets.right = insets.systemWindowInsetRight
                 applyInsetsToCurrentScreen()
                 insets.consumeStableInsets()
             }
