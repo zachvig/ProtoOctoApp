@@ -80,7 +80,7 @@ class FileDetailsFragment : BaseFragment(R.layout.fragment_file_details), InsetA
             height = if (position == 0) {
                 ViewGroup.LayoutParams.WRAP_CONTENT
             } else {
-                requireView().height - tabs.height
+                requireView().height - tabs.height - requireView().paddingBottom - requireView().paddingTop
             }
         }
 

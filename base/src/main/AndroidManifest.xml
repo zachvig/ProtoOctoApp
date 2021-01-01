@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.crysxd.octoapp.base">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application>
         <provider
             android:name=".PublicFileProvider"

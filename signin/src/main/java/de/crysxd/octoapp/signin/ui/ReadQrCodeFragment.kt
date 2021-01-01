@@ -2,21 +2,21 @@ package de.crysxd.octoapp.signin.ui
 
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.ui.InsetAwareScreen
 import de.crysxd.octoapp.signin.R
 import kotlinx.android.synthetic.main.fragment_read_qr_code.*
 
-class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code) {
+class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code), InsetAwareScreen {
 
     private var systemUiVisibilityBackup = 0
     private var navigationBarColorBackup = Color.WHITE
@@ -55,10 +55,6 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code) {
             it.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             it.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                applyInsets()
-            }
-
             navigationBarColorBackup = it.navigationBarColor
             systemUiVisibilityBackup = it.decorView.systemUiVisibility
             it.navigationBarColor = Color.BLACK
@@ -68,32 +64,6 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     it.decorView.systemUiVisibility = it.decorView.systemUiVisibility xor View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
                 }
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun applyInsets() {
-        lifecycleScope.launchWhenCreated {
-            requireActivity().window.let {
-                val margin2 = requireContext().resources.getDimension(R.dimen.margin_2).toInt()
-                ConstraintSet().apply {
-                    clone(constraintLayout)
-                    connect(
-                        R.id.buttonCancel,
-                        ConstraintSet.BOTTOM,
-                        ConstraintSet.PARENT_ID,
-                        ConstraintSet.BOTTOM,
-                        it.decorView.rootWindowInsets.stableInsetBottom + margin2
-                    )
-                    connect(
-                        R.id.octoView,
-                        ConstraintSet.TOP,
-                        ConstraintSet.PARENT_ID,
-                        ConstraintSet.TOP,
-                        it.decorView.rootWindowInsets.stableInsetBottom
-                    )
-                }.applyTo(constraintLayout)
             }
         }
     }
@@ -120,5 +90,26 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code) {
             it.decorView.systemUiVisibility = systemUiVisibilityBackup
             it.navigationBarColor = navigationBarColorBackup
         }
+    }
+
+    override fun handleInsets(insets: Rect) {
+        val margin2 = requireContext().resources.getDimension(R.dimen.margin_2).toInt()
+        ConstraintSet().apply {
+            clone(constraintLayout)
+            connect(
+                R.id.buttonCancel,
+                ConstraintSet.BOTTOM,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.BOTTOM,
+                insets.bottom + margin2
+            )
+            connect(
+                R.id.octoView,
+                ConstraintSet.TOP,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.TOP,
+                insets.bottom
+            )
+        }.applyTo(constraintLayout)
     }
 }

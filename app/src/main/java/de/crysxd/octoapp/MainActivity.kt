@@ -100,10 +100,10 @@ class MainActivity : OctoActivity() {
             // Listen for inset changes and store them
             window.decorView.setOnApplyWindowInsetsListener { _, insets ->
                 Timber.i("Insets updated $insets")
-                lastInsets.top = insets.stableInsetTop
-                lastInsets.left = insets.stableInsetLeft
-                lastInsets.bottom = insets.stableInsetBottom
-                lastInsets.right = insets.stableInsetRight
+                lastInsets.top = insets.systemWindowInsetTop
+                lastInsets.left = insets.systemWindowInsetLeft
+                lastInsets.bottom = insets.systemWindowInsetBottom
+                lastInsets.right = insets.systemWindowInsetRight
                 applyInsetsToCurrentScreen()
                 insets.consumeStableInsets()
             }
@@ -121,6 +121,7 @@ class MainActivity : OctoActivity() {
 
     private fun applyInsetsToScreen(screen: Fragment, topOverwrite: Int? = null) {
         val disconnectHeight = disconnectedMessage.height.takeIf { disconnectedMessage.isVisible }
+        Timber.v("Applying insets: disconnectedMessage=$disconnectHeight topOverwrite=$topOverwrite")
         toolbar.updateLayoutParams<CoordinatorLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
         octo.updateLayoutParams<CoordinatorLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
 
@@ -270,8 +271,8 @@ class MainActivity : OctoActivity() {
                 excludeChildren(it, true)
             }
         })
-        findCurrentScreen()?.let { applyInsetsToScreen(it, height.takeIf { visible }) }
         disconnectedMessage.isVisible = visible
+        findCurrentScreen()?.let { applyInsetsToScreen(it, height.takeIf { visible }) }
     }
 
     private fun updateCapabilities() {

@@ -82,4 +82,16 @@
         <key>premium_features</key>
         <value>gcode_preview,hls_webcam</value>
     </entry>
+    <entry>
+        <key>web_socket_ping_pong_timeout_ms</key>
+        <value>5000</value>
+    </entry>
+    <entry>
+        <key>web_socket_connect_timeout_ms</key>
+        <value>5000</value>
+    </entry>
+    <entry>
+        <key>tested_octoprint_version</key>
+        <value>1.5.2</value>
+    </entry>
 </defaultsMap>

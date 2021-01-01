@@ -35,21 +35,21 @@ class OctoPrint(
     rawWebUrl: String,
     private val apiKey: String,
     private val interceptors: List<Interceptor> = emptyList(),
-    private val keyStore: KeyStore?
+    private val keyStore: KeyStore?,
+    webSocketPingPongTimeoutMs: Long,
+    webSocketConnectTimeoutMs: Long,
 ) {
 
     val webUrl = "${rawWebUrl.removeSuffix("/")}/"
-
-    companion object {
-        const val TESTED_SERVER_VERSION = "1.5.2"
-    }
 
     private val webSocket = EventWebSocket(
         httpClient = createOkHttpClient(),
         webUrl = webUrl,
         gson = createGsonWithTypeAdapters(),
         logger = getLogger(),
-        loginApi = createLoginApi()
+        loginApi = createLoginApi(),
+        pingPongTimeoutMs = webSocketPingPongTimeoutMs,
+        connectionTimeoutMs = webSocketConnectTimeoutMs
     )
 
     fun getEventWebSocket() = webSocket

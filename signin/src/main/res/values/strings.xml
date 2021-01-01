@@ -40,4 +40,6 @@
     <string name="step_3_description">Trying to connect to port...</string>
     <string name="step_4_description">Trying to connect to OctoPrint...</string>
     <string name="trouble_shooting">Trouble shooting</string>
+    <string name="no_wifi_warning_long">Your phone is not connected to WiFi. In many cases, OctoPrint is only available over WiFi.</string>
+    <string name="sign_in_manual_link">Learn how to sign in</string>
 </resources>
