@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import com.android.billingclient.api.*
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import kotlinx.coroutines.*
@@ -147,6 +148,8 @@ object BillingManager {
                 Purchase.PurchaseState.PURCHASED == it.purchaseState && it.sku.contains("_sub_")
             }
             billingChannel.update {
+                Firebase.analytics.setUserProperty("premium_user", premiumActive.toString())
+                Firebase.analytics.setUserProperty("premium_sub_user", fromSubscription.toString())
                 it.copy(isPremiumActive = premiumActive, isPremiumFromSubscription = fromSubscription)
             }
 
