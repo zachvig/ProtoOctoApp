@@ -32,7 +32,7 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code), InsetAwareS
         scannerView.setResultHandler {
             OctoAnalytics.logEvent(OctoAnalytics.Event.QrCodeCompleted)
             findNavController().previousBackStackEntry?.savedStateHandle?.set(RESULT_API_KEY, it.text)
-            findNavController().popBackStack()
+           // findNavController().popBackStack()
         }
 
         buttonCancel.setOnClickListener {

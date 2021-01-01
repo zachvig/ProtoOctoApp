@@ -14,9 +14,11 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.composeErrorMessage
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.InsetAwareScreen
+import de.crysxd.octoapp.base.ui.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -39,10 +41,20 @@ import java.security.cert.Certificate
 class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen {
 
     override val viewModel: SignInViewModel by injectViewModel()
+    private val networkViewModel: NetworkStateViewModel by injectViewModel(Injector.get().viewModelFactory())
     private var viewCompactor: ViewCompactor? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        networkViewModel.networkState.observe(viewLifecycleOwner) {
+            Timber.i("network alpha: ${if (it !is NetworkStateViewModel.NetworkState.WifiConnected) 1f else 0f}")
+            inputWebUrl.actionTint = null
+            inputWebUrl.actionIcon = if (it !is NetworkStateViewModel.NetworkState.WifiConnected) R.drawable.ic_wifi_unavailable else 0
+            inputWebUrl.setOnActionListener {
+                requireOctoActivity().showDialog("Your phone is not connected to WiFi. In many cases, OctoPrint is only available over WiFi.")
+            }
+        }
 
         buttonSignIn.setOnClickListener { signIn() }
         inputApiKey.editText.setImeActionLabel(getString(R.string.sign_in), KeyEvent.KEYCODE_ENTER)

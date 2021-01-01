@@ -2,6 +2,9 @@ package de.crysxd.octoapp.base.ui.common
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Parcel
 import android.os.Parcelable
 import android.text.Editable
@@ -52,6 +55,39 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         }
     var selectAllOnFocus: Boolean = false
     var actionOnlyWithText: Boolean = false
+    private var actionSet = false
+    var actionTint: Int?
+        set(value) {
+            if (value != null) {
+                action.setColorFilter(value)
+            } else {
+                action.clearColorFilter()
+            }
+        }
+        get() = null
+    var actionIcon: Int?
+        set(value) {
+            if (value != null && value > 0) {
+                action.setImageResource(value)
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    (action.drawable as? AnimatedVectorDrawable)?.let {
+                        it.start()
+                        it.registerAnimationCallback(object : Animatable2.AnimationCallback() {
+                            override fun onAnimationEnd(drawable: Drawable) {
+                                it.start()
+                            }
+                        })
+                    }
+                }
+                action.isVisible = true
+                actionSet = true
+            } else {
+                action.setImageDrawable(null)
+                action.isVisible = false
+                actionSet = false
+            }
+        }
+        get() = null
 
     @Suppress("unused")
     val editText: AppCompatEditText by lazy { input }
@@ -85,12 +121,8 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             if (iconTint != -1) {
                 icon.setColorFilter(iconTint)
             }
-            val actionDrawable = it.getResourceId(R.styleable.OctoTextInputLayout_actionDrawable, 0)
-            if (actionDrawable > 0) {
-                action.setImageResource(actionDrawable)
-            } else {
-                action.isVisible = false
-            }
+            actionIcon = it.getResourceId(R.styleable.OctoTextInputLayout_actionDrawable, 0)
+            actionTint = ContextCompat.getColor(context, R.color.accent)
         }
 
         initialLabelColors = label.textColors
@@ -123,7 +155,7 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         } else {
             hintNormal
         }
-        val actionVisible = !editText.text.isNullOrBlank() || !actionOnlyWithText
+        val actionVisible = actionSet && (!editText.text.isNullOrBlank() || !actionOnlyWithText)
 
         // Only animate if changes worth animation are detected
         if (labelVisible != label.isVisible || hintText != input.hint || actionVisible != action.isVisible) {

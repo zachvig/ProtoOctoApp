@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:background="@drawable/bg_input"
     android:gravity="center_vertical"
     android:minHeight="70dp"
-    android:background="@drawable/bg_input">
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/icon"
@@ -20,8 +20,8 @@
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
@@ -54,12 +54,12 @@
 
     <ImageButton
         android:id="@+id/action"
-        android:contentDescription="@string/cd_read_octoprint_api_credentials_with_ar_code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:tint="?android:attr/colorAccent"
         android:layout_marginStart="@dimen/margin_1"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cd_read_octoprint_api_credentials_with_ar_code"
+        android:tint="@null"
         tools:srcCompat="@drawable/ic_qr_code_scanner_24px" />
 
 </LinearLayout>
