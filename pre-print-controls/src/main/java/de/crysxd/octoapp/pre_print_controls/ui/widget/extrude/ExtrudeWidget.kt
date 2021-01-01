@@ -15,7 +15,7 @@ class ExtrudeWidget(parent: Fragment) : OctoWidget(parent) {
 
     val viewModel: ExtrudeWidgetViewModel by injectViewModel()
 
-    override fun getTitle(context: Context) = "Extrude"
+    override fun getTitle(context: Context) = context.getString(R.string.widget_extrude)
     override fun getAnalyticsName() = "extrude"
 
     override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =

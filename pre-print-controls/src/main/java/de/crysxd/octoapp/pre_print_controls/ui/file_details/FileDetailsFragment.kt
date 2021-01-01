@@ -49,9 +49,9 @@ class FileDetailsFragment : BaseFragment(R.layout.fragment_file_details), InsetA
         viewPager.isUserInputEnabled = false
         TabLayoutMediator(tabs, viewPager) { tab, position ->
             tab.text = when (adapter.createFragment(position)) {
-                is InfoTab -> "Info"
+                is InfoTab -> getString(R.string.file_details_tab_info)
                 is GcodePreviewFragment -> {
-                    val builder = SpannableStringBuilder("Preview")
+                    val builder = SpannableStringBuilder(getString(R.string.file_details_tab_preview))
                     builder.append("   ")
                     val span = ImageSpan(requireContext(), R.drawable.ic_new)
                     builder.setSpan(span, builder.length - 1, builder.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)

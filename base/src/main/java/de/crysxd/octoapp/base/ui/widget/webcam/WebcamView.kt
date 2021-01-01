@@ -339,7 +339,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 zoom(focusX = detector.focusX, focusY = detector.focusY, newZoom = newZoom)
             } else if (!hintShown) {
                 hintShown = true
-                Toast.makeText(context, "Can't zoom in fit mode. Double tap to reset", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.cant_zoom_in_fit_mode), Toast.LENGTH_SHORT).show()
             }
 
             return true

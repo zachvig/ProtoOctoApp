@@ -46,7 +46,7 @@ class GcodePreviewWidget(parent: Fragment) : OctoWidget(parent) {
     private var hideLiveIndicatorJob: Job? = null
     private lateinit var file: FileObject.File
 
-    override fun getTitle(context: Context) = "Gcode"
+    override fun getTitle(context: Context) = context.getString(R.string.widget_gcode_preview)
 
     override fun getAnalyticsName() = "gcode_preview"
 

@@ -32,7 +32,7 @@ class MoveToolWidget(parent: Fragment) : OctoWidget(parent) {
         )
     }
 
-    override fun getTitle(context: Context) = "Move"
+    override fun getTitle(context: Context) = context.getString(R.string.widget_move)
     override fun getAnalyticsName() = "move"
     override fun hasSettings() = true
     override fun showSettings() {
