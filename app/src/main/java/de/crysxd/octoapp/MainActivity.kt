@@ -40,6 +40,8 @@ import timber.log.Timber
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
 
+const val KEY_LAST_NAVIGATION = "lastNavigation"
+
 class MainActivity : OctoActivity() {
 
     private var lastNavigation = -1
@@ -57,6 +59,7 @@ class MainActivity : OctoActivity() {
         val observer = Observer(this::onEventReceived)
         val events = ConnectPrinterInjector.get().octoprintProvider().eventFlow("MainActivity@events").asLiveData()
 
+        lastNavigation = savedInstanceState?.getInt(KEY_LAST_NAVIGATION, lastNavigation) ?: lastNavigation
         SignInInjector.get().octoprintRepository().instanceInformationFlow().asLiveData().observe(this, {
             Timber.i("Instance information received")
             if (it != null) {
@@ -105,6 +108,11 @@ class MainActivity : OctoActivity() {
                 insets.consumeStableInsets()
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_LAST_NAVIGATION, lastNavigation)
     }
 
     private fun applyInsetsToCurrentScreen() = findCurrentScreen()?.let { applyInsetsToScreen(it) }
