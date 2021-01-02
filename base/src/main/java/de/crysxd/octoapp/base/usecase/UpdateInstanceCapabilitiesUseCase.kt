@@ -43,9 +43,9 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                 OctoAnalytics.UserProperty.WebCamAvailable,
                 isWebcamSupported(settings.await()).toString()
             )
-            timber.i("Updated capabilities: $updated")
 
             if (updated != current) {
+                timber.i("Updated capabilities: $updated")
                 octoPrintRepository.storeOctoprintInstanceInformation(updated)
             } else {
                 timber.i("No changes")
