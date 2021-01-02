@@ -8,6 +8,7 @@ import de.crysxd.octoapp.base.SslKeyStoreHandler
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.usecase.UseCase
 import de.crysxd.octoapp.octoprint.exceptions.InvalidApiKeyException
+import de.crysxd.octoapp.octoprint.models.login.LoginResponse
 import de.crysxd.octoapp.signin.models.SignInInformation
 import timber.log.Timber
 
@@ -40,6 +41,10 @@ class SignInUseCase(
         if (response.session == null) {
             throw InvalidApiKeyException()
         }
+
+        // Check admin status
+        val isAdmin = response.groups?.contains(LoginResponse.GROUP_ADMINS) == true
+        OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.UserIsAdmin, isAdmin.toString())
 
         // Test that the API key is actually valid. On instances without authentication
         // the login endpoint accepts any API key but other endpoints do not
