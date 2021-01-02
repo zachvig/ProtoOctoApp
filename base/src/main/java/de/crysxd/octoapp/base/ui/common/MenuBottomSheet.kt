@@ -26,11 +26,13 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
 import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet.*
 import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet_premium_header.*
 import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet_premium_header.view.*
 import kotlinx.android.synthetic.main.item_menu.view.*
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -52,15 +54,21 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
         view.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.window_background))
         adapter = MenuAdapter(requireContext(), getMenuRes()) {
             lifecycleScope.launch(exceptionHandler) {
-                dismiss()
                 if (!onMenuItemSelected(it)) {
                     onMenuItemSelectedBase(it)
                 }
+                dismiss()
             }
         }
         menuRecycler.adapter = adapter
 
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+
+            val appLanguage = Injector.get().getAppLanguageUseCase().execute(Unit)
+            setMenuItemVisibility(R.id.menuChangeLanguage, appLanguage.canSwitchLocale)
+            setMenuItemTitle(R.id.menuChangeLanguage, appLanguage.switchLanguageText ?: "")
+            setMenuItemTitle(R.id.menuSupportOctoApp, Firebase.remoteConfig.getString("purchase_screen_launch_cta"))
+
             BillingManager.billingFlow().collectLatest {
                 setMenuItemVisibility(R.id.menuSupportOctoApp, !it.isPremiumActive)
 
@@ -93,6 +101,10 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
         adapter.setMenuItemVisibility(id, visible)
     }
 
+    fun setMenuItemTitle(@IdRes id: Int, title: CharSequence) {
+        adapter.setMenuItemTitle(id, title)
+    }
+
     fun setTitle(title: CharSequence) {
         menuTitle.text = title
         menuTitle.isVisible = true
@@ -100,14 +112,20 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
 
     abstract suspend fun onMenuItemSelected(@IdRes id: Int): Boolean
 
-    private suspend fun onMenuItemSelectedBase(@IdRes id: Int) = when (id) {
-        R.id.menuOpenOctoprint -> Injector.get().openOctoPrintWebUseCase().execute(requireContext())
-        R.id.menuGiveFeedback -> SendFeedbackDialog().show(requireActivity().supportFragmentManager, "send-feedback")
-        R.id.menuSupportOctoApp -> {
-            OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "more_menu"))
-            findNavController().navigate(R.id.action_show_purchase_flow)
+    private suspend fun onMenuItemSelectedBase(@IdRes id: Int) {
+        when (id) {
+            R.id.menuChangeLanguage -> GlobalScope.launch {
+                val newLocale = Injector.get().getAppLanguageUseCase().execute(Unit).switchLanguageLocale
+                Injector.get().setAppLanguageUseCase().execute(SetAppLanguageUseCase.Param(newLocale, requireActivity()))
+            }
+            R.id.menuOpenOctoprint -> Injector.get().openOctoPrintWebUseCase().execute(requireContext())
+            R.id.menuGiveFeedback -> SendFeedbackDialog().show(requireActivity().supportFragmentManager, "send-feedback")
+            R.id.menuSupportOctoApp -> {
+                OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "more_menu"))
+                findNavController().navigate(R.id.action_show_purchase_flow)
+            }
+            else -> Unit
         }
-        else -> Unit
     }
 
     override fun onStart() {
@@ -146,6 +164,7 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
 
         private val menuItems = mutableListOf<MenuItem>()
         private val hiddenItems = mutableListOf<Int>()
+        private val overrideTitles = mutableMapOf<Int, CharSequence>()
 
         init {
             inflateMenu()
@@ -160,6 +179,11 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
                 hiddenItems.add(id)
             }
 
+            inflateMenu()
+        }
+
+        fun setMenuItemTitle(@IdRes id: Int, title: CharSequence) {
+            overrideTitles[id] = title
             inflateMenu()
         }
 
@@ -188,11 +212,7 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
         override fun onBindViewHolder(holder: MenuItemViewHolder, position: Int) {
             val item = menuItems[position]
             holder.itemView.imageViewIcon.setImageDrawable(item.icon)
-            holder.itemView.textViewTitle.text = if (item.itemId == R.id.menuSupportOctoApp) {
-                Firebase.remoteConfig.getString("purchase_screen_launch_cta")
-            } else {
-                item.title
-            }
+            holder.itemView.textViewTitle.text = overrideTitles.getOrElse(item.itemId) { item.title }
             holder.itemView.setOnClickListener { callback(item.itemId) }
         }
     }

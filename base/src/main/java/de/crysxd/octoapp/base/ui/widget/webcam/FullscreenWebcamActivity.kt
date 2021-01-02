@@ -4,11 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.ui.LocaleActivity
 
 
-class FullscreenWebcamActivity : AppCompatActivity() {
+class FullscreenWebcamActivity : LocaleActivity() {
 
     companion object {
         fun start(activity: Activity) {

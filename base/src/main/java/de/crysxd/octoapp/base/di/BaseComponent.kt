@@ -69,6 +69,8 @@ interface BaseComponent {
     fun updateInstanceCapabilitiesUseCase(): UpdateInstanceCapabilitiesUseCase
     fun formatEtaUseCase(): FormatEtaUseCase
     fun signOutUseCase(): SignOutUseCase
+    fun getAppLanguageUseCase(): GetAppLanguageUseCase
+    fun setAppLanguageUseCase(): SetAppLanguageUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

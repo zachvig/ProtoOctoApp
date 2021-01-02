@@ -12,6 +12,11 @@
         android:title="@string/give_feedback" />
 
     <item
+        android:id="@+id/menuChangeLanguage"
+        android:icon="@drawable/ic_round_language_24"
+        android:title="" />
+
+    <item
         android:id="@id/menuOpenOctoprint"
         android:title="@string/open_octoprint"
         android:icon="@drawable/ic_round_open_in_browser_24" />
