@@ -68,12 +68,10 @@ open class ViewModelModule {
     @ViewModelKey(SelectFileViewModel::class)
     open fun provideSelectFileViewModel(
         loadFilesUseCase: LoadFilesUseCase,
-        startPrintJobUseCase: StartPrintJobUseCase,
         sharedPreferences: SharedPreferences,
         picasso: LiveData<Picasso?>
     ): ViewModel = SelectFileViewModel(
         loadFilesUseCase,
-        startPrintJobUseCase,
         sharedPreferences,
         picasso
     )
