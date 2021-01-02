@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="error_general">Quelque chose s\'est mal passé ! Essaie encore une fois, s\'il te plaît.</string>
     <string name="error_general_with_details"><![CDATA[Quelque chose s\'est mal passé ! Essaie encore une fois. <br/><br/><petit><font color="#%1$06X">%2$s</font></petit>]]></string>
     <string name="error_no_printer_connected">Aucune imprimante n\'est connectée à OctoPrint</string>
@@ -34,7 +33,7 @@
     <string name="try_restrating_the_app_or_octoprint">Essaie de redémarrer l\'application ou OctoPrint</string>
     <string name="give_feedback">Donnez votre avis</string>
     <string name="screenshot_of_current_screen">Capture d\'écran de l\'écran actuel</string>
-    <string name="app_logs">App logs</string>
+    <string name="app_logs">Journaux d\'application</string>
     <string name="thank_you_for_sending_feedback_please_select_what_should_be_included_in_your_message">Merci d\'envoyer vos commentaires. Veuillez entrer un message et choisir ce qui doit être joint.</string>
     <string name="send_feedback">Envoyer des commentaires</string>
     <string name="open_email">Ouvrir le courrier électronique</string>
@@ -61,7 +60,7 @@
     <string name="pause_the_print_to_send_commands">Arrête l\'impression pour envoyer des commandes.</string>
     <string name="get_support">Obtenir du soutien</string>
     <string name="show_details">Afficher les détails</string>
-    <string name="x_percent">%.0f\u2009%%%</string>
+    <string name="x_percent">%.0f %%</string>
     <string name="x_percent_int">%d %%</string>
     <string name="time_left_x">Temps restant : %s</string>
     <string name="eta_x">ETA : %s</string>
@@ -78,9 +77,9 @@
     <string name="x_of_y">%1$d de %2$d</string>
     <string name="error_video_playback">Impossible de jouer %1$s (%s)</string>
     <string name="set_lebel">Set label</string>
-    <string name="clear_lebel">Étiquette claire</string>
+    <string name="clear_lebel">Un label clair</string>
     <string name="remove_shortcut">Supprimer le raccourci</string>
-    <string name="enter_label">Enter label</string>
+    <string name="enter_label">Entrer le label</string>
     <string name="label_for_x">Label pour %s</string>
     <string name="hide">Cacher</string>
     <string name="shortcut_tutorial_line1">Raccourcis de la presse longue pour obtenir plus d\'options</string>
@@ -88,19 +87,19 @@
     <string name="one_gcode_per_line">Une commande Gcode par ligne</string>
     <string name="support_octoapp">Soutenir OctoApp</string>
     <plurals name="x_days">
-        <item quantity="one">Un jour</item>
+        <item quantity="one">%d jour</item>
         <item quantity="other">%d jours</item>
     </plurals>
     <plurals name="x_weeks">
-        <item quantity="one">Une semaine</item>
+        <item quantity="one">%d semaine</item>
         <item quantity="other">%d semaines</item>
     </plurals>
     <plurals name="x_months">
-        <item quantity="one">Un mois</item>
+        <item quantity="one">%d mois</item>
         <item quantity="other">%d mois</item>
     </plurals>
     <plurals name="x_years">
-        <item quantity="one">Un an</item>
+        <item quantity="one">%d an</item>
         <item quantity="other">%d années</item>
     </plurals>
     <string name="free_trial_x">Essai gratuit : %s</string>
@@ -143,7 +142,7 @@
     <string name="tap_temperature_to_edit">Touche la température pour éditer</string>
     <string name="preheat">Préchauffage</string>
     <string name="x_items_y">%1$d articles (%2$s)</string>
-    <string name="x_y">1$s (2$s)</string>
+    <string name="x_y">%1$s (%2$s)</string>
     <string name="select_file_to_print">Sélectionner le fichier à imprimer</string>
     <string name="extruding_x_mm">Extrusion %d mm</string>
     <string name="mm_0_025">0.025 mm</string>
@@ -208,7 +207,7 @@
     <string name="resume">CV</string>
     <string name="pause">Pause</string>
     <string name="eta">ETA</string>
-    <string name="print_name">Nom en caractères d\'imprimerie</string>
+    <string name="print_name">Nom</string>
     <string name="tune">Tune</string>
     <string name="cd_feed_rate">Vitesse du flux</string>
     <string name="cd_flow_rate">Débit</string>
@@ -262,12 +261,12 @@
     <string name="step_3_description">Essayer de se connecter au port…</string>
     <string name="step_4_description">Essayer de se connecter à OctoPrint…</string>
     <string name="trouble_shooting">Dépannage</string>
-    <string name="no_wifi_connection">No WiFi connection</string>
+    <string name="no_wifi_connection">Pas de connexion WiFi</string>
     <string name="widget_temperature">Températures</string>
     <string name="widget_extrude">Extrude</string>
     <string name="less_than_a_minute">moins d\'une minute</string>
     <string name="x_hours_y_mins">%1$02d:%2$02d h</string>
-    <string name="x_mins">2$d mins</string>
+    <string name="x_mins">%2$d mins</string>
     <string name="widget_gcode_send">Envoyer Gcode</string>
     <string name="cant_zoom_in_fit_mode">Impossible de zoomer en mode ajustement.</string>
     <string name="file_details_tab_info">Info</string>

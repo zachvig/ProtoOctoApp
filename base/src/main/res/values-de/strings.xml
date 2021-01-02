@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="error_general">Etwas ist schief gelaufen! Bitte versuche es noch einmal.</string>
     <string name="error_general_with_details"><![CDATA[Etwas ist schief gelaufen, bitte versuche es erneut.<br/><br/><small><font color="#%1$06X">%2$s</font></small>]]></string>
     <string name="error_no_printer_connected">Es ist kein Drucker mit OctoPrint verbunden</string>
@@ -20,8 +19,8 @@
     <string name="error_please_enter_a_value">Bitte gib einen Wert ein</string>
     <string name="x_temperature">%s Temperatur</string>
     <string name="print">Drucken</string>
-    <string name="prepare">Bereite vor.</string>
-    <string name="connect">Verbinde</string>
+    <string name="prepare">Vorbereiten</string>
+    <string name="connect">Verbinden</string>
     <string name="sent_x">Ausführen von %s</string>
     <string name="sent_x_and_y_others">Ausführen von %1$s und %2$d anderen</string>
     <string name="received_response_for_x">Empfangene Logs für %s</string>
@@ -52,7 +51,7 @@
     <string name="information_about_your_octoprint">Informationen über deinen OctoPrint</string>
     <string name="information_about_your_phone">Informationen über dein Telefon</string>
     <string name="other">Andere</string>
-    <string name="open_terminal">Open Terminal</string>
+    <string name="open_terminal">Terminal öffnen</string>
     <string name="show_logs">Logs anzeigen</string>
     <string name="error_cold_extrusion">Das Hotend ist unterhalb der Mindesttemperatur</string>
     <string name="command">Befehl</string>
@@ -61,7 +60,7 @@
     <string name="pause_the_print_to_send_commands">Halte den Druck an, um Befehle zu senden.</string>
     <string name="get_support">Hilfe bekommen</string>
     <string name="show_details">Details anzeigen</string>
-    <string name="x_percent">%.0f\u2009%%</string>
+    <string name="x_percent">%.0f %%</string>
     <string name="x_percent_int">%d %%</string>
     <string name="time_left_x">Verbleibende Zeit: %s</string>
     <string name="eta_x">ETA: %s</string>
@@ -73,8 +72,8 @@
     <string name="download_x">Herunterladen %s</string>
     <string name="error_unable_to_load_gcode">Etwas ist schief gelaufen, kann den Gcode nicht laden</string>
     <string name="try_again">Nochmal versuchen</string>
-    <string name="layer">Ebene</string>
-    <string name="layer_progress">Layer Progress</string>
+    <string name="layer">Schicht</string>
+    <string name="layer_progress">Schichtfortschritt</string>
     <string name="x_of_y">%1$d von %2$d</string>
     <string name="error_video_playback">Kann %1$s nicht spielen (%s)</string>
     <string name="set_lebel">Etikett setzen</string>
@@ -114,8 +113,8 @@
     <string name="enable">Aktiviere</string>
     <string name="gcode_preview">Gcode Vorschau</string>
     <string name="gcode_preview_live">Live Gcode Vorschau</string>
-    <string name="gcode_preview_description">Mit dieser Funktion kannst du eine Vorschau des Gcodes vor dem Start des Drucks anzeigen und den Fortschritt während des Drucks live beobachten.</string>
-    <string name="turn_psu_on">PSU einschalten</string>
+    <string name="gcode_preview_description">Diese Funktion kann eine Gcode Vorschau vor dem Start des Drucks anzeigen und den Fortschritt live beobachten.</string>
+    <string name="turn_psu_on">Netzteil einschalten</string>
     <string name="octoprint_is_starting_up">OctoPrint startet durch</string>
     <string name="waiting_for_printer_to_come_online">Warten darauf, dass der Drucker online geht</string>
     <string name="octoapp_will_auto_connect_the_printer_once_available">OctoApp wird den Drucker automatisch verbinden, sobald er verfügbar ist</string>
@@ -129,15 +128,15 @@
     <string name="printer_is_offline">Drucker ist offline</string>
     <string name="cycle_psu_to_reset_the_printer">Schalte das Netzteil aus, um den Drucker zurückzusetzen</string>
     <string name="turn_the_printer_off_and_on_again_to_reset_it">Schalte den Drucker aus und wieder ein, um ihn zurückzusetzen</string>
-    <string name="cycle_psu">PSU Zyklus</string>
+    <string name="cycle_psu">PSU Netzteil neustarten</string>
     <string name="retry_connection">Verbindung erneut versuchen</string>
-    <string name="psu_is_being_cycled">PSU wird getaktet</string>
+    <string name="psu_is_being_cycled">Netzteil wird neugetsratet</string>
     <string name="printer_connected">Drucker angeschlossen</string>
     <string name="auto_selection_failed">Automatische Erkennung des Ports nicht möglich, erste Auswahl</string>
-    <string name="turn_off_psu">PSU ausschalten</string>
+    <string name="turn_off_psu">Netzteil ausschalten</string>
     <string name="extrude_retract">Extrude / Retract</string>
     <string name="distance_in_mm_negative_for_retract">Abstand in mm (negativ für Einfahren)</string>
-    <string name="start_printing">Start Drucken</string>
+    <string name="start_printing">Druck starten</string>
     <string name="extrude">Extrudieren</string>
     <string name="move">Bewege</string>
     <string name="tap_temperature_to_edit">Tippe auf Temperatur zum Bearbeiten</string>
@@ -180,8 +179,8 @@
     <string name="last_print_at_x_failure">%s (Fehler)</string>
     <string name="completed">Abgeschlossen</string>
     <string name="x_times">%d mal</string>
-    <string name="failures">Ausfälle</string>
-    <string name="print_info">Infos drucken</string>
+    <string name="failures">Fehlschläge</string>
+    <string name="print_info">Generell</string>
     <string name="file">Datei</string>
     <string name="history">Geschichte</string>
     <string name="no_preview_image_available">Kein Vorschaubild verfügbar</string>
@@ -209,12 +208,12 @@
     <string name="pause">Pause</string>
     <string name="eta">ETA</string>
     <string name="print_name">Druck Name</string>
-    <string name="tune">Tune</string>
+    <string name="tune">Abstimmen</string>
     <string name="cd_feed_rate">Vorschubgeschwindigkeit</string>
     <string name="cd_flow_rate">Durchflussmenge</string>
     <string name="cd_fan_speed">Lüftergeschwindigkeit</string>
     <string name="why_are_the_values_not_always_shown">Warum werden die Werte nicht immer angezeigt?</string>
-    <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">OctoPrint kann die Lüftergeschwindigkeit und -raten nicht abfragen. Die Werte können nur angezeigt werden, wenn Änderungen beobachtet werden.</string>
+    <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">OctoPrint kann diese Werte nicht abfragen. Die Werte können nur angezeigt werden, wenn Änderungen beobachtet werden.</string>
     <string name="understood">Verstanden</string>
     <string name="apply">Anwenden</string>
     <string name="fan_speed_label_active">Lüftergeschwindigkeit von 0 bis 100</string>
@@ -248,7 +247,7 @@
     <string name="sign_in_succes_with_warnings">Die Anmeldung war erfolgreich, aber es gab Warnungen:</string>
     <string name="web_url">Web-URL</string>
     <string name="web_url_active_hint">Web-URL - kopiere das von deinem Browser!</string>
-    <string name="api_key_active_hint">API Schlüssel - aus den OctoPrint Einstellungen</string>
+    <string name="api_key_active_hint">API Schlüssel - in OctoPrint Einstellungen</string>
     <string name="error_api_cotains_illegal_characters">Der API Schlüssel enthält unerlaubte Zeichen</string>
     <string name="error_enter_api_key">Bitte gib einen API Schlüssel ein</string>
     <string name="trust_server_and_try_again">Server vertrauen</string>
@@ -275,7 +274,7 @@
     <string name="widget_move">Bewegen</string>
     <string name="widget_gcode_preview">Gcode</string>
     <string name="no_wifi_warning_long">Dein Telefon ist nicht mit WLAN verbunden. In vielen Fällen ist OctoPrint nur über WLAN verfügbar.</string>
-    <string name="sign_in_manual_link">Lernen wie man sich anmeldet</string>
+    <string name="sign_in_manual_link">Lerne wie man sich anmeldet</string>
     <string name="app_name">OctoApp</string>
     <string name="notification_channel_print_progress">Drucken…</string>
     <string name="notification_pausing_title">Innehalten…</string>

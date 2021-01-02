@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="error_general">¡Algo salió mal! Por favor, inténtelo de nuevo.</string>
     <string name="error_general_with_details">¡Algo salió mal! Por favor, inténtalo de nuevo.</string>
     <string name="error_no_printer_connected">Ninguna impresora está conectada a OctoPrint</string>
@@ -61,7 +60,7 @@
     <string name="pause_the_print_to_send_commands">Pausa la impresión para enviar comandos.</string>
     <string name="get_support">Obtener apoyo</string>
     <string name="show_details">Mostrar detalles</string>
-    <string name="x_percent">%.0f\u2009%%</string>
+    <string name="x_percent">%.0f %%</string>
     <string name="x_percent_int">%d %%</string>
     <string name="time_left_x">Tiempo restante: %s</string>
     <string name="eta_x">ETA: %s</string>
@@ -75,7 +74,7 @@
     <string name="try_again">Inténtalo de nuevo.</string>
     <string name="layer">Capa</string>
     <string name="layer_progress">Progreso de la capa</string>
-    <string name="x_of_y">1$d de 2$d</string>
+    <string name="x_of_y">%1$d de %2$d</string>
     <string name="error_video_playback">Incapaz de jugar %1$s (%s)</string>
     <string name="set_lebel">Ponga la etiqueta</string>
     <string name="clear_lebel">Etiqueta clara</string>
@@ -267,7 +266,7 @@
     <string name="widget_extrude">Extrusión</string>
     <string name="less_than_a_minute">menos de un minuto</string>
     <string name="x_hours_y_mins">%1$02d:%2$02d h</string>
-    <string name="x_mins">2$d mins</string>
+    <string name="x_mins">%2$d mins</string>
     <string name="widget_gcode_send">Envía a Gcode</string>
     <string name="cant_zoom_in_fit_mode">No se puede hacer zoom en el modo de ajuste. Doble toque para reiniciar</string>
     <string name="file_details_tab_info">Información</string>
@@ -282,7 +281,7 @@
     <string name="notification_paused_title">Pausado</string>
     <string name="notification_cancelling_title">Cancelar…</string>
     <string name="notification_printing_title">La impresión…</string>
-    <string name="notification_printing_message">1$d%% completado, 2$s restantes</string>
+    <string name="notification_printing_message">%1$d%% completado, %2$s restantes</string>
     <string name="notification_printing_lost_connection_message">Reconectando…</string>
     <string name="notification_print_done_title">Impresión completada</string>
     <string name="close">Cerrar</string>

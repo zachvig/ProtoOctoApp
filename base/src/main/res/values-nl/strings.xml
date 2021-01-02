@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="error_general">Er is iets misgegaan, probeer het alsjeblieft nog eens.</string>
     <string name="error_general_with_details"><![CDATA[Er is iets misgegaan, probeer het alsjeblieft opnieuw.<br/><br/><klein><font-kleur="#%1$06X">%2$s</font></klein>]]></string>
     <string name="error_no_printer_connected">Er is geen printer aangesloten op OctoPrint</string>
@@ -20,7 +19,7 @@
     <string name="error_please_enter_a_value">Voer een waarde in</string>
     <string name="x_temperature">%s temperatuur</string>
     <string name="print">Print</string>
-    <string name="prepare">Bereid je voor op</string>
+    <string name="prepare">Bereid je voor</string>
     <string name="connect">Verbind</string>
     <string name="sent_x">Uitvoeren %s</string>
     <string name="sent_x_and_y_others">Uitvoeren van %1$s en %2$d anderen</string>
@@ -30,7 +29,7 @@
     <string name="gcode_one_command_per_line">G-code (een commando per regel)</string>
     <string name="change_filament">Verander de gloeidraad</string>
     <string name="open_octoprint">Open OctoPrint</string>
-    <string name="set">Stel  in.</string>
+    <string name="set">Stel  in</string>
     <string name="try_restrating_the_app_or_octoprint">Probeer de app of OctoPrint opnieuw te starten</string>
     <string name="give_feedback">Feedback geven</string>
     <string name="screenshot_of_current_screen">Screenshot van het huidige scherm</string>
@@ -61,7 +60,7 @@
     <string name="pause_the_print_to_send_commands">Pauzeer de afdruk om commando\'s te versturen.</string>
     <string name="get_support">Ondersteuning krijgen</string>
     <string name="show_details">Toon details</string>
-    <string name="x_percent">%.0u2009%%%</string>
+    <string name="x_percent">%.0f %%</string>
     <string name="x_percent_int">%d %%</string>
     <string name="time_left_x">Resterende tijd: %s</string>
     <string name="eta_x">ETA: %s</string>
@@ -208,8 +207,8 @@
     <string name="resume">Hervat</string>
     <string name="pause">Pauze</string>
     <string name="eta">ETA</string>
-    <string name="print_name">Naam afdrukken</string>
-    <string name="tune">Stem af op</string>
+    <string name="print_name">Naam</string>
+    <string name="tune">Stem af</string>
     <string name="cd_feed_rate">Aanvoersnelheid</string>
     <string name="cd_flow_rate">Stroomsnelheid</string>
     <string name="cd_fan_speed">Fan speed</string>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="error_general">Qualcosa è andato storto!</string>
     <string name="error_general_with_details"><![CDATA[Qualcosa è andato storto, prova di nuovo.<br/><br/><br/><piccolo><font color="#%1$06X">%2$s</font></small></small>]]></string>
     <string name="error_no_printer_connected">Nessuna stampante è collegata a OctoPrint</string>
@@ -19,9 +18,9 @@
     <string name="done">Fatto</string>
     <string name="error_please_enter_a_value">Inserisci un valore</string>
     <string name="x_temperature">%s temperatura</string>
-    <string name="print">Stampa</string>
+    <string name="print">Stampare</string>
     <string name="prepare">Preparare</string>
-    <string name="connect">Collegati a</string>
+    <string name="connect">Connettersi</string>
     <string name="sent_x">Esecuzione %s</string>
     <string name="sent_x_and_y_others">Esecuzione %1$s e %2$d altri</string>
     <string name="received_response_for_x">Log ricevuti per %s</string>
@@ -61,7 +60,7 @@
     <string name="pause_the_print_to_send_commands">Metti in pausa la stampa per inviare i comandi.</string>
     <string name="get_support">Ottieni supporto</string>
     <string name="show_details">Mostra dettagli</string>
-    <string name="x_percent">%.0f\u2009%%</string>
+    <string name="x_percent">%.0f %%</string>
     <string name="x_percent_int">%d %%</string>
     <string name="time_left_x">Tempo rimanente: %s</string>
     <string name="eta_x">Tempo di arrivo previsto: %s</string>
@@ -190,7 +189,7 @@
     <string name="z_feedrate_mm_min">Velocità di avanzamento Z (mm/min)</string>
     <string name="update_settings">Aggiornare le impostazioni</string>
     <string name="emergency_stop">Arresto di emergenza</string>
-    <string name="cancel_print">Cancel Print</string>
+    <string name="cancel_print">Annulla la stampa</string>
     <string name="estimation">Stima</string>
     <string name="time_left">Tempo rimasto</string>
     <string name="time_spent">Tempo trascorso</string>
@@ -202,7 +201,7 @@
     <string name="resume_print_confirmation_message">Vuoi riprendere la stampa?</string>
     <string name="resume_print_confirmation_action">Riprendi stampa</string>
     <string name="cancel_print_confirmation_message">Vuoi cancellare la stampa?</string>
-    <string name="cancel_print_confirmation_action">Cancel print</string>
+    <string name="cancel_print_confirmation_action">Annulla stampa</string>
     <string name="emergency_stop_confirmation_message">Vuoi fermare la stampante in caso di emergenza?</string>
     <string name="emergency_stop_confirmation_action">Arresto di emergenza</string>
     <string name="resume">Riprendi</string>
