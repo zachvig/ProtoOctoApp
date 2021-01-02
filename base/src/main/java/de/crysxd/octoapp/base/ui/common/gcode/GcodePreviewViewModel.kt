@@ -80,11 +80,6 @@ class GcodePreviewViewModel(
                     )
                 }
             }
-        }.retry(3) {
-            delay(500L)
-            true
-        }.catch {
-            emit(ViewState.Error(it))
         }.distinctUntilChanged()
 
     private val internalViewState: Flow<ViewState> =

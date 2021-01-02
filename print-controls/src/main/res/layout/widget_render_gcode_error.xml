@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/errorState"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="@+id/errorState">
+    android:layout_height="wrap_content">
 
     <View
         android:id="@+id/view2"

@@ -42,7 +42,11 @@ class NetworkStateViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        manager.unregisterNetworkCallback(networkCallback)
+        try {
+            manager.unregisterNetworkCallback(networkCallback)
+        } catch (e: IllegalArgumentException) {
+            // Old SDK or other hickup, manager does not know networkCallback
+        }
     }
 
     @Suppress("DEPRECATION")
