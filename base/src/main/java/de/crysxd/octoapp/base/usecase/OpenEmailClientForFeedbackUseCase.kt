@@ -2,16 +2,21 @@ package de.crysxd.octoapp.base.usecase
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.os.Build
 import androidx.core.content.FileProvider
+import androidx.core.os.ConfigurationCompat
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
+import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
@@ -21,11 +26,28 @@ import java.util.zip.ZipOutputStream
 import javax.inject.Inject
 
 
-class OpenEmailClientForFeedbackUseCase @Inject constructor() : UseCase<OpenEmailClientForFeedbackUseCase.Params, Unit>() {
+class OpenEmailClientForFeedbackUseCase @Inject constructor(
+    private val octoPrint: OctoPrintProvider
+) : UseCase<OpenEmailClientForFeedbackUseCase.Params, Unit>() {
 
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun doExecute(param: Params, timber: Timber.Tree) = withContext(Dispatchers.IO) {
         val context = param.context
+        val gson = GsonBuilder().setPrettyPrinting().create()
+
+        val octoPrintVersion = try {
+            octoPrint.octoPrint().createVersionApi().getVersion().serverVersionText
+        } catch (e: Exception) {
+            Timber.w(e)
+            "error"
+        }
+
+        val pluginList = try {
+            octoPrint.octoPrint().createSettingsApi().getSettings().plugins.settings.map { it.key }
+        } catch (e: Exception) {
+            Timber.w(e)
+            "error"
+        }
 
         val email = Firebase.remoteConfig.getString("contact_email")
         val (version, versionCode) = context.packageManager.getPackageInfo(context.packageName, 0).let {
@@ -57,6 +79,7 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor() : UseCase<OpenEmai
             val build = JsonObject()
             build.addProperty("brand", Build.BRAND)
             build.addProperty("manufacturer", Build.MANUFACTURER)
+            build.addProperty("languages", ConfigurationCompat.getLocales(Resources.getSystem().configuration).toLanguageTags())
             build.addProperty("model", Build.MODEL)
             build.addProperty("product", Build.PRODUCT)
             build.addProperty("display", Build.DISPLAY)
@@ -74,16 +97,17 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor() : UseCase<OpenEmai
             val appVersion = JsonObject()
             appVersion.addProperty("version_name", version)
             appVersion.addProperty("version_code", versionCode)
-            val others = JsonObject()
-            appVersion.addProperty("language", Locale.getDefault().isO3Language)
-            appVersion.addProperty("country", Locale.getDefault().isO3Country)
+            appVersion.addProperty("app_language", ConfigurationCompat.getLocales(context.resources.configuration).toLanguageTags())
+            val locale = JsonObject()
+            locale.addProperty("language", Locale.getDefault().isO3Language)
+            locale.addProperty("country", Locale.getDefault().isO3Country)
             val phoneInfo = JsonObject()
-            phoneInfo.add("build", build)
+            phoneInfo.add("phone", build)
             phoneInfo.add("app", appVersion)
-            phoneInfo.add("others", others)
+            phoneInfo.add("locale", locale)
 
             zipStream.writer().apply {
-                write(phoneInfo.toString())
+                write(gson.toJson(phoneInfo))
                 flush()
             }
             zipStream.closeEntry()
@@ -93,7 +117,10 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor() : UseCase<OpenEmai
         if (param.sendOctoPrintInfo) {
             zipStream.putNextEntry(ZipEntry("octoprint_info.json"))
             zipStream.writer().apply {
-                write(Gson().toJson(Injector.get().octorPrintRepository().instanceInformation.value?.copy(apiKey = "***")))
+                val json = Gson().toJsonTree(Injector.get().octorPrintRepository().instanceInformationFlow().firstOrNull()?.copy(apiKey = "***")) as JsonObject
+                json.addProperty("octoprint_version", octoPrintVersion)
+                json.add("installed_plugins", Gson().toJsonTree(pluginList))
+                write(gson.toJson(json))
                 flush()
             }
             zipStream.closeEntry()

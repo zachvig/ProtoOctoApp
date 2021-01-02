@@ -94,4 +94,10 @@
         <key>tested_octoprint_version</key>
         <value>1.5.2</value>
     </entry>
+    <entry>
+        <key>default_plugins</key>
+        <value>
+            action_command_notification,action_command_prompt,announcements,backup,discovery,errortracking,gcodeviewer,pluginmanager,softwareupdate,tracking,virtual_printer
+        </value>
+    </entry>
 </defaultsMap>

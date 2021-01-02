@@ -1,5 +1,7 @@
 package de.crysxd.octoapp.base.usecase
 
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
@@ -32,10 +34,11 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                 m115Response = m115.await()
             )
 
-            OctoAnalytics.setUserProperty(
-                OctoAnalytics.UserProperty.PsuPluginAvailable,
-                isPsuControlSupported(settings.await()).toString()
-            )
+            val standardPlugins = Firebase.remoteConfig.getString("default_plugins").split(",").map { it.trim() }
+            settings.await().plugins.settings.keys.filter { !standardPlugins.contains(it) }.forEach {
+                OctoAnalytics.logEvent(OctoAnalytics.Event.PluginDetected(it))
+            }
+
             OctoAnalytics.setUserProperty(
                 OctoAnalytics.UserProperty.WebCamAvailable,
                 isWebcamSupported(settings.await()).toString()
@@ -52,7 +55,10 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
 
     private fun isWebcamSupported(settings: Settings) = settings.webcam.webcamEnabled
 
-    private fun isPsuControlSupported(settings: Settings) = settings.plugins.settings.containsKey("psucontrol")
+    private fun isPsuControlSupported(settings: Settings): Boolean {
+        val psuPlugins = listOf("psucontrol")
+        return settings.plugins.settings.keys.any { psuPlugins.contains(it) }
+    }
 
     private suspend fun executeM115() = try {
         withTimeout(5000L) {
