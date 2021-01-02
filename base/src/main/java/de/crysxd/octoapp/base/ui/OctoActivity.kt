@@ -3,7 +3,6 @@ package de.crysxd.octoapp.base.ui
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
@@ -20,7 +19,7 @@ import de.crysxd.octoapp.base.ui.common.OctoView
 import kotlinx.coroutines.CancellationException
 import timber.log.Timber
 
-abstract class OctoActivity : AppCompatActivity() {
+abstract class OctoActivity : LocaleActivity() {
 
     internal companion object {
         lateinit var instance: OctoActivity

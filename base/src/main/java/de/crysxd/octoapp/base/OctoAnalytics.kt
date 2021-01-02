@@ -23,6 +23,7 @@ object OctoAnalytics {
         object OctoPrintVersion : UserProperty("octoprint_server_version")
         object UserIsAdmin : UserProperty("octoprint_server_admin")
         object WebCamAvailable : UserProperty("webcam_available")
+        object AppLanguage : UserProperty("app_language")
     }
 
     sealed class Event(val name: String) {
@@ -50,6 +51,7 @@ object OctoAnalytics {
         object Login : Event(FirebaseAnalytics.Event.LOGIN)
 
         class WidgetInteraction(widgetName: String) : Event("widget_${widgetName}_interaction")
+        object AppLanguageChanged : OctoAnalytics.Event("app_language_changed")
 
         object PrinterAutoConnectFailed : Event("auto_connect_failed")
         object PrintCancelledByApp : Event("print_canceled_by_app")

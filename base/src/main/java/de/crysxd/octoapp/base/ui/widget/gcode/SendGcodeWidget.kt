@@ -23,7 +23,7 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
     val viewModel: SendGcodeWidgetViewModel by injectViewModel()
     private lateinit var layoutManager: GcodeShortcutLayoutManager
 
-    override fun getTitle(context: Context) = "Send Gcode"
+    override fun getTitle(context: Context) = context.getString(R.string.widget_gcode_send)
     override fun getAnalyticsName() = "gcode"
 
     override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =

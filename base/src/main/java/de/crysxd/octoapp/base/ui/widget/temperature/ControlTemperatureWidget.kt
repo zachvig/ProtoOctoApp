@@ -19,7 +19,7 @@ class ControlTemperatureWidget(parent: Fragment) : OctoWidget(parent) {
     private val toolViewModel: ControlToolTemperatureWidgetViewModel by injectViewModel()
     private val bedViewModel: ControlBedTemperatureWidgetViewModel by injectViewModel()
 
-    override fun getTitle(context: Context) = "Temperature"
+    override fun getTitle(context: Context) = context.getString(R.string.widget_temperature)
     override fun getAnalyticsName(): String = "temperature"
 
     override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =

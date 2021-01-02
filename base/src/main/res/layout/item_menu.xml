@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_4"
         android:layout_marginTop="@dimen/margin_2"
-        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_2"
         android:layout_marginBottom="@dimen/margin_2"
         android:textAppearance="@style/OctoTheme.TextAppearance.Button"
         android:textColor="@color/normal_text"
