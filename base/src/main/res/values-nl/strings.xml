@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="public_file_dir_name" translatable="false">openbare_bestanden</string>
-    <string name="updates_notification_channel" translatable="false">updates</string>
 
     <string name="error_general">Er is iets misgegaan, probeer het alsjeblieft nog eens.</string>
     <string name="error_general_with_details"><![CDATA[Er is iets misgegaan, probeer het alsjeblieft opnieuw.<br/><br/><klein><font-kleur="#%1$06X">%2$s</font></klein>]]></string>
@@ -291,4 +289,5 @@
     <string name="print_eta_x">ETA: %s</string>
     <string name="capabilities_validation_error">Kon je de mogelijkheden van je servers niet controleren. Sommige functies van de app werken misschien niet zoals verwacht.</string>
     <string name="connection_lost_reconnecting">Verbinding verbroken, opnieuw verbonden…</string>
+    <string name="error_please_enter_a_message">Gelieve een bericht in te voeren</string>
 </resources>

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="public_file_dir_name" translatable="false">archivos_públicos</string>
-    <string name="updates_notification_channel" translatable="false">actualizaciones</string>
 
     <string name="error_general">¡Algo salió mal! Por favor, inténtelo de nuevo.</string>
     <string name="error_general_with_details">¡Algo salió mal! Por favor, inténtalo de nuevo.</string>
@@ -291,4 +289,5 @@
     <string name="print_eta_x">ETA: %s</string>
     <string name="capabilities_validation_error">No pude verificar la capacidad de sus servidores. Algunas características de la aplicación podrían no funcionar como se esperaba.</string>
     <string name="connection_lost_reconnecting">Conexión perdida, reconectando…</string>
+    <string name="error_please_enter_a_message">Por favor, introduzca un mensaje</string>
 </resources>

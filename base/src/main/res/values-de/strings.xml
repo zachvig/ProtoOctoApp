@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="public_file_dir_name" translatable="false">public_files</string>
-    <string name="updates_notification_channel" translatable="false">Updates</string>
 
     <string name="error_general">Etwas ist schief gelaufen! Bitte versuche es noch einmal.</string>
     <string name="error_general_with_details"><![CDATA[Etwas ist schief gelaufen, bitte versuche es erneut.<br/><br/><small><font color="#%1$06X">%2$s</font></small>]]></string>
@@ -291,4 +289,5 @@
     <string name="print_eta_x">ETA: %s</string>
     <string name="capabilities_validation_error">Konnte die Fähigkeiten deines Servers nicht verifizieren. Einige Funktionen der App könnten nicht wie erwartet funktionieren.</string>
     <string name="connection_lost_reconnecting">Verbindung verloren, wiederherstellen…</string>
+    <string name="error_please_enter_a_message">Bitte geben Sie eine Nachricht ein</string>
 </resources>

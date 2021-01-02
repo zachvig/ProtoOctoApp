@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="public_file_dir_name" translatable="false">file_pubblici</string>
-    <string name="updates_notification_channel" translatable="false">aggiornamenti</string>
 
     <string name="error_general">Qualcosa è andato storto!</string>
     <string name="error_general_with_details"><![CDATA[Qualcosa è andato storto, prova di nuovo.<br/><br/><br/><piccolo><font color="#%1$06X">%2$s</font></small></small>]]></string>
@@ -291,4 +289,5 @@
     <string name="print_eta_x">Tempo di arrivo previsto: %s</string>
     <string name="capabilities_validation_error">Non ho potuto verificare le capacità dei tuoi server. Alcune funzionalità dell\'app potrebbero non funzionare come previsto.</string>
     <string name="connection_lost_reconnecting">Connessione persa, ricollegamento…</string>
+    <string name="error_please_enter_a_message">Inserire un messaggio</string>
 </resources>
