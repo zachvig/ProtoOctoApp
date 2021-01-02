@@ -5,10 +5,8 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
-import android.os.Parcel
 import android.os.Parcelable
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.View
@@ -20,6 +18,7 @@ import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.view_octo_input_layout.view.*
 
 
@@ -173,9 +172,9 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
 
     override fun onSaveInstanceState(): Parcelable {
         val savedState = SavedState(super.onSaveInstanceState()!!)
-        savedState.labelText = label.text
-        savedState.value = input.text.toString()
-        savedState.hint = input.hint ?: ""
+        savedState.labelText = label.text?.toString() ?: ""
+        savedState.value = input.text?.toString() ?: ""
+        savedState.hint = input.hint?.toString() ?: ""
         return savedState
     }
 
@@ -187,35 +186,10 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         input.hint = savedState.hint
     }
 
-    private class SavedState : BaseSavedState {
-        lateinit var labelText: CharSequence
-        lateinit var value: CharSequence
-        lateinit var hint: CharSequence
-
-        constructor(parcelable: Parcelable) : super(parcelable)
-
-        constructor(parcel: Parcel) : super(parcel) {
-            labelText = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(parcel)
-            value = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(parcel)
-            hint = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(parcel)
-        }
-
-        override fun writeToParcel(out: Parcel, flags: Int) {
-            super.writeToParcel(out, flags)
-            TextUtils.writeToParcel(labelText, out, flags)
-            TextUtils.writeToParcel(value, out, flags)
-            TextUtils.writeToParcel(hint, out, flags)
-        }
-
-        @Suppress("unused", "PropertyName")
-        val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
-            override fun createFromParcel(`in`: Parcel): SavedState {
-                return SavedState(`in`)
-            }
-
-            override fun newArray(size: Int): Array<SavedState?> {
-                return Array(size) { null }
-            }
-        }
+    @Parcelize
+    private class SavedState(val parcelable: Parcelable) : BaseSavedState(parcelable) {
+        lateinit var labelText: String
+        lateinit var value: String
+        lateinit var hint: String
     }
 }
