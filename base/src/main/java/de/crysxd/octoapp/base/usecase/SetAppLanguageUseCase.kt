@@ -3,6 +3,8 @@ package de.crysxd.octoapp.base.usecase
 import android.app.Activity
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import androidx.core.os.bundleOf
+import de.crysxd.octoapp.base.OctoAnalytics
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -18,6 +20,14 @@ class SetAppLanguageUseCase @Inject constructor(
             timber.i("Setting language to ${param.locale?.language}")
             putString(KEY_APP_LANGUAGE, param.locale?.language)
         }
+
+        OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.AppLanguage, param.locale?.language)
+        OctoAnalytics.logEvent(
+            OctoAnalytics.Event.AppLanguageChanged,
+            bundleOf(
+                "language" to (param.locale?.language ?: "reset")
+            )
+        )
 
         param.activity.finish()
         param.activity.startActivity(param.activity.intent)
