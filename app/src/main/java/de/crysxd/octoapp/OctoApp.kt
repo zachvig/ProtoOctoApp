@@ -11,8 +11,8 @@ import android.provider.Settings
 import androidx.core.content.res.ResourcesCompat
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import de.crysxd.octoapp.base.billing.BillingManager
@@ -79,9 +79,9 @@ class OctoApp : Application() {
         BillingManager.initBilling(this)
 
         // Setup FCM
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Timber.tag("FCM").i("Token: ${task.result?.token}")
+                Timber.tag("FCM").i("Token: ${task.result}")
             } else {
                 Timber.tag("FCM").w("Unable to get token")
             }

@@ -7,7 +7,10 @@ import android.graphics.Bitmap
 import android.os.Build
 import androidx.core.content.FileProvider
 import androidx.core.os.ConfigurationCompat
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -27,26 +30,43 @@ import javax.inject.Inject
 
 
 class OpenEmailClientForFeedbackUseCase @Inject constructor(
-    private val octoPrint: OctoPrintProvider
+    private val octoPrint: OctoPrintProvider,
+    private val getAppLanguageUseCase: GetAppLanguageUseCase
 ) : UseCase<OpenEmailClientForFeedbackUseCase.Params, Unit>() {
 
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun doExecute(param: Params, timber: Timber.Tree) = withContext(Dispatchers.IO) {
         val context = param.context
         val gson = GsonBuilder().setPrettyPrinting().create()
+        val appLanguage = getAppLanguageUseCase.execute(Unit).appLanguageLocale?.language
 
-        val octoPrintVersion = try {
-            octoPrint.octoPrint().createVersionApi().getVersion().serverVersionText
+        val octoPrintVersion = if (param.sendOctoPrintInfo) {
+            try {
+                octoPrint.octoPrint().createVersionApi().getVersion().serverVersionText
+            } catch (e: Exception) {
+                Timber.w(e)
+                "error"
+            }
+        } else {
+            ""
+        }
+
+        val fcmToken = try {
+            Tasks.await(FirebaseMessaging.getInstance().token)
         } catch (e: Exception) {
             Timber.w(e)
             "error"
         }
 
-        val pluginList = try {
-            octoPrint.octoPrint().createSettingsApi().getSettings().plugins.settings.map { it.key }
-        } catch (e: Exception) {
-            Timber.w(e)
-            "error"
+        val pluginList = if (param.sendOctoPrintInfo) {
+            try {
+                octoPrint.octoPrint().createSettingsApi().getSettings().plugins.settings.map { it.key }
+            } catch (e: Exception) {
+                Timber.w(e)
+                emptyList()
+            }
+        } else {
+            emptyList()
         }
 
         val email = Firebase.remoteConfig.getString("contact_email")
@@ -97,7 +117,9 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor(
             val appVersion = JsonObject()
             appVersion.addProperty("version_name", version)
             appVersion.addProperty("version_code", versionCode)
-            appVersion.addProperty("app_language", ConfigurationCompat.getLocales(context.resources.configuration).toLanguageTags())
+            appVersion.addProperty("app_language", appLanguage)
+            appVersion.addProperty("appid", Firebase.auth.currentUser?.uid ?: "")
+            appVersion.addProperty("fcmtoken", fcmToken)
             val locale = JsonObject()
             locale.addProperty("language", Locale.getDefault().isO3Language)
             locale.addProperty("country", Locale.getDefault().isO3Country)
