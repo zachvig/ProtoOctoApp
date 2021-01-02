@@ -36,9 +36,20 @@ class SendFeedbackDialog : DialogFragment() {
             checkboxScreenshot.isEnabled = false
         }
 
+        viewModel.viewState.observe(viewLifecycleOwner) {
+            when (it) {
+                SendFeedbackViewModel.ViewState.Idle -> Unit
+                SendFeedbackViewModel.ViewState.Loading -> {
+                    buttonOpenEmail.isEnabled = false
+                    buttonOpenEmail.setText(R.string.loading)
+                }
+                SendFeedbackViewModel.ViewState.Done -> dismissAllowingStateLoss()
+            }
+        }
+
         buttonOpenEmail.setOnClickListener {
             messageInput.error = if (messageInput.editText!!.text.isEmpty()) {
-                "Please enter a message"
+                getString(R.string.error_please_enter_a_message)
             } else {
                 viewModel.sendFeedback(
                     context = it.context,
@@ -48,7 +59,6 @@ class SendFeedbackDialog : DialogFragment() {
                     sendLogs = checkboxLogs.isChecked,
                     sendScreenshot = checkboxScreenshot.isChecked
                 )
-                dismissAllowingStateLoss()
                 null
             }
         }
