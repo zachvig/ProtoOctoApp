@@ -17,6 +17,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
@@ -154,6 +155,15 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor(
             it.compress(Bitmap.CompressFormat.WEBP, 75, zipStream)
             zipStream.closeEntry()
             fileCount++
+        }
+
+        BillingManager.billingFlow().firstOrNull()?.copy(availableSku = emptyList())?.let {
+            zipStream.putNextEntry(ZipEntry("billing.json"))
+            zipStream.writer().apply {
+                write(gson.toJson(it))
+                flush()
+            }
+            zipStream.closeEntry()
         }
 
         zipStream.close()
