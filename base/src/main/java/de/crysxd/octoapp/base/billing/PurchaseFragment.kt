@@ -6,6 +6,7 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -97,6 +98,15 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
                 }
 
                 is PurchaseViewModel.ViewState.SkuSelectionState -> {
+                    OctoAnalytics.logEvent(
+                        OctoAnalytics.Event.PurchaseOptionsShown, bundleOf(
+                            "title" to purchaseTitle.text.take(100),
+                            "text" to description.text.take(100),
+                            "more_text" to moreFeatures.text.take(100),
+                            "feature_text" to featureList.text.take(100),
+                            "button_text" to buttonSupport.text
+                        )
+                    )
                     skuStateStub?.isVisible = true
                     skuState?.isVisible = true
                     populateSkuState(state)
@@ -121,6 +131,15 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
             }
             view.details.isVisible = !view.details.text.isNullOrBlank()
             view.buttonSelect.setOnClickListener {
+                OctoAnalytics.logEvent(
+                    OctoAnalytics.Event.PurchaseOptionSelected, bundleOf(
+                        "button_text" to view.buttonSelect.text,
+                        "title" to skuTitle.text,
+                        "trial" to details.freeTrialPeriod,
+                        "badge" to state.badges[details.sku]?.let { it::class.java.simpleName },
+                        "sku" to details.sku
+                    )
+                )
                 BillingManager.purchase(requireActivity(), details)
             }
             view.badge.setImageResource(
@@ -154,6 +173,7 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
             Firebase.remoteConfig.getString("purchase_screen_more_features"),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
+        buttonSupport.text = Firebase.remoteConfig.getString("purchase_screen_continue_cta")
 
         purchaseTitle.movementMethod = LinkMovementMethod()
         description.movementMethod = LinkMovementMethod()

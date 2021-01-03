@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.billing
 
 import android.app.Activity
 import android.content.Context
+import androidx.core.os.bundleOf
 import com.android.billingclient.api.*
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.ktx.Firebase
@@ -131,8 +132,14 @@ object BillingManager {
 
         val billingResult = billingClient?.launchBillingFlow(activity, flowParams)
         return if (billingResult?.responseCode == BillingClient.BillingResponseCode.OK) {
+            OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseFlowCompleted, bundleOf("sku" to skuDetails.sku))
             true
         } else {
+            if (billingResult?.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
+                OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseFlowCancelled, bundleOf("sku" to skuDetails.sku))
+            } else {
+                OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseFlowFailed, bundleOf("code" to billingResult?.responseCode, "sku" to skuDetails.sku))
+            }
             logError("Unable to launch billing flow", billingResult)
             false
         }

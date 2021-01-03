@@ -82,5 +82,6 @@ object OctoAnalytics {
         object PurchaseOptionSelected : Event("purchase_option_selected")
         object PurchaseFlowCompleted : Event("purchase_billing_flow_completed")
         object PurchaseFlowCancelled : Event("purchase_billing_flow_cancelled")
+        object PurchaseFlowFailed : Event("purchase_billing_flow_failed")
     }
 }
