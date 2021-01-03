@@ -3,14 +3,12 @@ package de.crysxd.octoapp.pre_print_controls.ui.select_file
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.squareup.picasso.Picasso
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase.Params
-import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
 import de.crysxd.octoapp.pre_print_controls.R
@@ -28,12 +26,11 @@ const val HIDE_THUMBNAIL_HINT_FOR_DAYS = 21L
 
 class SelectFileViewModel(
     private val loadFilesUseCase: LoadFilesUseCase,
-    private val startPrintJobUseCase: StartPrintJobUseCase,
     private val sharedPreferences: SharedPreferences,
-    val picasso: LiveData<Picasso?>
+    val picasso: LiveData<Picasso?>,
 ) : BaseViewModel() {
 
-    private val filesMediator = MediatorLiveData<UiState>()
+    private val filesMediator = MutableLiveData<UiState>()
     private var filesInitialised = false
     private var showThumbnailHint = false
     private var lastFolder: FileObject.Folder? = null
@@ -54,6 +51,7 @@ class SelectFileViewModel(
                         hideThumbnailHint()
                     }
 
+                    Timber.i("Loaded ${loadedFolder.size} files")
                     filesMediator.postValue(UiState(false, loadedFolder, showThumbnailHint))
                 } catch (e: Exception) {
                     Timber.e(e)
@@ -62,7 +60,7 @@ class SelectFileViewModel(
             }
         }
 
-        return Transformations.map(filesMediator) { it }
+        return filesMediator
     }
 
     fun reload() {
