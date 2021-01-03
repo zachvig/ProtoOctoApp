@@ -34,7 +34,6 @@ import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
@@ -159,7 +158,6 @@ class MainActivity : OctoActivity() {
         BillingManager.onResume()
         lifecycleScope.launchWhenResumed {
             BillingManager.billingEventFlow().collectLatest {
-                delay(300L)
                 it.consume { event ->
                     when (event) {
                         BillingEvent.PurchaseCompleted -> PurchaseConfirmationDialog().show(supportFragmentManager, "purchase-confirmation")
