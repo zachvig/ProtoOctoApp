@@ -43,6 +43,7 @@ abstract class OctoWidget(val parent: Fragment) : LayoutContainer {
     }
 
     open fun onResume() = Unit
+    open fun onPause() = Unit
 
     fun setupBaseViewModel(baseViewModel: BaseViewModel) {
         if (parent is BaseFragment) {

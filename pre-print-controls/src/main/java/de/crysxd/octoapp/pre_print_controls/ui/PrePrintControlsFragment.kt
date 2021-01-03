@@ -77,6 +77,11 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
         adapter.dispatchResume()
     }
 
+    override fun onPause() {
+        super.onPause()
+        adapter.dispatchPause()
+    }
+
     class MenuBottomSheet : de.crysxd.octoapp.base.ui.common.MenuBottomSheet() {
 
         private val viewModel: PrePrintControlsViewModel by injectParentViewModel()

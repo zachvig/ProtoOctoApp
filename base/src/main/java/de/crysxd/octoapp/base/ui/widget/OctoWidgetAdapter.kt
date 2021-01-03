@@ -27,6 +27,10 @@ class OctoWidgetAdapter : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHolde
         widgets.forEach { it.second.widget.onResume() }
     }
 
+    fun dispatchPause() {
+        widgets.forEach { it.second.widget.onPause() }
+    }
+
     suspend fun setWidgets(context: Context, list: List<OctoWidget>) {
         if (widgets.map { it.second.widgetClassName } == list.map { it::class.java.name }) {
             Timber.i("Widgets not changed, skipping update")
