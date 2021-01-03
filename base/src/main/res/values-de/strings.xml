@@ -289,4 +289,6 @@
     <string name="capabilities_validation_error">Konnte die Fähigkeiten deines Servers nicht verifizieren. Einige Funktionen der App könnten nicht wie erwartet funktionieren.</string>
     <string name="connection_lost_reconnecting">Verbindung verloren, wiederherstellen…</string>
     <string name="error_please_enter_a_message">Bitte geben Sie eine Nachricht ein</string>
+    <string name="hls_stream_disabled_title">HLS webcam</string>
+    <string name="hls_stream_disbaled_description">HLS-Webcams sind deaktiviert, aktiviere sie jetzt, um dein Webcam-Bild zu sehen.</string>
 </resources>

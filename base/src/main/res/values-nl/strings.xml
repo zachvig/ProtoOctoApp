@@ -289,4 +289,6 @@
     <string name="capabilities_validation_error">Kon je de mogelijkheden van je servers niet controleren. Sommige functies van de app werken misschien niet zoals verwacht.</string>
     <string name="connection_lost_reconnecting">Verbinding verbroken, opnieuw verbonden…</string>
     <string name="error_please_enter_a_message">Gelieve een bericht in te voeren</string>
+    <string name="hls_stream_disabled_title">HLS webcam</string>
+    <string name="hls_stream_disbaled_description">HLS webcams zijn uitgeschakeld, laat ze nu uw webcambeeld zien.</string>
 </resources>
