@@ -40,6 +40,7 @@ import kotlin.math.absoluteValue
 class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScreen {
 
     override val viewModel: PurchaseViewModel by injectViewModel(Injector.get().viewModelFactory())
+    private var purchaseCompleted = false
     private val backPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
             when (viewModel.viewState.value) {
@@ -93,6 +94,7 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
                 }
 
                 PurchaseViewModel.ViewState.InitState -> {
+                    OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseIntroShown)
                     skuList?.removeAllViews()
                     initState?.isVisible = true
                 }
@@ -192,8 +194,18 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
         lifecycleScope.launchWhenStarted {
             // Billing completed, pop back stack and return
             BillingManager.billingEventFlow().collectLatest {
-                findNavController().popBackStack()
+                if (it.isRecent()) {
+                    purchaseCompleted = true
+                    findNavController().popBackStack()
+                }
             }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (!purchaseCompleted) {
+            OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenClosed)
         }
     }
 

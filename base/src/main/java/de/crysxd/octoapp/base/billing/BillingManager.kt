@@ -21,12 +21,20 @@ object BillingManager {
     private val billingChannel = ConflatedBroadcastChannel(BillingData())
     private val purchasesUpdateListener = PurchasesUpdatedListener { billingResult, purchases ->
         Timber.i("On purchase updated: $billingResult $purchases")
-        if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
-            GlobalScope.launch {
-                handlePurchases(purchases)
+        when (billingResult.responseCode) {
+            BillingClient.BillingResponseCode.OK -> {
+                OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseFlowCompleted, bundleOf("sku" to purchases?.joinToString(",") { it.sku }))
+                GlobalScope.launch {
+                    purchases?.let { handlePurchases(it) }
+                }
             }
-        } else if (billingResult.responseCode != BillingClient.BillingResponseCode.USER_CANCELED) {
-            logError("Purchase flow failed", billingResult)
+
+            BillingClient.BillingResponseCode.USER_CANCELED -> OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseFlowCancelled)
+
+            else -> {
+                OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseFlowFailed)
+                logError("Purchase flow failed", billingResult)
+            }
         }
     }
 
@@ -62,6 +70,7 @@ object BillingManager {
 
                 override fun onBillingServiceDisconnected() {
                     Timber.i("Billing disconnected")
+                    OctoAnalytics.logEvent(OctoAnalytics.Event.BillingNotAvailable)
                     billingClient = null
                     billingChannel.update {
                         it.copy(isBillingAvailable = false)
@@ -132,14 +141,9 @@ object BillingManager {
 
         val billingResult = billingClient?.launchBillingFlow(activity, flowParams)
         return if (billingResult?.responseCode == BillingClient.BillingResponseCode.OK) {
-            OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseFlowCompleted, bundleOf("sku" to skuDetails.sku))
             true
         } else {
-            if (billingResult?.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
-                OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseFlowCancelled, bundleOf("sku" to skuDetails.sku))
-            } else {
-                OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseFlowFailed, bundleOf("code" to billingResult?.responseCode, "sku" to skuDetails.sku))
-            }
+            OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseFlowFailed, bundleOf("code" to billingResult?.responseCode, "sku" to skuDetails.sku))
             logError("Unable to launch billing flow", billingResult)
             false
         }
@@ -155,10 +159,18 @@ object BillingManager {
             val fromSubscription = purchases.any {
                 Purchase.PurchaseState.PURCHASED == it.purchaseState && it.sku.contains("_sub_")
             }
+
+            OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.PremiumUser, premiumActive.toString())
+            OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.PremiumSubUser, fromSubscription.toString())
+
             billingChannel.update {
-                OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.PremiumUser, premiumActive.toString())
-                OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.PremiumSubUser, fromSubscription.toString())
-                it.copy(isPremiumActive = premiumActive, isPremiumFromSubscription = fromSubscription)
+                it.copy(
+                    isPremiumActive = premiumActive,
+                    isPremiumFromSubscription = fromSubscription,
+                    purchases = it.purchases.toMutableSet().apply {
+                        addAll(purchases.map { purchase -> purchase.orderId })
+                    }
+                )
             }
 
             // Activate purchases
