@@ -24,6 +24,9 @@ object OctoAnalytics {
         object UserIsAdmin : UserProperty("octoprint_server_admin")
         object WebCamAvailable : UserProperty("webcam_available")
         object AppLanguage : UserProperty("app_language")
+        object PremiumUser : UserProperty("premium_user")
+        object PremiumSubUser : UserProperty("premium_sub_user")
+        object UserId : UserProperty("user_id")
     }
 
     sealed class Event(val name: String) {
