@@ -100,4 +100,8 @@
             action_command_notification,action_command_prompt,announcements,backup,discovery,errortracking,gcodeviewer,pluginmanager,softwareupdate,tracking,virtual_printer
         </value>
     </entry>
+    <entry>
+        <key>billing_active</key>
+        <value>true</value>
+    </entry>
 </defaultsMap>

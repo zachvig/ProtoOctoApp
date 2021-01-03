@@ -37,8 +37,9 @@ object BillingManager {
         Timber.i("Updated: $new")
     }
 
-    fun initBilling(context: Context) {
+    fun initBilling(context: Context) = GlobalScope.launch(Dispatchers.IO) {
         if (billingClient == null) {
+            Tasks.await(Firebase.remoteConfig.fetchAndActivate())
             Timber.i("Initializing billing")
             billingClient = BillingClient.newBuilder(context)
                 .setListener(purchasesUpdateListener)
@@ -53,7 +54,7 @@ object BillingManager {
                         updateSku()
                         queryPurchases()
                         billingChannel.update {
-                            it.copy(isBillingAvailable = true)
+                            it.copy(isBillingAvailable = Firebase.remoteConfig.getBoolean("billing_active"))
                         }
                     }
                 }
@@ -154,8 +155,8 @@ object BillingManager {
             }
 
             // Activate purchases
+            var purchaseEventSent = false
             purchases.forEach { purchase ->
-                var purchaseEventSent = false
                 if (!purchase.isAcknowledged) {
                     if (!purchaseEventSent) {
                         purchaseEventSent = true

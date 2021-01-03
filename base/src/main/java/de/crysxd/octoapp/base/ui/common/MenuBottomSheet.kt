@@ -67,10 +67,10 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
             val appLanguage = Injector.get().getAppLanguageUseCase().execute(Unit)
             setMenuItemVisibility(R.id.menuChangeLanguage, appLanguage.canSwitchLocale)
             setMenuItemTitle(R.id.menuChangeLanguage, appLanguage.switchLanguageText ?: "")
-            setMenuItemTitle(R.id.menuSupportOctoApp, Firebase.remoteConfig.getString("purchase_screen_launch_cta"))
 
             BillingManager.billingFlow().collectLatest {
-                setMenuItemVisibility(R.id.menuSupportOctoApp, !it.isPremiumActive)
+                setMenuItemTitle(R.id.menuSupportOctoApp, Firebase.remoteConfig.getString("purchase_screen_launch_cta"))
+                setMenuItemVisibility(R.id.menuSupportOctoApp, !it.isPremiumActive && it.isBillingAvailable)
 
                 val showHeader = adapter.containsMenuItem(R.id.menuSupportOctoApp) && it.isPremiumActive
                 premiumHeaderStub?.isVisible = showHeader
