@@ -9,6 +9,7 @@ import androidx.core.content.edit
 import androidx.lifecycle.*
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.ext.isHlsStreamUrl
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.base.usecase.execute
@@ -62,7 +63,7 @@ class WebcamViewModel(
                     }
 
                     // Open stream
-                    if (streamUrl.endsWith(".m3u") || streamUrl.endsWith(".m3u8")) {
+                    if (streamUrl.isHlsStreamUrl) {
                         if (!BillingManager.isFeatureEnabled("hls_webcam")) {
                             emit(UiState.HlsStreamDisabled)
                         } else {
