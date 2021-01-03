@@ -4,6 +4,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.ext.isHlsStreamUrl
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import de.crysxd.octoapp.octoprint.models.settings.Settings
@@ -29,7 +30,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             val m115 = async { executeM115() }
 
             val updated = current?.copy(
-                supportsWebcam = isWebcamSupported(settings.await()),
+                supportsWebcam = isWebcamSupported(settings.await()) != null,
                 supportsPsuPlugin = isPsuControlSupported(settings.await()),
                 m115Response = m115.await()
             )
@@ -41,7 +42,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
 
             OctoAnalytics.setUserProperty(
                 OctoAnalytics.UserProperty.WebCamAvailable,
-                isWebcamSupported(settings.await()).toString()
+                isWebcamSupported(settings.await()) ?: "false"
             )
 
             if (updated != current) {
@@ -53,7 +54,11 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
         }
     }
 
-    private fun isWebcamSupported(settings: Settings) = settings.webcam.webcamEnabled
+    private fun isWebcamSupported(settings: Settings) = when {
+        settings.webcam.streamUrl?.isHlsStreamUrl == true -> "hls"
+        settings.webcam.streamUrl != null -> "mjpeg"
+        else -> null
+    }.takeIf { settings.webcam.webcamEnabled }
 
     private fun isPsuControlSupported(settings: Settings): Boolean {
         val psuPlugins = listOf("psucontrol")
