@@ -44,6 +44,7 @@ class InfoTab : Fragment(R.layout.fragment_info_tab) {
             val formatDurationUseCase = de.crysxd.octoapp.base.di.Injector.get().formatDurationUseCase()
 
             // Load preview image
+            val start = System.currentTimeMillis()
             file.thumbnail?.let {
                 Injector.get().picasso().observe(viewLifecycleOwner) { picasso ->
                     picasso.load(it)
@@ -52,16 +53,20 @@ class InfoTab : Fragment(R.layout.fragment_info_tab) {
                         .into(preview, object : Callback {
                             override fun onError(e: Exception?) = Unit
                             override fun onSuccess() {
-                                TransitionManager.beginDelayedTransition(view as ViewGroup)
-                                preview.isVisible = true
+                                preview.post {
+                                    if (start - System.currentTimeMillis() > 30) {
+                                        TransitionManager.beginDelayedTransition(view as ViewGroup)
+                                    }
+                                    preview.isVisible = true
 
-                                // Limit to 16:9 at most
-                                preview.measure(
-                                    View.MeasureSpec.makeMeasureSpec(generatedContent.width, View.MeasureSpec.EXACTLY),
-                                    View.MeasureSpec.makeMeasureSpec((generatedContent.width * (9 / 16f)).roundToInt(), View.MeasureSpec.AT_MOST),
-                                )
-                                preview.updateLayoutParams {
-                                    height = preview.measuredHeight
+                                    // Limit to 16:9 at most
+                                    preview.measure(
+                                        View.MeasureSpec.makeMeasureSpec(generatedContent.width, View.MeasureSpec.EXACTLY),
+                                        View.MeasureSpec.makeMeasureSpec((generatedContent.width * (9 / 16f)).roundToInt(), View.MeasureSpec.AT_MOST),
+                                    )
+                                    preview.updateLayoutParams {
+                                        height = preview.measuredHeight
+                                    }
                                 }
                             }
                         })

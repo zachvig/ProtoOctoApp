@@ -47,36 +47,40 @@ object BillingManager {
     }
 
     fun initBilling(context: Context) = GlobalScope.launch(Dispatchers.IO) {
-        if (billingClient == null) {
-            Tasks.await(Firebase.remoteConfig.fetchAndActivate())
-            Timber.i("Initializing billing")
-            billingClient = BillingClient.newBuilder(context)
-                .setListener(purchasesUpdateListener)
-                .enablePendingPurchases()
-                .build()
+        try {
+            if (billingClient == null) {
+                Tasks.await(Firebase.remoteConfig.fetchAndActivate())
+                Timber.i("Initializing billing")
+                billingClient = BillingClient.newBuilder(context)
+                    .setListener(purchasesUpdateListener)
+                    .enablePendingPurchases()
+                    .build()
 
-            billingClient?.startConnection(object : BillingClientStateListener {
-                override fun onBillingSetupFinished(billingResult: BillingResult) {
-                    Timber.i("Billing connected")
-                    if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                        // The BillingClient is ready. You can query purchases here.
-                        updateSku()
-                        queryPurchases()
-                        billingChannel.update {
-                            it.copy(isBillingAvailable = Firebase.remoteConfig.getBoolean("billing_active"))
+                billingClient?.startConnection(object : BillingClientStateListener {
+                    override fun onBillingSetupFinished(billingResult: BillingResult) {
+                        Timber.i("Billing connected")
+                        if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                            // The BillingClient is ready. You can query purchases here.
+                            updateSku()
+                            queryPurchases()
+                            billingChannel.update {
+                                it.copy(isBillingAvailable = Firebase.remoteConfig.getBoolean("billing_active"))
+                            }
                         }
                     }
-                }
 
-                override fun onBillingServiceDisconnected() {
-                    Timber.i("Billing disconnected")
-                    OctoAnalytics.logEvent(OctoAnalytics.Event.BillingNotAvailable)
-                    billingClient = null
-                    billingChannel.update {
-                        it.copy(isBillingAvailable = false)
+                    override fun onBillingServiceDisconnected() {
+                        Timber.i("Billing disconnected")
+                        OctoAnalytics.logEvent(OctoAnalytics.Event.BillingNotAvailable)
+                        billingClient = null
+                        billingChannel.update {
+                            it.copy(isBillingAvailable = false)
+                        }
                     }
-                }
-            })
+                })
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
         }
     }
 
