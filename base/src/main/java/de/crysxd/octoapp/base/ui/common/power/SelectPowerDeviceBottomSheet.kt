@@ -14,6 +14,7 @@ import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import kotlinx.android.parcel.Parcelize
+import timber.log.Timber
 
 class SelectPowerDeviceBottomSheet : BottomSheetDialogFragment() {
 
@@ -45,7 +46,8 @@ class SelectPowerDeviceBottomSheet : BottomSheetDialogFragment() {
 
         var powerDevices: List<Pair<PowerDevice, Boolean?>> = emptyList()
             set(value) {
-                field = value.sortedBy { it.first.displayName.toString() }
+                Timber.i("Devices: ${value.map { it.first.displayName }}")
+                field = value.sortedBy { it.first.displayName }
                 notifyDataSetChanged()
             }
 
