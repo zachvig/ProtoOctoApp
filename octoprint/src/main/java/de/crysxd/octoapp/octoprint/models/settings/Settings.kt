@@ -1,5 +1,8 @@
 package de.crysxd.octoapp.octoprint.models.settings
 
+import com.google.gson.annotations.SerializedName
+import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TradfriPowerDevice
+
 
 data class Settings(
     val webcam: WebcamSettings,
@@ -13,7 +16,7 @@ data class Settings(
     )
 
     data class PluginSettingsGroup(
-        val settings: Map<String, Settings.PluginSettings>
+        val settings: Map<String, PluginSettings>
     )
 
     interface PluginSettings
@@ -21,5 +24,9 @@ data class Settings(
     data class GcodeViewerSettings(
         val mobileSizeThreshold: Int,
         val sizeThreshold: Int
+    ) : PluginSettings
+
+    data class TradfriSettings(
+        @SerializedName("selected_devices") val devices: List<TradfriPowerDevice>
     ) : PluginSettings
 }
