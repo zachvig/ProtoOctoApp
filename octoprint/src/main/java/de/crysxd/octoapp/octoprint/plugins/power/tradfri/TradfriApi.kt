@@ -6,7 +6,7 @@ import retrofit2.http.POST
 
 interface TradfriApi {
 
-    @POST("plugin/psucontrol")
+    @POST("plugin/ikea_tradfri")
     suspend fun sendCommand(@Body command: TradfriCommand): TradfriResponse
 
 }
