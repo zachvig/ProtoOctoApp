@@ -32,16 +32,16 @@ open class ViewModelModule {
         autoConnectPrinterUseCase: AutoConnectPrinterUseCase,
         getPrinterConnectionUseCase: GetPrinterConnectionUseCase,
         openOctoprintWebUseCase: OpenOctoprintWebUseCase,
-        signOutUseCase: SignOutUseCase
+        signOutUseCase: SignOutUseCase,
+        getPowerDevicesUseCase: GetPowerDevicesUseCase
     ): ViewModel = ConnectPrinterViewModel(
-        octoPrintProvider,
         turnOnPsuUseCase,
         turnOffPsuUseCase,
         cyclePsuUseCase,
         autoConnectPrinterUseCase,
         getPrinterConnectionUseCase,
-        octoPrintRepository,
         openOctoprintWebUseCase,
-        signOutUseCase
+        signOutUseCase,
+        getPowerDevicesUseCase
     )
 }

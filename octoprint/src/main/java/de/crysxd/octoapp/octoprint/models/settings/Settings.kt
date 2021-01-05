@@ -15,9 +15,7 @@ data class Settings(
         val regex: String
     )
 
-    data class PluginSettingsGroup(
-        val settings: Map<String, PluginSettings>
-    )
+    class PluginSettingsGroup : HashMap<String, PluginSettings>()
 
     interface PluginSettings
 

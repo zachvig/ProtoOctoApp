@@ -20,7 +20,7 @@ class RemoteGcodeFileDataSource(
 
     override fun loadFile(file: FileObject.File, allowLargeFileDownloads: Boolean) = flow {
         val maxFileSize = octoPrintProvider.octoPrint().createSettingsApi()
-            .getSettings().plugins.settings.values.mapNotNull { it as? Settings.GcodeViewerSettings }
+            .getSettings().plugins.values.mapNotNull { it as? Settings.GcodeViewerSettings }
             .firstOrNull()?.mobileSizeThreshold
 
         if (maxFileSize != null && !allowLargeFileDownloads && file.size > maxFileSize) {

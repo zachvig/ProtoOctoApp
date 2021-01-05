@@ -71,6 +71,7 @@ interface BaseComponent {
     fun signOutUseCase(): SignOutUseCase
     fun getAppLanguageUseCase(): GetAppLanguageUseCase
     fun setAppLanguageUseCase(): SetAppLanguageUseCase
+    fun getPowerDevicesUseCase(): GetPowerDevicesUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

@@ -19,7 +19,7 @@ class PrePrintControlsViewModel(
     val instanceInformation = octoPrintRepository.instanceInformation
 
     fun turnOffPsu() = GlobalScope.launch(coroutineExceptionHandler) {
-        turnOffPsuUseCase.execute()
+        //TODO turnOffPsuUseCase.execute()
     }
 
     fun startPrint() {

@@ -27,7 +27,14 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
 
             // Gather all info in parallel
             val settings = async { octoPrintProvider.octoPrint().createSettingsApi().getSettings() }
-            val m115 = async { executeM115() }
+            val m115 = async {
+                try {
+                    executeM115()
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    null
+                }
+            }
 
             val updated = current?.copy(
                 m115Response = m115.await(),
@@ -35,7 +42,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             )
 
             val standardPlugins = Firebase.remoteConfig.getString("default_plugins").split(",").map { it.trim() }
-            settings.await().plugins.settings.keys.filter { !standardPlugins.contains(it) }.forEach {
+            settings.await().plugins.keys.filter { !standardPlugins.contains(it) }.forEach {
                 OctoAnalytics.logEvent(OctoAnalytics.Event.PluginDetected(it))
             }
 

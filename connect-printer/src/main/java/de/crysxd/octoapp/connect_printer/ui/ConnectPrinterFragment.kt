@@ -13,15 +13,17 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.common.power.SelectPowerDeviceBottomSheet
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.connect_printer.di.injectViewModel
+import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import kotlinx.android.synthetic.main.fragment_connect_printer.*
 import kotlinx.coroutines.delay
 import timber.log.Timber
 
-class ConnectPrinterFragment : BaseFragment() {
+class ConnectPrinterFragment : BaseFragment(), SelectPowerDeviceBottomSheet.Parent {
 
     private val networkViewModel: NetworkStateViewModel by injectViewModel(Injector.get().viewModelFactory())
     override val viewModel: ConnectPrinterViewModel by injectViewModel()
@@ -93,10 +95,10 @@ class ConnectPrinterFragment : BaseFragment() {
 
             is ConnectPrinterViewModel.UiState.WaitingForPrinterToComeOnline -> {
                 buttonTurnOnPsu.setOnClickListener {
-                    viewModel.togglePsu()
+                    SelectPowerDeviceBottomSheet.createForAction(SelectPowerDeviceBottomSheet.Action.TurnOn).show(childFragmentManager, "select-device")
                 }
                 buttonTurnOffPsu.setOnClickListener {
-                    viewModel.togglePsu()
+                    SelectPowerDeviceBottomSheet.createForAction(SelectPowerDeviceBottomSheet.Action.TurnOff).show(childFragmentManager, "select-device")
                 }
                 buttonSignOut.isVisible = true
                 buttonTurnOnPsu.isVisible = state.psuIsOn == false
@@ -123,7 +125,7 @@ class ConnectPrinterFragment : BaseFragment() {
                 buttonSignOut.isVisible = true
                 buttonTurnOnPsu.setOnClickListener {
                     if (state.psuSupported) {
-                        viewModel.cyclePsu()
+                        SelectPowerDeviceBottomSheet.createForAction(SelectPowerDeviceBottomSheet.Action.Cycle).show(childFragmentManager, "select-device")
                     } else {
                         viewModel.retryConnectionFromOfflineState()
                     }
@@ -173,5 +175,11 @@ class ConnectPrinterFragment : BaseFragment() {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Connect
         requireOctoActivity().octo.isVisible = false
+    }
+
+    override fun onPowerDeviceSelected(device: PowerDevice, action: SelectPowerDeviceBottomSheet.Action) = when (action) {
+        SelectPowerDeviceBottomSheet.Action.TurnOn -> viewModel.setDeviceOn(device, true)
+        SelectPowerDeviceBottomSheet.Action.TurnOff -> viewModel.setDeviceOn(device, false)
+        SelectPowerDeviceBottomSheet.Action.Cycle -> viewModel.cyclePsu(device)
     }
 }

@@ -15,12 +15,14 @@ import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
+import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.injectParentViewModel
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.widget.extrude.ExtrudeWidget
 import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidget
 import kotlinx.android.synthetic.main.fragment_pre_print_controls.*
+import kotlinx.coroutines.flow.collect
 import timber.log.Timber
 import de.crysxd.octoapp.base.R as BaseR
 
@@ -54,7 +56,7 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
             widgets.add(ControlTemperatureWidget(this@PrePrintControlsFragment))
             widgets.add(MoveToolWidget(this@PrePrintControlsFragment))
 
-            if (instance?.supportsWebcam == true) {
+            if (instance?.isWebcamSupported == true) {
                 widgets.add(WebcamWidget(this@PrePrintControlsFragment))
             }
 
@@ -90,8 +92,11 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
 
         override fun onStart() {
             super.onStart()
-            val psuSupported = Injector.get().octorPrintRepository().instanceInformation.value?.supportsPsuPlugin == true
-            setMenuItemVisibility(R.id.menuItemTurnOffPsu, psuSupported)
+            lifecycleScope.launchWhenCreated {
+                Injector.get().getPowerDevicesUseCase().execute(GetPowerDevicesUseCase.Params(false)).collect {
+                    setMenuItemVisibility(R.id.menuItemTurnOffPsu, it.isNotEmpty())
+                }
+            }
         }
 
         override suspend fun onMenuItemSelected(id: Int): Boolean {

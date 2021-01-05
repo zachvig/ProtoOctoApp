@@ -96,7 +96,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
             widgets.add(ProgressWidget(this@PrintControlsFragment))
             widgets.add(ControlTemperatureWidget(this@PrintControlsFragment))
 
-            if (instance?.supportsWebcam == true) {
+            if (instance?.isWebcamSupported == true) {
                 widgets.add(WebcamWidget(this@PrintControlsFragment))
             }
 

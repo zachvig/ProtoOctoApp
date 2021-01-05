@@ -18,12 +18,17 @@ class PluginSettingsDeserializer : JsonDeserializer<Settings.PluginSettingsGroup
             Pair(it, deserialize(context, it, obj.get(it)))
         }.toMap()
 
-        return Settings.PluginSettingsGroup(settings)
+        val pluginSettings = Settings.PluginSettingsGroup()
+        pluginSettings.putAll(settings)
+
+        return pluginSettings
     }
 
     private fun deserialize(context: JsonDeserializationContext, key: String, element: JsonElement) = when (key) {
         "gcodeviewer" -> context.deserialize<Settings.GcodeViewerSettings>(element, Settings.GcodeViewerSettings::class.java)
         "ikea_tradfri" -> context.deserialize<Settings.TradfriSettings>(element, Settings.TradfriSettings::class.java)
-        else -> object : Settings.PluginSettings {}
+        else -> Unknown
     }
+
+    private object Unknown : Settings.PluginSettings
 }
