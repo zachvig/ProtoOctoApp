@@ -21,10 +21,10 @@
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
-                android:background="?android:attr/windowBackground"
-                android:elevation="0.1dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?android:attr/windowBackground"
+                android:elevation="0.1dp"
                 app:tabSelectedTextColor="@color/dark_text"
                 app:tabTextAppearance="@style/OctoTheme.TextAppearance"
                 app:tabTextColor="@color/normal_text">
@@ -71,12 +71,6 @@
             android:layout_height="wrap_content"
             android:text="@string/start_printing" />
 
-        <de.crysxd.octoapp.base.ui.common.OctoMoreButton
-            android:id="@+id/buttonMore"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:elevation="10dp" />
     </FrameLayout>
 
 </FrameLayout>

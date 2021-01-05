@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionManager
@@ -69,10 +68,9 @@ class SelectFileFragment : BaseFragment() {
                 }
             )
             recyclerViewFileList.adapter = adapter
-            viewModel.picasso.observe(
-                viewLifecycleOwner, Observer {
-                    adapter.picasso = it
-                })
+            viewModel.picasso.observe(viewLifecycleOwner) {
+                adapter.picasso = it
+            }
 
             val showLoaderJob = lifecycleScope.launchWhenCreated {
                 delay(LOADER_DELAY)
@@ -80,7 +78,7 @@ class SelectFileFragment : BaseFragment() {
             }
 
             // Load files
-            viewModel.loadFiles(navArgs.folder).observe(viewLifecycleOwner, Observer {
+            viewModel.loadFiles(navArgs.folder).observe(viewLifecycleOwner) {
                 Timber.i(it.toString())
                 swipeRefreshLayout.isRefreshing = false
                 showLoaderJob.cancel()
@@ -93,7 +91,7 @@ class SelectFileFragment : BaseFragment() {
                         showThumbnailHint = it.showThumbnailHint
                     )
                 }
-            })
+            }
 
             // Setup swipe to refresh
             swipeRefreshLayout.setOnRefreshListener {

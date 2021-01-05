@@ -2,7 +2,7 @@
 <defaultsMap>
     <entry>
         <key>contact_email</key>
-        <value>octoapp.for.octoprint@gmail.com</value>
+        <value>hello@octoapp.eu</value>
     </entry>
     <entry>
         <key>printer_connection_timeout_sec</key>
@@ -30,6 +30,78 @@
     </entry>
     <entry>
         <key>gcode_response_send_line_pattern</key>
-        <value>^Send:.*%%COMMAND%%</value>
+        <value>^Send:.*%%COMMAND%%.*</value>
+    </entry>
+    <entry>
+        <key>available_subscription_sku_id</key>
+        <value></value>
+    </entry>
+    <entry>
+        <key>available_purchase_sku_id</key>
+        <value></value>
+    </entry>
+    <entry>
+        <key>purchase_screen_more_features</key>
+        <value>and much more to come!</value>
+    </entry>
+    <entry>
+        <key>purchase_screen_continue_cta</key>
+        <value>Support OctoApp</value>
+    </entry>
+    <entry>
+        <key>purchase_screen_launch_cta</key>
+        <value>Support OctoApp</value>
+    </entry>
+    <entry>
+        <key>purchase_screen_title</key>
+        <value><![CDATA[
+        Thank you for<br>supporting OctoApp!
+        ]]></value>
+    </entry>
+    <entry>
+        <key>purchase_screen_description</key>
+        <value><![CDATA[
+        Creating OctoApp and supporting all of you takes a lot of my time. To be able to continue this effort, I decided to make more advanced features exclusive for my supporters. <a><u>Read more</a></u><br/><br/><b>I will never start showing ads in this app nor will I take away features that are already available.</b><br/><br/>Following features will be unlocked:<br/>
+        ]]></value>
+    </entry>
+    <entry>
+        <key>purchase_screen_features</key>
+        <value><![CDATA[
+        Gcode viewer<br/>MTL webcam streams
+        ]]></value>
+    </entry>
+    <entry>
+        <key>sku_list_title</key>
+        <value>High Eight! Thanks for your support! You rock!</value>
+    </entry>
+    <entry>
+        <key>purchase_confirmation_background_video</key>
+        <value></value>
+    </entry>
+    <entry>
+        <key>premium_features</key>
+        <value>gcode_preview,hls_webcam</value>
+    </entry>
+    <entry>
+        <key>web_socket_ping_pong_timeout_ms</key>
+        <value>5000</value>
+    </entry>
+    <entry>
+        <key>web_socket_connect_timeout_ms</key>
+        <value>5000</value>
+    </entry>
+    <entry>
+        <key>tested_octoprint_version</key>
+        <value>1.5.2</value>
+    </entry>
+    <entry>
+        <key>default_plugins</key>
+        <value>
+            action_command_notification,action_command_prompt,announcements,backup,discovery,errortracking,gcodeviewer,pluginmanager,softwareupdate,tracking,virtual_printer
+        </value>
+    </entry>
+    <entry>
+        <key>billing_active</key>
+        <value>true</value>
     </entry>
 </defaultsMap>

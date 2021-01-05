@@ -1,6 +1,8 @@
 package de.crysxd.octoapp.pre_print_controls.ui.file_details
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import de.crysxd.octoapp.base.livedata.OctoTransformations.map
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
 import de.crysxd.octoapp.octoprint.models.files.FileObject
@@ -13,7 +15,15 @@ class FileDetailsViewModel(
 
     lateinit var file: FileObject.File
 
+    private val mutableLoading = MutableLiveData(false)
+    val loading = mutableLoading.map { it }
+
     fun startPrint() = viewModelScope.launch(coroutineExceptionHandler) {
-        startPrintJobUseCase.execute(file)
+        mutableLoading.postValue(true)
+        try {
+            startPrintJobUseCase.execute(file)
+        } finally {
+            mutableLoading.postValue(false)
+        }
     }
 }

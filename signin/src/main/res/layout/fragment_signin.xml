@@ -31,7 +31,7 @@
         android:id="@+id/octoView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/common_view_top_padding"
+        android:layout_marginTop="@dimen/margin_4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -88,6 +88,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewSubTitle" />
+
+    <TextView
+        android:id="@+id/manual"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_1"
+        android:text="@string/sign_in_manual_link"
+        app:layout_constraintEnd_toStartOf="@+id/focusTrap"
+        app:layout_constraintStart_toStartOf="@+id/inputApiKey"
+        app:layout_constraintTop_toBottomOf="@+id/inputApiKey" />
 
     <FrameLayout
         android:layout_width="0dp"

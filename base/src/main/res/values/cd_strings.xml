@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cd_home_xy" translatable="false">Home XY</string>
+    <string name="cd_home_z" translatable="false">Home Z</string>
+    <string name="cd_move_plus_y" translatable="false">Move +Y</string>
+    <string name="cd_move_minus_y" translatable="false">Move minus Y</string>
+    <string name="cd_move_minus_x" translatable="false">Move minus X</string>
+    <string name="cd_move_plus_x" translatable="false">move plus X</string>
+    <string name="cd_move_z_down" translatable="false">move z down</string>
+    <string name="cd_move_z_up" translatable="false">move Z up</string>
+    <string name="cd_read_octoprint_api_credentials_with_ar_code" translatable="false">Read Octoprint API credentials with AR code</string>
+    <string name="cd_history" translatable="false">History</string>
+    <string name="cd_turn_style_on_off" translatable="false">Turn style on/off</string>
+    <string name="cd_filter_terminal" translatable="false">Filter Terminal</string>
+    <string name="cd_live" translatable="false">Live</string>
+    <string name="cd_settings" translatable="false">Settings</string>
+    <string name="cd_next_layer" translatable="false">Next Layer</string>
+    <string name="cd_sync_with_print_progress" translatable="false">Sync with print progress</string>
+    <string name="cd_previous_layer" translatable="false">Previous Layer</string>
+</resources>

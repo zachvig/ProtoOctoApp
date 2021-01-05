@@ -99,6 +99,21 @@
         app:layout_constraintStart_toEndOf="@+id/buttonOpenOctoprint"
         app:layout_constraintTop_toBottomOf="@+id/textViewSubState" />
 
+    <TextView
+        android:id="@+id/noWifiWarning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_2"
+        android:drawableStart="@drawable/ic_wifi_unavailable"
+        android:drawablePadding="@dimen/margin_1"
+        android:gravity="center"
+        android:text="@string/no_wifi_connection"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/bottomActionBarrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
+
     <Button
         android:id="@+id/buttonOpenOctoprint"
         style="@style/OctoTheme.Widget.Button.Small.Secondary"
@@ -113,5 +128,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewSubState" />
 
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/bottomActionBarrier"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="buttonTurnOffPsu,buttonTurnOnPsu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

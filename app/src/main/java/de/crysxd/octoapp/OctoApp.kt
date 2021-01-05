@@ -11,10 +11,12 @@ import android.provider.Settings
 import androidx.core.content.res.ResourcesCompat
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.billing.BillingManager
 import timber.log.Timber
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
 import de.crysxd.octoapp.connect_printer.di.Injector as ConnectPrintInjector
@@ -55,7 +57,7 @@ class OctoApp : Application() {
         // Setup RemoteConfig
         Firebase.remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
         Firebase.remoteConfig.setConfigSettingsAsync(remoteConfigSettings {
-            minimumFetchIntervalInSeconds = 3600
+            minimumFetchIntervalInSeconds = if (BuildConfig.DEBUG) 10 else 3600
         })
         Firebase.remoteConfig.fetchAndActivate().addOnCompleteListener {
             it.exception?.let(Timber::e)
@@ -74,10 +76,13 @@ class OctoApp : Application() {
             )
         }
 
+        // Setup Billing
+        BillingManager.initBilling(this)
+
         // Setup FCM
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Timber.tag("FCM").i("Token: ${task.result?.token}")
+                Timber.tag("FCM").i("Token: ${task.result}")
             } else {
                 Timber.tag("FCM").w("Unable to get token")
             }
@@ -87,11 +92,13 @@ class OctoApp : Application() {
         if (Firebase.auth.currentUser == null) {
             Firebase.auth.signInAnonymously().addOnSuccessListener {
                 Timber.i("Signed in anonymously as ${it.user?.uid}")
+                OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.UserId, it.user?.uid)
             }.addOnFailureListener {
                 Timber.e("Failed to sign in: $it")
             }
         } else {
             Timber.i("Already signed in as ${Firebase.auth.currentUser?.uid}")
+            OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.UserId, Firebase.auth.currentUser?.uid)
         }
 
         // Setup analytics

@@ -2,10 +2,11 @@ package de.crysxd.octoapp.base.ui.common
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.os.Parcel
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Parcelable
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.View
@@ -17,6 +18,7 @@ import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.view_octo_input_layout.view.*
 
 
@@ -52,6 +54,39 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         }
     var selectAllOnFocus: Boolean = false
     var actionOnlyWithText: Boolean = false
+    private var actionSet = false
+    var actionTint: Int?
+        set(value) {
+            if (value != null) {
+                action.setColorFilter(value)
+            } else {
+                action.clearColorFilter()
+            }
+        }
+        get() = null
+    var actionIcon: Int?
+        set(value) {
+            if (value != null && value > 0) {
+                action.setImageResource(value)
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    (action.drawable as? AnimatedVectorDrawable)?.let {
+                        it.start()
+                        it.registerAnimationCallback(object : Animatable2.AnimationCallback() {
+                            override fun onAnimationEnd(drawable: Drawable) {
+                                it.start()
+                            }
+                        })
+                    }
+                }
+                action.isVisible = true
+                actionSet = true
+            } else {
+                action.setImageDrawable(null)
+                action.isVisible = false
+                actionSet = false
+            }
+        }
+        get() = null
 
     @Suppress("unused")
     val editText: AppCompatEditText by lazy { input }
@@ -85,12 +120,8 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             if (iconTint != -1) {
                 icon.setColorFilter(iconTint)
             }
-            val actionDrawable = it.getResourceId(R.styleable.OctoTextInputLayout_actionDrawable, 0)
-            if (actionDrawable > 0) {
-                action.setImageResource(actionDrawable)
-            } else {
-                action.isVisible = false
-            }
+            actionIcon = it.getResourceId(R.styleable.OctoTextInputLayout_actionDrawable, 0)
+            actionTint = ContextCompat.getColor(context, R.color.accent)
         }
 
         initialLabelColors = label.textColors
@@ -123,7 +154,7 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         } else {
             hintNormal
         }
-        val actionVisible = !editText.text.isNullOrBlank() || !actionOnlyWithText
+        val actionVisible = actionSet && (!editText.text.isNullOrBlank() || !actionOnlyWithText)
 
         // Only animate if changes worth animation are detected
         if (labelVisible != label.isVisible || hintText != input.hint || actionVisible != action.isVisible) {
@@ -141,9 +172,9 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
 
     override fun onSaveInstanceState(): Parcelable {
         val savedState = SavedState(super.onSaveInstanceState()!!)
-        savedState.labelText = label.text
-        savedState.value = input.text.toString()
-        savedState.hint = input.hint ?: ""
+        savedState.labelText = label.text?.toString() ?: ""
+        savedState.value = input.text?.toString() ?: ""
+        savedState.hint = input.hint?.toString() ?: ""
         return savedState
     }
 
@@ -155,35 +186,10 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         input.hint = savedState.hint
     }
 
-    private class SavedState : BaseSavedState {
-        lateinit var labelText: CharSequence
-        lateinit var value: CharSequence
-        lateinit var hint: CharSequence
-
-        constructor(parcelable: Parcelable) : super(parcelable)
-
-        constructor(parcel: Parcel) : super(parcel) {
-            labelText = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(parcel)
-            value = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(parcel)
-            hint = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(parcel)
-        }
-
-        override fun writeToParcel(out: Parcel, flags: Int) {
-            super.writeToParcel(out, flags)
-            TextUtils.writeToParcel(labelText, out, flags)
-            TextUtils.writeToParcel(value, out, flags)
-            TextUtils.writeToParcel(hint, out, flags)
-        }
-
-        @Suppress("unused", "PropertyName")
-        val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
-            override fun createFromParcel(`in`: Parcel): SavedState {
-                return SavedState(`in`)
-            }
-
-            override fun newArray(size: Int): Array<SavedState?> {
-                return Array(size) { null }
-            }
-        }
+    @Parcelize
+    private class SavedState(val parcelable: Parcelable) : BaseSavedState(parcelable) {
+        lateinit var labelText: String
+        lateinit var value: String
+        lateinit var hint: String
     }
 }

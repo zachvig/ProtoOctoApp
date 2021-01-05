@@ -7,8 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.ext.suspendedInflate
@@ -38,7 +41,14 @@ class WebcamWidget(
     override fun onViewCreated(view: View) {
         applyAspectRatio(viewModel.getInitialAspectRatio())
         webcamView.coroutineScope = parent.viewLifecycleOwner.lifecycleScope
-        webcamView.onResetConnection = viewModel::connect
+        webcamView.onResetConnection = {
+            if (webcamView.state == WebcamView.WebcamState.HlsStreamDisabled) {
+                OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "hls_webcam_widget"))
+                view.findNavController().navigate(R.id.action_show_purchase_flow)
+            } else {
+                viewModel.connect()
+            }
+        }
         webcamView.onFullscreenClicked = ::openFullscreen
         webcamView.onScaleToFillChanged = {
             viewModel.storeScaleType(
@@ -58,6 +68,7 @@ class WebcamWidget(
         webcamView.state = when (state) {
             Loading -> WebcamView.WebcamState.Loading
             UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
+            UiState.HlsStreamDisabled -> WebcamView.WebcamState.HlsStreamDisabled
             is UiState.FrameReady -> {
                 applyAspectRatio(state.aspectRation)
                 WebcamView.WebcamState.MjpegFrameReady(state.frame)
@@ -67,11 +78,21 @@ class WebcamWidget(
                 WebcamView.WebcamState.HlsStreamReady(state.uri)
             }
             is Error -> if (state.isManualReconnect) {
-                WebcamView.WebcamState.Error
+                WebcamView.WebcamState.Error(state.streamUrl)
             } else {
                 WebcamView.WebcamState.Reconnecting
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.connect()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        webcamView.onPause()
     }
 
     private fun openFullscreen() {

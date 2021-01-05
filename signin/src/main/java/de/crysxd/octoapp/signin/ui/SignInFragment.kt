@@ -1,19 +1,30 @@
 package de.crysxd.octoapp.signin.ui
 
+import android.annotation.SuppressLint
+import android.graphics.Rect
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.composeErrorMessage
 import de.crysxd.octoapp.base.ui.BaseFragment
+import de.crysxd.octoapp.base.ui.InsetAwareScreen
+import de.crysxd.octoapp.base.ui.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -33,12 +44,30 @@ import timber.log.Timber
 import java.net.URL
 import java.security.cert.Certificate
 
-class SignInFragment : BaseFragment(R.layout.fragment_signin) {
+class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen {
 
     override val viewModel: SignInViewModel by injectViewModel()
+    private val networkViewModel: NetworkStateViewModel by injectViewModel(Injector.get().viewModelFactory())
+    private var viewCompactor: ViewCompactor? = null
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        var noWifiLogged = false
+        networkViewModel.networkState.observe(viewLifecycleOwner) {
+            Timber.i("Network status: $it")
+            if (!noWifiLogged && it !is NetworkStateViewModel.NetworkState.WifiConnected) {
+                noWifiLogged = true
+                OctoAnalytics.logEvent(OctoAnalytics.Event.SignInNoWifiWarningShown)
+            }
+            inputWebUrl.actionTint = null
+            inputWebUrl.actionIcon = if (it !is NetworkStateViewModel.NetworkState.WifiConnected) R.drawable.ic_wifi_unavailable else 0
+            inputWebUrl.setOnActionListener {
+                OctoAnalytics.logEvent(OctoAnalytics.Event.SignInNoWifiWarningTapped)
+                requireOctoActivity().showDialog(getString(R.string.no_wifi_warning_long))
+            }
+        }
 
         buttonSignIn.setOnClickListener { signIn() }
         inputApiKey.editText.setImeActionLabel(getString(R.string.sign_in), KeyEvent.KEYCODE_ENTER)
@@ -47,13 +76,25 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
             true
         }
 
+        manual.text = HtmlCompat.fromHtml(
+            "<a href=\"${Firebase.remoteConfig.getString("help_url_sign_in")}\">${getString(R.string.sign_in_manual_link)}</a>",
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        )
+        manual.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                OctoAnalytics.logEvent(OctoAnalytics.Event.SignInHelpOpened)
+            }
+            false
+        }
+        manual.movementMethod = LinkMovementMethod()
+
         viewModel.viewState.observe(viewLifecycleOwner, Observer(this::updateViewState))
 
         val preFill = viewModel.getPreFillInfo()
         inputWebUrl.editText.setText(preFill.webUrl)
         inputApiKey.editText.setText(preFill.apiKey)
 
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(ReadQrCodeFragment.RESULT_API_KEY)?.observe(viewLifecycleOwner, Observer {
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(ReadQrCodeFragment.RESULT_API_KEY)?.observe(viewLifecycleOwner, {
             inputApiKey.editText.setText(it)
         })
 
@@ -63,18 +104,36 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
         }
 
         val full = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin) }
-        val compact = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin_compact) }
+        val compact0 = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin) }
+        val compact1 = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin) }
+        val compact2 = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin_compact) }
+        compact0.setMargin(R.id.octoView, ConstraintSet.TOP, requireContext().resources.getDimension(R.dimen.margin_5).toInt())
+        compact1.setMargin(R.id.octoView, ConstraintSet.TOP, requireContext().resources.getDimension(R.dimen.margin_4).toInt())
 
-        ViewCompactor(view as ViewGroup, reset = {
+        viewCompactor = ViewCompactor(view as ViewGroup, reset = {
             Timber.i("Reset")
             TransitionManager.beginDelayedTransition(requireView() as ViewGroup, InstantAutoTransition(quickTransition = true, explode = true))
             full.applyTo(constraintLayout)
             textViewTitle.setTextAppearanceCompat(R.style.OctoTheme_TextAppearance_Title_Large)
         }, compact = {
             Timber.i("Compact $it")
-            compact.applyTo(constraintLayout)
-            textViewTitle.setTextAppearanceCompat(R.style.OctoTheme_TextAppearance_Title)
-            false
+
+            when (it) {
+                0 -> {
+                    compact0.applyTo(constraintLayout)
+                    true
+                }
+                1 -> {
+                    compact1.applyTo(constraintLayout)
+                    true
+                }
+                2 -> {
+                    compact2.applyTo(constraintLayout)
+                    textViewTitle.setTextAppearanceCompat(R.style.OctoTheme_TextAppearance_Title)
+                    false
+                }
+                else -> false
+            }
         })
     }
 
@@ -214,5 +273,15 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin) {
                 .setTitle("Reconnect to:")
                 .show()
         }
+    }
+
+    override fun handleInsets(insets: Rect) {
+        requireView().updatePadding(
+            top = insets.top,
+            left = insets.left,
+            right = insets.right,
+            bottom = insets.bottom,
+        )
+        viewCompactor?.notifyChanged()
     }
 }

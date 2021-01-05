@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
@@ -108,7 +110,14 @@ class OctoPrintProvider(
     }
 
     fun createAdHocOctoPrint(it: OctoPrintInstanceInformationV2) =
-        OctoPrint(it.webUrl, it.apiKey, listOf(invalidApiKeyInterceptor), sslKeyStoreHandler.loadKeyStore()).also { octoPrint ->
+        OctoPrint(
+            rawWebUrl = it.webUrl,
+            apiKey = it.apiKey,
+            interceptors = listOf(invalidApiKeyInterceptor),
+            keyStore = sslKeyStoreHandler.loadKeyStore(),
+            webSocketConnectTimeoutMs = Firebase.remoteConfig.getLong("web_socket_connect_timeout_ms"),
+            webSocketPingPongTimeoutMs = Firebase.remoteConfig.getLong("web_socket_ping_pong_timeout_ms")
+        ).also { octoPrint ->
             val logger = octoPrint.getLogger()
             logger.handlers.forEach { logger.removeHandler(it) }
             logger.addHandler(timberHandler)

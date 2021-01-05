@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.feedback
 
 import android.content.Context
 import android.graphics.Bitmap
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.OpenEmailClientForFeedbackUseCase
@@ -13,6 +14,8 @@ class SendFeedbackViewModel(
 
     var screenshot: Bitmap? = null
 
+    val viewState = MutableLiveData<ViewState>(ViewState.Idle)
+
     fun sendFeedback(
         context: Context,
         message: String,
@@ -21,7 +24,7 @@ class SendFeedbackViewModel(
         sendLogs: Boolean,
         sendScreenshot: Boolean
     ) = viewModelScope.launch(coroutineExceptionHandler) {
-
+        viewState.postValue(ViewState.Loading)
         val screenshot = if (sendScreenshot) {
             screenshot
         } else {
@@ -38,5 +41,13 @@ class SendFeedbackViewModel(
                 screenshot = screenshot
             )
         )
+    }.invokeOnCompletion {
+        viewState.postValue(ViewState.Done)
+    }
+
+    sealed class ViewState {
+        object Idle : ViewState()
+        object Loading : ViewState()
+        object Done : ViewState()
     }
 }

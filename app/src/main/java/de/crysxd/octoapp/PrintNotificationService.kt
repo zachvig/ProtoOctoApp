@@ -169,6 +169,7 @@ class PrintNotificationService : Service() {
         .setContentText(status)
         .setProgress(maxProgress, progress, false)
         .setOngoing(true)
+        .addCloseAction()
         .setNotificationSilent()
         .build()
 
@@ -186,18 +187,7 @@ class PrintNotificationService : Service() {
         .setContentTitle(getString(R.string.notification_printing_lost_connection_message))
         .setContentText(lastEta)
         .setProgress(maxProgress, 0, true)
-        .addAction(
-            NotificationCompat.Action.Builder(
-                null,
-                getString(R.string.close),
-                PendingIntent.getService(
-                    this,
-                    0,
-                    Intent(this, PrintNotificationService::class.java).setAction(ACTION_STOP),
-                    0
-                )
-            ).build()
-        )
+        .addCloseAction()
         .setOngoing(false)
         .setNotificationSilent()
         .build()
@@ -206,8 +196,22 @@ class PrintNotificationService : Service() {
         .setContentTitle(getString(R.string.notification_printing_title))
         .setProgress(maxProgress, 0, true)
         .setOngoing(true)
+        .addCloseAction()
         .setNotificationSilent()
         .build()
+
+    private fun NotificationCompat.Builder.addCloseAction() = addAction(
+        NotificationCompat.Action.Builder(
+            null,
+            getString(R.string.close),
+            PendingIntent.getService(
+                this@PrintNotificationService,
+                0,
+                Intent(this@PrintNotificationService, PrintNotificationService::class.java).setAction(ACTION_STOP),
+                0
+            )
+        ).build()
+    )
 
     private fun createNotificationBuilder() = NotificationCompat.Builder(this, notificationChannelId)
         .setColorized(true)

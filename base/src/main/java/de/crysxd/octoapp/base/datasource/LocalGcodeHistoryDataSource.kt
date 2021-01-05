@@ -5,6 +5,7 @@ import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
+import timber.log.Timber
 
 class LocalGcodeHistoryDataSource(
     private val sharedPreferences: SharedPreferences,
@@ -16,13 +17,21 @@ class LocalGcodeHistoryDataSource(
     }
 
     override fun store(t: List<GcodeHistoryItem>?) {
-        sharedPreferences.edit {
-            putString(KEY, gson.toJson(t))
+        try {
+            sharedPreferences.edit {
+                putString(KEY, gson.toJson(t))
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
         }
     }
 
-    override fun get(): List<GcodeHistoryItem> = gson.fromJson(
-        sharedPreferences.getString(KEY, "[]"),
-        object : TypeToken<List<GcodeHistoryItem>>() {}.type
-    ) ?: emptyList()
+    override fun get(): List<GcodeHistoryItem>? = if (sharedPreferences.contains(KEY)) {
+        gson.fromJson(
+            sharedPreferences.getString(KEY, "[]"),
+            object : TypeToken<List<GcodeHistoryItem>>() {}.type
+        )
+    } else {
+        null
+    }
 }

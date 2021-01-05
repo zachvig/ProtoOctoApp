@@ -8,6 +8,8 @@ import android.widget.ImageView
 import androidx.core.content.edit
 import androidx.lifecycle.*
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.ext.isHlsStreamUrl
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.base.usecase.execute
@@ -15,16 +17,14 @@ import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message.EventMessage
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 
 private const val KEY_ASPECT_RATIO = "webcam_aspect_ration"
 private const val KEY_SCALE_TYPE = "webcam_scale_type"
 private const val KEY_SCALE_TYPE_FULLSCREEN = "webcam_scale_type_fullscreen"
 
+@Suppress("EXPERIMENTAL_API_USAGE")
 class WebcamViewModel(
     octoPrintProvider: OctoPrintProvider,
     private val getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
@@ -42,55 +42,62 @@ class WebcamViewModel(
         uiStateMediator.addSource(octoPrintProvider.octoPrintFlow().asLiveData()) { connect() }
         uiStateMediator.addSource(settingsUpdatedLiveData) { connect() }
         uiStateMediator.postValue(UiState.Loading)
-        connect()
     }
 
     fun connect() {
         previousSource?.let(uiStateMediator::removeSource)
 
-        val liveData = liveData {
-            try {
-                emit(UiState.Loading)
+        val liveData = BillingManager.billingFlow().map {
+            flow {
+                try {
+                    emit(UiState.Loading)
 
-                // Load settings
-                val webcamSettings = getWebcamSettingsUseCase.execute()
-                storeAspectRatio(webcamSettings.streamRatio)
-                val streamUrl = webcamSettings.streamUrl
+                    // Load settings
+                    val webcamSettings = getWebcamSettingsUseCase.execute()
+                    storeAspectRatio(webcamSettings.streamRatio)
+                    val streamUrl = webcamSettings.streamUrl
 
-                // Check if webcam is configured
-                if (!webcamSettings.webcamEnabled || streamUrl.isNullOrBlank()) {
-                    return@liveData emit(UiState.WebcamNotConfigured)
-                }
+                    // Check if webcam is configured
+                    if (!webcamSettings.webcamEnabled || streamUrl.isNullOrBlank()) {
+                        return@flow emit(UiState.WebcamNotConfigured)
+                    }
 
-                // Open stream
-                if (streamUrl.endsWith(".m3u") || streamUrl.endsWith(".m3u8")) {
-                    emit(UiState.HlsStreamReady(Uri.parse(streamUrl), webcamSettings.streamRatio))
-                } else {
-                    MjpegConnection(streamUrl)
-                        .load()
-                        .map {
-                            when (it) {
-                                is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading
-                                is MjpegConnection.MjpegSnapshot.Error -> UiState.Error(
-                                    isManualReconnect = false,
-                                    streamUrl = webcamSettings.streamUrl
-                                )
-                                is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
-                                    frame = applyTransformations(it.frame, webcamSettings),
-                                    aspectRation = webcamSettings.streamRatio
-                                )
+                    // Open stream
+                    if (streamUrl.isHlsStreamUrl) {
+                        if (!BillingManager.isFeatureEnabled("hls_webcam")) {
+                            emit(UiState.HlsStreamDisabled)
+                        } else {
+                            emit(UiState.HlsStreamReady(Uri.parse(streamUrl), webcamSettings.streamRatio))
+                        }
+                    } else {
+                        MjpegConnection(streamUrl)
+                            .load()
+                            .map {
+                                when (it) {
+                                    is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading
+                                    is MjpegConnection.MjpegSnapshot.Error -> UiState.Error(
+                                        isManualReconnect = false,
+                                        streamUrl = webcamSettings.streamUrl
+                                    )
+                                    is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
+                                        frame = applyTransformations(it.frame, webcamSettings),
+                                        aspectRation = webcamSettings.streamRatio
+                                    )
+                                }
                             }
-                        }
-                        .flowOn(Dispatchers.Default)
-                        .collect {
-                            emit(it)
-                        }
+                            .flowOn(Dispatchers.Default)
+                            .collect {
+                                emit(it)
+                            }
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    emit(UiState.Error(true))
                 }
-            } catch (e: Exception) {
-                Timber.e(e)
-                emit(UiState.Error(true))
             }
-        }
+        }.flatMapLatest {
+            it
+        }.asLiveData()
 
         previousSource = liveData
         uiStateMediator.addSource(liveData) { uiStateMediator.postValue(it) }
@@ -136,6 +143,7 @@ class WebcamViewModel(
     sealed class UiState {
         object Loading : UiState()
         object WebcamNotConfigured : UiState()
+        object HlsStreamDisabled : UiState()
         data class FrameReady(val frame: Bitmap, val aspectRation: String) : UiState()
         data class HlsStreamReady(val uri: Uri, val aspectRation: String) : UiState()
         data class Error(val isManualReconnect: Boolean, val streamUrl: String? = null) : UiState()

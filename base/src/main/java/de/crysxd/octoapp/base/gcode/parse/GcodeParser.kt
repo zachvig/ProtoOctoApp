@@ -49,7 +49,7 @@ class GcodeParser {
     private fun parseLine(line: String, positionInFile: Int) = when {
         isAbsolutePositioningCommand(line) -> isAbsolutePositioningActive = true
         isRelativePositioningCommand(line) -> isAbsolutePositioningActive = false
-        isMoveCommand(line) -> interpretMove(line, positionInFile)
+        isMoveCommand(line) -> interpretMove(line.takeWhile { it != ';' }, positionInFile)
         else -> Unit
     }
 

@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.di.modules
 
+import android.app.Application
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
@@ -7,6 +8,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.billing.PurchaseViewModel
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.feedback.SendFeedbackViewModel
 import de.crysxd.octoapp.base.repository.GcodeFileRepository
@@ -14,6 +16,7 @@ import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.BaseViewModelFactory
+import de.crysxd.octoapp.base.ui.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
 import de.crysxd.octoapp.base.ui.common.gcodeshortcut.GcodeShortcutEditViewModel
@@ -133,5 +136,21 @@ open class ViewModelModule {
         gcodeHistoryRepository: GcodeHistoryRepository
     ): ViewModel = GcodeShortcutEditViewModel(
         gcodeHistoryRepository = gcodeHistoryRepository
+    )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(PurchaseViewModel::class)
+    open fun providePurchaseViewModel(
+    ): ViewModel = PurchaseViewModel(
+    )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(NetworkStateViewModel::class)
+    open fun provideNetworkStateViewModel(
+        application: Application
+    ): ViewModel = NetworkStateViewModel(
+        application = application
     )
 }

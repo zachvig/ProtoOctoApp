@@ -104,9 +104,16 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         return true
     }
 
+    fun onPause() {
+        Timber.i("Stopping stream")
+        hlsPlayer.stop()
+    }
+
     private fun applyState(oldState: WebcamState?, newState: WebcamState) {
+        hideLiveIndicatorJob?.cancel()
         if (oldState == null || oldState::class != newState::class) {
             beginDelayedTransition()
+            Timber.i("Moving to state ${newState::class.java.simpleName}")
             children.filter { it != loadingState }.forEach { it.isVisible = false }
         }
 
@@ -122,9 +129,19 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 loadingState.isVisible = false
                 reconnectingState.isVisible = true
             }
+            WebcamState.HlsStreamDisabled -> {
+                loadingState.isVisible = false
+                errorState.isVisible = true
+                errorTitle.text = context.getString(R.string.hls_stream_disabled_title)
+                errorDescription.text = context.getString(R.string.hls_stream_disbaled_description)
+                buttonReconnect.text = context.getString(R.string.enable)
+            }
             is WebcamState.Error -> {
                 loadingState.isVisible = false
                 errorState.isVisible = true
+                errorTitle.text = context.getString(R.string.connection_failed)
+                errorDescription.text = newState.streamUrl
+                buttonReconnect.text = context.getString(R.string.reconnect)
             }
             is WebcamState.HlsStreamReady -> displayHlsStream(newState)
             is WebcamState.MjpegFrameReady -> displayMjpegFrame(newState)
@@ -151,7 +168,6 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         hlsPlayer.setMediaItem(MediaItem.fromUri(state.uri))
         hlsPlayer.prepare()
         hlsPlayer.play()
-        hideLiveIndicatorJob?.cancel()
 
         if (!playerInitialized) {
             playerInitialized = true
@@ -234,7 +250,6 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
         // Hide live indicator if no new frame arrives within 3s
         // Show stalled indicator if no new frame arrives within 10s
-        hideLiveIndicatorJob?.cancel()
         hideLiveIndicatorJob = coroutineScope.launchWhenCreated {
             delay(NOT_LIVE_IF_NO_FRAME_FOR_MS)
             beginDelayedTransition()
@@ -323,7 +338,8 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         object Loading : WebcamState()
         object Reconnecting : WebcamState()
         object NotConfigured : WebcamState()
-        object Error : WebcamState()
+        object HlsStreamDisabled : WebcamState()
+        data class Error(val streamUrl: String?) : WebcamState()
         data class HlsStreamReady(val uri: Uri) : WebcamState()
         data class MjpegFrameReady(val frame: Bitmap) : WebcamState()
     }
@@ -339,7 +355,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 zoom(focusX = detector.focusX, focusY = detector.focusY, newZoom = newZoom)
             } else if (!hintShown) {
                 hintShown = true
-                Toast.makeText(context, "Can't zoom in fit mode. Double tap to reset", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.cant_zoom_in_fit_mode), Toast.LENGTH_SHORT).show()
             }
 
             return true

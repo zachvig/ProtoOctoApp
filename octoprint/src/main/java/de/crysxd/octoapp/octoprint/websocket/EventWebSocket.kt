@@ -24,11 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.logging.Level
 import java.util.logging.Logger
 
-const val PING_TIMEOUT_MS = 10000L
-const val CONNECTION_TIMEOUT_MS = 10000L
 const val RECONNECT_DELAY_MS = 1000L
-const val RECONNECT_TIMEOUT_MS = CONNECTION_TIMEOUT_MS + RECONNECT_DELAY_MS
-const val STALLED_TIMEOUT = RECONNECT_TIMEOUT_MS * 3
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class EventWebSocket(
@@ -36,13 +32,19 @@ class EventWebSocket(
     private val webUrl: String,
     private val loginApi: LoginApi,
     private val gson: Gson,
-    private val logger: Logger
+    private val logger: Logger,
+    private val pingPongTimeoutMs: Long,
+    private val connectionTimeoutMs: Long,
 ) {
+
+    private val reconnectTimeout = connectionTimeoutMs + RECONNECT_DELAY_MS
+    private val stalledTimeout = reconnectTimeout * 3
 
     private var reconnectJob: Job? = null
     private var reportDisconnectedJob: Job? = null
     private var webSocket: WebSocket? = null
     private var isConnected = AtomicBoolean(false)
+    private var isOpen = false
     private var lastCurrentMessage: Message.CurrentMessage? = null
     private val channel = BroadcastChannel<Event>(15)
     private val subscriberCount = AtomicInteger(0)
@@ -54,8 +56,8 @@ class EventWebSocket(
                 .build()
 
             httpClient.newBuilder()
-                .pingInterval(PING_TIMEOUT_MS, TimeUnit.MILLISECONDS)
-                .connectTimeout(CONNECTION_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+                .pingInterval(pingPongTimeoutMs, TimeUnit.MILLISECONDS)
+                .connectTimeout(connectionTimeoutMs, TimeUnit.MILLISECONDS)
                 .build()
                 .newWebSocket(request, WebSocketListener())
 
@@ -117,6 +119,7 @@ class EventWebSocket(
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
+            isOpen = true
 
             // Handle open event
             logger.log(Level.INFO, "Web socket open")
@@ -137,7 +140,7 @@ class EventWebSocket(
             // Report disconnected after a delay. The delay is reset the next time we receive a message,
             // so the disconnect is propagated if we do not receive a message after a set delay
             // This is only the case if we still receive pings but no messages (otherwise connecting fails)
-            reportDisconnectedAfterDelay(WebSocketStalledException(), STALLED_TIMEOUT)
+            reportDisconnectedAfterDelay(WebSocketStalledException(), stalledTimeout)
 
             // OkHttp sometimes leaks connections.
             // If we are no longer supposed to be cIncreonnected, we crash the socket
@@ -167,6 +170,7 @@ class EventWebSocket(
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             super.onClosed(webSocket, code, reason)
             handleClosure()
+            isOpen = false
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
@@ -177,6 +181,7 @@ class EventWebSocket(
             } else {
                 logger.log(Level.WARNING, "Web socket was forcefully closed")
             }
+            isOpen = false
         }
 
         private fun reconnect(t: Throwable? = null) {
@@ -187,10 +192,13 @@ class EventWebSocket(
                 start()
             }
 
-            reportDisconnectedAfterDelay(t)
+            reportDisconnectedAfterDelay(
+                throwable = t,
+                delay = if (isOpen) reconnectTimeout else 0
+            )
         }
 
-        private fun reportDisconnectedAfterDelay(throwable: Throwable?, delay: Long = RECONNECT_TIMEOUT_MS) {
+        private fun reportDisconnectedAfterDelay(throwable: Throwable?, delay: Long = reconnectTimeout) {
             reportDisconnectedJob?.cancel()
             reportDisconnectedJob = GlobalScope.launch {
                 delay(delay)

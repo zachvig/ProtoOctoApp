@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+
+    <item
+        android:id="@id/menuSupportOctoApp"
+        android:icon="@drawable/ic_round_favorite_24"
+        android:title="@string/support_octoapp" />
+
     <item
         android:id="@id/menuGiveFeedback"
         android:icon="@drawable/ic_round_feedback_24"
@@ -12,9 +18,14 @@
         android:title="@string/sign_out" />
 
     <item
+        android:id="@+id/menuChangeLanguage"
+        android:icon="@drawable/ic_round_language_24"
+        android:title="" />
+
+    <item
         android:id="@id/menuOpenOctoprint"
-        android:title="@string/open_octoprint"
-        android:icon="@drawable/ic_round_open_in_browser_24" />
+        android:icon="@drawable/ic_round_open_in_browser_24"
+        android:title="@string/open_octoprint" />
 
     <item
         android:id="@+id/menuItemTurnOffPsu"

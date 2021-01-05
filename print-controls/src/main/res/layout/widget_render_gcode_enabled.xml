@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/enabledState"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="H,16:9"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <de.crysxd.octoapp.base.gcode.render.GcodeRenderView
+        android:id="@+id/renderView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="@dimen/margin_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="#f00"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <TextView
+        android:id="@+id/layerTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_2"
+        android:text="@string/layer"
+        android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+        app:layout_constraintBottom_toTopOf="@+id/layer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/renderView"
+        app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+    <TextView
+        android:id="@+id/layer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Label"
+        app:layout_constraintBottom_toTopOf="@+id/layerProgressTitle"
+        app:layout_constraintEnd_toEndOf="@+id/layerTitle"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/layerTitle"
+        app:layout_constraintTop_toBottomOf="@+id/layerTitle"
+        app:layout_goneMarginTop="@dimen/margin_0"
+        tools:text="16 of 234" />
+
+    <TextView
+        android:id="@+id/layerProgressTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_1"
+        android:text="@string/layer_progress"
+        android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+        app:layout_constraintBottom_toTopOf="@+id/layerPorgess"
+        app:layout_constraintEnd_toEndOf="@+id/layerTitle"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/layerTitle"
+        app:layout_constraintTop_toBottomOf="@+id/layer"
+        app:layout_goneMarginTop="@dimen/margin_0" />
+
+    <TextView
+        android:id="@+id/layerPorgess"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Label"
+        app:layout_constraintBottom_toTopOf="@+id/view2"
+        app:layout_constraintEnd_toEndOf="@+id/layerTitle"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/layerTitle"
+        app:layout_constraintTop_toBottomOf="@+id/layerProgressTitle"
+        tools:text="45%" />
+
+    <ImageButton
+        android:id="@+id/imageButtonFullscreen"
+        style="@style/OctoTheme.Widget.Button.Image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_round_fullscreen_24"
+        app:layout_constraintBottom_toBottomOf="@+id/view2"
+        app:layout_constraintEnd_toEndOf="@+id/view2"
+        app:tint="?attr/colorAccent" />
+
+    <ImageView
+        android:id="@+id/liveIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_1"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_live"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

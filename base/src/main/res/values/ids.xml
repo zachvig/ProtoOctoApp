@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="menuGiveFeedback" type="id" />
+    <item name="menuChangeLanguage" type="id" />
     <item name="menuOpenOctoprint" type="id" />
     <item name="menuSignOut" type="id" />
+    <item name="menuSupportOctoApp" type="id" />
+    <item name="action_show_purchase_flow" type="id" />
 </resources>
