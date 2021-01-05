@@ -16,7 +16,7 @@ class PsuControlPowerPlugin(
     }
 
     internal suspend fun isOn() =
-        psuApi.sendPsuCommand(PsuCommand.GetPsuStateCommand).isPSUOn == true
+        psuApi.sendPsuCommandWithResponse(PsuCommand.GetPsuStateCommand).isPSUOn == true
 
     override fun getDevices(settings: Settings) = if (settings.plugins.containsKey("psucontrol")) {
         listOf(PsuControlPowerDevice(this))

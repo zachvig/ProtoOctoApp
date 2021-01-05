@@ -16,7 +16,7 @@ class TradfriPowerPlugin(
     }
 
     internal suspend fun isOn(device: TradfriPowerDevice) =
-        api.sendCommand(TradfriCommand.GetDeviceStatus(device))?.state == true
+        api.sendCommandWithResponse(TradfriCommand.GetDeviceStatus(device)).state == true
 
     override fun getDevices(settings: Settings) =
         settings.plugins.values.mapNotNull {

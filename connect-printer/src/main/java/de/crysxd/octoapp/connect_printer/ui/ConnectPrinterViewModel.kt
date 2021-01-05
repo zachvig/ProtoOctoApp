@@ -46,10 +46,12 @@ class ConnectPrinterViewModel(
     private var isPsuTurnedOn: Boolean? = null
     private var isPsuSupported = false
     private val uiStateMediator = MediatorLiveData<UiState>()
+    private val psuState = MutableLiveData<Boolean>()
     val uiState = uiStateMediator.map { it }.distinctUntilChanged()
 
     init {
         uiStateMediator.addSource(availableSerialConnections) { updateUiState() }
+        uiStateMediator.addSource(psuState) { updateUiState() }
         uiStateMediator.addSource(psuCyclingState) { updateUiState() }
         uiStateMediator.value = UiState.Initializing
 
@@ -195,6 +197,7 @@ class ConnectPrinterViewModel(
         val wasPsuTurnedOn = isPsuTurnedOn
         try {
             isPsuTurnedOn = on
+            psuState.postValue(on)
 
             if (on) {
                 turnOnPsuUseCase.execute(device)
@@ -206,6 +209,7 @@ class ConnectPrinterViewModel(
             }
         } catch (e: Exception) {
             isPsuTurnedOn = wasPsuTurnedOn
+            psuState.postValue(wasPsuTurnedOn)
             throw e
         }
     }

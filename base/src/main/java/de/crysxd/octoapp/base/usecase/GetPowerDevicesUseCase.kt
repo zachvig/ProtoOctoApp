@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.usecase
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import javax.inject.Inject
@@ -29,6 +30,7 @@ class GetPowerDevicesUseCase @Inject constructor(
                 // Use withContext to split the stream in parallel
                 val withPowerState = devices.map {
                     try {
+                        delay(2000)
                         Pair(it, it.isOn())
                     } catch (e: Exception) {
                         Timber.e(e)
