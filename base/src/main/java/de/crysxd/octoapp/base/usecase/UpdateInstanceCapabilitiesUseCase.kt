@@ -30,9 +30,8 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             val m115 = async { executeM115() }
 
             val updated = current?.copy(
-                supportsWebcam = isWebcamSupported(settings.await()) != null,
-                supportsPsuPlugin = isPsuControlSupported(settings.await()),
-                m115Response = m115.await()
+                m115Response = m115.await(),
+                settings = settings.await()
             )
 
             val standardPlugins = Firebase.remoteConfig.getString("default_plugins").split(",").map { it.trim() }
@@ -59,11 +58,6 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
         settings.webcam.streamUrl != null -> "mjpeg"
         else -> null
     }.takeIf { settings.webcam.webcamEnabled }
-
-    private fun isPsuControlSupported(settings: Settings): Boolean {
-        val psuPlugins = listOf("psucontrol")
-        return settings.plugins.settings.keys.any { psuPlugins.contains(it) }
-    }
 
     private suspend fun executeM115() = try {
         withTimeout(5000L) {
