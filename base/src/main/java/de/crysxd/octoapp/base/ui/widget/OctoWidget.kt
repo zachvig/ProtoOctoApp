@@ -23,6 +23,8 @@ abstract class OctoWidget(val parent: Fragment) : LayoutContainer {
 
     open fun showSettings() = Unit
 
+    open fun isVisible() = true
+
     abstract fun getTitle(context: Context): String?
 
     abstract fun getAnalyticsName(): String

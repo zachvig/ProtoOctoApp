@@ -101,6 +101,9 @@ class OctoApp : Application() {
         // Do not enable if we are in a TestLab environment
         val testLabSetting = Settings.System.getString(contentResolver, "firebase.test.lab")
         Firebase.analytics.setAnalyticsCollectionEnabled("true" != testLabSetting && !BuildConfig.DEBUG)
+        if (BuildConfig.DEBUG) {
+            Firebase.analytics.setUserProperty("debug", "true")
+        }
 
         // Pre-load fonts in background. This will allow us later to asyn inflate views as loading fonts will need a Handler
         // After being loaded once, they are in cache

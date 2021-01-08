@@ -9,11 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.graphics.applyCanvas
 import androidx.core.os.bundleOf
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.findFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -27,6 +29,7 @@ import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.injectActivityViewModel
+import de.crysxd.octoapp.print_controls.ui.PrintControlsFragment
 import kotlinx.android.synthetic.main.widget_render_gcode.view.*
 import kotlinx.android.synthetic.main.widget_render_gcode_disabled.view.*
 import kotlinx.android.synthetic.main.widget_render_gcode_enabled.view.*
@@ -36,15 +39,20 @@ import kotlinx.android.synthetic.main.widget_render_gcode_loading.view.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
 const val NOT_LIVE_IF_NO_UPDATE_FOR_MS = 3000L
+private const val KEY_HIDDEN_AT = "gcode_preview_hidden_at"
+private val HIDDEN_FOR_MILLIS = TimeUnit.DAYS.toMillis(30L)
 
 class GcodePreviewWidget(parent: Fragment) : OctoWidget(parent) {
 
     private val viewModel: GcodePreviewViewModel by injectActivityViewModel(Injector.get().viewModelFactory())
     private var hideLiveIndicatorJob: Job? = null
     private lateinit var file: FileObject.File
+
+    override fun isVisible() = (System.currentTimeMillis() - Injector.get().sharedPreferences().getLong(KEY_HIDDEN_AT, 0)) > HIDDEN_FOR_MILLIS
 
     override fun getTitle(context: Context) = context.getString(R.string.widget_gcode_preview)
 
@@ -158,8 +166,10 @@ class GcodePreviewWidget(parent: Fragment) : OctoWidget(parent) {
             view.preview.setImageBitmap(bitmap)
         }
 
-        view.buttonHide.setOnClickListener {
-
+        view.buttonHide?.setOnClickListener {
+            OctoAnalytics.logEvent(OctoAnalytics.Event.DisabledFeatureHidden, bundleOf("feature" to "gcode_preview"))
+            Injector.get().sharedPreferences().edit { putLong(KEY_HIDDEN_AT, System.currentTimeMillis()) }
+            view.findFragment<PrintControlsFragment>().reloadWidgets()
         }
 
         view.buttonEnable.setOnClickListener {
