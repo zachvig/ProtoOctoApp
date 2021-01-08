@@ -26,6 +26,7 @@ object OctoAnalytics {
         object AppLanguage : UserProperty("app_language")
         object PremiumUser : UserProperty("premium_user")
         object PremiumSubUser : UserProperty("premium_sub_user")
+        object BillingStatus : UserProperty("billing_status")
         object UserId : UserProperty("user_id")
     }
 
@@ -76,7 +77,6 @@ object OctoAnalytics {
         object PrintWorkspaceShown : Event("workspace_shown_print")
         object TerminalWorkspaceShown : Event("workspace_shown_terminal")
 
-        object BillingNotAvailable : Event("billing_not_available")
         object PurchaseScreenScroll : Event("purchase_screen_scroll")
         object PurchaseScreenOpen : Event("purchase_screen_open")
         object PurchaseOptionsShown : Event("purchase_options_shown")
@@ -86,5 +86,6 @@ object OctoAnalytics {
         object PurchaseFlowCompleted : Event("purchase_billing_flow_completed")
         object PurchaseFlowCancelled : Event("purchase_billing_flow_cancelled")
         object PurchaseFlowFailed : Event("purchase_billing_flow_failed")
+        object DisabledFeatureHidden : Event("disabled_feature_hidden")
     }
 }

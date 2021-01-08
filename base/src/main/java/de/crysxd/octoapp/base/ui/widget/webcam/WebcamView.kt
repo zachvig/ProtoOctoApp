@@ -106,6 +106,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
     fun onPause() {
         Timber.i("Stopping stream")
+        hlsPlayer.pause()
         hlsPlayer.stop()
     }
 

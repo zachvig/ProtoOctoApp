@@ -16,7 +16,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.billing.BillingManager
 import timber.log.Timber
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
 import de.crysxd.octoapp.connect_printer.di.Injector as ConnectPrintInjector
@@ -76,9 +75,6 @@ class OctoApp : Application() {
             )
         }
 
-        // Setup Billing
-        BillingManager.initBilling(this)
-
         // Setup FCM
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -105,6 +101,9 @@ class OctoApp : Application() {
         // Do not enable if we are in a TestLab environment
         val testLabSetting = Settings.System.getString(contentResolver, "firebase.test.lab")
         Firebase.analytics.setAnalyticsCollectionEnabled("true" != testLabSetting && !BuildConfig.DEBUG)
+        if (BuildConfig.DEBUG) {
+            Firebase.analytics.setUserProperty("debug", "true")
+        }
 
         // Pre-load fonts in background. This will allow us later to asyn inflate views as loading fonts will need a Handler
         // After being loaded once, they are in cache

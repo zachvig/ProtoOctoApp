@@ -48,47 +48,57 @@ object BillingManager {
 
     fun initBilling(context: Context) = GlobalScope.launch(Dispatchers.IO) {
         try {
-            if (billingClient == null) {
-                Tasks.await(Firebase.remoteConfig.fetchAndActivate())
-                Timber.i("Initializing billing")
-                billingClient = BillingClient.newBuilder(context)
-                    .setListener(purchasesUpdateListener)
-                    .enablePendingPurchases()
-                    .build()
+            OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.BillingStatus, "unknown")
+            fetchRemoteConfig()
 
-                billingClient?.startConnection(object : BillingClientStateListener {
-                    override fun onBillingSetupFinished(billingResult: BillingResult) {
-                        Timber.i("Billing connected")
-                        if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                            // The BillingClient is ready. You can query purchases here.
-                            updateSku()
-                            queryPurchases()
-                            billingChannel.update {
-                                it.copy(isBillingAvailable = Firebase.remoteConfig.getBoolean("billing_active"))
-                            }
-                        }
-                    }
+            Timber.i("Initializing billing")
+            billingClient?.endConnection()
+            billingClient = BillingClient.newBuilder(context)
+                .setListener(purchasesUpdateListener)
+                .enablePendingPurchases()
+                .build()
 
-                    override fun onBillingServiceDisconnected() {
-                        Timber.i("Billing disconnected")
-                        OctoAnalytics.logEvent(OctoAnalytics.Event.BillingNotAvailable)
-                        billingClient = null
+            billingClient?.startConnection(object : BillingClientStateListener {
+                override fun onBillingSetupFinished(billingResult: BillingResult) {
+                    Timber.i("Billing connected")
+                    if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                        OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.BillingStatus, "available")
+                        // The BillingClient is ready. You can query purchases here.
+                        updateSku()
+                        queryPurchases()
                         billingChannel.update {
-                            it.copy(isBillingAvailable = false)
+                            it.copy(isBillingAvailable = Firebase.remoteConfig.getBoolean("billing_active"))
                         }
                     }
-                })
-            }
+                }
+
+                override fun onBillingServiceDisconnected() {
+                    Timber.i("Billing disconnected")
+                    billingClient = null
+                    billingChannel.update {
+                        it.copy(isBillingAvailable = false)
+                    }
+                }
+            })
         } catch (e: Exception) {
+            OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.BillingStatus, "error")
             Timber.e(e)
+        }
+    }
+
+    private fun fetchRemoteConfig() {
+        try {
+            Timber.i("Fetching latest remote config")
+            Tasks.await(Firebase.remoteConfig.fetchAndActivate())
+        } catch (e: Exception) {
+            // Continue with old values
         }
     }
 
     private fun updateSku() = GlobalScope.launch(Dispatchers.IO) {
         try {
+            fetchRemoteConfig()
             Timber.i("Updating SKU")
-
-            Tasks.await(Firebase.remoteConfig.fetchAndActivate())
             val subscriptionSkuIds = Firebase.remoteConfig.getString("available_subscription_sku_id")
             val purchaseSkuIds = Firebase.remoteConfig.getString("available_purchase_sku_id")
             fun String.splitSkuIds() = split(",").map { it.trim() }
@@ -244,8 +254,14 @@ object BillingManager {
             it.trim()
         }.contains(feature) || billingChannel.valueOrNull?.isPremiumActive == true
 
-    fun onResume() = GlobalScope.launch {
+    fun onResume(context: Context) = GlobalScope.launch {
         Timber.i("Resuming billing")
-        queryPurchases()
+        initBilling(context)
+    }
+
+    fun onPause() {
+        Timber.i("Pausing billing")
+        billingClient?.endConnection()
+        billingClient = null
     }
 }

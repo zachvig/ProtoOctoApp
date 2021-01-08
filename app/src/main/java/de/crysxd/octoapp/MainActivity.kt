@@ -158,7 +158,7 @@ class MainActivity : OctoActivity() {
 
     override fun onResume() {
         super.onResume()
-        BillingManager.onResume()
+        BillingManager.onResume(this)
         lifecycleScope.launchWhenResumed {
             BillingManager.billingEventFlow().collectLatest {
                 it.consume { event ->
@@ -168,6 +168,11 @@ class MainActivity : OctoActivity() {
                 }
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        BillingManager.onPause()
     }
 
     private fun navigate(id: Int) {
