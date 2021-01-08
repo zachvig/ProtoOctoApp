@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.octoprint.plugins.power
 
 abstract class PowerDevice {
+    abstract val id: String
     abstract val displayName: String
     abstract val pluginDisplayName: String
 
