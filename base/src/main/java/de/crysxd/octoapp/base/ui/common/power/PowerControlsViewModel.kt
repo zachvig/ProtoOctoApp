@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 
 @Suppress("EXPERIMENTAL_API_USAGE")
-class SelectPowerDeviceViewModel(
+class PowerControlsViewModel(
     getPowerDevicesUseCase: GetPowerDevicesUseCase
 ) : ViewModel() {
 

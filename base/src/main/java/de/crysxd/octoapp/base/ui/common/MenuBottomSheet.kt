@@ -3,13 +3,11 @@ package de.crysxd.octoapp.base.ui.common
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
 import androidx.annotation.IdRes
 import androidx.annotation.MenuRes
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.get
 import androidx.core.view.isVisible
@@ -17,7 +15,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -25,9 +22,10 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
+import de.crysxd.octoapp.base.ui.BottomSheetDialogFragmentCompat
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import de.crysxd.octoapp.base.usecase.execute
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
+import de.crysxd.octoapp.base.usecase.execute
 import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet.*
 import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet_premium_header.*
 import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet_premium_header.view.*
@@ -39,7 +37,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
-abstract class MenuBottomSheet : BottomSheetDialogFragment() {
+abstract class MenuBottomSheet : BottomSheetDialogFragmentCompat() {
 
     private lateinit var adapter: MenuAdapter
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
@@ -52,7 +50,6 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.window_background))
         adapter = MenuAdapter(requireContext(), getMenuRes()) {
             lifecycleScope.launch(exceptionHandler) {
                 if (!onMenuItemSelected(it)) {
@@ -130,29 +127,6 @@ abstract class MenuBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        // Fixes dialog hides nav bar on Android O
-        if (dialog != null && dialog!!.window != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val window = dialog!!.window
-            window!!.findViewById<View>(com.google.android.material.R.id.container).fitsSystemWindows = false
-            // dark navigation bar icons
-            val decorView = window.decorView
-            if (!requireContext().resources.getBoolean(R.bool.night_mode)) {
-                decorView.systemUiVisibility = decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-            }
-
-            val padding = requireContext().resources.getDimensionPixelSize(R.dimen.margin_2)
-            requireView().setPadding(
-                0,
-                padding,
-                0,
-                padding + (activity?.window?.decorView?.rootWindowInsets?.systemWindowInsetBottom ?: 0)
-            )
-
-        }
-    }
 
     fun show(fm: FragmentManager) {
         show(fm, "overflow-menu")

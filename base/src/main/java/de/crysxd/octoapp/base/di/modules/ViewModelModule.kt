@@ -20,7 +20,7 @@ import de.crysxd.octoapp.base.ui.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
 import de.crysxd.octoapp.base.ui.common.gcodeshortcut.GcodeShortcutEditViewModel
-import de.crysxd.octoapp.base.ui.common.power.SelectPowerDeviceViewModel
+import de.crysxd.octoapp.base.ui.common.power.PowerControlsViewModel
 import de.crysxd.octoapp.base.ui.common.terminal.TerminalViewModel
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlBedTemperatureWidgetViewModel
@@ -157,10 +157,10 @@ open class ViewModelModule {
 
     @Provides
     @IntoMap
-    @ViewModelKey(SelectPowerDeviceViewModel::class)
+    @ViewModelKey(PowerControlsViewModel::class)
     open fun provideSelectPowerDeviceViewModel(
         getPowerDevicesUseCase: GetPowerDevicesUseCase
-    ): ViewModel = SelectPowerDeviceViewModel(
+    ): ViewModel = PowerControlsViewModel(
         getPowerDevicesUseCase = getPowerDevicesUseCase
     )
 }

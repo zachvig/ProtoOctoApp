@@ -11,7 +11,7 @@ import javax.inject.Inject
 class GetPowerDevicesUseCase @Inject constructor(
     private val octoPrintRepository: OctoPrintRepository,
     private val octoPrintProvider: OctoPrintProvider
-) : UseCase<GetPowerDevicesUseCase.Params, Flow<List<Pair<PowerDevice, Boolean?>>>>() {
+) : UseCase<GetPowerDevicesUseCase.Params, Flow<List<Pair<PowerDevice, GetPowerDevicesUseCase.PowerState>>>>() {
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) = octoPrintRepository.instanceInformationFlow().map {
         it?.settings
@@ -22,22 +22,23 @@ class GetPowerDevicesUseCase @Inject constructor(
             } ?: emptyList()
 
             // Emit without power state
-            emit(devices.map { Pair(it, null) })
+            val result = devices.map { Pair(it, if (param.queryState) PowerState.Loading else PowerState.Unknown) }
+                .toMap()
+                .toMutableMap()
+            emit(result.toList())
 
             // If we should query power state do so and emit a second value
             if (param.queryState) {
                 // Use withContext to split the stream in parallel
-                val withPowerState = devices.map {
+                devices.forEach {
                     try {
-                        Pair(it, it.isOn())
+                        result[it] = if (it.isOn()) PowerState.On else PowerState.Off
                     } catch (e: Exception) {
                         Timber.e(e)
-                        Pair(it, null)
+                        result[it] = PowerState.Unknown
                     }
+                    emit(result.toList())
                 }
-
-                // Emit unified list after all have been collected
-                emit(withPowerState)
             }
         }
     }.flatMapLatest { it }
@@ -45,4 +46,11 @@ class GetPowerDevicesUseCase @Inject constructor(
     data class Params(
         val queryState: Boolean
     )
+
+    sealed class PowerState {
+        object On : PowerState()
+        object Off : PowerState()
+        object Unknown : PowerState()
+        object Loading : PowerState()
+    }
 }
