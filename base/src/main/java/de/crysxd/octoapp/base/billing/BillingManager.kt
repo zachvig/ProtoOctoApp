@@ -48,6 +48,7 @@ object BillingManager {
 
     fun initBilling(context: Context) = GlobalScope.launch(Dispatchers.IO) {
         try {
+            OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.BillingStatus, "unknown")
             fetchRemoteConfig()
 
             Timber.i("Initializing billing")
@@ -61,6 +62,7 @@ object BillingManager {
                 override fun onBillingSetupFinished(billingResult: BillingResult) {
                     Timber.i("Billing connected")
                     if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                        OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.BillingStatus, "available")
                         // The BillingClient is ready. You can query purchases here.
                         updateSku()
                         queryPurchases()
@@ -72,7 +74,6 @@ object BillingManager {
 
                 override fun onBillingServiceDisconnected() {
                     Timber.i("Billing disconnected")
-                    OctoAnalytics.logEvent(OctoAnalytics.Event.BillingNotAvailable)
                     billingClient = null
                     billingChannel.update {
                         it.copy(isBillingAvailable = false)
@@ -80,6 +81,7 @@ object BillingManager {
                 }
             })
         } catch (e: Exception) {
+            OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.BillingStatus, "error")
             Timber.e(e)
         }
     }
