@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="error_general">Er is iets misgegaan, probeer het alsjeblieft nog eens.</string>
-    <string name="error_general_with_details"><![CDATA[Er is iets misgegaan, probeer het alsjeblieft opnieuw.<br/><br/><klein><font-kleur="#%1$06X">%2$s</font></klein>]]></string>
+    <string name="error_general_with_details"><![CDATA[Er is iets misgegaan, probeer het alsjeblieft opnieuw.<br/><br/><small><font color="#%1$06X">%2$s</font></small>]]></string>
     <string name="error_no_printer_connected">Er is geen printer aangesloten op OctoPrint</string>
     <string name="error_invalid_octoprint_instance_information">OctoPrint heeft de API-sleutel afgewezen</string>
     <string name="temperature_x">%1$s\u2009°C</string>
@@ -15,11 +15,11 @@
     <string name="hotend">Hotend</string>
     <string name="bed">Bed</string>
     <string name="x_mm">%s mm</string>
-    <string name="done">Gedaan</string>
+    <string name="done">Klaar</string>
     <string name="error_please_enter_a_value">Voer een waarde in</string>
     <string name="x_temperature">%s temperatuur</string>
     <string name="print">Print</string>
-    <string name="prepare">Bereid je voor</string>
+    <string name="prepare">Voorbereiden</string>
     <string name="connect">Verbind</string>
     <string name="sent_x">Uitvoeren %s</string>
     <string name="sent_x_and_y_others">Uitvoeren van %1$s en %2$d anderen</string>
@@ -27,9 +27,9 @@
     <string name="received_response_for_x_and_y_others">Ontvangen logs voor %1$s en %2$d anderen</string>
     <string name="send_gcode">Stuur Gcode</string>
     <string name="gcode_one_command_per_line">G-code (een commando per regel)</string>
-    <string name="change_filament">Verander de gloeidraad</string>
+    <string name="change_filament">Verander de filament</string>
     <string name="open_octoprint">Open OctoPrint</string>
-    <string name="set">Stel  in</string>
+    <string name="set">Stel in</string>
     <string name="try_restrating_the_app_or_octoprint">Probeer de app of OctoPrint opnieuw te starten</string>
     <string name="give_feedback">Feedback geven</string>
     <string name="screenshot_of_current_screen">Screenshot van het huidige scherm</string>
@@ -44,7 +44,7 @@
     <string name="webcam">Webcam</string>
     <string name="pausing">Pauzeren…</string>
     <string name="cancelling">Annuleren…</string>
-    <string name="stream_stalled">Stroom is vastgelopen</string>
+    <string name="stream_stalled">Stream is vastgelopen</string>
     <string name="no_frames_since_xs">Geen frames sinds %ds</string>
     <string name="please_configure_your_webcam_in_octoprint">Configureer je webcam in Octoprint</string>
     <string name="fullscreen">Volledig scherm</string>
@@ -108,9 +108,9 @@
     <string name="purchase_dialog_text">Dankzij jouw ondersteuning kan ik de ontwikkeling van OctoApp voortzetten! Als je suggesties, problemen of gedachten hebt, kun je te allen tijde contact opnemen met %s!</string>
     <string name="purchase_dialog_button">Terug naar de app</string>
     <string name="billing_unsupported_title">Alleen ondersteund voor apps van Google Play</string>
-    <string name="billing_unsupported_detail">Alleen apps die zijn gedownload van Google Play kunnen functies activeren. Ga naar hello@octoapp.eu!</string>
+    <string name="billing_unsupported_detail">Alleen apps die zijn gedownload via Google Play kunnen functies activeren. Ga naar hello@octoapp.eu!</string>
     <string name="enable_gcode_preview">Schakel Gcode Preview in</string>
-    <string name="enable">Schakel  in.</string>
+    <string name="enable">Schakel in</string>
     <string name="gcode_preview">Gcode Voorbeeld</string>
     <string name="gcode_preview_live">Live Gcode Preview</string>
     <string name="gcode_preview_description">Met deze functie kun je een voorbeeld van Gcode bekijken voordat je begint met printen en de voortgang tijdens het printen live observeren.</string>
@@ -126,13 +126,13 @@
     <string name="this_may_happen_after_an_emergency_stop">Dit kan gebeuren na een noodstop. Probeer je printer opnieuw op te starten.</string>
     <string name="the_printer_is_offline">De printer is offline</string>
     <string name="printer_is_offline">Printer is offline</string>
-    <string name="cycle_psu_to_reset_the_printer">Cyclus de PSU om de printer te resetten</string>
+    <string name="cycle_psu_to_reset_the_printer">Start de PSU opnieuw op om de printer te resetten</string>
     <string name="turn_the_printer_off_and_on_again_to_reset_it">Zet de printer uit en weer aan om hem te resetten</string>
-    <string name="cycle_psu">PSU-fiets</string>
+    <string name="cycle_psu">PSU opnieuw opstarten</string>
     <string name="retry_connection">Opnieuw proberen verbinding te maken</string>
     <string name="psu_is_being_cycled">PSU wordt gefietst</string>
     <string name="printer_connected">Printer aangesloten</string>
-    <string name="auto_selection_failed">Niet in staat om de poort automatisch te detecteren, selecteer eerst</string>
+    <string name="auto_selection_failed">Niet in staat om de poort automatisch te detecteren, eerste wordt geselecteerd</string>
     <string name="turn_off_psu">Zet de PSU uit</string>
     <string name="extrude_retract">Extruderen / Terugtrekken</string>
     <string name="distance_in_mm_negative_for_retract">Afstand in mm (negatief voor retract)</string>
@@ -141,7 +141,6 @@
     <string name="move">Verplaats</string>
     <string name="tap_temperature_to_edit">Tik op temperatuur om te bewerken</string>
     <string name="preheat">Voorverwarmen</string>
-    <string name="x_items_y">%1$d items (%2$s)</string>
     <string name="x_y">%1$s (%2$s)</string>
     <string name="select_file_to_print">Selecteer bestand om af te drukken</string>
     <string name="extruding_x_mm">Extruderen %d mm</string>
@@ -160,7 +159,7 @@
     <string name="cura_plugin">Plugin Heling</string>
     <string name="this_folder_contains_no_files">Deze map bevat geen bestanden</string>
     <string name="no_files_on_octoprint_title">Geen bestanden op OctoPrint</string>
-    <string name="no_files_on_octoprint_subtitle"><![CDATA[Upload bestanden in de webinterface om te worden vermeld! <br><br> <klein>Kijk eens hoe <a href="https://www.youtube.com/watch?v=QB8MzoafnjY">Cura</a> en <a href="https://www.youtube.com/watch?v=V2PdG-Wx5Z0">Prusa Slicer</a> bestanden in OctoPrint automatisch kan opslaan.</klein>]]></string>
+    <string name="no_files_on_octoprint_subtitle"><![CDATA[Upload bestanden in de webinterface om te worden vermeld! <br><br> <small>Kijk eens hoe <a href="https://www.youtube.com/watch?v=QB8MzoafnjY">Cura</a> en <a href="https://www.youtube.com/watch?v=V2PdG-Wx5Z0">Prusa Slicer</a> bestanden in OctoPrint automatisch kan opslaan.</small>]]></string>
     <string name="empty">Leeg</string>
     <string name="heat_hotend">Warmtebron</string>
     <string name="heating_hotend">Verwarmingswarmte tot %d℃</string>
@@ -185,7 +184,7 @@
     <string name="history">Geschiedenis</string>
     <string name="no_preview_image_available">Geen voorbeeldafbeelding beschikbaar</string>
     <string name="unknown">Onbekend</string>
-    <string name="move_settings">Instellingen verplaatsen</string>
+    <string name="move_settings">Bewegingsinstellingen</string>
     <string name="z_feedrate_mm_min">Z-feedrate (mm/min)</string>
     <string name="update_settings">Instellingen bijwerken</string>
     <string name="emergency_stop">Noodstop</string>
@@ -194,26 +193,26 @@
     <string name="time_left">Resterende tijd</string>
     <string name="time_spent">Tijd besteed</string>
     <string name="progress">Voortgang</string>
-    <string name="change_filament_confirmation_message">Wil je de gloeidraad veranderen?</string>
-    <string name="change_filament_confirmation_action">Verander de gloeidraad</string>
+    <string name="change_filament_confirmation_message">Wil je de filament veranderen?</string>
+    <string name="change_filament_confirmation_action">Verander de filament</string>
     <string name="pause_print_confirmation_message">Wil je de afdruk pauzeren?</string>
     <string name="pause_print_confirmation_action">Pauze-afdruk</string>
     <string name="resume_print_confirmation_message">Wil je de afdruk hervatten?</string>
     <string name="resume_print_confirmation_action">Hervat afdrukken</string>
     <string name="cancel_print_confirmation_message">Wil je de afdruk annuleren?</string>
     <string name="cancel_print_confirmation_action">Afdrukken annuleren</string>
-    <string name="emergency_stop_confirmation_message">Wil je de printer in noodgevallen stoppen?</string>
+    <string name="emergency_stop_confirmation_message">Wil je een noodstop uitvoeren op de printer?</string>
     <string name="emergency_stop_confirmation_action">Noodstop</string>
     <string name="resume">Hervat</string>
     <string name="pause">Pauze</string>
     <string name="eta">ETA</string>
     <string name="print_name">Naam</string>
-    <string name="tune">Stem af</string>
+    <string name="tune">Bijstellen</string>
     <string name="cd_feed_rate">Aanvoersnelheid</string>
     <string name="cd_flow_rate">Stroomsnelheid</string>
     <string name="cd_fan_speed">Fan speed</string>
     <string name="why_are_the_values_not_always_shown">Waarom worden de waarden niet altijd getoond?</string>
-    <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">OctoPrint kan geen vraagtekens zetten bij de snelheid en de tarieven van de ventilatoren. Waarden kunnen alleen worden getoond als er veranderingen worden waargenomen.</string>
+    <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">OctoPrint kan de snelheid en de waarden van de ventilatoren niet opvragen. Waarden kunnen alleen worden getoond als er veranderingen worden waargenomen.</string>
     <string name="understood">Understood</string>
     <string name="apply">Solliciteer</string>
     <string name="fan_speed_label_active">Ventilatorsnelheid van 0 tot 100</string>
@@ -231,32 +230,31 @@
     <string name="default_port">80</string>
     <string name="a_ip_address">een IP-adres</string>
     <string name="enter_a_valid_web_url">Voer een geldige web URL in</string>
-    <string name="the_port">de haven</string>
+    <string name="the_port">de port</string>
     <string name="only_digits">Alleen cijfers</string>
     <string name="an_api_key">een API-sleutel</string>
     <string name="please_enter_x">Voer %s in</string>
     <string name="welcome_to_octoapp">Welkom bij OctoApp!</string>
-    <string name="error_unable_to_connect"><![CDATA[Kan niet worden verbonden met OctoPrint met de verstrekte informatie.<br/><br/><klein><font-kleur="#%1$06X">%2$s</font></klein>]]></string>
-    <string name="error_certificate_not_trusted">Android vertrouwt het certificaat van deze server niet. Dit is meestal het geval voor zelf ondertekende certificaten.nl Wil je deze server vertrouwen?</string>
+    <string name="error_unable_to_connect"><![CDATA[Kan niet worden verbonden met OctoPrint met de verstrekte informatie.<br/><br/><small><font color="#%1$06X">%2$s</font></small>]]></string>
+    <string name="error_certificate_not_trusted">Android vertrouwt het certificaat van deze server niet. Dit is meestal het geval voor zelf ondertekende certificaten. Wil je deze server vertrouwen?</string>
     <string name="scan_the_qr_code">Scan de QR-code</string>
     <string name="you_can_find_the_api_key_in_octoprint_s_settings_under_api">Je kunt de API sleutel vinden in OctoPrint\'s instellingen onder API</string>
     <string name="you_can_find_the_api_key_in_octoprint_s_settings">Je kunt de API sleutel vinden in de instellingen van OctoPrint.</string>
     <string name="error_api_key_reported_invalid">OctoPrint heeft je API sleutel als ongeldig gemeld. Meld je alsjeblieft opnieuw aan.</string>
     <string name="warning_server_version_too_new">Deze app versie is alleen getest met OctoPrint %1$s maar je gebruikt %2$s</string>
-    <string name="warning_no_admin_rights">De API-sleutel heeft geen admin-rechten. Delen van de app mogen niet werken!</string>
     <string name="sign_in_succes_with_warnings">Aanmelden is gelukt, maar er waren waarschuwingen:</string>
     <string name="web_url">Web URL</string>
     <string name="web_url_active_hint">Web URL - kopieer dit van je browser!</string>
     <string name="api_key_active_hint">API sleutel - van de OctoPrint instellingen</string>
     <string name="error_api_cotains_illegal_characters">De API-sleutel bevat illegale tekens</string>
     <string name="error_enter_api_key">Voer een API-sleutel in</string>
-    <string name="trust_server_and_try_again">Vertrouwensserver</string>
+    <string name="trust_server_and_try_again">Vertrouw server en probeer opnieuw</string>
     <string name="go_back">Ga terug</string>
     <string name="settings_seem_correct">Je instellingen lijken correct</string>
     <string name="all_checks_passed">Alle controles zijn geslaagd</string>
     <string name="check_again">Nogmaals controleren</string>
-    <string name="running_check_x_of_y">Lopende cheque %1$d van %2$d</string>
-    <string name="step_1_description">Proberen de gastheer op te lossen…</string>
+    <string name="running_check_x_of_y">Check %1$d van %2$d</string>
+    <string name="step_1_description">Proberen de host te vinden…</string>
     <string name="step_2_description">Proberen te pingen…</string>
     <string name="step_3_description">Proberen verbinding te maken met de poort…</string>
     <string name="step_4_description">Proberen verbinding te maken met OctoPrint…</string>

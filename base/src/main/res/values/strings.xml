@@ -144,7 +144,6 @@
     <string name="move">Move</string>
     <string name="tap_temperature_to_edit">Tap temperature to edit</string>
     <string name="preheat">Preheat</string>
-    <string name="x_items_y">%1$d items (%2$s)</string>
     <string name="x_y">%1$s (%2$s)</string>
     <string name="select_file_to_print">Select file to print</string>
     <string name="extruding_x_mm">Extruding %d mm</string>
@@ -191,7 +190,7 @@
     <string name="history">History</string>
     <string name="no_preview_image_available">No preview image available</string>
     <string name="unknown">Unknown</string>
-    <string name="move_settings">Move Settings</string>
+    <string name="move_settings">Movement settings</string>
     <string name="z_feedrate_mm_min">Z feedrate (mm/min)</string>
     <string name="update_settings">Update settings</string>
     <string name="emergency_stop">Emergency Stop</string>
@@ -251,7 +250,6 @@
     <string name="you_can_find_the_api_key_in_octoprint_s_settings">You can find the API key in OctoPrint\'s settings</string>
     <string name="error_api_key_reported_invalid">OctoPrint reported your API key as invalid. Please sign in again.</string>
     <string name="warning_server_version_too_new">This app version was only tested with OctoPrint %1$s but you use %2$s</string>
-    <string name="warning_no_admin_rights">The API key has no admin rights. Parts of the app may not work!</string>
     <string name="sign_in_succes_with_warnings"><b>Sign in succeeded but there were warnings:</b></string>
     <string name="web_url">Web URL</string>
     <string name="web_url_active_hint">Web URL — copy this from your browser!</string>

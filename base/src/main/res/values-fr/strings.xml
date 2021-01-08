@@ -141,7 +141,6 @@
     <string name="move">Déplacement</string>
     <string name="tap_temperature_to_edit">Touche la température pour éditer</string>
     <string name="preheat">Préchauffage</string>
-    <string name="x_items_y">%1$d articles (%2$s)</string>
     <string name="x_y">%1$s (%2$s)</string>
     <string name="select_file_to_print">Sélectionner le fichier à imprimer</string>
     <string name="extruding_x_mm">Extrusion %d mm</string>
@@ -185,7 +184,7 @@
     <string name="history">Histoire</string>
     <string name="no_preview_image_available">Aucune image de prévisualisation disponible</string>
     <string name="unknown">Inconnu</string>
-    <string name="move_settings">Déplacer les paramètres</string>
+    <string name="move_settings">Paramètres de mouvement</string>
     <string name="z_feedrate_mm_min">Avance Z (mm/min)</string>
     <string name="update_settings">Mise à jour des paramètres</string>
     <string name="emergency_stop">Arrêt d\'urgence</string>
@@ -243,7 +242,6 @@
     <string name="you_can_find_the_api_key_in_octoprint_s_settings">Tu peux trouver la clé API dans les paramètres d\'OctoPrint</string>
     <string name="error_api_key_reported_invalid">OctoPrint a signalé que votre clé API n\'était pas valide. Veuillez vous reconnecter.</string>
     <string name="warning_server_version_too_new">Cette version de l\'application n\'a été testée qu\'avec OctoPrint %1$s mais tu utilises %2$s</string>
-    <string name="warning_no_admin_rights">La clé API n\'a pas de droits d\'administration. Certaines parties de l\'application peuvent ne pas fonctionner !</string>
     <string name="sign_in_succes_with_warnings">L\'inscription a réussi mais il y a eu des avertissements :</string>
     <string name="web_url">URL du web</string>
     <string name="web_url_active_hint">URL du site Web - copie-le à partir de ton navigateur !</string>
