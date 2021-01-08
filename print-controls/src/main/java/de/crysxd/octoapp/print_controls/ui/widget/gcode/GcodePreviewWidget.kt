@@ -19,6 +19,7 @@ import androidx.fragment.app.findFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
@@ -52,7 +53,8 @@ class GcodePreviewWidget(parent: Fragment) : OctoWidget(parent) {
     private var hideLiveIndicatorJob: Job? = null
     private lateinit var file: FileObject.File
 
-    override fun isVisible() = (System.currentTimeMillis() - Injector.get().sharedPreferences().getLong(KEY_HIDDEN_AT, 0)) > HIDDEN_FOR_MILLIS
+    override fun isVisible() = BillingManager.isFeatureEnabled("gcode_preview") ||
+            (System.currentTimeMillis() - Injector.get().sharedPreferences().getLong(KEY_HIDDEN_AT, 0)) > HIDDEN_FOR_MILLIS
 
     override fun getTitle(context: Context) = context.getString(R.string.widget_gcode_preview)
 
