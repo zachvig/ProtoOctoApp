@@ -3,6 +3,7 @@
 
     <style name="OctoTheme.TextAppearance" parent="Theme.AppCompat">
         <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="fontFamily">@font/roboto_regular</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
@@ -10,21 +11,25 @@
     <style name="OctoTheme.TextAppearance.Label">
         <item name="android:textSize">12sp</item>
         <item name="android:fontFamily">@font/roboto_light</item>
+        <item name="fontFamily">@font/roboto_light</item>
     </style>
 
     <style name="OctoTheme.TextAppearance.Label.Small">
         <item name="android:textSize">11sp</item>
+        <item name="fontFamily">@font/roboto_regular</item>
         <item name="android:fontFamily">@font/roboto_regular</item>
         <item name="android:textColor">?android:attr/textColorTertiary</item>
     </style>
 
     <style name="OctoTheme.TextAppearance.Input">
         <item name="android:textSize">20sp</item>
+        <item name="fontFamily">@font/ubuntu_light</item>
         <item name="android:fontFamily">@font/ubuntu_light</item>
     </style>
 
     <style name="OctoTheme.TextAppearance.Title">
         <item name="android:fontFamily">@font/ubuntu_regular</item>
+        <item name="fontFamily">@font/ubuntu_regular</item>
         <item name="android:textSize">22sp</item>
         <item name="android:textColor">?android:attr/colorPrimary</item>
     </style>
@@ -40,12 +45,14 @@
     <style name="OctoTheme.TextAppearance.SubTitle">
         <item name="android:textSize">16sp</item>
         <item name="android:fontFamily">@font/ubuntu_light</item>
+        <item name="fontFamily">@font/ubuntu_light</item>
         <item name="android:textColor">@color/dark_text</item>
     </style>
 
     <style name="OctoTheme.TextAppearance.Button">
         <item name="android:textSize">20sp</item>
         <item name="android:fontFamily">@font/roboto_light</item>
+        <item name="fontFamily">@font/roboto_light</item>
         <item name="android:textColor">@color/button_primary_text_color</item>
     </style>
 
@@ -56,12 +63,14 @@
     <style name="OctoTheme.TextAppearance.SectionHeader">
         <item name="android:textSize">16sp</item>
         <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="fontFamily">@font/roboto_medium</item>
         <item name="android:textColor">@color/dark_text</item>
     </style>
 
     <style name="OctoTheme.TextAppearance.LargeData">
         <item name="android:textSize">30sp</item>
         <item name="android:fontFamily">@font/roboto_light</item>
+        <item name="fontFamily">@font/roboto_light</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 

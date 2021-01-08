@@ -45,6 +45,8 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
                 noWifiWarning.isVisible = it !is NetworkStateViewModel.NetworkState.WifiConnected
             }
 
+            requireOctoActivity().showErrorDetailsDialog(Exception("sdf"))
+
             // Subscribe to view state
             viewModel.uiState.observe(viewLifecycleOwner, { state ->
                 Timber.i("$state")
