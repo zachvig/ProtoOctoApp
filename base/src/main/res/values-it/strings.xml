@@ -141,7 +141,6 @@
     <string name="move">Spostati</string>
     <string name="tap_temperature_to_edit">Tocca la temperatura da modificare</string>
     <string name="preheat">Preriscaldare</string>
-    <string name="x_items_y">%1$d items (%2$s)</string>
     <string name="x_y">%1$s (%2$s)</string>
     <string name="select_file_to_print">Seleziona il file da stampare</string>
     <string name="extruding_x_mm">Estrusione %d mm</string>
@@ -185,7 +184,7 @@
     <string name="history">Storia</string>
     <string name="no_preview_image_available">Nessuna immagine di anteprima disponibile</string>
     <string name="unknown">Sconosciuto</string>
-    <string name="move_settings">Spostare le impostazioni</string>
+    <string name="move_settings">Impostazioni di movimento</string>
     <string name="z_feedrate_mm_min">Velocità di avanzamento Z (mm/min)</string>
     <string name="update_settings">Aggiornare le impostazioni</string>
     <string name="emergency_stop">Arresto di emergenza</string>
@@ -243,7 +242,6 @@
     <string name="you_can_find_the_api_key_in_octoprint_s_settings">Puoi trovare la chiave API nelle impostazioni di OctoPrint</string>
     <string name="error_api_key_reported_invalid">OctoPrint ha segnalato la tua chiave API come non valida. Per favore accedi di nuovo.</string>
     <string name="warning_server_version_too_new">Questa versione dell\'app è stata testata solo con OctoPrint %1$s ma si usa %2$s</string>
-    <string name="warning_no_admin_rights">La chiave API non ha diritti di amministrazione, alcune parti dell\'applicazione potrebbero non funzionare!</string>
     <string name="sign_in_succes_with_warnings">L\'accesso è riuscito, ma ci sono stati degli avvertimenti:</string>
     <string name="web_url">URL web</string>
     <string name="web_url_active_hint">URL Web - copia questo dal tuo browser!</string>

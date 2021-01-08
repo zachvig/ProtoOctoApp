@@ -103,8 +103,12 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
             widgets.add(GcodePreviewWidget(this@PrintControlsFragment))
             widgets.add(TuneWidget(this@PrintControlsFragment))
             Timber.i("Installing widgets: ${widgets.map { it::class.java.simpleName }}")
-            adapter.setWidgets(requireContext(), widgets)
+            adapter.setWidgets(requireContext(), widgets.filter { it.isVisible() })
         }
+    }
+
+    fun reloadWidgets() {
+        installApplicableWidgets(viewModel.instanceInformation.value)
     }
 
     override fun onResume() {
