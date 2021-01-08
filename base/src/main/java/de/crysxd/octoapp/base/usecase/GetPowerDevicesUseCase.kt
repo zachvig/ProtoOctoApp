@@ -11,7 +11,7 @@ import javax.inject.Inject
 class GetPowerDevicesUseCase @Inject constructor(
     private val octoPrintRepository: OctoPrintRepository,
     private val octoPrintProvider: OctoPrintProvider
-) : UseCase<GetPowerDevicesUseCase.Params, Flow<List<Pair<PowerDevice, GetPowerDevicesUseCase.PowerState>>>>() {
+) : UseCase<GetPowerDevicesUseCase.Params, Flow<PowerDeviceList>>() {
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) = octoPrintRepository.instanceInformationFlow().map {
         it?.settings
@@ -22,10 +22,9 @@ class GetPowerDevicesUseCase @Inject constructor(
             } ?: emptyList()
 
             // Emit without power state
-            val result = devices.map { Pair(it, if (param.queryState) PowerState.Loading else PowerState.Unknown) }
+            val result = devices.map { Pair<PowerDevice, PowerState>(it, PowerState.Unknown) }
                 .toMap()
                 .toMutableMap()
-            emit(result.toList())
 
             // If we should query power state do so and emit a second value
             if (param.queryState) {
@@ -37,9 +36,10 @@ class GetPowerDevicesUseCase @Inject constructor(
                         Timber.e(e)
                         result[it] = PowerState.Unknown
                     }
-                    emit(result.toList())
                 }
             }
+
+            emit(result.toList())
         }
     }.flatMapLatest { it }
 
@@ -51,6 +51,7 @@ class GetPowerDevicesUseCase @Inject constructor(
         object On : PowerState()
         object Off : PowerState()
         object Unknown : PowerState()
-        object Loading : PowerState()
     }
 }
+
+typealias PowerDeviceList = List<Pair<PowerDevice, GetPowerDevicesUseCase.PowerState>>
