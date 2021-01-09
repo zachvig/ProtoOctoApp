@@ -41,10 +41,9 @@
 
         <Button
             android:id="@+id/buttonSelect"
-            style="@style/OctoTheme.Widget.Button"
+            style="@style/OctoTheme.Widget.Button.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_card_button"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:text="Support for 1 month" />
 

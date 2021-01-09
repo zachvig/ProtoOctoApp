@@ -3,5 +3,5 @@
 
     <item android:color="?android:attr/textColorSecondary" android:state_enabled="false" />
 
-    <item android:color="@color/window_background" />
+    <item android:color="@color/input_background" />
 </selector>

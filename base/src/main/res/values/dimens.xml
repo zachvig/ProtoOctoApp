@@ -8,7 +8,7 @@
     <dimen name="gcode_render_view_print_head_size">3dp</dimen>
 
     <dimen name="common_view_top_padding">@dimen/margin_6</dimen>
-    <dimen name="common_corner_radius">@dimen/margin_1</dimen>
+    <dimen name="common_corner_radius">@dimen/margin_2</dimen>
 
     <dimen name="margin_0">2dp</dimen>
     <dimen name="margin_1">10dp</dimen>
