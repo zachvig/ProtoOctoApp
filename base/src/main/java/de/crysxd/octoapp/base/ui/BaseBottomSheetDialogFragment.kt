@@ -4,7 +4,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.CallSuper
-import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -22,8 +21,7 @@ abstract class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
         viewModel.navContoller = findNavController()
         requireOctoActivity().observeErrorEvents(viewModel.errorLiveData)
         requireOctoActivity().observerMessageEvents(viewModel.messages)
-        view.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.window_background))
-
+        view.setBackgroundResource(R.drawable.bg_bottom_sheet)
     }
 
     override fun onStart() {
