@@ -4,6 +4,7 @@ import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 
 data class PsuControlPowerDevice(private val plugin: PsuControlPowerPlugin) : PowerDevice() {
     override val id = "psu"
+    override val pluginId = "psucontrol"
     override val displayName = "PSU"
     override val pluginDisplayName = "PSU Control"
 

@@ -95,10 +95,12 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
 
             is ConnectPrinterViewModel.UiState.WaitingForPrinterToComeOnline -> {
                 buttonTurnOnPsu.setOnClickListener {
-                    PowerControlsBottomSheet.createForAction(PowerControlsBottomSheet.Action.TurnOn).show(childFragmentManager, "select-device")
+                    PowerControlsBottomSheet.createForAction(PowerControlsBottomSheet.Action.TurnOn, PowerControlsBottomSheet.DeviceType.PrinterPsu)
+                        .show(childFragmentManager, "select-device")
                 }
                 buttonTurnOffPsu.setOnClickListener {
-                    PowerControlsBottomSheet.createForAction(PowerControlsBottomSheet.Action.TurnOff).show(childFragmentManager, "select-device")
+                    PowerControlsBottomSheet.createForAction(PowerControlsBottomSheet.Action.TurnOff, PowerControlsBottomSheet.DeviceType.PrinterPsu)
+                        .show(childFragmentManager, "select-device")
                 }
                 buttonSignOut.isVisible = true
                 buttonTurnOnPsu.isVisible = state.psuIsOn == false
@@ -125,7 +127,8 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
                 buttonSignOut.isVisible = true
                 buttonTurnOnPsu.setOnClickListener {
                     if (state.psuSupported) {
-                        PowerControlsBottomSheet.createForAction(PowerControlsBottomSheet.Action.Cycle).show(childFragmentManager, "select-device")
+                        PowerControlsBottomSheet.createForAction(PowerControlsBottomSheet.Action.Cycle, PowerControlsBottomSheet.DeviceType.PrinterPsu)
+                            .show(childFragmentManager)
                     } else {
                         viewModel.retryConnectionFromOfflineState()
                     }

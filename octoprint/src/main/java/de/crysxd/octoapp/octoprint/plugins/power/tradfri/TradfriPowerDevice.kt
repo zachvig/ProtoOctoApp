@@ -12,6 +12,9 @@ data class TradfriPowerDevice(
     @Transient
     override val pluginDisplayName = "Trådfri"
 
+    @Transient
+    override val pluginId = "tradfri"
+
     override suspend fun turnOn() = plugin?.turnOn(this)
         ?: throw IllegalStateException("Acquire this class from TradfriPowerPlugin!")
 

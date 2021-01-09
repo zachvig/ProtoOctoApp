@@ -102,8 +102,10 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
 
         override suspend fun onMenuItemSelected(id: Int): Boolean {
             when (id) {
-                R.id.menuItemTurnOffPsu -> PowerControlsBottomSheet.createForAction(PowerControlsBottomSheet.Action.TurnOff)
-                    .show(parentFragmentManager)
+                R.id.menuItemTurnOffPsu -> PowerControlsBottomSheet.createForAction(
+                    PowerControlsBottomSheet.Action.TurnOff,
+                    PowerControlsBottomSheet.DeviceType.PrinterPsu
+                ).show(parentFragmentManager)
                 else -> return false
             }
 

@@ -160,11 +160,13 @@ open class ViewModelModule {
         getPowerDevicesUseCase: GetPowerDevicesUseCase,
         turnOffPsuUseCase: TurnOffPsuUseCase,
         turnOnPsuUseCase: TurnOnPsuUseCase,
-        cyclePsuUseCase: CyclePsuUseCase
+        cyclePsuUseCase: CyclePsuUseCase,
+        sharedPreferences: SharedPreferences
     ): ViewModel = PowerControlsViewModel(
         turnOffPsuUseCase = turnOffPsuUseCase,
         turnOnPsuUseCase = turnOnPsuUseCase,
         cyclePsuUseCase = cyclePsuUseCase,
         getPowerDevicesUseCase = getPowerDevicesUseCase,
+        sharedPreferences = sharedPreferences
     )
 }

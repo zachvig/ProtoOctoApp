@@ -51,6 +51,16 @@
             android:visibility="gone"
             tools:visibility="visible" />
 
+        <CheckBox
+            android:id="@+id/checkboxUseInFuture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/margin_1"
+            android:text="@string/power_controls___always_use_this_device"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </FrameLayout>

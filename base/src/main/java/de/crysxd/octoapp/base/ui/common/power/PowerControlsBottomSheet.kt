@@ -29,18 +29,22 @@ import kotlinx.android.parcel.Parcelize
 import timber.log.Timber
 
 
+
 class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
 
     companion object {
         private const val ARG_ACTION = "action"
-        fun createForAction(action: Action) = PowerControlsBottomSheet().also {
-            it.arguments = bundleOf(ARG_ACTION to action)
+        private const val ARG_DEVICE_TYPE = "device_type"
+        fun createForAction(action: Action, deviceType: DeviceType = DeviceType.Unspecified) = PowerControlsBottomSheet().also {
+            it.arguments = bundleOf(ARG_ACTION to action, ARG_DEVICE_TYPE to deviceType)
         }
     }
 
     private lateinit var binding: PowerControlsBottomSheetBinding
     private val action get() = requireArguments().getParcelable<Action>(ARG_ACTION)!!
+    private val deviceType get() = requireArguments().getParcelable<DeviceType>(ARG_DEVICE_TYPE)!!
     private val adapter by lazy { PowerDeviceAdapter(requireContext()) }
+    private var listWasShown = false
     override val viewModel by injectViewModel<PowerControlsViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = PowerControlsBottomSheetBinding.inflate(
@@ -62,6 +66,7 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
 
+        viewModel.setAction(action, deviceType)
         viewModel.viewState.observe(viewLifecycleOwner) {
             when (it) {
                 PowerControlsViewModel.ViewState.Loading -> setLoadingActive(true)
@@ -83,11 +88,24 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
     }
 
     private fun setLoadingActive(active: Boolean) {
+        if (!active) {
+            listWasShown = true
+        }
+
+        // If the list was visible before, we use invisible to hide so the layout height does not change (animation glitches)
+        val hiddenVisibility = if (listWasShown) View.INVISIBLE else View.GONE
+
         TransitionManager.beginDelayedTransition(requireView().findParent<CoordinatorLayout>())
         binding.progressBar.isVisible = active
-        binding.subtitle.visibility = if (!active) View.VISIBLE else View.INVISIBLE
-        binding.title.visibility = if (!active) View.VISIBLE else View.INVISIBLE
-        binding.recyclerView.visibility = if (!active) View.VISIBLE else View.INVISIBLE
+        binding.subtitle.visibility = if (!active) View.VISIBLE else hiddenVisibility
+        binding.title.visibility = if (!active) View.VISIBLE else hiddenVisibility
+        binding.checkboxUseInFuture.visibility = when {
+            deviceType is DeviceType.Unspecified -> View.GONE
+            active -> hiddenVisibility
+            else -> View.VISIBLE
+        }
+        binding.recyclerView.visibility = if (!active) View.VISIBLE else hiddenVisibility
+
     }
 
     private inner class PowerDeviceAdapter(context: Context) : RecyclerView.Adapter<PowerDeviceViewHolder>() {
@@ -122,7 +140,7 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
                 }
             }
             holder.itemView.setOnClickListener {
-                viewModel.executeAction(item.first, action)
+                viewModel.executeAction(item.first, action, deviceType, binding.checkboxUseInFuture.isChecked)
             }
             holder.itemView.setOnLongClickListener {
                 val items = arrayOf(
@@ -134,9 +152,9 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
                 MaterialAlertDialogBuilder(it.context)
                     .setItems(items) { _, which ->
                         when (which) {
-                            0 -> viewModel.executeAction(item.first, Action.TurnOn)
-                            1 -> viewModel.executeAction(item.first, Action.TurnOff)
-                            2 -> viewModel.executeAction(item.first, Action.Cycle)
+                            0 -> viewModel.executeAction(item.first, Action.TurnOn, deviceType, binding.checkboxUseInFuture.isChecked)
+                            1 -> viewModel.executeAction(item.first, Action.TurnOff, deviceType, binding.checkboxUseInFuture.isChecked)
+                            2 -> viewModel.executeAction(item.first, Action.Cycle, deviceType, binding.checkboxUseInFuture.isChecked)
                         }
                     }
                     .show()
@@ -149,6 +167,15 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
 
     private class PowerDeviceViewHolder(parent: ViewGroup) : ViewBindingHolder<ItemPowerDeviceBinding>
         (ItemPowerDeviceBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+
+
+    sealed class DeviceType : Parcelable {
+        @Parcelize
+        object PrinterPsu : DeviceType()
+
+        @Parcelize
+        object Unspecified : DeviceType()
+    }
 
     sealed class Action : Parcelable {
         @Parcelize
