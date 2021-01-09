@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="OctoTheme.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/accent</item>
+        <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
         <item name="colorSecondary">@color/accent</item>
         <item name="android:windowBackground">@color/window_background</item>
@@ -63,6 +63,7 @@
     <style name="OctoTheme.Widget.Button.More" parent="OctoTheme.Widget.Button.Secondary">
         <item name="shapeAppearance">@style/OctoTheme.ShapeAppearance.Button.More</item>
         <item name="android:minWidth">50dp</item>
+        <item name="strokeColor">@color/button_primary_bg_color</item>
         <item name="icon">@drawable/ic_round_more_vert_24</item>
         <item name="backgroundTint">@color/window_background</item>
         <item name="android:paddingStart">15dp</item>

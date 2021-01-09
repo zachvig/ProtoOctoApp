@@ -152,7 +152,7 @@
     <string name="y">Y</string>
     <string name="x">X</string>
     <string name="z">Z</string>
-    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews">Gebruik Cura of Prusa Slicer en installeer een plugin om miniatuurvoorvertoningen te krijgen!</string>
+    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_title">Gebruikt u Cura of Prusa Slicer?</string>
     <string name="learn_more">Meer informatie</string>
     <string name="thumbnail_info_message">Installeer de onderstaande plugin voor je slicer om thumbnail previews van alle bestanden te krijgen!</string>
     <string name="prusa_slicer_plugin">Pruisen Slicer Plugin</string>
@@ -289,4 +289,5 @@
     <string name="error_please_enter_a_message">Gelieve een bericht in te voeren</string>
     <string name="hls_stream_disabled_title">HLS webcam</string>
     <string name="hls_stream_disbaled_description">HLS webcams zijn uitgeschakeld, laat ze nu uw webcambeeld zien.</string>
+    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_detail">Installeer een plugin voor het verkrijgen van miniatuurvoorvertoningen!</string>
 </resources>

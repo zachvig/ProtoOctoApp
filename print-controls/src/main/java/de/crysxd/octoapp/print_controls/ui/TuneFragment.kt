@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionManager
@@ -32,14 +31,12 @@ class TuneFragment : Fragment(R.layout.fragment_tune) {
         super.onViewCreated(view, savedInstanceState)
 
         // Show/Hide data hint
-        viewModel.uiState.observe(viewLifecycleOwner, Observer {
+        viewModel.uiState.observe(viewLifecycleOwner) {
             if (!it.initialValue) {
                 TransitionManager.beginDelayedTransition(view as ViewGroup)
             }
 
-            dataHint.isVisible = it.showDataHint
-
-            if (it.initialValue && !it.showDataHint) {
+            if (it.initialValue && !tutorial.isVisible) {
                 feedRateInput.editText.requestFocusAndOpenSoftKeyboard()
             }
 
@@ -49,11 +46,6 @@ class TuneFragment : Fragment(R.layout.fragment_tune) {
                 feedRateInput.editText.clearFocusAndHideSoftKeyboard()
                 findNavController().popBackStack()
             }
-        })
-
-        // Hide data hint on click
-        buttonHideHint.setOnClickListener {
-            viewModel.hideDataHint()
         }
 
         fun OctoTextInputLayout.prepare() = this.apply {
