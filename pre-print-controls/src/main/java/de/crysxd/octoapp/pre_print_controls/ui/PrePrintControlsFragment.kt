@@ -9,6 +9,7 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.common.power.PowerControlsBottomSheet
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
@@ -101,7 +102,8 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
 
         override suspend fun onMenuItemSelected(id: Int): Boolean {
             when (id) {
-                R.id.menuItemTurnOffPsu -> viewModel.turnOffPsu()
+                R.id.menuItemTurnOffPsu -> PowerControlsBottomSheet.createForAction(PowerControlsBottomSheet.Action.TurnOff)
+                    .show(parentFragmentManager)
                 else -> return false
             }
 

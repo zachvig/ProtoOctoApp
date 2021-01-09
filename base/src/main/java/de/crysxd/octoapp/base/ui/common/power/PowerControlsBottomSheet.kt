@@ -10,6 +10,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionManager
@@ -74,6 +75,11 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
                 }
             }
         }
+    }
+
+
+    fun show(fm: FragmentManager) {
+        show(fm, "power-controls")
     }
 
     private fun setLoadingActive(active: Boolean) {
