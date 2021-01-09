@@ -29,7 +29,6 @@ import kotlinx.android.parcel.Parcelize
 import timber.log.Timber
 
 
-
 class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
 
     companion object {
@@ -54,12 +53,18 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //
         binding.title.setText(
             when (action) {
                 Action.TurnOn -> R.string.power_controls___title_turn_on
                 Action.TurnOff -> R.string.power_controls___title_turn_off
                 Action.Cycle -> R.string.power_controls___title_cycle
+                Action.Unspecified -> R.string.power_controls___title_unspecified
+            }
+        )
+        binding.subtitle.setText(
+            when (action) {
+                Action.Unspecified -> R.string.power_controls___subtitle_unspecified
+                else -> R.string.power_controls___subtitle_specified
             }
         )
 
@@ -140,29 +145,37 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
                 }
             }
             holder.itemView.setOnClickListener {
-                viewModel.executeAction(item.first, action, deviceType, binding.checkboxUseInFuture.isChecked)
+                if (action != Action.Unspecified) {
+                    viewModel.executeAction(item.first, action, deviceType, binding.checkboxUseInFuture.isChecked)
+                } else {
+                    askForAction(item.first)
+                }
             }
             holder.itemView.setOnLongClickListener {
-                val items = arrayOf(
-                    getString(R.string.power_controls___turn_on),
-                    getString(R.string.power_controls___turn_off),
-                    getString(R.string.power_controls___cycle)
-                )
-
-                MaterialAlertDialogBuilder(it.context)
-                    .setItems(items) { _, which ->
-                        when (which) {
-                            0 -> viewModel.executeAction(item.first, Action.TurnOn, deviceType, binding.checkboxUseInFuture.isChecked)
-                            1 -> viewModel.executeAction(item.first, Action.TurnOff, deviceType, binding.checkboxUseInFuture.isChecked)
-                            2 -> viewModel.executeAction(item.first, Action.Cycle, deviceType, binding.checkboxUseInFuture.isChecked)
-                        }
-                    }
-                    .show()
+                askForAction(item.first)
                 true
             }
         }
 
         override fun getItemCount() = powerDevices.size
+    }
+
+    private fun askForAction(device: PowerDevice) {
+        val items = arrayOf(
+            getString(R.string.power_controls___turn_on),
+            getString(R.string.power_controls___turn_off),
+            getString(R.string.power_controls___cycle)
+        )
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setItems(items) { _, which ->
+                when (which) {
+                    0 -> viewModel.executeAction(device, Action.TurnOn, deviceType, binding.checkboxUseInFuture.isChecked)
+                    1 -> viewModel.executeAction(device, Action.TurnOff, deviceType, binding.checkboxUseInFuture.isChecked)
+                    2 -> viewModel.executeAction(device, Action.Cycle, deviceType, binding.checkboxUseInFuture.isChecked)
+                }
+            }
+            .show()
     }
 
     private class PowerDeviceViewHolder(parent: ViewGroup) : ViewBindingHolder<ItemPowerDeviceBinding>
@@ -186,6 +199,9 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
 
         @Parcelize
         object Cycle : Action()
+
+        @Parcelize
+        object Unspecified : Action()
     }
 
     interface Parent {

@@ -302,7 +302,9 @@
     <string name="power_controls___title_turn_on">Select a device to turn on</string>
     <string name="power_controls___title_turn_off">Select a device to turn off</string>
     <string name="power_controls___title_cycle">Select a device to cycle</string>
-    <string name="power_controls___subtitle">Long press a device for a different action</string>
+    <string name="power_controls___title_unspecified">Select a device</string>
+    <string name="power_controls___subtitle_specified">Long press a device for a different action</string>
+    <string name="power_controls___subtitle_unspecified">You can select what to do with the device in the next step</string>
     <string name="power_controls___turn_on">Turn on</string>
     <string name="power_controls___turn_off">Turn off</string>
     <string name="power_controls___cycle">Cycle</string>

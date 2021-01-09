@@ -135,6 +135,7 @@ class PowerControlsViewModel(
                 PowerControlsBottomSheet.Action.TurnOn -> turnOnPsuUseCase.execute(device)
                 PowerControlsBottomSheet.Action.TurnOff -> turnOffPsuUseCase.execute(device)
                 PowerControlsBottomSheet.Action.Cycle -> cyclePsuUseCase.execute(device)
+                else -> throw IllegalArgumentException("Action is not specified, can't execute")
             }
             mutableViewState.postValue(ViewState.Completed(action, device))
         } catch (e: Exception) {

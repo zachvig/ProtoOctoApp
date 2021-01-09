@@ -60,6 +60,12 @@
         <item name="strokeWidth">1dp</item>
     </style>
 
+    <style name="OctoTheme.Widget.Button.Secondary.WithMore">
+        <item name="shapeAppearance">@style/OctoTheme.ShapeAppearance.Button.WithMore</item>
+        <item name="android:paddingStart">70dp</item>
+        <item name="android:paddingEnd">@dimen/margin_1</item>
+    </style>
+
     <style name="OctoTheme.Widget.Button.More" parent="OctoTheme.Widget.Button.Secondary">
         <item name="shapeAppearance">@style/OctoTheme.ShapeAppearance.Button.More</item>
         <item name="android:minWidth">50dp</item>

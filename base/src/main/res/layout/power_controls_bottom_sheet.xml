@@ -36,8 +36,8 @@
             android:layout_marginTop="@dimen/margin_0"
             android:layout_marginBottom="@dimen/margin_1"
             android:gravity="center"
-            android:paddingHorizontal="@dimen/margin_4"
-            android:text="@string/power_controls___subtitle"
+            android:paddingHorizontal="@dimen/margin_2"
+            android:text="@string/power_controls___subtitle_specified"
             android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
             android:visibility="gone"
             tools:visibility="visible" />
