@@ -309,4 +309,5 @@
     <string name="power_controls___turn_off">Turn off</string>
     <string name="power_controls___cycle">Cycle</string>
     <string name="power_controls___always_use_this_device">Always use this device for this action</string>
+    <string name="power_controls___x_offline">%s (offline)</string>
 </resources>

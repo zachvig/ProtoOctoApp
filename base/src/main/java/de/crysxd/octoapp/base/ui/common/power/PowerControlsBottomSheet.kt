@@ -129,19 +129,16 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
         override fun onBindViewHolder(holder: PowerDeviceViewHolder, position: Int) {
             val item = powerDevices[position]
             holder.binding.name.text = item.first.displayName
-            holder.binding.plugin.text = item.first.pluginDisplayName
+            holder.binding.plugin.text = when (item.second) {
+                On, Off -> item.first.pluginDisplayName
+                Unknown -> getString(R.string.power_controls___x_offline, item.first.pluginDisplayName)
+            }
             when (item.second) {
                 On -> {
                     holder.binding.icon.setColorFilter(green)
-                    holder.binding.icon.setImageResource(R.drawable.ic_round_power_settings_new_24)
                 }
-                Off -> {
+                Unknown, Off -> {
                     holder.binding.icon.setColorFilter(gray)
-                    holder.binding.icon.setImageResource(R.drawable.ic_round_power_settings_new_24)
-                }
-                Unknown -> {
-                    holder.binding.icon.setColorFilter(gray)
-                    holder.binding.icon.setImageResource(R.drawable.ic_round_help_outline_24)
                 }
             }
             holder.itemView.setOnClickListener {
