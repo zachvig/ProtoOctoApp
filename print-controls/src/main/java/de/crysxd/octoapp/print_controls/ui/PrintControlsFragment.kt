@@ -123,7 +123,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
 
     class MenuBottomSheet : de.crysxd.octoapp.base.ui.common.MenuBottomSheet() {
 
-        private val viewModel: PrintControlsViewModel by injectParentViewModel()
+        override val viewModel: PrintControlsViewModel by injectParentViewModel()
 
         override fun getMenuRes() = R.menu.print_controls_menu
 

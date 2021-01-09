@@ -25,9 +25,6 @@ import java.util.concurrent.TimeUnit
 
 
 class ConnectPrinterViewModel(
-    private val turnOnPsuUseCase: TurnOnPsuUseCase,
-    private val turnOffPsuUseCase: TurnOffPsuUseCase,
-    private val cyclePsuUseCase: CyclePsuUseCase,
     private val autoConnectPrinterUseCase: AutoConnectPrinterUseCase,
     private val getPrinterConnectionUseCase: GetPrinterConnectionUseCase,
     private val openOctoprintWebUseCase: OpenOctoprintWebUseCase,
@@ -198,15 +195,6 @@ class ConnectPrinterViewModel(
         try {
             isPsuTurnedOn = on
             psuState.postValue(on)
-
-            if (on) {
-                turnOnPsuUseCase.execute(device)
-                psuCyclingState.postValue(PsuCycledState.Cycled)
-                resetConnectionAttempt()
-
-            } else {
-                turnOffPsuUseCase.execute(device)
-            }
         } catch (e: Exception) {
             isPsuTurnedOn = wasPsuTurnedOn
             psuState.postValue(wasPsuTurnedOn)
@@ -215,8 +203,6 @@ class ConnectPrinterViewModel(
     }
 
     fun cyclePsu(device: PowerDevice) = viewModelScope.launch(coroutineExceptionHandler) {
-        psuCyclingState.postValue(PsuCycledState.Cycling)
-        cyclePsuUseCase.execute(device)
         psuCyclingState.postValue(PsuCycledState.Cycled)
         resetConnectionAttempt()
     }

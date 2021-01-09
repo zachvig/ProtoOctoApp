@@ -10,28 +10,25 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.ItemPowerDeviceBinding
 import de.crysxd.octoapp.base.databinding.PowerControlsBottomSheetBinding
 import de.crysxd.octoapp.base.di.injectViewModel
-import de.crysxd.octoapp.base.ui.BottomSheetDialogFragmentCompat
+import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.base.ui.ext.findParent
-import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase.PowerState.*
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import kotlinx.android.parcel.Parcelize
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
-class PowerControlsBottomSheet : BottomSheetDialogFragmentCompat() {
+class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
 
     companion object {
         private const val ARG_ACTION = "action"
@@ -43,7 +40,7 @@ class PowerControlsBottomSheet : BottomSheetDialogFragmentCompat() {
     private lateinit var binding: PowerControlsBottomSheetBinding
     private val action get() = requireArguments().getParcelable<Action>(ARG_ACTION)!!
     private val adapter by lazy { PowerDeviceAdapter(requireContext()) }
-    private val viewModel by injectViewModel<PowerControlsViewModel>()
+    override val viewModel by injectViewModel<PowerControlsViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = PowerControlsBottomSheetBinding.inflate(
         inflater, container, false
@@ -51,25 +48,40 @@ class PowerControlsBottomSheet : BottomSheetDialogFragmentCompat() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //
+        binding.title.setText(
+            when (action) {
+                Action.TurnOn -> R.string.power_controls___title_turn_on
+                Action.TurnOff -> R.string.power_controls___title_turn_off
+                Action.Cycle -> R.string.power_controls___title_cycle
+            }
+        )
+
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
-        val start = System.currentTimeMillis()
-        viewModel.powerDevices.observe(viewLifecycleOwner) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                // Wait at least 300ms before transitioning into data state
-                delay((300 - (System.currentTimeMillis() - start)).coerceAtLeast(0))
 
-                // Animate visibility with fade
-                TransitionManager.beginDelayedTransition(view.findParent<CoordinatorLayout>(), InstantAutoTransition())
-
-                // Change state
-                adapter.powerDevices = it
-                binding.progressBar.isVisible = false
-                binding.title.isVisible = true
-                binding.recyclerView.isVisible = true
-                binding.progressBar.isVisible = false
+        viewModel.viewState.observe(viewLifecycleOwner) {
+            when (it) {
+                PowerControlsViewModel.ViewState.Loading -> setLoadingActive(true)
+                is PowerControlsViewModel.ViewState.Completed -> {
+                    (parentFragment as? Parent)?.onPowerDeviceSelected(it.powerDevice, it.action)
+                    dismissAllowingStateLoss()
+                }
+                is PowerControlsViewModel.ViewState.PowerDevicesLoaded -> {
+                    adapter.powerDevices = it.powerDevices
+                    setLoadingActive(false)
+                }
             }
         }
+    }
+
+    private fun setLoadingActive(active: Boolean) {
+        TransitionManager.beginDelayedTransition(requireView().findParent<CoordinatorLayout>())
+        binding.progressBar.isVisible = active
+        binding.subtitle.visibility = if (!active) View.VISIBLE else View.INVISIBLE
+        binding.title.visibility = if (!active) View.VISIBLE else View.INVISIBLE
+        binding.recyclerView.visibility = if (!active) View.VISIBLE else View.INVISIBLE
     }
 
     private inner class PowerDeviceAdapter(context: Context) : RecyclerView.Adapter<PowerDeviceViewHolder>() {
@@ -104,8 +116,25 @@ class PowerControlsBottomSheet : BottomSheetDialogFragmentCompat() {
                 }
             }
             holder.itemView.setOnClickListener {
-                (parentFragment as? Parent)?.onPowerDeviceSelected(item.first, action)
-                dismiss()
+                viewModel.executeAction(item.first, action)
+            }
+            holder.itemView.setOnLongClickListener {
+                val items = arrayOf(
+                    getString(R.string.power_controls___turn_on),
+                    getString(R.string.power_controls___turn_off),
+                    getString(R.string.power_controls___cycle)
+                )
+
+                MaterialAlertDialogBuilder(it.context)
+                    .setItems(items) { _, which ->
+                        when (which) {
+                            0 -> viewModel.executeAction(item.first, Action.TurnOn)
+                            1 -> viewModel.executeAction(item.first, Action.TurnOff)
+                            2 -> viewModel.executeAction(item.first, Action.Cycle)
+                        }
+                    }
+                    .show()
+                true
             }
         }
 
@@ -127,6 +156,6 @@ class PowerControlsBottomSheet : BottomSheetDialogFragmentCompat() {
     }
 
     interface Parent {
-        fun onPowerDeviceSelected(device: PowerDevice, action: Action): Any
+        fun onPowerDeviceSelected(device: PowerDevice, action: Action?): Any?
     }
 }

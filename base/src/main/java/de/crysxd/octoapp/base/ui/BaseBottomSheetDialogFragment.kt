@@ -3,16 +3,27 @@ package de.crysxd.octoapp.base.ui
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.CallSuper
 import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 
-open class BottomSheetDialogFragmentCompat : BottomSheetDialogFragment() {
+abstract class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
+    protected abstract val viewModel: BaseViewModel
+
+    @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.navContoller = findNavController()
+        requireOctoActivity().observeErrorEvents(viewModel.errorLiveData)
+        requireOctoActivity().observerMessageEvents(viewModel.messages)
         view.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.window_background))
+
     }
 
     override fun onStart() {

@@ -26,18 +26,12 @@ open class ViewModelModule {
     open fun provideSignInViewModel(
         octoPrintRepository: OctoPrintRepository,
         octoPrintProvider: OctoPrintProvider,
-        turnOnPsuUseCase: TurnOnPsuUseCase,
-        turnOffPsuUseCase: TurnOffPsuUseCase,
-        cyclePsuUseCase: CyclePsuUseCase,
         autoConnectPrinterUseCase: AutoConnectPrinterUseCase,
         getPrinterConnectionUseCase: GetPrinterConnectionUseCase,
         openOctoprintWebUseCase: OpenOctoprintWebUseCase,
         signOutUseCase: SignOutUseCase,
         getPowerDevicesUseCase: GetPowerDevicesUseCase
     ): ViewModel = ConnectPrinterViewModel(
-        turnOnPsuUseCase,
-        turnOffPsuUseCase,
-        cyclePsuUseCase,
         autoConnectPrinterUseCase,
         getPrinterConnectionUseCase,
         openOctoprintWebUseCase,

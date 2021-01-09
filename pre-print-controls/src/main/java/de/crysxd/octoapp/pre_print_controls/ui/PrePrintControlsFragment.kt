@@ -86,7 +86,7 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
 
     class MenuBottomSheet : de.crysxd.octoapp.base.ui.common.MenuBottomSheet() {
 
-        private val viewModel: PrePrintControlsViewModel by injectParentViewModel()
+        override val viewModel: PrePrintControlsViewModel by injectParentViewModel()
 
         override fun getMenuRes() = R.menu.prepare_menu
 

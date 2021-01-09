@@ -177,7 +177,8 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
         requireOctoActivity().octo.isVisible = false
     }
 
-    override fun onPowerDeviceSelected(device: PowerDevice, action: PowerControlsBottomSheet.Action) = when (action) {
+    override fun onPowerDeviceSelected(device: PowerDevice, action: PowerControlsBottomSheet.Action?) = when (action) {
+        null -> null
         PowerControlsBottomSheet.Action.TurnOn -> viewModel.setDeviceOn(device, true)
         PowerControlsBottomSheet.Action.TurnOff -> viewModel.setDeviceOn(device, false)
         PowerControlsBottomSheet.Action.Cycle -> viewModel.cyclePsu(device)

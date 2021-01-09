@@ -10,9 +10,16 @@ class CyclePsuUseCase @Inject constructor() : UseCase<PowerDevice, Unit>() {
 
     override suspend fun doExecute(param: PowerDevice, timber: Timber.Tree) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PsuCycled)
-        param.turnOff()
-        delay(1000)
+        val e = try {
+            param.turnOff()
+            null
+        } catch (e: Exception) {
+            timber.e(e, "Error while turning off, continuing anyways")
+            e
+        }
+        delay(2000)
         param.turnOn()
         delay(1000)
+        e?.let { throw it }
     }
 }

@@ -23,7 +23,7 @@ class GcodeShortcutEditBottomSheet : MenuBottomSheet() {
     }
 
     // We need to use parent scope to prevent the set label action to die when the bottom sheet is closed
-    private val viewModel: GcodeShortcutEditViewModel by injectParentViewModel(Injector.get().viewModelFactory())
+    override val viewModel: GcodeShortcutEditViewModel by injectParentViewModel(Injector.get().viewModelFactory())
     private val command get() = requireArguments().getParcelable<GcodeHistoryItem>(ARG_COMMAND)
 
     override fun getMenuRes() = R.menu.menu_gcode_edit

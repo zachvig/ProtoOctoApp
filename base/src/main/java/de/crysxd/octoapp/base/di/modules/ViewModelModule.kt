@@ -157,8 +157,14 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(PowerControlsViewModel::class)
     open fun provideSelectPowerDeviceViewModel(
-        getPowerDevicesUseCase: GetPowerDevicesUseCase
+        getPowerDevicesUseCase: GetPowerDevicesUseCase,
+        turnOffPsuUseCase: TurnOffPsuUseCase,
+        turnOnPsuUseCase: TurnOnPsuUseCase,
+        cyclePsuUseCase: CyclePsuUseCase
     ): ViewModel = PowerControlsViewModel(
-        getPowerDevicesUseCase = getPowerDevicesUseCase
+        turnOffPsuUseCase = turnOffPsuUseCase,
+        turnOnPsuUseCase = turnOnPsuUseCase,
+        cyclePsuUseCase = cyclePsuUseCase,
+        getPowerDevicesUseCase = getPowerDevicesUseCase,
     )
 }
