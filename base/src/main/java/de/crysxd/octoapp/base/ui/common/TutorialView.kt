@@ -50,7 +50,10 @@ class TutorialView @JvmOverloads constructor(context: Context, attributeSet: Att
                     onLearnMoreAction()
                 }
                 binding.buttonHideHint.setOnClickListener {
-                    TransitionManager.beginDelayedTransition(rootView as ViewGroup)
+                    if (!alwaysShown) {
+                        TransitionManager.beginDelayedTransition(rootView as ViewGroup)
+                    }
+
                     isVisible = false
                     onHideAction()
                     sharedPrefKey?.let {
