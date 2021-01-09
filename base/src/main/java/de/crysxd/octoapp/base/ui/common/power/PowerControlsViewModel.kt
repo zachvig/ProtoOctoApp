@@ -41,6 +41,7 @@ class PowerControlsViewModel(
                 return@launch
             }
         } catch (e: Exception) {
+            coroutineExceptionHandler.handleException(coroutineContext, e)
             Timber.e(e)
             Timber.i("Default device action failed. Clearing default")
             sharedPreferences.edit { remove(createPreferencesKeyForActionId(deviceType)) }
