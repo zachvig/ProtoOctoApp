@@ -50,11 +50,12 @@ class TutorialView @JvmOverloads constructor(context: Context, attributeSet: Att
                     onLearnMoreAction()
                 }
                 binding.buttonHideHint.setOnClickListener {
+                    // If always shown is set sombody else takes care of hiding the view
                     if (!alwaysShown) {
                         TransitionManager.beginDelayedTransition(rootView as ViewGroup)
+                        isVisible = false
                     }
 
-                    isVisible = false
                     onHideAction()
                     sharedPrefKey?.let {
                         prefs?.edit { putBoolean(sharedPrefKey, !isSharedPrefInverted) }
