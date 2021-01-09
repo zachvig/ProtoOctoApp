@@ -204,6 +204,8 @@ class ConnectPrinterViewModel(
 
     fun cyclePsu(device: PowerDevice) = viewModelScope.launch(coroutineExceptionHandler) {
         psuCyclingState.postValue(PsuCycledState.Cycled)
+        isPsuTurnedOn = true
+        psuState.postValue(true)
         resetConnectionAttempt()
     }
 
