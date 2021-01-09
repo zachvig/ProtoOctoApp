@@ -29,17 +29,25 @@
         <item name="android:keepScreenOn">true</item>
     </style>
 
-    <style name="OctoTheme.Widget.Button" parent="Widget.MaterialComponents.Button.TextButton">
+    <style name="OctoTheme.Widget.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Button</item>
         <item name="android:textColor">@color/button_primary_text_color</item>
         <item name="backgroundTint">@color/button_primary_bg_color</item>
         <item name="rippleColor">@color/white</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:elevation">3dp</item>
         <item name="shapeAppearance">@style/OctoTheme.ShapeAppearance.Button</item>
         <item name="android:paddingStart">@dimen/margin_2</item>
         <item name="android:paddingEnd">@dimen/margin_2</item>
         <item name="android:paddingTop">@dimen/margin_2</item>
         <item name="android:paddingBottom">@dimen/margin_2</item>
         <item name="android:drawablePadding">@dimen/margin_0</item>
+    </style>
+
+    <style name="OctoTheme.Widget.Button.WithMore">
+        <item name="shapeAppearance">@style/OctoTheme.ShapeAppearance.Button.WithMore</item>
+        <item name="android:paddingStart">70dp</item>
+        <item name="android:paddingEnd">@dimen/margin_1</item>
     </style>
 
     <style name="OctoTheme.Widget.Button.Secondary">
@@ -52,17 +60,13 @@
         <item name="strokeWidth">1dp</item>
     </style>
 
-    <style name="OctoTheme.Widget.Button.More" parent="Widget.MaterialComponents.Button.TextButton">
+    <style name="OctoTheme.Widget.Button.More" parent="OctoTheme.Widget.Button.Secondary">
         <item name="shapeAppearance">@style/OctoTheme.ShapeAppearance.Button.More</item>
-        <item name="android:minWidth">0dp</item>
-        <item name="android:elevation">0dp</item>
-        <item name="iconTint">@color/button_secondary_text_color</item>
-        <item name="android:stateListAnimator">@null</item>
-        <item name="strokeWidth">1dp</item>
-        <item name="rippleColor">@color/accent</item>
-        <item name="strokeColor">@color/button_secondary_stroke_color</item>
+        <item name="android:minWidth">50dp</item>
         <item name="icon">@drawable/ic_round_more_vert_24</item>
         <item name="backgroundTint">@color/window_background</item>
+        <item name="android:paddingStart">15dp</item>
+        <item name="android:paddingEnd">15dp</item>
     </style>
 
     <style name="OctoTheme.Widget.Button.Card" parent="OctoTheme.Widget.Button">
@@ -114,9 +118,12 @@
     <style name="OctoTheme.Widget.Button.Borderless" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="backgroundTint">@android:color/transparent</item>
         <item name="strokeWidth">0dp</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
         <item name="rippleColor">@color/accent</item>
-        <item name="paddingStart">@dimen/margin_1</item>
-        <item name="paddingEnd">@dimen/margin_1</item>
+        <item name="paddingStart">@dimen/margin_0</item>
+        <item name="paddingEnd">@dimen/margin_0</item>
         <item name="shapeAppearance">@style/OctoTheme.ShapeAppearance.Button</item>
         <item name="android:textColor">@color/button_secondary_text_color</item>
         <item name="android:textAllCaps">false</item>
@@ -145,6 +152,12 @@
     <style name="OctoTheme.ShapeAppearance.Button.More">
         <item name="cornerSizeTopLeft">0dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
+    </style>
+
+
+    <style name="OctoTheme.ShapeAppearance.Button.WithMore">
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
     </style>
 
     <style name="OctoTheme.ShapeAppearance.Button.Card">

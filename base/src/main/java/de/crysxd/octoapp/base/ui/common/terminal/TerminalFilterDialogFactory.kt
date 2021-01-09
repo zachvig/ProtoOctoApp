@@ -1,7 +1,7 @@
 package de.crysxd.octoapp.base.ui.common.terminal
 
-import android.app.AlertDialog
 import android.content.Context
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 
 
@@ -14,7 +14,7 @@ class TerminalFilterDialogFactory {
     ) {
         val updatedFilters = filters.toMutableList()
 
-        AlertDialog.Builder(context)
+        MaterialAlertDialogBuilder(context)
             .setTitle("Select Filters")
             .setMultiChoiceItems(
                 filters.map { it.first.name }.toTypedArray(),

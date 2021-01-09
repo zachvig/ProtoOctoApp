@@ -3,11 +3,11 @@ package de.crysxd.octoapp.print_controls.ui
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
@@ -34,7 +34,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
         super.onViewCreated(view, savedInstanceState)
 
 
-        viewModel.printState.observe(viewLifecycleOwner, Observer {
+        viewModel.printState.observe(viewLifecycleOwner) {
             val isPaused = it.state?.flags?.paused == true
             buttonTogglePausePrint.isEnabled = true
             buttonTogglePausePrint.setText(
@@ -63,7 +63,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
                     viewModel.togglePausePrint()
                 }
             }
-        })
+        }
 
         viewModel.instanceInformation.observe(viewLifecycleOwner, Observer(this::installApplicableWidgets))
 
@@ -81,7 +81,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
     }
 
     private fun doAfterConfirmation(@StringRes message: Int, @StringRes button: Int, action: () -> Unit) {
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setMessage(message)
             .setPositiveButton(button) { _, _ -> action() }
             .setNegativeButton(R.string.cancel, null)
@@ -152,7 +152,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
         }
 
         private fun doAfterConfirmation(@StringRes message: Int, @StringRes button: Int, action: () -> Unit) {
-            AlertDialog.Builder(requireContext())
+            MaterialAlertDialogBuilder(requireContext())
                 .setMessage(message)
                 .setPositiveButton(button) { _, _ -> action() }
                 .setNegativeButton(R.string.cancel, null)

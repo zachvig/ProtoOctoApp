@@ -32,11 +32,12 @@
 
     </de.crysxd.octoapp.base.ui.common.OctoScrollView>
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/bottomAction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
+        android:orientation="horizontal"
         android:paddingLeft="@dimen/margin_2"
         android:paddingTop="@dimen/margin_2"
         android:paddingRight="@dimen/margin_2"
@@ -45,18 +46,19 @@
 
         <Button
             android:id="@+id/buttonStartPrint"
-            android:layout_width="match_parent"
+            style="@style/OctoTheme.Widget.Button.WithMore"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/start_printing" />
 
         <Button
             android:id="@+id/buttonMore"
+            style="@style/OctoTheme.Widget.Button.More"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="end"
-            style="@style/OctoTheme.Widget.Button.More"
-            android:elevation="10dp" />
-    </FrameLayout>
+            android:layout_gravity="end" />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
