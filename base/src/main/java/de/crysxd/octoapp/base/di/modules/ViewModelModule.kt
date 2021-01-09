@@ -20,6 +20,7 @@ import de.crysxd.octoapp.base.ui.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
 import de.crysxd.octoapp.base.ui.common.gcodeshortcut.GcodeShortcutEditViewModel
+import de.crysxd.octoapp.base.ui.common.power.PowerControlsViewModel
 import de.crysxd.octoapp.base.ui.common.terminal.TerminalViewModel
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlBedTemperatureWidgetViewModel
@@ -55,11 +56,9 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(SendGcodeWidgetViewModel::class)
     open fun provideSendGcodeWidgetViewModel(
-        sharedPreferences: SharedPreferences,
         useCase: ExecuteGcodeCommandUseCase,
         getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase
     ): ViewModel = SendGcodeWidgetViewModel(
-        sharedPreferences = sharedPreferences,
         getGcodeShortcutsUseCase = getGcodeShortcutsUseCase,
         sendGcodeCommandUseCase = useCase
     )
@@ -152,5 +151,22 @@ open class ViewModelModule {
         application: Application
     ): ViewModel = NetworkStateViewModel(
         application = application
+    )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(PowerControlsViewModel::class)
+    open fun provideSelectPowerDeviceViewModel(
+        getPowerDevicesUseCase: GetPowerDevicesUseCase,
+        turnOffPsuUseCase: TurnOffPsuUseCase,
+        turnOnPsuUseCase: TurnOnPsuUseCase,
+        cyclePsuUseCase: CyclePsuUseCase,
+        sharedPreferences: SharedPreferences
+    ): ViewModel = PowerControlsViewModel(
+        turnOffPsuUseCase = turnOffPsuUseCase,
+        turnOnPsuUseCase = turnOnPsuUseCase,
+        cyclePsuUseCase = cyclePsuUseCase,
+        getPowerDevicesUseCase = getPowerDevicesUseCase,
+        sharedPreferences = sharedPreferences
     )
 }

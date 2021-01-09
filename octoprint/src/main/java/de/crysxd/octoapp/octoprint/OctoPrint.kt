@@ -14,6 +14,7 @@ import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.socket.Message
+import de.crysxd.octoapp.octoprint.plugins.power.PowerPluginsCollection
 import de.crysxd.octoapp.octoprint.websocket.EventWebSocket
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -79,8 +80,7 @@ class OctoPrint(
     fun createPrinterApi(): PrinterApi.Wrapper =
         PrinterApi.Wrapper(createRetrofit().create(PrinterApi::class.java), webSocket)
 
-    fun createPsuApi(): PsuApi.Wrapper =
-        PsuApi.Wrapper((createRetrofit().create(PsuApi::class.java)), webSocket)
+    fun createPowerPluginsCollection() = PowerPluginsCollection(createRetrofit())
 
     fun createConnectionApi(): ConnectionApi.Wrapper =
         ConnectionApi.Wrapper((createRetrofit().create(ConnectionApi::class.java)))

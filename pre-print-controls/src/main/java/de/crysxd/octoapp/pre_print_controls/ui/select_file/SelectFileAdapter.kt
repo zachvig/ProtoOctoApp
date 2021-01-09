@@ -192,8 +192,8 @@ class SelectFileAdapter(
         }
 
         is ViewHolder.ThumbnailHintViewHolder -> {
-            holder.itemView.buttonHide.setOnClickListener { onHideThumbnailHint(this) }
-            holder.itemView.buttonLearnMore.setOnClickListener { onShowThumbnailInfo(this) }
+            holder.itemView.tutorial.onHideAction = { onHideThumbnailHint(this) }
+            holder.itemView.tutorial.onLearnMoreAction = { onShowThumbnailInfo(this) }
         }
 
         is ViewHolder.NoFilesViewHolder -> {

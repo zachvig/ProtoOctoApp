@@ -152,7 +152,7 @@
     <string name="y">Y</string>
     <string name="x">X</string>
     <string name="z">Z</string>
-    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews">Usando Cura o Prusa Slicer? Installa un plugin per ottenere le anteprime delle miniature!</string>
+    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_title">Usando Cura o Prusa Slicer?</string>
     <string name="learn_more">Per saperne di più</string>
     <string name="thumbnail_info_message">Installa il plugin qui sotto per l\'affettatrice per avere le anteprime di tutti i file!</string>
     <string name="prusa_slicer_plugin">Prussia Affettatrice Plugin</string>
@@ -289,4 +289,5 @@
     <string name="error_please_enter_a_message">Inserire un messaggio</string>
     <string name="hls_stream_disabled_title">Webcam HLS</string>
     <string name="hls_stream_disbaled_description">Le webcam HLS sono disabilitate, abilitatele ora per vedere l\'immagine della vostra webcam.</string>
+    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_detail">Installa un plugin per ottenere le anteprime delle miniature!</string>
 </resources>

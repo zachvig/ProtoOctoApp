@@ -152,7 +152,7 @@
     <string name="y">Y</string>
     <string name="x">X</string>
     <string name="z">Z</string>
-    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews">Tu utilises Cura ou Prusa Slicer ? Installe un plugin pour obtenir des aperçus en miniature !</string>
+    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_title">Tu utilises Cura ou Prusa Slicer ?</string>
     <string name="learn_more">En savoir plus</string>
     <string name="thumbnail_info_message">Installe le plugin ci-dessous pour ton trancheur afin d\'obtenir des aperçus de tous les fichiers sous forme de vignettes !</string>
     <string name="prusa_slicer_plugin">Plugin Trancheur de Prusse</string>
@@ -289,4 +289,5 @@
     <string name="error_please_enter_a_message">Veuillez entrer un message</string>
     <string name="hls_stream_disabled_title">HLS webcam</string>
     <string name="hls_stream_disbaled_description">Les webcams HLS sont désactivées, activez-les maintenant pour voir l\'image de votre webcam.</string>
+    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_detail">Installe un plugin pour obtenir des aperçus en miniature !</string>
 </resources>

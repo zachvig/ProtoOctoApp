@@ -61,7 +61,7 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor(
 
         val pluginList = if (param.sendOctoPrintInfo) {
             try {
-                octoPrint.octoPrint().createSettingsApi().getSettings().plugins.settings.map { it.key }
+                octoPrint.octoPrint().createSettingsApi().getSettings().plugins.map { it.key }
             } catch (e: Exception) {
                 Timber.w(e)
                 emptyList()

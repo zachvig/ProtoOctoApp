@@ -156,7 +156,8 @@
     <string name="y">Y</string>
     <string name="x">X</string>
     <string name="z">Z</string>
-    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews">Using Cura or Prusa Slicer? Install a plugin to get thumbnail previews!</string>
+    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_title">Using Cura or Prusa Slicer?</string>
+    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_detail">Install a plugin to get thumbnail previews!</string>
     <string name="learn_more">Learn more</string>
     <string name="thumbnail_info_message">Install the below plugin for your slicer to get thumbnail previews of all files!</string>
     <string name="prusa_slicer_plugin">Prusa Slicer Plugin</string>
@@ -298,4 +299,15 @@
     <string name="error_please_enter_a_message">Please enter a message</string>
     <string name="hls_stream_disabled_title">HLS webcam stream</string>
     <string name="hls_stream_disbaled_description">HLS streams are disabled, enable them now to see your webcam image.</string>
+    <string name="power_controls___title_turn_on">Select a device to turn on</string>
+    <string name="power_controls___title_turn_off">Select a device to turn off</string>
+    <string name="power_controls___title_cycle">Select a device to cycle</string>
+    <string name="power_controls___title_unspecified">Select a device</string>
+    <string name="power_controls___subtitle_specified">Long press a device for a different action</string>
+    <string name="power_controls___subtitle_unspecified">You can select what to do with the device in the next step</string>
+    <string name="power_controls___turn_on">Turn on</string>
+    <string name="power_controls___turn_off">Turn off</string>
+    <string name="power_controls___cycle">Cycle</string>
+    <string name="power_controls___always_use_this_device">Always use this device for this action</string>
+    <string name="power_controls___x_offline">%s (offline)</string>
 </resources>

@@ -8,7 +8,6 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
@@ -17,6 +16,7 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -154,7 +154,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
 
             // SSL error and we can "force trust" this server if user agrees
             if (res.exception is OctoPrintHttpsException && res.exception.serverCertificates.isNotEmpty()) {
-                AlertDialog.Builder(requireContext())
+                MaterialAlertDialogBuilder(requireContext())
                     .setMessage(R.string.error_certificate_not_trusted)
                     .setPositiveButton(R.string.trust_server_and_try_again) { _, _ ->
                         signIn(res.exception.serverCertificates)
@@ -165,7 +165,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
 
             // Any other error
             else {
-                AlertDialog.Builder(requireContext())
+                MaterialAlertDialogBuilder(requireContext())
                     .setMessage(res.exception.composeErrorMessage(requireContext(), R.string.error_unable_to_connect))
                     .setPositiveButton(android.R.string.ok, null)
                     .setNegativeButton(R.string.trouble_shooting) { _, _ ->
@@ -225,7 +225,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
                     "⚠️ $text"
                 }
 
-                AlertDialog.Builder(requireContext())
+                MaterialAlertDialogBuilder(requireContext())
                     .setTitle(getString(R.string.sign_in_succes_with_warnings))
                     .setMessage(message)
                     .setPositiveButton(android.R.string.ok, null)
@@ -263,7 +263,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
         val labels = knownSignInInfo.map { info -> info.webUrl }.toTypedArray()
         buttonMore.isVisible = knownSignInInfo.isNotEmpty()
         buttonMore.setOnClickListener {
-            AlertDialog.Builder(it.context)
+            MaterialAlertDialogBuilder(it.context)
                 .setItems(labels) { _, position ->
                     val info = knownSignInInfo[position]
                     inputWebUrl.editText.setText(info.webUrl)

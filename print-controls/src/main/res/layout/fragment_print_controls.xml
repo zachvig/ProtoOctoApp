@@ -48,7 +48,8 @@
             android:layout_height="wrap_content"
             android:text="@string/pause" />
 
-        <de.crysxd.octoapp.base.ui.common.OctoMoreButton
+        <Button
+            style="@style/OctoTheme.Widget.Button.More"
             android:id="@+id/buttonMore"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

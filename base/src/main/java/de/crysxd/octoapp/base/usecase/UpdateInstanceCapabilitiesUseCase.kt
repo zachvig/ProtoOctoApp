@@ -27,16 +27,22 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
 
             // Gather all info in parallel
             val settings = async { octoPrintProvider.octoPrint().createSettingsApi().getSettings() }
-            val m115 = async { executeM115() }
+            val m115 = async {
+                try {
+                    executeM115()
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    null
+                }
+            }
 
             val updated = current?.copy(
-                supportsWebcam = isWebcamSupported(settings.await()) != null,
-                supportsPsuPlugin = isPsuControlSupported(settings.await()),
-                m115Response = m115.await()
+                m115Response = m115.await(),
+                settings = settings.await()
             )
 
             val standardPlugins = Firebase.remoteConfig.getString("default_plugins").split(",").map { it.trim() }
-            settings.await().plugins.settings.keys.filter { !standardPlugins.contains(it) }.forEach {
+            settings.await().plugins.keys.filter { !standardPlugins.contains(it) }.forEach {
                 OctoAnalytics.logEvent(OctoAnalytics.Event.PluginDetected(it))
             }
 
@@ -59,11 +65,6 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
         settings.webcam.streamUrl != null -> "mjpeg"
         else -> null
     }.takeIf { settings.webcam.webcamEnabled }
-
-    private fun isPsuControlSupported(settings: Settings): Boolean {
-        val psuPlugins = listOf("psucontrol")
-        return settings.plugins.settings.keys.any { psuPlugins.contains(it) }
-    }
 
     private suspend fun executeM115() = try {
         withTimeout(5000L) {
