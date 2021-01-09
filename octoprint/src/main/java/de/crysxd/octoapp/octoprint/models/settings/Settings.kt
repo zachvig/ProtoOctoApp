@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.octoprint.models.settings
 
 import com.google.gson.annotations.SerializedName
+import de.crysxd.octoapp.octoprint.plugins.power.tplinkplug.TpLinkSmartPlugPowerDevice
 import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TradfriPowerDevice
 
 
@@ -26,5 +27,9 @@ data class Settings(
 
     data class TradfriSettings(
         @SerializedName("selected_devices") val devices: List<TradfriPowerDevice>
+    ) : PluginSettings
+
+    data class TpLinkSmartPlugSettings(
+        @SerializedName("arrSmartplugs") val devices: List<TpLinkSmartPlugPowerDevice>
     ) : PluginSettings
 }
