@@ -14,7 +14,7 @@ import java.util.*
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class PowerControlsViewModel(
-    getPowerDevicesUseCase: GetPowerDevicesUseCase,
+    private val getPowerDevicesUseCase: GetPowerDevicesUseCase,
     private val turnOnPsuUseCase: TurnOnPsuUseCase,
     private val turnOffPsuUseCase: TurnOffPsuUseCase,
     private val cyclePsuUseCase: CyclePsuUseCase,
@@ -26,50 +26,64 @@ class PowerControlsViewModel(
 
     private var autoAction: PowerControlsBottomSheet.Action? = null
     private var autoDeviceType: PowerControlsBottomSheet.DeviceType? = null
+    private var isInitialised = false
 
-    init {
-        var isFirst = true
-        val powerDevices = flow {
-            emit(getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(true)))
-        }.flatMapLatest { it }
-            .onEach {
-                if (isFirst) {
-                    // Load at least 300 ms to make the initial load animation nice
+    fun setAction(action: PowerControlsBottomSheet.Action, deviceType: PowerControlsBottomSheet.DeviceType) = viewModelScope.launch(coroutineExceptionHandler) {
+        autoAction = action
+        autoDeviceType = deviceType
+
+        // Get devices without state, this is a instant action from cache
+        // Try to perform the action with the cache value
+        try {
+            val simpleDevices = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(false))
+            if (attemptAutoHandle(simpleDevices.first())) {
+                Timber.i("Used default device for $action")
+                return@launch
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+            Timber.i("Default device action failed. Clearing default")
+            sharedPreferences.edit { remove(createPreferencesKeyForActionId(deviceType)) }
+        }
+
+        // We couldn't use the default, load power devices and query on/off state
+        // This function might get called more than once. Do not query state again
+        if (!isInitialised) {
+            isInitialised = true
+            var isFirst = true
+            val start = System.currentTimeMillis()
+            val powerDevices = flow {
+                emit(getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(true)))
+            }.flatMapLatest { it }
+                .onEach {
+                    if (isFirst) {
+                        // Load at least 500 ms to make the initial load animation nice
+                        delay((500 - (System.currentTimeMillis() - start)).coerceAtLeast(0))
+                    }
+
+                    // Only update UI if this is the first load or we still show the devices
+                    // We must not jump from a second locaing state (when action is executed) or from completed back to devices
+                    if (isFirst || mutableViewState.value is ViewState.PowerDevicesLoaded) {
+                        mutableViewState.postValue(ViewState.PowerDevicesLoaded(it))
+                    }
+
                     isFirst = false
-                    delay(300)
                 }
-            }
-            .distinctUntilChanged()
-            .asLiveData()
+                .asLiveData()
 
-        // Update thr power devices once while loading (initial load) and while we still
-        // show them and not moved to either loading state again or completed state
-        var isInitialLoad = true
-        mutableViewState.postValue(ViewState.Loading)
-        mutableViewState.addSource(powerDevices) {
-            if (isInitialLoad || mutableViewState.value is ViewState.PowerDevicesLoaded) {
-                isInitialLoad = false
-                if (!attemptAutoHandle(it)) {
-                    mutableViewState.postValue(ViewState.PowerDevicesLoaded(it))
-                }
-            }
+            // Hook up flow to view state
+            mutableViewState.addSource(powerDevices) { }
         }
     }
 
-    fun setAction(action: PowerControlsBottomSheet.Action, deviceType: PowerControlsBottomSheet.DeviceType) {
-        autoAction = action
-        autoDeviceType = deviceType
-        attemptAutoHandle((viewState.value as? ViewState.PowerDevicesLoaded)?.powerDevices)
-    }
-
-    private fun attemptAutoHandle(devices: PowerDeviceList?): Boolean {
+    private suspend fun attemptAutoHandle(devices: PowerDeviceList?): Boolean {
         val action = autoAction
         val deviceType = autoDeviceType ?: PowerControlsBottomSheet.DeviceType.Unspecified
         val defaultDeviceIdForAction = sharedPreferences.getString(createPreferencesKeyForActionId(deviceType), null)
 
         return if (action != null && devices != null && defaultDeviceIdForAction != null) {
             devices.firstOrNull { it.first.uniqueId == defaultDeviceIdForAction }?.first?.let {
-                executeAction(it, action, deviceType, useAsDefault = true, forceExecute = true)
+                executeActionInternal(it, action, deviceType, useAsDefault = true, internalExecution = true)
                 true
             } ?: false
         } else {
@@ -84,13 +98,22 @@ class PowerControlsViewModel(
         device: PowerDevice,
         action: PowerControlsBottomSheet.Action,
         deviceType: PowerControlsBottomSheet.DeviceType,
-        useAsDefault: Boolean,
-        forceExecute: Boolean = false
+        useAsDefault: Boolean
     ) = viewModelScope.launch(coroutineExceptionHandler) {
+        executeActionInternal(device, action, deviceType, useAsDefault)
+    }
+
+    private suspend fun executeActionInternal(
+        device: PowerDevice,
+        action: PowerControlsBottomSheet.Action,
+        deviceType: PowerControlsBottomSheet.DeviceType,
+        useAsDefault: Boolean,
+        internalExecution: Boolean = false
+    ) {
         // Only accept commands if we are not yet busy or done
-        if (!forceExecute && (mutableViewState.value !is ViewState.PowerDevicesLoaded)) {
+        if (!internalExecution && (mutableViewState.value !is ViewState.PowerDevicesLoaded)) {
             Timber.w("Dropped execution, already busy")
-            return@launch
+            return
         }
 
         // Store default :)
@@ -115,7 +138,12 @@ class PowerControlsViewModel(
             }
             mutableViewState.postValue(ViewState.Completed(action, device))
         } catch (e: Exception) {
-            mutableViewState.postValue(ViewState.Completed(null, device))
+            // Action failed, thus we report a null action as nothing was done
+            // If this internally triggered, we do not post the result as there might be further steps
+            if (!internalExecution) {
+                mutableViewState.postValue(ViewState.Completed(null, device))
+            }
+
             throw e
         }
     }
