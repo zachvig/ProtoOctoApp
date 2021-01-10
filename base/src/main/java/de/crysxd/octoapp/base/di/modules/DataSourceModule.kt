@@ -31,6 +31,10 @@ class DataSourceModule {
         LocalGcodeHistoryDataSource(sharedPreferences, Gson())
 
     @Provides
+    fun provideLocalPinnedMenuItemsDataSource(sharedPreferences: SharedPreferences): DataSource<Set<String>> =
+        LocalPinnedMenuItemsDataSource(sharedPreferences)
+
+    @Provides
     fun providesGcodeFileDataSources(
         context: Context,
         octoPrintProvider: OctoPrintProvider

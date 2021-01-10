@@ -16,6 +16,7 @@ interface Menu {
 interface MenuItem {
     val itemId: String
     val groupId: String
+    val order: Int
 
     val style: Style
     val showAsSubMenu: Boolean get() = false

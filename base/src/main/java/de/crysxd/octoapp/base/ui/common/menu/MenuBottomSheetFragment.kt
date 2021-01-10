@@ -20,6 +20,7 @@ import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.MenuBottomSheetFragmentBinding
 import de.crysxd.octoapp.base.databinding.MenuItemBinding
+import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
@@ -84,9 +85,9 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         true
     }
 
-    private fun beginDelayedTransition() {
+    private fun beginDelayedTransition(smallChange: Boolean = false) {
         view?.findParent<CoordinatorLayout>()?.let {
-            TransitionManager.beginDelayedTransition(it, InstantAutoTransition(quickTransition = false, explode = true))
+            TransitionManager.beginDelayedTransition(it, InstantAutoTransition(explode = !smallChange))
         }
     }
 
@@ -99,6 +100,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             set(value) {
                 field = value
                 val currentDestination = findNavController().currentDestination?.id ?: 0
+                pinnedItemIds = Injector.get().pinnedMenuItemsRepository().getPinnedMenuItems()
                 menuItems = value?.getMenuItem()?.filter {
                     runBlocking {
                         it.isVisible(currentDestination)
@@ -107,6 +109,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                 notifyDataSetChanged()
             }
 
+        var pinnedItemIds: Set<String> = emptySet()
         var menuItems: List<MenuItem> = emptyList()
             private set
 
@@ -124,12 +127,22 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     }
                 }
             }
+            if (!item.showAsSubMenu) {
+                holder.binding.button.setOnLongClickListener {
+                    beginDelayedTransition(true)
+                    Injector.get().pinnedMenuItemsRepository().toggleMenuItemPinned(item.itemId)
+                    menu = menu
+                    true
+                }
+            }
 
             // Icons
             holder.binding.button.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 item.icon,
                 0,
-                R.drawable.ic_round_chevron_right_24.takeIf { item.showAsSubMenu } ?: 0,
+                R.drawable.ic_round_chevron_right_24.takeIf { item.showAsSubMenu }
+                    ?: R.drawable.ic_round_push_pin_16_half_alpha.takeIf { pinnedItemIds.contains(item.itemId) }
+                    ?: 0,
                 0
             )
 

@@ -9,19 +9,32 @@ import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.di.Injector
 
 class MainMenu : Menu {
-    override fun getMenuItem() = listOf(
-        SupportOctoAppMenuItem(),
-        ShowSettingsMenuItem(),
-        ShowPrinterMenuItem(),
-        ShowNewsMenuItem()
-    )
+    override fun getMenuItem(): List<MenuItem> {
+        val base = listOf(
+            SupportOctoAppMenuItem(),
+            ShowSettingsMenuItem(),
+            ShowPrinterMenuItem(),
+            ShowNewsMenuItem()
+        )
+
+        val library = MenuItemLibrary()
+        val pinnedItems = Injector.get().pinnedMenuItemsRepository().getPinnedMenuItems().mapNotNull {
+            library[it]
+        }.mapNotNull {
+            it.java.constructors[0].newInstance() as? MenuItem
+        }
+
+        return listOf(base, pinnedItems).flatten().sortedBy { it.order }
+    }
 }
 
 class SupportOctoAppMenuItem : MenuItem {
-    override val itemId = "support_octoapp"
+    override val itemId = MENU_ITEM_SUPPORT_OCTOAPP
     override val groupId = "support"
+    override val order = 0
     override val style = Style.Support
     override val showAsSubMenu = true
     override val icon = R.drawable.ic_round_favorite_24
@@ -31,13 +44,14 @@ class SupportOctoAppMenuItem : MenuItem {
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "main_menu"))
         host.findNavController().navigate(R.id.action_show_purchase_flow)
-        return true
+        return false
     }
 }
 
 class ShowSettingsMenuItem : MenuItem {
-    override val itemId = "show_settings"
+    override val itemId = MENU_ITEM_SETTINGS_MENU
     override val groupId = "main_menu"
+    override val order = 10
     override val style = Style.Settings
     override val showAsSubMenu = true
     override val showAsHalfWidth = true
@@ -50,9 +64,10 @@ class ShowSettingsMenuItem : MenuItem {
     }
 }
 
-class ShowPrinterMenuItem() : MenuItem {
-    override val itemId = "show_print_menu"
+class ShowPrinterMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_PRINTER_MENU
     override val groupId = "main_menu"
+    override val order = 20
     override val style = Style.Printer
     override val showAsSubMenu = true
     override val showAsHalfWidth = true
@@ -65,9 +80,10 @@ class ShowPrinterMenuItem() : MenuItem {
     }
 }
 
-class ShowNewsMenuItem() : MenuItem {
-    override val itemId = "show_news"
+class ShowNewsMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_NEWS
     override val groupId = "main_menu"
+    override val order = 30
     override val style = Style.External
     override val showAsSubMenu = true
     override val showAsHalfWidth = true

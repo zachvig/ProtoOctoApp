@@ -29,8 +29,9 @@ class SettingsMenu : Menu {
 }
 
 class SendFeedbackMenuItem : MenuItem {
-    override val itemId = "send_feedback"
+    override val itemId = MENU_ITEM_SEND_FEEDBACK
     override val groupId = ""
+    override val order = 100
     override val style = Style.Settings
     override val icon = R.drawable.ic_round_rate_review_24
 
@@ -42,8 +43,9 @@ class SendFeedbackMenuItem : MenuItem {
 }
 
 class ChangeLanguageMenuItem : MenuItem {
-    override val itemId = "change_language"
+    override val itemId = MENU_ITEM_CHANGE_LANGUAGE
     override val groupId = ""
+    override val order = 110
     override val style = Style.Settings
     override val icon = R.drawable.ic_round_translate_24
 
@@ -57,8 +59,9 @@ class ChangeLanguageMenuItem : MenuItem {
 }
 
 class OpenOctoPrintMenuItem : MenuItem {
-    override val itemId = "open_octoprint"
+    override val itemId = MENU_ITEM_OPEN_OCTOPRINT
     override val groupId = ""
+    override val order = 120
     override val style = Style.Settings
     override val icon = R.drawable.ic_round_open_in_browser_24
 
@@ -70,8 +73,9 @@ class OpenOctoPrintMenuItem : MenuItem {
 }
 
 class ChangeOctoPrintInstanceMenuItem : MenuItem {
-    override val itemId = "change_server"
+    override val itemId = MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE
     override val groupId = ""
+    override val order = 130
     override val style = Style.Settings
     override val icon = R.drawable.ic_round_swap_horiz_24
 
