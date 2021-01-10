@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.FragmentManager
@@ -24,17 +25,13 @@ import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.base.ui.ext.findParent
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
+import kotlinx.coroutines.runBlocking
 
 
 class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     override val viewModel by injectViewModel<MenuBottomSheetViewModel>()
     private lateinit var viewBinding: MenuBottomSheetFragmentBinding
     private val adapter = Adapter()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        pushMenu(MainMenu())
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         MenuBottomSheetFragmentBinding.inflate(inflater, container, false).also { viewBinding = it }.root
@@ -44,6 +41,12 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         viewBinding.recyclerView.adapter = adapter
         viewBinding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2).also {
             it.spanSizeLookup = SpanSizeLookUp()
+        }
+
+        if (viewModel.menuBackStack.isEmpty()) {
+            pushMenu(MainMenu())
+        } else {
+            showMenu(viewModel.menuBackStack.last())
         }
     }
 
@@ -59,16 +62,25 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     fun show(fm: FragmentManager) = show(fm, "main-menu")
 
     fun pushMenu(settingsMenu: Menu) {
-        beginDelayedTransition()
         adapter.menu?.let { viewModel.menuBackStack.add(it) }
+        showMenu(settingsMenu)
+    }
+
+    fun showMenu(settingsMenu: Menu) {
+        beginDelayedTransition()
         adapter.menu = settingsMenu
+        viewBinding.title.text = settingsMenu.getTitle(requireContext())
+        viewBinding.title.isVisible = viewBinding.title.text.isNotBlank()
+        viewBinding.subtitle.text = settingsMenu.getSubtitle(requireContext())
+        viewBinding.subtitle.isVisible = viewBinding.title.text.isNotBlank()
+        viewBinding.bottom.text = settingsMenu.getBottomText(requireContext())
+        viewBinding.bottom.isVisible = viewBinding.title.text.isNotBlank()
     }
 
     private fun popMenu(): Boolean = if (viewModel.menuBackStack.isEmpty()) {
         false
     } else {
-        beginDelayedTransition()
-        adapter.menu = viewModel.menuBackStack.removeLast()
+        showMenu(viewModel.menuBackStack.removeLast())
         true
     }
 
@@ -87,7 +99,11 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             set(value) {
                 field = value
                 val currentDestination = findNavController().currentDestination?.id ?: 0
-                menuItems = value?.getMenuItem(requireContext())?.filter { it.isVisible(currentDestination) } ?: emptyList()
+                menuItems = value?.getMenuItem()?.filter {
+                    runBlocking {
+                        it.isVisible(currentDestination)
+                    }
+                } ?: emptyList()
                 notifyDataSetChanged()
             }
 
@@ -100,10 +116,12 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
 
         override fun onBindViewHolder(holder: MenuItemHolder, position: Int) {
             val item = menuItems[position]
-            holder.binding.button.text = item.title
+            holder.binding.button.text = runBlocking { item.getTitle(requireContext()) }
             holder.binding.button.setOnClickListener {
-                if (item.onClicked(this@MenuBottomSheetFragment)) {
-                    dismiss()
+                viewModel.execute {
+                    if (item.onClicked(this@MenuBottomSheetFragment)) {
+                        dismiss()
+                    }
                 }
             }
 
@@ -136,7 +154,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     private inner class MenuItemHolder(parent: ViewGroup) :
         ViewBindingHolder<MenuItemBinding>(MenuItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)) {
         init {
-            // In this list we don't recycler so we can use TransitionManager easily
+            // In this list we don't recycle so we can use TransitionManager easily
             setIsRecyclable(false)
         }
     }

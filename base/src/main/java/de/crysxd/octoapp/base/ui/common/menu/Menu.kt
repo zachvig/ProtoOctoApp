@@ -7,14 +7,16 @@ import androidx.annotation.IdRes
 import de.crysxd.octoapp.base.R
 
 interface Menu {
-    fun getMenuItem(context: Context): List<MenuItem>
+    fun getMenuItem(): List<MenuItem>
+    fun getTitle(context: Context): CharSequence? = null
+    fun getSubtitle(context: Context): CharSequence? = null
+    fun getBottomText(context: Context): CharSequence? = null
 }
 
 interface MenuItem {
     val itemId: String
     val groupId: String
 
-    val title: CharSequence
     val style: Style
     val showAsSubMenu: Boolean get() = false
     val showAsHalfWidth: Boolean get() = false
@@ -22,8 +24,9 @@ interface MenuItem {
     @get:DrawableRes
     val icon: Int
 
-    fun isVisible(@IdRes destinationId: Int) = true
-    fun onClicked(host: MenuBottomSheetFragment) = true
+    suspend fun getTitle(context: Context): CharSequence
+    suspend fun isVisible(@IdRes destinationId: Int) = true
+    suspend fun onClicked(host: MenuBottomSheetFragment) = true
 }
 
 sealed class Style(

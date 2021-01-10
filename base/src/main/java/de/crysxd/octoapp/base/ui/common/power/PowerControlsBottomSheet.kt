@@ -100,7 +100,9 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
         // If the list was visible before, we use invisible to hide so the layout height does not change (animation glitches)
         val hiddenVisibility = if (listWasShown) View.INVISIBLE else View.GONE
 
-        TransitionManager.beginDelayedTransition(requireView().findParent<CoordinatorLayout>())
+        requireView().findParent<CoordinatorLayout>()?.let {
+            TransitionManager.beginDelayedTransition(it)
+        }
         binding.progressBar.isVisible = active
         binding.subtitle.visibility = if (!active) View.VISIBLE else hiddenVisibility
         binding.title.visibility = if (!active) View.VISIBLE else hiddenVisibility
