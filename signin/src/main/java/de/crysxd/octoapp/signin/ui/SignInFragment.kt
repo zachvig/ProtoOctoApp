@@ -1,11 +1,12 @@
 package de.crysxd.octoapp.signin.ui
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Rect
+import android.net.Uri
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.KeyEvent
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
@@ -76,15 +77,11 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
             true
         }
 
-        manual.text = HtmlCompat.fromHtml(
-            "<a href=\"${Firebase.remoteConfig.getString("help_url_sign_in")}\">${getString(R.string.sign_in_manual_link)}</a>",
-            HtmlCompat.FROM_HTML_MODE_LEGACY
-        )
-        manual.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_UP) {
-                OctoAnalytics.logEvent(OctoAnalytics.Event.SignInHelpOpened)
-            }
-            false
+        manual.text = HtmlCompat.fromHtml("<a href=\"\">${getString(R.string.sign_in_manual_link)}</a>", HtmlCompat.FROM_HTML_MODE_LEGACY)
+        manual.setOnClickListener {
+            val uri = Uri.parse(Firebase.remoteConfig.getString("help_url_sign_in"))
+            OctoAnalytics.logEvent(OctoAnalytics.Event.SignInHelpOpened)
+            startActivity(Intent(Intent.ACTION_VIEW, uri))
         }
         manual.movementMethod = LinkMovementMethod()
 

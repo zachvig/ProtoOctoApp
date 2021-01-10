@@ -246,7 +246,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
         val old = mjpegSurface.drawable as? BitmapDrawable
         mjpegSurface.setImageBitmap(state.frame)
-        old?.bitmap?.recycle()
+        old?.bitmap?.takeIf { it != state.frame }?.recycle()
         applyAspectRatio(state.frame.width, state.frame.height)
 
         // Hide live indicator if no new frame arrives within 3s
