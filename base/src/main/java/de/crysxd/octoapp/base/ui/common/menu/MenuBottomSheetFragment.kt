@@ -74,9 +74,9 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         viewBinding.title.text = settingsMenu.getTitle(requireContext())
         viewBinding.title.isVisible = viewBinding.title.text.isNotBlank()
         viewBinding.subtitle.text = settingsMenu.getSubtitle(requireContext())
-        viewBinding.subtitle.isVisible = viewBinding.title.text.isNotBlank()
+        viewBinding.subtitle.isVisible = viewBinding.subtitle.text.isNotBlank()
         viewBinding.bottom.text = settingsMenu.getBottomText(requireContext())
-        viewBinding.bottom.isVisible = viewBinding.title.text.isNotBlank()
+        viewBinding.bottom.isVisible = viewBinding.bottom.text.isNotBlank()
     }
 
     private fun popMenu(): Boolean = if (viewModel.menuBackStack.isEmpty()) {
