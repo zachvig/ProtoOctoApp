@@ -5,7 +5,6 @@ import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.R
@@ -16,7 +15,6 @@ import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import kotlinx.android.synthetic.main.widget_gcode.*
 import kotlinx.android.synthetic.main.widget_gcode.view.*
-import kotlinx.android.synthetic.main.widget_gcode_tutorial.*
 
 class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
 
@@ -38,15 +36,6 @@ class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
         view.buttonOpenTerminal.setOnClickListener {
             recordInteraction()
             it.findNavController().navigate(R.id.action_open_terminal)
-        }
-
-        if (!viewModel.isTutorialHidden()) {
-            tutorialStub.inflate()
-            buttonHideTutorial.setOnClickListener {
-                viewModel.markTutorialHidden()
-                TransitionManager.beginDelayedTransition(parent.requireActivity().window.decorView as ViewGroup)
-                tutorial.isVisible = false
-            }
         }
     }
 

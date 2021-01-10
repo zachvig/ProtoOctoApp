@@ -1,7 +1,5 @@
 package de.crysxd.octoapp.base.ui.widget.gcode
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.material.snackbar.Snackbar
@@ -18,7 +16,6 @@ import kotlinx.coroutines.launch
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class SendGcodeWidgetViewModel(
-    private val sharedPreferences: SharedPreferences,
     private val getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase,
     private val sendGcodeCommandUseCase: ExecuteGcodeCommandUseCase
 ) : BaseViewModel() {
@@ -30,10 +27,6 @@ class SendGcodeWidgetViewModel(
         it
     }.distinctUntilChanged().asLiveData()
 
-
-    fun isTutorialHidden() = sharedPreferences.getBoolean(tutorialHiddenPreferenceKey, false)
-
-    fun markTutorialHidden() = sharedPreferences.edit { putBoolean(tutorialHiddenPreferenceKey, true) }
 
     fun sendGcodeCommand(command: String) = viewModelScope.launch(coroutineExceptionHandler) {
         val gcodeCommand = GcodeCommand.Batch(command.split("\n").toTypedArray())

@@ -8,33 +8,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:id="@+id/root"
         android:layout_height="match_parent">
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:alpha="0.4"
-            app:layout_constraintBottom_toBottomOf="@+id/button"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/backgroundImage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:importantForAccessibility="no"
-                android:scaleType="fitXY"
-                android:src="@drawable/temp_background" />
-
-            <ImageView
-                android:id="@+id/backgroundImageAnimated"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:importantForAccessibility="no"
-                android:rotation="180"
-                android:scaleType="fitXY"
-                android:src="@drawable/temp_background" />
-
-        </FrameLayout>
 
         <TextView
             android:id="@+id/textViewComponentName"
@@ -73,12 +48,11 @@
             tools:text="200 °C target " />
 
         <Button
+            style="@style/OctoTheme.Widget.Button.Small.Card"
             android:id="@+id/button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_1"
-            android:background="@drawable/bg_card_button"
-            android:padding="@dimen/margin_1"
             android:text="@string/set"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

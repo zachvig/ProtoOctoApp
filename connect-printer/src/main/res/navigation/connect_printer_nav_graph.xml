@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/connectPrinterFragment"
         android:name="de.crysxd.octoapp.connect_printer.ui.ConnectPrinterFragment"
-        tools:layout="@layout/fragment_connect_printer"
+        tools:layout="@layout/connect_printer_fragment"
         android:label="ConnectPrinterFragment" />
 
 </navigation>

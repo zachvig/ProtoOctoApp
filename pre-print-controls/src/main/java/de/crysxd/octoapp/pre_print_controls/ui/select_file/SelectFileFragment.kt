@@ -7,10 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -51,7 +51,7 @@ class SelectFileFragment : BaseFragment() {
                     viewModel.hideThumbnailHint()
                 },
                 onShowThumbnailInfo = {
-                    AlertDialog.Builder(requireContext())
+                    MaterialAlertDialogBuilder(requireContext())
                         .setMessage(getString(R.string.thumbnail_info_message))
                         .setPositiveButton(R.string.cura_plugin) { _, _ ->
                             openLink("https://plugins.octoprint.org/plugins/UltimakerFormatPackage/")

@@ -152,7 +152,7 @@
     <string name="y">Y</string>
     <string name="x">X</string>
     <string name="z">Z</string>
-    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews">¿Usando Cura o Prusa Slicer? ¡Instale un plugin para obtener vistas previas de las miniaturas!</string>
+    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_title">¿Usando Cura o Prusa Slicer?</string>
     <string name="learn_more">Aprende más.</string>
     <string name="thumbnail_info_message">Instale el siguiente plugin para su cortadora para obtener vistas previas en miniatura de todos los archivos!</string>
     <string name="prusa_slicer_plugin">Prussia Slicer Plugin</string>
@@ -289,4 +289,5 @@
     <string name="error_please_enter_a_message">Por favor, introduzca un mensaje</string>
     <string name="hls_stream_disabled_title">HLS webcam</string>
     <string name="hls_stream_disbaled_description">Las cámaras web HLS están deshabilitadas, habilítalas ahora para ver la imagen de tu cámara web.</string>
+    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_detail">¡Instale un plugin para obtener vistas previas de las miniaturas!</string>
 </resources>

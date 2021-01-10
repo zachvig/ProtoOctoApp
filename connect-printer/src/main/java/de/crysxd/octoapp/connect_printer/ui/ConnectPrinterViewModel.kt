@@ -6,12 +6,9 @@ import androidx.lifecycle.*
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ext.filterEventsForMessageType
 import de.crysxd.octoapp.base.livedata.OctoTransformations.map
 import de.crysxd.octoapp.base.livedata.PollingLiveData
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase.Params
@@ -19,24 +16,21 @@ import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintBootingException
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse.ConnectionState.MAYBE_ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT
-import de.crysxd.octoapp.octoprint.models.socket.Message.PsuControlPluginMessage
+import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 
 class ConnectPrinterViewModel(
-    octoPrintProvider: OctoPrintProvider,
-    private val turnOnPsuUseCase: TurnOnPsuUseCase,
-    private val turnOffPsuUseCase: TurnOffPsuUseCase,
-    private val cyclePsuUseCase: CyclePsuUseCase,
     private val autoConnectPrinterUseCase: AutoConnectPrinterUseCase,
     private val getPrinterConnectionUseCase: GetPrinterConnectionUseCase,
-    private val octoPrintRepository: OctoPrintRepository,
     private val openOctoprintWebUseCase: OpenOctoprintWebUseCase,
-    private val signOutUseCase: SignOutUseCase
+    private val signOutUseCase: SignOutUseCase,
+    private val getPowerDevicesUseCase: GetPowerDevicesUseCase
 ) : BaseViewModel() {
 
     private val connectionTimeoutNs = TimeUnit.SECONDS.toNanos(Firebase.remoteConfig.getLong("printer_connection_timeout_sec"))
@@ -47,11 +41,10 @@ class ConnectPrinterViewModel(
         getPrinterConnectionUseCase.execute()
     }
 
-    private val psuState = octoPrintProvider.eventFlow("connect")
-        .filterEventsForMessageType<PsuControlPluginMessage>()
-        .asLiveData()
-
+    private var isPsuTurnedOn: Boolean? = null
+    private var isPsuSupported = false
     private val uiStateMediator = MediatorLiveData<UiState>()
+    private val psuState = MutableLiveData<Boolean>()
     val uiState = uiStateMediator.map { it }.distinctUntilChanged()
 
     init {
@@ -59,38 +52,42 @@ class ConnectPrinterViewModel(
         uiStateMediator.addSource(psuState) { updateUiState() }
         uiStateMediator.addSource(psuCyclingState) { updateUiState() }
         uiStateMediator.value = UiState.Initializing
+
+        viewModelScope.launch {
+            val liveData = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(false)).onEach {
+                Timber.i("Power devices: %s", it.joinToString { d -> d.first.displayName })
+                isPsuSupported = it.isNotEmpty()
+            }.catch {
+                Timber.e(it)
+                coroutineExceptionHandler.handleException(coroutineContext, it)
+            }.asLiveData()
+            uiStateMediator.addSource(liveData) { updateUiState() }
+        }
     }
 
     private fun updateUiState() = viewModelScope.launch(coroutineExceptionHandler) {
         uiStateMediator.postValue(computeUiState())
     }
 
-    private suspend fun computeUiState(): UiState {
+    private fun computeUiState(): UiState {
         try {
             // Connection
             val connectionResponse = availableSerialConnections.value
             val connectionResult = (connectionResponse as? PollingLiveData.Result.Success)?.result
 
             // PSU
-            val psuState = psuState.value ?: if (octoPrintRepository.instanceInformationFlow().first()?.supportsPsuPlugin == true) {
-                PsuControlPluginMessage(false)
+            val psuCyclingState = psuCyclingState.value ?: PsuCycledState.NotCycled
+            val isPsuTurnedOn = if (isPsuSupported) {
+                isPsuTurnedOn ?: false
             } else {
                 null
             }
-            val supportsPsuPlugin = psuState != null
-            val psuCyclingState = psuCyclingState.value ?: PsuCycledState.NotCycled
 
             viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
                 Timber.d("-----")
                 Timber.d("ConnectionResult: $connectionResult")
-                Timber.d("PsuState: $psuState")
+                Timber.d("PsuSupported: $isPsuSupported")
                 Timber.d("PsuCycled: $psuCyclingState")
-
-                if (supportsPsuPlugin) {
-                    octoPrintRepository.instanceInformationFlow().first().let {
-                        octoPrintRepository.storeOctoprintInstanceInformation(it?.copy(supportsPsuPlugin = supportsPsuPlugin))
-                    }
-                }
             }
 
             if (connectionResponse != null) {
@@ -105,10 +102,10 @@ class ConnectPrinterViewModel(
                         UiState.PrinterPsuCycling
 
                     isNoPrinterAvailable(connectionResult) ->
-                        UiState.WaitingForPrinterToComeOnline(psuState?.isPsuOn)
+                        UiState.WaitingForPrinterToComeOnline(isPsuTurnedOn)
 
                     isPrinterOffline(connectionResult, psuCyclingState) ->
-                        UiState.PrinterOffline(supportsPsuPlugin)
+                        UiState.PrinterOffline(isPsuSupported)
 
                     isPrinterConnecting(connectionResult) ->
                         UiState.PrinterConnecting
@@ -119,7 +116,7 @@ class ConnectPrinterViewModel(
                     else -> {
                         // Printer ready to connect
                         autoConnect(connectionResult)
-                        UiState.WaitingForPrinterToComeOnline(psuState?.isPsuOn)
+                        UiState.WaitingForPrinterToComeOnline(isPsuTurnedOn)
                     }
                 }
             }
@@ -197,20 +194,22 @@ class ConnectPrinterViewModel(
         lastConnectionAttempt = 0
     }
 
-    fun togglePsu() = viewModelScope.launch(coroutineExceptionHandler) {
-        if (psuState.value?.isPsuOn == true) {
-            turnOffPsuUseCase.execute()
-        } else {
-            turnOnPsuUseCase.execute()
-            psuCyclingState.postValue(PsuCycledState.Cycled)
-            resetConnectionAttempt()
+    fun setDeviceOn(device: PowerDevice, on: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
+        val wasPsuTurnedOn = isPsuTurnedOn
+        try {
+            isPsuTurnedOn = on
+            psuState.postValue(on)
+        } catch (e: Exception) {
+            isPsuTurnedOn = wasPsuTurnedOn
+            psuState.postValue(wasPsuTurnedOn)
+            throw e
         }
     }
 
-    fun cyclePsu() = viewModelScope.launch(coroutineExceptionHandler) {
-        psuCyclingState.postValue(PsuCycledState.Cycling)
-        cyclePsuUseCase.execute()
+    fun cyclePsu(device: PowerDevice) = viewModelScope.launch(coroutineExceptionHandler) {
         psuCyclingState.postValue(PsuCycledState.Cycled)
+        isPsuTurnedOn = true
+        psuState.postValue(true)
         resetConnectionAttempt()
     }
 

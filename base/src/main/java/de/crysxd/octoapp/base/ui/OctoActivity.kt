@@ -1,12 +1,13 @@
 package de.crysxd.octoapp.base.ui
 
-import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
@@ -116,7 +117,7 @@ abstract class OctoActivity : LocaleActivity() {
     ) {
         Timber.i("Showing dialog: [message=$message, positiveButton=$positiveButton, neutralButton=$neutralButton")
         dialog?.dismiss()
-        dialog = AlertDialog.Builder(this).let { builder ->
+        dialog = MaterialAlertDialogBuilder(this).let { builder ->
             builder.setMessage(message)
             builder.setPositiveButton(positiveButton) { _, _ -> positiveAction(this) }
             neutralButton?.let {

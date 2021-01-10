@@ -118,8 +118,9 @@
             android:layout_height="wrap_content"
             android:text="@string/sign_in_to_octoprint" />
 
-        <de.crysxd.octoapp.base.ui.common.OctoMoreButton
+        <Button
             android:id="@+id/buttonMore"
+            style="@style/OctoTheme.Widget.Button.More"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="end"

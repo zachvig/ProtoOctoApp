@@ -20,4 +20,13 @@
             <enum name="swim" value="1" />
         </attr>
     </declare-styleable>
+    <declare-styleable name="TutorialView">
+        <attr name="title" format="string" />
+        <attr name="detail" format="string" />
+        <attr name="hidePrefName" format="string" />
+        <attr name="hidePrefInverted" format="boolean" />
+        <attr name="hideButton" format="string" />
+        <attr name="learnMoreButton" format="string" />
+        <attr name="alwaysShow" format="boolean" />
+    </declare-styleable>
 </resources>

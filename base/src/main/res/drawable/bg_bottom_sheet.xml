@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@color/window_background" />
+    <item
+        android:gravity="top|center_horizontal"
+        android:top="@dimen/margin_1">
+        <shape android:shape="rectangle">
+
+            <solid android:color="@color/input_background" />
+            <size
+                android:width="60dp"
+                android:height="2dp" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+</layer-list>
