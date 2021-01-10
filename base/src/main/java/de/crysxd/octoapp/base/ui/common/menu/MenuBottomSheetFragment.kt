@@ -26,6 +26,7 @@ import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.base.ui.ext.findParent
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
 
@@ -122,6 +123,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             holder.binding.button.text = runBlocking { item.getTitle(requireContext()) }
             holder.binding.button.setOnClickListener {
                 viewModel.execute {
+                    delay(100)
                     if (item.onClicked(this@MenuBottomSheetFragment)) {
                         dismiss()
                     }
