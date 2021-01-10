@@ -40,7 +40,7 @@ class SupportOctoAppMenuItem : MenuItem {
     override val showAsSubMenu = true
     override val icon = R.drawable.ic_round_favorite_24
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.support_octoapp)
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_support_octoapp)
     override suspend fun isVisible(@IdRes destinationId: Int) = BillingManager.shouldAdvertisePremium()
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "main_menu"))
@@ -59,7 +59,7 @@ class ShowSettingsMenuItem : SubMenuItem() {
     override val icon = R.drawable.ic_round_settings_24
     override val subMenu = SettingsMenu()
 
-    override suspend fun getTitle(context: Context) = "Settings"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_settings)
 }
 
 class ShowPrinterMenuItem : SubMenuItem() {
@@ -71,7 +71,7 @@ class ShowPrinterMenuItem : SubMenuItem() {
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_round_print_24
     override val subMenu = PrinterMenu()
-    override suspend fun getTitle(context: Context) = "Printer"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_printer)
 }
 
 class ShowNewsMenuItem : MenuItem {
@@ -83,7 +83,7 @@ class ShowNewsMenuItem : MenuItem {
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_twitter_24px
 
-    override suspend fun getTitle(context: Context) = "News"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_news)
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         val i = Intent(Intent.ACTION_VIEW)
         i.data = Uri.parse("https://twitter.com/realoctoapp")

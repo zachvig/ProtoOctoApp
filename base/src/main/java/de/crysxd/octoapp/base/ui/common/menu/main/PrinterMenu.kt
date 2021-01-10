@@ -16,8 +16,8 @@ class PrinterMenu : Menu {
         OpenPowerControlsMenuItem(),
     )
 
-    override fun getTitle(context: Context) = "Printer"
-    override fun getSubtitle(context: Context) = "Long-press any item to pin it to start"
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___menu_printer_title)
+    override fun getSubtitle(context: Context) = context.getString(R.string.main_menu___submenu_subtitle)
 }
 
 class OpenPowerControlsMenuItem : MenuItem {
@@ -31,7 +31,7 @@ class OpenPowerControlsMenuItem : MenuItem {
         GetPowerDevicesUseCase.Params(false)
     ).first().isNotEmpty()
 
-    override suspend fun getTitle(context: Context) = "Open power controls"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_power_controls)
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         PowerControlsBottomSheet.createForAction().show(host.parentFragmentManager)
         return true
@@ -49,7 +49,7 @@ class TurnPsuOffMenuItem : MenuItem {
         GetPowerDevicesUseCase.Params(false)
     ).first().isNotEmpty() && destinationId == R.id.workspacePrePrint
 
-    override suspend fun getTitle(context: Context) = "Turn printer off"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_turn_psu_off)
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         PowerControlsBottomSheet.createForAction(
             PowerControlsBottomSheet.Action.TurnOff,
@@ -69,7 +69,7 @@ class EmergencyStopMenuItem : ConfirmedMenuItem() {
     override fun getConfirmMessage(context: Context) = context.getString(R.string.emergency_stop_confirmation_message)
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.emergency_stop_confirmation_action)
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
-    override suspend fun getTitle(context: Context) = "Emergency Stop"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_emergency_stop)
     override suspend fun onConfirmed(host: MenuBottomSheetFragment): Boolean {
         Injector.get().emergencyStopUseCase().execute(Unit)
         return true
@@ -87,7 +87,7 @@ class CancelPrintMenuItem : ConfirmedMenuItem() {
     override fun getConfirmMessage(context: Context) = context.getString(R.string.cancel_print_confirmation_message)
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.cancel_print_confirmation_action)
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
-    override suspend fun getTitle(context: Context) = "Cancel Print"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_cancel_print)
     override suspend fun onConfirmed(host: MenuBottomSheetFragment): Boolean {
         Injector.get().cancelPrintJobUseCase().execute(Unit)
         return true

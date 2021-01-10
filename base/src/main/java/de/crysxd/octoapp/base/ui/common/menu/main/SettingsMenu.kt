@@ -20,11 +20,11 @@ class SettingsMenu : Menu {
         ChangeOctoPrintInstanceMenuItem(),
     )
 
-    override fun getTitle(context: Context) = "Settings"
-    override fun getSubtitle(context: Context) = "Long-press any item to pin it to start"
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___menu_settings_title)
+    override fun getSubtitle(context: Context) = context.getString(R.string.main_menu___submenu_subtitle)
     override fun getBottomText(context: Context) = HtmlCompat.fromHtml(
-        String.format(
-            "Version <font color=\"%1$06x\"><b>%2\$s</b></font> was<br/>made <font color=\"%1$06x\"><b>for you</b></font> with love in Europe 🇪🇺",
+        context.getString(
+            R.string.main_menu___about_text,
             ContextCompat.getColor(context, R.color.dark_text),
             context.packageManager.getPackageInfo(context.packageName, 0).versionName
         ),
@@ -39,7 +39,7 @@ class SendFeedbackMenuItem : MenuItem {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_rate_review_24
 
-    override suspend fun getTitle(context: Context) = "Send Feedback"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_send_feedback)
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         SendFeedbackDialog().show(host.parentFragmentManager, "feedback")
         return true
@@ -69,7 +69,7 @@ class OpenOctoPrintMenuItem : MenuItem {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_open_in_browser_24
 
-    override suspend fun getTitle(context: Context) = "Open OctoPrint"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_octoprint)
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         Injector.get().openOctoPrintWebUseCase().execute(host.requireContext())
         return true
@@ -83,7 +83,7 @@ class ChangeOctoPrintInstanceMenuItem : MenuItem {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_swap_horiz_24
 
-    override suspend fun getTitle(context: Context) = "Change OctoPrint instance"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_change_octoprint_instance)
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         Injector.get().signOutUseCase().execute(Unit)
         return true

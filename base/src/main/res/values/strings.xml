@@ -310,4 +310,19 @@
     <string name="power_controls___cycle">Cycle</string>
     <string name="power_controls___always_use_this_device">Always use this device for this action</string>
     <string name="power_controls___x_offline">%s (offline)</string>
+    <string name="main_menu___item_support_octoapp">Support OctoApp</string>
+    <string name="main_menu___item_show_settings">Settings</string>
+    <string name="main_menu___item_news">News</string>
+    <string name="main_menu___menu_printer_title">Printer</string>
+    <string name="main_menu___submenu_subtitle">Long-press any item to pin it to start</string>
+    <string name="main_menu___item_open_power_controls">Open power controls</string>
+    <string name="main_menu___item_turn_psu_off">Turn printer off</string>
+    <string name="main_menu___item_emergency_stop">Emergency Stop</string>
+    <string name="main_menu___item_cancel_print">Cancel Print</string>
+    <string name="main_menu___menu_settings_title">Settings</string>
+    <string name="main_menu___about_text"><![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> was<br/>made <font color="%1$06x"><b>for you</b></font> with love in Europe 🇪🇺]]></string>
+    <string name="main_menu___item_send_feedback">Send Feedback</string>
+    <string name="main_menu___item_open_octoprint">Open OctoPrint</string>
+    <string name="main_menu___item_change_octoprint_instance">Change OctoPrint instance</string>
+    <string name="main_menu___item_show_printer">Printer</string>
 </resources>
