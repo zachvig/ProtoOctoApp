@@ -77,7 +77,7 @@ class ShowNewsMenuItem : MenuItem {
     override val itemId = MENU_ITEM_NEWS
     override val groupId = "main_menu"
     override val order = 30
-    override val style = Style.External
+    override val style = Style.Neutral
     override val showAsSubMenu = true
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_twitter_24px

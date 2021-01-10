@@ -85,5 +85,5 @@ sealed class Style(
     object Settings : Style(R.color.yellow_translucent, R.color.yellow)
     object Routines : Style(R.color.green_translucent, R.color.green)
     object Printer : Style(R.color.blue_translucent, R.color.blue)
-    object External : Style(R.color.light_grey_translucent, R.color.light_grey)
+    object Neutral : Style(R.color.light_grey_translucent, R.color.light_grey)
 }
