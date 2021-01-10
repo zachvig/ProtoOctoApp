@@ -117,8 +117,10 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
 
     private inner class PowerDeviceAdapter(context: Context) : RecyclerView.Adapter<PowerDeviceViewHolder>() {
 
-        private val green = ContextCompat.getColor(context, R.color.primary_dark)
-        private val gray = ContextCompat.getColor(context, R.color.light_text)
+        private val greenForeground = ContextCompat.getColor(context, R.color.green)
+        private val greenBackground = ContextCompat.getColor(context, R.color.green_translucent)
+        private val grayForeground = ContextCompat.getColor(context, R.color.light_text)
+        private val grayBackground = ContextCompat.getColor(context, R.color.input_background)
         var powerDevices: List<Pair<PowerDevice, GetPowerDevicesUseCase.PowerState>> = emptyList()
             set(value) {
                 Timber.i("Devices: ${value.map { it.first.displayName }}")
@@ -137,10 +139,12 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
             }
             when (item.second) {
                 On -> {
-                    holder.binding.icon.setColorFilter(green)
+                    holder.binding.icon.setColorFilter(greenForeground)
+                    holder.binding.root.setCardBackgroundColor(greenBackground)
                 }
                 Unknown, Off -> {
-                    holder.binding.icon.setColorFilter(gray)
+                    holder.binding.icon.setColorFilter(grayForeground)
+                    holder.binding.root.setCardBackgroundColor(grayBackground)
                 }
             }
             holder.itemView.setOnClickListener {
