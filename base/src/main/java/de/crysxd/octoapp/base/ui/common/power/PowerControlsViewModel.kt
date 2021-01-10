@@ -82,7 +82,7 @@ class PowerControlsViewModel(
         val deviceType = autoDeviceType ?: PowerControlsBottomSheet.DeviceType.Unspecified
         val defaultDeviceIdForAction = sharedPreferences.getString(createPreferencesKeyForActionId(deviceType), null)
 
-        return if (action != null && devices != null && (defaultDeviceIdForAction != null || devices.size == 1)) {
+        return if ((action != null && action != PowerControlsBottomSheet.Action.Unspecified) && devices != null && (defaultDeviceIdForAction != null || devices.size == 1)) {
             val device = devices.firstOrNull { it.first.uniqueId == defaultDeviceIdForAction }
                 ?: devices.firstOrNull()?.takeIf { devices.size == 1 }
 
