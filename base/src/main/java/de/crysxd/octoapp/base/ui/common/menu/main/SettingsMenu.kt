@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui.common.menu
+package de.crysxd.octoapp.base.ui.common.menu.main
 
 import android.content.Context
 import androidx.core.content.ContextCompat
@@ -6,6 +6,10 @@ import androidx.core.text.HtmlCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
+import de.crysxd.octoapp.base.ui.common.menu.Menu
+import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.common.menu.MenuItem
+import de.crysxd.octoapp.base.ui.common.menu.MenuItemStyle
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
 
 class SettingsMenu : Menu {
@@ -32,7 +36,7 @@ class SendFeedbackMenuItem : MenuItem {
     override val itemId = MENU_ITEM_SEND_FEEDBACK
     override val groupId = ""
     override val order = 100
-    override val style = Style.Settings
+    override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_rate_review_24
 
     override suspend fun getTitle(context: Context) = "Send Feedback"
@@ -46,7 +50,7 @@ class ChangeLanguageMenuItem : MenuItem {
     override val itemId = MENU_ITEM_CHANGE_LANGUAGE
     override val groupId = ""
     override val order = 110
-    override val style = Style.Settings
+    override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_translate_24
 
     override suspend fun isVisible(destinationId: Int) = Injector.get().getAppLanguageUseCase().execute(Unit).canSwitchLocale
@@ -62,7 +66,7 @@ class OpenOctoPrintMenuItem : MenuItem {
     override val itemId = MENU_ITEM_OPEN_OCTOPRINT
     override val groupId = ""
     override val order = 120
-    override val style = Style.Settings
+    override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_open_in_browser_24
 
     override suspend fun getTitle(context: Context) = "Open OctoPrint"
@@ -76,7 +80,7 @@ class ChangeOctoPrintInstanceMenuItem : MenuItem {
     override val itemId = MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE
     override val groupId = ""
     override val order = 130
-    override val style = Style.Settings
+    override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_swap_horiz_24
 
     override suspend fun getTitle(context: Context) = "Change OctoPrint instance"

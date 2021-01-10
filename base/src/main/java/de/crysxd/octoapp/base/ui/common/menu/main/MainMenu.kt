@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui.common.menu
+package de.crysxd.octoapp.base.ui.common.menu.main
 
 import android.content.Context
 import android.content.Intent
@@ -10,6 +10,7 @@ import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ui.common.menu.*
 
 class MainMenu : Menu {
     override fun getMenuItem(): List<MenuItem> {
@@ -35,7 +36,7 @@ class SupportOctoAppMenuItem : MenuItem {
     override val itemId = MENU_ITEM_SUPPORT_OCTOAPP
     override val groupId = "support"
     override val order = 0
-    override val style = Style.Support
+    override val style = MenuItemStyle.Support
     override val showAsSubMenu = true
     override val icon = R.drawable.ic_round_favorite_24
 
@@ -52,7 +53,7 @@ class ShowSettingsMenuItem : SubMenuItem() {
     override val itemId = MENU_ITEM_SETTINGS_MENU
     override val groupId = "main_menu"
     override val order = 10
-    override val style = Style.Settings
+    override val style = MenuItemStyle.Settings
     override val showAsSubMenu = true
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_round_settings_24
@@ -65,7 +66,7 @@ class ShowPrinterMenuItem : SubMenuItem() {
     override val itemId = MENU_ITEM_PRINTER_MENU
     override val groupId = "main_menu"
     override val order = 20
-    override val style = Style.Printer
+    override val style = MenuItemStyle.Printer
     override val showAsSubMenu = true
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_round_print_24
@@ -77,7 +78,7 @@ class ShowNewsMenuItem : MenuItem {
     override val itemId = MENU_ITEM_NEWS
     override val groupId = "main_menu"
     override val order = 30
-    override val style = Style.Neutral
+    override val style = MenuItemStyle.Neutral
     override val showAsSubMenu = true
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_twitter_24px

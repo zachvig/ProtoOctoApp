@@ -1,5 +1,6 @@
-package de.crysxd.octoapp.base.ui.common.menu
+package de.crysxd.octoapp.base.ui.common.menu.main
 
+import de.crysxd.octoapp.base.ui.common.menu.MenuItem
 import kotlin.reflect.KClass
 
 const val MENU_ITEM_SUPPORT_OCTOAPP = "main___support_octoapp"
