@@ -3,9 +3,11 @@ package de.crysxd.octoapp.base.ui.common.menu
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.TextViewCompat
@@ -13,12 +15,15 @@ import androidx.fragment.app.FragmentManager
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.MenuBottomSheetFragmentBinding
 import de.crysxd.octoapp.base.databinding.MenuItemBinding
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
+import de.crysxd.octoapp.base.ui.ext.findParent
+import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 
 
 class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
@@ -40,22 +45,37 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         viewBinding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2).also {
             it.spanSizeLookup = SpanSizeLookUp()
         }
+    }
 
-
+    override fun onCreateDialog(savedInstanceState: Bundle?) = super.onCreateDialog(savedInstanceState).also {
+        it.setOnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP && !popMenu()) {
+                dismiss()
+            }
+            true
+        }
     }
 
     fun show(fm: FragmentManager) = show(fm, "main-menu")
 
     fun pushMenu(settingsMenu: Menu) {
+        beginDelayedTransition()
         adapter.menu?.let { viewModel.menuBackStack.add(it) }
         adapter.menu = settingsMenu
     }
 
-    fun popMenu(): Boolean = if (viewModel.menuBackStack.isEmpty()) {
+    private fun popMenu(): Boolean = if (viewModel.menuBackStack.isEmpty()) {
         false
     } else {
+        beginDelayedTransition()
         adapter.menu = viewModel.menuBackStack.removeLast()
         true
+    }
+
+    private fun beginDelayedTransition() {
+        view?.findParent<CoordinatorLayout>()?.let {
+            TransitionManager.beginDelayedTransition(it, InstantAutoTransition(quickTransition = false, explode = true))
+        }
     }
 
     private inner class SpanSizeLookUp : GridLayoutManager.SpanSizeLookup() {
@@ -81,7 +101,11 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         override fun onBindViewHolder(holder: MenuItemHolder, position: Int) {
             val item = menuItems[position]
             holder.binding.button.text = item.title
-            holder.binding.button.setOnClickListener { item.onClicked(this@MenuBottomSheetFragment) }
+            holder.binding.button.setOnClickListener {
+                if (item.onClicked(this@MenuBottomSheetFragment)) {
+                    dismiss()
+                }
+            }
 
             // Icons
             holder.binding.button.setCompoundDrawablesRelativeWithIntrinsicBounds(
@@ -110,6 +134,10 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     }
 
     private inner class MenuItemHolder(parent: ViewGroup) :
-        ViewBindingHolder<MenuItemBinding>(MenuItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-
+        ViewBindingHolder<MenuItemBinding>(MenuItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)) {
+        init {
+            // In this list we don't recycler so we can use TransitionManager easily
+            setIsRecyclable(false)
+        }
+    }
 }

@@ -4,8 +4,11 @@ import android.view.View
 import android.view.ViewGroup
 
 @Suppress("UNCHECKED_CAST")
-fun <T : ViewGroup> View.findParent(): T = when {
-    parent == null -> throw IllegalStateException("Parent not found")
-    parent as? T != null -> parent as T
-    else -> (parent as ViewGroup).findParent()
+inline fun <reified T : ViewGroup> View.findParent(): T {
+    var parent = parent as? ViewGroup
+    while (parent != null && parent !is T) {
+        parent = parent.parent as? ViewGroup
+    }
+    parent ?: throw IllegalStateException("Unable to find a parent of type ${T::class.java.simpleName}")
+    return parent as T
 }
