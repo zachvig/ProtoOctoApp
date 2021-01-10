@@ -24,6 +24,7 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
+import de.crysxd.octoapp.base.ui.common.menu.main.MainMenu
 import de.crysxd.octoapp.base.ui.ext.findParent
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import kotlinx.coroutines.delay

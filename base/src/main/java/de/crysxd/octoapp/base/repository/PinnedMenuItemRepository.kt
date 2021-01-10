@@ -1,9 +1,10 @@
 package de.crysxd.octoapp.base.repository
 
 import de.crysxd.octoapp.base.datasource.DataSource
-import de.crysxd.octoapp.base.ui.common.menu.MENU_ITEM_CANCEL_PRINT
-import de.crysxd.octoapp.base.ui.common.menu.MENU_ITEM_EMERGENCY_STOP
-import de.crysxd.octoapp.base.ui.common.menu.MENU_ITEM_TURN_PSU_OFF
+import de.crysxd.octoapp.base.ui.common.menu.main.MENU_ITEM_CANCEL_PRINT
+import de.crysxd.octoapp.base.ui.common.menu.main.MENU_ITEM_EMERGENCY_STOP
+import de.crysxd.octoapp.base.ui.common.menu.main.MENU_ITEM_TURN_PSU_OFF
+
 
 class PinnedMenuItemRepository(
     private val dataSource: DataSource<Set<String>>
