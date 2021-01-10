@@ -5,25 +5,21 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
-import de.crysxd.octoapp.base.ui.common.power.PowerControlsBottomSheet
+import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
-import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.pre_print_controls.R
-import de.crysxd.octoapp.pre_print_controls.di.injectParentViewModel
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.widget.extrude.ExtrudeWidget
 import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidget
 import kotlinx.android.synthetic.main.fragment_pre_print_controls.*
-import kotlinx.coroutines.flow.collect
 import timber.log.Timber
 import de.crysxd.octoapp.base.R as BaseR
 
@@ -40,7 +36,7 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
         }
 
         buttonMore.setOnClickListener {
-            MenuBottomSheet().show(childFragmentManager)
+            MenuBottomSheetFragment().show(childFragmentManager)
         }
 
         viewModel.instanceInformation.observe(viewLifecycleOwner, Observer(this::installApplicableWidgets))
@@ -83,33 +79,5 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
     override fun onPause() {
         super.onPause()
         adapter.dispatchPause()
-    }
-
-    class MenuBottomSheet : de.crysxd.octoapp.base.ui.common.MenuBottomSheet() {
-
-        override val viewModel: PrePrintControlsViewModel by injectParentViewModel()
-
-        override fun getMenuRes() = R.menu.prepare_menu
-
-        override fun onStart() {
-            super.onStart()
-            lifecycleScope.launchWhenCreated {
-                Injector.get().getPowerDevicesUseCase().execute(GetPowerDevicesUseCase.Params(false)).collect {
-                    setMenuItemVisibility(R.id.menuItemTurnOffPsu, it.isNotEmpty())
-                }
-            }
-        }
-
-        override suspend fun onMenuItemSelected(id: Int): Boolean {
-            when (id) {
-                R.id.menuItemTurnOffPsu -> PowerControlsBottomSheet.createForAction(
-                    PowerControlsBottomSheet.Action.TurnOff,
-                    PowerControlsBottomSheet.DeviceType.PrinterPsu
-                ).show(parentFragmentManager)
-                else -> return false
-            }
-
-            return true
-        }
     }
 }

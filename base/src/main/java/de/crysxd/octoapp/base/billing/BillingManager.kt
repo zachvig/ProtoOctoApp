@@ -254,6 +254,10 @@ object BillingManager {
             it.trim()
         }.contains(feature) || billingChannel.valueOrNull?.isPremiumActive == true
 
+    fun shouldAdvertisePremium() = billingChannel.valueOrNull?.let {
+        it.isBillingAvailable && !it.isPremiumActive
+    } ?: false
+
     fun onResume(context: Context) = GlobalScope.launch {
         Timber.i("Resuming billing")
         initBilling(context)

@@ -20,6 +20,7 @@ import de.crysxd.octoapp.base.ui.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
 import de.crysxd.octoapp.base.ui.common.gcodeshortcut.GcodeShortcutEditViewModel
+import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetViewModel
 import de.crysxd.octoapp.base.ui.common.power.PowerControlsViewModel
 import de.crysxd.octoapp.base.ui.common.terminal.TerminalViewModel
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
@@ -169,4 +170,9 @@ open class ViewModelModule {
         getPowerDevicesUseCase = getPowerDevicesUseCase,
         sharedPreferences = sharedPreferences
     )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(MenuBottomSheetViewModel::class)
+    open fun provideMenuBottomSheetViewModel(): ViewModel = MenuBottomSheetViewModel()
 }

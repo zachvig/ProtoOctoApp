@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#13C100</color>
+    <color name="primary">@color/green</color>
     <color name="primary_dark">#169300</color>
     <color name="primary_light">#D0F3CC</color>
-    <color name="accent">#3888C6</color>
+    <color name="accent">@color/blue</color>
 
     <color name="window_background">@color/white</color>
     <color name="input_background">@color/light_blue</color>
@@ -20,11 +20,10 @@
     <color name="secondary_button_text">@color/accent</color>
     <color name="primary_button_background">@color/accent</color>
     <color name="button_more_foreground">@color/accent</color>
-    <color name="thumbnail_tint">#18F101</color>
     <color name="analysis_bad">@color/red</color>
     <color name="analysis_normal">@color/orange</color>
     <color name="analysis_good">@color/primary</color>
-    <color name="button_disabled">#eaeaea</color>
+    <color name="button_disabled">@color/very_light_grey</color>
 
     <color name="snackbar_neutral">@color/light_grey</color>
     <color name="snackbar_positive">@color/primary</color>
@@ -32,11 +31,21 @@
 
     <color name="white">#fff</color>
     <color name="black">#000</color>
-    <color name="red">#F44336</color>
+    <color name="red">#EE3F3F</color>
+    <color name="red_translucent">#26EE3F3F</color>
+    <color name="blue">#389AE5</color>
+    <color name="blue_translucent">#0D389AE5</color>
+    <color name="yellow">#FFC000</color>
+    <color name="yellow_translucent">#1FFFC000</color>
+    <color name="green">#27AE60</color>
+    <color name="green_translucent">#2627AE60</color>
     <color name="orange">#FF9800</color>
+    <color name="orange_translucent">#26FF9800</color>
     <color name="light_grey">#999</color>
+    <color name="light_grey_translucent">#2D999999</color>
+    <color name="very_light_grey">#eaeaea</color>
     <color name="dark_grey">#1a1a1a</color>
-    <color name="light_blue">#0D3888C6</color>
+    <color name="light_blue">#F0F9FF</color>
     <color name="black_translucent">#B4000000</color>
     <color name="black_translucent_2">#1A000000</color>
     <color name="white_translucent">#B5FFFFFF</color>
