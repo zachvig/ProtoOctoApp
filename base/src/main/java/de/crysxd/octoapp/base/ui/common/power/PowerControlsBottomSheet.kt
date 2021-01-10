@@ -34,7 +34,7 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
     companion object {
         private const val ARG_ACTION = "action"
         private const val ARG_DEVICE_TYPE = "device_type"
-        fun createForAction(action: Action, deviceType: DeviceType = DeviceType.Unspecified) = PowerControlsBottomSheet().also {
+        fun createForAction(action: Action = Action.Unspecified, deviceType: DeviceType = DeviceType.Unspecified) = PowerControlsBottomSheet().also {
             it.arguments = bundleOf(ARG_ACTION to action, ARG_DEVICE_TYPE to deviceType)
         }
     }

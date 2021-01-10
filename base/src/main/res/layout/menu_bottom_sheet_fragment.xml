@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_2"
-        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_3"
         android:gravity="center"
         android:textAppearance="@style/OctoTheme.TextAppearance.Title"
         android:textColor="@color/dark_text" />

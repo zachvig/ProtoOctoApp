@@ -5,19 +5,18 @@ import android.view.View
 import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.print_controls.R
-import de.crysxd.octoapp.print_controls.di.injectParentViewModel
 import de.crysxd.octoapp.print_controls.di.injectViewModel
 import de.crysxd.octoapp.print_controls.ui.widget.gcode.GcodePreviewWidget
 import de.crysxd.octoapp.print_controls.ui.widget.progress.ProgressWidget
@@ -68,7 +67,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
         viewModel.instanceInformation.observe(viewLifecycleOwner, Observer(this::installApplicableWidgets))
 
         buttonMore.setOnClickListener {
-            MenuBottomSheet().show(childFragmentManager, "menu")
+            MenuBottomSheetFragment().show(childFragmentManager)
         }
 
         (widgetsList.layoutManager as? StaggeredGridLayoutManager)?.spanCount = resources.getInteger(de.crysxd.octoapp.base.R.integer.widget_list_span_count)
@@ -119,44 +118,5 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
     override fun onPause() {
         super.onPause()
         adapter.dispatchPause()
-    }
-
-    class MenuBottomSheet : de.crysxd.octoapp.base.ui.common.MenuBottomSheet() {
-
-        override val viewModel: PrintControlsViewModel by injectParentViewModel()
-
-        override fun getMenuRes() = R.menu.print_controls_menu
-
-        override suspend fun onMenuItemSelected(id: Int): Boolean {
-            // Get ViewModel, will be used after confirmation dialog
-            viewModel
-
-            when (id) {
-                R.id.menuCancelPrint -> doAfterConfirmation(
-                    message = R.string.cancel_print_confirmation_message,
-                    button = R.string.cancel_print_confirmation_action
-                ) {
-                    viewModel.cancelPrint()
-                }
-                R.id.menuOpenTerminal -> findNavController().navigate(R.id.action_open_terminal)
-                R.id.menuEmergencyStop -> doAfterConfirmation(
-                    message = R.string.emergency_stop_confirmation_message,
-                    button = R.string.emergency_stop_confirmation_action
-                ) {
-                    viewModel.emergencyStop()
-                }
-                else -> return false
-            }
-
-            return true
-        }
-
-        private fun doAfterConfirmation(@StringRes message: Int, @StringRes button: Int, action: () -> Unit) {
-            MaterialAlertDialogBuilder(requireContext())
-                .setMessage(message)
-                .setPositiveButton(button) { _, _ -> action() }
-                .setNegativeButton(R.string.cancel, null)
-                .show()
-        }
     }
 }

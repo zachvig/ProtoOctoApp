@@ -4,7 +4,11 @@ import android.content.Context
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.util.concurrent.CountDownLatch
 
 interface Menu {
     fun getMenuItem(): List<MenuItem>
@@ -28,6 +32,49 @@ interface MenuItem {
     suspend fun getTitle(context: Context): CharSequence
     suspend fun isVisible(@IdRes destinationId: Int) = true
     suspend fun onClicked(host: MenuBottomSheetFragment) = true
+}
+
+abstract class SubMenuItem : MenuItem {
+    abstract val subMenu: Menu
+
+    override suspend fun isVisible(@IdRes destinationId: Int) = subMenu.getMenuItem().any { it.isVisible(destinationId) }
+    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
+        host.pushMenu(subMenu)
+        return false
+    }
+}
+
+abstract class ConfirmedMenuItem : MenuItem {
+    abstract fun getConfirmMessage(context: Context): CharSequence
+    abstract fun getConfirmPositiveAction(context: Context): CharSequence
+    abstract suspend fun onConfirmed(host: MenuBottomSheetFragment): Boolean
+
+    @Suppress("BlockingMethodInNonBlockingContext")
+    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean = withContext(Dispatchers.Main) {
+        var confirmed = false
+        val latch = CountDownLatch(1)
+
+        // Show confirmation dialog
+        MaterialAlertDialogBuilder(host.requireContext())
+            .setMessage(getConfirmMessage(host.requireContext()))
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(getConfirmPositiveAction(host.requireContext())) { _, _ ->
+                confirmed = true
+            }.setOnDismissListener {
+                latch.countDown()
+            }
+            .show()
+
+        // Wait for the dialog to be closed :)
+        withContext(Dispatchers.IO) { latch.await() }
+
+        // Run action
+        if (confirmed) {
+            onConfirmed(host)
+        } else {
+            false
+        }
+    }
 }
 
 sealed class Style(

@@ -48,7 +48,7 @@ class SupportOctoAppMenuItem : MenuItem {
     }
 }
 
-class ShowSettingsMenuItem : MenuItem {
+class ShowSettingsMenuItem : SubMenuItem() {
     override val itemId = MENU_ITEM_SETTINGS_MENU
     override val groupId = "main_menu"
     override val order = 10
@@ -56,15 +56,12 @@ class ShowSettingsMenuItem : MenuItem {
     override val showAsSubMenu = true
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_round_settings_24
+    override val subMenu = SettingsMenu()
 
     override suspend fun getTitle(context: Context) = "Settings"
-    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
-        host.pushMenu(SettingsMenu())
-        return false
-    }
 }
 
-class ShowPrinterMenuItem : MenuItem {
+class ShowPrinterMenuItem : SubMenuItem() {
     override val itemId = MENU_ITEM_PRINTER_MENU
     override val groupId = "main_menu"
     override val order = 20
@@ -72,12 +69,8 @@ class ShowPrinterMenuItem : MenuItem {
     override val showAsSubMenu = true
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_round_print_24
-
+    override val subMenu = PrinterMenu()
     override suspend fun getTitle(context: Context) = "Printer"
-    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
-        //host.pushMenu(PrinterMenu())
-        return false
-    }
 }
 
 class ShowNewsMenuItem : MenuItem {

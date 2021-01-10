@@ -30,7 +30,7 @@ class AppReviewFragment : Fragment() {
         lifecycleScope.launchWhenResumed {
             Timber.d("Installing review request trigger")
             requireActivity().findNavController(R.id.mainNavController).addOnDestinationChangedListener { _, destination, _ ->
-                if (destination.id == R.id.printControlsFragment) {
+                if (destination.id == R.id.workspacePrint) {
                     storeConditions(loadConditions().copy(printWasActive = true))
                 }
             }
