@@ -51,4 +51,5 @@
     <color name="white_translucent">#B5FFFFFF</color>
     <color name="status_bar_scrim">#80FFFFFF</color>
     <color name="white_translucent_2">#2AFFFFFF</color>
+    <color name="white_translucent_3">#12FFFFFF</color>
 </resources>
