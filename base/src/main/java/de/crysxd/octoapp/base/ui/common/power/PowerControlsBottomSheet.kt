@@ -34,7 +34,7 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
     companion object {
         private const val ARG_ACTION = "action"
         private const val ARG_DEVICE_TYPE = "device_type"
-        fun createForAction(action: Action, deviceType: DeviceType = DeviceType.Unspecified) = PowerControlsBottomSheet().also {
+        fun createForAction(action: Action = Action.Unspecified, deviceType: DeviceType = DeviceType.Unspecified) = PowerControlsBottomSheet().also {
             it.arguments = bundleOf(ARG_ACTION to action, ARG_DEVICE_TYPE to deviceType)
         }
     }
@@ -100,7 +100,9 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
         // If the list was visible before, we use invisible to hide so the layout height does not change (animation glitches)
         val hiddenVisibility = if (listWasShown) View.INVISIBLE else View.GONE
 
-        TransitionManager.beginDelayedTransition(requireView().findParent<CoordinatorLayout>())
+        requireView().findParent<CoordinatorLayout>()?.let {
+            TransitionManager.beginDelayedTransition(it)
+        }
         binding.progressBar.isVisible = active
         binding.subtitle.visibility = if (!active) View.VISIBLE else hiddenVisibility
         binding.title.visibility = if (!active) View.VISIBLE else hiddenVisibility
@@ -115,8 +117,10 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
 
     private inner class PowerDeviceAdapter(context: Context) : RecyclerView.Adapter<PowerDeviceViewHolder>() {
 
-        private val green = ContextCompat.getColor(context, R.color.primary_dark)
-        private val gray = ContextCompat.getColor(context, R.color.light_text)
+        private val greenForeground = ContextCompat.getColor(context, R.color.green)
+        private val greenBackground = ContextCompat.getColor(context, R.color.green_translucent)
+        private val grayForeground = ContextCompat.getColor(context, R.color.light_text)
+        private val grayBackground = ContextCompat.getColor(context, R.color.input_background)
         var powerDevices: List<Pair<PowerDevice, GetPowerDevicesUseCase.PowerState>> = emptyList()
             set(value) {
                 Timber.i("Devices: ${value.map { it.first.displayName }}")
@@ -135,10 +139,12 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
             }
             when (item.second) {
                 On -> {
-                    holder.binding.icon.setColorFilter(green)
+                    holder.binding.icon.setColorFilter(greenForeground)
+                    holder.binding.root.setCardBackgroundColor(greenBackground)
                 }
                 Unknown, Off -> {
-                    holder.binding.icon.setColorFilter(gray)
+                    holder.binding.icon.setColorFilter(grayForeground)
+                    holder.binding.root.setCardBackgroundColor(grayBackground)
                 }
             }
             holder.itemView.setOnClickListener {

@@ -6,4 +6,7 @@
     <item name="menuSignOut" type="id" />
     <item name="menuSupportOctoApp" type="id" />
     <item name="action_show_purchase_flow" type="id" />
+    <item name="workspaceConnect" type="id" />
+    <item name="workspacePrint" type="id" />
+    <item name="workspacePrePrint" type="id" />
 </resources>

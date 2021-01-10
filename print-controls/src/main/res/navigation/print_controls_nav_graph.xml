@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/print_controls_nav_graph"
-    app:startDestination="@id/printControlsFragment">
+    app:startDestination="@id/workspacePrint">
 
     <action
         android:id="@+id/action_show_purchase_flow"
@@ -14,7 +14,7 @@
         app:popExitAnim="@anim/popExitAnim" />
 
     <fragment
-        android:id="@+id/printControlsFragment"
+        android:id="@id/workspacePrint"
         android:name="de.crysxd.octoapp.print_controls.ui.PrintControlsFragment"
         android:label="PrintControlsFragment"
         tools:layout="@layout/fragment_print_controls">

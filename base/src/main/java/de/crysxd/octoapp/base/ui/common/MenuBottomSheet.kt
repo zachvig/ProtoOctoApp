@@ -37,6 +37,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
+@Deprecated("Do not use :)")
 abstract class MenuBottomSheet : BaseBottomSheetDialogFragment() {
 
     private lateinit var adapter: MenuAdapter

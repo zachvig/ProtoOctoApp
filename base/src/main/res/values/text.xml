@@ -51,8 +51,8 @@
 
     <style name="OctoTheme.TextAppearance.Button">
         <item name="android:textSize">20sp</item>
-        <item name="android:fontFamily">@font/roboto_light</item>
-        <item name="fontFamily">@font/roboto_light</item>
+        <item name="android:fontFamily">@font/ubuntu_light</item>
+        <item name="fontFamily">@font/ubuntu_light</item>
         <item name="android:textColor">@color/button_primary_text_color</item>
     </style>
 
