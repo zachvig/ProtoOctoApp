@@ -170,13 +170,12 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         action.setOnClickListener(l)
     }
 
-    override fun onSaveInstanceState(): Parcelable {
-        val savedState = SavedState(super.onSaveInstanceState()!!)
-        savedState.labelText = label.text?.toString() ?: ""
-        savedState.value = input.text?.toString() ?: ""
-        savedState.hint = input.hint?.toString() ?: ""
-        return savedState
-    }
+    override fun onSaveInstanceState(): Parcelable = SavedState(
+        super.onSaveInstanceState()!!,
+        labelText = label.text?.toString() ?: "",
+        value = input.text?.toString() ?: "",
+        hint = input.hint?.toString() ?: ""
+    )
 
     override fun onRestoreInstanceState(state: Parcelable) {
         val savedState = state as SavedState
@@ -187,9 +186,10 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     @Parcelize
-    private class SavedState(val parcelable: Parcelable) : BaseSavedState(parcelable) {
-        lateinit var labelText: String
-        lateinit var value: String
-        lateinit var hint: String
-    }
+    private class SavedState(
+        val parcelable: Parcelable,
+        val labelText: String?,
+        val value: String?,
+        val hint: String?,
+    ) : BaseSavedState(parcelable)
 }
