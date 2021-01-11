@@ -48,13 +48,15 @@ class GcodePreviewViewModel(
     }
 
     private val featureEnabledFlow: Flow<Boolean> = BillingManager.billingFlow().map {
-        val enabled = BillingManager.isFeatureEnabled("gcode_preview")
+        val enabled = isFeatureEnabled()
         Timber.i("Feature enabled: $enabled")
         enabled
     }.onEach {
-        filePendingToLoad?.let {
-            filePendingToLoad = null
-            downloadGcode(it, true)
+        if (it) {
+            filePendingToLoad?.let { file ->
+                filePendingToLoad = null
+                downloadGcode(file, true)
+            }
         }
     }
 
@@ -99,10 +101,14 @@ class GcodePreviewViewModel(
     val viewState = merge(manualViewStateChannel.asFlow(), internalViewState)
         .asLiveData(viewModelScope.coroutineContext)
 
+
+    private fun isFeatureEnabled() = BillingManager.isFeatureEnabled("gcode_preview")
+
     fun downloadGcode(file: FileObject.File, allowLargeFileDownloads: Boolean) = viewModelScope.launch {
+        Timber.i("Download file: ${file.path}")
         gcodeChannel.offer(flowOf(GcodeFileDataSource.LoadState.Loading(0f)))
 
-        if (featureEnabledFlow.first()) {
+        if (isFeatureEnabled()) {
             gcodeChannel.offer(gcodeFileRepository.loadFile(file, allowLargeFileDownloads))
         } else {
             // Feature currently disabled. Store the file to be loaded once the feature got enabled.
