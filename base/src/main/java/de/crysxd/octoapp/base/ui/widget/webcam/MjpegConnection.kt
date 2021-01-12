@@ -8,9 +8,7 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.retry
 import timber.log.Timber
-import java.io.BufferedInputStream
-import java.io.ByteArrayOutputStream
-import java.io.IOException
+import java.io.*
 import java.net.HttpURLConnection
 import java.net.SocketException
 import java.net.URL
@@ -47,6 +45,7 @@ class MjpegConnection(private val streamUrl: String) {
             var lastBufferLength = 0
             val imageBuffer = ByteArrayOutputStream()
             var lostFrameCount = 0
+            var bitmapOptions: BitmapFactory.Options? = null
             while (true) {
                 // Read data
                 val bufferLength = input.read(buffer)
@@ -73,8 +72,21 @@ class MjpegConnection(private val streamUrl: String) {
 
                     // Create bitmap
                     if (imageBuffer.size() - boundary.length > 0) {
-                        val image = imageBuffer.toByteArray()
-                        val outputImg = BitmapFactory.decodeByteArray(image, 0, image.size)
+                        if (bitmapOptions == null) {
+                            Timber.i("Init options")
+                            bitmapOptions = BitmapFactory.Options()
+                            bitmapOptions.inJustDecodeBounds = true
+                            readBitmap(imageBuffer, bitmapOptions)
+//                            Timber.i("Init options 2")
+                            val bitmap = Bitmap.createBitmap(bitmapOptions.outHeight, bitmapOptions.outWidth, Bitmap.Config.ARGB_8888)
+//                            Timber.i("Init options4")
+                            bitmapOptions.inBitmap = bitmap
+                            bitmapOptions.inJustDecodeBounds = false
+                            bitmapOptions.inSampleSize = 1
+                            Timber.i("Options created (${bitmapOptions.outWidth}x${bitmapOptions.outHeight} px)")
+                        }
+                        val outputImg = readBitmap(imageBuffer, bitmapOptions)
+//                        Timber.i("Frame")
                         if (outputImg != null) {
                             lostFrameCount = 0
                             emit(MjpegSnapshot.Frame(outputImg))
@@ -113,6 +125,24 @@ class MjpegConnection(private val streamUrl: String) {
         Timber.e(it)
         delay(RECONNECT_TIMEOUT_MS)
         true
+    }
+
+    @Suppress("BlockingMethodInNonBlockingContext")
+    private suspend fun readBitmap(image: ByteArrayOutputStream, options: BitmapFactory.Options): Bitmap? {
+        val inStream = PipedInputStream()
+        val outStream = PipedOutputStream()
+        outStream.connect(inStream)
+//        val job = GlobalScope.launch(Dispatchers.IO) {
+//            image.writeTo(outStream)
+//            outStream.close()
+//            Timber.i("Done1")
+//        }
+//        Timber.i("Done2")
+        val bitmap = BitmapFactory.decodeByteArray(image.toByteArray(), 0, image.size(), options)
+//        Timber.i("Done5 ${options.outHeight}")
+//        job.cancelAndJoin()
+//        Timber.i("Done3  ${options.outHeight}")
+        return bitmap
     }
 
     private fun connect() = (URL(streamUrl).openConnection() as HttpURLConnection).also {

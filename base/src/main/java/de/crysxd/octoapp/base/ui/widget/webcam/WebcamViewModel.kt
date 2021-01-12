@@ -6,6 +6,7 @@ import android.graphics.Matrix
 import android.net.Uri
 import android.widget.ImageView
 import androidx.core.content.edit
+import androidx.core.graphics.applyCanvas
 import androidx.lifecycle.*
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.billing.BillingManager
@@ -71,6 +72,7 @@ class WebcamViewModel(
                             emit(UiState.HlsStreamReady(Uri.parse(streamUrl), webcamSettings.streamRatio))
                         }
                     } else {
+                        var reuseBitmap: Bitmap? = null
                         MjpegConnection(streamUrl)
                             .load()
                             .map {
@@ -80,10 +82,11 @@ class WebcamViewModel(
                                         isManualReconnect = false,
                                         streamUrl = webcamSettings.streamUrl
                                     )
-                                    is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
-                                        frame = applyTransformations(it.frame, webcamSettings),
-                                        aspectRation = webcamSettings.streamRatio
-                                    )
+                                    is MjpegConnection.MjpegSnapshot.Frame -> {
+                                        reuseBitmap = reuseBitmap ?: Bitmap.createBitmap(it.frame.width, it.frame.height, Bitmap.Config.ARGB_8888)
+                                        applyTransformations(it.frame, reuseBitmap!!, webcamSettings)
+                                        UiState.FrameReady(frame = reuseBitmap!!, aspectRation = webcamSettings.streamRatio)
+                                    }
                                 }
                             }
                             .flowOn(Dispatchers.Default)
@@ -119,27 +122,27 @@ class WebcamViewModel(
 
     fun getInitialAspectRatio() = sharedPreferences.getString(KEY_ASPECT_RATIO, null) ?: "16:9"
 
-    private fun applyTransformations(frame: Bitmap, webcamSettings: WebcamSettings) =
-        if (webcamSettings.flipV || webcamSettings.flipH || webcamSettings.rotate90) {
-            val matrix = Matrix()
+    private fun applyTransformations(src: Bitmap, dest: Bitmap, webcamSettings: WebcamSettings) {
+        val matrix = Matrix()
 
-            if (webcamSettings.rotate90) {
-                matrix.postRotate(-90f)
-            }
-
-            matrix.postScale(
-                if (webcamSettings.flipH) -1f else 1f,
-                if (webcamSettings.flipV) -1f else 1f,
-                frame.width / 2f,
-                frame.height / 2f
-            )
-
-            val transformed = Bitmap.createBitmap(frame, 0, 0, frame.width, frame.height, matrix, true)
-            frame.recycle()
-            transformed
-        } else {
-            frame
+        if (webcamSettings.rotate90) {
+            matrix.postRotate(-90f)
         }
+
+        matrix.postScale(
+            if (webcamSettings.flipH) -1f else 1f,
+            if (webcamSettings.flipV) -1f else 1f,
+            src.width / 2f,
+            src.height / 2f
+        )
+
+        dest.applyCanvas {
+            save()
+            concat(matrix)
+            drawBitmap(src, 0f, 0f, null)
+            restore()
+        }
+    }
 
     sealed class UiState {
         object Loading : UiState()
