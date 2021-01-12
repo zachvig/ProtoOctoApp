@@ -2,7 +2,6 @@ package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
@@ -24,8 +23,7 @@ const val DEFAULT_HEADER_BOUNDARY = "[_a-zA-Z0-9]*boundary"
 
 class MjpegConnection(private val streamUrl: String) {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Suppress("BlockingMethodInNonBlockingContext")
+    @Suppress("BlockingMethodInNonBlockingContext", "ExperimentalApiUsage")
     fun load() = flow {
         while (true) {
             emit(MjpegSnapshot.Loading)
@@ -91,18 +89,12 @@ class MjpegConnection(private val streamUrl: String) {
                     }
 
                     // Reset imageBuffer and write rest of data (next image)
-                    try {
-
-
-                        imageBuffer.reset()
-                        val afterBoundaryIndex = boundaryIndex + boundary.length
-                        val afterBoundaryLength = (lastBufferLength + bufferLength) - afterBoundaryIndex
-                        imageBuffer.write(lastBuffer, afterBoundaryIndex, afterBoundaryLength)
-                        System.arraycopy(lastBuffer, afterBoundaryIndex, lastBuffer, 0, afterBoundaryLength)
-                        lastBufferLength = afterBoundaryLength
-                    } catch (e: Exception) {
-                        throw e
-                    }
+                    imageBuffer.reset()
+                    val afterBoundaryIndex = boundaryIndex + boundary.length
+                    val afterBoundaryLength = (lastBufferLength + bufferLength) - afterBoundaryIndex
+                    imageBuffer.write(lastBuffer, afterBoundaryIndex, afterBoundaryLength)
+                    System.arraycopy(lastBuffer, afterBoundaryIndex, lastBuffer, 0, afterBoundaryLength)
+                    lastBufferLength = afterBoundaryLength
                 } else {
                     // Write data
                     imageBuffer.write(buffer, 0, bufferLength)
