@@ -2,7 +2,7 @@ package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
@@ -72,24 +72,28 @@ class MjpegConnection(private val streamUrl: String) {
 
                     // Create bitmap
                     if (imageBuffer.size() - boundary.length > 0) {
+                        // Create the bitmap options. This allows use to reuse the same Bitmap over and over
                         if (bitmapOptions == null) {
                             Timber.i("Init options")
+                            // Read bitmap bounds
                             bitmapOptions = BitmapFactory.Options()
                             bitmapOptions.inJustDecodeBounds = true
                             readBitmap(imageBuffer, bitmapOptions)
-//                            Timber.i("Init options 2")
+
+                            // Create the bitmap we will continue to reuse
                             val bitmap = Bitmap.createBitmap(bitmapOptions.outHeight, bitmapOptions.outWidth, Bitmap.Config.ARGB_8888)
-//                            Timber.i("Init options4")
+
+                            // Configure options to reuse bitmap
                             bitmapOptions.inBitmap = bitmap
                             bitmapOptions.inJustDecodeBounds = false
                             bitmapOptions.inSampleSize = 1
                             Timber.i("Options created (${bitmapOptions.outWidth}x${bitmapOptions.outHeight} px)")
                         }
-                        val outputImg = readBitmap(imageBuffer, bitmapOptions)
-//                        Timber.i("Frame")
-                        if (outputImg != null) {
+                        readBitmap(imageBuffer, bitmapOptions)
+                        val bitmap = bitmapOptions.inBitmap
+                        if (bitmap != null) {
                             lostFrameCount = 0
-                            emit(MjpegSnapshot.Frame(outputImg))
+                            emit(MjpegSnapshot.Frame(bitmapOptions.inBitmap))
                         } else {
                             lostFrameCount++
                             Timber.e("Lost frame due to decoding error (lostFrames=$lostFrameCount)")
@@ -128,21 +132,20 @@ class MjpegConnection(private val streamUrl: String) {
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    private suspend fun readBitmap(image: ByteArrayOutputStream, options: BitmapFactory.Options): Bitmap? {
+    private suspend fun readBitmap(image: ByteArrayOutputStream, options: BitmapFactory.Options) = withContext(Dispatchers.IO) {
         val inStream = PipedInputStream()
-        val outStream = PipedOutputStream()
-        outStream.connect(inStream)
-//        val job = GlobalScope.launch(Dispatchers.IO) {
-//            image.writeTo(outStream)
-//            outStream.close()
-//            Timber.i("Done1")
-//        }
-//        Timber.i("Done2")
-        val bitmap = BitmapFactory.decodeByteArray(image.toByteArray(), 0, image.size(), options)
-//        Timber.i("Done5 ${options.outHeight}")
-//        job.cancelAndJoin()
-//        Timber.i("Done3  ${options.outHeight}")
-        return bitmap
+        val outStream = PipedOutputStream(inStream)
+        val job = launch {
+            try {
+                image.writeTo(outStream)
+                outStream.close()
+            } catch (e: IOException) {
+                // Usual exception when only reading bounds of the bitmap (caused be calling close after decodeStream())
+            }
+        }
+        BitmapFactory.decodeStream(inStream, null, options)
+        outStream.close()
+        job.cancelAndJoin()
     }
 
     private fun connect() = (URL(streamUrl).openConnection() as HttpURLConnection).also {
@@ -163,7 +166,7 @@ class MjpegConnection(private val streamUrl: String) {
         // If the information is not presented, throw an exception and use default value instead.
         val contentType: String = connection.getHeaderField("Content-Type") ?: throw java.lang.Exception("Unable to get content type")
         val types = contentType.split(";".toRegex()).toTypedArray()
-        if (types.size == 0) {
+        if (types.isEmpty()) {
             throw java.lang.Exception("Content type was empty")
         }
         var extractedBoundary: String? = null

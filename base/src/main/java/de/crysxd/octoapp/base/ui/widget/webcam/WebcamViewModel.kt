@@ -83,9 +83,14 @@ class WebcamViewModel(
                                         streamUrl = webcamSettings.streamUrl
                                     )
                                     is MjpegConnection.MjpegSnapshot.Frame -> {
-                                        reuseBitmap = reuseBitmap ?: Bitmap.createBitmap(it.frame.width, it.frame.height, Bitmap.Config.ARGB_8888)
-                                        applyTransformations(it.frame, reuseBitmap!!, webcamSettings)
-                                        UiState.FrameReady(frame = reuseBitmap!!, aspectRation = webcamSettings.streamRatio)
+                                        if (reuseBitmap == null) {
+                                            reuseBitmap = Bitmap.createBitmap(it.frame.width, it.frame.height, Bitmap.Config.ARGB_8888)
+                                            applyTransformations(it.frame, reuseBitmap!!, webcamSettings)
+                                            UiState.MjpegStreamReady(frame = reuseBitmap!!, aspectRation = webcamSettings.streamRatio)
+                                        } else {
+                                            applyTransformations(it.frame, reuseBitmap!!, webcamSettings)
+                                            UiState.MjpegStreamUpdated
+                                        }
                                     }
                                 }
                             }
@@ -148,8 +153,9 @@ class WebcamViewModel(
         object Loading : UiState()
         object WebcamNotConfigured : UiState()
         object HlsStreamDisabled : UiState()
-        data class FrameReady(val frame: Bitmap, val aspectRation: String) : UiState()
+        data class MjpegStreamReady(val frame: Bitmap, val aspectRation: String) : UiState()
         data class HlsStreamReady(val uri: Uri, val aspectRation: String) : UiState()
+        object MjpegStreamUpdated : UiState()
         data class Error(val isManualReconnect: Boolean, val streamUrl: String? = null) : UiState()
     }
 }
