@@ -2,12 +2,15 @@ package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.retry
 import timber.log.Timber
 import java.io.BufferedInputStream
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.SocketException
@@ -42,7 +45,9 @@ class MjpegConnection(private val streamUrl: String) {
 
             // Read frames
             val buffer = ByteArray(4096)
-            var image = ByteArray(0)
+            val lastBuffer = ByteArray(buffer.size * 2)
+            var lastBufferLength = 0
+            val imageBuffer = ByteArrayOutputStream()
             var lostFrameCount = 0
             while (true) {
                 // Read data
@@ -51,41 +56,60 @@ class MjpegConnection(private val streamUrl: String) {
                     throw SocketException("Socket closed")
                 }
 
-                // Append to image
-                val tmpCheckBoundry = addByte(image, buffer, 0, bufferLength)
-                val checkHeaderStr = String(tmpCheckBoundry, Charset.forName("ASCII"))
+                // Combine buffers and search for boundary
+                System.arraycopy(buffer, 0, lastBuffer, lastBufferLength, bufferLength)
+                val bufferStr = String(lastBuffer.sliceArray(0 until lastBufferLength + bufferLength), Charset.forName("ASCII"))
 
                 // Check if frame is completed
-                val matcher = boundaryPattern.matcher(checkHeaderStr)
+                val matcher = boundaryPattern.matcher(bufferStr)
                 if (matcher.find()) {
-                    // Finalize image buffer
+                    // Find boundary
                     val boundary = matcher.group(0)!!
-                    var boundaryIndex = checkHeaderStr.indexOf(boundary)
-                    boundaryIndex -= image.size
-                    image = if (boundaryIndex > 0) {
-                        addByte(image, buffer, 0, boundaryIndex)
-                    } else {
-                        delByte(image, -boundaryIndex)
+                    val boundaryIndex = bufferStr.indexOf(boundary)
+
+                    // Write missing data into imageBuffer
+                    val missingLength = (boundaryIndex + boundary.length) - lastBufferLength
+                    if (missingLength > 0) {
+                        imageBuffer.write(lastBuffer, lastBufferLength, missingLength)
                     }
 
-                    // Read bitmap
-                    val outputImg = BitmapFactory.decodeByteArray(image, 0, image.size)
-                    if (outputImg != null) {
-                        lostFrameCount = 0
-                        emit(MjpegSnapshot.Frame(outputImg))
-                    } else {
-                        lostFrameCount++
-                        Timber.e("Lost frame due to decoding error (lostFrames=$lostFrameCount)")
+                    // Create bitmap
+                    if (imageBuffer.size() - boundary.length > 0) {
+                        val image = imageBuffer.toByteArray()
+                        val outputImg = BitmapFactory.decodeByteArray(image, 0, image.size)
+                        if (outputImg != null) {
+                            lostFrameCount = 0
+                            emit(MjpegSnapshot.Frame(outputImg))
+                        } else {
+                            lostFrameCount++
+                            Timber.e("Lost frame due to decoding error (lostFrames=$lostFrameCount)")
 
-                        if (lostFrameCount > TOLERATED_FRAME_LOSS_STREAK) {
-                            throw IOException("Too many lost frames ($lostFrameCount)")
+                            if (lostFrameCount > TOLERATED_FRAME_LOSS_STREAK) {
+                                throw IOException("Too many lost frames ($lostFrameCount)")
+                            }
                         }
                     }
 
-                    val headerIndex: Int = boundaryIndex + boundary.length
-                    image = addByte(ByteArray(0), buffer, headerIndex, bufferLength - headerIndex)
+                    // Reset imageBuffer and write rest of data (next image)
+                    try {
+
+
+                        imageBuffer.reset()
+                        val afterBoundaryIndex = boundaryIndex + boundary.length
+                        val afterBoundaryLength = (lastBufferLength + bufferLength) - afterBoundaryIndex
+                        imageBuffer.write(lastBuffer, afterBoundaryIndex, afterBoundaryLength)
+                        System.arraycopy(lastBuffer, afterBoundaryIndex, lastBuffer, 0, afterBoundaryLength)
+                        lastBufferLength = afterBoundaryLength
+                    } catch (e: Exception) {
+                        throw e
+                    }
                 } else {
-                    image = addByte(image, buffer, 0, bufferLength)
+                    // Write data
+                    imageBuffer.write(buffer, 0, bufferLength)
+
+                    // Store for next iteration
+                    System.arraycopy(buffer, 0, lastBuffer, 0, bufferLength)
+                    lastBufferLength = bufferLength
                 }
             }
         }
@@ -97,7 +121,7 @@ class MjpegConnection(private val streamUrl: String) {
         Timber.e(it)
         delay(RECONNECT_TIMEOUT_MS)
         true
-    }.flowOn(Dispatchers.IO)
+    }
 
     private fun connect() = (URL(streamUrl).openConnection() as HttpURLConnection).also {
         it.doInput = true
@@ -109,7 +133,7 @@ class MjpegConnection(private val streamUrl: String) {
 
         // Determine boundary pattern
         // Use the whole header as separator in case boundary locate in difference chunks
-        return Pattern.compile("--$headerBoundary\\s+(.*)\\r\\n\\r\\n", Pattern.DOTALL)
+        return Pattern.compile("(\\r\\n)?--$headerBoundary\\s+(.*)\\r\\n\\r\\n", Pattern.DOTALL)
     }
 
     private fun extractBoundary(connection: HttpURLConnection): String? = try {
@@ -134,19 +158,6 @@ class MjpegConnection(private val streamUrl: String) {
     } catch (e: java.lang.Exception) {
         Timber.w("Unable to extract header boundary")
         null
-    }
-
-    private fun addByte(base: ByteArray, add: ByteArray, addIndex: Int, length: Int): ByteArray {
-        val tmp = ByteArray(base.size + length)
-        System.arraycopy(base, 0, tmp, 0, base.size)
-        System.arraycopy(add, addIndex, tmp, base.size, length)
-        return tmp
-    }
-
-    private fun delByte(base: ByteArray, del: Int): ByteArray {
-        val tmp = ByteArray(base.size - del)
-        System.arraycopy(base, 0, tmp, 0, tmp.size)
-        return tmp
     }
 
     sealed class MjpegSnapshot {
