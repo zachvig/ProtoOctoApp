@@ -200,6 +200,7 @@ class GcodePreviewWidget(parent: Fragment) : OctoWidget(parent) {
 
         view.imageButtonFullscreen?.setOnClickListener {
             it.findNavController().navigate(R.id.action_show_fullscreen_gcode, GcodePreviewFragmentArgs(file, true).toBundle())
+            recordInteraction()
         }
 
         view.layer.text = requireContext().getString(de.crysxd.octoapp.base.R.string.x_of_y, renderContext.layerNumber, renderContext.layerCount)
