@@ -58,7 +58,7 @@ class MjpegConnection(private val streamUrl: String) {
 
                 // Combine buffers and search for boundary
                 System.arraycopy(buffer, 0, lastBuffer, lastBufferLength, bufferLength)
-                val bufferStr = String(lastBuffer.sliceArray(0 until lastBufferLength + bufferLength), Charset.forName("ASCII"))
+                val bufferStr = String(lastBuffer, 0, lastBufferLength + bufferLength, Charset.forName("ASCII"))
 
                 // Check if frame is completed
                 val matcher = boundaryPattern.matcher(bufferStr)
