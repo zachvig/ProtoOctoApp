@@ -53,21 +53,22 @@ class WebcamFragment : Fragment(R.layout.fragment_webcam) {
         }
 
         viewModel.uiState.observe(viewLifecycleOwner) {
-            webcamView.state = when (it) {
-                WebcamViewModel.UiState.Loading -> WebcamView.WebcamState.Loading
-                WebcamViewModel.UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
+            when (it) {
+                WebcamViewModel.UiState.Loading -> webcamView.state = WebcamView.WebcamState.Loading
+                WebcamViewModel.UiState.WebcamNotConfigured -> webcamView.state = WebcamView.WebcamState.NotConfigured
                 WebcamViewModel.UiState.HlsStreamDisabled -> {
                     // We can't launch the purchase flow in fullscreen. Finish activity.
                     requireActivity().finish()
-                    WebcamView.WebcamState.HlsStreamDisabled
+                    webcamView.state = WebcamView.WebcamState.HlsStreamDisabled
                 }
-                is WebcamViewModel.UiState.FrameReady -> WebcamView.WebcamState.MjpegFrameReady(it.frame)
-                is WebcamViewModel.UiState.HlsStreamReady -> WebcamView.WebcamState.HlsStreamReady(it.uri)
-                is WebcamViewModel.UiState.Error -> if (it.isManualReconnect) {
+                is WebcamViewModel.UiState.MjpegStreamReady -> webcamView.state = WebcamView.WebcamState.MjpegFrameReady(it.frame)
+                is WebcamViewModel.UiState.HlsStreamReady -> webcamView.state = WebcamView.WebcamState.HlsStreamReady(it.uri)
+                is WebcamViewModel.UiState.Error -> webcamView.state = if (it.isManualReconnect) {
                     WebcamView.WebcamState.Error(it.streamUrl)
                 } else {
                     WebcamView.WebcamState.Reconnecting
                 }
+                else -> webcamView.invalidateMjpegFrame()
             }
         }
 
