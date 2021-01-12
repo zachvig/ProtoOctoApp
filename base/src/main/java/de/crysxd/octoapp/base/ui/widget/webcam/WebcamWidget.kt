@@ -74,7 +74,7 @@ class WebcamWidget(
                 webcamView.state = WebcamView.WebcamState.MjpegFrameReady(state.frame)
             }
             is UiState.MjpegStreamUpdated -> {
-                webcamView.invalidate()
+                webcamView.invalidateMjpegFrame()
             }
             is UiState.HlsStreamReady -> {
                 applyAspectRatio(state.aspectRation)
