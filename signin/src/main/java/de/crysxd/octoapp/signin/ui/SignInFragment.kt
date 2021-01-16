@@ -203,14 +203,19 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
         if (res is SignInViewState.Loading) {
             buttonSignIn.isEnabled = false
             buttonSignIn.text = getString(R.string.loading)
+            buttonSignInWithMore.isEnabled = false
+            buttonSignInWithMore.text = getString(R.string.loading)
         } else {
             buttonSignIn.isEnabled = true
             buttonSignIn.text = getString(R.string.sign_in_to_octoprint)
+            buttonSignInWithMore.isEnabled = true
+            buttonSignInWithMore.text = getString(R.string.sign_in_to_octoprint)
         }
 
         @Suppress("ControlFlowWithEmptyBody")
         if (res is SignInViewState.SignInSuccess) {
             buttonSignIn.isEnabled = false
+            buttonSignInWithMore.isEnabled = false
             OctoAnalytics.logEvent(OctoAnalytics.Event.SignInSuccess)
 
             // Show warning dialog if
