@@ -25,6 +25,7 @@
                 android:layout_height="wrap_content"
                 android:background="?android:attr/windowBackground"
                 android:elevation="0.1dp"
+                app:tabIndicatorColor="@color/accent"
                 app:tabSelectedTextColor="@color/dark_text"
                 app:tabTextAppearance="@style/OctoTheme.TextAppearance"
                 app:tabTextColor="@color/normal_text">
@@ -59,10 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:clipToPadding="false"
-        android:paddingLeft="@dimen/margin_2"
-        android:paddingTop="@dimen/margin_2"
-        android:paddingRight="@dimen/margin_2"
-        android:paddingBottom="@dimen/margin_2"
+        android:padding="@dimen/margin_2"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <Button

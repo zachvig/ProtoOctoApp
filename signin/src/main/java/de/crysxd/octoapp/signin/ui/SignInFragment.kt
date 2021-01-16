@@ -71,6 +71,7 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
         }
 
         buttonSignIn.setOnClickListener { signIn() }
+        buttonSignInWithMore.setOnClickListener { signIn() }
         inputApiKey.editText.setImeActionLabel(getString(R.string.sign_in), KeyEvent.KEYCODE_ENTER)
         inputApiKey.editText.setOnEditorActionListener { _, _, _ ->
             signIn()
@@ -259,6 +260,8 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
         val knownSignInInfo = viewModel.getKnownSignInInfo()
         val labels = knownSignInInfo.map { info -> info.webUrl }.toTypedArray()
         buttonMore.isVisible = knownSignInInfo.isNotEmpty()
+        buttonSignIn.isVisible = !buttonMore.isVisible
+        buttonSignInWithMore.isVisible = buttonMore.isVisible
         buttonMore.setOnClickListener {
             MaterialAlertDialogBuilder(it.context)
                 .setItems(labels) { _, position ->

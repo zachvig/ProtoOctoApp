@@ -36,6 +36,10 @@
         <item name="rippleColor">@color/white</item>
         <item name="android:stateListAnimator">@null</item>
         <item name="android:elevation">3dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
         <item name="shapeAppearance">@style/OctoTheme.ShapeAppearance.Button</item>
         <item name="android:paddingStart">@dimen/margin_2</item>
         <item name="android:paddingEnd">@dimen/margin_2</item>
@@ -55,9 +59,9 @@
         <item name="backgroundTint">@color/button_secondary_bg_color</item>
         <item name="android:textColor">@color/button_secondary_text_color</item>
         <item name="iconTint">@color/button_secondary_text_color</item>
+        <item name="strokeWidth">1dp</item>
         <item name="strokeColor">@color/button_primary_bg_color</item>
         <item name="rippleColor">@color/accent</item>
-        <item name="strokeWidth">1dp</item>
     </style>
 
     <style name="OctoTheme.Widget.Button.Secondary.WithMore">
@@ -81,6 +85,10 @@
         <item name="android:paddingBottom">@dimen/margin_1</item>
         <item name="android:paddingEnd">@dimen/margin_1</item>
         <item name="android:paddingStart">15dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
         <item name="android:drawablePadding">@dimen/margin_1</item>
         <item name="android:textColor">@color/dark_text</item>
         <item name="strokeWidth">1dp</item>

@@ -14,6 +14,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
+        android:paddingBottom="@dimen/margin_1"
         android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
         app:layout_constraintBottom_toBottomOf="@+id/imageButtonSettings"
         app:layout_constraintEnd_toStartOf="@+id/imageButtonSettings"
@@ -39,7 +40,6 @@
         android:id="@+id/widgetContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_2"
         app:layout_constraintTop_toBottomOf="@id/textViewWidgetTitle" />
 
     <View

@@ -31,30 +31,28 @@
 
     </de.crysxd.octoapp.base.ui.common.OctoScrollView>
 
-    <FrameLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/bottomAction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:clipToPadding="false"
-        android:paddingLeft="@dimen/margin_2"
-        android:paddingTop="@dimen/margin_2"
-        android:paddingRight="@dimen/margin_2"
-        android:paddingBottom="@dimen/margin_2"
+        android:padding="@dimen/margin_2"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
             android:id="@+id/buttonTogglePausePrint"
-            android:layout_width="match_parent"
+            style="@style/OctoTheme.Widget.Button.WithMore"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/pause" />
 
         <Button
-            style="@style/OctoTheme.Widget.Button.More"
             android:id="@+id/buttonMore"
+            style="@style/OctoTheme.Widget.Button.More"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:elevation="10dp" />
-    </FrameLayout>
+            android:layout_height="match_parent" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
