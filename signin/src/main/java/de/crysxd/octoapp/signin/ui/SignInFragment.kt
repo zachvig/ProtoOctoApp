@@ -28,6 +28,8 @@ import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.common.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.ext.setTextAppearanceCompat
@@ -272,21 +274,11 @@ class SignInFragment : BaseFragment(), InsetAwareScreen {
             requireOctoActivity().showDialog(requireContext().getString(R.string.error_api_key_reported_invalid))
         }
 
-        val knownSignInInfo = viewModel.getKnownSignInInfo()
-        val labels = knownSignInInfo.map { info -> info.webUrl }.toTypedArray()
-        binding.buttonMore.isVisible = knownSignInInfo.isNotEmpty()
+        binding.buttonMore.isVisible = viewModel.getKnownSignInInfo().isNotEmpty()
         binding.buttonSignIn.isVisible = !binding.buttonMore.isVisible
         binding.buttonSignInWithMore.isVisible = binding.buttonMore.isVisible
         binding.buttonMore.setOnClickListener {
-            MaterialAlertDialogBuilder(it.context)
-                .setItems(labels) { _, position ->
-                    val info = knownSignInInfo[position]
-                    binding.inputWebUrl.editText.setText(info.webUrl)
-                    binding.inputApiKey.editText.setText(info.apiKey)
-                    signIn()
-                }
-                .setTitle("Reconnect to:")
-                .show()
+            MenuBottomSheetFragment.createForMenu(SwitchOctoPrintMenu()).show(childFragmentManager)
         }
     }
 

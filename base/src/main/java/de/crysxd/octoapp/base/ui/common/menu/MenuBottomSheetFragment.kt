@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.TextViewCompat
@@ -36,6 +37,15 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     private lateinit var viewBinding: MenuBottomSheetFragmentBinding
     private val adapter = Adapter()
 
+    companion object {
+        private const val KEY_MENU = "menu"
+        fun createForMenu(menu: Menu) = MenuBottomSheetFragment().also {
+            it.arguments = bundleOf(KEY_MENU to menu)
+        }
+    }
+
+    private val rootMenu get() = arguments?.getParcelable<Menu>(KEY_MENU) ?: MainMenu()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         MenuBottomSheetFragmentBinding.inflate(inflater, container, false).also { viewBinding = it }.root
 
@@ -47,7 +57,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         }
 
         if (viewModel.menuBackStack.isEmpty()) {
-            pushMenu(MainMenu())
+            pushMenu(rootMenu)
         } else {
             showMenu(viewModel.menuBackStack.last())
         }

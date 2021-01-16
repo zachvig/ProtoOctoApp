@@ -11,7 +11,9 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.common.menu.*
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 class MainMenu : Menu {
     override fun getMenuItem(): List<MenuItem> {
         val base = listOf(

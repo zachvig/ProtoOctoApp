@@ -25,7 +25,6 @@ import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
-import de.crysxd.octoapp.base.usecase.execute
 import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet.*
 import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet_premium_header.*
 import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet_premium_header.view.*
@@ -119,7 +118,6 @@ abstract class MenuBottomSheet : BaseBottomSheetDialogFragment() {
             }
             R.id.menuOpenOctoprint -> Injector.get().openOctoPrintWebUseCase().execute(requireContext())
             R.id.menuGiveFeedback -> SendFeedbackDialog().show(requireActivity().supportFragmentManager, "send-feedback")
-            R.id.menuSignOut -> Injector.get().signOutUseCase().execute()
             R.id.menuSupportOctoApp -> {
                 OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "more_menu"))
                 findNavController().navigate(R.id.action_show_purchase_flow)

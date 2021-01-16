@@ -15,9 +15,10 @@ import de.crysxd.octoapp.base.ui.common.menu.MenuItemStyle
 import de.crysxd.octoapp.base.ui.common.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
+import kotlinx.android.parcel.Parcelize
 import timber.log.Timber
 
-
+@Parcelize
 class SettingsMenu : Menu {
     override fun getMenuItem() = listOf(
         SendFeedbackMenuItem(),

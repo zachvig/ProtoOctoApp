@@ -6,8 +6,10 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.common.menu.*
 import de.crysxd.octoapp.base.ui.common.power.PowerControlsBottomSheet
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
+import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.flow.first
 
+@Parcelize
 class PrinterMenu : Menu {
     override fun getMenuItem() = listOf(
         CancelPrintMenuItem(),

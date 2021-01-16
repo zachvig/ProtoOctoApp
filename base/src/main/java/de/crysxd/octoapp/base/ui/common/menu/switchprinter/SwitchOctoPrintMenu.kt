@@ -5,7 +5,6 @@ import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.common.menu.Menu
 import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
@@ -15,9 +14,12 @@ import de.crysxd.octoapp.base.ui.common.menu.main.MENU_ITEM_ADD_INSTANCE
 import de.crysxd.octoapp.base.ui.common.menu.main.MENU_ITEM_ENABLE_QUICK_SWITCH
 import de.crysxd.octoapp.base.ui.common.menu.main.MENU_ITEM_SIGN_OUT
 import de.crysxd.octoapp.base.ui.common.menu.main.MENU_ITEM_SWITCH_INSTANCE
+import kotlinx.android.parcel.Parcelize
 
-private val isQuickSwitchEnabled get() = BillingManager.isFeatureEnabled("quick_switch")
+private var isQuickSwitchEnabled = false//BillingManager.isFeatureEnabled("quick_switch")
+private val isAnyActive get() = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl != null
 
+@Parcelize
 class SwitchOctoPrintMenu : Menu {
 
     override fun getTitle(context: Context) = context.getString(
@@ -80,10 +82,10 @@ class AddInstanceMenuItem : MenuItem {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_add_24
 
-    override suspend fun isVisible(destinationId: Int) = isQuickSwitchEnabled
+    override suspend fun isVisible(destinationId: Int) = isQuickSwitchEnabled && isAnyActive
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_add_instance)
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
-        Injector.get().signOutUseCase().execute(Unit)
+        Injector.get().octorPrintRepository().clearActive()
         return true
     }
 }
@@ -96,10 +98,10 @@ class SignOutMenuItem : MenuItem {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_login_24
 
-    override suspend fun isVisible(destinationId: Int) = !isQuickSwitchEnabled
+    override suspend fun isVisible(destinationId: Int) = !isQuickSwitchEnabled && isAnyActive
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_sign_out)
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
-        Injector.get().signOutUseCase().execute(Unit)
+        Injector.get().octorPrintRepository().clearActive()
         return true
     }
 }
@@ -117,6 +119,7 @@ class EnableQuickSwitchMenuItem : MenuItem {
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "switch_menu"))
         host.findNavController().navigate(R.id.action_show_purchase_flow)
-        return true
+        isQuickSwitchEnabled = true
+        return false
     }
 }

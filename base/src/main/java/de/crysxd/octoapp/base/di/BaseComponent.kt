@@ -68,7 +68,6 @@ interface BaseComponent {
     fun formatDurationUseCase(): FormatDurationUseCase
     fun updateInstanceCapabilitiesUseCase(): UpdateInstanceCapabilitiesUseCase
     fun formatEtaUseCase(): FormatEtaUseCase
-    fun signOutUseCase(): SignOutUseCase
     fun getAppLanguageUseCase(): GetAppLanguageUseCase
     fun setAppLanguageUseCase(): SetAppLanguageUseCase
     fun getPowerDevicesUseCase(): GetPowerDevicesUseCase
