@@ -76,6 +76,7 @@ class OctoPrintRepository(
         storeOctoprintInstanceInformation(instance.webUrl, instance)
         octoPreferences.activeInstanceWebUrl = instance.webUrl
         Timber.i("Setting as active: ${instance.webUrl}")
+        postActiveInstance()
     }
 
     suspend fun updateActive(block: suspend (OctoPrintInstanceInformationV2) -> OctoPrintInstanceInformationV2?) {

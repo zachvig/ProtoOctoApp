@@ -208,11 +208,13 @@ class SignInFragment : BaseFragment(), InsetAwareScreen {
         }
 
         if (res is SignInViewState.Loading) {
+            binding.buttonMore.isEnabled = false
             binding.buttonSignIn.isEnabled = false
             binding.buttonSignIn.text = getString(R.string.loading)
             binding.buttonSignInWithMore.isEnabled = false
             binding.buttonSignInWithMore.text = getString(R.string.loading)
         } else {
+            binding.buttonMore.isEnabled = true
             binding.buttonSignIn.isEnabled = true
             binding.buttonSignIn.text = getString(R.string.sign_in_to_octoprint)
             binding.buttonSignInWithMore.isEnabled = true
@@ -221,6 +223,7 @@ class SignInFragment : BaseFragment(), InsetAwareScreen {
 
         @Suppress("ControlFlowWithEmptyBody")
         if (res is SignInViewState.SignInSuccess) {
+            binding.buttonMore.isEnabled = false
             binding.buttonSignIn.isEnabled = false
             binding.buttonSignInWithMore.isEnabled = false
             OctoAnalytics.logEvent(OctoAnalytics.Event.SignInSuccess)
@@ -280,7 +283,7 @@ class SignInFragment : BaseFragment(), InsetAwareScreen {
                     val info = knownSignInInfo[position]
                     binding.inputWebUrl.editText.setText(info.webUrl)
                     binding.inputApiKey.editText.setText(info.apiKey)
-                    viewModel.completeSignIn(info)
+                    signIn()
                 }
                 .setTitle("Reconnect to:")
                 .show()
