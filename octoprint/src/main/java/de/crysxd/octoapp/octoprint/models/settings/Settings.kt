@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.octoprint.models.settings
 
 import com.google.gson.annotations.SerializedName
+import de.crysxd.octoapp.octoprint.plugins.power.tasmota.TasmotaPowerDevice
 import de.crysxd.octoapp.octoprint.plugins.power.tplinkplug.TpLinkSmartPlugPowerDevice
 import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TradfriPowerDevice
 
@@ -31,5 +32,9 @@ data class Settings(
 
     data class TpLinkSmartPlugSettings(
         @SerializedName("arrSmartplugs") val devices: List<TpLinkSmartPlugPowerDevice>
+    ) : PluginSettings
+
+    data class TasmotaSettings(
+        @SerializedName("arrSmartplugs") val devices: List<TasmotaPowerDevice>
     ) : PluginSettings
 }
