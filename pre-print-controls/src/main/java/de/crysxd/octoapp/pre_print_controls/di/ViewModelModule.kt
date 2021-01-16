@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.pre_print_controls.di
 
-import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -8,6 +7,7 @@ import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.ViewModelFactory
@@ -43,13 +43,13 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(MoveToolWidgetViewModel::class)
     open fun provideMoveToolControlsViewModel(
-        sharedPreferences: SharedPreferences,
+        octoPreferences: OctoPreferences,
         useCase1: HomePrintHeadUseCase,
         useCase2: JogPrintHeadUseCase
     ): ViewModel = MoveToolWidgetViewModel(
         useCase1,
         useCase2,
-        sharedPreferences
+        octoPreferences
     )
 
     @Provides
@@ -68,11 +68,11 @@ open class ViewModelModule {
     @ViewModelKey(SelectFileViewModel::class)
     open fun provideSelectFileViewModel(
         loadFilesUseCase: LoadFilesUseCase,
-        sharedPreferences: SharedPreferences,
+        octoPreferences: OctoPreferences,
         picasso: LiveData<Picasso?>
     ): ViewModel = SelectFileViewModel(
         loadFilesUseCase,
-        sharedPreferences,
+        octoPreferences,
         picasso
     )
 

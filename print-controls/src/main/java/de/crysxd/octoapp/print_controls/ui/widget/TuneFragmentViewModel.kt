@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.print_controls.ui.widget
 
-import android.content.SharedPreferences
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
@@ -10,7 +9,6 @@ import kotlinx.coroutines.launch
 
 
 class TuneFragmentViewModel(
-    private val sharedPreferences: SharedPreferences,
     private val tunePrintUseCase: TunePrintUseCase
 ) : BaseViewModel() {
 

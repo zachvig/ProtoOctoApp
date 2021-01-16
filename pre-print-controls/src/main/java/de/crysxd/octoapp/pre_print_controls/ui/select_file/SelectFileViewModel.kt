@@ -1,11 +1,10 @@
 package de.crysxd.octoapp.pre_print_controls.ui.select_file
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.squareup.picasso.Picasso
+import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase.Params
@@ -21,12 +20,11 @@ import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-const val KEY_HIDE_THUMBNAIL_HINT_UNTIL = "hide_thumbnail_hin_until"
 const val HIDE_THUMBNAIL_HINT_FOR_DAYS = 21L
 
 class SelectFileViewModel(
     private val loadFilesUseCase: LoadFilesUseCase,
-    private val sharedPreferences: SharedPreferences,
+    private val octoPreferences: OctoPreferences,
     val picasso: LiveData<Picasso?>,
 ) : BaseViewModel() {
 
@@ -69,13 +67,11 @@ class SelectFileViewModel(
     }
 
     private suspend fun isHideThumbnailHint(): Boolean = withContext(Dispatchers.IO) {
-        Date(sharedPreferences.getLong(KEY_HIDE_THUMBNAIL_HINT_UNTIL, 0)).after(Date())
+        octoPreferences.hideThumbnailHintUntil.after(Date())
     }
 
     fun hideThumbnailHint() = viewModelScope.launch(coroutineExceptionHandler) {
-        sharedPreferences.edit {
-            putLong(KEY_HIDE_THUMBNAIL_HINT_UNTIL, System.currentTimeMillis() + TimeUnit.DAYS.toMillis(HIDE_THUMBNAIL_HINT_FOR_DAYS))
-        }
+        octoPreferences.hideThumbnailHintUntil = Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(HIDE_THUMBNAIL_HINT_FOR_DAYS))
 
         filesMediator.value?.let {
             filesMediator.postValue(it.copy(showThumbnailHint = false))

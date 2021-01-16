@@ -1,11 +1,11 @@
 package de.crysxd.octoapp.print_controls.ui
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -14,7 +14,6 @@ import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
-import de.crysxd.octoapp.base.ui.common.menu.main.KEY_KEEP_SCREEN_ON
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
@@ -32,10 +31,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
 
     override val viewModel: PrintControlsViewModel by injectViewModel()
     private val adapter = OctoWidgetAdapter()
-    private val isKeepScreenOn get() = Injector.get().sharedPreferences().getBoolean(KEY_KEEP_SCREEN_ON, false)
-    private val preferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
-        updateKeepScreenOn()
-    }
+    private val isKeepScreenOn get() = Injector.get().octoPreferences().isKeepScreenOnDuringPrint
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -71,7 +67,9 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
             }
         }
 
-        updateKeepScreenOn()
+        Injector.get().octoPreferences().updatedFlow.asLiveData().observe(viewLifecycleOwner) {
+            updateKeepScreenOn()
+        }
 
         viewModel.instanceInformation.observe(viewLifecycleOwner, Observer(this::installApplicableWidgets))
 
@@ -94,7 +92,6 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
 
     override fun onStart() {
         super.onStart()
-        Injector.get().sharedPreferences().registerOnSharedPreferenceChangeListener(preferencesListener)
         updateKeepScreenOn()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Print
         widgetListScroller.setupWithToolbar(requireOctoActivity(), bottomAction)
@@ -103,7 +100,6 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
     override fun onStop() {
         super.onStop()
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        Injector.get().sharedPreferences().unregisterOnSharedPreferenceChangeListener(preferencesListener)
     }
 
     private fun doAfterConfirmation(@StringRes message: Int, @StringRes button: Int, action: () -> Unit) {

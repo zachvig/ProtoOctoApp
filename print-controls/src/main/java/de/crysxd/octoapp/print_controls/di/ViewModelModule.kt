@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.print_controls.di
 
-import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.Module
@@ -66,10 +65,8 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(TuneFragmentViewModel::class)
     open fun provideTuneFragmentViewModel(
-        sharedPreferences: SharedPreferences,
         tunePrintUseCase: TunePrintUseCase
     ): ViewModel = TuneFragmentViewModel(
-        sharedPreferences,
         tunePrintUseCase
     )
 }
