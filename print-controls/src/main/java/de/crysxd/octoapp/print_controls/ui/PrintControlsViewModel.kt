@@ -9,6 +9,8 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class PrintControlsViewModel(
@@ -24,7 +26,9 @@ class PrintControlsViewModel(
         .filterEventsForMessageType(CurrentMessage::class.java)
         .filter { it.progress != null }
 
-    val instanceInformation = octoPrintRepository.instanceInformationFlow()
+    val webCamSupported = octoPrintRepository.instanceInformationFlow()
+        .map { it?.isWebcamSupported == true }
+        .distinctUntilChanged()
         .asLiveData()
 
     fun togglePausePrint() = viewModelScope.launch(coroutineExceptionHandler) {

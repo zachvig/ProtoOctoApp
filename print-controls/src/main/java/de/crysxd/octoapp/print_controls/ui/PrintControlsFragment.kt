@@ -10,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
@@ -71,7 +70,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
             updateKeepScreenOn()
         }
 
-        viewModel.instanceInformation.observe(viewLifecycleOwner, Observer(this::installApplicableWidgets))
+        viewModel.webCamSupported.observe(viewLifecycleOwner, Observer(this::installApplicableWidgets))
 
         buttonMore.setOnClickListener {
             MenuBottomSheetFragment().show(childFragmentManager)
@@ -110,7 +109,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
             .show()
     }
 
-    private fun installApplicableWidgets(instance: OctoPrintInstanceInformationV2?) {
+    private fun installApplicableWidgets(webCamSupported: Boolean) {
         lifecycleScope.launchWhenCreated {
             widgetsList.adapter = adapter
 
@@ -118,7 +117,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
             widgets.add(ProgressWidget(this@PrintControlsFragment))
             widgets.add(ControlTemperatureWidget(this@PrintControlsFragment))
 
-            if (instance?.isWebcamSupported == true) {
+            if (webCamSupported) {
                 widgets.add(WebcamWidget(this@PrintControlsFragment))
             }
 
@@ -130,7 +129,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
     }
 
     fun reloadWidgets() {
-        installApplicableWidgets(viewModel.instanceInformation.value)
+        installApplicableWidgets(viewModel.webCamSupported.value == true)
     }
 
     override fun onResume() {
