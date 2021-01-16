@@ -99,34 +99,42 @@
         app:layout_constraintStart_toStartOf="@+id/inputApiKey"
         app:layout_constraintTop_toBottomOf="@+id/inputApiKey" />
 
-    <FrameLayout
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/bottomAction"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_2"
-        android:layout_marginTop="@dimen/margin_2"
-        android:layout_marginEnd="@dimen/margin_2"
-        android:layout_marginBottom="@dimen/margin_2"
+        android:clipToPadding="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/margin_2"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputApiKey"
+        app:layout_constraintTop_toBottomOf="@+id/manual"
         app:layout_constraintVertical_bias="1">
 
         <Button
             android:id="@+id/buttonSignIn"
+            style="@style/OctoTheme.Widget.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/sign_in_to_octoprint" />
+
+        <Button
+            android:id="@+id/buttonSignInWithMore"
+            style="@style/OctoTheme.Widget.Button.WithMore"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/sign_in_to_octoprint"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/buttonMore"
             style="@style/OctoTheme.Widget.Button.More"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:elevation="10dp" />
+            android:visibility="gone" />
 
-    </FrameLayout>
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

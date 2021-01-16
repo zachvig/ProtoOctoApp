@@ -25,47 +25,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:octoActivity="swim" />
 
-    <Button
-        android:id="@+id/buttonTurnOnPsu"
-        style="@style/OctoTheme.Widget.Button.WithMore"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_2"
-        android:layout_marginBottom="@dimen/margin_2"
-        android:text="@string/turn_psu_on"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buttonTurnOffPsu"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="773dp" />
-
-    <Button
-        android:id="@+id/buttonTurnOffPsu"
-        style="@style/OctoTheme.Widget.Button.Secondary.WithMore"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_2"
-        android:text="@string/turn_off_psu"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button_more"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/buttonTurnOnPsu"
-        app:layout_goneMarginStart="@dimen/margin_2"
-        tools:layout_editor_absoluteY="773dp" />
-
-    <Button
-        android:id="@+id/button_more"
-        style="@style/OctoTheme.Widget.Button.More"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin_2"
-        android:layout_marginBottom="@dimen/margin_2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/buttonTurnOffPsu"
-        tools:layout_editor_absoluteY="781dp" />
-
     <TextView
         android:id="@+id/textViewState"
         android:layout_width="0dp"
@@ -98,18 +57,6 @@
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="@string/error_no_printer_connected" />
 
-    <Button
-        android:id="@+id/buttonSignOut"
-        style="@style/OctoTheme.Widget.Button.Small.Secondary"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_3"
-        android:text="@string/sign_out"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/buttonOpenOctoprint"
-        app:layout_constraintTop_toBottomOf="@+id/textViewSubState" />
-
     <TextView
         android:id="@+id/noWifiWarning"
         android:layout_width="wrap_content"
@@ -125,25 +72,79 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:visibility="visible" />
 
-    <Button
-        android:id="@+id/buttonOpenOctoprint"
-        style="@style/OctoTheme.Widget.Button.Small.Secondary"
-        android:layout_width="wrap_content"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/psuTurnOffControls"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_3"
-        android:layout_marginEnd="@dimen/margin_2"
-        android:text="@string/open_octoprint"
-        app:layout_constraintEnd_toStartOf="@+id/buttonSignOut"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewSubState" />
+        android:clipToPadding="false"
+        android:padding="@dimen/margin_2"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/buttonTurnOffPsu"
+            style="@style/OctoTheme.Widget.Button.Secondary.WithMore"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/turn_off_psu" />
+
+        <Button
+            android:id="@+id/buttonMore1"
+            style="@style/OctoTheme.Widget.Button.More"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/psuTurnOnControls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:padding="@dimen/margin_2"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/buttonTurnOnPsu"
+            style="@style/OctoTheme.Widget.Button.WithMore"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/turn_psu_on" />
+
+        <Button
+            android:id="@+id/buttonMore2"
+            style="@style/OctoTheme.Widget.Button.More"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/psuUnvailableControls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:gravity="center_vertical"
+        android:padding="@dimen/margin_2"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/buttonMore3"
+            style="@style/OctoTheme.Widget.Button.Secondary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Show actions" />
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/bottomActionBarrier"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:barrierDirection="top"
-        app:constraint_referenced_ids="buttonTurnOffPsu,buttonTurnOnPsu" />
+        app:constraint_referenced_ids="psuTurnOffControls,psuTurnOnControls,psuUnvailableControls" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

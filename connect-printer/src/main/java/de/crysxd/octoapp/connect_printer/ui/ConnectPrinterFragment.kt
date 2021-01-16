@@ -11,6 +11,7 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.common.power.PowerControlsBottomSheet
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.connect_printer.R
@@ -57,29 +58,28 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
                 }
             }
 
-            binding.buttonOpenOctoprint.setOnClickListener {
-                viewModel.openWebInterface(it.context)
+            binding.buttonMore1.setOnClickListener {
+                showMenu()
             }
-
-            binding.buttonMore.setOnClickListener {
-                PowerControlsBottomSheet.createForAction(PowerControlsBottomSheet.Action.Unspecified).show(childFragmentManager)
+            binding.buttonMore2.setOnClickListener {
+                showMenu()
             }
-
-            binding.buttonSignOut.setOnClickListener {
-                viewModel.signOut()
+            binding.buttonMore3.setOnClickListener {
+                showMenu()
             }
         })
     }
 
+    private fun showMenu() {
+        MenuBottomSheetFragment().show(childFragmentManager)
+    }
+
     private fun handleUiStateUpdate(state: ConnectPrinterViewModel.UiState) {
-        binding.buttonTurnOnPsu.isVisible = false
-        binding.buttonTurnOffPsu.isVisible = false
-        binding.buttonOpenOctoprint.isVisible = false
-        binding.buttonSignOut.isVisible = false
+        binding.psuTurnOnControls.isVisible = false
+        binding.psuTurnOffControls.isVisible = false
 
         when (state) {
             ConnectPrinterViewModel.UiState.OctoPrintNotAvailable -> {
-                binding.buttonSignOut.isVisible = true
                 showStatus(
                     R.string.octoprint_is_not_available,
                     R.string.check_your_network_connection
@@ -99,9 +99,8 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
                     PowerControlsBottomSheet.createForAction(PowerControlsBottomSheet.Action.TurnOff, PowerControlsBottomSheet.DeviceType.PrinterPsu)
                         .show(childFragmentManager, "select-device")
                 }
-                binding.buttonSignOut.isVisible = true
-                binding.buttonTurnOnPsu.isVisible = state.psuIsOn == false
-                binding.buttonTurnOffPsu.isVisible = state.psuIsOn == true
+                binding.psuTurnOnControls.isVisible = state.psuIsOn == false
+                binding.psuTurnOffControls.isVisible = state.psuIsOn == true
                 binding.buttonTurnOnPsu.text = getString(R.string.turn_psu_on)
                 binding.buttonTurnOffPsu.text = getString(R.string.turn_off_psu)
                 showStatus(
@@ -119,9 +118,7 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
             )
 
             is ConnectPrinterViewModel.UiState.PrinterOffline -> {
-                binding.buttonOpenOctoprint.isVisible = true
-                binding.buttonTurnOnPsu.isVisible = true
-                binding.buttonSignOut.isVisible = true
+                binding.psuTurnOnControls.isVisible = true
                 binding.buttonTurnOnPsu.setOnClickListener {
                     if (state.psuSupported) {
                         PowerControlsBottomSheet.createForAction(PowerControlsBottomSheet.Action.Cycle, PowerControlsBottomSheet.DeviceType.PrinterPsu)
@@ -165,7 +162,7 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
             )
         }.let { }
 
-        binding.buttonMore.isVisible = binding.buttonTurnOnPsu.isVisible || binding.buttonTurnOffPsu.isVisible
+        binding.psuUnvailableControls.isVisible = !binding.psuTurnOnControls.isVisible && !binding.psuTurnOffControls.isVisible
 
     }
 
