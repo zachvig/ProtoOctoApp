@@ -6,7 +6,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -40,17 +39,17 @@ abstract class OctoActivity : LocaleActivity() {
         super.onCreate(savedInstanceState)
     }
 
-    fun observeErrorEvents(events: LiveData<Event<Throwable>>) = events.observe(this, Observer {
+    fun observeErrorEvents(events: LiveData<Event<Throwable>>) = events.observe(this) {
         it.value?.let(this::showDialog)
-    })
+    }
 
-    fun observerMessageEvents(events: LiveData<Event<BaseViewModel.Message>>) = events.observe(this, Observer { event ->
+    fun observerMessageEvents(events: LiveData<Event<BaseViewModel.Message>>) = events.observe(this) { event ->
         when (val message = event.value) {
             null -> Unit
             is BaseViewModel.Message.SnackbarMessage -> showSnackbar(message)
             is BaseViewModel.Message.DialogMessage -> showDialog(message)
         }.toString()
-    })
+    }
 
     private fun showSnackbar(message: BaseViewModel.Message.SnackbarMessage) {
         Snackbar.make(coordinatorLayout, message.text(this), message.duration).apply {
@@ -126,4 +125,6 @@ abstract class OctoActivity : LocaleActivity() {
             builder.show()
         }
     }
+
+    abstract fun startPrintNotificationService()
 }

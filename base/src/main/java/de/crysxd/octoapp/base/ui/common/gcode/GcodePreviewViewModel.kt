@@ -63,7 +63,7 @@ class GcodePreviewViewModel(
     }.distinctUntilChangedBy { it.path }.asLiveData()
 
     private val renderContextFlow: Flow<ViewState> = gcodeChannel.asFlow().filterNotNull().flatMapLatest { it }
-        .combine(octoPrintProvider.passiveCurrentMessageFlow()) { gcodeState, currentMessage ->
+        .combine(octoPrintProvider.passiveCurrentMessageFlow().sample(3000)) { gcodeState, currentMessage ->
             Pair(gcodeState, currentMessage)
         }.combine(contextFactoryChannel.asFlow()) { pair, factory ->
             val (gcodeState, currentMessage) = pair

@@ -1,7 +1,6 @@
 package de.crysxd.octoapp
 
 import android.app.NotificationManager
-import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
@@ -46,7 +45,6 @@ class MainActivity : OctoActivity() {
 
     private var lastNavigation = -1
     private val lastInsets = Rect()
-    private val notificationServiceIntent by lazy { Intent(this, PrintNotificationService::class.java) }
 
     override val octoToolbar: OctoToolbar by lazy { toolbar }
     override val octo: OctoView by lazy { toolbarOctoView }
@@ -69,7 +67,7 @@ class MainActivity : OctoActivity() {
                 events.observe(this, observer)
             } else {
                 navigate(R.id.action_sign_in_required)
-                stopService(notificationServiceIntent)
+                PrintNotificationService.stop(this)
                 (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).cancel(PrintNotificationService.NOTIFICATION_ID)
                 events.removeObserver(observer)
             }
@@ -218,14 +216,14 @@ class MainActivity : OctoActivity() {
             when {
                 // We encountered an error, try reconnecting
                 flags == null || flags.closedOrError || flags.error -> {
-                    stopService(notificationServiceIntent)
+                    PrintNotificationService.stop(this)
                     R.id.action_connect_printer
                 }
 
                 // We are printing
                 flags.printing || flags.paused || flags.pausing || flags.cancelling -> {
                     try {
-                        startService(notificationServiceIntent)
+                        PrintNotificationService.start(this)
                     } catch (e: IllegalStateException) {
                         // User might have closed app just in time so we can't start the service
                     }
@@ -234,12 +232,12 @@ class MainActivity : OctoActivity() {
 
                 // We are connected
                 flags.operational -> {
-                    stopService(notificationServiceIntent)
+                    PrintNotificationService.stop(this)
                     R.id.action_printer_connected
                 }
 
                 !flags.operational && !flags.paused && !flags.cancelling && !flags.printing && !flags.pausing -> {
-                    stopService(notificationServiceIntent)
+                    PrintNotificationService.stop(this)
                     R.id.action_connect_printer
                 }
 
@@ -290,5 +288,9 @@ class MainActivity : OctoActivity() {
                 showDialog(getString(R.string.capabilities_validation_error))
             }
         }
+    }
+
+    override fun startPrintNotificationService() {
+        PrintNotificationService.start(this)
     }
 }
