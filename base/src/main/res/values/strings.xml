@@ -329,4 +329,6 @@
     <string name="main_menu___item_use_dark_mode">Use dark mode</string>
     <string name="main_menu___item_turn_print_notification_on">Turn print notification on</string>
     <string name="main_menu___item_turn_print_notification_off">Turn print notification off</string>
+    <string name="main_menu___item_keep_screen_on_during_pinrt_on">Keep screen on while printing</string>
+    <string name="main_menu___item_keep_screen_on_during_pinrt_off">Turn screen off while printing </string>
 </resources>
