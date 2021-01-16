@@ -81,7 +81,7 @@
     <string name="remove_shortcut">Verknüpfung entfernen</string>
     <string name="enter_label">Alias eingeben</string>
     <string name="label_for_x">Alias für %s</string>
-    <string name="hide">Verstecken</string>
+    <string name="hide">Später</string>
     <string name="shortcut_tutorial_line1">Halte Befehle gedrückt um mehr Optionen zu erhalten</string>
     <string name="shortcut_tutorial_line2">Verknüpfungen werden automatisch hinzugefügt, wenn du Befehle im Terminal sendest</string>
     <string name="one_gcode_per_line">Ein Gcode Befehl pro Zeile</string>
