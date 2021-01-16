@@ -13,7 +13,12 @@ import de.crysxd.octoapp.base.ui.common.menu.Menu
 import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.common.menu.MenuItem
 import de.crysxd.octoapp.base.ui.common.menu.MenuItemStyle
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
+import timber.log.Timber
+
+const val KEY_PRINT_NOTIFICATION_ENABLED = "print_notification_enabled"
+const val KEY_MANUAL_DARK_MODE = "manual_dark_mode_enabled"
 
 class SettingsMenu : Menu {
     override fun getMenuItem() = listOf(
@@ -21,6 +26,7 @@ class SettingsMenu : Menu {
         ChangeLanguageMenuItem(),
         OpenOctoPrintMenuItem(),
         NightThemeMenuItem(),
+        PrintNotificationMenutItem(),
         ChangeOctoPrintInstanceMenuItem(),
     )
 
@@ -82,9 +88,9 @@ class OpenOctoPrintMenuItem : MenuItem {
 
 class NightThemeMenuItem : MenuItem {
     private var isManualDarkModeEnabled
-        get() = Injector.get().sharedPreferences().getBoolean("manual_dark_mode_enabled", false)
+        get() = Injector.get().sharedPreferences().getBoolean(KEY_MANUAL_DARK_MODE, false)
         set(value) {
-            Injector.get().sharedPreferences().edit { putBoolean("manual_dark_mode_enabled", value) }
+            Injector.get().sharedPreferences().edit { putBoolean(KEY_MANUAL_DARK_MODE, value) }
         }
 
     override val itemId = MENU_ITEM_NIGHT_THEME
@@ -95,7 +101,7 @@ class NightThemeMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
     override suspend fun getTitle(context: Context) =
-        context.getString(if (isManualDarkModeEnabled) R.string.main_menu___use_light_mode else R.string.main_menu___use_dark_mode)
+        context.getString(if (isManualDarkModeEnabled) R.string.main_menu___item_use_light_mode else R.string.main_menu___item_use_dark_mode)
 
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         isManualDarkModeEnabled = if (isManualDarkModeEnabled) {
@@ -105,14 +111,47 @@ class NightThemeMenuItem : MenuItem {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             true
         }
-        return false
+        return true
+    }
+}
+
+class PrintNotificationMenutItem : MenuItem {
+    private var isPrintNotificationEnabled
+        get() = Injector.get().sharedPreferences().getBoolean(KEY_PRINT_NOTIFICATION_ENABLED, true)
+        set(value) {
+            Injector.get().sharedPreferences().edit { putBoolean(KEY_PRINT_NOTIFICATION_ENABLED, value) }
+        }
+
+    override val itemId = MENU_ITEM_PRINT_NOTIFICATION
+    override val groupId = ""
+    override val order = 150
+    override val style = MenuItemStyle.Settings
+    override val icon = if (isPrintNotificationEnabled) R.drawable.ic_round_notifications_off_24 else R.drawable.ic_round_notifications_active_24
+
+    override suspend fun getTitle(context: Context) = context.getString(
+        if (isPrintNotificationEnabled) R.string.main_menu___item_turn_print_notification_off else R.string.main_menu___item_turn_print_notification_on
+    )
+
+    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
+        isPrintNotificationEnabled = !isPrintNotificationEnabled
+
+        try {
+            if (isPrintNotificationEnabled) {
+                Timber.i("Service enabled, starting service")
+                host.requireOctoActivity().startPrintNotificationService()
+            }
+        } catch (e: IllegalStateException) {
+            // User might have closed app just in time so we can't start the service
+        }
+
+        return true
     }
 }
 
 class ChangeOctoPrintInstanceMenuItem : MenuItem {
     override val itemId = MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE
     override val groupId = ""
-    override val order = 140
+    override val order = 160
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_swap_horiz_24
 

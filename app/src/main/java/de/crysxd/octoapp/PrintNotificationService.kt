@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.media.RingtoneManager
 import android.os.Build
 import android.os.IBinder
@@ -13,6 +14,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ui.common.menu.main.KEY_PRINT_NOTIFICATION_ENABLED
 import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
@@ -35,6 +37,19 @@ class PrintNotificationService : Service() {
 
     companion object {
         const val NOTIFICATION_ID = 3249
+        private val isNotificationEnabled get() = Injector.get().sharedPreferences().getBoolean(KEY_PRINT_NOTIFICATION_ENABLED, true)
+
+        fun start(context: Context) {
+            if (isNotificationEnabled) {
+                val intent = Intent(context, PrintNotificationService::class.java)
+                context.startService(intent)
+            }
+        }
+
+        fun stop(context: Context) {
+            val intent = Intent(context, PrintNotificationService::class.java)
+            context.stopService(intent)
+        }
     }
 
     private val coroutineJob = Job()
@@ -47,34 +62,47 @@ class PrintNotificationService : Service() {
     private val formatDurationUseCase: FormatDurationUseCase = Injector.get().formatDurationUseCase()
     private var lastEta: String = ""
     private var didSeePrintBeingActive = false
+    private val preferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+        if (!isNotificationEnabled) {
+            Timber.i("Service disabled, stopping self")
+            stopSelf()
+        }
+    }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
-        Timber.i("Creating notification service")
-        GlobalScope.launch(coroutineJob) {
-            eventFlow.onEach {
-                onEventReceived(it)
-            }.retry(RETRY_COUNT) {
-                delay(RETRY_DELAY)
-                true
-            }.catch {
-                Timber.e(it)
-            }.collect()
-        }
+        if (isNotificationEnabled) {
+            Timber.i("Creating notification service")
+            GlobalScope.launch(coroutineJob) {
+                eventFlow.onEach {
+                    onEventReceived(it)
+                }.retry(RETRY_COUNT) {
+                    delay(RETRY_DELAY)
+                    true
+                }.catch {
+                    Timber.e(it)
+                }.collect()
+            }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel()
-        }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                createNotificationChannel()
+            }
 
-        startForeground(NOTIFICATION_ID, createInitialNotification())
+            startForeground(NOTIFICATION_ID, createInitialNotification())
+            Injector.get().sharedPreferences().registerOnSharedPreferenceChangeListener(preferencesListener)
+        } else {
+            Timber.i("Notification service disabled, skipping creation")
+            stopSelf()
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Timber.i("Destroying notification service")
         notificationManager.cancel(NOTIFICATION_ID)
+        Injector.get().sharedPreferences().unregisterOnSharedPreferenceChangeListener(preferencesListener)
         coroutineJob.cancel()
     }
 
@@ -136,7 +164,7 @@ class PrintNotificationService : Service() {
                     }
                     else -> null
                 }?.let {
-                    Timber.d("Updating notification")
+                    Timber.v("Updating notification")
                     notificationManager.notify(NOTIFICATION_ID, it)
                 }
             } catch (e: Exception) {
