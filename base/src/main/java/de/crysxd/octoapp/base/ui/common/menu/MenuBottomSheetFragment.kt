@@ -127,6 +127,8 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     delay(100)
                     if (item.onClicked(this@MenuBottomSheetFragment)) {
                         dismiss()
+                    } else {
+                        notifyDataSetChanged()
                     }
                 }
             }

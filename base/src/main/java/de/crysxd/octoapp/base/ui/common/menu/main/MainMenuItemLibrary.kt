@@ -13,6 +13,7 @@ const val MENU_ITEM_OPEN_OCTOPRINT = "settings___open_octoprint"
 const val MENU_ITEM_NIGHT_THEME = "settings___night_theme"
 const val MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE = "settings___change_octoprint_instnace"
 const val MENU_ITEM_PRINT_NOTIFICATION = "settings___print_notification"
+const val MENU_ITEM_SCREEN_ON_DURING_PRINT = "settings___keep_screen_on_during__print"
 const val MENU_ITEM_CANCEL_PRINT = "printer___cancel_print"
 const val MENU_ITEM_EMERGENCY_STOP = "printer___cemergency_stop"
 const val MENU_ITEM_TURN_PSU_OFF = "printer___turn_psu_off"
@@ -35,7 +36,8 @@ class MenuItemLibrary {
         MENU_ITEM_TURN_PSU_OFF to TurnPsuOffMenuItem::class,
         MENU_ITEM_POWER_CONTROLS to OpenPowerControlsMenuItem::class,
         MENU_ITEM_NIGHT_THEME to NightThemeMenuItem::class,
-        MENU_ITEM_PRINT_NOTIFICATION to PrintNotificationMenutItem::class,
+        MENU_ITEM_PRINT_NOTIFICATION to PrintNotificationMenuItem::class,
+        MENU_ITEM_SCREEN_ON_DURING_PRINT to KeepScreenOnDuringPrintMenuItem::class,
     )
 
     operator fun get(itemId: String): KClass<out MenuItem>? = map[itemId]

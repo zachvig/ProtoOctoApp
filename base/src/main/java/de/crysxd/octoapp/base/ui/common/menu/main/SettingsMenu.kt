@@ -19,6 +19,7 @@ import timber.log.Timber
 
 const val KEY_PRINT_NOTIFICATION_ENABLED = "print_notification_enabled"
 const val KEY_MANUAL_DARK_MODE = "manual_dark_mode_enabled"
+const val KEY_KEEP_SCREEN_ON = "keep_screen_on"
 
 class SettingsMenu : Menu {
     override fun getMenuItem() = listOf(
@@ -26,7 +27,8 @@ class SettingsMenu : Menu {
         ChangeLanguageMenuItem(),
         OpenOctoPrintMenuItem(),
         NightThemeMenuItem(),
-        PrintNotificationMenutItem(),
+        PrintNotificationMenuItem(),
+        KeepScreenOnDuringPrintMenuItem(),
         ChangeOctoPrintInstanceMenuItem(),
     )
 
@@ -115,7 +117,7 @@ class NightThemeMenuItem : MenuItem {
     }
 }
 
-class PrintNotificationMenutItem : MenuItem {
+class PrintNotificationMenuItem : MenuItem {
     private var isPrintNotificationEnabled
         get() = Injector.get().sharedPreferences().getBoolean(KEY_PRINT_NOTIFICATION_ENABLED, true)
         set(value) {
@@ -148,10 +150,33 @@ class PrintNotificationMenutItem : MenuItem {
     }
 }
 
+class KeepScreenOnDuringPrintMenuItem : MenuItem {
+    private var isKeepScreenOn
+        get() = Injector.get().sharedPreferences().getBoolean(KEY_KEEP_SCREEN_ON, false)
+        set(value) {
+            Injector.get().sharedPreferences().edit { putBoolean(KEY_KEEP_SCREEN_ON, value) }
+        }
+
+    override val itemId = MENU_ITEM_SCREEN_ON_DURING_PRINT
+    override val groupId = ""
+    override val order = 160
+    override val style = MenuItemStyle.Settings
+    override val icon = if (isKeepScreenOn) R.drawable.ic_round_brightness_low_24 else R.drawable.ic_round_brightness_high_24
+
+    override suspend fun getTitle(context: Context) = context.getString(
+        if (isKeepScreenOn) R.string.main_menu___item_keep_screen_on_during_pinrt_off else R.string.main_menu___item_keep_screen_on_during_pinrt_on
+    )
+
+    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
+        isKeepScreenOn = !isKeepScreenOn
+        return true
+    }
+}
+
 class ChangeOctoPrintInstanceMenuItem : MenuItem {
     override val itemId = MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE
     override val groupId = ""
-    override val order = 160
+    override val order = 170
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_swap_horiz_24
 
