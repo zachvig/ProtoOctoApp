@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.TextViewCompat
@@ -36,6 +37,15 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     private lateinit var viewBinding: MenuBottomSheetFragmentBinding
     private val adapter = Adapter()
 
+    companion object {
+        private const val KEY_MENU = "menu"
+        fun createForMenu(menu: Menu) = MenuBottomSheetFragment().also {
+            it.arguments = bundleOf(KEY_MENU to menu)
+        }
+    }
+
+    private val rootMenu get() = arguments?.getParcelable<Menu>(KEY_MENU) ?: MainMenu()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         MenuBottomSheetFragmentBinding.inflate(inflater, container, false).also { viewBinding = it }.root
 
@@ -47,7 +57,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         }
 
         if (viewModel.menuBackStack.isEmpty()) {
-            pushMenu(MainMenu())
+            pushMenu(rootMenu)
         } else {
             showMenu(viewModel.menuBackStack.last())
         }
@@ -107,7 +117,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     runBlocking {
                         it.isVisible(currentDestination)
                     }
-                } ?: emptyList()
+                }?.sortedWith(compareBy({ it.order }, { it.itemId })) ?: emptyList()
                 notifyDataSetChanged()
             }
 
@@ -158,6 +168,9 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                 bottomMargin = requireContext().resources.getDimension(if (groupChanged) R.dimen.margin_2 else R.dimen.margin_0_1).toInt()
                 marginEnd = requireContext().resources.getDimension(R.dimen.margin_0_1).toInt()
             }
+
+            // Max lines
+            holder.binding.button.maxLines = if (item.enforceSingleLine) 1 else 2
 
             // Colors
             val background = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), item.style.backgroundColor))

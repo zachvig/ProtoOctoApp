@@ -11,7 +11,9 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.common.menu.*
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 class MainMenu : Menu {
     override fun getMenuItem(): List<MenuItem> {
         val base = listOf(
@@ -24,11 +26,9 @@ class MainMenu : Menu {
         val library = MenuItemLibrary()
         val pinnedItems = Injector.get().pinnedMenuItemsRepository().getPinnedMenuItems().mapNotNull {
             library[it]
-        }.mapNotNull {
-            it.java.constructors[0].newInstance() as? MenuItem
         }
 
-        return listOf(base, pinnedItems).flatten().sortedBy { it.order }
+        return listOf(base, pinnedItems).flatten()
     }
 }
 

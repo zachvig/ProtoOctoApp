@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.connect_printer.ui
 
-import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.*
 import com.google.firebase.ktx.Firebase
@@ -10,8 +9,11 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.livedata.OctoTransformations.map
 import de.crysxd.octoapp.base.livedata.PollingLiveData
 import de.crysxd.octoapp.base.ui.BaseViewModel
-import de.crysxd.octoapp.base.usecase.*
+import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase
 import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase.Params
+import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
+import de.crysxd.octoapp.base.usecase.GetPrinterConnectionUseCase
+import de.crysxd.octoapp.base.usecase.execute
 import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintBootingException
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
@@ -28,8 +30,6 @@ import java.util.concurrent.TimeUnit
 class ConnectPrinterViewModel(
     private val autoConnectPrinterUseCase: AutoConnectPrinterUseCase,
     private val getPrinterConnectionUseCase: GetPrinterConnectionUseCase,
-    private val openOctoprintWebUseCase: OpenOctoprintWebUseCase,
-    private val signOutUseCase: SignOutUseCase,
     private val getPowerDevicesUseCase: GetPowerDevicesUseCase
 ) : BaseViewModel() {
 
@@ -216,14 +216,6 @@ class ConnectPrinterViewModel(
     fun retryConnectionFromOfflineState() {
         lastConnectionAttempt = 0L
         psuCyclingState.postValue(PsuCycledState.Cycled)
-    }
-
-    fun openWebInterface(context: Context) = viewModelScope.launch(coroutineExceptionHandler) {
-        openOctoprintWebUseCase.execute(context)
-    }
-
-    fun signOut() = viewModelScope.launch(coroutineExceptionHandler) {
-        signOutUseCase.execute()
     }
 
     private sealed class PsuCycledState {

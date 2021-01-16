@@ -12,6 +12,8 @@ interface MenuItem {
     val style: MenuItemStyle
     val showAsSubMenu: Boolean get() = false
     val showAsHalfWidth: Boolean get() = false
+    val canBePinned: Boolean get() = true
+    val enforceSingleLine: Boolean get() = true
 
     @get:DrawableRes
     val icon: Int

@@ -81,8 +81,9 @@
     </style>
 
     <style name="OctoTheme.Widget.Button.Menu">
-        <item name="android:paddingTop">@dimen/margin_1</item>
-        <item name="android:paddingBottom">@dimen/margin_1</item>
+        <item name="android:paddingTop">@dimen/margin_0</item>
+        <item name="android:paddingBottom">@dimen/margin_0</item>
+        <item name="android:minHeight">45dp</item>
         <item name="android:paddingEnd">@dimen/margin_1</item>
         <item name="android:paddingStart">15dp</item>
         <item name="android:insetTop">0dp</item>
@@ -92,6 +93,7 @@
         <item name="android:drawablePadding">@dimen/margin_1</item>
         <item name="android:textColor">@color/dark_text</item>
         <item name="strokeWidth">1dp</item>
+        <item name="android:ellipsize">end</item>
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:elevation">0dp</item>
         <item name="android:stateListAnimator">@null</item>

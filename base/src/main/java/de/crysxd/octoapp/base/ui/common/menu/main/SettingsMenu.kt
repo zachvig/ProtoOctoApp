@@ -12,11 +12,13 @@ import de.crysxd.octoapp.base.ui.common.menu.Menu
 import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.common.menu.MenuItem
 import de.crysxd.octoapp.base.ui.common.menu.MenuItemStyle
+import de.crysxd.octoapp.base.ui.common.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
+import kotlinx.android.parcel.Parcelize
 import timber.log.Timber
 
-
+@Parcelize
 class SettingsMenu : Menu {
     override fun getMenuItem() = listOf(
         SendFeedbackMenuItem(),
@@ -44,6 +46,7 @@ class SendFeedbackMenuItem : MenuItem {
     override val itemId = MENU_ITEM_SEND_FEEDBACK
     override val groupId = ""
     override val order = 100
+    override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_rate_review_24
 
@@ -57,7 +60,8 @@ class SendFeedbackMenuItem : MenuItem {
 class ChangeLanguageMenuItem : MenuItem {
     override val itemId = MENU_ITEM_CHANGE_LANGUAGE
     override val groupId = ""
-    override val order = 110
+    override val order = 101
+    override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_translate_24
 
@@ -73,7 +77,8 @@ class ChangeLanguageMenuItem : MenuItem {
 class OpenOctoPrintMenuItem : MenuItem {
     override val itemId = MENU_ITEM_OPEN_OCTOPRINT
     override val groupId = ""
-    override val order = 120
+    override val order = 102
+    override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_open_in_browser_24
 
@@ -88,7 +93,8 @@ class NightThemeMenuItem : MenuItem {
     private val isManualDarkModeEnabled get() = Injector.get().octoPreferences().isManualDarkModeEnabled
     override val itemId = MENU_ITEM_NIGHT_THEME
     override val groupId = ""
-    override val order = 130
+    override val order = 103
+    override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = if (isManualDarkModeEnabled) R.drawable.ic_round_light_mode_24 else R.drawable.ic_round_dark_mode_24
 
@@ -112,7 +118,8 @@ class PrintNotificationMenuItem : MenuItem {
     private val isPrintNotificationEnabled get() = Injector.get().octoPreferences().isPrintNotificationEnabled
     override val itemId = MENU_ITEM_PRINT_NOTIFICATION
     override val groupId = ""
-    override val order = 150
+    override val order = 104
+    override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = if (isPrintNotificationEnabled) R.drawable.ic_round_notifications_off_24 else R.drawable.ic_round_notifications_active_24
 
@@ -140,7 +147,8 @@ class KeepScreenOnDuringPrintMenuItem : MenuItem {
     private val isKeepScreenOn get() = Injector.get().octoPreferences().isKeepScreenOnDuringPrint
     override val itemId = MENU_ITEM_SCREEN_ON_DURING_PRINT
     override val groupId = ""
-    override val order = 160
+    override val order = 105
+    override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = if (isKeepScreenOn) R.drawable.ic_round_brightness_low_24 else R.drawable.ic_round_brightness_high_24
 
@@ -157,13 +165,14 @@ class KeepScreenOnDuringPrintMenuItem : MenuItem {
 class ChangeOctoPrintInstanceMenuItem : MenuItem {
     override val itemId = MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE
     override val groupId = ""
-    override val order = 170
+    override val order = 106
     override val style = MenuItemStyle.Settings
+    override val enforceSingleLine = false
     override val icon = R.drawable.ic_round_swap_horiz_24
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_change_octoprint_instance)
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
-        Injector.get().signOutUseCase().execute(Unit)
-        return true
+        host.pushMenu(SwitchOctoPrintMenu())
+        return false
     }
 }
