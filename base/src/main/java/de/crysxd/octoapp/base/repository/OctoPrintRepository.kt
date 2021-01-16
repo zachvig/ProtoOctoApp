@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.base.repository
 
-import androidx.lifecycle.asLiveData
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.datasource.DataSource
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
@@ -17,9 +16,6 @@ class OctoPrintRepository(
 ) {
 
     private val instanceInformationChannel = ConflatedBroadcastChannel<OctoPrintInstanceInformationV2?>(null)
-
-    @Deprecated("Use instanceInformationFlow()")
-    val instanceInformation = instanceInformationChannel.asFlow().asLiveData()
 
     init {
         // Upgrade from legacy to new data source

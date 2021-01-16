@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.print_controls.ui
 
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filter
@@ -23,21 +24,10 @@ class PrintControlsViewModel(
         .filterEventsForMessageType(CurrentMessage::class.java)
         .filter { it.progress != null }
 
-    val instanceInformation = octoPrintRepository.instanceInformation
+    val instanceInformation = octoPrintRepository.instanceInformationFlow()
+        .asLiveData()
 
     fun togglePausePrint() = viewModelScope.launch(coroutineExceptionHandler) {
         togglePausePrintJobUseCase.execute()
-    }
-
-    fun cancelPrint() = viewModelScope.launch(coroutineExceptionHandler) {
-        cancelPrintJobUseCase.execute()
-    }
-
-    fun changeFilament() = viewModelScope.launch(coroutineExceptionHandler) {
-        changeFilamentUseCase.execute()
-    }
-
-    fun emergencyStop() = viewModelScope.launch(coroutineExceptionHandler) {
-        emergencyStopUseCase.execute()
     }
 }
