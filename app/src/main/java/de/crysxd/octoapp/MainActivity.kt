@@ -60,7 +60,7 @@ class MainActivity : OctoActivity() {
         lastNavigation = savedInstanceState?.getInt(KEY_LAST_NAVIGATION, lastNavigation) ?: lastNavigation
         SignInInjector.get().octoprintRepository().instanceInformationFlow().asLiveData().observe(this, {
             Timber.i("Instance information received")
-            if (it != null) {
+            if (it != null && it.apiKey.isNotBlank()) {
                 if (lastNavigation < 0) {
                     navigate(R.id.action_connect_printer)
                 }

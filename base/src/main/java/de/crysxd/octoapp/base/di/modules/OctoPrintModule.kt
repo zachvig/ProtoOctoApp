@@ -4,6 +4,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
 import dagger.Provides
 import de.crysxd.octoapp.base.InvalidApiKeyInterceptor
+import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.SslKeyStoreHandler
 import de.crysxd.octoapp.base.datasource.DataSource
@@ -13,7 +14,6 @@ import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.*
-import de.crysxd.octoapp.base.usecase.CheckOctoPrintInstanceInformationUseCase
 
 @Module
 open class OctoPrintModule {
@@ -21,11 +21,13 @@ open class OctoPrintModule {
     @BaseScope
     @Provides
     open fun provideOctoPrintRepository(
-        dataSource: DataSource<OctoPrintInstanceInformationV2>,
-        checkOctoPrintInstanceInformationUseCase: CheckOctoPrintInstanceInformationUseCase
+        legacyDataSource: DataSource<OctoPrintInstanceInformationV2>,
+        dataSource: DataSource<List<OctoPrintInstanceInformationV2>>,
+        octoPreferences: OctoPreferences,
     ) = OctoPrintRepository(
+        legacyDataSource,
         dataSource,
-        checkOctoPrintInstanceInformationUseCase
+        octoPreferences
     )
 
     @BaseScope

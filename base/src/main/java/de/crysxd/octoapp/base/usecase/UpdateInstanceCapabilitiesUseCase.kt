@@ -23,39 +23,35 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
 
     override suspend fun doExecute(param: Unit, timber: Timber.Tree) {
         withContext(Dispatchers.IO) {
-            val current = octoPrintRepository.getRawOctoPrintInstanceInformation()
-
-            // Gather all info in parallel
-            val settings = async { octoPrintProvider.octoPrint().createSettingsApi().getSettings() }
-            val m115 = async {
-                try {
-                    executeM115()
-                } catch (e: Exception) {
-                    Timber.e(e)
-                    null
+            octoPrintRepository.updateActive { current ->
+                // Gather all info in parallel
+                val settings = async { octoPrintProvider.octoPrint().createSettingsApi().getSettings() }
+                val m115 = async {
+                    try {
+                        executeM115()
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                        null
+                    }
                 }
-            }
 
-            val updated = current?.copy(
-                m115Response = m115.await(),
-                settings = settings.await()
-            )
+                val updated = current.copy(
+                    m115Response = m115.await(),
+                    settings = settings.await()
+                )
 
-            val standardPlugins = Firebase.remoteConfig.getString("default_plugins").split(",").map { it.trim() }
-            settings.await().plugins.keys.filter { !standardPlugins.contains(it) }.forEach {
-                OctoAnalytics.logEvent(OctoAnalytics.Event.PluginDetected(it))
-            }
+                val standardPlugins = Firebase.remoteConfig.getString("default_plugins").split(",").map { it.trim() }
+                settings.await().plugins.keys.filter { !standardPlugins.contains(it) }.forEach {
+                    OctoAnalytics.logEvent(OctoAnalytics.Event.PluginDetected(it))
+                }
 
-            OctoAnalytics.setUserProperty(
-                OctoAnalytics.UserProperty.WebCamAvailable,
-                isWebcamSupported(settings.await()) ?: "false"
-            )
+                OctoAnalytics.setUserProperty(
+                    OctoAnalytics.UserProperty.WebCamAvailable,
+                    isWebcamSupported(settings.await()) ?: "false"
+                )
 
-            if (updated != current) {
                 timber.i("Updated capabilities: $updated")
-                octoPrintRepository.storeOctoprintInstanceInformation(updated)
-            } else {
-                timber.i("No changes")
+                updated
             }
         }
     }

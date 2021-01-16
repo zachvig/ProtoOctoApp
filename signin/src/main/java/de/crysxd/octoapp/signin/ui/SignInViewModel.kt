@@ -1,13 +1,9 @@
 package de.crysxd.octoapp.signin.ui
 
-import android.content.SharedPreferences
 import android.net.Uri
-import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
@@ -22,8 +18,7 @@ import kotlinx.coroutines.launch
 class SignInViewModel(
     private val octoPrintRepository: OctoPrintRepository,
     private val verifyUseCase: VerifySignInInformationUseCase,
-    private val signInUseCase: SignInUseCase,
-    private val sharedPreferences: SharedPreferences
+    private val signInUseCase: SignInUseCase
 ) : BaseViewModel() {
 
     var failedSignInCounter = 0
@@ -76,28 +71,13 @@ class SignInViewModel(
     fun completeSignIn(instanceInformation: OctoPrintInstanceInformationV2) {
         // Save instance information, MainActivity will navigate away
         OctoAnalytics.logEvent(OctoAnalytics.Event.Login)
-        octoPrintRepository.storeOctoprintInstanceInformation(instanceInformation)
-        recordValidSignInInfo(instanceInformation)
+        octoPrintRepository.setActive(instanceInformation)
     }
 
-    fun getPreFillInfo() = octoPrintRepository.getRawOctoPrintInstanceInformation() ?: OctoPrintInstanceInformationV2(
+    fun getPreFillInfo() = octoPrintRepository.getActiveInstanceSnapshot() ?: OctoPrintInstanceInformationV2(
         webUrl = "",
         apiKey = ""
     )
 
-    private fun recordValidSignInInfo(instanceInformation: OctoPrintInstanceInformationV2) {
-        val last = getKnownSignInInfo().toMutableList().map {
-            it.webUrl to it
-        }.toMap().toMutableMap()
-        last[instanceInformation.webUrl] = instanceInformation
-
-        sharedPreferences.edit {
-            putString("known_valid_instance_information", Gson().toJson(last.map { it.value }))
-        }
-    }
-
-    fun getKnownSignInInfo(): List<OctoPrintInstanceInformationV2> {
-        val json = sharedPreferences.getString("known_valid_instance_information", null) ?: "[]"
-        return Gson().fromJson(json, object : TypeToken<List<OctoPrintInstanceInformationV2>>() {}.type)
-    }
+    fun getKnownSignInInfo() = octoPrintRepository.getAll()
 }

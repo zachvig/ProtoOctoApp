@@ -17,6 +17,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_KEEP_SCREEN_ON = "keep_screen_on"
         private const val KEY_APP_LANGUAGE = "app_language"
         private const val KEY_HIDE_THUMBNAIL_HINT_UNTIL = "hide_thumbnail_hin_until"
+        private const val KEY_ACTIVE_INSTANCE_WEB_URL = "active_instance_web_url"
     }
 
     private val updatedChannel = ConflatedBroadcastChannel(Unit)
@@ -26,6 +27,12 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         sharedPreferences.edit(action = block)
         updatedChannel.offer(Unit)
     }
+
+    var activeInstanceWebUrl: String?
+        get() = sharedPreferences.getString(KEY_ACTIVE_INSTANCE_WEB_URL, null)
+        set(value) {
+            edit { putString(KEY_ACTIVE_INSTANCE_WEB_URL, value) }
+        }
 
     var isKeepScreenOnDuringPrint
         get() = sharedPreferences.getBoolean(KEY_KEEP_SCREEN_ON, false)
