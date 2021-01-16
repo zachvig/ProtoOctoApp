@@ -1,7 +1,10 @@
 package de.crysxd.octoapp.base.ui.common.menu.main
 
 import android.content.Context
+import android.os.Build
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.text.HtmlCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
@@ -17,6 +20,7 @@ class SettingsMenu : Menu {
         SendFeedbackMenuItem(),
         ChangeLanguageMenuItem(),
         OpenOctoPrintMenuItem(),
+        NightThemeMenuItem(),
         ChangeOctoPrintInstanceMenuItem(),
     )
 
@@ -76,10 +80,39 @@ class OpenOctoPrintMenuItem : MenuItem {
     }
 }
 
+class NightThemeMenuItem : MenuItem {
+    private var isManualDarkModeEnabled
+        get() = Injector.get().sharedPreferences().getBoolean("manual_dark_mode_enabled", false)
+        set(value) {
+            Injector.get().sharedPreferences().edit { putBoolean("manual_dark_mode_enabled", value) }
+        }
+
+    override val itemId = MENU_ITEM_NIGHT_THEME
+    override val groupId = ""
+    override val order = 130
+    override val style = MenuItemStyle.Settings
+    override val icon = if (isManualDarkModeEnabled) R.drawable.ic_round_light_mode_24 else R.drawable.ic_round_dark_mode_24
+
+    override suspend fun isVisible(destinationId: Int) = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+    override suspend fun getTitle(context: Context) =
+        context.getString(if (isManualDarkModeEnabled) R.string.main_menu___use_light_mode else R.string.main_menu___use_dark_mode)
+
+    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
+        isManualDarkModeEnabled = if (isManualDarkModeEnabled) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            false
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            true
+        }
+        return false
+    }
+}
+
 class ChangeOctoPrintInstanceMenuItem : MenuItem {
     override val itemId = MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE
     override val groupId = ""
-    override val order = 130
+    override val order = 140
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_swap_horiz_24
 
