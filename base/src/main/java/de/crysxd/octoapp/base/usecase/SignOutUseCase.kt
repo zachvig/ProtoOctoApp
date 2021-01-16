@@ -9,6 +9,6 @@ class SignOutUseCase @Inject constructor(
 ) : UseCase<Unit, Unit>() {
 
     override suspend fun doExecute(param: Unit, timber: Timber.Tree) {
-        octoPrintRepository.clearOctoprintInstanceInformation()
+        octoPrintRepository.clearActive()
     }
 }

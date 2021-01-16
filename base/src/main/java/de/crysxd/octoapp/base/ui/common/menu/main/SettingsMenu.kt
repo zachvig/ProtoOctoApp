@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
-import androidx.core.content.edit
 import androidx.core.text.HtmlCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
@@ -17,9 +16,6 @@ import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
 import timber.log.Timber
 
-const val KEY_PRINT_NOTIFICATION_ENABLED = "print_notification_enabled"
-const val KEY_MANUAL_DARK_MODE = "manual_dark_mode_enabled"
-const val KEY_KEEP_SCREEN_ON = "keep_screen_on"
 
 class SettingsMenu : Menu {
     override fun getMenuItem() = listOf(
@@ -89,12 +85,7 @@ class OpenOctoPrintMenuItem : MenuItem {
 }
 
 class NightThemeMenuItem : MenuItem {
-    private var isManualDarkModeEnabled
-        get() = Injector.get().sharedPreferences().getBoolean(KEY_MANUAL_DARK_MODE, false)
-        set(value) {
-            Injector.get().sharedPreferences().edit { putBoolean(KEY_MANUAL_DARK_MODE, value) }
-        }
-
+    private val isManualDarkModeEnabled get() = Injector.get().octoPreferences().isManualDarkModeEnabled
     override val itemId = MENU_ITEM_NIGHT_THEME
     override val groupId = ""
     override val order = 130
@@ -106,7 +97,7 @@ class NightThemeMenuItem : MenuItem {
         context.getString(if (isManualDarkModeEnabled) R.string.main_menu___item_use_light_mode else R.string.main_menu___item_use_dark_mode)
 
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
-        isManualDarkModeEnabled = if (isManualDarkModeEnabled) {
+        Injector.get().octoPreferences().isManualDarkModeEnabled = if (isManualDarkModeEnabled) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             false
         } else {
@@ -118,12 +109,7 @@ class NightThemeMenuItem : MenuItem {
 }
 
 class PrintNotificationMenuItem : MenuItem {
-    private var isPrintNotificationEnabled
-        get() = Injector.get().sharedPreferences().getBoolean(KEY_PRINT_NOTIFICATION_ENABLED, true)
-        set(value) {
-            Injector.get().sharedPreferences().edit { putBoolean(KEY_PRINT_NOTIFICATION_ENABLED, value) }
-        }
-
+    private val isPrintNotificationEnabled get() = Injector.get().octoPreferences().isPrintNotificationEnabled
     override val itemId = MENU_ITEM_PRINT_NOTIFICATION
     override val groupId = ""
     override val order = 150
@@ -135,7 +121,7 @@ class PrintNotificationMenuItem : MenuItem {
     )
 
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
-        isPrintNotificationEnabled = !isPrintNotificationEnabled
+        Injector.get().octoPreferences().isPrintNotificationEnabled = !isPrintNotificationEnabled
 
         try {
             if (isPrintNotificationEnabled) {
@@ -151,12 +137,7 @@ class PrintNotificationMenuItem : MenuItem {
 }
 
 class KeepScreenOnDuringPrintMenuItem : MenuItem {
-    private var isKeepScreenOn
-        get() = Injector.get().sharedPreferences().getBoolean(KEY_KEEP_SCREEN_ON, false)
-        set(value) {
-            Injector.get().sharedPreferences().edit { putBoolean(KEY_KEEP_SCREEN_ON, value) }
-        }
-
+    private val isKeepScreenOn get() = Injector.get().octoPreferences().isKeepScreenOnDuringPrint
     override val itemId = MENU_ITEM_SCREEN_ON_DURING_PRINT
     override val groupId = ""
     override val order = 160
@@ -168,7 +149,7 @@ class KeepScreenOnDuringPrintMenuItem : MenuItem {
     )
 
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
-        isKeepScreenOn = !isKeepScreenOn
+        Injector.get().octoPreferences().isKeepScreenOnDuringPrint = !isKeepScreenOn
         return true
     }
 }

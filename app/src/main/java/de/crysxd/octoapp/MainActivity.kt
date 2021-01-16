@@ -1,6 +1,9 @@
 package de.crysxd.octoapp
 
+import android.annotation.SuppressLint
 import android.app.NotificationManager
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
@@ -60,7 +63,7 @@ class MainActivity : OctoActivity() {
         lastNavigation = savedInstanceState?.getInt(KEY_LAST_NAVIGATION, lastNavigation) ?: lastNavigation
         SignInInjector.get().octoprintRepository().instanceInformationFlow().asLiveData().observe(this, {
             Timber.i("Instance information received")
-            if (it != null) {
+            if (it != null && it.apiKey.isNotBlank()) {
                 if (lastNavigation < 0) {
                     navigate(R.id.action_connect_printer)
                 }
@@ -108,7 +111,15 @@ class MainActivity : OctoActivity() {
                 insets.consumeStableInsets()
             }
         }
+
+        if (!isTablet()) {
+            // Stop screen rotation on phones
+            @SuppressLint("SourceLockedOrientationActivity")
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
     }
+
+    private fun isTablet() = ((this.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE)
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

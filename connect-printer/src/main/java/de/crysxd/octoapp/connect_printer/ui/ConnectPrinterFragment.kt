@@ -45,10 +45,15 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
             Timber.i("$state")
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                val views = listOf(binding.buttonTurnOnPsu, binding.buttonTurnOffPsu, binding.textViewState, binding.textViewSubState)
+                val views = listOf(
+                    binding.psuTurnOffControls,
+                    binding.psuTurnOnControls,
+                    binding.psuUnvailableControls,
+                    binding.textViewState,
+                    binding.textViewSubState
+                )
                 val duration = view.animate().duration
                 if (firstStateUpdate) {
-                    handleUiStateUpdate(state)
                     firstStateUpdate = false
                 } else {
                     views.forEach { it.animate().alpha(0f).start() }

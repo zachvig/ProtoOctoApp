@@ -17,13 +17,22 @@ import de.crysxd.octoapp.octoprint.models.settings.Settings
 @Module
 class DataSourceModule {
 
+    private fun createGson() = GsonBuilder()
+        .registerTypeAdapter(Settings.PluginSettingsGroup::class.java, PluginSettingsDeserializer())
+        .create()
+
     @Provides
-    fun provideOctoPrintInstanceInformationDataSource(sharedPreferences: SharedPreferences): DataSource<OctoPrintInstanceInformationV2> =
+    fun provideLegacyOctoPrintInstanceInformationDataSource(sharedPreferences: SharedPreferences): DataSource<OctoPrintInstanceInformationV2> =
+        LocalLegacyOctoPrintInstanceInformationSource(
+            sharedPreferences,
+            createGson()
+        )
+
+    @Provides
+    fun provideOctoPrintInstanceInformationDataSource(sharedPreferences: SharedPreferences): DataSource<List<OctoPrintInstanceInformationV2>> =
         LocalOctoPrintInstanceInformationSource(
             sharedPreferences,
-            GsonBuilder()
-                .registerTypeAdapter(Settings.PluginSettingsGroup::class.java, PluginSettingsDeserializer())
-                .create()
+            createGson()
         )
 
     @Provides

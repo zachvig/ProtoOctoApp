@@ -14,7 +14,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ui.common.menu.main.KEY_PRINT_NOTIFICATION_ENABLED
 import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
@@ -37,7 +36,7 @@ class PrintNotificationService : Service() {
 
     companion object {
         const val NOTIFICATION_ID = 3249
-        private val isNotificationEnabled get() = Injector.get().sharedPreferences().getBoolean(KEY_PRINT_NOTIFICATION_ENABLED, true)
+        private val isNotificationEnabled get() = Injector.get().octoPreferences().isPrintNotificationEnabled
 
         fun start(context: Context) {
             if (isNotificationEnabled) {

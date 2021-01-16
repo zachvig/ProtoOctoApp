@@ -1,21 +1,21 @@
 package de.crysxd.octoapp.base.usecase
 
-import android.content.SharedPreferences
 import android.content.res.Resources
 import androidx.core.os.ConfigurationCompat
+import de.crysxd.octoapp.base.OctoPreferences
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
 
 class GetAppLanguageUseCase @Inject constructor(
-    private val sharedPreferences: SharedPreferences
+    private val octoPreferences: OctoPreferences
 ) : UseCase<Unit, GetAppLanguageUseCase.Result>() {
 
     override suspend fun doExecute(param: Unit, timber: Timber.Tree): Result {
         val confirmedLanguages = listOf("de") // If device language is listed here, it will be used as default
         val deviceLanguage = ConfigurationCompat.getLocales(Resources.getSystem().configuration)[0].language
-        val appLanguage = sharedPreferences.getString(KEY_APP_LANGUAGE, deviceLanguage.takeIf { confirmedLanguages.contains(it) } ?: "en")
+        val appLanguage = octoPreferences.appLanguage ?: deviceLanguage.takeIf { confirmedLanguages.contains(it) } ?: "en"
 
         timber.i("Device language: $deviceLanguage")
         timber.i("App language: $appLanguage")

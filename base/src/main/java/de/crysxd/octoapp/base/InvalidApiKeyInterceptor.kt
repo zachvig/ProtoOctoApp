@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base
 
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import timber.log.Timber
@@ -13,8 +14,10 @@ class InvalidApiKeyInterceptor(
         val response = chain.proceed(chain.request())
 
         if (response.code == 403) {
-            Timber.e("API key invalid, clearing data")
-            octoPrintRepository.clearOctoprintInstanceInformation(apiKeyWasInvalid = true)
+            runBlocking {
+                Timber.e("API key invalid, clearing data")
+                octoPrintRepository.reportActiveApiKeyInvalid()
+            }
         }
 
         return response

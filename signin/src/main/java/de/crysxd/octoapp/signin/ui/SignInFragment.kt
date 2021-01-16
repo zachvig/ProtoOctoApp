@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintSet
@@ -35,21 +36,27 @@ import de.crysxd.octoapp.base.ui.utils.ViewCompactor
 import de.crysxd.octoapp.octoprint.exceptions.BasicAuthRequiredException
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintHttpsException
 import de.crysxd.octoapp.signin.R
+import de.crysxd.octoapp.signin.databinding.FragmentSigninBinding
 import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInViewState
 import de.crysxd.octoapp.signin.troubleshoot.TroubleShootingFragmentArgs
 import de.crysxd.octoapp.signin.usecases.SignInUseCase.Warning.TooNewServerVersion
-import kotlinx.android.synthetic.main.fragment_signin.*
 import timber.log.Timber
 import java.net.URL
 import java.security.cert.Certificate
 
-class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen {
+class SignInFragment : BaseFragment(), InsetAwareScreen {
 
+    private lateinit var binding: FragmentSigninBinding
     override val viewModel: SignInViewModel by injectViewModel()
     private val networkViewModel: NetworkStateViewModel by injectViewModel(Injector.get().viewModelFactory())
     private var viewCompactor: ViewCompactor? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+        FragmentSigninBinding.inflate(layoutInflater, container, false).also {
+            binding = it
+        }.root
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,41 +69,41 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
                 noWifiLogged = true
                 OctoAnalytics.logEvent(OctoAnalytics.Event.SignInNoWifiWarningShown)
             }
-            inputWebUrl.actionTint = null
-            inputWebUrl.actionIcon = if (it !is NetworkStateViewModel.NetworkState.WifiConnected) R.drawable.ic_wifi_unavailable else 0
-            inputWebUrl.setOnActionListener {
+            binding.inputWebUrl.actionTint = null
+            binding.inputWebUrl.actionIcon = if (it !is NetworkStateViewModel.NetworkState.WifiConnected) R.drawable.ic_wifi_unavailable else 0
+            binding.inputWebUrl.setOnActionListener {
                 OctoAnalytics.logEvent(OctoAnalytics.Event.SignInNoWifiWarningTapped)
                 requireOctoActivity().showDialog(getString(R.string.no_wifi_warning_long))
             }
         }
 
-        buttonSignIn.setOnClickListener { signIn() }
-        buttonSignInWithMore.setOnClickListener { signIn() }
-        inputApiKey.editText.setImeActionLabel(getString(R.string.sign_in), KeyEvent.KEYCODE_ENTER)
-        inputApiKey.editText.setOnEditorActionListener { _, _, _ ->
+        binding.buttonSignIn.setOnClickListener { signIn() }
+        binding.buttonSignInWithMore.setOnClickListener { signIn() }
+        binding.inputApiKey.editText.setImeActionLabel(getString(R.string.sign_in), KeyEvent.KEYCODE_ENTER)
+        binding.inputApiKey.editText.setOnEditorActionListener { _, _, _ ->
             signIn()
             true
         }
 
-        manual.text = HtmlCompat.fromHtml("<a href=\"\">${getString(R.string.sign_in_manual_link)}</a>", HtmlCompat.FROM_HTML_MODE_LEGACY)
-        manual.setOnClickListener {
+        binding.manual.text = HtmlCompat.fromHtml("<a href=\"\">${getString(R.string.sign_in_manual_link)}</a>", HtmlCompat.FROM_HTML_MODE_LEGACY)
+        binding.manual.setOnClickListener {
             val uri = Uri.parse(Firebase.remoteConfig.getString("help_url_sign_in"))
             OctoAnalytics.logEvent(OctoAnalytics.Event.SignInHelpOpened)
             startActivity(Intent(Intent.ACTION_VIEW, uri))
         }
-        manual.movementMethod = LinkMovementMethod()
+        binding.manual.movementMethod = LinkMovementMethod()
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer(this::updateViewState))
 
         val preFill = viewModel.getPreFillInfo()
-        inputWebUrl.editText.setText(preFill.webUrl)
-        inputApiKey.editText.setText(preFill.apiKey)
+        binding.inputWebUrl.editText.setText(preFill.webUrl)
+        binding.inputApiKey.editText.setText(preFill.apiKey)
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(ReadQrCodeFragment.RESULT_API_KEY)?.observe(viewLifecycleOwner, {
-            inputApiKey.editText.setText(it)
+            binding.inputApiKey.editText.setText(it)
         })
 
-        inputApiKey.setOnActionListener {
+        binding.inputApiKey.setOnActionListener {
             OctoAnalytics.logEvent(OctoAnalytics.Event.QrCodeStarted)
             findNavController().navigate(R.id.actionReadQrCode)
         }
@@ -111,23 +118,23 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
         viewCompactor = ViewCompactor(view as ViewGroup, reset = {
             Timber.i("Reset")
             TransitionManager.beginDelayedTransition(requireView() as ViewGroup, InstantAutoTransition(quickTransition = true, explode = true))
-            full.applyTo(constraintLayout)
-            textViewTitle.setTextAppearanceCompat(R.style.OctoTheme_TextAppearance_Title_Large)
+            full.applyTo(binding.constraintLayout)
+            binding.textViewTitle.setTextAppearanceCompat(R.style.OctoTheme_TextAppearance_Title_Large)
         }, compact = {
             Timber.i("Compact $it")
 
             when (it) {
                 0 -> {
-                    compact0.applyTo(constraintLayout)
+                    compact0.applyTo(binding.constraintLayout)
                     true
                 }
                 1 -> {
-                    compact1.applyTo(constraintLayout)
+                    compact1.applyTo(binding.constraintLayout)
                     true
                 }
                 2 -> {
-                    compact2.applyTo(constraintLayout)
-                    textViewTitle.setTextAppearanceCompat(R.style.OctoTheme_TextAppearance_Title)
+                    compact2.applyTo(binding.constraintLayout)
+                    binding.textViewTitle.setTextAppearanceCompat(R.style.OctoTheme_TextAppearance_Title)
                     false
                 }
                 else -> false
@@ -168,8 +175,8 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
                     .setPositiveButton(android.R.string.ok, null)
                     .setNegativeButton(R.string.trouble_shooting) { _, _ ->
                         OctoAnalytics.logEvent(OctoAnalytics.Event.TroubleShootFromSignIn)
-                        inputWebUrl.editText.clearFocusAndHideSoftKeyboard()
-                        inputApiKey.editText.clearFocusAndHideSoftKeyboard()
+                        binding.inputWebUrl.editText.clearFocusAndHideSoftKeyboard()
+                        binding.inputApiKey.editText.clearFocusAndHideSoftKeyboard()
                         findNavController().navigate(
                             R.id.actionTroubleShoot,
                             TroubleShootingFragmentArgs(
@@ -190,27 +197,35 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
                     "web_url_invalid" to (res.result.webUrlErrorMessage != null),
                     "api_key_error" to res.result.apiKeyErrorMessage,
                     "web_url_error" to res.result.webUrlErrorMessage,
-                    "web_url_input" to inputWebUrl.editText.text.toString(),
+                    "web_url_input" to binding.inputWebUrl.editText.text.toString(),
                 )
             )
-            inputWebUrl.error = res.result.webUrlErrorMessage
-            inputApiKey.error = res.result.apiKeyErrorMessage
+            binding.inputWebUrl.error = res.result.webUrlErrorMessage
+            binding.inputApiKey.error = res.result.apiKeyErrorMessage
         } else {
-            inputWebUrl.error = null
-            inputApiKey.error = null
+            binding.inputWebUrl.error = null
+            binding.inputApiKey.error = null
         }
 
         if (res is SignInViewState.Loading) {
-            buttonSignIn.isEnabled = false
-            buttonSignIn.text = getString(R.string.loading)
+            binding.buttonMore.isEnabled = false
+            binding.buttonSignIn.isEnabled = false
+            binding.buttonSignIn.text = getString(R.string.loading)
+            binding.buttonSignInWithMore.isEnabled = false
+            binding.buttonSignInWithMore.text = getString(R.string.loading)
         } else {
-            buttonSignIn.isEnabled = true
-            buttonSignIn.text = getString(R.string.sign_in_to_octoprint)
+            binding.buttonMore.isEnabled = true
+            binding.buttonSignIn.isEnabled = true
+            binding.buttonSignIn.text = getString(R.string.sign_in_to_octoprint)
+            binding.buttonSignInWithMore.isEnabled = true
+            binding.buttonSignInWithMore.text = getString(R.string.sign_in_to_octoprint)
         }
 
         @Suppress("ControlFlowWithEmptyBody")
         if (res is SignInViewState.SignInSuccess) {
-            buttonSignIn.isEnabled = false
+            binding.buttonMore.isEnabled = false
+            binding.buttonSignIn.isEnabled = false
+            binding.buttonSignInWithMore.isEnabled = false
             OctoAnalytics.logEvent(OctoAnalytics.Event.SignInSuccess)
 
             // Show warning dialog if
@@ -238,8 +253,8 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
     private fun signIn(trustedCerts: List<Certificate>? = null) {
         viewModel.startSignIn(
             SignInInformation(
-                webUrl = inputWebUrl.editText.text.toString(),
-                apiKey = inputApiKey.editText.text.toString(),
+                webUrl = binding.inputWebUrl.editText.text.toString(),
+                apiKey = binding.inputApiKey.editText.text.toString(),
                 trustedCerts = trustedCerts
             )
         )
@@ -259,16 +274,16 @@ class SignInFragment : BaseFragment(R.layout.fragment_signin), InsetAwareScreen 
 
         val knownSignInInfo = viewModel.getKnownSignInInfo()
         val labels = knownSignInInfo.map { info -> info.webUrl }.toTypedArray()
-        buttonMore.isVisible = knownSignInInfo.isNotEmpty()
-        buttonSignIn.isVisible = !buttonMore.isVisible
-        buttonSignInWithMore.isVisible = buttonMore.isVisible
-        buttonMore.setOnClickListener {
+        binding.buttonMore.isVisible = knownSignInInfo.isNotEmpty()
+        binding.buttonSignIn.isVisible = !binding.buttonMore.isVisible
+        binding.buttonSignInWithMore.isVisible = binding.buttonMore.isVisible
+        binding.buttonMore.setOnClickListener {
             MaterialAlertDialogBuilder(it.context)
                 .setItems(labels) { _, position ->
                     val info = knownSignInInfo[position]
-                    inputWebUrl.editText.setText(info.webUrl)
-                    inputApiKey.editText.setText(info.apiKey)
-                    viewModel.completeSignIn(info)
+                    binding.inputWebUrl.editText.setText(info.webUrl)
+                    binding.inputApiKey.editText.setText(info.apiKey)
+                    signIn()
                 }
                 .setTitle("Reconnect to:")
                 .show()

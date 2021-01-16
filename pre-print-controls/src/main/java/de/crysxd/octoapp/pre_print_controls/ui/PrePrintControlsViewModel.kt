@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.pre_print_controls.ui
 
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
@@ -7,7 +8,8 @@ import de.crysxd.octoapp.base.usecase.ChangeFilamentUseCase
 import de.crysxd.octoapp.base.usecase.TurnOffPsuUseCase
 import de.crysxd.octoapp.base.usecase.execute
 import de.crysxd.octoapp.pre_print_controls.R
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class PrePrintControlsViewModel(
@@ -16,11 +18,10 @@ class PrePrintControlsViewModel(
     private val changeFilamentUseCase: ChangeFilamentUseCase
 ) : BaseViewModel() {
 
-    val instanceInformation = octoPrintRepository.instanceInformation
-
-    fun turnOffPsu() = GlobalScope.launch(coroutineExceptionHandler) {
-        //TODO turnOffPsuUseCase.execute()
-    }
+    val webCamSupported = octoPrintRepository.instanceInformationFlow()
+        .map { it?.isWebcamSupported == true }
+        .distinctUntilChanged()
+        .asLiveData()
 
     fun startPrint() {
         navContoller.navigate(R.id.action_start_print)

@@ -118,7 +118,6 @@
     <style name="OctoTheme.Widget.Button.Small.Card">
         <item name="android:stateListAnimator">@null</item>
         <item name="android:elevation">0dp</item>
-        <item name="android:translationY">6dp</item>
         <item name="shapeAppearance">@style/OctoTheme.ShapeAppearance.Button.Card</item>
     </style>
 

@@ -127,12 +127,13 @@
             android:text="@string/sign_in_to_octoprint"
             android:visibility="gone" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonMore"
             style="@style/OctoTheme.Widget.Button.More"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:icon="@drawable/ic_round_swap_horiz_24" />
 
     </LinearLayout>
 

@@ -5,7 +5,6 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
@@ -39,11 +38,11 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
             MenuBottomSheetFragment().show(childFragmentManager)
         }
 
-        viewModel.instanceInformation.observe(viewLifecycleOwner, Observer(this::installApplicableWidgets))
+        viewModel.webCamSupported.observe(viewLifecycleOwner, Observer(this::installApplicableWidgets))
         (widgetList.layoutManager as? StaggeredGridLayoutManager)?.spanCount = resources.getInteger(BaseR.integer.widget_list_span_count)
     }
 
-    private fun installApplicableWidgets(instance: OctoPrintInstanceInformationV2?) {
+    private fun installApplicableWidgets(webcamSupported: Boolean) {
         lifecycleScope.launchWhenCreated {
             if (widgetList.adapter == null) {
                 widgetList.adapter = adapter
@@ -53,7 +52,7 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
             widgets.add(ControlTemperatureWidget(this@PrePrintControlsFragment))
             widgets.add(MoveToolWidget(this@PrePrintControlsFragment))
 
-            if (instance?.isWebcamSupported == true) {
+            if (webcamSupported) {
                 widgets.add(WebcamWidget(this@PrePrintControlsFragment))
             }
 

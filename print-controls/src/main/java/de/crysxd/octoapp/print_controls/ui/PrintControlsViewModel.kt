@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.print_controls.ui
 
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.livedata.OctoTransformations.filter
@@ -8,6 +9,8 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class PrintControlsViewModel(
@@ -23,21 +26,12 @@ class PrintControlsViewModel(
         .filterEventsForMessageType(CurrentMessage::class.java)
         .filter { it.progress != null }
 
-    val instanceInformation = octoPrintRepository.instanceInformation
+    val webCamSupported = octoPrintRepository.instanceInformationFlow()
+        .map { it?.isWebcamSupported == true }
+        .distinctUntilChanged()
+        .asLiveData()
 
     fun togglePausePrint() = viewModelScope.launch(coroutineExceptionHandler) {
         togglePausePrintJobUseCase.execute()
-    }
-
-    fun cancelPrint() = viewModelScope.launch(coroutineExceptionHandler) {
-        cancelPrintJobUseCase.execute()
-    }
-
-    fun changeFilament() = viewModelScope.launch(coroutineExceptionHandler) {
-        changeFilamentUseCase.execute()
-    }
-
-    fun emergencyStop() = viewModelScope.launch(coroutineExceptionHandler) {
-        emergencyStopUseCase.execute()
     }
 }

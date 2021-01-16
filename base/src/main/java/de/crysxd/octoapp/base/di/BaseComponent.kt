@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import dagger.Component
+import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.SslKeyStoreHandler
 import de.crysxd.octoapp.base.di.modules.*
@@ -31,6 +32,7 @@ interface BaseComponent {
     fun context(): Context
     fun app(): Application
     fun sharedPreferences(): SharedPreferences
+    fun octoPreferences(): OctoPreferences
 
     // SslModule
     fun sslKeyStoreHandler(): SslKeyStoreHandler
