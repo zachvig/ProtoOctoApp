@@ -5,6 +5,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.common.menu.Menu
 import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
@@ -16,7 +17,7 @@ import de.crysxd.octoapp.base.ui.common.menu.main.MENU_ITEM_SIGN_OUT
 import de.crysxd.octoapp.base.ui.common.menu.main.MENU_ITEM_SWITCH_INSTANCE
 import kotlinx.android.parcel.Parcelize
 
-private var isQuickSwitchEnabled = false//BillingManager.isFeatureEnabled("quick_switch")
+private var isQuickSwitchEnabled = BillingManager.isFeatureEnabled("quick_switch")
 private val isAnyActive get() = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl != null
 
 @Parcelize
