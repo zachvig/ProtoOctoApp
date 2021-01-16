@@ -159,6 +159,9 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                 marginEnd = requireContext().resources.getDimension(R.dimen.margin_0_1).toInt()
             }
 
+            // Max lines
+            holder.binding.button.maxLines = if (item.enforceSingleLine) 1 else 2
+
             // Colors
             val background = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), item.style.backgroundColor))
             val foreground = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), item.style.highlightColor))

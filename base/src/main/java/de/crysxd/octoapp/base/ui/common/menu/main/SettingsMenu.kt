@@ -45,6 +45,7 @@ class SendFeedbackMenuItem : MenuItem {
     override val itemId = MENU_ITEM_SEND_FEEDBACK
     override val groupId = ""
     override val order = 100
+    override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_rate_review_24
 
@@ -59,6 +60,7 @@ class ChangeLanguageMenuItem : MenuItem {
     override val itemId = MENU_ITEM_CHANGE_LANGUAGE
     override val groupId = ""
     override val order = 101
+    override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_translate_24
 
@@ -75,6 +77,7 @@ class OpenOctoPrintMenuItem : MenuItem {
     override val itemId = MENU_ITEM_OPEN_OCTOPRINT
     override val groupId = ""
     override val order = 102
+    override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_open_in_browser_24
 
@@ -90,6 +93,7 @@ class NightThemeMenuItem : MenuItem {
     override val itemId = MENU_ITEM_NIGHT_THEME
     override val groupId = ""
     override val order = 103
+    override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = if (isManualDarkModeEnabled) R.drawable.ic_round_light_mode_24 else R.drawable.ic_round_dark_mode_24
 
@@ -114,6 +118,7 @@ class PrintNotificationMenuItem : MenuItem {
     override val itemId = MENU_ITEM_PRINT_NOTIFICATION
     override val groupId = ""
     override val order = 104
+    override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = if (isPrintNotificationEnabled) R.drawable.ic_round_notifications_off_24 else R.drawable.ic_round_notifications_active_24
 
@@ -142,6 +147,7 @@ class KeepScreenOnDuringPrintMenuItem : MenuItem {
     override val itemId = MENU_ITEM_SCREEN_ON_DURING_PRINT
     override val groupId = ""
     override val order = 105
+    override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = if (isKeepScreenOn) R.drawable.ic_round_brightness_low_24 else R.drawable.ic_round_brightness_high_24
 
@@ -160,6 +166,7 @@ class ChangeOctoPrintInstanceMenuItem : MenuItem {
     override val groupId = ""
     override val order = 106
     override val style = MenuItemStyle.Settings
+    override val enforceSingleLine = false
     override val icon = R.drawable.ic_round_swap_horiz_24
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_change_octoprint_instance)
