@@ -29,7 +29,7 @@ import timber.log.Timber
 import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
-const val NOT_LIVE_IF_NO_UPDATE_FOR_MS = 3000L
+const val NOT_LIVE_IF_NO_UPDATE_FOR_MS = 5000L
 
 class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
 
@@ -134,10 +134,6 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
             requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
             requireOctoActivity().octo.isVisible = false
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     private fun updateViewState(state: GcodePreviewViewModel.ViewState) {

@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.gcode.render
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.drawable.Drawable
@@ -13,12 +14,16 @@ import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.minus
 import de.crysxd.octoapp.base.BuildConfig
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.models.GcodeRenderContext
 import de.crysxd.octoapp.base.gcode.render.models.RenderStyle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.math.max
 import kotlin.system.measureTimeMillis
@@ -40,6 +45,12 @@ class GcodeRenderView @JvmOverloads constructor(
     private val minPrintHeadDiameter = resources.getDimension(R.dimen.gcode_render_view_print_head_size)
     private var scrollOffset = PointF(0f, 0f)
     private var zoom = 1f
+    private var useAsyncRender = false
+    private var asyncRenderCache: Bitmap? = null
+    private var asyncRenderBusy = false
+    private var pendingAsyncRender = false
+    private var renderScope: CoroutineScope? = null
+    var isAcceptTouchInput = true
     private var printBed: Drawable? = null
     var renderParams: RenderParams? = null
         set(value) {
@@ -76,11 +87,18 @@ class GcodeRenderView @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        scaleGestureDetector.onTouchEvent(event)
-        if (!scaleGestureDetector.isInProgress) {
-            gestureDetector.onTouchEvent(event)
+        if (isAcceptTouchInput) {
+            scaleGestureDetector.onTouchEvent(event)
+            if (!scaleGestureDetector.isInProgress) {
+                gestureDetector.onTouchEvent(event)
+            }
         }
         return true
+    }
+
+    fun enableAsyncRender(coroutineScope: CoroutineScope) {
+        renderScope = coroutineScope
+        useAsyncRender = true
     }
 
     private fun enforceScrollLimits(params: RenderParams) {
@@ -119,20 +137,84 @@ class GcodeRenderView @JvmOverloads constructor(
         }
     }
 
+    override fun invalidate() {
+        if (useAsyncRender) {
+            renderAsync()
+        } else {
+            super.invalidate()
+        }
+    }
+
     override fun onDraw(canvas: Canvas) = measureTimeMillis {
         super.onDraw(canvas)
+
+        // Skip draw without params
+        val params = renderParams ?: return
+
+        // Enforce scroll limits
+        enforceScrollLimits(params)
 
         // Check HW acceleration
         if (!canvas.isHardwareAccelerated && BuildConfig.DEBUG) {
             Timber.w("Missing hardware acceleration!")
         }
 
+        if (useAsyncRender) {
+            asyncRenderCache?.let {
+                canvas.drawBitmap(it, 0f, 0f, null)
+            }
+        } else {
+            render(canvas)
+        }
+    }.let {
+        if (BuildConfig.DEBUG) {
+            // Do not log in non-debug builds to increase performance
+            Timber.v("Draw took ${it}ms")
+        }
+    }
+
+    private fun renderAsync(): Unit = measureTimeMillis {
+        if (width == 0 || height == 0 || asyncRenderBusy) {
+            // Trigger render again after we are done
+            pendingAsyncRender = true
+            return
+        }
+        asyncRenderBusy = true
+
+        renderScope?.launch(Dispatchers.IO) {
+            // Create bitmap
+            val bitmap = asyncRenderCache?.takeIf { it.height == height && it.width == width }
+                ?: Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            asyncRenderCache = bitmap
+
+            // Render
+            bitmap.applyCanvas {
+                render(this)
+            }
+
+            // We are done. Paint to view
+            post {
+                super.invalidate()
+                asyncRenderBusy = false
+                if (pendingAsyncRender) {
+                    pendingAsyncRender = false
+                    renderAsync()
+                }
+            }
+        } ?: run {
+            asyncRenderBusy = false
+        }
+    }.let {
+        if (BuildConfig.DEBUG) {
+            // Do not log in non-debug builds to increase performance
+            Timber.v("Async render took ${it}ms")
+        }
+    }
+
+    private fun render(canvas: Canvas) {
         // Skip draw without params
         val params = renderParams ?: return
         val style = params.renderStyle
-
-        // Enforce scroll limits
-        enforceScrollLimits(params)
 
         // Calc offsets, center render if smaller than view
         val backgroundWidth = paddedWidth.toFloat()
@@ -196,11 +278,6 @@ class GcodeRenderView @JvmOverloads constructor(
                 style.printHeadPaint
             )
 
-        }
-    }.let {
-        if (BuildConfig.DEBUG) {
-            // Do not log in non-debug builds to increase performance
-            Timber.v("Render took ${it}ms")
         }
     }
 

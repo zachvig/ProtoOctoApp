@@ -43,7 +43,7 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
-const val NOT_LIVE_IF_NO_UPDATE_FOR_MS = 3000L
+const val NOT_LIVE_IF_NO_UPDATE_FOR_MS = 5000L
 private const val KEY_HIDDEN_AT = "gcode_preview_hidden_at"
 private val HIDDEN_FOR_MILLIS = TimeUnit.DAYS.toMillis(30L)
 
@@ -206,6 +206,8 @@ class GcodePreviewWidget(parent: Fragment) : OctoWidget(parent) {
         view.layer.text = requireContext().getString(de.crysxd.octoapp.base.R.string.x_of_y, renderContext.layerNumber, renderContext.layerCount)
         view.layerPorgess.text = String.format("%.0f %%", renderContext.layerProgress * 100)
 
+        view.renderView.isAcceptTouchInput = false
+        view.renderView.enableAsyncRender(parent.viewLifecycleOwner.lifecycleScope)
         view.renderView.renderParams = GcodeRenderView.RenderParams(
             renderContext = state.renderContext!!,
             renderStyle = state.renderStyle!!,
