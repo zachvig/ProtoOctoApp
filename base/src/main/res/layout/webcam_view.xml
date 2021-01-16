@@ -143,7 +143,7 @@
             style="@style/OctoTheme.Widget.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_3"
+            android:layout_marginBottom="@dimen/margin_2"
             android:text="@string/trouble_shooting"
             android:textAppearance="@style/OctoTheme.TextAppearance"
             android:textColor="@color/text_colored_background" />
