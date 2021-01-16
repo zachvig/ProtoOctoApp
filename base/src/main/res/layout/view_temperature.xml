@@ -1,63 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     style="@style/OctoTheme.Widget.Card">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:id="@+id/root"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textViewComponentName"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_2"
+            android:layout_marginHorizontal="@dimen/margin_2"
             android:textAppearance="@style/OctoTheme.TextAppearance.Label"
             android:textColor="@color/temperature_text"
-            app:layout_constraintEnd_toEndOf="@+id/textViewTemperature"
-            app:layout_constraintStart_toStartOf="@+id/textViewTemperature"
-            app:layout_constraintTop_toTopOf="parent"
             tools:text="Hotend" />
 
         <TextView
             android:id="@+id/textViewTemperature"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_2"
-            android:layout_marginEnd="@dimen/margin_2"
+            android:layout_marginHorizontal="@dimen/margin_2"
             android:textAppearance="@style/OctoTheme.TextAppearance.LargeData"
             android:textColor="@color/temperature_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewComponentName"
             tools:text="200 °C" />
 
         <TextView
             android:id="@+id/textViewTarget"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/OctoTheme.TextAppearance.Label"
             android:textColor="@color/temperature_text"
-            app:layout_constraintEnd_toEndOf="@+id/textViewTemperature"
-            app:layout_constraintStart_toStartOf="@+id/textViewTemperature"
-            app:layout_constraintTop_toBottomOf="@+id/textViewTemperature"
+            android:layout_marginHorizontal="@dimen/margin_2"
+            android:layout_marginBottom="@dimen/margin_1"
             tools:text="200 °C target " />
 
         <Button
             style="@style/OctoTheme.Widget.Button.Small.Card"
             android:id="@+id/button"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_1"
-            android:text="@string/set"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewTarget" />
+            android:text="@string/set" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.cardview.widget.CardView>
