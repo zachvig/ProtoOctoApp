@@ -1,7 +1,8 @@
 package de.crysxd.octoapp.base.ui.common.menu.main
 
 import de.crysxd.octoapp.base.ui.common.menu.MenuItem
-import kotlin.reflect.KClass
+import de.crysxd.octoapp.base.ui.common.menu.switchprinter.AddInstanceMenuItem
+import de.crysxd.octoapp.base.ui.common.menu.switchprinter.SwitchInstanceMenuItem
 
 const val MENU_ITEM_SUPPORT_OCTOAPP = "main___support_octoapp"
 const val MENU_ITEM_SETTINGS_MENU = "main___settings_menu"
@@ -18,6 +19,10 @@ const val MENU_ITEM_CANCEL_PRINT = "printer___cancel_print"
 const val MENU_ITEM_EMERGENCY_STOP = "printer___cemergency_stop"
 const val MENU_ITEM_TURN_PSU_OFF = "printer___turn_psu_off"
 const val MENU_ITEM_POWER_CONTROLS = "printer___open_power_controls"
+const val MENU_ITEM_SIGN_OUT = "switch___sign_out"
+const val MENU_ITEM_SWITCH_INSTANCE = "switch___to_instance/"
+const val MENU_ITEM_ADD_INSTANCE = "switch___add_instance"
+const val MENU_ITEM_ENABLE_QUICK_SWITCH = "switch___enable_quick_switch"
 
 
 class MenuItemLibrary {
@@ -38,7 +43,12 @@ class MenuItemLibrary {
         MENU_ITEM_NIGHT_THEME to NightThemeMenuItem::class,
         MENU_ITEM_PRINT_NOTIFICATION to PrintNotificationMenuItem::class,
         MENU_ITEM_SCREEN_ON_DURING_PRINT to KeepScreenOnDuringPrintMenuItem::class,
+        MENU_ITEM_ADD_INSTANCE to AddInstanceMenuItem::class,
     )
 
-    operator fun get(itemId: String): KClass<out MenuItem>? = map[itemId]
+    operator fun get(itemId: String): MenuItem? = when {
+        map.containsKey(itemId) -> map[itemId]?.java?.constructors?.firstOrNull()?.newInstance() as? MenuItem
+        itemId.startsWith(MENU_ITEM_SWITCH_INSTANCE) -> SwitchInstanceMenuItem.forItemId(itemId)
+        else -> null
+    }
 }

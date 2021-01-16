@@ -24,11 +24,9 @@ class MainMenu : Menu {
         val library = MenuItemLibrary()
         val pinnedItems = Injector.get().pinnedMenuItemsRepository().getPinnedMenuItems().mapNotNull {
             library[it]
-        }.mapNotNull {
-            it.java.constructors[0].newInstance() as? MenuItem
         }
 
-        return listOf(base, pinnedItems).flatten().sortedBy { it.order }
+        return listOf(base, pinnedItems).flatten()
     }
 }
 

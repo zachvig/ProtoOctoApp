@@ -80,7 +80,7 @@
     </entry>
     <entry>
         <key>premium_features</key>
-        <value>gcode_preview,hls_webcam</value>
+        <value>gcode_preview,hls_webcam,quick_switch</value>
     </entry>
     <entry>
         <key>web_socket_ping_pong_timeout_ms</key>

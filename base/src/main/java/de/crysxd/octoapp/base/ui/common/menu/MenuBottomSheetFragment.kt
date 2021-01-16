@@ -107,7 +107,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     runBlocking {
                         it.isVisible(currentDestination)
                     }
-                } ?: emptyList()
+                }?.sortedWith(compareBy({ it.order }, { it.itemId })) ?: emptyList()
                 notifyDataSetChanged()
             }
 
