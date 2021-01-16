@@ -36,6 +36,7 @@ class WebcamViewModel(
     val uiState = uiStateMediator.map { it }
     private val settingsUpdatedLiveData = octoPrintProvider.eventFlow("webcam")
         .filter { it is Event.MessageReceived && it.message is EventMessage.SettingsUpdated }
+        .debounce(1000)
         .asLiveData()
 
     init {

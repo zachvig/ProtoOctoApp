@@ -97,6 +97,7 @@ class WebcamWidget(
 
     private fun openFullscreen() {
         FullscreenWebcamActivity.start(parent.requireActivity())
+        recordInteraction()
     }
 
     private fun applyAspectRatio(aspectRation: String) {
