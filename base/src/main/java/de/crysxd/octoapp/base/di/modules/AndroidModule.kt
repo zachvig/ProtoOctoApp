@@ -7,6 +7,7 @@ import androidx.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
 import de.crysxd.octoapp.base.OctoPreferences
+import de.crysxd.octoapp.base.di.BaseScope
 
 @Module
 open class AndroidModule(private val app: Application) {
@@ -22,6 +23,7 @@ open class AndroidModule(private val app: Application) {
         PreferenceManager.getDefaultSharedPreferences(context)
 
     @Provides
+    @BaseScope
     open fun provideOctoPreferences(sharedPreferences: SharedPreferences) =
         OctoPreferences(sharedPreferences)
 }
