@@ -20,7 +20,7 @@ class OctoPrintRepository(
     init {
         // Upgrade from legacy to new data source
         legacyDataSource.get()?.let {
-            setActiveInstance(it)
+            setActive(it)
             legacyDataSource.store(null)
         }
 
@@ -28,11 +28,6 @@ class OctoPrintRepository(
     }
 
     fun instanceInformationFlow() = instanceInformationChannel.asFlow().distinctUntilChanged()
-
-    fun setActiveInstance(info: OctoPrintInstanceInformationV2) {
-        octoPreferences.activeInstanceWebUrl = info.webUrl
-        storeOctoprintInstanceInformation(info.webUrl, info)
-    }
 
     fun getActiveInstanceSnapshot() = instanceInformationChannel.valueOrNull
 
