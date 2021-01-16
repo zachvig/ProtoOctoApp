@@ -1,6 +1,9 @@
 package de.crysxd.octoapp
 
+import android.annotation.SuppressLint
 import android.app.NotificationManager
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
@@ -108,7 +111,15 @@ class MainActivity : OctoActivity() {
                 insets.consumeStableInsets()
             }
         }
+
+        if (!isTablet()) {
+            // Stop screen rotation on phones
+            @SuppressLint("SourceLockedOrientationActivity")
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
     }
+
+    private fun isTablet() = ((this.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE)
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
