@@ -33,7 +33,20 @@
         android:layout_marginTop="@dimen/margin_2"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_live"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/renderControls"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/slow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_2"
+        android:layout_marginEnd="@dimen/margin_0_1"
+        android:importantForAccessibility="no"
+        android:alpha="0"
+        android:src="@drawable/ic_slow"
+        app:layout_constraintEnd_toStartOf="@+id/live"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
@@ -324,7 +337,7 @@
         android:layout_height="wrap_content"
         android:visibility="visible"
         app:constraint_referenced_ids="preview,textViewDisabledTitle,textViewDisbaledDescription,buttonEnableFeature"
-        tools:visibility="visible" />
+        tools:visibility="gone" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/largeFileGroup"
@@ -355,7 +368,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="titleLayer,layerHeight,layerNumber,layerProgress,titleLayerProgress,layerSeekBar,layerProgressSeekBar,background,renderView,renderControls,live"
-        tools:visibility="gone" />
+        app:constraint_referenced_ids="slow,titleLayer,layerHeight,layerNumber,layerProgress,titleLayerProgress,layerSeekBar,layerProgressSeekBar,background,renderView,renderControls,live"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

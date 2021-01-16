@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.PointF
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -32,6 +33,7 @@ private const val MIN_ZOOM = 1f
 private const val MAX_ZOOM = 10f
 private const val ZOOM_SPEED = 0.2f
 private const val DOUBLE_TAP_ZOOM = 5f
+private const val ASYNC_RENDER_RECOMMENDED_THRESHOLD_MS = 20
 
 class GcodeRenderView @JvmOverloads constructor(
     context: Context,
@@ -45,8 +47,12 @@ class GcodeRenderView @JvmOverloads constructor(
     private val minPrintHeadDiameter = resources.getDimension(R.dimen.gcode_render_view_print_head_size)
     private var scrollOffset = PointF(0f, 0f)
     private var zoom = 1f
-    private var useAsyncRender = false
+    var useAsyncRender = false
+        private set
     private var asyncRenderCache: Bitmap? = null
+    private var asyncRenderResult: Bitmap? = null
+    var asyncRenderRecommended = false
+        private set
     private var asyncRenderBusy = false
     private var pendingAsyncRender = false
     private var renderScope: CoroutineScope? = null
@@ -116,8 +122,7 @@ class GcodeRenderView @JvmOverloads constructor(
             }
             it.interpolator = DecelerateInterpolator()
             it.duration = 150
-            it.start()
-        }
+        }.start()
     }
 
     private fun zoom(focusX: Float, focusY: Float, newZoom: Float) {
@@ -160,7 +165,7 @@ class GcodeRenderView @JvmOverloads constructor(
         }
 
         if (useAsyncRender) {
-            asyncRenderCache?.let {
+            asyncRenderResult?.let {
                 canvas.drawBitmap(it, 0f, 0f, null)
             }
         } else {
@@ -170,6 +175,10 @@ class GcodeRenderView @JvmOverloads constructor(
         if (BuildConfig.DEBUG) {
             // Do not log in non-debug builds to increase performance
             Timber.v("Draw took ${it}ms")
+        }
+
+        if (it > ASYNC_RENDER_RECOMMENDED_THRESHOLD_MS) {
+            asyncRenderRecommended = true
         }
     }
 
@@ -185,16 +194,31 @@ class GcodeRenderView @JvmOverloads constructor(
             // Create bitmap
             val bitmap = asyncRenderCache?.takeIf { it.height == height && it.width == width }
                 ?: Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+
             asyncRenderCache = bitmap
 
-            // Render
+
+            // Render. This bitmap may be blank when we need to draw to the view.
+            bitmap.eraseColor(Color.TRANSPARENT)
             bitmap.applyCanvas {
                 render(this)
             }
 
             // We are done. Paint to view
             post {
+                // Flush. This bitmap is always ready to be drawn.
+                val result = asyncRenderResult?.takeIf { it.height == height && it.width == width }
+                    ?: Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                asyncRenderResult = result
+                result.eraseColor(Color.TRANSPARENT)
+                result.applyCanvas {
+                    drawBitmap(bitmap, 0f, 0f, null)
+                }
+
+                // Invalidate to draw to view
                 super.invalidate()
+
+                // New data came in while we were busy? Trigger next round
                 asyncRenderBusy = false
                 if (pendingAsyncRender) {
                     pendingAsyncRender = false

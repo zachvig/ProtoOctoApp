@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -213,6 +214,14 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
         layerNumber.text = getString(R.string.x_of_y, layerSeekBar.progress + 1, state.renderContext.layerCount)
         layerHeight.text = getString(R.string.x_mm, layerHeightMm)
         layerProgress.text = String.format("%.0f %%", layerProgressPercent * 100)
+
+        // Only switch to async render if the view recommends it.
+        // This way we have smooth scrolling as long as possible but never block the UI thread
+        if (renderView.asyncRenderRecommended && !renderView.useAsyncRender) {
+            slow.animate().alpha(1f).start()
+            Toast.makeText(requireContext(), "Slow", Toast.LENGTH_SHORT).show()
+            renderView.enableAsyncRender(viewLifecycleOwner.lifecycleScope)
+        }
 
         renderView.renderParams = GcodeRenderView.RenderParams(
             renderContext = state.renderContext,
