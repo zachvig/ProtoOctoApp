@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.signin.troubleshoot
+package de.crysxd.octoapp.base.ui.common.troubleshoot
 
 sealed class TroubleShootingResult {
     data class Running(val step: Int, val totalSteps: Int, val status: String) : TroubleShootingResult()

@@ -18,12 +18,12 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:adjustViewBounds="true"
+            android:importantForAccessibility="no"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:src="@tools:sample/backgrounds/scenic"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:importantForAccessibility="no" />
+            tools:src="@tools:sample/backgrounds/scenic" />
 
         <SurfaceView
             android:id="@+id/hlsSurface"
@@ -95,10 +95,10 @@
         android:layout_height="match_parent"
         android:layout_margin="@dimen/margin_2"
         android:gravity="center"
-        android:visibility="gone"
         android:text="@string/please_configure_your_webcam_in_octoprint"
         android:textAppearance="@style/OctoTheme.TextAppearance.Title"
         android:textColor="@color/text_colored_background"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -133,17 +133,27 @@
             android:layout_marginLeft="@dimen/margin_2"
             android:layout_marginTop="@dimen/margin_0"
             android:layout_marginRight="@dimen/margin_2"
-            android:layout_marginBottom="@dimen/margin_2"
             android:gravity="center"
             android:textAppearance="@style/OctoTheme.TextAppearance.Label"
             android:textColor="@color/text_colored_background"
             tools:text="http://mywebcam.com/stream" />
 
         <Button
+            android:id="@+id/buttonTroubleShoot"
+            style="@style/OctoTheme.Widget.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_3"
+            android:text="@string/trouble_shooting"
+            android:textAppearance="@style/OctoTheme.TextAppearance"
+            android:textColor="@color/text_colored_background" />
+
+        <Button
             android:id="@+id/buttonReconnect"
             style="@style/OctoTheme.Widget.Button.Small.Secondary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_1"
             android:text="@string/reconnect"
             android:textColor="@color/text_colored_background" />
 

@@ -6,6 +6,15 @@
     app:startDestination="@id/loginFragment">
 
     <include app:graph="@navigation/purchase_flow_nav_graph" />
+    <include app:graph="@navigation/trouble_shoot_nav_graph" />
+
+    <action
+        android:id="@+id/action_trouble_shoot"
+        app:destination="@id/trouble_shoot_nav_graph"
+        app:enterAnim="@anim/enterAnim"
+        app:exitAnim="@anim/exitAnim"
+        app:popEnterAnim="@anim/popEnterAnim"
+        app:popExitAnim="@anim/popExitAnim" />
 
     <action
         android:id="@+id/action_show_purchase_flow"
@@ -27,27 +36,12 @@
             app:exitAnim="@anim/exitAnim"
             app:popEnterAnim="@anim/popEnterAnim"
             app:popExitAnim="@anim/popExitAnim" />
-        <action
-            android:id="@+id/actionTroubleShoot"
-            app:destination="@id/troubleShootingFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/readQrCodeFragment"
         android:name="de.crysxd.octoapp.signin.ui.ReadQrCodeFragment"
-        tools:layout="@layout/fragment_read_qr_code"
-        android:label="ReadQrCodeFragment" />
-    <fragment
-        android:id="@+id/troubleShootingFragment"
-        android:name="de.crysxd.octoapp.signin.troubleshoot.TroubleShootingFragment"
-        android:label="TroubleShootingFragment"
-        tools:layout="@layout/fragment_trouble_shooting">>
-        <argument
-            android:name="baseUrl"
-            app:argType="android.net.Uri" />
-        <argument
-            android:name="apiKey"
-            app:argType="string" />
-    </fragment>
+        android:label="ReadQrCodeFragment"
+        tools:layout="@layout/fragment_read_qr_code" />
 
 </navigation>

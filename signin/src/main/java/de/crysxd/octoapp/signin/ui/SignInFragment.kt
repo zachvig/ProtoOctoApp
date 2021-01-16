@@ -30,6 +30,7 @@ import de.crysxd.octoapp.base.ui.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.common.menu.switchprinter.SwitchOctoPrintMenu
+import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootingFragmentArgs
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.ext.setTextAppearanceCompat
@@ -42,7 +43,6 @@ import de.crysxd.octoapp.signin.databinding.FragmentSigninBinding
 import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInViewState
-import de.crysxd.octoapp.signin.troubleshoot.TroubleShootingFragmentArgs
 import de.crysxd.octoapp.signin.usecases.SignInUseCase.Warning.TooNewServerVersion
 import timber.log.Timber
 import java.net.URL
@@ -180,7 +180,7 @@ class SignInFragment : BaseFragment(), InsetAwareScreen {
                         binding.inputWebUrl.editText.clearFocusAndHideSoftKeyboard()
                         binding.inputApiKey.editText.clearFocusAndHideSoftKeyboard()
                         findNavController().navigate(
-                            R.id.actionTroubleShoot,
+                            R.id.action_trouble_shoot,
                             TroubleShootingFragmentArgs(
                                 baseUrl = res.baseUrl,
                                 apiKey = res.apiKey

@@ -28,17 +28,10 @@ class MjpegConnection(private val streamUrl: String) {
             emit(MjpegSnapshot.Loading)
 
             // Connect
-            val (boundaryPattern, input) = try {
-                val connection = connect()
-                val boundaryPattern = createHeaderBoundaryPattern(connection)
-                val input = BufferedInputStream(connection.inputStream)
-                Timber.i("Connected to $streamUrl")
-                Pair(boundaryPattern, input)
-            } catch (e: Exception) {
-                emit(MjpegSnapshot.Error)
-                delay(RECONNECT_TIMEOUT_MS)
-                continue
-            }
+            val connection = connect()
+            val boundaryPattern = createHeaderBoundaryPattern(connection)
+            val input = BufferedInputStream(connection.inputStream)
+            Timber.i("Connected to $streamUrl")
 
             // Read frames
             val buffer = ByteArray(4096)
@@ -93,7 +86,7 @@ class MjpegConnection(private val streamUrl: String) {
         Timber.i("Stopped stream")
     }.onStart {
         Timber.i("Starting stream")
-    }.retry {
+    }.retry(3) {
         Timber.e(it)
         delay(RECONNECT_TIMEOUT_MS)
         true
@@ -151,7 +144,6 @@ class MjpegConnection(private val streamUrl: String) {
 
     sealed class MjpegSnapshot {
         object Loading : MjpegSnapshot()
-        object Error : MjpegSnapshot()
         data class Frame(val frame: Bitmap) : MjpegSnapshot()
     }
 }

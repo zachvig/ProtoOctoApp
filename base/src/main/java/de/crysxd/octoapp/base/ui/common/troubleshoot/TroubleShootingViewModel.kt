@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.signin.troubleshoot
+package de.crysxd.octoapp.base.ui.common.troubleshoot
 
 import android.content.Context
 import android.net.Uri
@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.signin.R
+import de.crysxd.octoapp.base.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -24,9 +24,10 @@ class TroubleShootViewModel : ViewModel() {
 
     private val troubleShootingResult = MutableLiveData<TroubleShootingResult>()
 
-    fun runTest(context: Context, baseUrl: Uri, apiKey: String): LiveData<TroubleShootingResult> {
+    fun runTest(context: Context, baseUrl: Uri, apiKey: String?): LiveData<TroubleShootingResult> {
         if (troubleShootingResult.value !is TroubleShootingResult.Running) {
-            troubleShootingResult.postValue(TroubleShootingResult.Running(0, 4, ""))
+            val totalSteps = if (apiKey != null) 4 else 3
+            troubleShootingResult.postValue(TroubleShootingResult.Running(0, totalSteps, ""))
 
             viewModelScope.launch(Dispatchers.IO) {
                 Timber.i("Running checks")
@@ -35,17 +36,19 @@ class TroubleShootViewModel : ViewModel() {
 
                 val result =
                     runAtLeast {
-                        troubleShootingResult.postValue(TroubleShootingResult.Running(1, 4, context.getString(R.string.step_1_description)))
+                        troubleShootingResult.postValue(TroubleShootingResult.Running(1, totalSteps, context.getString(R.string.step_1_description)))
                         runDnsTest(baseUrl)
                     } ?: runAtLeast {
-                        troubleShootingResult.postValue(TroubleShootingResult.Running(2, 4, context.getString(R.string.step_2_description)))
+                        troubleShootingResult.postValue(TroubleShootingResult.Running(2, totalSteps, context.getString(R.string.step_2_description)))
                         runHostReachableTest(baseUrl)
                     } ?: runAtLeast {
-                        troubleShootingResult.postValue(TroubleShootingResult.Running(3, 4, context.getString(R.string.step_3_description)))
+                        troubleShootingResult.postValue(TroubleShootingResult.Running(3, totalSteps, context.getString(R.string.step_3_description)))
                         runPortOpenTest(baseUrl)
-                    } ?: runAtLeast {
-                        troubleShootingResult.postValue(TroubleShootingResult.Running(4, 4, context.getString(R.string.step_4_description)))
-                        runConnectionTest(baseUrl)
+                    } ?: apiKey?.let {
+                        runAtLeast {
+                            troubleShootingResult.postValue(TroubleShootingResult.Running(4, totalSteps, context.getString(R.string.step_4_description)))
+                            runConnectionTest(baseUrl)
+                        }
                     } ?: TroubleShootingResult.Success
 
                 troubleShootingResult.postValue(result)

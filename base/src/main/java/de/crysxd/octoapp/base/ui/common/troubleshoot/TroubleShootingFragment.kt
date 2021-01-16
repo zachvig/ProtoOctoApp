@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.signin.troubleshoot
+package de.crysxd.octoapp.base.ui.common.troubleshoot
 
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
@@ -14,14 +14,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
-import de.crysxd.octoapp.signin.R
-import de.crysxd.octoapp.signin.di.injectViewModel
 import kotlinx.android.synthetic.main.fragment_trouble_shooting.*
 
-class TroubleShootingFragment : Fragment(R.layout.fragment_trouble_shooting) {
+class TroubleShootingFragment : Fragment(R.layout.trouble_shooting_fragment) {
 
     private val viewModel: TroubleShootViewModel by injectViewModel()
 

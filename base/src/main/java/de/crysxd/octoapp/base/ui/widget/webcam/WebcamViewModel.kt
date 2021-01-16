@@ -76,10 +76,6 @@ class WebcamViewModel(
                             .map {
                                 when (it) {
                                     is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading
-                                    is MjpegConnection.MjpegSnapshot.Error -> UiState.Error(
-                                        isManualReconnect = false,
-                                        streamUrl = webcamSettings.streamUrl
-                                    )
                                     is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
                                         frame = applyTransformations(it.frame, webcamSettings),
                                         aspectRation = webcamSettings.streamRatio
@@ -87,6 +83,15 @@ class WebcamViewModel(
                                 }
                             }
                             .flowOn(Dispatchers.Default)
+                            .catch {
+                                Timber.e(it)
+                                emit(
+                                    UiState.Error(
+                                        isManualReconnect = true,
+                                        streamUrl = webcamSettings.streamUrl
+                                    )
+                                )
+                            }
                             .collect {
                                 emit(it)
                             }

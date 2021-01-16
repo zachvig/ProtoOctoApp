@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/trouble_shoot_nav_graph"
+    app:startDestination="@+id/troubleShootingFragment">
+
+    <fragment
+        android:id="@+id/troubleShootingFragment"
+        android:name="de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootingFragment"
+        android:label="TroubleShootingFragment"
+        tools:layout="@layout/fragment_trouble_shooting">>
+        <argument
+            android:name="baseUrl"
+            app:argType="android.net.Uri" />
+        <argument
+            android:name="apiKey"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+
+</navigation>

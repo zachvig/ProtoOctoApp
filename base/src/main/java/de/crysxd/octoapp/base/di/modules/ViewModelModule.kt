@@ -23,6 +23,7 @@ import de.crysxd.octoapp.base.ui.common.gcodeshortcut.GcodeShortcutEditViewModel
 import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetViewModel
 import de.crysxd.octoapp.base.ui.common.power.PowerControlsViewModel
 import de.crysxd.octoapp.base.ui.common.terminal.TerminalViewModel
+import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootViewModel
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlBedTemperatureWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlToolTemperatureWidgetViewModel
@@ -36,6 +37,12 @@ open class ViewModelModule {
     @Provides
     fun bindViewModelFactory(creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>): BaseViewModelFactory =
         BaseViewModelFactory(creators)
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(TroubleShootViewModel::class)
+    open fun provideTroubleShootViewModel(): ViewModel =
+        TroubleShootViewModel()
 
     @Provides
     @IntoMap

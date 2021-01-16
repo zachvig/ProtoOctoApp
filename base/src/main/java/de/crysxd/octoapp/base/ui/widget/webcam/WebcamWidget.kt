@@ -35,8 +35,8 @@ class WebcamWidget(
     override fun getAnalyticsName() = "webcam"
 
     @SuppressLint("ClickableViewAccessibility")
-    override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup) = inflater.suspendedInflate(R.layout.widget_webcam, container, false) as ViewGroup
-
+    override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup) =
+        inflater.suspendedInflate(R.layout.widget_webcam, container, false) as ViewGroup
 
     override fun onViewCreated(view: View) {
         applyAspectRatio(viewModel.getInitialAspectRatio())
@@ -50,6 +50,7 @@ class WebcamWidget(
             }
         }
         webcamView.onFullscreenClicked = ::openFullscreen
+        webcamView.supportsToubleShooting = true
         webcamView.onScaleToFillChanged = {
             viewModel.storeScaleType(
                 if (webcamView.scaleToFill) {

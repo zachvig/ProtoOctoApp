@@ -18,6 +18,7 @@ import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.navigation.findNavController
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import com.google.android.exoplayer2.*
@@ -26,6 +27,7 @@ import com.google.android.exoplayer2.source.LoadEventInfo
 import com.google.android.exoplayer2.source.MediaLoadData
 import com.google.android.exoplayer2.video.VideoListener
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootingFragmentArgs
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import kotlinx.android.synthetic.main.view_webcam.view.*
 import kotlinx.coroutines.Job
@@ -51,6 +53,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
     private var transitionActive = false
     private var nativeAspectRation: Point? = null
+    var supportsToubleShooting = false
     var scaleToFill: Boolean = false
         set(value) {
             field = value
@@ -144,6 +147,13 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 errorTitle.text = context.getString(R.string.connection_failed)
                 errorDescription.text = newState.streamUrl
                 buttonReconnect.text = context.getString(R.string.reconnect)
+                buttonTroubleShoot.isVisible = supportsToubleShooting
+                buttonTroubleShoot.setOnClickListener {
+                    findNavController().navigate(
+                        R.id.action_trouble_shoot,
+                        TroubleShootingFragmentArgs(Uri.parse(newState.streamUrl), null).toBundle()
+                    )
+                }
             }
             is WebcamState.HlsStreamReady -> displayHlsStream(newState)
             is WebcamState.MjpegFrameReady -> displayMjpegFrame(newState)

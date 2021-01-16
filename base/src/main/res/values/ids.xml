@@ -9,4 +9,5 @@
     <item name="workspaceConnect" type="id" />
     <item name="workspacePrint" type="id" />
     <item name="workspacePrePrint" type="id" />
+    <item name="action_trouble_shoot" type="id" />
 </resources>
