@@ -13,6 +13,7 @@
     <dimen name="margin_0">2dp</dimen>
     <dimen name="margin_0_1">5dp</dimen>
     <dimen name="margin_1">10dp</dimen>
+    <dimen name="margin_1_2">15dp</dimen>
     <dimen name="margin_2">20dp</dimen>
     <dimen name="margin_3">40dp</dimen>
     <dimen name="margin_4">60dp</dimen>
