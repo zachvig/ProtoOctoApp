@@ -26,7 +26,7 @@ class TroubleShootViewModel : ViewModel() {
 
     fun runTest(context: Context, baseUrl: Uri, apiKey: String?): LiveData<TroubleShootingResult> {
         if (troubleShootingResult.value !is TroubleShootingResult.Running) {
-            val totalSteps = if (apiKey != null) 4 else 3
+            val totalSteps = 4
             troubleShootingResult.postValue(TroubleShootingResult.Running(0, totalSteps, ""))
 
             viewModelScope.launch(Dispatchers.IO) {
@@ -44,11 +44,9 @@ class TroubleShootViewModel : ViewModel() {
                     } ?: runAtLeast {
                         troubleShootingResult.postValue(TroubleShootingResult.Running(3, totalSteps, context.getString(R.string.step_3_description)))
                         runPortOpenTest(baseUrl)
-                    } ?: apiKey?.let {
-                        runAtLeast {
-                            troubleShootingResult.postValue(TroubleShootingResult.Running(4, totalSteps, context.getString(R.string.step_4_description)))
-                            runConnectionTest(baseUrl)
-                        }
+                    } ?: runAtLeast {
+                        troubleShootingResult.postValue(TroubleShootingResult.Running(4, totalSteps, context.getString(R.string.step_4_description)))
+                        runConnectionTest(baseUrl)
                     } ?: TroubleShootingResult.Success
 
                 troubleShootingResult.postValue(result)

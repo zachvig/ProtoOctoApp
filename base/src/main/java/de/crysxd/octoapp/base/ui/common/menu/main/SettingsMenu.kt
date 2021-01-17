@@ -2,7 +2,6 @@ package de.crysxd.octoapp.base.ui.common.menu.main
 
 import android.content.Context
 import android.os.Build
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import de.crysxd.octoapp.base.R
@@ -103,13 +102,7 @@ class NightThemeMenuItem : MenuItem {
         context.getString(if (isManualDarkModeEnabled) R.string.main_menu___item_use_light_mode else R.string.main_menu___item_use_dark_mode)
 
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
-        Injector.get().octoPreferences().isManualDarkModeEnabled = if (isManualDarkModeEnabled) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            false
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            true
-        }
+        Injector.get().octoPreferences().isManualDarkModeEnabled = !isManualDarkModeEnabled
         return true
     }
 }

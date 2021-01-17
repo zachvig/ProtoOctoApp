@@ -147,12 +147,12 @@ class TerminalFragment : BaseFragment(R.layout.fragment_terminal) {
             }
         }
 
-        buttonToggleStyled.setCompoundDrawablesRelativeWithIntrinsicBounds(
+        buttonToggleStyled.setIconResource(
             if (adapter is StyledTerminalAdapter) {
                 R.drawable.ic_round_code_24
             } else {
                 R.drawable.ic_round_brush_24
-            }, 0, 0, 0
+            }
         )
 
         this.adapter = adapter

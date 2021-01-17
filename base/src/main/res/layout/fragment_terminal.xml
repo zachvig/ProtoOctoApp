@@ -70,31 +70,34 @@
             android:paddingEnd="@dimen/margin_2"
             android:showDividers="middle">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonClear"
                 style="@style/OctoTheme.Widget.Button.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/cd_history"
-                android:drawableStart="@drawable/ic_round_clear_all_24"
-                android:drawablePadding="@dimen/margin_0" />
+                android:paddingEnd="@dimen/margin_1"
+                app:icon="@drawable/ic_round_clear_all_24" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonToggleStyled"
                 style="@style/OctoTheme.Widget.Button.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/cd_turn_style_on_off"
-                android:drawableStart="@drawable/ic_round_brush_24" />
+                android:paddingEnd="@dimen/margin_1"
+                app:icon="@drawable/ic_round_brush_24" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonFilters"
                 style="@style/OctoTheme.Widget.Button.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/cd_filter_terminal"
-                android:drawableStart="@drawable/ic_round_filter_alt_24"
                 android:textSize="20sp"
+                app:icon="@drawable/ic_round_filter_alt_24"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
                 tools:text="1" />
 
         </LinearLayout>
