@@ -141,31 +141,48 @@ class GcodePreviewWidget(parent: Fragment) : OctoWidget(parent) {
         }
     }
 
+    private fun createPreviewImage(renderStyle: RenderStyle, attempt: Int = 0) {
+        val width = view.preview.width
+        val height = view.preview.height - view.preview.paddingBottom - view.preview.paddingTop
+
+        // Ensure we are layed out. If not, try again (seems to happen sometimes)
+        if (width <= 0 || height <= 0) {
+            if (attempt < 3) {
+                view.post {
+                    createPreviewImage(renderStyle, attempt + 1)
+                }
+            }
+            return
+        }
+
+        val bitmap = Bitmap.createBitmap(
+            width,
+            height,
+            Bitmap.Config.ARGB_8888
+        )
+        val background = ContextCompat.getDrawable(requireContext(), renderStyle.background)
+        val foreground = ContextCompat.getDrawable(requireContext(), R.drawable.gcode_preview)
+        bitmap.applyCanvas {
+            fun drawImage(image: Drawable?) = image?.let {
+                val backgroundScale = height / it.intrinsicHeight.toFloat()
+                it.setBounds(
+                    (width - it.intrinsicWidth * backgroundScale).toInt(),
+                    0,
+                    width,
+                    height
+                )
+                it.draw(this)
+            }
+
+            drawImage(background)
+            drawImage(foreground)
+        }
+        view.preview.setImageBitmap(bitmap)
+    }
+
     private fun bindDisabledViewState(renderStyle: RenderStyle) {
         view.doOnNextLayout {
-            val bitmap = Bitmap.createBitmap(
-                view.preview.width,
-                view.preview.height - view.preview.paddingBottom - view.preview.paddingTop,
-                Bitmap.Config.ARGB_8888
-            )
-            val background = ContextCompat.getDrawable(requireContext(), renderStyle.background)
-            val foreground = ContextCompat.getDrawable(requireContext(), R.drawable.gcode_preview)
-            bitmap.applyCanvas {
-                fun drawImage(image: Drawable?) = image?.let {
-                    val backgroundScale = height / it.intrinsicHeight.toFloat()
-                    it.setBounds(
-                        (width - it.intrinsicWidth * backgroundScale).toInt(),
-                        0,
-                        width,
-                        height
-                    )
-                    it.draw(this)
-                }
-
-                drawImage(background)
-                drawImage(foreground)
-            }
-            view.preview.setImageBitmap(bitmap)
+            createPreviewImage(renderStyle)
         }
 
         view.buttonHide?.setOnClickListener {
