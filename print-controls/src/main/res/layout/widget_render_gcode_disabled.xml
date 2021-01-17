@@ -47,30 +47,37 @@
         android:ellipsize="end"
         android:text="@string/gcode_preview_description"
         android:textAppearance="@style/OctoTheme.TextAppearance.Label"
-        app:layout_constraintBottom_toTopOf="@+id/buttonHide"
+        app:layout_constraintBottom_toTopOf="@+id/buttonBar"
         app:layout_constraintEnd_toEndOf="@+id/title"
         app:layout_constraintStart_toStartOf="@+id/title"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
-    <Button
-        android:id="@+id/buttonEnable"
-        style="@style/OctoTheme.Widget.Button.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin_2"
-        android:text="@string/enable"
-        app:layout_constraintEnd_toEndOf="@+id/view2"
-        app:layout_constraintTop_toTopOf="@+id/buttonHide" />
-
-    <Button
-        android:id="@+id/buttonHide"
-        style="@style/OctoTheme.Widget.Button.Small.Secondary"
+    <!-- We need this layout to patch up a constraint layout bug. Buttons would not accept margins -->
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/buttonBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/margin_1"
         android:layout_marginBottom="@dimen/margin_2"
-        android:text="@string/hide"
-        app:layout_constraintBottom_toBottomOf="@+id/view2"
-        app:layout_constraintEnd_toStartOf="@+id/buttonEnable" />
+        app:divider="@drawable/margin_1_divider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:showDividers="middle">
+
+        <Button
+            android:id="@+id/buttonEnable"
+            style="@style/OctoTheme.Widget.Button.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enable" />
+
+        <Button
+            android:id="@+id/buttonHide"
+            style="@style/OctoTheme.Widget.Button.Small.Secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hide" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
