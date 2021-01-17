@@ -53,7 +53,7 @@ class InfoTab : Fragment(R.layout.fragment_info_tab) {
                         .into(preview, object : Callback {
                             override fun onError(e: Exception?) = Unit
                             override fun onSuccess() {
-                                preview.post {
+                                preview?.post {
                                     if (start - System.currentTimeMillis() > 30) {
                                         TransitionManager.beginDelayedTransition(view as ViewGroup)
                                     }
