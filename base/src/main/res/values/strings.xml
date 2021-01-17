@@ -299,6 +299,7 @@
     <string name="error_please_enter_a_message">Please enter a message</string>
     <string name="hls_stream_disabled_title">HLS webcam stream</string>
     <string name="hls_stream_disbaled_description">HLS streams are disabled, enable them now to see your webcam image.</string>
+    <string name="show_actions">Show actions</string>
     <string name="power_controls___title_turn_on">Select a device to turn on</string>
     <string name="power_controls___title_turn_off">Select a device to turn off</string>
     <string name="power_controls___title_cycle">Select a device to cycle</string>
