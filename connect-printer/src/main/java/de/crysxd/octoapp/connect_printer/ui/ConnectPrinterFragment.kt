@@ -25,7 +25,6 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
 
     private val networkViewModel: NetworkStateViewModel by injectViewModel(Injector.get().viewModelFactory())
     override val viewModel: ConnectPrinterViewModel by injectViewModel()
-    private var firstStateUpdate = true
     private lateinit var binding: ConnectPrinterFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -41,6 +40,7 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
         }
 
         // Subscribe to view state
+        var lastState: ConnectPrinterViewModel.UiState? = null
         viewModel.uiState.observe(viewLifecycleOwner, { state ->
             Timber.i("$state")
 
@@ -53,14 +53,14 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
                     binding.textViewSubState
                 )
                 val duration = view.animate().duration
-                if (firstStateUpdate) {
-                    firstStateUpdate = false
-                } else {
+                if (lastState != state) {
                     views.forEach { it.animate().alpha(0f).start() }
                     delay(duration)
                     handleUiStateUpdate(state)
                     views.forEach { it.animate().alpha(1f).start() }
                 }
+
+                lastState = state
             }
 
             binding.buttonMore1.setOnClickListener {
