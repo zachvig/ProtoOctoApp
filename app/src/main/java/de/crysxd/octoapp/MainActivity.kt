@@ -38,6 +38,7 @@ import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import timber.log.Timber
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
@@ -61,20 +62,21 @@ class MainActivity : OctoActivity() {
         val events = ConnectPrinterInjector.get().octoprintProvider().eventFlow("MainActivity@events").asLiveData()
 
         lastNavigation = savedInstanceState?.getInt(KEY_LAST_NAVIGATION, lastNavigation) ?: lastNavigation
-        SignInInjector.get().octoprintRepository().instanceInformationFlow().asLiveData().observe(this, {
-            Timber.i("Instance information received")
-            if (it != null && it.apiKey.isNotBlank()) {
-                if (lastNavigation < 0) {
+        SignInInjector.get().octoprintRepository().instanceInformationFlow()
+            .distinctUntilChangedBy { it?.webUrl }
+            .asLiveData()
+            .observe(this, {
+                Timber.i("Instance information received")
+                if (it != null && it.apiKey.isNotBlank()) {
                     navigate(R.id.action_connect_printer)
+                    events.observe(this, observer)
+                } else {
+                    navigate(R.id.action_sign_in_required)
+                    PrintNotificationService.stop(this)
+                    (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).cancel(PrintNotificationService.NOTIFICATION_ID)
+                    events.removeObserver(observer)
                 }
-                events.observe(this, observer)
-            } else {
-                navigate(R.id.action_sign_in_required)
-                PrintNotificationService.stop(this)
-                (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).cancel(PrintNotificationService.NOTIFICATION_ID)
-                events.removeObserver(observer)
-            }
-        })
+            })
 
         lifecycleScope.launchWhenResumed {
             findNavController(R.id.mainNavController).addOnDestinationChangedListener { _, destination, _ ->
