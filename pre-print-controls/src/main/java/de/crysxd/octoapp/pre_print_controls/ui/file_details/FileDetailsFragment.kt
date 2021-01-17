@@ -75,31 +75,33 @@ class FileDetailsFragment : BaseFragment(R.layout.fragment_file_details), InsetA
     }
 
     private fun updateLayout() {
-        val position = viewPager.currentItem
-        viewPager.updateLayoutParams {
-            height = if (position == 0) {
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            } else {
-                requireView().height - tabs.height - requireView().paddingBottom - requireView().paddingTop
+        viewPager.post {
+            val position = viewPager.currentItem
+            viewPager.updateLayoutParams {
+                height = if (position == 0) {
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                } else {
+                    requireView().height - tabs.height - requireView().paddingBottom - requireView().paddingTop
+                }
             }
-        }
 
-        scrollView.isUserInputEnabled = position == 0
-        scrollView.isBottomActionAnimationEnabled = false
-        scrollView.post {
-            scrollView.smoothScrollTo(0, if (position == 0) 0 else Int.MAX_VALUE)
-        }
-        bottomAction.animate().translationY(if (position == 0) 0f else bottomAction.height.toFloat()).withEndAction {
-            scrollView.isBottomActionAnimationEnabled = position == 0
-        }.start()
+            scrollView.isUserInputEnabled = position == 0
+            scrollView.isBottomActionAnimationEnabled = false
+            scrollView.post {
+                scrollView.smoothScrollTo(0, if (position == 0) 0 else Int.MAX_VALUE)
+            }
+            bottomAction.animate().translationY(if (position == 0) 0f else bottomAction.height.toFloat()).withEndAction {
+                scrollView.isBottomActionAnimationEnabled = position == 0
+            }.start()
 
-        val toolbarTranslation = if (position == 0) 0f else -requireOctoActivity().octoToolbar.bottom.toFloat()
-        requireOctoActivity().octoToolbar.animate().also {
-            it.duration = 150
-        }.translationY(toolbarTranslation).start()
-        requireOctoActivity().octo.animate().also {
-            it.duration = 150
-        }.translationY(toolbarTranslation).start()
+            val toolbarTranslation = if (position == 0) 0f else -requireOctoActivity().octoToolbar.bottom.toFloat()
+            requireOctoActivity().octoToolbar.animate().also {
+                it.duration = 150
+            }.translationY(toolbarTranslation).start()
+            requireOctoActivity().octo.animate().also {
+                it.duration = 150
+            }.translationY(toolbarTranslation).start()
+        }
     }
 
     inner class Adapter(file: FileObject.File) : FragmentStateAdapter(this@FileDetailsFragment) {
