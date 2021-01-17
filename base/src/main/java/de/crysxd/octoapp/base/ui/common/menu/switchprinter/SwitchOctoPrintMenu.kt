@@ -57,7 +57,7 @@ class SwitchInstanceMenuItem(private val webUrl: String) : MenuItem {
     }
 
     override val itemId = MENU_ITEM_SWITCH_INSTANCE + webUrl
-    override val groupId = ""
+    override var groupId = ""
     override val order = 151
     override val showAsSubMenu = false
     override val style = MenuItemStyle.Settings
@@ -78,7 +78,7 @@ class SwitchInstanceMenuItem(private val webUrl: String) : MenuItem {
 
 class AddInstanceMenuItem : MenuItem {
     override val itemId = MENU_ITEM_ADD_INSTANCE
-    override val groupId = ""
+    override var groupId = ""
     override val order = 150
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_add_24
@@ -93,7 +93,7 @@ class AddInstanceMenuItem : MenuItem {
 
 class SignOutMenuItem : MenuItem {
     override val itemId = MENU_ITEM_SIGN_OUT
-    override val groupId = ""
+    override var groupId = ""
     override val order = 150
     override val canBePinned = false
     override val style = MenuItemStyle.Settings
@@ -109,7 +109,7 @@ class SignOutMenuItem : MenuItem {
 
 class EnableQuickSwitchMenuItem : MenuItem {
     override val itemId = MENU_ITEM_ENABLE_QUICK_SWITCH
-    override val groupId = ""
+    override var groupId = ""
     override val order = 151
     override val canBePinned = false
     override val style = MenuItemStyle.Settings

@@ -9,12 +9,24 @@ import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TradfriPowerDevice
 data class Settings(
     val webcam: WebcamSettings,
     val plugins: PluginSettingsGroup,
+    val temperature: TemperatureSettings,
     val terminalFilters: List<TerminalFilter>
 ) {
 
     data class TerminalFilter(
         val name: String,
         val regex: String
+    )
+
+    data class TemperatureSettings(
+        val profiles: List<TemperatureProfile>
+    )
+
+    data class TemperatureProfile(
+        val bed: Int?,
+        val chamber: Int?,
+        val extruder: Int?,
+        val name: String
     )
 
     class PluginSettingsGroup : HashMap<String, PluginSettings>()

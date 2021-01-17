@@ -4,6 +4,7 @@ import android.content.Context
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.common.menu.*
+import de.crysxd.octoapp.base.ui.common.menu.temperature.TemperatureMenu
 import de.crysxd.octoapp.base.ui.common.power.PowerControlsBottomSheet
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import kotlinx.android.parcel.Parcelize
@@ -14,6 +15,7 @@ class PrinterMenu : Menu {
     override fun getMenuItem() = listOf(
         CancelPrintMenuItem(),
         EmergencyStopMenuItem(),
+        ShowTemperatureMenuItem(),
         TurnPsuOffMenuItem(),
         OpenPowerControlsMenuItem(),
     )
@@ -22,10 +24,27 @@ class PrinterMenu : Menu {
     override fun getSubtitle(context: Context) = context.getString(R.string.main_menu___submenu_subtitle)
 }
 
+
+class ShowTemperatureMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_TEMPERATURE_MENU
+    override var groupId = "submenus"
+    override val order = 200
+    override val style = MenuItemStyle.Printer
+    override val icon = R.drawable.ic_round_local_fire_department_24
+    override val showAsSubMenu = true
+
+    override suspend fun isVisible(destinationId: Int) = destinationId != R.id.workspaceConnect
+    override suspend fun getTitle(context: Context) = "Temperature presents"
+    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
+        host.pushMenu(TemperatureMenu())
+        return false
+    }
+}
+
 class OpenPowerControlsMenuItem : MenuItem {
     override val itemId = MENU_ITEM_POWER_CONTROLS
-    override val groupId = ""
-    override val order = 200
+    override var groupId = "power"
+    override val order = 201
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_power_settings_new_24
 
@@ -42,8 +61,8 @@ class OpenPowerControlsMenuItem : MenuItem {
 
 class TurnPsuOffMenuItem : MenuItem {
     override val itemId = MENU_ITEM_TURN_PSU_OFF
-    override val groupId = ""
-    override val order = 210
+    override var groupId = "power"
+    override val order = 202
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_baseline_power_off_24
 
@@ -63,8 +82,8 @@ class TurnPsuOffMenuItem : MenuItem {
 
 class EmergencyStopMenuItem : ConfirmedMenuItem() {
     override val itemId = MENU_ITEM_EMERGENCY_STOP
-    override val groupId = ""
-    override val order = 220
+    override var groupId = "print"
+    override val order = 203
     override val style = MenuItemStyle.Printer
 
     override val icon = R.drawable.ic_round_offline_bolt_24
@@ -81,8 +100,8 @@ class EmergencyStopMenuItem : ConfirmedMenuItem() {
 
 class CancelPrintMenuItem : ConfirmedMenuItem() {
     override val itemId = MENU_ITEM_CANCEL_PRINT
-    override val groupId = ""
-    override val order = 230
+    override var groupId = "print"
+    override val order = 204
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_cancel_24
 

@@ -53,13 +53,15 @@ class OctoWidgetAdapter : RecyclerView.Adapter<OctoWidgetAdapter.WidgetViewHolde
         WidgetViewHolder(context, widget::class.java.name, widget).also { holder ->
             LayoutInflater.from(context).suspendedInflate(R.layout.item_widget, holder.itemView as ViewGroup, true)
 
+            val moreIcon = widget.getMoreIcon()
             holder.itemView.textViewWidgetTitle.text = widget.getTitle(holder.itemView.context)
             holder.itemView.textViewWidgetTitle.isVisible = holder.itemView.textViewWidgetTitle.text.isNotBlank()
             holder.itemView.padding.isVisible = position < count - 1
-            holder.itemView.imageButtonSettings.visibility = if (widget.hasSettings()) View.VISIBLE else View.INVISIBLE
+            holder.itemView.imageButtonSettings.visibility = if (moreIcon != null) View.VISIBLE else View.INVISIBLE
+            moreIcon?.let { holder.itemView.imageButtonSettings.setImageResource(it) }
             holder.itemView.imageButtonSettings.setOnClickListener {
-                if (widget.hasSettings()) {
-                    widget.showSettings()
+                if (moreIcon != null) {
+                    widget.showMore()
                 }
             }
 

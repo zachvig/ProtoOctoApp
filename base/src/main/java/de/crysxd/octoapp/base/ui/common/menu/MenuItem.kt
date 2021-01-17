@@ -6,7 +6,7 @@ import androidx.annotation.IdRes
 
 interface MenuItem {
     val itemId: String
-    val groupId: String
+    var groupId: String
     val order: Int
 
     val style: MenuItemStyle

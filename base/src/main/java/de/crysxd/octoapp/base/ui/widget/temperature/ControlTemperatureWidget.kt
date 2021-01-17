@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
+import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.common.menu.temperature.TemperatureMenu
 import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
@@ -21,6 +23,11 @@ class ControlTemperatureWidget(parent: Fragment) : OctoWidget(parent) {
 
     override fun getTitle(context: Context) = context.getString(R.string.widget_temperature)
     override fun getAnalyticsName(): String = "temperature"
+    override fun getMoreIcon() = R.drawable.ic_round_category_24
+    override fun showMore() {
+        MenuBottomSheetFragment.createForMenu(TemperatureMenu()).show(parent.childFragmentManager)
+        super.showMore()
+    }
 
     override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
         inflater.suspendedInflate(R.layout.widget_temperature, container, false)

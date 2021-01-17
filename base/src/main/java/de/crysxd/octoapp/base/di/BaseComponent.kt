@@ -51,6 +51,7 @@ interface BaseComponent {
 
     // UseCaseModule
     fun setToolTargetTemperatureUseCase(): SetToolTargetTemperatureUseCase
+    fun setBedTargetTemperatureUseCase(): SetBedTargetTemperatureUseCase
     fun homePrintHeadUseCase(): HomePrintHeadUseCase
     fun jogPrintHeadUseCase(): JogPrintHeadUseCase
     fun turnOnPsuUseCase(): TurnOnPsuUseCase

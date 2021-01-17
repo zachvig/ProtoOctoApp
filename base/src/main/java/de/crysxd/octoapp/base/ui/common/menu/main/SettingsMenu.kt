@@ -43,7 +43,7 @@ class SettingsMenu : Menu {
 
 class SendFeedbackMenuItem : MenuItem {
     override val itemId = MENU_ITEM_SEND_FEEDBACK
-    override val groupId = ""
+    override var groupId = ""
     override val order = 100
     override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
@@ -58,7 +58,7 @@ class SendFeedbackMenuItem : MenuItem {
 
 class ChangeLanguageMenuItem : MenuItem {
     override val itemId = MENU_ITEM_CHANGE_LANGUAGE
-    override val groupId = ""
+    override var groupId = ""
     override val order = 101
     override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
@@ -75,7 +75,7 @@ class ChangeLanguageMenuItem : MenuItem {
 
 class OpenOctoPrintMenuItem : MenuItem {
     override val itemId = MENU_ITEM_OPEN_OCTOPRINT
-    override val groupId = ""
+    override var groupId = ""
     override val order = 102
     override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
@@ -91,7 +91,7 @@ class OpenOctoPrintMenuItem : MenuItem {
 class NightThemeMenuItem : MenuItem {
     private val isManualDarkModeEnabled get() = Injector.get().octoPreferences().isManualDarkModeEnabled
     override val itemId = MENU_ITEM_NIGHT_THEME
-    override val groupId = ""
+    override var groupId = ""
     override val order = 103
     override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
@@ -110,7 +110,7 @@ class NightThemeMenuItem : MenuItem {
 class PrintNotificationMenuItem : MenuItem {
     private val isPrintNotificationEnabled get() = Injector.get().octoPreferences().isPrintNotificationEnabled
     override val itemId = MENU_ITEM_PRINT_NOTIFICATION
-    override val groupId = ""
+    override var groupId = ""
     override val order = 104
     override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
@@ -139,7 +139,7 @@ class PrintNotificationMenuItem : MenuItem {
 class KeepScreenOnDuringPrintMenuItem : MenuItem {
     private val isKeepScreenOn get() = Injector.get().octoPreferences().isKeepScreenOnDuringPrint
     override val itemId = MENU_ITEM_SCREEN_ON_DURING_PRINT
-    override val groupId = ""
+    override var groupId = ""
     override val order = 105
     override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
@@ -157,11 +157,12 @@ class KeepScreenOnDuringPrintMenuItem : MenuItem {
 
 class ChangeOctoPrintInstanceMenuItem : MenuItem {
     override val itemId = MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE
-    override val groupId = ""
+    override var groupId = ""
     override val order = 106
     override val style = MenuItemStyle.Settings
     override val enforceSingleLine = false
     override val icon = R.drawable.ic_round_swap_horiz_24
+    override val showAsSubMenu = true
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_change_octoprint_instance)
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {

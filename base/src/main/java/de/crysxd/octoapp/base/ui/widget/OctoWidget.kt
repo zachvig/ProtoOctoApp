@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.DrawableRes
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -19,9 +20,10 @@ abstract class OctoWidget(val parent: Fragment) : LayoutContainer {
     override val containerView: View
         get() = view
 
-    open fun hasSettings() = false
+    @DrawableRes
+    open fun getMoreIcon(): Int? = null
 
-    open fun showSettings() = Unit
+    open fun showMore() = Unit
 
     open fun isVisible() = true
 

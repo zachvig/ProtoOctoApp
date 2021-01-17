@@ -51,7 +51,7 @@ abstract class OctoActivity : LocaleActivity() {
         }.toString()
     }
 
-    private fun showSnackbar(message: BaseViewModel.Message.SnackbarMessage) {
+    fun showSnackbar(message: BaseViewModel.Message.SnackbarMessage) {
         Snackbar.make(coordinatorLayout, message.text(this), message.duration).apply {
             message.actionText(this@OctoActivity)?.let {
                 setAction(it) { message.action(this@OctoActivity) }

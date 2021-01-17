@@ -25,7 +25,9 @@ class MainMenu : Menu {
 
         val library = MenuItemLibrary()
         val pinnedItems = Injector.get().pinnedMenuItemsRepository().getPinnedMenuItems().mapNotNull {
-            library[it]
+            val item = library[it]
+            item?.groupId = "pinned"
+            item
         }
 
         return listOf(base, pinnedItems).flatten()
@@ -34,7 +36,7 @@ class MainMenu : Menu {
 
 class SupportOctoAppMenuItem : MenuItem {
     override val itemId = MENU_ITEM_SUPPORT_OCTOAPP
-    override val groupId = "support"
+    override var groupId = "support"
     override val order = 0
     override val style = MenuItemStyle.Support
     override val showAsSubMenu = true
@@ -51,7 +53,7 @@ class SupportOctoAppMenuItem : MenuItem {
 
 class ShowSettingsMenuItem : SubMenuItem() {
     override val itemId = MENU_ITEM_SETTINGS_MENU
-    override val groupId = "main_menu"
+    override var groupId = "main_menu"
     override val order = 10
     override val style = MenuItemStyle.Settings
     override val showAsSubMenu = true
@@ -64,7 +66,7 @@ class ShowSettingsMenuItem : SubMenuItem() {
 
 class ShowPrinterMenuItem : SubMenuItem() {
     override val itemId = MENU_ITEM_PRINTER_MENU
-    override val groupId = "main_menu"
+    override var groupId = "main_menu"
     override val order = 20
     override val style = MenuItemStyle.Printer
     override val showAsSubMenu = true
@@ -76,7 +78,7 @@ class ShowPrinterMenuItem : SubMenuItem() {
 
 class ShowNewsMenuItem : MenuItem {
     override val itemId = MENU_ITEM_NEWS
-    override val groupId = "main_menu"
+    override var groupId = "main_menu"
     override val order = 30
     override val style = MenuItemStyle.Neutral
     override val showAsSubMenu = true
