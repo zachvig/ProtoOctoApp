@@ -338,5 +338,4 @@
     <string name="main_menu___title_quick_switch_disabled">Quick switch disabled</string>
     <string name="main_menu___title_quick_switch">Switch OctoPrint</string>
     <string name="main_menu___subtitle_quick_switch_disabled">Quick switch allows you to seamlessly switch between multiple OctoPrint instances. Without this feature, you need to enter your web URL and API key again.</string>
-    <string name="main_menu___about_text"><![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> was<br/>made <font color="%1$06x"><b>for you</b></font> with love in Europe 🇪🇺]]></string>
 </resources>
