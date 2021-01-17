@@ -77,7 +77,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
+        android:gravity="center_vertical"
         android:padding="@dimen/margin_2"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
@@ -101,7 +103,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
+        android:gravity="center_vertical"
         android:padding="@dimen/margin_2"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
@@ -127,6 +131,7 @@
         android:clipToPadding="false"
         android:gravity="center_vertical"
         android:padding="@dimen/margin_2"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
