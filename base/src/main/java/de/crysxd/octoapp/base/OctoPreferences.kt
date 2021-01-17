@@ -55,7 +55,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
     var appLanguage
         get() = sharedPreferences.getString(KEY_APP_LANGUAGE, null)
         set(value) {
-            edit { putString(KEY_MANUAL_DARK_MODE, value) }
+            edit { putString(KEY_APP_LANGUAGE, value) }
         }
 
     var hideThumbnailHintUntil
