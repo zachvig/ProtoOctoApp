@@ -117,6 +117,13 @@ class MainActivity : OctoActivity() {
             @SuppressLint("SourceLockedOrientationActivity")
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
+
+        // Observe settings
+        Injector.get().octoPreferences().updatedFlow.asLiveData().observe(this) {
+            lifecycleScope.launchWhenCreated {
+                Injector.get().applyLegacyDarkModeUseCase().execute(this@MainActivity)
+            }
+        }
     }
 
     private fun isTablet() = ((this.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE)
