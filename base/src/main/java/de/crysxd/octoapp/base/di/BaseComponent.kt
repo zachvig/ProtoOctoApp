@@ -8,6 +8,7 @@ import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.SslKeyStoreHandler
 import de.crysxd.octoapp.base.di.modules.*
 import de.crysxd.octoapp.base.logging.FirebaseTree
+import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.logging.TimberCacheTree
 import de.crysxd.octoapp.base.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
@@ -41,6 +42,7 @@ interface BaseComponent {
     // LoggingModule
     fun timberCacheTree(): TimberCacheTree
     fun firebaseTree(): FirebaseTree
+    fun sensitiveDataMask(): SensitiveDataMask
 
     // OctoprintModule
     fun octorPrintRepository(): OctoPrintRepository

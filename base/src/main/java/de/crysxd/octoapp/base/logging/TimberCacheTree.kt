@@ -30,7 +30,8 @@ class TimberCacheTree(
                 if (priority > Log.VERBOSE) {
                     val prefix = "${getTime()} ${getLevel(priority)}/${tag ?: "???"}: "
                     cache.append(prefix)
-                    cache.append(mask.mask(message.substring(0, message.length.coerceAtMost(maxMessageLength))))
+                    val content = mask.mask(message.substring(0, message.length.coerceAtMost(maxMessageLength)))
+                    cache.append(content)
                     cache.append("\n")
 
                     t?.let {
