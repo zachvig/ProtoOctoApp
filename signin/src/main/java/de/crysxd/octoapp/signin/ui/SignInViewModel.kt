@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
@@ -18,7 +19,8 @@ import kotlinx.coroutines.launch
 class SignInViewModel(
     private val octoPrintRepository: OctoPrintRepository,
     private val verifyUseCase: VerifySignInInformationUseCase,
-    private val signInUseCase: SignInUseCase
+    private val signInUseCase: SignInUseCase,
+    private val sensitiveDataMask: SensitiveDataMask
 ) : BaseViewModel() {
 
     var failedSignInCounter = 0
@@ -28,6 +30,10 @@ class SignInViewModel(
 
     fun startSignIn(info: SignInInformation) =
         viewModelScope.launch(coroutineExceptionHandler) {
+            // Register sensitive data to exclude it from logs
+            sensitiveDataMask.registerApiKey(info.apiKey)
+            sensitiveDataMask.registerWebUrl(info.webUrl)
+
             val upgradedInfo = info.copy(
                 webUrl = addHttpIfNotPresent(info.webUrl)
             )

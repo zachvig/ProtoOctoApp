@@ -4,7 +4,9 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import de.crysxd.octoapp.octoprint.api.*
 import de.crysxd.octoapp.octoprint.exceptions.GenerateExceptionInterceptor
-import de.crysxd.octoapp.octoprint.exceptions.OctoPrintException
+import de.crysxd.octoapp.octoprint.interceptors.ApiKeyInterceptor
+import de.crysxd.octoapp.octoprint.interceptors.BasicAuthInterceptor
+import de.crysxd.octoapp.octoprint.interceptors.CatchAllInterceptor
 import de.crysxd.octoapp.octoprint.json.ConnectionStateDeserializer
 import de.crysxd.octoapp.octoprint.json.FileObjectDeserializer
 import de.crysxd.octoapp.octoprint.json.MessageDeserializer
@@ -21,7 +23,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.IOException
 import java.net.URI
 import java.security.KeyStore
 import java.security.SecureRandom
@@ -123,8 +124,9 @@ class OctoPrint(
             sslSocketFactory(sslContext.socketFactory, x509TrustManager)
         }
 
-        addInterceptor(createCatchAllInterceptor())
-        addInterceptor(createAddHeaderInterceptor())
+        addInterceptor(CatchAllInterceptor())
+        addInterceptor(BasicAuthInterceptor(webUrl))
+        addInterceptor(ApiKeyInterceptor(apiKey))
         addInterceptor(GenerateExceptionInterceptor())
         addInterceptor(
             HttpLoggingInterceptor(LoggingInterceptorLogger(logger))
@@ -132,28 +134,4 @@ class OctoPrint(
         )
         this@OctoPrint.interceptors.forEach { addInterceptor(it) }
     }.build()
-
-    private fun createAddHeaderInterceptor() = Interceptor {
-        it.proceed(
-            it.request().newBuilder()
-                .addHeader("X-Api-Key", apiKey)
-                .addHeader("Accept", "application/json")
-                .build()
-        )
-    }
-
-    private fun createCatchAllInterceptor() = Interceptor {
-        // OkHttp crashed the app if an other Exception than IOException is thrown. Let's not do that....
-        var url = "undefined"
-        try {
-            url = it.request().url.toString()
-            it.proceed(it.request())
-        } catch (e: IOException) {
-            // IOException will be caught
-            throw e
-        } catch (e: Throwable) {
-            // Let's wrap in OctoprintException (extends IOException)
-            throw OctoPrintException(e, "Uncaught exception while requesting: $url")
-        }
-    }
 }

@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.repository
 
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.datasource.DataSource
+import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
@@ -13,7 +14,8 @@ class OctoPrintRepository(
     private val legacyDataSource: DataSource<OctoPrintInstanceInformationV2>,
     private val dataSource: DataSource<List<OctoPrintInstanceInformationV2>>,
     private val octoPreferences: OctoPreferences,
-) {
+    private val sensitiveDataMask: SensitiveDataMask,
+    ) {
 
     private val instanceInformationChannel = ConflatedBroadcastChannel<OctoPrintInstanceInformationV2?>(null)
 
@@ -35,6 +37,10 @@ class OctoPrintRepository(
         val activeWebUrl = octoPreferences.activeInstanceWebUrl
         val activeInstance = getAll().firstOrNull {
             it.webUrl == activeWebUrl
+        }
+        activeInstance?.let {
+            sensitiveDataMask.registerWebUrl(it.webUrl)
+            sensitiveDataMask.registerApiKey(it.apiKey)
         }
         instanceInformationChannel.offer(activeInstance)
     }
