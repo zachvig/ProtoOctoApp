@@ -140,7 +140,8 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor(
         if (param.sendOctoPrintInfo) {
             zipStream.putNextEntry(ZipEntry("octoprint_info.json"))
             zipStream.writer().apply {
-                val json = Gson().toJsonTree(Injector.get().octorPrintRepository().instanceInformationFlow().firstOrNull()?.copy(apiKey = "***")) as JsonObject
+                val json = Gson().toJsonTree(Injector.get().octorPrintRepository().instanceInformationFlow().firstOrNull()?.copy(apiKey = "***")) as? JsonObject
+                    ?: JsonObject()
                 json.addProperty("octoprint_version", octoPrintVersion)
                 json.add("installed_plugins", Gson().toJsonTree(pluginList))
                 write(gson.toJson(json))

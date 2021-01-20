@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.repository
 
 import androidx.lifecycle.asLiveData
 import de.crysxd.octoapp.base.datasource.DataSource
+import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.usecase.CheckOctoPrintInstanceInformationUseCase
 import kotlinx.coroutines.GlobalScope
@@ -13,7 +14,8 @@ import timber.log.Timber
 @Suppress("EXPERIMENTAL_API_USAGE")
 class OctoPrintRepository(
     private val dataSource: DataSource<OctoPrintInstanceInformationV2>,
-    private val checkOctoPrintInstanceInformationUseCase: CheckOctoPrintInstanceInformationUseCase
+    private val checkOctoPrintInstanceInformationUseCase: CheckOctoPrintInstanceInformationUseCase,
+    private val sensitiveDataMask: SensitiveDataMask,
 ) {
 
     private val instanceInformationChannel = ConflatedBroadcastChannel<OctoPrintInstanceInformationV2?>(null)
@@ -42,6 +44,10 @@ class OctoPrintRepository(
         if (instance == null || instance != instanceInformationChannel.valueOrNull) {
             dataSource.store(instance)
             Timber.i("Posting $instance")
+            instance?.let {
+                sensitiveDataMask.registerWebUrl(it.webUrl)
+                sensitiveDataMask.registerApiKey(it.apiKey)
+            }
             instanceInformationChannel.offer(
                 if (instance != null && checkOctoPrintInstanceInformationUseCase.execute(instance)) {
                     instance

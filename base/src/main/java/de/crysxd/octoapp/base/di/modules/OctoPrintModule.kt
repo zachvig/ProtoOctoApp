@@ -9,6 +9,7 @@ import de.crysxd.octoapp.base.SslKeyStoreHandler
 import de.crysxd.octoapp.base.datasource.DataSource
 import de.crysxd.octoapp.base.datasource.GcodeFileDataSourceGroup
 import de.crysxd.octoapp.base.di.BaseScope
+import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
@@ -25,10 +26,12 @@ open class OctoPrintModule {
     @Provides
     open fun provideOctoPrintRepository(
         dataSource: DataSource<OctoPrintInstanceInformationV2>,
-        checkOctoPrintInstanceInformationUseCase: CheckOctoPrintInstanceInformationUseCase
+        checkOctoPrintInstanceInformationUseCase: CheckOctoPrintInstanceInformationUseCase,
+        sensitiveDataMask: SensitiveDataMask
     ) = OctoPrintRepository(
         dataSource,
-        checkOctoPrintInstanceInformationUseCase
+        checkOctoPrintInstanceInformationUseCase,
+        sensitiveDataMask,
     )
 
     @BaseScope

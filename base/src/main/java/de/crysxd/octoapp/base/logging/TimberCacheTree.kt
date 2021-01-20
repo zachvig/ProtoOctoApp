@@ -40,7 +40,7 @@ class TimberCacheTree(
 
                         stackTrace.buffer.lines().forEach {
                             cache.append(prefix)
-                            cache.append(it)
+                            cache.append(mask.mask(it))
                             cache.append("\n")
                         }
                     }
