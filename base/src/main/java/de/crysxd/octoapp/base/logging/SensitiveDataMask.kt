@@ -21,7 +21,10 @@ class SensitiveDataMask {
     }
 
     fun registerSensitiveData(data: String, replacement: String) {
-        sensitiveData.add(SensitiveData(data, replacement))
+        val data = SensitiveData(data, replacement)
+        if (!sensitiveData.contains(data)) {
+            sensitiveData.add(data)
+        }
     }
 
     fun mask(input: String): String {
