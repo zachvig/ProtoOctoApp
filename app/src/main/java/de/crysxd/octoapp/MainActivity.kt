@@ -34,6 +34,7 @@ import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
 import de.crysxd.octoapp.base.usecase.execute
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
+import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.android.synthetic.main.activity_main.*
@@ -207,6 +208,7 @@ class MainActivity : OctoActivity() {
             Timber.w("Connection lost")
             when (e.exception) {
                 is WebSocketMaybeBrokenException -> e.exception?.let(this::showDialog)
+                is WebSocketUpgradeFailedException -> e.exception?.let(this::showDialog)
                 else -> setDisconnectedMessageVisible(!listOf(R.id.action_connect_printer, R.id.action_sign_in_required).contains(lastNavigation))
             }
         }

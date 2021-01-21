@@ -2,9 +2,7 @@ package de.crysxd.octoapp.octoprint.websocket
 
 import com.google.gson.Gson
 import de.crysxd.octoapp.octoprint.api.LoginApi
-import de.crysxd.octoapp.octoprint.exceptions.WebSocketDysfunctionalException
-import de.crysxd.octoapp.octoprint.exceptions.WebSocketStalledException
-import de.crysxd.octoapp.octoprint.exceptions.WebSocketZombieException
+import de.crysxd.octoapp.octoprint.exceptions.*
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.*
@@ -48,11 +46,12 @@ class EventWebSocket(
     private var lastCurrentMessage: Message.CurrentMessage? = null
     private val channel = BroadcastChannel<Event>(15)
     private val subscriberCount = AtomicInteger(0)
+    private val webSocketUrl = URI.create(webUrl).resolve("sockjs/websocket").toURL()
 
     fun start() {
         if (subscriberCount.get() > 0 && isConnected.compareAndSet(false, true)) {
             val request = Request.Builder()
-                .url(URI.create(webUrl).resolve("sockjs/websocket").toURL())
+                .url(webSocketUrl)
                 .build()
 
             httpClient.newBuilder()
@@ -175,16 +174,22 @@ class EventWebSocket(
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
-            if (t !is WebSocketZombieException) {
-                logger.log(Level.WARNING, "Web socket encountered failure", t)
-                reconnect(t)
-            } else {
-                logger.log(Level.WARNING, "Web socket was forcefully closed")
+            when {
+                t is WebSocketZombieException -> {
+                    logger.log(Level.WARNING, "Web socket was forcefully closed")
+                }
+                t is OctoPrintApiException && t.responseCode >= 400 -> {
+                    reconnect(WebSocketUpgradeFailedException(t.responseCode, webUrl), true)
+                }
+                else -> {
+                    reconnect(t)
+                }
             }
+
             isOpen = false
         }
 
-        private fun reconnect(t: Throwable? = null) {
+        private fun reconnect(t: Throwable? = null, reportImmediately: Boolean = false) {
             isConnected.set(false)
 
             reconnectJob = GlobalScope.launch {
@@ -194,7 +199,7 @@ class EventWebSocket(
 
             reportDisconnectedAfterDelay(
                 throwable = t,
-                delay = if (isOpen) reconnectTimeout else 0
+                delay = if (!isOpen || reportImmediately) 0 else reconnectTimeout
             )
         }
 
