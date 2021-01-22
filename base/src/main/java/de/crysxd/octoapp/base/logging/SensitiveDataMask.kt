@@ -1,11 +1,13 @@
 package de.crysxd.octoapp.base.logging
 
 import android.net.Uri
-import java.util.*
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 class SensitiveDataMask {
 
-    private var sensitiveData = Vector<SensitiveData>()
+    private val lock = ReentrantLock()
+    private var sensitiveData = mutableListOf<SensitiveData>()
     private val basicAuthRegex = Regex("(http[s]?)://(.*)@")
 
     fun registerWebUrl(webUrl: String) {
@@ -20,14 +22,14 @@ class SensitiveDataMask {
         registerSensitiveData(apiKey, "api_key")
     }
 
-    fun registerSensitiveData(data: String, replacement: String) {
-        val data = SensitiveData(data, replacement)
-        if (!sensitiveData.contains(data)) {
-            sensitiveData.add(data)
+    private fun registerSensitiveData(data: String, replacement: String) = lock.withLock {
+        val d = SensitiveData(data, replacement)
+        if (!sensitiveData.contains(d)) {
+            sensitiveData.add(d)
         }
     }
 
-    fun mask(input: String): String {
+    fun mask(input: String): String = lock.withLock {
         var output = input
 
         sensitiveData.forEach {
