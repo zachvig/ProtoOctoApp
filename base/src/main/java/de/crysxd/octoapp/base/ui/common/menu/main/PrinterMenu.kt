@@ -34,7 +34,7 @@ class ShowTemperatureMenuItem : MenuItem {
     override val showAsSubMenu = true
 
     override suspend fun isVisible(destinationId: Int) = destinationId != R.id.workspaceConnect
-    override suspend fun getTitle(context: Context) = "Temperature presents"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_temperature_presets)
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         host.pushMenu(TemperatureMenu())
         return false
