@@ -87,13 +87,11 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(WebcamViewModel::class)
     open fun provideWebcamWidgetViewModel(
-        octoPrintProvider: OctoPrintProvider,
+        octoPrintRepository: OctoPrintRepository,
         getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
-        sharedPreferences: SharedPreferences
     ): ViewModel = WebcamViewModel(
-        octoPrintProvider,
+        octoPrintRepository,
         getWebcamSettingsUseCase,
-        sharedPreferences
     )
 
     @Provides
