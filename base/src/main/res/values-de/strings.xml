@@ -329,4 +329,10 @@
     <string name="main_menu___subtitle_quick_switch_disabled">Schnellwechsel erlaubt es reibungslos zwischen mehreren OctoPrint zu wechseln. Ohne diese Funktion benötigst du die Web URL und den API Schlüssel erneut.</string>
     <string name="main_menu___item_open_power_controls">Energieoptionen öffnen</string>
     <string name="show_actions">Aktionen anzeigen</string>
+    <string name="temperature_menu___applied_error">%s nicht gefunden, konnte nicht angewendet werden</string>
+    <string name="main_menu___item_temperature_presets">Temperatur-Voreinstellungen</string>
+    <string name="temperature_menu___title">Temperatur-Voreinstellungen</string>
+    <string name="temperature_menu___subtitle">Du kannst diese Voreinstellungen in den OctoPrint-Einstellungen ändern</string>
+    <string name="temperature_menu___item_preheat">%s vorheizen</string>
+    <string name="temperature_menu___applied_confirmation">%s angewendet</string>
 </resources>
