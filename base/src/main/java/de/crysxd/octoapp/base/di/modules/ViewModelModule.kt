@@ -1,9 +1,7 @@
 package de.crysxd.octoapp.base.di.modules
 
 import android.app.Application
-import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
-import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
@@ -103,17 +101,14 @@ open class ViewModelModule {
         serialCommunicationLogsRepository: SerialCommunicationLogsRepository,
         getTerminalFiltersUseCase: GetTerminalFiltersUseCase,
         octoPrintProvider: OctoPrintProvider,
-        sharedPreferences: SharedPreferences,
-        gcodeHistoryRepository: GcodeHistoryRepository
+        octoPrintRepository: OctoPrintRepository,
     ): ViewModel = TerminalViewModel(
         getGcodeShortcutsUseCase,
         executeGcodeCommandUseCase,
         serialCommunicationLogsRepository,
         getTerminalFiltersUseCase,
         octoPrintProvider,
-        sharedPreferences,
-        gcodeHistoryRepository,
-        Gson()
+        octoPrintRepository,
     )
 
     @Provides

@@ -1,14 +1,10 @@
 package de.crysxd.octoapp.base.ui.common.terminal
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
 import androidx.lifecycle.*
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.SerialCommunication
-import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
@@ -26,10 +22,6 @@ import timber.log.Timber
 import java.util.*
 import java.util.regex.Pattern
 
-
-const val KEY_SELECTED_TERMINAL_FILTERS = "selected_terminal_filters"
-const val KEY_STYLED_TERMINAL = "styled_terminal"
-
 @Suppress("EXPERIMENTAL_API_USAGE")
 class TerminalViewModel(
     private val getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase,
@@ -37,9 +29,7 @@ class TerminalViewModel(
     private val serialCommunicationLogsRepository: SerialCommunicationLogsRepository,
     private val getTerminalFiltersUseCase: GetTerminalFiltersUseCase,
     octoPrintProvider: OctoPrintProvider,
-    private val sharedPreferences: SharedPreferences,
-    private val gcodeHistoryRepository: GcodeHistoryRepository,
-    private val gson: Gson
+    private val octoPrintRepository: OctoPrintRepository,
 ) : BaseViewModel() {
 
     private val terminalFiltersMediator = MediatorLiveData<List<Settings.TerminalFilter>>()
@@ -111,9 +101,9 @@ class TerminalViewModel(
         }
     }
 
-    private fun saveSelectedFilters() {
-        sharedPreferences.edit {
-            putString(KEY_SELECTED_TERMINAL_FILTERS, gson.toJson(selectedTerminalFilters))
+    private fun saveSelectedFilters() = viewModelScope.launch(coroutineExceptionHandler) {
+        octoPrintRepository.updateAppSettingsForActive {
+            it.copy(selectedTerminalFilters = selectedTerminalFilters)
         }
     }
 
@@ -123,13 +113,15 @@ class TerminalViewModel(
         }
     }
 
-    private fun loadSelectedFilters() = sharedPreferences.getString(KEY_SELECTED_TERMINAL_FILTERS, null)?.let {
-        gson.fromJson<List<Settings.TerminalFilter>>(it, object : TypeToken<List<Settings.TerminalFilter?>>() {}.type)
-    } ?: emptyList()
+    private fun loadSelectedFilters() = octoPrintRepository.getActiveInstanceSnapshot()?.appSettings?.selectedTerminalFilters ?: emptyList()
 
-    fun isStyledTerminalUsed() = sharedPreferences.getBoolean(KEY_STYLED_TERMINAL, true)
+    fun isStyledTerminalUsed() = octoPrintRepository.getActiveInstanceSnapshot()?.appSettings?.isStyledTerminal ?: true
 
-    fun setStyledTerminalUsed(used: Boolean) = sharedPreferences.edit { putBoolean(KEY_STYLED_TERMINAL, used) }
+    fun setStyledTerminalUsed(used: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
+        octoPrintRepository.updateAppSettingsForActive {
+            it.copy(isStyledTerminal = used)
+        }
+    }
 
     fun executeGcode(gcode: String) = viewModelScope.launch(coroutineExceptionHandler) {
         executeGcodeCommandUseCase.execute(
