@@ -5,10 +5,21 @@
     android:id="@+id/connect_printer_nav_graph"
     app:startDestination="@id/workspaceConnect">
 
+    <include app:graph="@navigation/purchase_flow_nav_graph" />
+
     <fragment
         android:id="@id/workspaceConnect"
         android:name="de.crysxd.octoapp.connect_printer.ui.ConnectPrinterFragment"
         tools:layout="@layout/connect_printer_fragment"
         android:label="ConnectPrinterFragment" />
+
+    <action
+        android:id="@+id/action_show_purchase_flow"
+        app:destination="@id/purchase_flow_nav_graph"
+        app:enterAnim="@anim/enterAnim"
+        app:exitAnim="@anim/exitAnim"
+        app:popEnterAnim="@anim/popEnterAnim"
+        app:popExitAnim="@anim/popExitAnim" />
+
 
 </navigation>
