@@ -167,13 +167,13 @@ open class ViewModelModule {
         turnOffPsuUseCase: TurnOffPsuUseCase,
         turnOnPsuUseCase: TurnOnPsuUseCase,
         cyclePsuUseCase: CyclePsuUseCase,
-        sharedPreferences: SharedPreferences
+        octoPrintRepository: OctoPrintRepository,
     ): ViewModel = PowerControlsViewModel(
         turnOffPsuUseCase = turnOffPsuUseCase,
         turnOnPsuUseCase = turnOnPsuUseCase,
         cyclePsuUseCase = cyclePsuUseCase,
         getPowerDevicesUseCase = getPowerDevicesUseCase,
-        sharedPreferences = sharedPreferences
+        octoPrintRepository = octoPrintRepository
     )
 
     @Provides
