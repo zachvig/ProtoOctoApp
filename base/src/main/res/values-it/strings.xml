@@ -330,4 +330,10 @@
     <string name="main_menu___title_quick_switch_disabled">Interruttore rapido disattivato</string>
     <string name="main_menu___title_quick_switch">Interruttore OctoPrint</string>
     <string name="main_menu___subtitle_quick_switch_disabled">Lo switch rapido consente di passare senza soluzione di continuità tra più istanze di OctoPrint. Senza questa funzione, è necessario inserire nuovamente l\'URL web e la chiave API.</string>
+    <string name="temperature_menu___subtitle">È possibile cambiare questo preset nelle impostazioni di OctoPrint</string>
+    <string name="temperature_menu___title">Preset di temperatura</string>
+    <string name="main_menu___item_temperature_presets">Preset di temperatura</string>
+    <string name="temperature_menu___item_preheat">Preriscaldare %s</string>
+    <string name="temperature_menu___applied_confirmation">Applicato %s</string>
+    <string name="temperature_menu___applied_error">%s non trovato, non può essere applicato</string>
 </resources>

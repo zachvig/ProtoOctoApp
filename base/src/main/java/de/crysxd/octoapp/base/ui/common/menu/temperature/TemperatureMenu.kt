@@ -16,8 +16,8 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 class TemperatureMenu : Menu {
-    override fun getSubtitle(context: Context) = "You can change this presets in OctoPrint settings"
-    override fun getTitle(context: Context) = "Temperature Presets"
+    override fun getSubtitle(context: Context) = context.getString(R.string.temperature_menu___subtitle)
+    override fun getTitle(context: Context) = context.getString(R.string.temperature_menu___title)
     override fun getMenuItem() = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()
         ?.settings?.temperature?.profiles?.map {
             ApplyTemperaturePresetMenuItem(it.name)
@@ -34,7 +34,7 @@ class ApplyTemperaturePresetMenuItem(val presetName: String) : MenuItem {
     override val style = MenuItemStyle.Printer
     override var groupId = ""
     override val icon = R.drawable.ic_round_local_fire_department_24
-    override suspend fun getTitle(context: Context) = "Preheat $presetName"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.temperature_menu___item_preheat, presetName)
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.settings?.temperature?.profiles?.firstOrNull {
@@ -44,14 +44,14 @@ class ApplyTemperaturePresetMenuItem(val presetName: String) : MenuItem {
             Injector.get().setBedTargetTemperatureUseCase().execute(SetBedTargetTemperatureUseCase.Param(it.bed ?: 0))
             host.requireOctoActivity().showSnackbar(
                 BaseViewModel.Message.SnackbarMessage(
-                    text = { "$presetName applied" },
+                    text = { ctx -> ctx.getString(R.string.temperature_menu___applied_confirmation, presetName) },
                     type = BaseViewModel.Message.SnackbarMessage.Type.Positive
                 )
             )
         } ?: run {
             host.requireOctoActivity().showSnackbar(
                 BaseViewModel.Message.SnackbarMessage(
-                    text = { "$presetName not found, could not apply." },
+                    text = { ctx -> ctx.getString(R.string.temperature_menu___applied_error, presetName) },
                     type = BaseViewModel.Message.SnackbarMessage.Type.Negative
                 )
             )
