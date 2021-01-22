@@ -17,6 +17,7 @@ data class OctoPrintInstanceInformationV2(
     val apiKeyWasInvalid: Boolean = false,
     val m115Response: String? = null,
     val settings: Settings? = null,
+    val appSettings: AppSettings? = null,
 ) {
     constructor(legacy: OctoPrintInstanceInformationV1) : this(
         webUrl = "http://${legacy.hostName}:${legacy.port}",

@@ -6,7 +6,6 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.media.RingtoneManager
 import android.os.Build
 import android.os.IBinder
@@ -20,10 +19,7 @@ import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.retry
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -61,12 +57,6 @@ class PrintNotificationService : Service() {
     private val formatDurationUseCase: FormatDurationUseCase = Injector.get().formatDurationUseCase()
     private var lastEta: String = ""
     private var didSeePrintBeingActive = false
-    private val preferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
-        if (!isNotificationEnabled) {
-            Timber.i("Service disabled, stopping self")
-            stopSelf()
-        }
-    }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -85,12 +75,20 @@ class PrintNotificationService : Service() {
                 }.collect()
             }
 
+            GlobalScope.launch(coroutineJob) {
+                Injector.get().octoPreferences().updatedFlow.collectLatest {
+                    if (!isNotificationEnabled) {
+                        Timber.i("Service disabled, stopping self")
+                        stopSelf()
+                    }
+                }
+            }
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 createNotificationChannel()
             }
 
             startForeground(NOTIFICATION_ID, createInitialNotification())
-            Injector.get().sharedPreferences().registerOnSharedPreferenceChangeListener(preferencesListener)
         } else {
             Timber.i("Notification service disabled, skipping creation")
             stopSelf()
@@ -101,7 +99,6 @@ class PrintNotificationService : Service() {
         super.onDestroy()
         Timber.i("Destroying notification service")
         notificationManager.cancel(NOTIFICATION_ID)
-        Injector.get().sharedPreferences().unregisterOnSharedPreferenceChangeListener(preferencesListener)
         coroutineJob.cancel()
     }
 

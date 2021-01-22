@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.pre_print_controls.di
 
-import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -44,13 +43,13 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(MoveToolWidgetViewModel::class)
     open fun provideMoveToolControlsViewModel(
-        sharePreferences: SharedPreferences,
+        octoPrintRepository: OctoPrintRepository,
         useCase1: HomePrintHeadUseCase,
         useCase2: JogPrintHeadUseCase
     ): ViewModel = MoveToolWidgetViewModel(
         useCase1,
         useCase2,
-        sharePreferences
+        octoPrintRepository
     )
 
     @Provides

@@ -1,46 +1,37 @@
 package de.crysxd.octoapp.base.ui.widget.webcam
 
-import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
 import android.widget.ImageView
-import androidx.core.content.edit
 import androidx.lifecycle.*
-import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.ext.isHlsStreamUrl
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.base.usecase.execute
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
-import de.crysxd.octoapp.octoprint.models.socket.Event
-import de.crysxd.octoapp.octoprint.models.socket.Message.EventMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import timber.log.Timber
-
-private const val KEY_ASPECT_RATIO = "webcam_aspect_ration"
-private const val KEY_SCALE_TYPE = "webcam_scale_type"
-private const val KEY_SCALE_TYPE_FULLSCREEN = "webcam_scale_type_fullscreen"
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class WebcamViewModel(
-    octoPrintProvider: OctoPrintProvider,
-    private val getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
-    private val sharedPreferences: SharedPreferences
+    private val octoPrintRepository: OctoPrintRepository,
+    private val getWebcamSettingsUseCase: GetWebcamSettingsUseCase
 ) : BaseViewModel() {
 
     private var previousSource: LiveData<UiState>? = null
     private val uiStateMediator = MediatorLiveData<UiState>()
     val uiState = uiStateMediator.map { it }
-    private val settingsUpdatedLiveData = octoPrintProvider.eventFlow("webcam")
-        .filter { it is Event.MessageReceived && it.message is EventMessage.SettingsUpdated }
+    private val octoPrintLiveData = octoPrintRepository.instanceInformationFlow()
+        .distinctUntilChangedBy { it?.settings?.webcam }
         .asLiveData()
 
     init {
-        uiStateMediator.addSource(octoPrintProvider.octoPrintFlow().asLiveData()) { connect() }
-        uiStateMediator.addSource(settingsUpdatedLiveData) { connect() }
+        uiStateMediator.addSource(octoPrintLiveData) { connect() }
         uiStateMediator.postValue(UiState.Loading)
     }
 
@@ -54,7 +45,6 @@ class WebcamViewModel(
 
                     // Load settings
                     val webcamSettings = getWebcamSettingsUseCase.execute()
-                    storeAspectRatio(webcamSettings.streamRatio)
                     val streamUrl = webcamSettings.streamUrl
 
                     // Check if webcam is configured
@@ -108,20 +98,23 @@ class WebcamViewModel(
         uiStateMediator.addSource(liveData) { uiStateMediator.postValue(it) }
     }
 
-    fun storeScaleType(scaleType: ImageView.ScaleType, isFullscreen: Boolean) = sharedPreferences.edit {
-        putInt(if (isFullscreen) KEY_SCALE_TYPE_FULLSCREEN else KEY_SCALE_TYPE, scaleType.ordinal)
+    fun storeScaleType(scaleType: ImageView.ScaleType, isFullscreen: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
+        octoPrintRepository.updateAppSettingsForActive {
+            if (isFullscreen) {
+                it.copy(webcamFullscreenScaleType = scaleType.ordinal)
+            } else {
+                it.copy(webcamScaleType = scaleType.ordinal)
+            }
+        }
     }
 
-    fun getScaleType(isFullscreen: Boolean, default: ImageView.ScaleType) = ImageView.ScaleType.values()[sharedPreferences.getInt(
-        if (isFullscreen) KEY_SCALE_TYPE_FULLSCREEN else KEY_SCALE_TYPE,
-        default.ordinal
-    )]
+    fun getScaleType(isFullscreen: Boolean, default: ImageView.ScaleType) = ImageView.ScaleType.values()[
+            octoPrintRepository.getActiveInstanceSnapshot()?.appSettings?.let {
+                if (isFullscreen) it.webcamFullscreenScaleType else it.webcamScaleType
+            } ?: default.ordinal
+    ]
 
-    private fun storeAspectRatio(aspectRatio: String) = sharedPreferences.edit {
-        putString(KEY_ASPECT_RATIO, aspectRatio)
-    }
-
-    fun getInitialAspectRatio() = sharedPreferences.getString(KEY_ASPECT_RATIO, null) ?: "16:9"
+    fun getInitialAspectRatio() = octoPrintRepository.getActiveInstanceSnapshot()?.settings?.webcam?.streamRatio ?: "16:9"
 
     private fun applyTransformations(frame: Bitmap, webcamSettings: WebcamSettings) =
         if (webcamSettings.flipV || webcamSettings.flipH || webcamSettings.rotate90) {

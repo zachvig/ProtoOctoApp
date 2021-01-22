@@ -18,7 +18,7 @@ class GcodeShortcutLayoutManager(
 ) {
 
     private val otherViewTag = "other_view"
-    private var initialLayout = false
+    private var initialLayout = true
 
     init {
         layout.children.forEach { it.tag = otherViewTag }
@@ -61,9 +61,9 @@ class GcodeShortcutLayoutManager(
         // Scroll to end of list the first time we populate the buttons
         if (initialLayout) {
             initialLayout = false
-            scroller?.postDelayed({
+            scroller?.post {
                 scroller.scrollTo(layout.width, 0)
-            }, 150)
+            }
         }
     }
 }

@@ -1,8 +1,7 @@
 package de.crysxd.octoapp.base.ui.common.power
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
 import androidx.lifecycle.*
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
@@ -18,7 +17,7 @@ class PowerControlsViewModel(
     private val turnOnPsuUseCase: TurnOnPsuUseCase,
     private val turnOffPsuUseCase: TurnOffPsuUseCase,
     private val cyclePsuUseCase: CyclePsuUseCase,
-    private val sharedPreferences: SharedPreferences,
+    private val octoPrintRepository: OctoPrintRepository,
 ) : BaseViewModel() {
 
     private val mutableViewState = MediatorLiveData<ViewState>()
@@ -44,7 +43,9 @@ class PowerControlsViewModel(
             coroutineExceptionHandler.handleException(coroutineContext, e)
             Timber.e(e)
             Timber.i("Default device action failed. Clearing default")
-            sharedPreferences.edit { remove(createPreferencesKeyForActionId(deviceType)) }
+            octoPrintRepository.updateAppSettingsForActive {
+                it.copy(defaultPowerDevices = it.defaultPowerDevices?.toMutableMap()?.apply { remove(deviceType.prefKey) })
+            }
         }
 
         // We couldn't use the default, load power devices and query on/off state
@@ -80,7 +81,7 @@ class PowerControlsViewModel(
     private suspend fun attemptAutoHandle(devices: PowerDeviceList?): Boolean {
         val action = autoAction
         val deviceType = autoDeviceType ?: PowerControlsBottomSheet.DeviceType.Unspecified
-        val defaultDeviceIdForAction = sharedPreferences.getString(createPreferencesKeyForActionId(deviceType), null)
+        val defaultDeviceIdForAction = octoPrintRepository.getActiveInstanceSnapshot()?.appSettings?.defaultPowerDevices?.get(deviceType.prefKey)
 
         return if ((action != null && action != PowerControlsBottomSheet.Action.Unspecified) && devices != null && (defaultDeviceIdForAction != null || devices.size == 1)) {
             val device = devices.firstOrNull { it.first.uniqueId == defaultDeviceIdForAction }
@@ -94,9 +95,6 @@ class PowerControlsViewModel(
             false
         }
     }
-
-    private fun createPreferencesKeyForActionId(deviceType: PowerControlsBottomSheet.DeviceType) =
-        "power_controls_default_${deviceType::class.java.simpleName.toLowerCase(Locale.ENGLISH)}"
 
     fun executeAction(
         device: PowerDevice,
@@ -122,7 +120,9 @@ class PowerControlsViewModel(
 
         // Store default :)
         if (deviceType != PowerControlsBottomSheet.DeviceType.Unspecified && useAsDefault) {
-            sharedPreferences.edit { putString(createPreferencesKeyForActionId(deviceType), device.uniqueId) }
+            octoPrintRepository.updateAppSettingsForActive {
+                it.copy(defaultPowerDevices = (it.defaultPowerDevices ?: emptyMap()).toMutableMap().apply { this[deviceType.prefKey] = device.uniqueId })
+            }
         }
 
         // Switch to loading state
@@ -152,6 +152,8 @@ class PowerControlsViewModel(
             throw e
         }
     }
+
+    private val PowerControlsBottomSheet.DeviceType.prefKey get() = this::class.java.simpleName.toLowerCase(Locale.ENGLISH)
 
     sealed class ViewState {
         object Loading : ViewState()

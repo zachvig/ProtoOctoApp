@@ -1,9 +1,7 @@
 package de.crysxd.octoapp.base.di.modules
 
 import android.app.Application
-import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
-import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
@@ -87,13 +85,11 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(WebcamViewModel::class)
     open fun provideWebcamWidgetViewModel(
-        octoPrintProvider: OctoPrintProvider,
+        octoPrintRepository: OctoPrintRepository,
         getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
-        sharedPreferences: SharedPreferences
     ): ViewModel = WebcamViewModel(
-        octoPrintProvider,
+        octoPrintRepository,
         getWebcamSettingsUseCase,
-        sharedPreferences
     )
 
     @Provides
@@ -105,17 +101,14 @@ open class ViewModelModule {
         serialCommunicationLogsRepository: SerialCommunicationLogsRepository,
         getTerminalFiltersUseCase: GetTerminalFiltersUseCase,
         octoPrintProvider: OctoPrintProvider,
-        sharedPreferences: SharedPreferences,
-        gcodeHistoryRepository: GcodeHistoryRepository
+        octoPrintRepository: OctoPrintRepository,
     ): ViewModel = TerminalViewModel(
         getGcodeShortcutsUseCase,
         executeGcodeCommandUseCase,
         serialCommunicationLogsRepository,
         getTerminalFiltersUseCase,
         octoPrintProvider,
-        sharedPreferences,
-        gcodeHistoryRepository,
-        Gson()
+        octoPrintRepository,
     )
 
     @Provides
@@ -169,13 +162,13 @@ open class ViewModelModule {
         turnOffPsuUseCase: TurnOffPsuUseCase,
         turnOnPsuUseCase: TurnOnPsuUseCase,
         cyclePsuUseCase: CyclePsuUseCase,
-        sharedPreferences: SharedPreferences
+        octoPrintRepository: OctoPrintRepository,
     ): ViewModel = PowerControlsViewModel(
         turnOffPsuUseCase = turnOffPsuUseCase,
         turnOnPsuUseCase = turnOnPsuUseCase,
         cyclePsuUseCase = cyclePsuUseCase,
         getPowerDevicesUseCase = getPowerDevicesUseCase,
-        sharedPreferences = sharedPreferences
+        octoPrintRepository = octoPrintRepository
     )
 
     @Provides
