@@ -216,8 +216,13 @@ class GcodePreviewWidget(parent: Fragment) : OctoWidget(parent) {
         }
 
         view.imageButtonFullscreen?.setOnClickListener {
-            it.findNavController().navigate(R.id.action_show_fullscreen_gcode, GcodePreviewFragmentArgs(file, true).toBundle())
-            recordInteraction()
+            try {
+                it.findNavController().navigate(R.id.action_show_fullscreen_gcode, GcodePreviewFragmentArgs(file, true).toBundle())
+                recordInteraction()
+            } catch (e: Exception) {
+                // Fix for https://bit.ly/39TmzR4 in lack of a better solution
+                Timber.e(e)
+            }
         }
 
         view.layer.text = requireContext().getString(de.crysxd.octoapp.base.R.string.x_of_y, renderContext.layerNumber, renderContext.layerCount)
