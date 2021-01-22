@@ -1,11 +1,10 @@
 package de.crysxd.octoapp.pre_print_controls.ui.widget.move
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.text.InputType
-import androidx.core.content.edit
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
@@ -19,12 +18,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 const val DEFAULT_FEED_RATE = 4000
-const val KEY_Z_FEED_RATE = "move_tool_z_feed_rate"
 
 class MoveToolWidgetViewModel(
     private val homePrintHeadUseCase: HomePrintHeadUseCase,
     private val jogPrintHeadUseCase: JogPrintHeadUseCase,
-    private val sharedPreferences: SharedPreferences
+    private val octoPrintRepository: OctoPrintRepository,
 ) : BaseViewModel() {
 
     var jogResolution: Float = -1f
@@ -77,10 +75,12 @@ class MoveToolWidgetViewModel(
         else -> DEFAULT_FEED_RATE
     }
 
-    private fun getZFeedRate() = sharedPreferences.getInt(KEY_Z_FEED_RATE, DEFAULT_FEED_RATE)
+    private fun getZFeedRate() = octoPrintRepository.getActiveInstanceSnapshot()?.appSettings?.moveZFeedRate ?: DEFAULT_FEED_RATE
 
-    private fun setZFeedRate(feedRate: Int) = sharedPreferences.edit {
-        putInt(KEY_Z_FEED_RATE, feedRate)
+    private fun setZFeedRate(feedRate: Int) = viewModelScope.launch(coroutineExceptionHandler) {
+        octoPrintRepository.updateAppSettingsForActive {
+            it.copy(moveZFeedRate = feedRate)
+        }
     }
 
     sealed class Direction(val multiplier: Float) {

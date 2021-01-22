@@ -8,4 +8,5 @@ data class AppSettings(
     val defaultPowerDevices: Map<String, String>? = null,
     val selectedTerminalFilters: List<Settings.TerminalFilter>? = null,
     val isStyledTerminal: Boolean? = null,
+    val moveZFeedRate: Int? = null
 )
