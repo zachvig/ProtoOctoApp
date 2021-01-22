@@ -7,7 +7,6 @@ import android.widget.ImageView
 import androidx.lifecycle.*
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.ext.isHlsStreamUrl
-import de.crysxd.octoapp.base.models.AppSettings
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
@@ -17,10 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
-
-private const val KEY_ASPECT_RATIO = "webcam_aspect_ration"
-private const val KEY_SCALE_TYPE = "webcam_scale_type"
-private const val KEY_SCALE_TYPE_FULLSCREEN = "webcam_scale_type_fullscreen"
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class WebcamViewModel(
@@ -104,15 +99,12 @@ class WebcamViewModel(
     }
 
     fun storeScaleType(scaleType: ImageView.ScaleType, isFullscreen: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
-        octoPrintRepository.updateActive {
-            val appSettings = it.appSettings ?: AppSettings()
-            it.copy(
-                appSettings = if (isFullscreen) {
-                    appSettings.copy(webcamFullscreenScaleType = scaleType.ordinal)
-                } else {
-                    appSettings.copy(webcamScaleType = scaleType.ordinal)
-                }
-            )
+        octoPrintRepository.updateAppSettingsForActive {
+            if (isFullscreen) {
+                it.copy(webcamFullscreenScaleType = scaleType.ordinal)
+            } else {
+                it.copy(webcamScaleType = scaleType.ordinal)
+            }
         }
     }
 
