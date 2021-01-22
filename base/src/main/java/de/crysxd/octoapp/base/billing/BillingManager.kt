@@ -104,7 +104,8 @@ object BillingManager {
             fun String.splitSkuIds() = split(",").map { it.trim() }
             Timber.i("Fetching SKU: subscriptions=$subscriptionSkuIds purchases=$purchaseSkuIds")
 
-            val subscriptions = async {
+            val supervisor = SupervisorJob()
+            val subscriptions = async(supervisor) {
                 fetchSku(
                     SkuDetailsParams.newBuilder()
                         .setSkusList(subscriptionSkuIds.splitSkuIds())
@@ -113,7 +114,7 @@ object BillingManager {
                 )
             }
 
-            val purchases = async {
+            val purchases = async(supervisor) {
                 fetchSku(
                     SkuDetailsParams.newBuilder()
                         .setSkusList(purchaseSkuIds.splitSkuIds())
