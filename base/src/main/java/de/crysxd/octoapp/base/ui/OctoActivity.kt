@@ -2,6 +2,8 @@ package de.crysxd.octoapp.base.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
@@ -122,7 +124,10 @@ abstract class OctoActivity : LocaleActivity() {
             neutralButton?.let {
                 builder.setNeutralButton(it) { _, _ -> neutralAction(this) }
             }
-            builder.show()
+            builder.show().also {
+                // Allow links to be clicked
+                it.findViewById<TextView>(android.R.id.message)?.movementMethod = LinkMovementMethod()
+            }
         }
     }
 
