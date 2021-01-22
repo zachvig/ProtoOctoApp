@@ -26,7 +26,7 @@ class GcodeFileRepository(
                         try {
                             it.cacheGcode(file, state.gcode)
                         } catch (e: Exception) {
-                            Timber.i(e)
+                            Timber.e(e)
                         }
                     }
                 }
