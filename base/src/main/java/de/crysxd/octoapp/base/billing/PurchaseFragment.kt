@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.billing
 
+import android.app.AlertDialog
 import android.graphics.Rect
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
@@ -153,6 +154,15 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
                 }
             )
             skuList.addView(view)
+        }
+
+        if (state.billingData.availableSku.isEmpty()) {
+            OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseMissingSku)
+            AlertDialog.Builder(requireContext())
+                .setMessage("Thanks for your interest! There was a issue loading available offers, check back later!")
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    findNavController().popBackStack()
+                }.show()
         }
     }
 

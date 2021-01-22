@@ -79,6 +79,7 @@ object OctoAnalytics {
 
         object PurchaseScreenScroll : Event("purchase_screen_scroll")
         object PurchaseScreenOpen : Event("purchase_screen_open")
+        object PurchaseMissingSku : Event("purchase_missing_sku")
         object PurchaseOptionsShown : Event("purchase_options_shown")
         object PurchaseIntroShown : Event("purchase_intro_shown")
         object PurchaseScreenClosed : Event("purchase_screen_closed")
