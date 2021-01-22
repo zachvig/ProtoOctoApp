@@ -35,7 +35,7 @@ class ApplyTemperaturePresetMenuItem(val presetName: String) : MenuItem {
     override var groupId = ""
     override val icon = R.drawable.ic_round_local_fire_department_24
     override suspend fun getTitle(context: Context) = "Preheat $presetName"
-
+    override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.settings?.temperature?.profiles?.firstOrNull {
             it.name == presetName
