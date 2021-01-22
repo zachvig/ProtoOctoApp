@@ -278,8 +278,8 @@
     <string name="notification_pausing_title">Pausa…</string>
     <string name="notification_paused_title">In pausa</string>
     <string name="notification_cancelling_title">Cancellare…</string>
-    <string name="notification_printing_title">La stampa…</string>
-    <string name="notification_printing_message">%1$d%d%% completato, %2$s lasciato</string>
+    <string name="notification_printing_title">In stampa…</string>
+    <string name="notification_printing_message">%1$d%% completato, %2$s rimanenti</string>
     <string name="notification_printing_lost_connection_message">Riconnessione…</string>
     <string name="notification_print_done_title">Stampa completata</string>
     <string name="close">Chiudi</string>

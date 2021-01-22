@@ -44,8 +44,8 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code), InsetAwareS
         super.onResume()
 
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            scannerView.postDelayed({
-                scannerView.startCamera()
+            scannerView?.postDelayed({
+                scannerView?.startCamera()
             }, 300)
         } else {
             requestPermissions(arrayOf(android.Manifest.permission.CAMERA), 1)

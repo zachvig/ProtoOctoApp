@@ -18,6 +18,7 @@ import kotlinx.coroutines.withContext
 import org.nustaq.serialization.FSTConfiguration
 import timber.log.Timber
 import java.io.File
+import java.io.IOException
 import java.util.*
 
 
@@ -50,8 +51,13 @@ class LocalGcodeFileDataSource(
                 emit(GcodeFileDataSource.LoadState.Loading(0f))
                 val cacheEntry = gson.fromJson(sharedPreferences.getString(file.cacheKey, null), CacheEntry::class.java)
 
-                val gcode = cacheEntry.localFile.inputStream().use {
-                    fstConfig.decodeFromStream(it) as Gcode
+                val gcode = try {
+                    cacheEntry.localFile.inputStream().use {
+                        fstConfig.decodeFromStream(it) as Gcode
+                    }
+                } catch (e: OutOfMemoryError) {
+                    System.gc()
+                    throw IOException(e)
                 }
 
                 emit(GcodeFileDataSource.LoadState.Ready(gcode))
@@ -81,12 +87,17 @@ class LocalGcodeFileDataSource(
         )
 
         cacheRoot.mkdirs()
-        cacheEntry.localFile.outputStream().use {
-            fstConfig.encodeToStream(it, gcode)
-        }
+        try {
+            cacheEntry.localFile.outputStream().use {
+                fstConfig.encodeToStream(it, gcode)
+            }
 
-        sharedPreferences.edit {
-            putString(file.cacheKey, gson.toJson(cacheEntry))
+            sharedPreferences.edit {
+                putString(file.cacheKey, gson.toJson(cacheEntry))
+            }
+        } catch (e: OutOfMemoryError) {
+            System.gc()
+            throw IOException(e)
         }
 
         cleanUp()
