@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.ui.common.menu
 
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -100,7 +101,14 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
 
     private fun beginDelayedTransition(smallChange: Boolean = false) {
         view?.findParent<CoordinatorLayout>()?.let {
-            TransitionManager.beginDelayedTransition(it, InstantAutoTransition(explode = !smallChange))
+            val epicenterX = it.width / 2
+            val epicenterY = it.width / 2
+            TransitionManager.beginDelayedTransition(
+                it, InstantAutoTransition(
+                    explode = !smallChange,
+                    explodeEpicenter = Rect(epicenterX, epicenterY, epicenterX, epicenterY)
+                )
+            )
         }
     }
 
