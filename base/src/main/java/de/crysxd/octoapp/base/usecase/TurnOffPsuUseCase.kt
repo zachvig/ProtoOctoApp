@@ -2,12 +2,13 @@ package de.crysxd.octoapp.base.usecase
 
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
+import de.crysxd.octoapp.octoprint.plugins.power.tradfri.runWithTradfriFix
 import timber.log.Timber
 import javax.inject.Inject
 
 class TurnOffPsuUseCase @Inject constructor() : UseCase<PowerDevice, Unit>() {
 
-    override suspend fun doExecute(param: PowerDevice, timber: Timber.Tree) {
+    override suspend fun doExecute(param: PowerDevice, timber: Timber.Tree) = runWithTradfriFix(param) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PsuTurnedOff)
         param.turnOff()
     }

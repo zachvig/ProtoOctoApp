@@ -1,6 +1,8 @@
 package de.crysxd.octoapp.octoprint.plugins.power.tradfri
 
+import de.crysxd.octoapp.octoprint.exceptions.OctoPrintApiException
 import de.crysxd.octoapp.octoprint.models.settings.Settings
+import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import de.crysxd.octoapp.octoprint.plugins.power.PowerPlugin
 
 class TradfriPowerPlugin(
@@ -24,4 +26,15 @@ class TradfriPowerPlugin(
         }.firstOrNull()?.devices?.map {
             it.copy(plugin = this)
         } ?: emptyList()
+}
+
+suspend fun runWithTradfriFix(powerDevice: PowerDevice, block: suspend () -> Unit) {
+    try {
+        block()
+    } catch (e: OctoPrintApiException) {
+        // Tradfri gives 500 on every action...ignore
+        if (e.responseCode != 500 || powerDevice !is TradfriPowerDevice) {
+            throw e
+        }
+    }
 }
