@@ -43,7 +43,7 @@ object BillingManager {
     private fun ConflatedBroadcastChannel<BillingData>.update(block: (BillingData) -> BillingData) {
         val new = block(valueOrNull ?: BillingData())
         offer(new)
-        Timber.i("Updated: $new")
+        Timber.v("Updated: $new")
     }
 
     fun initBilling(context: Context) = GlobalScope.launch(Dispatchers.IO) {
@@ -124,7 +124,7 @@ object BillingManager {
             }
 
             val allSku = listOf(subscriptions.await(), purchases.await()).flatten()
-            Timber.i("Updated SKU: $allSku")
+            Timber.i("Updated SKU: ${allSku.map { it.sku }}")
             Timber.i("Premium features: ${Firebase.remoteConfig.getString("premium_features")}")
             billingChannel.update { it.copy(availableSku = allSku) }
         } catch (e: Exception) {
