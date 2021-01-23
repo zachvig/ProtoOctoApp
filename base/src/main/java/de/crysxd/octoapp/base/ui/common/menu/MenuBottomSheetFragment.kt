@@ -75,7 +75,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     fun show(fm: FragmentManager) = show(fm, "main-menu")
 
     fun pushMenu(settingsMenu: Menu) {
-        adapter.menu?.let { viewModel.menuBackStack.add(it) }
+        viewModel.menuBackStack.add(settingsMenu)
         showMenu(settingsMenu)
     }
 
@@ -90,10 +90,11 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         viewBinding.bottom.isVisible = viewBinding.bottom.text.isNotBlank()
     }
 
-    private fun popMenu(): Boolean = if (viewModel.menuBackStack.isEmpty()) {
+    private fun popMenu(): Boolean = if (viewModel.menuBackStack.size <= 1) {
         false
     } else {
-        showMenu(viewModel.menuBackStack.removeLast())
+        viewModel.menuBackStack.removeLast()
+        showMenu(viewModel.menuBackStack.last())
         true
     }
 
