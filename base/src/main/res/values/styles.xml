@@ -81,9 +81,10 @@
     </style>
 
     <style name="OctoTheme.Widget.Button.Menu">
+        <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Button.Menu</item>
         <item name="android:paddingTop">@dimen/margin_0</item>
         <item name="android:paddingBottom">@dimen/margin_0</item>
-        <item name="android:minHeight">45dp</item>
+        <item name="android:minHeight">38dp</item>
         <item name="android:paddingEnd">@dimen/margin_1</item>
         <item name="android:paddingStart">15dp</item>
         <item name="android:insetTop">0dp</item>

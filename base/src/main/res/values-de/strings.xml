@@ -319,8 +319,8 @@
     <string name="main_menu___item_use_dark_mode">Dark-Mode ausschalten</string>
     <string name="main_menu___item_turn_print_notification_on">Notification einschalten</string>
     <string name="main_menu___item_turn_print_notification_off">Notification ausschalten</string>
-    <string name="main_menu___item_keep_screen_on_during_pinrt_on">Bildschirm während Druck an lassen</string>
-    <string name="main_menu___item_keep_screen_on_during_pinrt_off">Bildschirm während Druck ausschalten</string>
+    <string name="main_menu___item_keep_screen_on_during_pinrt_on">Bildschirm während Druck an </string>
+    <string name="main_menu___item_keep_screen_on_during_pinrt_off">Bildschirm während Druck aus</string>
     <string name="main_menu___item_sign_out">Dauerhaft abmelden</string>
     <string name="main_menu___item_add_instance">Neues OctoPrint hinzufügen</string>
     <string name="main_menu___enable_quick_switch">Schnellwechsel aktivieren</string>
