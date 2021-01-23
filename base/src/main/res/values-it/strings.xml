@@ -336,4 +336,6 @@
     <string name="temperature_menu___item_preheat">Preriscaldare %s</string>
     <string name="temperature_menu___applied_confirmation">Applicato %s</string>
     <string name="temperature_menu___applied_error">%s non trovato, non può essere applicato</string>
+    <string name="announcement___new_version_detail">Questa versione introduce un menu principale personalizzabile, il supporto per più OctoPrint così come il controllo dell\'alimentazione per IKEA Trådfri, TP-Link e Tasmoa smart plugs (è richiesto il plugin OctoPrint corrispondente)</string>
+    <string name="announcement___new_version_title">Benvenuti a OctoApp 1.5!</string>
 </resources>

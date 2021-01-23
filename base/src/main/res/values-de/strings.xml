@@ -198,7 +198,7 @@
     <string name="pause_print_confirmation_message">Willst du den Druck unterbrechen?</string>
     <string name="pause_print_confirmation_action">Pause drucken</string>
     <string name="resume_print_confirmation_message">Willst du den Druck fortsetzen?</string>
-    <string name="resume_print_confirmation_action">Lebenslauf drucken</string>
+    <string name="resume_print_confirmation_action">Fortsetzen</string>
     <string name="cancel_print_confirmation_message">Willst du den Druck abbrechen?</string>
     <string name="cancel_print_confirmation_action">Drucken abbrechen</string>
     <string name="emergency_stop_confirmation_message">Willst du den Drucker notstoppen?</string>
@@ -319,8 +319,8 @@
     <string name="main_menu___item_use_dark_mode">Dark-Mode ausschalten</string>
     <string name="main_menu___item_turn_print_notification_on">Notification einschalten</string>
     <string name="main_menu___item_turn_print_notification_off">Notification ausschalten</string>
-    <string name="main_menu___item_keep_screen_on_during_pinrt_on">Bildschirm während Druck an lassen</string>
-    <string name="main_menu___item_keep_screen_on_during_pinrt_off">Bildschirm während Druck ausschalten</string>
+    <string name="main_menu___item_keep_screen_on_during_pinrt_on">Bildschirm während Druck an </string>
+    <string name="main_menu___item_keep_screen_on_during_pinrt_off">Bildschirm während Druck aus</string>
     <string name="main_menu___item_sign_out">Dauerhaft abmelden</string>
     <string name="main_menu___item_add_instance">Neues OctoPrint hinzufügen</string>
     <string name="main_menu___enable_quick_switch">Schnellwechsel aktivieren</string>
@@ -335,4 +335,6 @@
     <string name="temperature_menu___subtitle">Du kannst diese Voreinstellungen in den OctoPrint-Einstellungen ändern</string>
     <string name="temperature_menu___item_preheat">%s vorheizen</string>
     <string name="temperature_menu___applied_confirmation">%s angewendet</string>
+    <string name="announcement___new_version_detail">Diese Version führt ein anpassbares Hauptmenü, Unterstützung für mehrere OctoPrint sowie Stromkontrollen für IKEA Trådfri, TP-Link und Tasmoa Smart Plugs ein (passendes OctoPrint-Plugin erforderlich)</string>
+    <string name="announcement___new_version_title">Willkommen in OctoApp 1.5!</string>
 </resources>

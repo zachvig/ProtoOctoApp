@@ -43,7 +43,7 @@
     </style>
 
     <style name="OctoTheme.TextAppearance.SubTitle">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:fontFamily">@font/ubuntu_light</item>
         <item name="fontFamily">@font/ubuntu_light</item>
         <item name="android:textColor">@color/dark_text</item>
@@ -54,6 +54,10 @@
         <item name="android:fontFamily">@font/ubuntu_light</item>
         <item name="fontFamily">@font/ubuntu_light</item>
         <item name="android:textColor">@color/button_primary_text_color</item>
+    </style>
+
+    <style name="OctoTheme.TextAppearance.Button.Menu">
+        <item name="android:textSize">17sp</item>
     </style>
 
     <style name="OctoTheme.TextAppearance.Button.Borderless">

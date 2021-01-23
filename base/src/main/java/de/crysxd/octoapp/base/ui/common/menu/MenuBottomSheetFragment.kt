@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.ui.common.menu
 
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -75,7 +76,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     fun show(fm: FragmentManager) = show(fm, "main-menu")
 
     fun pushMenu(settingsMenu: Menu) {
-        adapter.menu?.let { viewModel.menuBackStack.add(it) }
+        viewModel.menuBackStack.add(settingsMenu)
         showMenu(settingsMenu)
     }
 
@@ -90,16 +91,24 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         viewBinding.bottom.isVisible = viewBinding.bottom.text.isNotBlank()
     }
 
-    private fun popMenu(): Boolean = if (viewModel.menuBackStack.isEmpty()) {
+    private fun popMenu(): Boolean = if (viewModel.menuBackStack.size <= 1) {
         false
     } else {
-        showMenu(viewModel.menuBackStack.removeLast())
+        viewModel.menuBackStack.removeLast()
+        showMenu(viewModel.menuBackStack.last())
         true
     }
 
     private fun beginDelayedTransition(smallChange: Boolean = false) {
         view?.findParent<CoordinatorLayout>()?.let {
-            TransitionManager.beginDelayedTransition(it, InstantAutoTransition(explode = !smallChange))
+            val epicenterX = it.width / 2
+            val epicenterY = it.width / 2
+            TransitionManager.beginDelayedTransition(
+                it, InstantAutoTransition(
+                    explode = !smallChange,
+                    explodeEpicenter = Rect(epicenterX, epicenterY, epicenterX, epicenterY)
+                )
+            )
         }
     }
 
@@ -165,7 +174,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             val nextItem = menuItems.getOrNull(position + 1)
             val groupChanged = nextItem != null && nextItem.groupId != item.groupId
             holder.itemView.updateLayoutParams<GridLayoutManager.LayoutParams> {
-                bottomMargin = requireContext().resources.getDimension(if (groupChanged) R.dimen.margin_2 else R.dimen.margin_0_1).toInt()
+                bottomMargin = requireContext().resources.getDimension(if (groupChanged) R.dimen.margin_1_2 else R.dimen.margin_0_1).toInt()
                 marginEnd = requireContext().resources.getDimension(R.dimen.margin_0_1).toInt()
             }
 

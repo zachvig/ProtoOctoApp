@@ -17,7 +17,7 @@ import de.crysxd.octoapp.base.ui.common.menu.main.MENU_ITEM_SIGN_OUT
 import de.crysxd.octoapp.base.ui.common.menu.main.MENU_ITEM_SWITCH_INSTANCE
 import kotlinx.android.parcel.Parcelize
 
-private var isQuickSwitchEnabled = BillingManager.isFeatureEnabled("quick_switch")
+private val isQuickSwitchEnabled get() = BillingManager.isFeatureEnabled("quick_switch")
 private val isAnyActive get() = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl != null
 
 @Parcelize
@@ -120,7 +120,6 @@ class EnableQuickSwitchMenuItem : MenuItem {
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "switch_menu"))
         host.findNavController().navigate(R.id.action_show_purchase_flow)
-        isQuickSwitchEnabled = true
         return false
     }
 }
