@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+\<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="error_general">Etwas ist schief gelaufen! Bitte versuche es noch einmal.</string>
     <string name="error_general_with_details"><![CDATA[Etwas ist schief gelaufen, bitte versuche es erneut.<br/><br/><small><font color="#%1$06X">%2$s</font></small>]]></string>
@@ -198,7 +198,7 @@
     <string name="pause_print_confirmation_message">Willst du den Druck unterbrechen?</string>
     <string name="pause_print_confirmation_action">Pause drucken</string>
     <string name="resume_print_confirmation_message">Willst du den Druck fortsetzen?</string>
-    <string name="resume_print_confirmation_action">Lebenslauf drucken</string>
+    <string name="resume_print_confirmation_action">Fortsetzen</string>
     <string name="cancel_print_confirmation_message">Willst du den Druck abbrechen?</string>
     <string name="cancel_print_confirmation_action">Drucken abbrechen</string>
     <string name="emergency_stop_confirmation_message">Willst du den Drucker notstoppen?</string>
