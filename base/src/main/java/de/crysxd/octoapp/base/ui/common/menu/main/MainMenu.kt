@@ -47,7 +47,7 @@ class SupportOctoAppMenuItem : MenuItem {
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "main_menu"))
         host.findNavController().navigate(R.id.action_show_purchase_flow)
-        return false
+        return true
     }
 }
 
