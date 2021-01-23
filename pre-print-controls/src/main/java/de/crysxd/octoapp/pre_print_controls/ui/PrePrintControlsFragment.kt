@@ -5,12 +5,13 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
+import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
+import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
@@ -22,7 +23,7 @@ import kotlinx.android.synthetic.main.fragment_pre_print_controls.*
 import timber.log.Timber
 import de.crysxd.octoapp.base.R as BaseR
 
-class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_controls) {
+class PrePrintControlsFragment : WidgetHostFragment(R.layout.fragment_pre_print_controls) {
 
     override val viewModel: PrePrintControlsViewModel by injectViewModel()
     private val adapter = OctoWidgetAdapter()
@@ -49,6 +50,7 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
             }
 
             val widgets = mutableListOf<OctoWidget>()
+            widgets.add(AnnouncementWidget(this@PrePrintControlsFragment))
             widgets.add(ControlTemperatureWidget(this@PrePrintControlsFragment))
             widgets.add(MoveToolWidget(this@PrePrintControlsFragment))
 
@@ -60,8 +62,12 @@ class PrePrintControlsFragment : BaseFragment(R.layout.fragment_pre_print_contro
             widgets.add(SendGcodeWidget(this@PrePrintControlsFragment))
 
             Timber.i("Installing widgets: ${widgets.map { it::class.java.simpleName }}")
-            adapter.setWidgets(requireContext(), widgets)
+            adapter.setWidgets(requireContext(), widgets.filter { it.isVisible() })
         }
+    }
+
+    override fun reloadWidgets() {
+        installApplicableWidgets(viewModel.webCamSupported.value == true)
     }
 
     override fun onStart() {

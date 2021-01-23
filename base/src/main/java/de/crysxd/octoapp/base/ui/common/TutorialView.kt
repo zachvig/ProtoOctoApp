@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import androidx.core.content.edit
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.TutorialViewBinding
 import de.crysxd.octoapp.base.di.Injector
@@ -25,20 +26,31 @@ class TutorialView @JvmOverloads constructor(context: Context, attributeSet: Att
     private var sharedPrefKey: String? = null
     private var isSharedPrefInverted = false
 
+    companion object {
+        fun isTutorialVisible(prefKey: String, isInvertedLogic: Boolean = false): Boolean {
+            val value = Injector.get().sharedPreferences().getBoolean(prefKey, isInvertedLogic)
+            return if (isInvertedLogic) value else !value
+        }
+    }
+
     init {
         val prefs = if (isInEditMode) null else Injector.get().sharedPreferences()
 
         context.obtainStyledAttributes(attributeSet, R.styleable.TutorialView).use {
-            sharedPrefKey = it.getString(R.styleable.TutorialView_hidePrefName)
+            sharedPrefKey = if (isInEditMode) null else it.getString(R.styleable.TutorialView_hidePrefName)
             isSharedPrefInverted = it.getBoolean(R.styleable.TutorialView_hidePrefInverted, false)
 
             val alwaysShown = it.getBoolean(R.styleable.TutorialView_alwaysShow, false)
-            val hidden = sharedPrefKey?.let { prefs?.getBoolean(sharedPrefKey, isSharedPrefInverted) } ?: false
-            isVisible = !(if (isSharedPrefInverted) !hidden else hidden) || isInEditMode || alwaysShown
+            val visible = sharedPrefKey?.let { key -> isTutorialVisible(key, isSharedPrefInverted) } ?: false
+            isVisible = visible || isInEditMode || alwaysShown
 
             // Only inflate view if visible
             if (isVisible) {
                 val binding = TutorialViewBinding.inflate(LayoutInflater.from(context), this, true)
+
+                if (it.getBoolean(R.styleable.TutorialView_noBottomMargin, false)) {
+                    binding.root.updateLayoutParams<LayoutParams> { bottomMargin = 0 }
+                }
 
                 binding.title.text = it.getString(R.styleable.TutorialView_title)
                 binding.detail.text = it.getString(R.styleable.TutorialView_detail)
@@ -50,16 +62,17 @@ class TutorialView @JvmOverloads constructor(context: Context, attributeSet: Att
                     onLearnMoreAction()
                 }
                 binding.buttonHideHint.setOnClickListener {
-                    // If always shown is set sombody else takes care of hiding the view
+                    // If always shown is set somebody else takes care of hiding the view
                     if (!alwaysShown) {
                         TransitionManager.beginDelayedTransition(rootView as ViewGroup)
                         isVisible = false
                     }
 
-                    onHideAction()
                     sharedPrefKey?.let {
                         prefs?.edit { putBoolean(sharedPrefKey, !isSharedPrefInverted) }
                     }
+
+                    onHideAction()
                 }
             }
         }

@@ -1,4 +1,4 @@
-\<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="error_general">Etwas ist schief gelaufen! Bitte versuche es noch einmal.</string>
     <string name="error_general_with_details"><![CDATA[Etwas ist schief gelaufen, bitte versuche es erneut.<br/><br/><small><font color="#%1$06X">%2$s</font></small>]]></string>
@@ -335,4 +335,6 @@
     <string name="temperature_menu___subtitle">Du kannst diese Voreinstellungen in den OctoPrint-Einstellungen ändern</string>
     <string name="temperature_menu___item_preheat">%s vorheizen</string>
     <string name="temperature_menu___applied_confirmation">%s angewendet</string>
+    <string name="announcement___new_version_detail">Diese Version führt ein anpassbares Hauptmenü, Unterstützung für mehrere OctoPrint sowie Stromkontrollen für IKEA Trådfri, TP-Link und Tasmoa Smart Plugs ein (passendes OctoPrint-Plugin erforderlich)</string>
+    <string name="announcement___new_version_title">Willkommen in OctoApp 1.5!</string>
 </resources>

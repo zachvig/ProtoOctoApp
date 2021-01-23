@@ -10,12 +10,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
+import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
+import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.print_controls.R
@@ -26,7 +27,7 @@ import de.crysxd.octoapp.print_controls.ui.widget.tune.TuneWidget
 import kotlinx.android.synthetic.main.fragment_print_controls.*
 import timber.log.Timber
 
-class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
+class PrintControlsFragment : WidgetHostFragment(R.layout.fragment_print_controls) {
 
     override val viewModel: PrintControlsViewModel by injectViewModel()
     private val adapter = OctoWidgetAdapter()
@@ -114,6 +115,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
             widgetsList.adapter = adapter
 
             val widgets = mutableListOf<OctoWidget>()
+            widgets.add(AnnouncementWidget(this@PrintControlsFragment))
             widgets.add(ProgressWidget(this@PrintControlsFragment))
             widgets.add(ControlTemperatureWidget(this@PrintControlsFragment))
 
@@ -128,7 +130,7 @@ class PrintControlsFragment : BaseFragment(R.layout.fragment_print_controls) {
         }
     }
 
-    fun reloadWidgets() {
+    override fun reloadWidgets() {
         installApplicableWidgets(viewModel.webCamSupported.value == true)
     }
 

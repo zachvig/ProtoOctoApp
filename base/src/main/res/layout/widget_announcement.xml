@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<de.crysxd.octoapp.base.ui.common.TutorialView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:alwaysShow="true"
+    app:detail="@string/announcement___new_version_detail"
+    app:hidePrefName="@string/pref_key_version_announcement"
+    app:learnMoreButton="@string/learn_more"
+    app:noBottomMargin="true"
+    app:title="@string/announcement___new_version_title" />
