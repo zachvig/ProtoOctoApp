@@ -256,7 +256,7 @@ object BillingManager {
         }.contains(feature) || billingChannel.valueOrNull?.isPremiumActive == true
 
     fun shouldAdvertisePremium() = billingChannel.valueOrNull?.let {
-        it.isBillingAvailable && !it.isPremiumActive
+        it.isBillingAvailable && !it.isPremiumActive && it.availableSku.isNotEmpty()
     } ?: false
 
     fun onResume(context: Context) = GlobalScope.launch {
