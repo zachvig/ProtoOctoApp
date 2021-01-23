@@ -7,5 +7,6 @@
     app:detail="@string/announcement___new_version_detail"
     app:hidePrefName="@string/pref_key_version_announcement"
     app:learnMoreButton="@string/learn_more"
+    app:hideButton="@string/hide"
     app:noBottomMargin="true"
     app:title="@string/announcement___new_version_title" />
