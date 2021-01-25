@@ -30,7 +30,7 @@
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginEnd="@dimen/margin_2"
         android:ellipsize="end"
-        android:lines="1"
+        android:maxLines="2"
         android:textAppearance="@style/OctoTheme.TextAppearance"
         app:layout_constraintBottom_toTopOf="@+id/textViewDetail"
         app:layout_constraintEnd_toStartOf="@+id/imageViewArrow"

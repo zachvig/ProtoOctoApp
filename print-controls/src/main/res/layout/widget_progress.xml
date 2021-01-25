@@ -67,11 +67,10 @@
         android:layout_marginTop="@dimen/margin_2"
         android:visibility="invisible"
         android:ellipsize="middle"
-        android:singleLine="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/labelBarrier"
         app:layout_constraintTop_toBottomOf="@+id/progressBarBackground"
-        tools:text="2:45 h"
+        tools:text="This is a long name\nsdfidfjosdofijo"
         tools:visibility="visible" />
 
     <TextView
@@ -80,22 +79,22 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
         android:text="@string/time_spent"
+        android:layout_marginTop="@dimen/margin_0"
         android:textColor="@color/dark_text"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewPrintNameLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewPrintName" />
 
     <TextView
         android:id="@+id/textViewTimeSpent"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
-        android:visibility="invisible"
         android:ellipsize="middle"
-        android:singleLine="true"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/labelBarrier"
-        app:layout_constraintTop_toBottomOf="@+id/textViewPrintNameLabel"
-        tools:text="2:45 h"
+        app:layout_constraintTop_toTopOf="@+id/textViewTimeSpentLabel"
+        tools:text="2:45 h\nusifh"
         tools:visibility="visible" />
 
     <TextView
@@ -107,21 +106,19 @@
         android:text="@string/time_left"
         android:textColor="@color/dark_text"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTimeSpentLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewTimeSpent" />
 
     <TextView
         android:id="@+id/textViewTimeLeft"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
-        android:layout_marginTop="@dimen/margin_0"
         android:ellipsize="middle"
-        android:singleLine="true"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/labelBarrier"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTimeSpentLabel"
-        tools:text="32 min"
+        app:layout_constraintTop_toTopOf="@id/textViewTimeLeftLabel"
+        tools:text="32 min\ndsifj"
         tools:visibility="visible" />
 
     <TextView
@@ -133,27 +130,24 @@
         android:text="@string/eta"
         android:textColor="@color/dark_text"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTimeLeftLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewTimeLeft" />
 
     <TextView
         android:id="@+id/textVieEta"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
-        android:layout_marginTop="@dimen/margin_0"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@id/labelBarrier"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTimeLeftLabel"
-        tools:text="32 min"
+        app:layout_constraintTop_toTopOf="@+id/textViewEtaLabel"
+        tools:text="32 min\nsuri"
         tools:visibility="visible" />
 
     <View
         android:id="@+id/estimationIndicator"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
         android:layout_marginStart="6dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="4dp"
         android:background="@drawable/bg_circle"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -165,8 +159,8 @@
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/labelBarrier"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
         app:barrierDirection="end"
         app:constraint_referenced_ids="textViewPrintNameLabel,textViewTimeSpentLabel,textViewEtaLabel,textViewTimeLeftLabel"
         tools:layout_editor_absoluteX="393dp" />

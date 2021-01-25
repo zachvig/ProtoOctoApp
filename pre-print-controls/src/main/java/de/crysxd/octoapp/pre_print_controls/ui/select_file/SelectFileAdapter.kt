@@ -153,7 +153,7 @@ class SelectFileAdapter(
                         dateTimeFormat.format(Date(file.date * 1000)),
                         file.size.asStyleFileSize()
                     )
-                    holder.imageViewArrow.visibility = View.INVISIBLE
+                    holder.imageViewArrow.visibility = View.GONE
                     holder.textViewDetail.isVisible = true
 
                     val icon = if (file.typePath?.contains(FileObject.FILE_TYPE_MACHINE_CODE) == true) {
