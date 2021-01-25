@@ -20,6 +20,7 @@ class MainMenu : Menu {
             SupportOctoAppMenuItem(),
             ShowSettingsMenuItem(),
             ShowPrinterMenuItem(),
+            ShowOctoPrintMenuItem(),
             ShowNewsMenuItem()
         )
 
@@ -76,10 +77,27 @@ class ShowPrinterMenuItem : SubMenuItem() {
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_printer)
 }
 
+
+class ShowOctoPrintMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_OCTOPRINT
+    override var groupId = "main_menu"
+    override val order = 30
+    override val style = MenuItemStyle.OctoPrint
+    override val showAsSubMenu = true
+    override val showAsHalfWidth = true
+    override val icon = R.drawable.ic_octoprint_24px
+
+    override suspend fun getTitle(context: Context) = "OctoPrint"
+    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
+        host.pushMenu(OctoPrintMenu())
+        return false
+    }
+}
+
 class ShowNewsMenuItem : MenuItem {
     override val itemId = MENU_ITEM_NEWS
     override var groupId = "main_menu"
-    override val order = 30
+    override val order = 40
     override val style = MenuItemStyle.Neutral
     override val showAsSubMenu = true
     override val showAsHalfWidth = true
