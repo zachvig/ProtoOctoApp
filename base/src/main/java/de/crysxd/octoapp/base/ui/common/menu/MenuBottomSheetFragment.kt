@@ -1,13 +1,14 @@
 package de.crysxd.octoapp.base.ui.common.menu
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.view.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -153,6 +154,11 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             }
             if (!item.showAsSubMenu) {
                 holder.binding.button.setOnLongClickListener {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        (requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator)
+                            .vibrate(VibrationEffect.createOneShot(30, 255))
+                    }
+
                     beginDelayedTransition(true)
                     Injector.get().pinnedMenuItemsRepository().toggleMenuItemPinned(item.itemId)
                     menu = menu
