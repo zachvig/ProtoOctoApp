@@ -152,7 +152,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     }
                 }
             }
-            if (!item.showAsSubMenu) {
+            if (!item.showAsSubMenu && item.canBePinned) {
                 holder.binding.button.setOnLongClickListener {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         (requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator)

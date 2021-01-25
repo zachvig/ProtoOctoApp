@@ -22,7 +22,6 @@ class SettingsMenu : Menu {
     override fun getMenuItem() = listOf(
         SendFeedbackMenuItem(),
         ChangeLanguageMenuItem(),
-        OpenOctoPrintMenuItem(),
         NightThemeMenuItem(),
         PrintNotificationMenuItem(),
         KeepScreenOnDuringPrintMenuItem(),
@@ -69,21 +68,6 @@ class ChangeLanguageMenuItem : MenuItem {
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         val newLocale = Injector.get().getAppLanguageUseCase().execute(Unit).switchLanguageLocale
         Injector.get().setAppLanguageUseCase().execute(SetAppLanguageUseCase.Param(newLocale, host.requireActivity()))
-        return true
-    }
-}
-
-class OpenOctoPrintMenuItem : MenuItem {
-    override val itemId = MENU_ITEM_OPEN_OCTOPRINT
-    override var groupId = ""
-    override val order = 102
-    override val enforceSingleLine = false
-    override val style = MenuItemStyle.Settings
-    override val icon = R.drawable.ic_round_open_in_browser_24
-
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_octoprint)
-    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
-        Injector.get().openOctoPrintWebUseCase().execute(host.requireContext())
         return true
     }
 }

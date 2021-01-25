@@ -9,7 +9,7 @@ sealed class MenuItemStyle(
 ) {
     object Support : MenuItemStyle(R.color.red_translucent, R.color.red)
     object Settings : MenuItemStyle(R.color.yellow_translucent, R.color.yellow)
-    object Routines : MenuItemStyle(R.color.green_translucent, R.color.green)
+    object OctoPrint : MenuItemStyle(R.color.green_translucent, R.color.green)
     object Printer : MenuItemStyle(R.color.blue_translucent, R.color.blue)
     object Neutral : MenuItemStyle(R.color.light_grey_translucent, R.color.light_grey)
 }
