@@ -337,4 +337,5 @@
     <string name="temperature_menu___applied_confirmation">%s angewendet</string>
     <string name="announcement___new_version_detail">Diese Version führt ein anpassbares Hauptmenü, Unterstützung für mehrere OctoPrint sowie Stromkontrollen für IKEA Trådfri, TP-Link und Tasmoa Smart Plugs ein (passendes OctoPrint-Plugin erforderlich)</string>
     <string name="announcement___new_version_title">Willkommen in OctoApp 1.5!</string>
+    <string name="main_menu___system_command_executed">\"%s\" ausgeführt</string>
 </resources>
