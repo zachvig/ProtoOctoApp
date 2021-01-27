@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.base.billing
 
-import android.app.AlertDialog
 import android.graphics.Rect
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
@@ -16,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -158,7 +158,7 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
 
         if (state.billingData.availableSku.isEmpty()) {
             OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseMissingSku)
-            AlertDialog.Builder(requireContext())
+            MaterialAlertDialogBuilder(requireContext())
                 .setMessage("Thanks for your interest! There was a issue loading available offers, check back later!")
                 .setPositiveButton(android.R.string.ok) { _, _ ->
                     findNavController().popBackStack()
