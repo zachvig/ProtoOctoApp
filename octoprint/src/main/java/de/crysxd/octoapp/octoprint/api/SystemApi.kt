@@ -19,6 +19,8 @@ interface SystemApi {
 
         suspend fun getSystemCommands() = wrapped.getSystemCommands()
 
-        suspend fun executeSystemCommand(cmd: SystemCommand) = wrapped.executeSystemCommand(source = cmd.source, action = cmd.action)
+        suspend fun executeSystemCommand(cmd: SystemCommand) {
+            wrapped.executeSystemCommand(source = cmd.source, action = cmd.action)
+        }
     }
 }

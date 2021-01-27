@@ -4,8 +4,13 @@ import android.content.Context
 import androidx.core.text.HtmlCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.menu.*
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.parcel.Parcelize
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 private val sysCommands get() = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.systemCommands
@@ -70,6 +75,24 @@ class ExecuteSystemCommandMenuItem(val source: String, val action: String) : Con
     override fun getConfirmMessage(context: Context) = HtmlCompat.fromHtml(systemCommand?.confirm ?: "Execute?", HtmlCompat.FROM_HTML_MODE_COMPACT)
     override fun getConfirmPositiveAction(context: Context) = systemCommand?.name ?: context.getString(android.R.string.ok)
     override suspend fun onConfirmed(host: MenuBottomSheetFragment): Boolean {
+        // Might take a second, do in background and close menu
+        GlobalScope.launch {
+            val activity = host.requireOctoActivity()
+
+            try {
+                Injector.get().executeSystemCommandUseCase().execute(systemCommand!!)
+                activity.showSnackbar(
+                    BaseViewModel.Message.SnackbarMessage(
+                        text = { ctx -> ctx.getString(R.string.main_menu___system_command_executed, systemCommand?.name) },
+                        type = BaseViewModel.Message.SnackbarMessage.Type.Positive
+                    )
+                )
+            } catch (e: Exception) {
+                Timber.e(e)
+                activity.showErrorDetailsDialog(e)
+            }
+        }
+
         return true
     }
 }
