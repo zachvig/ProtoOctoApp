@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.models
 
 import de.crysxd.octoapp.octoprint.models.settings.Settings
+import de.crysxd.octoapp.octoprint.models.system.SystemCommand
 
 data class OctoPrintInstanceInformationV1(
     val hostName: String,
@@ -17,6 +18,7 @@ data class OctoPrintInstanceInformationV2(
     val apiKeyWasInvalid: Boolean = false,
     val m115Response: String? = null,
     val settings: Settings? = null,
+    val systemCommands: List<SystemCommand>? = null,
     val appSettings: AppSettings? = null,
 ) {
     constructor(legacy: OctoPrintInstanceInformationV1) : this(

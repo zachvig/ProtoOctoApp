@@ -338,4 +338,5 @@
     <string name="temperature_menu___applied_error">%s non trovato, non può essere applicato</string>
     <string name="announcement___new_version_detail">Questa versione introduce un menu principale personalizzabile, il supporto per più OctoPrint così come il controllo dell\'alimentazione per IKEA Trådfri, TP-Link e Tasmoa smart plugs (è richiesto il plugin OctoPrint corrispondente)</string>
     <string name="announcement___new_version_title">Benvenuti a OctoApp 1.5!</string>
+    <string name="main_menu___system_command_executed">\"%s\" eseguito</string>
 </resources>

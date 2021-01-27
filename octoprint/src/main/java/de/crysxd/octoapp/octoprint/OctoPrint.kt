@@ -86,6 +86,9 @@ class OctoPrint(
     fun createConnectionApi(): ConnectionApi.Wrapper =
         ConnectionApi.Wrapper((createRetrofit().create(ConnectionApi::class.java)))
 
+    fun createSystemApi(): SystemApi.Wrapper =
+        SystemApi.Wrapper((createRetrofit().create(SystemApi::class.java)))
+
     fun getLogger(): Logger = Logger.getLogger("OctoPrint")
 
     private fun createRetrofit() = Retrofit.Builder()

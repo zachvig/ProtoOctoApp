@@ -346,4 +346,5 @@
     <string name="main_menu___item_temperature_presets">Temperature presets</string>
     <string name="announcement___new_version_detail">This version introduces a customizable main menu, support for multiple OctoPrint as well as power controls for IKEA Trådfri, TP-Link and Tasmoa smart plugs (matching OctoPrint plugin required)</string>
     <string name="announcement___new_version_title">Welcome to OctoApp 1.5!</string>
+    <string name="main_menu___system_command_executed">\"%s\" executed</string>
 </resources>

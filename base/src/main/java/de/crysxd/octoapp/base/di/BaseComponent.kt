@@ -75,6 +75,7 @@ interface BaseComponent {
     fun setAppLanguageUseCase(): SetAppLanguageUseCase
     fun getPowerDevicesUseCase(): GetPowerDevicesUseCase
     fun applyLegacyDarkModeUseCase(): ApplyLegacyDarkMode
+    fun executeSystemCommandUseCase(): ExecuteSystemCommandUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

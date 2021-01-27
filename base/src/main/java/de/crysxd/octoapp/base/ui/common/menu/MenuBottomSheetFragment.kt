@@ -180,7 +180,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             val nextItem = menuItems.getOrNull(position + 1)
             val groupChanged = nextItem != null && nextItem.groupId != item.groupId
             holder.itemView.updateLayoutParams<GridLayoutManager.LayoutParams> {
-                bottomMargin = requireContext().resources.getDimension(if (groupChanged) R.dimen.margin_1_2 else R.dimen.margin_0_1).toInt()
+                bottomMargin = requireContext().resources.getDimension(if (groupChanged) R.dimen.margin_2 else R.dimen.margin_0_1).toInt()
                 marginEnd = requireContext().resources.getDimension(R.dimen.margin_0_1).toInt()
             }
 

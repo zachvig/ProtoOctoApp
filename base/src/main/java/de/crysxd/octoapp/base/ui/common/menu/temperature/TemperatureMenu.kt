@@ -13,6 +13,8 @@ import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.SetBedTargetTemperatureUseCase
 import de.crysxd.octoapp.base.usecase.SetToolTargetTemperatureUseCase
 import kotlinx.android.parcel.Parcelize
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 @Parcelize
 class TemperatureMenu : Menu {
@@ -37,24 +39,28 @@ class ApplyTemperaturePresetMenuItem(val presetName: String) : MenuItem {
     override suspend fun getTitle(context: Context) = context.getString(R.string.temperature_menu___item_preheat, presetName)
     override suspend fun isVisible(destinationId: Int) = destinationId != R.id.workspaceConnect
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
-        Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.settings?.temperature?.profiles?.firstOrNull {
-            it.name == presetName
-        }?.let {
-            Injector.get().setToolTargetTemperatureUseCase().execute(SetToolTargetTemperatureUseCase.Param(it.extruder ?: 0))
-            Injector.get().setBedTargetTemperatureUseCase().execute(SetBedTargetTemperatureUseCase.Param(it.bed ?: 0))
-            host.requireOctoActivity().showSnackbar(
-                BaseViewModel.Message.SnackbarMessage(
-                    text = { ctx -> ctx.getString(R.string.temperature_menu___applied_confirmation, presetName) },
-                    type = BaseViewModel.Message.SnackbarMessage.Type.Positive
+        GlobalScope.launch {
+            val activity = host.requireOctoActivity()
+
+            Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.settings?.temperature?.profiles?.firstOrNull {
+                it.name == presetName
+            }?.let {
+                Injector.get().setToolTargetTemperatureUseCase().execute(SetToolTargetTemperatureUseCase.Param(it.extruder ?: 0))
+                Injector.get().setBedTargetTemperatureUseCase().execute(SetBedTargetTemperatureUseCase.Param(it.bed ?: 0))
+                activity.showSnackbar(
+                    BaseViewModel.Message.SnackbarMessage(
+                        text = { ctx -> ctx.getString(R.string.temperature_menu___applied_confirmation, presetName) },
+                        type = BaseViewModel.Message.SnackbarMessage.Type.Positive
+                    )
                 )
-            )
-        } ?: run {
-            host.requireOctoActivity().showSnackbar(
-                BaseViewModel.Message.SnackbarMessage(
-                    text = { ctx -> ctx.getString(R.string.temperature_menu___applied_error, presetName) },
-                    type = BaseViewModel.Message.SnackbarMessage.Type.Negative
+            } ?: run {
+                activity.showSnackbar(
+                    BaseViewModel.Message.SnackbarMessage(
+                        text = { ctx -> ctx.getString(R.string.temperature_menu___applied_error, presetName) },
+                        type = BaseViewModel.Message.SnackbarMessage.Type.Negative
+                    )
                 )
-            )
+            }
         }
 
         return true
