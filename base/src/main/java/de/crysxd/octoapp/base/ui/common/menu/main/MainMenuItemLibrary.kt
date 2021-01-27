@@ -13,6 +13,7 @@ const val MENU_ITEM_OCTOPRINT = "main___octoprint"
 const val MENU_ITEM_SEND_FEEDBACK = "settings___send_feedback"
 const val MENU_ITEM_CHANGE_LANGUAGE = "settings___change_language"
 const val MENU_ITEM_OPEN_OCTOPRINT = "settings___open_octoprint"
+const val MENU_EXECUTE_SYSTEM_COMMAND = "octoprint___execute_system_command"
 const val MENU_ITEM_NIGHT_THEME = "settings___night_theme"
 const val MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE = "settings___change_octoprint_instnace"
 const val MENU_ITEM_PRINT_NOTIFICATION = "settings___print_notification"
@@ -55,6 +56,7 @@ class MenuItemLibrary {
         map.containsKey(itemId) -> map[itemId]?.java?.constructors?.firstOrNull()?.newInstance() as? MenuItem
         itemId.startsWith(MENU_ITEM_SWITCH_INSTANCE) -> SwitchInstanceMenuItem.forItemId(itemId)
         itemId.startsWith(MENU_ITEM_APPLY_TEMPERATURE_PRESET) -> ApplyTemperaturePresetMenuItem.forItemId(itemId)
+        itemId.startsWith(MENU_EXECUTE_SYSTEM_COMMAND) -> ExecuteSystemCommandMenuItem.forItemId(itemId)
         else -> null
     }
 }
