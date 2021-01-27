@@ -338,4 +338,5 @@
     <string name="main_menu___item_temperature_presets">Préréglages de la température</string>
     <string name="announcement___new_version_detail">Cette version introduit un menu principal personnalisable, la prise en charge de plusieurs OctoPrint ainsi que des contrôles de puissance pour les prises intelligentes IKEA Trådfri, TP-Link et Tasmoa (prise OctoPrint correspondante requise)</string>
     <string name="announcement___new_version_title">Bienvenue à OctoApp 1.5 !</string>
+    <string name="main_menu___system_command_executed">\"%s\" exécutée</string>
 </resources>

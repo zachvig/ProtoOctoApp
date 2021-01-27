@@ -26,6 +26,16 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             octoPrintRepository.updateActive { current ->
                 // Gather all info in parallel
                 val settings = async { octoPrintProvider.octoPrint().createSettingsApi().getSettings() }
+                val commands = async {
+                    try {
+                        octoPrintProvider.octoPrint().createSystemApi().getSystemCommands()
+                    } catch (e: Exception) {
+                        // Might fail for lacking permissions
+                        Timber.e(e)
+                        null
+                    }
+                }
+
                 val m115 = async {
                     try {
                         executeM115()
@@ -37,7 +47,8 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
 
                 val updated = current.copy(
                     m115Response = m115.await(),
-                    settings = settings.await()
+                    settings = settings.await(),
+                    systemCommands = commands.await()?.all
                 )
 
                 val standardPlugins = Firebase.remoteConfig.getString("default_plugins").split(",").map { it.trim() }

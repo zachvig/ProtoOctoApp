@@ -338,4 +338,5 @@
     <string name="temperature_menu___applied_error">%s niet gevonden, kon niet worden toegepast</string>
     <string name="announcement___new_version_detail">Deze versie introduceert een aanpasbaar hoofdmenu, ondersteuning voor meerdere OctoPrint, evenals stroomregelingen voor IKEA Trådfri, TP-Link en Tasmoa slimme stekkers (bijpassende OctoPrint plugin vereist)</string>
     <string name="announcement___new_version_title">Welkom in OctoApp 1.5!</string>
+    <string name="main_menu___system_command_executed">\"%s\" uitgevoerd</string>
 </resources>
