@@ -65,7 +65,13 @@ class ExecuteSystemCommandMenuItem(val source: String, val action: String) : Con
     override var groupId = "open"
     override val order = 410
     override val style = MenuItemStyle.OctoPrint
-    override val icon = R.drawable.ic_round_control_camera_24
+    override val icon = when (systemCommand?.action) {
+        "reboot" -> R.drawable.ic_command_restart_24px
+        "restart" -> R.drawable.ic_command_restart_24px
+        "restart_safe" -> R.drawable.ic_command_restart_24px
+        "shutdown" -> R.drawable.ic_command_shutdown_24px
+        else -> R.drawable.ic_command_generic_24px
+    }
 
     private val systemCommand
         get() = sysCommands?.firstOrNull { it.source == source && it.action == action }
