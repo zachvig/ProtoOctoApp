@@ -28,8 +28,10 @@ import de.crysxd.octoapp.base.billing.BillingEvent
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.PurchaseConfirmationDialog
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ui.ColorTheme
 import de.crysxd.octoapp.base.ui.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.OctoActivity
+import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
 import de.crysxd.octoapp.base.usecase.execute
@@ -78,6 +80,11 @@ class MainActivity : OctoActivity() {
                     events.removeObserver(observer)
                 }
             })
+
+        SignInInjector.get().octoprintRepository().instanceInformationFlow()
+            .distinctUntilChangedBy { it?.settings?.appearance?.color }
+            .asLiveData()
+            .observe(this) { ColorTheme.applyColorTheme(it.colorTheme) }
 
         lifecycleScope.launchWhenResumed {
             findNavController(R.id.mainNavController).addOnDestinationChangedListener { _, destination, _ ->
