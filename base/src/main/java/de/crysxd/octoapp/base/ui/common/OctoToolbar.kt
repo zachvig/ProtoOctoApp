@@ -1,15 +1,16 @@
 package de.crysxd.octoapp.base.ui.common
 
 import android.content.Context
+import android.os.Build
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.ui.ColorTheme
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import kotlinx.android.synthetic.main.view_octo_toolbar.view.*
 
@@ -33,45 +34,76 @@ class OctoToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
             }
 
             field = value
+            bindState()
+        }
 
-            if (value == State.Hidden) {
-                animate().alpha(0f).start()
-                return
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        ColorTheme.notifyAboutColorChangesUntilDetachedFromWindow(this) {
+            bindState()
+        }
+    }
+
+    private fun bindState() {
+        val lightColor = ColorTheme.activeColorTheme.light
+        val darkColor = ColorTheme.activeColorTheme.dark
+
+        if (state == State.Hidden) {
+            animate().alpha(0f).start()
+            return
+        }
+
+        if (alpha > 0) {
+            TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
+        }
+
+        animate().alpha(1f).start()
+        textViewStep1Label.isVisible = false
+        textViewStep1Label.background?.setTint(lightColor)
+        textViewStep2Label.isVisible = false
+        textViewStep2Label.background?.setTint(lightColor)
+        textViewStep3Label.isVisible = false
+        textViewStep3Label.background?.setTint(lightColor)
+        viewConnector1To2.background?.setTint(lightColor)
+        viewConnector2To3.background?.setTint(lightColor)
+        textViewStep1.text = ""
+        textViewStep2.text = ""
+        textViewStep3.text = ""
+        textViewStep1.foregroundCompat?.alpha = 255
+        textViewStep2.foregroundCompat?.alpha = 255
+        textViewStep3.foregroundCompat?.alpha = 255
+        textViewStep1.background.setTint(darkColor)
+        textViewStep2.background.setTint(darkColor)
+        textViewStep3.background.setTint(darkColor)
+
+        when (state) {
+            State.Connect -> {
+                textViewStep1Label.isVisible = true
+                textViewStep1.text = "1"
+                textViewStep1.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
+                textViewStep1.foregroundCompat?.alpha = 0
             }
-
-            if (alpha > 0) {
-                TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
+            State.Prepare -> {
+                textViewStep2Label.isVisible = true
+                textViewStep2.text = "2"
+                textViewStep2.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
+                textViewStep2.foregroundCompat?.alpha = 0
             }
-
-            animate().alpha(1f).start()
-            textViewStep1Label.isVisible = false
-            textViewStep2Label.isVisible = false
-            textViewStep3Label.isVisible = false
-            textViewStep1.text = ""
-            textViewStep2.text = ""
-            textViewStep3.text = ""
-            textViewStep1.setBackgroundResource(R.drawable.bg_toolbar_chip_number_hidden)
-            textViewStep2.setBackgroundResource(R.drawable.bg_toolbar_chip_number_hidden)
-            textViewStep3.setBackgroundResource(R.drawable.bg_toolbar_chip_number_hidden)
-
-            when (value) {
-                State.Connect -> {
-                    textViewStep1Label.isVisible = true
-                    textViewStep1.text = "1"
-                    textViewStep1.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
-                }
-                State.Prepare -> {
-                    textViewStep2Label.isVisible = true
-                    textViewStep2.text = "2"
-                    textViewStep2.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
-                }
-                State.Print -> {
-                    textViewStep3Label.isVisible = true
-                    textViewStep3.text = "3"
-                    textViewStep3.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
-                }
-                State.Hidden -> Unit
+            State.Print -> {
+                textViewStep3Label.isVisible = true
+                textViewStep3.text = "3"
+                textViewStep3.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
+                textViewStep3.foregroundCompat?.alpha = 0
             }
+            State.Hidden -> Unit
+        }
+    }
+
+    private val View.foregroundCompat
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            foreground
+        } else {
+            null
         }
 
     sealed class State {

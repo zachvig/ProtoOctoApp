@@ -47,14 +47,17 @@ class SwitchOctoPrintMenu : Menu {
             EnableQuickSwitchMenuItem()
         )
     }
-
-
 }
 
 class SwitchInstanceMenuItem(private val webUrl: String) : MenuItem {
     companion object {
         fun forItemId(itemId: String) = SwitchInstanceMenuItem(itemId.replace(MENU_ITEM_SWITCH_INSTANCE, ""))
     }
+
+    private val instanceInfo
+        get() = Injector.get().octorPrintRepository().getAll().firstOrNull {
+            it.webUrl == webUrl
+        }
 
     override val itemId = MENU_ITEM_SWITCH_INSTANCE + webUrl
     override var groupId = ""
@@ -63,15 +66,15 @@ class SwitchInstanceMenuItem(private val webUrl: String) : MenuItem {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_swap_horiz_24
 
-    override suspend fun isVisible(destinationId: Int) = isQuickSwitchEnabled && Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl != webUrl
-    override suspend fun getTitle(context: Context) = webUrl.replace("http://", "").replace("https://", "")
+    override suspend fun isVisible(destinationId: Int) = instanceInfo != null && isQuickSwitchEnabled &&
+            Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl != webUrl
+
+    override suspend fun getTitle(context: Context) = instanceInfo?.settings?.appearance?.name?.takeIf { it.isNotBlank() }
+        ?: webUrl.replace("http://", "").replace("https://", "")
+
     override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
         val repo = Injector.get().octorPrintRepository()
-        repo.getAll().firstOrNull {
-            it.webUrl == webUrl
-        }?.let {
-            repo.setActive(it)
-        }
+        instanceInfo?.let { repo.setActive(it) }
         return true
     }
 }

@@ -14,8 +14,8 @@
         android:gravity="center"
         android:paddingStart="40dp"
         android:paddingEnd="10dp"
-        android:textColor="?android:attr/textColorPrimary"
         android:text="@string/connect"
+        android:textColor="?android:attr/textColorPrimary"
         app:layout_constraintBottom_toBottomOf="@+id/textViewStep1"
         app:layout_constraintStart_toStartOf="@+id/textViewStep1"
         app:layout_constraintTop_toTopOf="@+id/textViewStep1" />
@@ -25,11 +25,13 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@drawable/bg_toolbar_chip_number"
+        android:foreground="@drawable/bg_toolbar_chip_number_hidden"
         android:gravity="center"
-        tools:text="1"
         android:textColor="@color/text_colored_background"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:targetApi="m"
+        tools:text="1" />
 
     <View
         android:id="@+id/viewConnector1To2"
@@ -60,12 +62,14 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@drawable/bg_toolbar_chip_number"
+        android:foreground="@drawable/bg_toolbar_chip_number_hidden"
         android:gravity="center"
-        tools:text="2"
         android:textColor="@color/text_colored_background"
         app:layout_constraintBottom_toBottomOf="@+id/viewConnector1To2"
         app:layout_constraintStart_toEndOf="@+id/viewConnector1To2"
-        app:layout_constraintTop_toTopOf="@+id/viewConnector1To2" />
+        app:layout_constraintTop_toTopOf="@+id/viewConnector1To2"
+        tools:targetApi="m"
+        tools:text="2" />
 
     <View
         android:id="@+id/viewConnector2To3"
@@ -96,12 +100,14 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@drawable/bg_toolbar_chip_number"
+        android:foreground="@drawable/bg_toolbar_chip_number_hidden"
         android:gravity="center"
-        tools:text="3"
         android:textColor="@color/text_colored_background"
         app:layout_constraintBottom_toBottomOf="@+id/viewConnector2To3"
         app:layout_constraintStart_toEndOf="@+id/viewConnector2To3"
-        app:layout_constraintTop_toTopOf="@+id/viewConnector2To3" />
+        app:layout_constraintTop_toTopOf="@+id/viewConnector2To3"
+        tools:targetApi="m"
+        tools:text="3" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

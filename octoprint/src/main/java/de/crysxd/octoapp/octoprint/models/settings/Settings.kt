@@ -10,8 +10,14 @@ data class Settings(
     val webcam: WebcamSettings,
     val plugins: PluginSettingsGroup,
     val temperature: TemperatureSettings,
-    val terminalFilters: List<TerminalFilter>
+    val terminalFilters: List<TerminalFilter>,
+    val appearance: Appearance?,
 ) {
+
+    data class Appearance(
+        val name: String?,
+        val color: String?
+    )
 
     data class TerminalFilter(
         val name: String,
