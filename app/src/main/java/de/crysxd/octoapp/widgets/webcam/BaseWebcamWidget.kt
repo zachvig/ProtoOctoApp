@@ -25,20 +25,10 @@ import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.text.DateFormat
 import java.util.*
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 abstract class BaseWebcamWidget : AppWidgetProvider() {
-
-    override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == REFRESH_ACTION || intent.action == Intent.ACTION_SCREEN_ON) {
-            intent.getIntExtra(ARG_WIDGET_ID, 0).takeIf { it != 0 }?.let {
-                val live = intent.getBooleanExtra(ARG_PLAY_LIVE, false)
-                Timber.i("Updating request received for $it (live=$live)")
-                updateAppWidget(context, it, live)
-            } ?: notifyWidgetDataChanged()
-        } else {
-            super.onReceive(context, intent)
-        }
-    }
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         // There may be multiple widgets active, so update all of them
@@ -56,9 +46,9 @@ abstract class BaseWebcamWidget : AppWidgetProvider() {
     }
 
     companion object {
-        private const val REFRESH_ACTION = "de.crysxd.octoapp.widgets.ACTION_REFRESH"
-        private const val ARG_WIDGET_ID = "widgetId"
-        private const val ARG_PLAY_LIVE = "playLive"
+        internal const val REFRESH_ACTION = "de.crysxd.octoapp.widgets.ACTION_REFRESH"
+        internal const val ARG_WIDGET_ID = "widgetId"
+        internal const val ARG_PLAY_LIVE = "playLive"
         private const val LIVE_FOR_SECS = 30
         private const val BITMAP_WIDTH = 1080
         private var lastUpdateJobs = mutableMapOf<Int, WeakReference<Job>>()
@@ -154,16 +144,22 @@ abstract class BaseWebcamWidget : AppWidgetProvider() {
             appWidgetId: Int
         ): Bitmap? {
             var frame: Bitmap? = null
+            val lock = ReentrantLock()
+            val sampleRateMs = 1000L
             withTimeoutOrNull(LIVE_FOR_SECS * 1000L) {
                 // Thread A: Load webcam images
-                launch {
-                    createBitmapFlow(octoPrintInfo).collect { frame = it }
+                launch(Dispatchers.IO) {
+                    createBitmapFlow(octoPrintInfo, sampleRateMs = sampleRateMs).collect {
+                        Timber.v("Received frame")
+                        lock.withLock { frame = it }
+                    }
                 }
 
                 // Thread B: Update UI every 100ms
                 launch {
                     val start = System.currentTimeMillis()
                     while (true) {
+                        val savedFrame = lock.withLock { frame }
                         val secsLeft = (System.currentTimeMillis() - start) / 1000
                         val views = createViews(
                             context = context,
@@ -172,21 +168,22 @@ abstract class BaseWebcamWidget : AppWidgetProvider() {
                             webcamSettings = webcamSettings,
                             updatedAtText = createLiveForText(secsLeft.toInt()),
                             live = true,
-                            frame = frame
+                            frame = savedFrame
                         )
                         views.setViewVisibility(R.id.buttonCancelLive, View.VISIBLE)
                         views.setOnClickPendingIntent(R.id.buttonCancelLive, createUpdateIntent(context, appWidgetId, false))
                         appWidgetManager.updateAppWidget(appWidgetId, views)
-                        delay(100)
+                        Timber.v("Pushed frame")
+                        delay(sampleRateMs)
                     }
                 }
             }
             return frame
         }
 
-        private suspend fun createBitmapFlow(octoPrintInfo: OctoPrintInstanceInformationV2?) = Injector.get()
+        private suspend fun createBitmapFlow(octoPrintInfo: OctoPrintInstanceInformationV2?, sampleRateMs: Long = 1) = Injector.get()
             .getWebcamSnapshotUseCase()
-            .execute(GetWebcamSnapshotUseCase.Params(octoPrintInfo, BITMAP_WIDTH, R.dimen.widget_corner_radius))
+            .execute(GetWebcamSnapshotUseCase.Params(octoPrintInfo, BITMAP_WIDTH, sampleRateMs, R.dimen.widget_corner_radius))
 
         private fun createUpdateIntent(context: Context, widgetId: Int, playLive: Boolean) = PendingIntent.getBroadcast(
             context,
