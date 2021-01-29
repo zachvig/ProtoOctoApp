@@ -2,6 +2,7 @@ package de.crysxd.octoapp
 
 import android.annotation.SuppressLint
 import android.app.NotificationManager
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Rect
@@ -48,6 +49,7 @@ import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjecto
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
 
 const val KEY_LAST_NAVIGATION = "lastNavigation"
+const val EXTRA_TARGET_OCTOPRINT_WEB_URL = "octoprint_web_url"
 
 class MainActivity : OctoActivity() {
 
@@ -64,6 +66,8 @@ class MainActivity : OctoActivity() {
 
         val observer = Observer(this::onEventReceived)
         val events = ConnectPrinterInjector.get().octoprintProvider().eventFlow("MainActivity@events").asLiveData()
+
+        onNewIntent(intent)
 
         lastNavigation = savedInstanceState?.getInt(KEY_LAST_NAVIGATION, lastNavigation) ?: lastNavigation
         SignInInjector.get().octoprintRepository().instanceInformationFlow()
@@ -134,6 +138,16 @@ class MainActivity : OctoActivity() {
         Injector.get().octoPreferences().updatedFlow.asLiveData().observe(this) {
             lifecycleScope.launchWhenCreated {
                 Injector.get().applyLegacyDarkModeUseCase().execute(this@MainActivity)
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.getStringExtra(EXTRA_TARGET_OCTOPRINT_WEB_URL)?.let { webUrl ->
+            val repo = Injector.get().octorPrintRepository()
+            repo.getAll().firstOrNull { it.webUrl == webUrl }?.let {
+                repo.setActive(it)
             }
         }
     }
@@ -314,6 +328,7 @@ class MainActivity : OctoActivity() {
         lifecycleScope.launchWhenCreated {
             try {
                 Injector.get().updateInstanceCapabilitiesUseCase().execute()
+                notifyWidgetDataChanged()
             } catch (e: Exception) {
                 Timber.e(e)
                 showDialog(getString(R.string.capabilities_validation_error))
