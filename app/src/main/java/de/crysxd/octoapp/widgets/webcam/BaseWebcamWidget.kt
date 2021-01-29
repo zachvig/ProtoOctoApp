@@ -12,6 +12,7 @@ import android.widget.RemoteViews
 import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_WEB_URL
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.usecase.GetWebcamSnapshotUseCase
@@ -203,7 +204,9 @@ abstract class BaseWebcamWidget : AppWidgetProvider() {
             context,
             "launch_main_with_url_$webUrl".hashCode(),
             Intent(context, MainActivity::class.java).also {
-                it.putExtra(EXTRA_TARGET_OCTOPRINT_WEB_URL, webUrl)
+                if (BillingManager.isFeatureEnabled("quick_switch")) {
+                    it.putExtra(EXTRA_TARGET_OCTOPRINT_WEB_URL, webUrl)
+                }
             },
             PendingIntent.FLAG_UPDATE_CURRENT
         )
