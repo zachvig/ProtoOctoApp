@@ -9,6 +9,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.view.View
 import android.widget.RemoteViews
+import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
@@ -23,7 +24,7 @@ import java.lang.ref.WeakReference
 import java.text.DateFormat
 import java.util.*
 
-class WebcamWidget : AppWidgetProvider() {
+abstract class BaseWebcamWidget : AppWidgetProvider() {
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == REFRESH_ACTION || intent.action == Intent.ACTION_SCREEN_ON) {
@@ -70,7 +71,10 @@ class WebcamWidget : AppWidgetProvider() {
         internal fun notifyWidgetDataChanged() {
             val context = Injector.get().context()
             val manager = AppWidgetManager.getInstance(context)
-            manager.getAppWidgetIds(ComponentName(context, WebcamWidget::class.java)).forEach {
+            manager.getAppWidgetIds(ComponentName(context, NoControlsWebcamWidget::class.java)).forEach {
+                updateAppWidget(context, it)
+            }
+            manager.getAppWidgetIds(ComponentName(context, ControlsWebcamWidget::class.java)).forEach {
                 updateAppWidget(context, it)
             }
         }
@@ -78,9 +82,10 @@ class WebcamWidget : AppWidgetProvider() {
         internal fun updateAppWidget(context: Context, appWidgetId: Int, playLive: Boolean = false) {
             lastUpdateJobs[appWidgetId]?.get()?.cancel()
             lastUpdateJobs[appWidgetId] = WeakReference(GlobalScope.launch {
-                Timber.i("Updating widget $appWidgetId")
+                Timber.i("Updating webcam widget $appWidgetId")
 
                 val appWidgetManager = AppWidgetManager.getInstance(context)
+                val hasControls = appWidgetManager.getAppWidgetInfo(appWidgetId).provider.className == ControlsWebcamWidget::class.java.name
                 val webUrl = WidgetPreferences.getInstanceForWidgetId(appWidgetId)
                 val octoPrintInfo = Injector.get().octorPrintRepository().getAll().firstOrNull { it.webUrl == webUrl }
                 val webCamSettings = Injector.get().getWebcamSettingsUseCase().execute(octoPrintInfo)
@@ -88,12 +93,12 @@ class WebcamWidget : AppWidgetProvider() {
                 // Push loading state
                 appWidgetManager.updateAppWidget(
                     appWidgetId, createViews(
-                        context,
-                        appWidgetId,
-                        webCamSettings,
-                        if (playLive) createLiveForText(0) else "Updating...",
-                        false,
-                        null
+                        context = context,
+                        widgetId = appWidgetId,
+                        webcamSettings = webCamSettings,
+                        updatedAtText = if (playLive) createLiveForText(0) else "Updating...",
+                        live = false,
+                        frame = null
                     )
                 )
 
@@ -114,14 +119,14 @@ class WebcamWidget : AppWidgetProvider() {
                     context,
                     appWidgetId,
                     webCamSettings,
-                    if (frame == null) createUpdateFailedText(appWidgetId) else createUpdatedNowText(),
+                    (if (frame == null) createUpdateFailedText(appWidgetId) else createUpdatedNowText()).takeIf { hasControls },
                     false,
                     frame
                 )
                 views.setOnClickPendingIntent(R.id.buttonRefresh, createUpdateIntent(context, appWidgetId, false))
                 views.setOnClickPendingIntent(R.id.buttonLive, createUpdateIntent(context, appWidgetId, true))
-                views.setViewVisibility(R.id.buttonRefresh, View.VISIBLE)
-                views.setViewVisibility(R.id.buttonLive, View.VISIBLE)
+                views.setViewVisibility(R.id.buttonRefresh, if (hasControls) View.VISIBLE else View.GONE)
+                views.setViewVisibility(R.id.buttonLive, if (hasControls) View.VISIBLE else View.GONE)
                 appWidgetManager.updateAppWidget(appWidgetId, views)
                 frame?.let {
                     WidgetPreferences.setImageDimensionsForWidgetId(appWidgetId, it.width, it.height)
@@ -178,9 +183,18 @@ class WebcamWidget : AppWidgetProvider() {
             context,
             "$widgetId$playLive".hashCode(),
             Intent(REFRESH_ACTION).also {
-                it.putExtra(ARG_WIDGET_ID, widgetId)
-                it.putExtra(ARG_PLAY_LIVE, playLive)
+                if (playLive) {
+                    it.putExtra(ARG_WIDGET_ID, widgetId)
+                    it.putExtra(ARG_PLAY_LIVE, playLive)
+                }
             },
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        private fun createLaunchAppIntent(context: Context) = PendingIntent.getActivity(
+            context,
+            324,
+            Intent(context, MainActivity::class.java),
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
@@ -198,7 +212,7 @@ class WebcamWidget : AppWidgetProvider() {
             context: Context,
             widgetId: Int,
             webcamSettings: WebcamSettings,
-            updatedAtText: String,
+            updatedAtText: String?,
             live: Boolean,
             frame: Bitmap?
         ): RemoteViews {
@@ -218,7 +232,9 @@ class WebcamWidget : AppWidgetProvider() {
             views.setViewVisibility(R.id.buttonCancelLive, View.GONE)
             views.setViewVisibility(R.id.buttonRefresh, View.GONE)
             views.setViewVisibility(R.id.buttonLive, View.GONE)
+            views.setViewVisibility(R.id.updatedAt, if (updatedAtText.isNullOrBlank()) View.GONE else View.VISIBLE)
             views.setViewVisibility(R.id.noImageCont, if (frame == null) View.VISIBLE else View.GONE)
+            views.setOnClickPendingIntent(R.id.root, createLaunchAppIntent(context))
             return views
         }
 

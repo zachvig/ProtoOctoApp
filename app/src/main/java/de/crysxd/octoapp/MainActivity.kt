@@ -39,7 +39,7 @@ import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
-import de.crysxd.octoapp.widgets.webcam.WebcamWidget
+import de.crysxd.octoapp.widgets.webcam.BaseWebcamWidget.Companion.notifyWidgetDataChanged
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -71,7 +71,7 @@ class MainActivity : OctoActivity() {
             .asLiveData()
             .observe(this, {
                 Timber.i("Instance information received")
-                WebcamWidget.notifyWidgetDataChanged()
+                notifyWidgetDataChanged()
                 if (it != null && it.apiKey.isNotBlank()) {
                     navigate(R.id.action_connect_printer)
                     events.observe(this, observer)

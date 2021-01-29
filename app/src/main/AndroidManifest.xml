@@ -19,7 +19,20 @@
         android:supportsRtl="true"
         android:theme="@style/OctoTheme"
         tools:targetApi="n">
-        <receiver android:name=".widgets.webcam.WebcamWidget">
+        <receiver android:name=".widgets.webcam.ControlsWebcamWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="de.crysxd.octoapp.widgets.ACTION_REFRESH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/webcam_widget_info" />
+        </receiver>
+
+        <receiver android:name=".widgets.webcam.NoControlsWebcamWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

@@ -4,8 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import de.crysxd.octoapp.widgets.webcam.WebcamWidget.Companion.cancelAllUpdates
-import de.crysxd.octoapp.widgets.webcam.WebcamWidget.Companion.notifyWidgetDataChanged
+import de.crysxd.octoapp.widgets.webcam.BaseWebcamWidget.Companion.cancelAllUpdates
+import de.crysxd.octoapp.widgets.webcam.BaseWebcamWidget.Companion.notifyWidgetDataChanged
 
 
 class WidgetSupportBroadcastReceiver(context: Context) : BroadcastReceiver() {
