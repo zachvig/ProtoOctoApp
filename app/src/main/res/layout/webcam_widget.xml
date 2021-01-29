@@ -1,0 +1,121 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/noImageCont"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/widget_background_dark"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/margin_1">
+
+        <TextView
+            android:id="@+id/noImageTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/margin_1"
+            android:gravity="center"
+            android:text="No image available"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+            android:textColor="@color/white_translucent" />
+
+        <TextView
+            android:id="@+id/noImageUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="No image available"
+            android:textAppearance="@style/OctoTheme.TextAppearance"
+            android:textColor="@color/white_translucent" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/webcamContentPlaceholder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:importantForAccessibility="no"
+        android:scaleType="centerInside" />
+
+    <ImageView
+        android:id="@+id/webcamContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:importantForAccessibility="no"
+        android:scaleType="centerInside" />
+
+    <TextView
+        android:id="@+id/updatedAt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_margin="@dimen/margin_1"
+        android:background="@drawable/widget_chip_background"
+        android:paddingHorizontal="@dimen/margin_1"
+        android:paddingVertical="@dimen/margin_0"
+        android:text="Updated 23:41"
+        android:textAppearance="@style/OctoTheme.TextAppearance"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/live"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_margin="@dimen/margin_1"
+        android:background="@drawable/widget_chip_live_background"
+        android:paddingHorizontal="@dimen/margin_1"
+        android:paddingVertical="@dimen/margin_0"
+        android:paddingStart="@dimen/margin_2"
+        android:text="Live for 15s"
+        android:textAppearance="@style/OctoTheme.TextAppearance"
+        android:textColor="@color/white" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/margin_1"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/buttonLive"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="@dimen/margin_1"
+            android:background="@drawable/widget_chip_background"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_round_play_arrow_24"
+            android:tint="@color/white" />
+
+        <ImageButton
+            android:id="@+id/buttonRefresh"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginStart="@dimen/margin_1"
+            android:background="@drawable/widget_chip_background"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_round_refresh_24"
+            android:tint="@color/white" />
+
+        <ImageButton
+            android:id="@+id/buttonCancelLive"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginStart="@dimen/margin_1"
+            android:background="@drawable/widget_chip_background"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_round_pause_24"
+            android:tint="@color/white" />
+    </LinearLayout>
+
+</FrameLayout>

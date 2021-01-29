@@ -4,8 +4,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import timber.log.Timber
 import java.io.BufferedInputStream
 import java.io.IOException
@@ -86,10 +88,6 @@ class MjpegConnection(private val streamUrl: String) {
         Timber.i("Stopped stream")
     }.onStart {
         Timber.i("Starting stream")
-    }.retry(3) {
-        Timber.e(it)
-        delay(RECONNECT_TIMEOUT_MS)
-        true
     }.flowOn(Dispatchers.IO)
 
     private fun connect() = (URL(streamUrl).openConnection() as HttpURLConnection).also {
