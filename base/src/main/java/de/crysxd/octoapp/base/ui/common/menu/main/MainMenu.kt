@@ -37,7 +37,7 @@ class MainMenu : Menu {
 
 class SupportOctoAppMenuItem : MenuItem {
     override val itemId = MENU_ITEM_SUPPORT_OCTOAPP
-    override var groupId = "main_menu"
+    override var groupId = "support"
     override val order = 0
     override val style = MenuItemStyle.Support
     override val showAsSubMenu = true
