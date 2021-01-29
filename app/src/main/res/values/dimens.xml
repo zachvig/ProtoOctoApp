@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="feedback_trigger_area_size">120dp</dimen>
+    <dimen name="widget_corner_radius">20dp</dimen>
+    <dimen name="widget_min_dimension">140dp</dimen>
 </resources>

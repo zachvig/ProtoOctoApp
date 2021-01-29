@@ -87,9 +87,11 @@ open class ViewModelModule {
     open fun provideWebcamWidgetViewModel(
         octoPrintRepository: OctoPrintRepository,
         getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
+        applyWebcamTransformationsUseCase: ApplyWebcamTransformationsUseCase,
     ): ViewModel = WebcamViewModel(
         octoPrintRepository,
         getWebcamSettingsUseCase,
+        applyWebcamTransformationsUseCase,
     )
 
     @Provides

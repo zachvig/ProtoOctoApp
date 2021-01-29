@@ -39,8 +39,7 @@ class ConfigureWidgetActivity : Activity() {
                 WidgetPreferences.setInstanceForWidgetId(appWidgetId, allWebUrls[selected])
 
                 // It is the responsibility of the configuration activity to update the app widget
-                val appWidgetManager = AppWidgetManager.getInstance(this)
-                updateAppWidget(this, appWidgetManager, appWidgetId)
+                updateAppWidget(this, appWidgetId)
             }
             .setOnDismissListener {
                 Handler().postDelayed({
