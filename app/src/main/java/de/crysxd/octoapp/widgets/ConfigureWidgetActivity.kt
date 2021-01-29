@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.widgets.webcam.updateAppWidget
+import de.crysxd.octoapp.widgets.webcam.WebcamWidget.Companion.updateAppWidget
 import timber.log.Timber
 
 class ConfigureWidgetActivity : Activity() {
