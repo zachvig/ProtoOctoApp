@@ -29,8 +29,8 @@ class PrinterMenu : Menu {
 
 class ShowTemperatureMenuItem : MenuItem {
     override val itemId = MENU_ITEM_TEMPERATURE_MENU
-    override var groupId = "submenus"
-    override val order = 200
+    override var groupId = ""
+    override val order = 310
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_local_fire_department_24
     override val showAsSubMenu = true
@@ -46,7 +46,7 @@ class ShowTemperatureMenuItem : MenuItem {
 class ShowWebcamMenuItem : MenuItem {
     override val itemId = MENU_ITEM_SHOW_WEBCAM
     override var groupId = "submenus"
-    override val order = 201
+    override val order = 311
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_videocam_24
 
@@ -60,8 +60,8 @@ class ShowWebcamMenuItem : MenuItem {
 
 class OpenPowerControlsMenuItem : MenuItem {
     override val itemId = MENU_ITEM_POWER_CONTROLS
-    override var groupId = "power"
-    override val order = 210
+    override var groupId = ""
+    override val order = 311
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_power_settings_new_24
 
@@ -78,8 +78,8 @@ class OpenPowerControlsMenuItem : MenuItem {
 
 class TurnPsuOffMenuItem : MenuItem {
     override val itemId = MENU_ITEM_TURN_PSU_OFF
-    override var groupId = "power"
-    override val order = 211
+    override var groupId = ""
+    override val order = 312
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_baseline_power_off_24
 
@@ -99,8 +99,8 @@ class TurnPsuOffMenuItem : MenuItem {
 
 class EmergencyStopMenuItem : ConfirmedMenuItem() {
     override val itemId = MENU_ITEM_EMERGENCY_STOP
-    override var groupId = "print"
-    override val order = 220
+    override var groupId = ""
+    override val order = 330
     override val style = MenuItemStyle.Printer
 
     override val icon = R.drawable.ic_round_offline_bolt_24
@@ -117,8 +117,8 @@ class EmergencyStopMenuItem : ConfirmedMenuItem() {
 
 class CancelPrintMenuItem : ConfirmedMenuItem() {
     override val itemId = MENU_ITEM_CANCEL_PRINT
-    override var groupId = "print"
-    override val order = 221
+    override var groupId = ""
+    override val order = 331
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_cancel_24
 

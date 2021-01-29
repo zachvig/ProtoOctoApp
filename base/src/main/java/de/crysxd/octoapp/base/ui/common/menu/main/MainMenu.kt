@@ -37,7 +37,7 @@ class MainMenu : Menu {
 
 class SupportOctoAppMenuItem : MenuItem {
     override val itemId = MENU_ITEM_SUPPORT_OCTOAPP
-    override var groupId = "support"
+    override var groupId = "main_menu"
     override val order = 0
     override val style = MenuItemStyle.Support
     override val showAsSubMenu = true
@@ -68,7 +68,7 @@ class ShowSettingsMenuItem : SubMenuItem() {
 class ShowPrinterMenuItem : SubMenuItem() {
     override val itemId = MENU_ITEM_PRINTER_MENU
     override var groupId = "main_menu"
-    override val order = 20
+    override val order = 30
     override val style = MenuItemStyle.Printer
     override val showAsSubMenu = true
     override val showAsHalfWidth = true
@@ -81,7 +81,7 @@ class ShowPrinterMenuItem : SubMenuItem() {
 class ShowOctoPrintMenuItem : MenuItem {
     override val itemId = MENU_ITEM_OCTOPRINT
     override var groupId = "main_menu"
-    override val order = 30
+    override val order = 20
     override val style = MenuItemStyle.OctoPrint
     override val showAsSubMenu = true
     override val showAsHalfWidth = true
