@@ -1,0 +1,75 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background_dark">
+
+    <LinearLayout
+        android:id="@+id/noImageCont"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="No image available"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+            android:textColor="@color/white_translucent" />
+
+        <TextView
+            android:id="@+id/noImageUrl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="No image available"
+            android:textAppearance="@style/OctoTheme.TextAppearance"
+            android:textColor="@color/white_translucent" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/updatedAt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/margin_1"
+        android:background="@drawable/widget_chip_background"
+        android:contentDescription="@string/appwidget_text"
+        android:paddingHorizontal="@dimen/margin_1"
+        android:paddingVertical="@dimen/margin_0"
+        android:text="Updated 23:41"
+        android:textAppearance="@style/OctoTheme.TextAppearance"
+        android:textColor="@color/white" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/widget_chip_background"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/margin_2">
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Printing, 80% completed"
+            android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+            android:textColor="@color/white" />
+
+        <ImageButton
+            android:id="@+id/button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="0dp"
+            android:background="@drawable/widget_chip_background_inverse"
+            android:src="@drawable/ic_round_pause_24"
+            android:tint="@color/white" />
+
+    </LinearLayout>
+</RelativeLayout>

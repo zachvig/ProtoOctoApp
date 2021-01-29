@@ -10,7 +10,6 @@ import de.crysxd.octoapp.base.ext.isHlsStreamUrl
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
-import de.crysxd.octoapp.base.usecase.execute
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -44,7 +43,7 @@ class WebcamViewModel(
                     emit(UiState.Loading)
 
                     // Load settings
-                    val webcamSettings = getWebcamSettingsUseCase.execute()
+                    val webcamSettings = getWebcamSettingsUseCase.execute(null)
                     val streamUrl = webcamSettings.streamUrl
 
                     // Check if webcam is configured

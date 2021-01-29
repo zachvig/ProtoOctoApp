@@ -76,6 +76,7 @@ interface BaseComponent {
     fun getPowerDevicesUseCase(): GetPowerDevicesUseCase
     fun applyLegacyDarkModeUseCase(): ApplyLegacyDarkMode
     fun executeSystemCommandUseCase(): ExecuteSystemCommandUseCase
+    fun getWebcamSettingsUseCase(): GetWebcamSettingsUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory
