@@ -42,7 +42,7 @@ class OctoPrintMenu : Menu {
 class OpenOctoPrintMenuItem : MenuItem {
     override val itemId = MENU_ITEM_OPEN_OCTOPRINT
     override var groupId = ""
-    override val order = 400
+    override val order = 200
     override val enforceSingleLine = false
     override val style = MenuItemStyle.OctoPrint
     override val icon = R.drawable.ic_round_open_in_browser_24
@@ -62,8 +62,8 @@ class ExecuteSystemCommandMenuItem(val source: String, val action: String) : Con
     }
 
     override val itemId = "$MENU_EXECUTE_SYSTEM_COMMAND/$source/$action"
-    override var groupId = "open"
-    override val order = 410
+    override var groupId = ""
+    override val order = 210
     override val style = MenuItemStyle.OctoPrint
     override val icon = when (systemCommand?.action) {
         "reboot" -> R.drawable.ic_command_restart_24px

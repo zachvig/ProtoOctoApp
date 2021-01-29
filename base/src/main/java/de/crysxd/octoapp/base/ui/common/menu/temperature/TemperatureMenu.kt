@@ -32,7 +32,7 @@ class ApplyTemperaturePresetMenuItem(val presetName: String) : MenuItem {
     }
 
     override val itemId = MENU_ITEM_APPLY_TEMPERATURE_PRESET + presetName
-    override val order = 250
+    override val order = 300
     override val style = MenuItemStyle.Printer
     override var groupId = ""
     override val icon = R.drawable.ic_round_local_fire_department_24
