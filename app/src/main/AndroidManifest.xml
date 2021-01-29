@@ -42,7 +42,7 @@
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/webcam_widget_info" />
+                android:resource="@xml/webcam_widget_no_controls_info" />
         </receiver>
 
         <activity
