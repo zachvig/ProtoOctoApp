@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.view.View
 import android.widget.RemoteViews
 import de.crysxd.octoapp.R
@@ -14,7 +15,10 @@ import de.crysxd.octoapp.base.usecase.GetWebcamSnapshotUseCase
 import de.crysxd.octoapp.widgets.WidgetPreferences
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
@@ -79,8 +83,11 @@ internal fun updateAppWidget(context: Context, appWidgetId: Int, playLive: Boole
 
     fun createLiveForText(liveSinceSecs: Int) = "Live for ${liveForSecs - liveSinceSecs}s"
 
-    fun createViews(updatedAtText: String): RemoteViews {
+    fun createViews(updatedAtText: String, frame: Bitmap?): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.webcam_widget)
+        frame?.let {
+            views.setImageViewBitmap(R.id.webcamContent, frame)
+        }
         views.setTextViewText(R.id.noImageUrl, webCamSettings.streamUrl)
         views.setTextViewText(R.id.updatedAt, updatedAtText)
         views.setViewVisibility(R.id.buttonRefresh, View.GONE)
@@ -88,32 +95,39 @@ internal fun updateAppWidget(context: Context, appWidgetId: Int, playLive: Boole
         return views
     }
 
-    appWidgetManager.updateAppWidget(appWidgetId, createViews(if (playLive) createLiveForText(0) else "Updating..."))
+    appWidgetManager.updateAppWidget(appWidgetId, createViews(if (playLive) createLiveForText(0) else "Updating...", null))
 
-    suspend fun pushFrame(views: RemoteViews) = try {
-        val frame = Injector.get().getWebcamSnapshotUseCase().execute(GetWebcamSnapshotUseCase.Params(octoPrintInfo, 1080, R.dimen.widget_corner_radius))
-        views.setImageViewBitmap(R.id.webcamContent, frame)
-        true
-    } catch (e: Exception) {
-        Timber.e(e)
-        views.setTextViewText(R.id.noImageTitle, "Error while loading image")
-        false
-    }
-
-    if (playLive) {
-        repeat(liveForSecs * 2) {
-            val start = System.currentTimeMillis()
-            val views = createViews(createLiveForText(it / 2))
-            if (!pushFrame(views)) {
-                return@repeat
+    val frame = if (playLive) {
+        var frame: Bitmap? = null
+        withTimeoutOrNull(liveForSecs * 1000L) {
+            launch {
+                Injector.get().getWebcamSnapshotUseCase().execute(GetWebcamSnapshotUseCase.Params(octoPrintInfo, 1080, R.dimen.widget_corner_radius))
+                    .collect {
+                        frame = it
+                    }
             }
-            appWidgetManager.updateAppWidget(appWidgetId, views)
-            delay(500 - (System.currentTimeMillis() - start))
+
+            launch {
+                val start = System.currentTimeMillis()
+                while (true) {
+                    val secsLeft = (System.currentTimeMillis() - start) / 1000
+                    val views = createViews(createLiveForText(secsLeft.toInt()), frame)
+                    appWidgetManager.updateAppWidget(appWidgetId, views)
+                    delay(100)
+                }
+            }
+        }
+        frame
+    } else {
+        try {
+            Injector.get().getWebcamSnapshotUseCase().execute(GetWebcamSnapshotUseCase.Params(octoPrintInfo, 1080, R.dimen.widget_corner_radius)).first()
+        } catch (e: Exception) {
+            Timber.e(e)
+            null
         }
     }
 
-    val views = createViews("Updated at ${getTime()}")
-    pushFrame(views)
+    val views = createViews("Updated at ${getTime()}", frame)
     views.setOnClickPendingIntent(R.id.buttonRefresh, createUpdateIntent(context, appWidgetId, false))
     views.setOnClickPendingIntent(R.id.buttonLive, createUpdateIntent(context, appWidgetId, true))
     views.setViewVisibility(R.id.buttonRefresh, View.VISIBLE)
