@@ -39,7 +39,7 @@
     <string name="open_email">Envoyer l\' email</string>
     <string name="updates_notification_channel_name">Mises à jour</string>
     <string name="connection_failed">Échec de connexion</string>
-    <string name="reconnecting">Reconnexion.../string>
+    <string name="reconnecting">Reconnexion...</string>
     <string name="reconnect">Reconnecter</string>
     <string name="webcam">Webcam</string>
     <string name="pausing">Mise en pause...</string>
