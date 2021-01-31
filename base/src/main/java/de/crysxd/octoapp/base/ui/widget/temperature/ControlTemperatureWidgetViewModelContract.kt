@@ -4,20 +4,19 @@ import android.content.Context
 import android.text.InputType
 import androidx.annotation.StringRes
 import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.livedata.OctoTransformations.filter
-import de.crysxd.octoapp.base.livedata.OctoTransformations.filterEventsForMessageType
-import de.crysxd.octoapp.base.livedata.OctoTransformations.mapNotNull
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import de.crysxd.octoapp.octoprint.models.socket.HistoricTemperatureData
-import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -25,10 +24,10 @@ abstract class ControlTemperatureWidgetViewModelContract(
     octoPrintProvider: OctoPrintProvider
 ) : BaseViewModel() {
 
-    val temperature = octoPrintProvider.eventLiveData
-        .filterEventsForMessageType(CurrentMessage::class.java)
+    val temperature = octoPrintProvider.passiveCurrentMessageFlow()
         .filter { it.temps.isNotEmpty() }
         .mapNotNull { extractComponentTemperature(it.temps.first()) }
+        .asLiveData()
 
     protected abstract suspend fun setTemperature(temp: Int)
 
