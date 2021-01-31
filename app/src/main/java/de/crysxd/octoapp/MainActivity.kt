@@ -237,9 +237,7 @@ class MainActivity : OctoActivity() {
             // We are connected, let's update the available capabilities of the connect Octoprint
             if ((System.currentTimeMillis() - lastSuccessfulCapabilitiesUpdate) > 10000) {
                 updateCapabilities("connected_event")
-            }
-
-            Unit
+            } else Unit
         }
         else -> Unit
     }
