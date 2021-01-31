@@ -36,7 +36,7 @@ class GcodeShortcutLayoutManager(
 
         // Add new views
         gcodes.forEach { gcode ->
-            val button = removedViews.firstOrNull { it.tag == gcode.command }
+            val button = removedViews.firstOrNull { it.tag == gcode.command && it.parent == null }
                 ?: LayoutInflater.from(layout.context).inflate(R.layout.widget_gcode_button, layout, false) as Button
 
             button.text = gcode.name
