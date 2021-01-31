@@ -1,16 +1,15 @@
 package de.crysxd.octoapp
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.media.RingtoneManager
+import android.media.AudioAttributes
+import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
@@ -27,6 +26,7 @@ const val ACTION_STOP = "stop"
 const val DISCONNECT_IF_NO_MESSAGE_FOR_MS = 60_000L
 const val RETRY_DELAY = 1_000L
 const val RETRY_COUNT = 3L
+const val FILAMENT_CHANGE_NOTIFICATION_ID = 3100
 
 class PrintNotificationService : Service() {
 
@@ -52,11 +52,14 @@ class PrintNotificationService : Service() {
     private val eventFlow = Injector.get().octoPrintProvider().eventFlow("notification-service")
     private val openAppRequestCode = 3249
     private val maxProgress = 100
-    private val notificationChannelId = "print_progress"
+    private val normalNotificationChannelId = "print_progress"
+    private val filamentNotificationChannelId = "filament_change"
     private val notificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
     private val formatDurationUseCase: FormatDurationUseCase = Injector.get().formatDurationUseCase()
     private var lastEta: String = ""
     private var didSeePrintBeingActive = false
+    private var didSeeFilamentChangeAt = 0L
+    private var pausedBecauseOfFilamentChange = false
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -85,7 +88,7 @@ class PrintNotificationService : Service() {
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                createNotificationChannel()
+                createNotificationChannels()
             }
 
             startForeground(NOTIFICATION_ID, createInitialNotification())
@@ -118,44 +121,8 @@ class PrintNotificationService : Service() {
                     is Event.Connected -> createInitialNotification()
                     is Event.MessageReceived -> {
                         (event.message as? Message.CurrentMessage)?.let { message ->
-                            // Schedule transition into disconnected state if no message was received for a set timeout
-                            markDisconnectedAfterDelay()
-
-                            // Check if still printing
-                            val flags = message.state?.flags
-                            Timber.v(message.toString())
-                            if (flags == null || !listOf(flags.printing, flags.paused, flags.pausing, flags.cancelling).any { it }) {
-                                if (message.progress?.completion?.toInt() == maxProgress && didSeePrintBeingActive) {
-                                    didSeePrintBeingActive = false
-                                    Timber.i("Print done, showing notification")
-                                    val name = message.job?.file?.display
-                                    notificationManager.notify((3242..4637).random(), createCompletedNotification(name))
-                                }
-
-                                Timber.i("Not printing, stopping self")
-                                stopSelf()
-                                return@let null
-                            }
-
-                            // Update notification
-                            didSeePrintBeingActive = true
-                            message.progress?.let {
-                                val progress = it.completion.toInt()
-                                val left = formatDurationUseCase.execute(it.printTimeLeft.toLong())
-
-                                lastEta = getString(R.string.print_eta_x, Injector.get().formatEtaUseCase().execute(it.printTimeLeft))
-                                val detail = getString(R.string.notification_printing_message, progress, left)
-                                val title = getString(
-                                    when {
-                                        flags.pausing -> R.string.notification_pausing_title
-                                        flags.paused -> R.string.notification_paused_title
-                                        flags.cancelling -> R.string.notification_cancelling_title
-                                        else -> R.string.notification_printing_title
-                                    }
-                                )
-
-                                createProgressNotification(progress, title, detail)
-                            }
+                            updateFilamentChangeNotification(message)
+                            updatePrintNotification(message)
                         }
                     }
                     else -> null
@@ -169,14 +136,96 @@ class PrintNotificationService : Service() {
         }
     }
 
+    private fun updateFilamentChangeNotification(message: Message.CurrentMessage) {
+        if (message.logs.any { it.contains("M600") }) {
+            didSeeFilamentChangeAt = System.currentTimeMillis()
+            notificationManager.notify(FILAMENT_CHANGE_NOTIFICATION_ID, createFilamentChangeNotification())
+        }
+    }
+
+    private suspend fun updatePrintNotification(message: Message.CurrentMessage): Notification? {
+        // Schedule transition into disconnected state if no message was received for a set timeout
+        markDisconnectedAfterDelay()
+
+        // Check if still printing
+        val flags = message.state?.flags
+        Timber.v(message.toString())
+        if (flags == null || !listOf(flags.printing, flags.paused, flags.pausing, flags.cancelling).any { it }) {
+            if (message.progress?.completion?.toInt() == maxProgress && didSeePrintBeingActive) {
+                didSeePrintBeingActive = false
+                Timber.i("Print done, showing notification")
+                val name = message.job?.file?.display
+                notificationManager.notify((3242..4637).random(), createCompletedNotification(name))
+            }
+
+            Timber.i("Not printing, stopping self")
+            stopSelf()
+            return null
+        }
+
+        // Update notification
+        didSeePrintBeingActive = true
+        message.progress?.let {
+            val progress = it.completion.toInt()
+            val left = formatDurationUseCase.execute(it.printTimeLeft.toLong())
+
+            lastEta = getString(R.string.print_eta_x, Injector.get().formatEtaUseCase().execute(it.printTimeLeft))
+            val detail = getString(R.string.notification_printing_message, progress, left)
+            val title = getString(
+                when {
+                    flags.pausing -> R.string.notification_pausing_title
+                    flags.paused -> {
+                        // If we are paused and we saw a filament change command just before,
+                        // we assume we where paused because of the filament change
+                        if ((System.currentTimeMillis() - didSeeFilamentChangeAt) < 10000) {
+                            pausedBecauseOfFilamentChange = true
+                        }
+
+                        if (pausedBecauseOfFilamentChange) {
+                            R.string.notification_paused_filamet_change_title
+                        } else {
+                            R.string.notification_paused_title
+                        }
+                    }
+                    flags.cancelling -> R.string.notification_cancelling_title
+                    else -> {
+                        pausedBecauseOfFilamentChange = false
+                        notificationManager.cancel(FILAMENT_CHANGE_NOTIFICATION_ID)
+                        R.string.notification_printing_title
+                    }
+                }
+            )
+
+            return createProgressNotification(progress, title, detail)
+        }
+
+        return null
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel() {
+    private fun createNotificationChannels() {
         notificationManager.createNotificationChannel(
             NotificationChannel(
-                notificationChannelId,
+                normalNotificationChannelId,
                 getString(R.string.notification_channel_print_progress),
                 NotificationManager.IMPORTANCE_HIGH
             )
+        )
+
+        val soundUri = Uri.parse("android.resource://${applicationContext.packageName}/${R.raw.notification_filament_change}")
+        val audioAttributes = AudioAttributes.Builder()
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+            .build()
+
+        notificationManager.createNotificationChannel(
+            NotificationChannel(
+                filamentNotificationChannelId,
+                getString(R.string.notification_channel_filament_change),
+                NotificationManager.IMPORTANCE_HIGH
+            ).also {
+                it.setSound(soundUri, audioAttributes)
+            }
         )
     }
 
@@ -204,7 +253,14 @@ class PrintNotificationService : Service() {
                 setContentText(it)
             }
         }
-        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+        .setDefaults(Notification.DEFAULT_SOUND)
+        .setDefaults(Notification.DEFAULT_VIBRATE)
+        .build()
+
+    private fun createFilamentChangeNotification() = createNotificationBuilder(filamentNotificationChannelId)
+        .setContentTitle(getString(R.string.notification_filament_change_required))
+        .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
+        .setDefaults(Notification.DEFAULT_VIBRATE)
         .build()
 
     private fun createDisconnectedNotification() = createNotificationBuilder()
@@ -237,7 +293,7 @@ class PrintNotificationService : Service() {
         ).build()
     )
 
-    private fun createNotificationBuilder() = NotificationCompat.Builder(this, notificationChannelId)
+    private fun createNotificationBuilder(notificationChannelId: String = normalNotificationChannelId) = NotificationCompat.Builder(this, notificationChannelId)
         .setColorized(true)
         .setColor(ContextCompat.getColor(this, R.color.primary_light))
         .setSmallIcon(R.drawable.ic_notification_default)
