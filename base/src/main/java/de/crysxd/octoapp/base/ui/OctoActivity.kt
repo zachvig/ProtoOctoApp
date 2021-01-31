@@ -2,6 +2,8 @@ package de.crysxd.octoapp.base.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.method.LinkMovementMethod
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -29,12 +31,10 @@ abstract class OctoActivity : LocaleActivity() {
     }
 
     private var dialog: AlertDialog? = null
-
     abstract val octoToolbar: OctoToolbar
-
     abstract val octo: OctoView
-
     abstract val coordinatorLayout: CoordinatorLayout
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         instance = this
@@ -53,7 +53,7 @@ abstract class OctoActivity : LocaleActivity() {
         }.toString()
     }
 
-    fun showSnackbar(message: BaseViewModel.Message.SnackbarMessage) {
+    fun showSnackbar(message: BaseViewModel.Message.SnackbarMessage) = handler.post {
         Snackbar.make(coordinatorLayout, message.text(this), message.duration).apply {
             message.actionText(this@OctoActivity)?.let {
                 setAction(it) { message.action(this@OctoActivity) }
@@ -115,7 +115,7 @@ abstract class OctoActivity : LocaleActivity() {
         positiveAction: (Context) -> Unit = {},
         neutralButton: CharSequence? = null,
         neutralAction: (Context) -> Unit = {}
-    ) {
+    ) = handler.post {
         Timber.i("Showing dialog: [message=$message, positiveButton=$positiveButton, neutralButton=$neutralButton")
         dialog?.dismiss()
         dialog = MaterialAlertDialogBuilder(this).let { builder ->
