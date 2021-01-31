@@ -78,10 +78,13 @@ class WebcamWidget(
                 applyAspectRatio(state.aspectRation)
                 WebcamView.WebcamState.HlsStreamReady(state.uri)
             }
-            is Error -> if (state.isManualReconnect) {
-                WebcamView.WebcamState.Error(state.streamUrl)
-            } else {
-                WebcamView.WebcamState.Reconnecting
+            is Error -> {
+                state.aspectRation?.let(::applyAspectRatio)
+                if (state.isManualReconnect) {
+                    WebcamView.WebcamState.Error(state.streamUrl)
+                } else {
+                    WebcamView.WebcamState.Reconnecting
+                }
             }
         }
     }

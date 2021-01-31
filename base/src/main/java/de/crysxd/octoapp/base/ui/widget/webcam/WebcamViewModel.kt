@@ -36,6 +36,7 @@ class WebcamViewModel(
     }
 
     fun connect() {
+        Timber.i("Connecting")
         previousSource?.let(uiStateMediator::removeSource)
 
         val liveData = BillingManager.billingFlow().map {
@@ -77,7 +78,8 @@ class WebcamViewModel(
                                 emit(
                                     UiState.Error(
                                         isManualReconnect = true,
-                                        streamUrl = webcamSettings.streamUrl
+                                        streamUrl = webcamSettings.streamUrl,
+                                        aspectRation = webcamSettings.streamRatio
                                     )
                                 )
                             }
@@ -144,6 +146,6 @@ class WebcamViewModel(
         object HlsStreamDisabled : UiState()
         data class FrameReady(val frame: Bitmap, val aspectRation: String) : UiState()
         data class HlsStreamReady(val uri: Uri, val aspectRation: String) : UiState()
-        data class Error(val isManualReconnect: Boolean, val streamUrl: String? = null) : UiState()
+        data class Error(val isManualReconnect: Boolean, val streamUrl: String? = null, val aspectRation: String? = null) : UiState()
     }
 }

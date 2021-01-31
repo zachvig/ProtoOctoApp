@@ -52,6 +52,7 @@ class MainActivity : OctoActivity() {
 
     private var lastNavigation = -1
     private val lastInsets = Rect()
+    private var lastSuccessfulCapabilitiesUpdate = 0L
 
     override val octoToolbar: OctoToolbar by lazy { toolbar }
     override val octo: OctoView by lazy { toolbarOctoView }
@@ -175,6 +176,7 @@ class MainActivity : OctoActivity() {
     override fun onStart() {
         super.onStart()
         Timber.i("UI started")
+        updateCapabilities("ui_start")
     }
 
     override fun onStop() {
@@ -233,7 +235,11 @@ class MainActivity : OctoActivity() {
         is Message.EventMessage -> onEventMessageReceived(e)
         is Message.ConnectedMessage -> {
             // We are connected, let's update the available capabilities of the connect Octoprint
-            updateCapabilities()
+            if ((System.currentTimeMillis() - lastSuccessfulCapabilitiesUpdate) > 10000) {
+                updateCapabilities("connected_event")
+            }
+
+            Unit
         }
         else -> Unit
     }
@@ -279,7 +285,7 @@ class MainActivity : OctoActivity() {
     private fun onEventMessageReceived(e: Message.EventMessage) = when (e) {
         is Message.EventMessage.Connected, is Message.EventMessage.SettingsUpdated -> {
             // New printer connected or settings updated, let's update capabilities
-            updateCapabilities()
+            updateCapabilities("settings_updated")
         }
         else -> Unit
     }
@@ -308,11 +314,14 @@ class MainActivity : OctoActivity() {
         findCurrentScreen()?.let { applyInsetsToScreen(it, height.takeIf { visible }) }
     }
 
-    private fun updateCapabilities() {
+    private fun updateCapabilities(trigger: String) {
+        Timber.i("Updating capabities (trigger=$trigger)")
         lifecycleScope.launchWhenCreated {
             try {
+                lastSuccessfulCapabilitiesUpdate = System.currentTimeMillis()
                 Injector.get().updateInstanceCapabilitiesUseCase().execute()
             } catch (e: Exception) {
+                lastSuccessfulCapabilitiesUpdate = 0
                 Timber.e(e)
                 showDialog(getString(R.string.capabilities_validation_error))
             }
