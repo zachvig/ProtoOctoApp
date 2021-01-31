@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.*
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -28,7 +27,6 @@ import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.base.ui.common.menu.main.MainMenu
-import de.crysxd.octoapp.base.ui.ext.findParent
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -101,11 +99,13 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     }
 
     private fun beginDelayedTransition(smallChange: Boolean = false) {
-        view?.findParent<CoordinatorLayout>()?.let {
-            val epicenterX = it.width / 2
+        view?.rootView?.let {
+            // We need a offset if the view does not span the entire screen as the epicenter is in screen coordinates (?)
+            val epicenterX = getScreenWidth() / 2
             val epicenterY = it.width / 2
             TransitionManager.beginDelayedTransition(
-                it, InstantAutoTransition(
+                it as ViewGroup,
+                InstantAutoTransition(
                     explode = !smallChange,
                     explodeEpicenter = Rect(epicenterX, epicenterY, epicenterX, epicenterY)
                 )
