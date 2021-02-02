@@ -162,6 +162,14 @@ class SelectFileAdapter(
                         otherFileIcon
                     } ?: ColorDrawable(Color.TRANSPARENT)
 
+                    val resultIcon = when (file.prints?.last?.success) {
+                        true -> R.drawable.ic_round_check_circle_24
+                        false -> R.drawable.ic_round_highlight_off_circle_24
+                        null -> null
+                    }
+                    resultIcon?.let(holder.resultIndicator::setImageResource)
+                    holder.resultIndicator.alpha = if (resultIcon != null) 1f else 0f
+
                     when {
                         picasso == null -> {
                             holder.imageViewFileIcon.setImageDrawable(icon)

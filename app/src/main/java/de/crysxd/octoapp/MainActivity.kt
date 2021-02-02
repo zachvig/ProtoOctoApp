@@ -192,7 +192,9 @@ class MainActivity : OctoActivity() {
     override fun onStart() {
         super.onStart()
         Timber.i("UI started")
-        updateCapabilities("ui_start")
+        // OctoPrint might not be available, this is more like a fire and forget
+        // Don't bother user with error messages
+        updateCapabilities("ui_start", escalateError = false)
     }
 
     override fun onStop() {
@@ -328,7 +330,7 @@ class MainActivity : OctoActivity() {
         findCurrentScreen()?.let { applyInsetsToScreen(it, height.takeIf { visible }) }
     }
 
-    private fun updateCapabilities(trigger: String) {
+    private fun updateCapabilities(trigger: String, escalateError: Boolean = true) {
         Timber.i("Updating capabities (trigger=$trigger)")
         lifecycleScope.launchWhenCreated {
             try {
@@ -337,8 +339,10 @@ class MainActivity : OctoActivity() {
                 notifyWidgetDataChanged()
             } catch (e: Exception) {
                 lastSuccessfulCapabilitiesUpdate = 0
-                Timber.e(e)
-                showDialog(getString(R.string.capabilities_validation_error))
+                if (escalateError) {
+                    Timber.e(e)
+                    showDialog(getString(R.string.capabilities_validation_error))
+                }
             }
         }
     }
