@@ -18,8 +18,8 @@ android {
         applicationId "de.crysxd.octoapp"
         minSdkVersion 21
         targetSdkVersion project.rootProject.ext.target_sdk
-        versionCode 1607
-        versionName "1.6-beta07"
+        versionCode 1608
+        versionName "1.6-beta08"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
