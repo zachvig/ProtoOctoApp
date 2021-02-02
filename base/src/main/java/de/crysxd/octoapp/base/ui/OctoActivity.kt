@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -116,18 +117,23 @@ abstract class OctoActivity : LocaleActivity() {
         neutralButton: CharSequence? = null,
         neutralAction: (Context) -> Unit = {}
     ) = handler.post {
-        Timber.i("Showing dialog: [message=$message, positiveButton=$positiveButton, neutralButton=$neutralButton")
-        dialog?.dismiss()
-        dialog = MaterialAlertDialogBuilder(this).let { builder ->
-            builder.setMessage(message)
-            builder.setPositiveButton(positiveButton) { _, _ -> positiveAction(this) }
-            neutralButton?.let {
-                builder.setNeutralButton(it) { _, _ -> neutralAction(this) }
+        // Check activity state before showing dialog
+        if (lifecycle.currentState >= Lifecycle.State.CREATED) {
+            Timber.i("Showing dialog: [message=$message, positiveButton=$positiveButton, neutralButton=$neutralButton")
+            dialog?.dismiss()
+            dialog = MaterialAlertDialogBuilder(this).let { builder ->
+                builder.setMessage(message)
+                builder.setPositiveButton(positiveButton) { _, _ -> positiveAction(this) }
+                neutralButton?.let {
+                    builder.setNeutralButton(it) { _, _ -> neutralAction(this) }
+                }
+                builder.show().also {
+                    // Allow links to be clicked
+                    it.findViewById<TextView>(android.R.id.message)?.movementMethod = LinkMovementMethod()
+                }
             }
-            builder.show().also {
-                // Allow links to be clicked
-                it.findViewById<TextView>(android.R.id.message)?.movementMethod = LinkMovementMethod()
-            }
+        } else {
+            Timber.w("Dialog skipped, activity finished")
         }
     }
 
