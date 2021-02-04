@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import okhttp3.Credentials
 import timber.log.Timber
 import java.io.BufferedInputStream
 import java.io.IOException
@@ -90,9 +91,24 @@ class MjpegConnection(private val streamUrl: String) {
         Timber.i("Starting stream")
     }.flowOn(Dispatchers.IO)
 
-    private fun connect() = (URL(streamUrl).openConnection() as HttpURLConnection).also {
-        it.doInput = true
-        it.connect()
+    private fun connect(): HttpURLConnection {
+        val url = URL(streamUrl)
+        val connection = url.openConnection() as HttpURLConnection
+
+        // Basic Auth
+        url.userInfo?.let {
+            try {
+                val components = it.split(":")
+                val credentials = Credentials.basic(components[0], components[1])
+                connection.setRequestProperty("Authorization", credentials)
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+        }
+
+        connection.doInput = true
+        connection.connect()
+        return connection
     }
 
     private fun createHeaderBoundaryPattern(connection: HttpURLConnection): Pattern {
