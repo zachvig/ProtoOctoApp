@@ -92,7 +92,7 @@ class PrintNotificationMenuItem : ToggleMenuItem() {
     override val order = 104
     override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
-    override val icon = R.drawable.ic_round_notifications_off_24
+    override val icon = R.drawable.ic_round_notifications_active_24
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_turn_print_notification_on)
 
     override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
