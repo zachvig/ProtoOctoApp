@@ -19,6 +19,7 @@ const val MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE = "settings___change_octoprint_ins
 const val MENU_ITEM_PRINT_NOTIFICATION = "settings___print_notification"
 const val MENU_ITEM_SCREEN_ON_DURING_PRINT = "settings___keep_screen_on_during__print"
 const val MENU_ITEM_CANCEL_PRINT = "printer___cancel_print"
+const val MENU_ITEM_CANCEL_PRINT_KEEP_TEMPS = "printer___cancel_print_keep_temps"
 const val MENU_ITEM_SHOW_WEBCAM = "printer___show_webcam"
 const val MENU_ITEM_EMERGENCY_STOP = "printer___cemergency_stop"
 const val MENU_ITEM_TURN_PSU_OFF = "printer___turn_psu_off"
@@ -50,7 +51,8 @@ class MenuItemLibrary {
         MENU_ITEM_PRINT_NOTIFICATION to PrintNotificationMenuItem::class,
         MENU_ITEM_SCREEN_ON_DURING_PRINT to KeepScreenOnDuringPrintMenuItem::class,
         MENU_ITEM_ADD_INSTANCE to AddInstanceMenuItem::class,
-        MENU_ITEM_SHOW_WEBCAM to ShowWebcamMenuItem::class
+        MENU_ITEM_SHOW_WEBCAM to ShowWebcamMenuItem::class,
+        MENU_ITEM_CANCEL_PRINT_KEEP_TEMPS to CancelPrintKeepTemperaturesMenuItem::class
     )
 
     operator fun get(itemId: String): MenuItem? = when {

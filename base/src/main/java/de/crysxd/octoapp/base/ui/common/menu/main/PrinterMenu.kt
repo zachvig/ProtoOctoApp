@@ -7,6 +7,7 @@ import de.crysxd.octoapp.base.ui.common.menu.*
 import de.crysxd.octoapp.base.ui.common.menu.temperature.TemperatureMenu
 import de.crysxd.octoapp.base.ui.common.power.PowerControlsBottomSheet
 import de.crysxd.octoapp.base.ui.widget.webcam.FullscreenWebcamActivity
+import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.flow.first
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.first
 class PrinterMenu : Menu {
     override fun getMenuItem() = listOf(
         CancelPrintMenuItem(),
+        CancelPrintKeepTemperaturesMenuItem(),
         EmergencyStopMenuItem(),
         ShowTemperatureMenuItem(),
         ShowWebcamMenuItem(),
@@ -45,7 +47,7 @@ class ShowTemperatureMenuItem : MenuItem {
 
 class ShowWebcamMenuItem : MenuItem {
     override val itemId = MENU_ITEM_SHOW_WEBCAM
-    override var groupId = "submenus"
+    override var groupId = ""
     override val order = 311
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_videocam_24
@@ -114,9 +116,8 @@ class EmergencyStopMenuItem : ConfirmedMenuItem() {
     }
 }
 
-
-class CancelPrintMenuItem : ConfirmedMenuItem() {
-    override val itemId = MENU_ITEM_CANCEL_PRINT
+class CancelPrintKeepTemperaturesMenuItem : ConfirmedMenuItem() {
+    override val itemId = MENU_ITEM_CANCEL_PRINT_KEEP_TEMPS
     override var groupId = ""
     override val order = 331
     override val style = MenuItemStyle.Printer
@@ -125,9 +126,26 @@ class CancelPrintMenuItem : ConfirmedMenuItem() {
     override fun getConfirmMessage(context: Context) = context.getString(R.string.cancel_print_confirmation_message)
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.cancel_print_confirmation_action)
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_cancel_print_keep_temp)
+    override suspend fun onConfirmed(host: MenuBottomSheetFragment): Boolean {
+        Injector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(restoreTemperatures = true))
+        return true
+    }
+}
+
+class CancelPrintMenuItem : ConfirmedMenuItem() {
+    override val itemId = MENU_ITEM_CANCEL_PRINT
+    override var groupId = ""
+    override val order = 332
+    override val style = MenuItemStyle.Printer
+    override val icon = R.drawable.ic_round_cancel_24
+
+    override fun getConfirmMessage(context: Context) = context.getString(R.string.cancel_print_confirmation_message)
+    override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.cancel_print_confirmation_action)
+    override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_cancel_print)
     override suspend fun onConfirmed(host: MenuBottomSheetFragment): Boolean {
-        Injector.get().cancelPrintJobUseCase().execute(Unit)
+        Injector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(restoreTemperatures = false))
         return true
     }
 }
