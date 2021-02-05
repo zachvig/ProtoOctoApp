@@ -2,7 +2,6 @@ package de.crysxd.octoapp.base.ui.widget.gcode
 
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.android.material.snackbar.Snackbar
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.OctoActivity
@@ -34,7 +33,6 @@ class SendGcodeWidgetViewModel(
 
         postMessage(
             OctoActivity.Message.SnackbarMessage(
-                duration = Snackbar.LENGTH_INDEFINITE,
                 text = { con ->
                     con.getString(
                         if (gcodeCommand.commands.size == 1) {
