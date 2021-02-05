@@ -60,6 +60,7 @@
         android:background="@drawable/widget_chip_background"
         android:paddingHorizontal="@dimen/margin_1"
         android:paddingVertical="@dimen/margin_0"
+        android:gravity="end"
         android:text="Updated 23:41"
         android:textAppearance="@style/OctoTheme.TextAppearance"
         android:textColor="@color/white" />
