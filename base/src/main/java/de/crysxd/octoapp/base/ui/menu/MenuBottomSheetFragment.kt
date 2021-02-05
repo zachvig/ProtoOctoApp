@@ -144,49 +144,16 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         override fun onBindViewHolder(holder: MenuItemHolder, position: Int) {
             val item = menuItems[position]
             val title = runBlocking { item.getTitle(requireContext()) }
-            holder.binding.button.text = title
+            holder.binding.text.text = title
             holder.binding.button.setOnClickListener {
-                viewModel.execute {
-                    delay(100)
-                    val activity = requireOctoActivity()
-                    val closeBottomSheet = item.onClicked(this@MenuBottomSheetFragment) { action ->
-                        GlobalScope.launch {
-                            try {
-                                // Start confirmation
-                                Timber.i("Action start")
-                                activity.showSnackbar(
-                                    OctoActivity.Message.SnackbarMessage(
-                                        text = { it.getString(R.string.menu___executing_command, title) },
-                                        debounce = true
-                                    )
-                                )
-
-                                // Execute
-                                action()
-
-                                // End confirmation
-                                Timber.i("Action end")
-                                activity.showSnackbar(
-                                    OctoActivity.Message.SnackbarMessage(
-                                        text = { it.getString(R.string.menu___completed_command, title) },
-                                        type = OctoActivity.Message.SnackbarMessage.Type.Positive
-                                    )
-                                )
-                            } catch (e: Exception) {
-                                Timber.e(e, "Action failed")
-                                activity.showErrorDetailsDialog(e)
-                            }
-                        }
-                    }
-
-                    if (closeBottomSheet) {
-                        dismiss()
-                    } else {
-                        notifyDataSetChanged()
-                    }
+                if (item is ToggleMenuItem) {
+                    executeFlipToggle(holder, item)
+                } else {
+                    executeClick(item, title)
                 }
             }
-            if (!item.showAsSubMenu && item.canBePinned) {
+
+            if (item.canBePinned) {
                 holder.binding.button.setOnLongClickListener {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         (requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator)
@@ -200,15 +167,19 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                 }
             }
 
+            // Toggle
+            holder.binding.toggle.isVisible = item is ToggleMenuItem
+            holder.binding.toggle.isChecked = (item as? ToggleMenuItem)?.isEnabled == true
+
+            // Pin
+            holder.binding.pin.isVisible = pinnedItemIds.contains(item.itemId)
+
             // Icons
-            holder.binding.button.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                item.icon,
-                0,
-                R.drawable.ic_round_chevron_right_24.takeIf { item.showAsSubMenu }
-                    ?: R.drawable.ic_round_push_pin_16_half_alpha.takeIf { pinnedItemIds.contains(item.itemId) }
-                    ?: 0,
-                0
-            )
+            val iconStart = item.icon
+            val iconEnd = R.drawable.ic_round_chevron_right_24.takeIf { item.showAsSubMenu } ?: 0
+            holder.binding.text.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, iconEnd, 0)
+            holder.binding.icon.setImageResource(iconStart)
+            //  holder.binding.pin.setImageResource(iconEnd)
 
             // Margins
             val nextItem = menuItems.getOrNull(position + 1)
@@ -218,17 +189,70 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                 marginEnd = requireContext().resources.getDimension(R.dimen.margin_0_1).toInt()
             }
 
-            // Max lines
-            holder.binding.button.maxLines = if (item.enforceSingleLine) 1 else 2
-
             // Colors
             val background = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), item.style.backgroundColor))
             val foreground = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), item.style.highlightColor))
             val transparent = ColorStateList.valueOf(Color.TRANSPARENT)
             holder.binding.button.backgroundTintList = if (item.showAsHalfWidth) transparent else background
             TextViewCompat.setCompoundDrawableTintList(holder.binding.button, foreground)
+            TextViewCompat.setCompoundDrawableTintList(holder.binding.text, foreground)
+            holder.binding.icon.setColorFilter(foreground.defaultColor)
+            // holder.binding.pin.setColorFilter(foreground.defaultColor)
+            // holder.binding.pin.backgroundTintList = transparent
             holder.binding.button.strokeColor = if (item.showAsHalfWidth) foreground else transparent
             holder.binding.button.rippleColor = if (item.showAsHalfWidth) foreground else background
+        }
+
+        private fun executeFlipToggle(holder: MenuItemHolder, item: ToggleMenuItem) {
+            viewModel.execute {
+                try {
+                    item.handleToggleFlipped(this@MenuBottomSheetFragment, !item.isEnabled)
+                    holder.binding.toggle.isChecked = item.isEnabled
+                } catch (e: Exception) {
+                    requireOctoActivity().showErrorDetailsDialog(e)
+                }
+            }
+        }
+
+        private fun executeClick(item: MenuItem, title: CharSequence) {
+            val activity = requireOctoActivity()
+            viewModel.execute {
+                val closeBottomSheet = item.onClicked(this@MenuBottomSheetFragment) { action ->
+                    GlobalScope.launch {
+                        delay(100)
+
+                        try {
+                            // Start confirmation
+                            Timber.i("Action start")
+                            activity.showSnackbar(
+                                OctoActivity.Message.SnackbarMessage(
+                                    text = { it.getString(R.string.menu___executing_command, title) },
+                                    debounce = true
+                                )
+                            )
+
+                            // Execute
+                            action()
+
+                            // End confirmation
+                            Timber.i("Action end")
+                            activity.showSnackbar(
+                                OctoActivity.Message.SnackbarMessage(
+                                    text = { it.getString(R.string.menu___completed_command, title) },
+                                    type = OctoActivity.Message.SnackbarMessage.Type.Positive
+                                )
+                            )
+                        } catch (e: Exception) {
+                            Timber.e(e, "Action failed")
+                            activity.showErrorDetailsDialog(e)
+                        }
+                    }
+                }
+
+                if (closeBottomSheet) {
+                    dismiss()
+                }
+            }
         }
     }
 

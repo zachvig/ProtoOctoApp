@@ -72,73 +72,59 @@ class ChangeLanguageMenuItem : MenuItem {
     }
 }
 
-class NightThemeMenuItem : MenuItem {
-    private val isManualDarkModeEnabled get() = Injector.get().octoPreferences().isManualDarkModeEnabled
+class NightThemeMenuItem : ToggleMenuItem() {
+    override val isEnabled get() = Injector.get().octoPreferences().isManualDarkModeEnabled
     override val itemId = MENU_ITEM_NIGHT_THEME
     override var groupId = ""
     override val order = 103
     override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
-    override val icon = if (isManualDarkModeEnabled) R.drawable.ic_round_light_mode_24 else R.drawable.ic_round_dark_mode_24
+    override val icon = R.drawable.ic_round_dark_mode_24
 
     override suspend fun isVisible(destinationId: Int) = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
-    override suspend fun getTitle(context: Context) =
-        context.getString(if (isManualDarkModeEnabled) R.string.main_menu___item_use_light_mode else R.string.main_menu___item_use_dark_mode)
-
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
-        executeAsync {
-            Injector.get().octoPreferences().isManualDarkModeEnabled = !isManualDarkModeEnabled
-        }
-
-        return true
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_use_dark_mode)
+    override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+        Injector.get().octoPreferences().isManualDarkModeEnabled = enabled
     }
 }
 
-class PrintNotificationMenuItem : MenuItem {
-    private val isPrintNotificationEnabled get() = Injector.get().octoPreferences().isPrintNotificationEnabled
+class PrintNotificationMenuItem : ToggleMenuItem() {
+    override val isEnabled get() = Injector.get().octoPreferences().isPrintNotificationEnabled
     override val itemId = MENU_ITEM_PRINT_NOTIFICATION
     override var groupId = ""
     override val order = 104
     override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
-    override val icon = if (isPrintNotificationEnabled) R.drawable.ic_round_notifications_off_24 else R.drawable.ic_round_notifications_active_24
+    override val icon = R.drawable.ic_round_notifications_off_24
+    override suspend fun getTitle(context: Context) = "Print notifications"
 
-    override suspend fun getTitle(context: Context) = context.getString(
-        if (isPrintNotificationEnabled) R.string.main_menu___item_turn_print_notification_off else R.string.main_menu___item_turn_print_notification_on
-    )
-
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
-        Injector.get().octoPreferences().isPrintNotificationEnabled = !isPrintNotificationEnabled
+    override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+        Injector.get().octoPreferences().isPrintNotificationEnabled = enabled
 
         try {
-            if (isPrintNotificationEnabled) {
+            if (enabled) {
                 Timber.i("Service enabled, starting service")
                 host.requireOctoActivity().startPrintNotificationService()
             }
         } catch (e: IllegalStateException) {
             // User might have closed app just in time so we can't start the service
         }
-
-        return true
     }
 }
 
-class KeepScreenOnDuringPrintMenuItem : MenuItem {
-    private val isKeepScreenOn get() = Injector.get().octoPreferences().isKeepScreenOnDuringPrint
+class KeepScreenOnDuringPrintMenuItem : ToggleMenuItem() {
+    override val isEnabled get() = Injector.get().octoPreferences().isKeepScreenOnDuringPrint
     override val itemId = MENU_ITEM_SCREEN_ON_DURING_PRINT
     override var groupId = ""
     override val order = 105
     override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
-    override val icon = if (isKeepScreenOn) R.drawable.ic_round_brightness_low_24 else R.drawable.ic_round_brightness_high_24
+    override val icon = R.drawable.ic_round_brightness_high_24
 
-    override suspend fun getTitle(context: Context) = context.getString(
-        if (isKeepScreenOn) R.string.main_menu___item_keep_screen_on_during_pinrt_off else R.string.main_menu___item_keep_screen_on_during_pinrt_on
-    )
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_keep_screen_on_during_pinrt_on)
 
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
-        Injector.get().octoPreferences().isKeepScreenOnDuringPrint = !isKeepScreenOn
-        return true
+    override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+        Injector.get().octoPreferences().isKeepScreenOnDuringPrint = enabled
     }
 }
 

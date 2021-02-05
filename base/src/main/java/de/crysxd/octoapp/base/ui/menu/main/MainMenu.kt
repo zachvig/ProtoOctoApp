@@ -68,7 +68,7 @@ class ShowSettingsMenuItem : SubMenuItem() {
 class ShowPrinterMenuItem : SubMenuItem() {
     override val itemId = MENU_ITEM_PRINTER_MENU
     override var groupId = "main_menu"
-    override val order = 30
+    override val order = 40
     override val style = MenuItemStyle.Printer
     override val showAsSubMenu = true
     override val showAsHalfWidth = true
@@ -81,7 +81,7 @@ class ShowPrinterMenuItem : SubMenuItem() {
 class ShowOctoPrintMenuItem : MenuItem {
     override val itemId = MENU_ITEM_OCTOPRINT
     override var groupId = "main_menu"
-    override val order = 20
+    override val order = 30
     override val style = MenuItemStyle.OctoPrint
     override val showAsSubMenu = true
     override val showAsHalfWidth = true
@@ -97,7 +97,7 @@ class ShowOctoPrintMenuItem : MenuItem {
 class ShowNewsMenuItem : MenuItem {
     override val itemId = MENU_ITEM_NEWS
     override var groupId = "main_menu"
-    override val order = 40
+    override val order = 20
     override val style = MenuItemStyle.Neutral
     override val showAsSubMenu = true
     override val showAsHalfWidth = true

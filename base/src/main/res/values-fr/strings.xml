@@ -317,12 +317,9 @@
     <string name="main_menu___item_open_octoprint">Open OctoPrint</string>
     <string name="main_menu___item_change_octoprint_instance">Switch OctoPrint</string>
     <string name="main_menu___item_show_printer">Printer</string>
-    <string name="main_menu___item_use_light_mode">Use light mode</string>
     <string name="main_menu___item_use_dark_mode">Use dark mode</string>
     <string name="main_menu___item_turn_print_notification_on">Turn print notification on</string>
-    <string name="main_menu___item_turn_print_notification_off">Turn print notification off</string>
     <string name="main_menu___item_keep_screen_on_during_pinrt_on">Keep screen on while printing</string>
-    <string name="main_menu___item_keep_screen_on_during_pinrt_off">Turn screen off while printing</string>
     <string name="main_menu___item_sign_out">Permanently sign out</string>
     <string name="main_menu___item_add_instance">Add new OctoPrint</string>
     <string name="main_menu___enable_quick_switch">Enable quick switch</string>

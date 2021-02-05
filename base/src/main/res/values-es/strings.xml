@@ -318,12 +318,9 @@
     <string name="main_menu___item_open_octoprint">Abrir OctoPrint</string>
     <string name="main_menu___item_change_octoprint_instance">Cambiar OctoPrint</string>
     <string name="main_menu___item_show_printer">Impresora</string>
-    <string name="main_menu___item_use_light_mode">Usar el modo de luz</string>
-    <string name="main_menu___item_use_dark_mode">Usar el modo oscuro</string>
-    <string name="main_menu___item_turn_print_notification_on">Activar la notificación de impresión</string>
-    <string name="main_menu___item_turn_print_notification_off">Desactivar la notificación de impresión</string>
-    <string name="main_menu___item_keep_screen_on_during_pinrt_on">Mantenga la pantalla encendida mientras imprime</string>
-    <string name="main_menu___item_keep_screen_on_during_pinrt_off">Apagar la pantalla mientras se imprime</string>
+    <string name="main_menu___item_use_dark_mode">Modo oscuro</string>
+    <string name="main_menu___item_turn_print_notification_on">Notificaciones de impresión</string>
+    <string name="main_menu___item_keep_screen_on_during_pinrt_on">Impresión: pantalla iluminada</string>
     <string name="main_menu___item_sign_out">Firme permanentemente la salida</string>
     <string name="main_menu___item_add_instance">Añadir nuevo OctoPrint</string>
     <string name="main_menu___enable_quick_switch">Activar el interruptor rápido</string>
