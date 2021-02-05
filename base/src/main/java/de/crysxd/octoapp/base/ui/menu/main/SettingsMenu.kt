@@ -22,6 +22,7 @@ class SettingsMenu : Menu {
         NightThemeMenuItem(),
         PrintNotificationMenuItem(),
         KeepScreenOnDuringPrintMenuItem(),
+        AutoConnectPrinterMenuItem(),
         ChangeOctoPrintInstanceMenuItem(),
     )
 
@@ -114,21 +115,33 @@ class KeepScreenOnDuringPrintMenuItem : ToggleMenuItem() {
     override val itemId = MENU_ITEM_SCREEN_ON_DURING_PRINT
     override var groupId = ""
     override val order = 105
-    override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_brightness_high_24
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_keep_screen_on_during_pinrt_on)
-
     override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
         Injector.get().octoPreferences().isKeepScreenOnDuringPrint = enabled
+    }
+}
+
+class AutoConnectPrinterMenuItem : ToggleMenuItem() {
+    override val isEnabled get() = Injector.get().octoPreferences().isAutoConnectPrinter
+    override val itemId = MENU_ITEM_AUTO_CONNECT_PRINTER
+    override var groupId = ""
+    override val order = 106
+    override val style = MenuItemStyle.Settings
+    override val icon = R.drawable.ic_round_hdr_auto_24px
+
+    override suspend fun getTitle(context: Context) = "Auto connect printer"
+    override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+        Injector.get().octoPreferences().isAutoConnectPrinter = enabled
     }
 }
 
 class ChangeOctoPrintInstanceMenuItem : MenuItem {
     override val itemId = MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE
     override var groupId = ""
-    override val order = 106
+    override val order = 150
     override val style = MenuItemStyle.Settings
     override val enforceSingleLine = false
     override val icon = R.drawable.ic_round_swap_horiz_24

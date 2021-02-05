@@ -18,6 +18,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_APP_LANGUAGE = "app_language"
         private const val KEY_HIDE_THUMBNAIL_HINT_UNTIL = "hide_thumbnail_hin_until"
         private const val KEY_ACTIVE_INSTANCE_WEB_URL = "active_instance_web_url"
+        private const val KEY_AUTO_CONNECT_PRINTER = "auto_connect_printer"
     }
 
     private val updatedChannel = ConflatedBroadcastChannel(Unit)
@@ -38,6 +39,12 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         get() = sharedPreferences.getBoolean(KEY_KEEP_SCREEN_ON, false)
         set(value) {
             edit { putBoolean(KEY_KEEP_SCREEN_ON, value) }
+        }
+
+    var isAutoConnectPrinter
+        get() = sharedPreferences.getBoolean(KEY_AUTO_CONNECT_PRINTER, true)
+        set(value) {
+            edit { putBoolean(KEY_AUTO_CONNECT_PRINTER, value) }
         }
 
     var isPrintNotificationEnabled

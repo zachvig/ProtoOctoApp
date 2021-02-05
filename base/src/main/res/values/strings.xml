@@ -351,4 +351,10 @@
     <string name="announcement___new_version_detail">This version introduces a customizable main menu, support for multiple OctoPrint as well as power controls for IKEA Trådfri, TP-Link and Tasmoa smart plugs (matching OctoPrint plugin required)</string>
     <string name="announcement___new_version_title">Welcome to OctoApp 1.5!</string>
     <string name="main_menu___system_command_executed">\"%s\" executed</string>
+    <string name="connect_printer___waiting_for_user_title">Connect when you are ready</string>
+    <string name="connect_printer___waiting_for_user_subtitle">You can enable auto-connect in the settings</string>
+    <string name="connect_printer___begin_connection">Connect Printer</string>
+    <string name="connect_printer___begin_connection_cofirmation_positive">Connect Printer</string>
+    <string name="connect_printer___begin_connection_cofirmation_negative">@string/cancel</string>
+    <string name="connect_printer___begin_connection_confirmation_message"><![CDATA[Start connecting the printer?<br><small>This will interrupt ongoing prints from SD card!</small>]]></string>
 </resources>

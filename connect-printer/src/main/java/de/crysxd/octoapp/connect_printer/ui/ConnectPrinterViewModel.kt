@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.livedata.OctoTransformations.map
 import de.crysxd.octoapp.base.livedata.PollingLiveData
@@ -30,7 +31,8 @@ import java.util.concurrent.TimeUnit
 class ConnectPrinterViewModel(
     private val autoConnectPrinterUseCase: AutoConnectPrinterUseCase,
     private val getPrinterConnectionUseCase: GetPrinterConnectionUseCase,
-    private val getPowerDevicesUseCase: GetPowerDevicesUseCase
+    private val getPowerDevicesUseCase: GetPowerDevicesUseCase,
+    private val octoPreferences: OctoPreferences,
 ) : BaseViewModel() {
 
     private val connectionTimeoutNs = TimeUnit.SECONDS.toNanos(Firebase.remoteConfig.getLong("printer_connection_timeout_sec"))
@@ -45,12 +47,16 @@ class ConnectPrinterViewModel(
     private var isPsuSupported = false
     private val uiStateMediator = MediatorLiveData<UiState>()
     private val psuState = MutableLiveData<Boolean>()
+    private var userAllowedConnectAt = 0L
+    private var manualTrigger = MutableLiveData(Unit)
     val uiState = uiStateMediator.map { it }.distinctUntilChanged()
 
     init {
+        uiStateMediator.addSource(octoPreferences.updatedFlow.asLiveData()) { updateUiState() }
         uiStateMediator.addSource(availableSerialConnections) { updateUiState() }
         uiStateMediator.addSource(psuState) { updateUiState() }
         uiStateMediator.addSource(psuCyclingState) { updateUiState() }
+        uiStateMediator.addSource(manualTrigger) { updateUiState() }
         uiStateMediator.value = UiState.Initializing
 
         viewModelScope.launch {
@@ -83,6 +89,10 @@ class ConnectPrinterViewModel(
                 null
             }
 
+            // Are we allowed to automatically connect the printer?
+            val isAutoConnect = octoPreferences.isAutoConnectPrinter ||
+                    TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - userAllowedConnectAt) < 3
+
             viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
                 Timber.d("-----")
                 Timber.d("ConnectionResult: $connectionResult")
@@ -97,6 +107,9 @@ class ConnectPrinterViewModel(
 
                     isOctoPrintUnavailable(connectionResponse) || connectionResult == null ->
                         UiState.OctoPrintNotAvailable
+
+                    !isAutoConnect ->
+                        UiState.WaitingForUser
 
                     isPsuBeingCycled(psuCyclingState) ->
                         UiState.PrinterPsuCycling
@@ -218,6 +231,11 @@ class ConnectPrinterViewModel(
         psuCyclingState.postValue(PsuCycledState.Cycled)
     }
 
+    fun beginConnect() {
+        userAllowedConnectAt = System.currentTimeMillis()
+        manualTrigger.postValue(Unit)
+    }
+
     private sealed class PsuCycledState {
         object NotCycled : PsuCycledState()
         object Cycled : PsuCycledState()
@@ -232,6 +250,7 @@ class ConnectPrinterViewModel(
         object OctoPrintNotAvailable : UiState()
 
         data class WaitingForPrinterToComeOnline(val psuIsOn: Boolean?) : UiState()
+        object WaitingForUser : UiState()
         object PrinterConnecting : UiState()
         data class PrinterOffline(val psuSupported: Boolean) : UiState()
         object PrinterPsuCycling : UiState()

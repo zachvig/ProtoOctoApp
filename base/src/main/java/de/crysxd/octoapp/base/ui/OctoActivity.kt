@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
@@ -154,7 +155,7 @@ abstract class OctoActivity : LocaleActivity() {
             Timber.i("Showing dialog: [message=$message, positiveButton=$positiveButton, neutralButton=$neutralButton")
             dialog?.dismiss()
             dialog = MaterialAlertDialogBuilder(this).let { builder ->
-                builder.setMessage(message)
+                builder.setMessage(HtmlCompat.fromHtml(message.toString(), HtmlCompat.FROM_HTML_MODE_COMPACT))
                 builder.setPositiveButton(positiveButton) { _, _ -> positiveAction(this) }
                 neutralButton?.let {
                     builder.setNeutralButton(it) { _, _ -> neutralAction(this) }

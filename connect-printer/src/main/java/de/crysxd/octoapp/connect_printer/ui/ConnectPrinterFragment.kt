@@ -63,14 +63,17 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
                 lastState = state
             }
 
-            binding.buttonMore1.setOnClickListener {
-                showMenu()
-            }
-            binding.buttonMore2.setOnClickListener {
-                showMenu()
-            }
-            binding.buttonMore3.setOnClickListener {
-                showMenu()
+            binding.buttonMore1.setOnClickListener { showMenu() }
+            binding.buttonMore2.setOnClickListener { showMenu() }
+            binding.buttonMore3.setOnClickListener { showMenu() }
+            binding.buttonMore4.setOnClickListener { showMenu() }
+            binding.buttonBeginConnect.setOnClickListener {
+                requireOctoActivity().showDialog(
+                    message = getString(R.string.connect_printer___begin_connection_confirmation_message),
+                    positiveButton = getString(R.string.connect_printer___begin_connection_cofirmation_positive),
+                    positiveAction = { viewModel.beginConnect() },
+                    neutralButton = getString(R.string.connect_printer___begin_connection_cofirmation_negative)
+                )
             }
         })
     }
@@ -153,6 +156,14 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
                 R.string.psu_is_being_cycled
             )
 
+            ConnectPrinterViewModel.UiState.WaitingForUser -> {
+                binding.beginConnectControls.isVisible = true
+                showStatus(
+                    R.string.connect_printer___waiting_for_user_title,
+                    R.string.connect_printer___waiting_for_user_subtitle
+                )
+            }
+
             ConnectPrinterViewModel.UiState.Initializing -> showStatus(
                 R.string.searching_for_octoprint
             )
@@ -167,7 +178,8 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
             )
         }.let { }
 
-        binding.psuUnvailableControls.isVisible = !binding.psuTurnOnControls.isVisible && !binding.psuTurnOffControls.isVisible
+        binding.psuUnvailableControls.isVisible =
+            !binding.psuTurnOnControls.isVisible && !binding.psuTurnOffControls.isVisible && !binding.beginConnectControls.isVisible
 
     }
 
