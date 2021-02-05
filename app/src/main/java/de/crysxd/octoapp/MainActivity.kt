@@ -39,12 +39,12 @@ import de.crysxd.octoapp.base.usecase.execute
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.socket.Event
-import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.widgets.webcam.BaseWebcamWidget.Companion.notifyWidgetDataChanged
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import timber.log.Timber
+import de.crysxd.octoapp.octoprint.models.socket.Message as SocketMessage
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
 
@@ -248,10 +248,10 @@ class MainActivity : OctoActivity() {
         is Event.MessageReceived -> onMessageReceived(e.message)
     }
 
-    private fun onMessageReceived(e: Message) = when (e) {
-        is Message.CurrentMessage -> onCurrentMessageReceived(e)
-        is Message.EventMessage -> onEventMessageReceived(e)
-        is Message.ConnectedMessage -> {
+    private fun onMessageReceived(e: SocketMessage) = when (e) {
+        is SocketMessage.CurrentMessage -> onCurrentMessageReceived(e)
+        is SocketMessage.EventMessage -> onEventMessageReceived(e)
+        is SocketMessage.ConnectedMessage -> {
             // We are connected, let's update the available capabilities of the connect Octoprint
             if ((System.currentTimeMillis() - lastSuccessfulCapabilitiesUpdate) > 10000) {
                 updateCapabilities("connected_event")
@@ -260,7 +260,7 @@ class MainActivity : OctoActivity() {
         else -> Unit
     }
 
-    private fun onCurrentMessageReceived(e: Message.CurrentMessage) {
+    private fun onCurrentMessageReceived(e: SocketMessage.CurrentMessage) {
         Timber.tag("navigation").v(e.state?.flags.toString())
         val flags = e.state?.flags
         navigate(
@@ -298,8 +298,8 @@ class MainActivity : OctoActivity() {
         )
     }
 
-    private fun onEventMessageReceived(e: Message.EventMessage) = when (e) {
-        is Message.EventMessage.Connected, is Message.EventMessage.SettingsUpdated -> {
+    private fun onEventMessageReceived(e: SocketMessage.EventMessage) = when (e) {
+        is SocketMessage.EventMessage.Connected, is SocketMessage.EventMessage.SettingsUpdated -> {
             // New printer connected or settings updated, let's update capabilities
             updateCapabilities("settings_updated")
         }

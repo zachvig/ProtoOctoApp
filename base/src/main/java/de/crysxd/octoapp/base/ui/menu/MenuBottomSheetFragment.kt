@@ -25,7 +25,7 @@ import de.crysxd.octoapp.base.databinding.MenuItemBinding
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
-import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.ui.OctoActivity
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.main.MainMenu
@@ -143,7 +143,8 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
 
         override fun onBindViewHolder(holder: MenuItemHolder, position: Int) {
             val item = menuItems[position]
-            holder.binding.button.text = runBlocking { item.getTitle(requireContext()) }
+            val title = runBlocking { item.getTitle(requireContext()) }
+            holder.binding.button.text = title
             holder.binding.button.setOnClickListener {
                 viewModel.execute {
                     delay(100)
@@ -154,8 +155,8 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                                 // Start confirmation
                                 Timber.i("Action start")
                                 activity.showSnackbar(
-                                    BaseViewModel.Message.SnackbarMessage(
-                                        text = { "Executing '${holder.binding.button.text}'" }
+                                    OctoActivity.Message.SnackbarMessage(
+                                        text = { it.getString(R.string.menu___executing_command, title) }
                                     )
                                 )
 
@@ -165,9 +166,9 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                                 // End confirmation
                                 Timber.i("Action end")
                                 activity.showSnackbar(
-                                    BaseViewModel.Message.SnackbarMessage(
-                                        text = { "Completed '${holder.binding.button.text}'" },
-                                        type = BaseViewModel.Message.SnackbarMessage.Type.Positive
+                                    OctoActivity.Message.SnackbarMessage(
+                                        text = { it.getString(R.string.menu___completed_command, title) },
+                                        type = OctoActivity.Message.SnackbarMessage.Type.Positive
                                     )
                                 )
                             } catch (e: Exception) {

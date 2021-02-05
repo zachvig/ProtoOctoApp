@@ -5,6 +5,7 @@ import android.text.InputType
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.ui.OctoActivity
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.ExtrudeFilamentUseCase
@@ -53,19 +54,21 @@ class ExtrudeWidgetViewModel(
     private fun extrude(mm: Int) = GlobalScope.launch(coroutineExceptionHandler) {
         try {
             extrudeFilamentUseCase.execute(ExtrudeFilamentUseCase.Param(mm))
-            postMessage(Message.SnackbarMessage { it.getString(R.string.extruding_x_mm, mm) })
+            postMessage(OctoActivity.Message.SnackbarMessage { it.getString(R.string.extruding_x_mm, mm) })
         } catch (e: ExtrudeFilamentUseCase.ColdExtrusionException) {
-            postMessage(Message.DialogMessage(
-                text = { it.getString(R.string.error_cold_extrusion, e.minTemp, e.currentTemp) },
-                neutralButton = { it.getString(R.string.heat_hotend) },
-                neutralAction = {
-                    GlobalScope.launch(coroutineExceptionHandler) {
-                        Timber.i("Heating to ${e.minTemp} before extrusion")
-                        setToolTargetTemperatureUseCase.execute(SetToolTargetTemperatureUseCase.Param(e.minTemp + 5))
-                        postMessage(Message.SnackbarMessage { it.getString(R.string.heating_hotend, e.minTemp) })
+            postMessage(
+                OctoActivity.Message.DialogMessage(
+                    text = { it.getString(R.string.error_cold_extrusion, e.minTemp, e.currentTemp) },
+                    neutralButton = { it.getString(R.string.heat_hotend) },
+                    neutralAction = {
+                        GlobalScope.launch(coroutineExceptionHandler) {
+                            Timber.i("Heating to ${e.minTemp} before extrusion")
+                            setToolTargetTemperatureUseCase.execute(SetToolTargetTemperatureUseCase.Param(e.minTemp + 5))
+                            postMessage(OctoActivity.Message.SnackbarMessage { it.getString(R.string.heating_hotend, e.minTemp) })
+                        }
                     }
-                }
-            ))
+                )
+            )
         }
     }
 }

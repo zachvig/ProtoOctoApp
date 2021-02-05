@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.material.snackbar.Snackbar
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.ui.OctoActivity
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase.Response.RecordedResponse
 import de.crysxd.octoapp.base.usecase.GetGcodeShortcutsUseCase
@@ -32,7 +33,7 @@ class SendGcodeWidgetViewModel(
         val gcodeCommand = GcodeCommand.Batch(command.split("\n").toTypedArray())
 
         postMessage(
-            Message.SnackbarMessage(
+            OctoActivity.Message.SnackbarMessage(
                 duration = Snackbar.LENGTH_INDEFINITE,
                 text = { con ->
                     con.getString(
@@ -55,8 +56,8 @@ class SendGcodeWidgetViewModel(
         )
 
         postMessage(
-            Message.SnackbarMessage(
-                type = Message.SnackbarMessage.Type.Positive,
+            OctoActivity.Message.SnackbarMessage(
+                type = OctoActivity.Message.SnackbarMessage.Type.Positive,
                 text = { con ->
                     con.getString(
                         if (gcodeCommand.commands.size == 1) {
@@ -68,7 +69,7 @@ class SendGcodeWidgetViewModel(
                 },
                 action = {
                     postMessage(
-                        Message.DialogMessage(
+                        OctoActivity.Message.DialogMessage(
                             text = {
                                 responses.joinToString("\n\n") {
                                     listOf(

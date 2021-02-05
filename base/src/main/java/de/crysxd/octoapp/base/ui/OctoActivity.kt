@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -24,8 +25,13 @@ import de.crysxd.octoapp.base.models.Event
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.debounce
 import timber.log.Timber
 
+@Suppress("EXPERIMENTAL_API_USAGE")
 abstract class OctoActivity : LocaleActivity() {
 
     internal companion object {
@@ -38,25 +44,37 @@ abstract class OctoActivity : LocaleActivity() {
     abstract val octo: OctoView
     abstract val coordinatorLayout: CoordinatorLayout
     private val handler = Handler(Looper.getMainLooper())
+    private val snackbarMessageChannel = ConflatedBroadcastChannel<Message.SnackbarMessage>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         instance = this
         super.onCreate(savedInstanceState)
+
+        // Debounce snackbars to prevent them from "flashing up"
+        lifecycleScope.launchWhenCreated {
+            snackbarMessageChannel.asFlow()
+                .debounce(500)
+                .collect(::doShowSnackbar)
+        }
     }
 
     fun observeErrorEvents(events: LiveData<Event<Throwable>>) = events.observe(this) {
         it.value?.let(this::showDialog)
     }
 
-    fun observerMessageEvents(events: LiveData<Event<BaseViewModel.Message>>) = events.observe(this) { event ->
+    fun observerMessageEvents(events: LiveData<Event<Message>>) = events.observe(this) { event ->
         when (val message = event.value) {
             null -> Unit
-            is BaseViewModel.Message.SnackbarMessage -> showSnackbar(message)
-            is BaseViewModel.Message.DialogMessage -> showDialog(message)
-        }.toString()
+            is Message.SnackbarMessage -> showSnackbar(message)
+            is Message.DialogMessage -> showDialog(message)
+        }
     }
 
-    fun showSnackbar(message: BaseViewModel.Message.SnackbarMessage) = handler.post {
+    fun showSnackbar(message: Message.SnackbarMessage) {
+        snackbarMessageChannel.offer(message)
+    }
+
+    private fun doShowSnackbar(message: Message.SnackbarMessage) = handler.post {
         Snackbar.make(coordinatorLayout, message.text(this), message.duration).apply {
             message.actionText(this@OctoActivity)?.let {
                 setAction(it) { message.action(this@OctoActivity) }
@@ -65,9 +83,9 @@ abstract class OctoActivity : LocaleActivity() {
             setBackgroundTint(
                 ContextCompat.getColor(
                     this@OctoActivity, when (message.type) {
-                        BaseViewModel.Message.SnackbarMessage.Type.Neutral -> R.color.snackbar_neutral
-                        BaseViewModel.Message.SnackbarMessage.Type.Positive -> R.color.snackbar_positive
-                        BaseViewModel.Message.SnackbarMessage.Type.Negative -> R.color.snackbar_negative
+                        Message.SnackbarMessage.Type.Neutral -> R.color.snackbar_neutral
+                        Message.SnackbarMessage.Type.Positive -> R.color.snackbar_positive
+                        Message.SnackbarMessage.Type.Negative -> R.color.snackbar_negative
                     }
                 )
             )
@@ -83,7 +101,7 @@ abstract class OctoActivity : LocaleActivity() {
         }.show()
     }
 
-    private fun showDialog(message: BaseViewModel.Message.DialogMessage) {
+    private fun showDialog(message: Message.DialogMessage) {
         showDialog(
             message = message.text(this),
             positiveButton = message.positiveButton(this),
@@ -145,4 +163,28 @@ abstract class OctoActivity : LocaleActivity() {
     }
 
     abstract fun startPrintNotificationService()
+
+    sealed class Message {
+        data class SnackbarMessage(
+            val duration: Int = Snackbar.LENGTH_SHORT,
+            val type: Type = Type.Neutral,
+            val actionText: (Context) -> CharSequence? = { null },
+            val action: (Context) -> Unit = {},
+            val text: (Context) -> CharSequence
+        ) : Message() {
+            sealed class Type {
+                object Neutral : Type()
+                object Positive : Type()
+                object Negative : Type()
+            }
+        }
+
+        data class DialogMessage(
+            val text: (Context) -> CharSequence,
+            val positiveButton: (Context) -> CharSequence = { it.getString(android.R.string.ok) },
+            val neutralButton: (Context) -> CharSequence? = { null },
+            val positiveAction: (Context) -> Unit = {},
+            val neutralAction: (Context) -> Unit = {}
+        ) : Message()
+    }
 }
