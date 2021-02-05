@@ -52,7 +52,8 @@ class MenuItemLibrary {
         MENU_ITEM_SCREEN_ON_DURING_PRINT to KeepScreenOnDuringPrintMenuItem::class,
         MENU_ITEM_ADD_INSTANCE to AddInstanceMenuItem::class,
         MENU_ITEM_SHOW_WEBCAM to ShowWebcamMenuItem::class,
-        MENU_ITEM_CANCEL_PRINT_KEEP_TEMPS to CancelPrintKeepTemperaturesMenuItem::class
+        MENU_ITEM_CANCEL_PRINT_KEEP_TEMPS to CancelPrintKeepTemperaturesMenuItem::class,
+        MENU_ITEM_TEMPERATURE_MENU to ShowTemperatureMenuItem::class
     )
 
     operator fun get(itemId: String): MenuItem? = when {
