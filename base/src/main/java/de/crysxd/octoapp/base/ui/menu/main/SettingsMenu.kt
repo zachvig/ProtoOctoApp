@@ -63,11 +63,8 @@ class ChangeLanguageMenuItem : MenuItem {
     override suspend fun isVisible(destinationId: Int) = Injector.get().getAppLanguageUseCase().execute(Unit).canSwitchLocale
     override suspend fun getTitle(context: Context) = Injector.get().getAppLanguageUseCase().execute(Unit).switchLanguageText ?: ""
     override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
-        executeAsync {
-            val newLocale = Injector.get().getAppLanguageUseCase().execute(Unit).switchLanguageLocale
-            Injector.get().setAppLanguageUseCase().execute(SetAppLanguageUseCase.Param(newLocale, host.requireActivity()))
-        }
-
+        val newLocale = Injector.get().getAppLanguageUseCase().execute(Unit).switchLanguageLocale
+        Injector.get().setAppLanguageUseCase().execute(SetAppLanguageUseCase.Param(newLocale, host.requireActivity()))
         return true
     }
 }

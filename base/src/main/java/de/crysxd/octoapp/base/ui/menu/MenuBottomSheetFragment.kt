@@ -197,8 +197,6 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             TextViewCompat.setCompoundDrawableTintList(holder.binding.button, foreground)
             TextViewCompat.setCompoundDrawableTintList(holder.binding.text, foreground)
             holder.binding.icon.setColorFilter(foreground.defaultColor)
-            // holder.binding.pin.setColorFilter(foreground.defaultColor)
-            // holder.binding.pin.backgroundTintList = transparent
             holder.binding.button.strokeColor = if (item.showAsHalfWidth) foreground else transparent
             holder.binding.button.rippleColor = if (item.showAsHalfWidth) foreground else background
         }
