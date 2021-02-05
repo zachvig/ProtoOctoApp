@@ -47,6 +47,7 @@
     <color name="light_grey_translucent">#2D999999</color>
     <color name="very_light_grey">#eaeaea</color>
     <color name="dark_grey">#1a1a1a</color>
+    <color name="dark_grey_2">#2B2A2A</color>
     <color name="light_blue">#F0F9FF</color>
     <color name="black_translucent">#B4000000</color>
     <color name="black_translucent_2">#1A000000</color>

@@ -29,6 +29,7 @@ import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filterNotNull
 import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
@@ -44,7 +45,7 @@ abstract class OctoActivity : LocaleActivity() {
     abstract val octo: OctoView
     abstract val coordinatorLayout: CoordinatorLayout
     private val handler = Handler(Looper.getMainLooper())
-    private val snackbarMessageChannel = ConflatedBroadcastChannel<Message.SnackbarMessage>()
+    private val snackbarMessageChannel = ConflatedBroadcastChannel<Message.SnackbarMessage?>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         instance = this
@@ -53,7 +54,8 @@ abstract class OctoActivity : LocaleActivity() {
         // Debounce snackbars to prevent them from "flashing up"
         lifecycleScope.launchWhenCreated {
             snackbarMessageChannel.asFlow()
-                .debounce(500)
+                .debounce(1000)
+                .filterNotNull()
                 .collect(::doShowSnackbar)
         }
     }
@@ -71,10 +73,15 @@ abstract class OctoActivity : LocaleActivity() {
     }
 
     fun showSnackbar(message: Message.SnackbarMessage) {
-        snackbarMessageChannel.offer(message)
+        if (message.debounce) {
+            snackbarMessageChannel.offer(message)
+        } else {
+            doShowSnackbar(message)
+        }
     }
 
     private fun doShowSnackbar(message: Message.SnackbarMessage) = handler.post {
+        snackbarMessageChannel.offer(null)
         Snackbar.make(coordinatorLayout, message.text(this), message.duration).apply {
             message.actionText(this@OctoActivity)?.let {
                 setAction(it) { message.action(this@OctoActivity) }
@@ -170,6 +177,7 @@ abstract class OctoActivity : LocaleActivity() {
             val type: Type = Type.Neutral,
             val actionText: (Context) -> CharSequence? = { null },
             val action: (Context) -> Unit = {},
+            val debounce: Boolean = false,
             val text: (Context) -> CharSequence
         ) : Message() {
             sealed class Type {

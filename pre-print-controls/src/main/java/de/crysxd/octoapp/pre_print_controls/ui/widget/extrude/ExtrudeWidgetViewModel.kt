@@ -53,8 +53,8 @@ class ExtrudeWidgetViewModel(
 
     private fun extrude(mm: Int) = GlobalScope.launch(coroutineExceptionHandler) {
         try {
-            extrudeFilamentUseCase.execute(ExtrudeFilamentUseCase.Param(mm))
             postMessage(OctoActivity.Message.SnackbarMessage { it.getString(R.string.extruding_x_mm, mm) })
+            extrudeFilamentUseCase.execute(ExtrudeFilamentUseCase.Param(mm))
         } catch (e: ExtrudeFilamentUseCase.ColdExtrusionException) {
             postMessage(
                 OctoActivity.Message.DialogMessage(

@@ -43,7 +43,8 @@ class SendGcodeWidgetViewModel(
                             R.string.sent_x_and_y_others
                         }, gcodeCommand.commands.first(), gcodeCommand.commands.size - 1
                     )
-                }
+                },
+                debounce = true
             )
         )
 

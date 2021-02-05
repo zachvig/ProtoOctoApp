@@ -156,7 +156,8 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                                 Timber.i("Action start")
                                 activity.showSnackbar(
                                     OctoActivity.Message.SnackbarMessage(
-                                        text = { it.getString(R.string.menu___executing_command, title) }
+                                        text = { it.getString(R.string.menu___executing_command, title) },
+                                        debounce = true
                                     )
                                 )
 
