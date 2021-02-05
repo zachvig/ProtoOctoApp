@@ -6,7 +6,7 @@ abstract class SubMenuItem : MenuItem {
     abstract val subMenu: Menu
 
     override suspend fun isVisible(@IdRes destinationId: Int) = subMenu.getMenuItem().any { it.isVisible(destinationId) }
-    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
         host.pushMenu(subMenu)
         return false
     }

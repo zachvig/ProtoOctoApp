@@ -25,11 +25,13 @@ import de.crysxd.octoapp.base.databinding.MenuItemBinding
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
+import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.base.ui.common.menu.main.MainMenu
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import timber.log.Timber
 
 
 class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
@@ -145,7 +147,37 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             holder.binding.button.setOnClickListener {
                 viewModel.execute {
                     delay(100)
-                    if (item.onClicked(this@MenuBottomSheetFragment)) {
+                    val activity = requireOctoActivity()
+                    val closeBottomSheet = item.onClicked(this@MenuBottomSheetFragment) { action ->
+                        GlobalScope.launch {
+                            try {
+                                // Start confirmation
+                                Timber.i("Action start")
+                                activity.showSnackbar(
+                                    BaseViewModel.Message.SnackbarMessage(
+                                        text = { "Executing '${holder.binding.button.text}'" }
+                                    )
+                                )
+
+                                // Execute
+                                action()
+
+                                // End confirmation
+                                Timber.i("Action end")
+                                activity.showSnackbar(
+                                    BaseViewModel.Message.SnackbarMessage(
+                                        text = { "Completed '${holder.binding.button.text}'" },
+                                        type = BaseViewModel.Message.SnackbarMessage.Type.Positive
+                                    )
+                                )
+                            } catch (e: Exception) {
+                                Timber.e(e, "Action failed")
+                                activity.showErrorDetailsDialog(e)
+                            }
+                        }
+                    }
+
+                    if (closeBottomSheet) {
                         dismiss()
                     } else {
                         notifyDataSetChanged()

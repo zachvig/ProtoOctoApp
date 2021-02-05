@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.method.LinkMovementMethod
+import android.view.Gravity
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -73,6 +75,11 @@ abstract class OctoActivity : LocaleActivity() {
             val foregroundColor = ContextCompat.getColor(this@OctoActivity, R.color.text_colored_background)
             setTextColor(foregroundColor)
             setActionTextColor(foregroundColor)
+        }.also {
+            it.view.translationY = octoToolbar.top.toFloat()
+            it.view.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+                gravity = Gravity.TOP
+            }
         }.show()
     }
 

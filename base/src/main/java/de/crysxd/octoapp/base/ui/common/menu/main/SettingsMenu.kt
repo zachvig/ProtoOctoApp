@@ -7,10 +7,7 @@ import androidx.core.text.HtmlCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
-import de.crysxd.octoapp.base.ui.common.menu.Menu
-import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
-import de.crysxd.octoapp.base.ui.common.menu.MenuItem
-import de.crysxd.octoapp.base.ui.common.menu.MenuItemStyle
+import de.crysxd.octoapp.base.ui.common.menu.*
 import de.crysxd.octoapp.base.ui.common.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
@@ -49,7 +46,7 @@ class SendFeedbackMenuItem : MenuItem {
     override val icon = R.drawable.ic_round_rate_review_24
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_send_feedback)
-    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
         SendFeedbackDialog().show(host.parentFragmentManager, "feedback")
         return true
     }
@@ -65,9 +62,12 @@ class ChangeLanguageMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = Injector.get().getAppLanguageUseCase().execute(Unit).canSwitchLocale
     override suspend fun getTitle(context: Context) = Injector.get().getAppLanguageUseCase().execute(Unit).switchLanguageText ?: ""
-    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
-        val newLocale = Injector.get().getAppLanguageUseCase().execute(Unit).switchLanguageLocale
-        Injector.get().setAppLanguageUseCase().execute(SetAppLanguageUseCase.Param(newLocale, host.requireActivity()))
+    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+        executeAsync {
+            val newLocale = Injector.get().getAppLanguageUseCase().execute(Unit).switchLanguageLocale
+            Injector.get().setAppLanguageUseCase().execute(SetAppLanguageUseCase.Param(newLocale, host.requireActivity()))
+        }
+
         return true
     }
 }
@@ -85,8 +85,11 @@ class NightThemeMenuItem : MenuItem {
     override suspend fun getTitle(context: Context) =
         context.getString(if (isManualDarkModeEnabled) R.string.main_menu___item_use_light_mode else R.string.main_menu___item_use_dark_mode)
 
-    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
-        Injector.get().octoPreferences().isManualDarkModeEnabled = !isManualDarkModeEnabled
+    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+        executeAsync {
+            Injector.get().octoPreferences().isManualDarkModeEnabled = !isManualDarkModeEnabled
+        }
+
         return true
     }
 }
@@ -104,7 +107,7 @@ class PrintNotificationMenuItem : MenuItem {
         if (isPrintNotificationEnabled) R.string.main_menu___item_turn_print_notification_off else R.string.main_menu___item_turn_print_notification_on
     )
 
-    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
         Injector.get().octoPreferences().isPrintNotificationEnabled = !isPrintNotificationEnabled
 
         try {
@@ -133,7 +136,7 @@ class KeepScreenOnDuringPrintMenuItem : MenuItem {
         if (isKeepScreenOn) R.string.main_menu___item_keep_screen_on_during_pinrt_off else R.string.main_menu___item_keep_screen_on_during_pinrt_on
     )
 
-    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
         Injector.get().octoPreferences().isKeepScreenOnDuringPrint = !isKeepScreenOn
         return true
     }
@@ -149,7 +152,7 @@ class ChangeOctoPrintInstanceMenuItem : MenuItem {
     override val showAsSubMenu = true
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_change_octoprint_instance)
-    override suspend fun onClicked(host: MenuBottomSheetFragment): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
         host.pushMenu(SwitchOctoPrintMenu())
         return false
     }

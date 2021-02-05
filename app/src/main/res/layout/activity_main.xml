@@ -42,7 +42,6 @@
         app:defaultNavHost="true"
         app:layout_anchor="@+id/updateChecker"
         app:layout_anchorGravity="center"
-        app:layout_behavior=".base.ui.common.ShrinkBehavior"
         app:navGraph="@navigation/main_nav_graph" />
 
     <LinearLayout

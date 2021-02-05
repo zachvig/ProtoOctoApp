@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 
+typealias SuspendExecutor = suspend (suspend () -> Unit) -> Unit
+
 interface MenuItem {
     val itemId: String
     var groupId: String
@@ -20,5 +22,5 @@ interface MenuItem {
 
     suspend fun getTitle(context: Context): CharSequence
     suspend fun isVisible(@IdRes destinationId: Int) = true
-    suspend fun onClicked(host: MenuBottomSheetFragment) = true
+    suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor) = true
 }
