@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui.common.menu.switchprinter
+package de.crysxd.octoapp.base.ui.menu.switchprinter
 
 import android.content.Context
 import androidx.core.os.bundleOf
@@ -7,11 +7,11 @@ import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ui.common.menu.*
-import de.crysxd.octoapp.base.ui.common.menu.main.MENU_ITEM_ADD_INSTANCE
-import de.crysxd.octoapp.base.ui.common.menu.main.MENU_ITEM_ENABLE_QUICK_SWITCH
-import de.crysxd.octoapp.base.ui.common.menu.main.MENU_ITEM_SIGN_OUT
-import de.crysxd.octoapp.base.ui.common.menu.main.MENU_ITEM_SWITCH_INSTANCE
+import de.crysxd.octoapp.base.ui.menu.*
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ADD_INSTANCE
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ENABLE_QUICK_SWITCH
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SIGN_OUT
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SWITCH_INSTANCE
 import kotlinx.android.parcel.Parcelize
 
 private val isQuickSwitchEnabled get() = BillingManager.isFeatureEnabled("quick_switch")

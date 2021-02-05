@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui.common.menu
+package de.crysxd.octoapp.base.ui.menu
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -27,8 +27,8 @@ import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
-import de.crysxd.octoapp.base.ui.common.menu.main.MainMenu
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.ui.menu.main.MainMenu
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import kotlinx.coroutines.*
 import timber.log.Timber

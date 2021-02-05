@@ -11,9 +11,9 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
-import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.common.power.PowerControlsBottomSheet
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.connect_printer.databinding.ConnectPrinterFragmentBinding
 import de.crysxd.octoapp.connect_printer.di.injectViewModel

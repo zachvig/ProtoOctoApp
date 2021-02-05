@@ -28,12 +28,12 @@ import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
-import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
-import de.crysxd.octoapp.base.ui.common.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootingFragmentArgs
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.ext.setTextAppearanceCompat
+import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.ui.utils.ViewCompactor
 import de.crysxd.octoapp.octoprint.exceptions.BasicAuthRequiredException

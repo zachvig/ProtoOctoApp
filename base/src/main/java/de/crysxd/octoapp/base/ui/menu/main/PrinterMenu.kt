@@ -1,11 +1,11 @@
-package de.crysxd.octoapp.base.ui.common.menu.main
+package de.crysxd.octoapp.base.ui.menu.main
 
 import android.content.Context
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ui.common.menu.*
-import de.crysxd.octoapp.base.ui.common.menu.temperature.TemperatureMenu
 import de.crysxd.octoapp.base.ui.common.power.PowerControlsBottomSheet
+import de.crysxd.octoapp.base.ui.menu.*
+import de.crysxd.octoapp.base.ui.menu.temperature.TemperatureMenu
 import de.crysxd.octoapp.base.ui.widget.webcam.FullscreenWebcamActivity
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase

@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui.common.menu.main
+package de.crysxd.octoapp.base.ui.menu.main
 
 import android.content.Context
 import android.os.Build
@@ -7,9 +7,9 @@ import androidx.core.text.HtmlCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
-import de.crysxd.octoapp.base.ui.common.menu.*
-import de.crysxd.octoapp.base.ui.common.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.ui.menu.*
+import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
 import kotlinx.android.parcel.Parcelize
 import timber.log.Timber

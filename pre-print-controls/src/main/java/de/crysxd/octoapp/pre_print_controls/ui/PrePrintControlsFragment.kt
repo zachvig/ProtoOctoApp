@@ -6,8 +6,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
-import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
 import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment

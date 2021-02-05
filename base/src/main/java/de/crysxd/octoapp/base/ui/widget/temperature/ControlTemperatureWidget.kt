@@ -8,9 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
-import de.crysxd.octoapp.base.ui.common.menu.MenuBottomSheetFragment
-import de.crysxd.octoapp.base.ui.common.menu.temperature.TemperatureMenu
 import de.crysxd.octoapp.base.ui.ext.suspendedInflate
+import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.temperature.TemperatureMenu
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import kotlinx.android.synthetic.main.view_temperature.view.*

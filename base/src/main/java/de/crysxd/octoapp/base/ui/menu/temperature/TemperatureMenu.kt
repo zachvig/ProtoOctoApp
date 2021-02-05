@@ -1,10 +1,10 @@
-package de.crysxd.octoapp.base.ui.common.menu.temperature
+package de.crysxd.octoapp.base.ui.menu.temperature
 
 import android.content.Context
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ui.common.menu.*
-import de.crysxd.octoapp.base.ui.common.menu.main.MENU_ITEM_APPLY_TEMPERATURE_PRESET
+import de.crysxd.octoapp.base.ui.menu.*
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_APPLY_TEMPERATURE_PRESET
 import de.crysxd.octoapp.base.usecase.SetBedTargetTemperatureUseCase
 import de.crysxd.octoapp.base.usecase.SetToolTargetTemperatureUseCase
 import kotlinx.android.parcel.Parcelize

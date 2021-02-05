@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui.common.menu
+package de.crysxd.octoapp.base.ui.menu
 
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.ui.BaseViewModel

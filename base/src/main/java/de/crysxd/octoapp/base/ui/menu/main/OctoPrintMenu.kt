@@ -1,10 +1,10 @@
-package de.crysxd.octoapp.base.ui.common.menu.main
+package de.crysxd.octoapp.base.ui.menu.main
 
 import android.content.Context
 import androidx.core.text.HtmlCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ui.common.menu.*
+import de.crysxd.octoapp.base.ui.menu.*
 import kotlinx.android.parcel.Parcelize
 
 

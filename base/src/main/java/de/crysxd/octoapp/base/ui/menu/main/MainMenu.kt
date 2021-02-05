@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui.common.menu.main
+package de.crysxd.octoapp.base.ui.menu.main
 
 import android.content.Context
 import android.content.Intent
@@ -10,7 +10,7 @@ import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ui.common.menu.*
+import de.crysxd.octoapp.base.ui.menu.*
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize

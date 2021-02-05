@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui.common.menu
+package de.crysxd.octoapp.base.ui.menu
 
 import android.content.Context
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

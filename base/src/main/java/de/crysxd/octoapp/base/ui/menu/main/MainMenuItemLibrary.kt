@@ -1,9 +1,9 @@
-package de.crysxd.octoapp.base.ui.common.menu.main
+package de.crysxd.octoapp.base.ui.menu.main
 
-import de.crysxd.octoapp.base.ui.common.menu.MenuItem
-import de.crysxd.octoapp.base.ui.common.menu.switchprinter.AddInstanceMenuItem
-import de.crysxd.octoapp.base.ui.common.menu.switchprinter.SwitchInstanceMenuItem
-import de.crysxd.octoapp.base.ui.common.menu.temperature.ApplyTemperaturePresetMenuItem
+import de.crysxd.octoapp.base.ui.menu.MenuItem
+import de.crysxd.octoapp.base.ui.menu.switchprinter.AddInstanceMenuItem
+import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchInstanceMenuItem
+import de.crysxd.octoapp.base.ui.menu.temperature.ApplyTemperaturePresetMenuItem
 
 const val MENU_ITEM_SUPPORT_OCTOAPP = "main___support_octoapp"
 const val MENU_ITEM_SETTINGS_MENU = "main___settings_menu"
