@@ -84,6 +84,8 @@ class PowerControlsBottomSheet : BaseBottomSheetDialogFragment() {
                     setLoadingActive(false)
                 }
             }
+
+            forceResizeBottomSheet()
         }
     }
 

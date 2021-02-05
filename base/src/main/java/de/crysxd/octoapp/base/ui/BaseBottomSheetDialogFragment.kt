@@ -37,7 +37,7 @@ abstract class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
         super.onStart()
 
         // Fixes dialog hides nav bar on Android O
-        if (dialog != null && dialog!!.window != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (dialog != null && dialog!!.window != null && Build.VERSION_CODES.O >= Build.VERSION.SDK_INT && Build.VERSION_CODES.Q <= Build.VERSION.SDK_INT) {
             val window = dialog!!.window
             window!!.findViewById<View>(com.google.android.material.R.id.container).fitsSystemWindows = false
 
@@ -53,6 +53,16 @@ abstract class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
         }
 
         // Fix bottom sheet not fully shown on tablet in landscape
+        forceResizeBottomSheet()
+
+        // Limit bottom sheet width to get a pleasant look on tablets
+        val maxWidth = requireContext().resources.getDimension(R.dimen.max_bottom_sheet_width).toInt()
+        dialog?.window?.setLayout(getScreenWidth().coerceAtMost(maxWidth), ViewGroup.LayoutParams.MATCH_PARENT)
+    }
+
+    fun forceResizeBottomSheet() {
+        // This is a fix for tablets in landscape mode not fully showing a bottom sheet
+        // We manually set the peek height to make sure everything is shown
         val coordinator = requireView().findParent<CoordinatorLayout>()
         coordinator?.findViewById<View>(R.id.design_bottom_sheet)?.let { bottomSheet ->
             val behaviour = BottomSheetBehavior.from(bottomSheet)
@@ -61,11 +71,6 @@ abstract class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
                 coordinator.parent.requestLayout()
             }
         }
-
-        // Limit bottom sheet width to get a pleasant look on tablets
-
-        val maxWidth = requireContext().resources.getDimension(R.dimen.max_bottom_sheet_width).toInt()
-        dialog?.window?.setLayout(getScreenWidth().coerceAtMost(maxWidth), ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
     protected fun getScreenWidth(): Int {
