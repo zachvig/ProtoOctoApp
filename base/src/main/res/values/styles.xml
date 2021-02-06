@@ -144,6 +144,7 @@
         <item name="android:backgroundTint">@color/button_secondary_bg_color</item>
         <item name="android:textColor">@color/button_secondary_text_color</item>
         <item name="strokeColor">@color/button_secondary_stroke_color</item>
+        <item name="drawableTint">@color/button_secondary_stroke_color</item>
         <item name="rippleColor">@color/accent</item>
         <item name="strokeWidth">1dp</item>
     </style>

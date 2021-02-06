@@ -24,6 +24,8 @@
     <color name="analysis_normal">@color/orange</color>
     <color name="analysis_good">@color/primary</color>
     <color name="button_disabled">@color/very_light_grey</color>
+    <color name="menu_pin_foreground">@color/white</color>
+    <color name="menu_pin_background">@color/black_translucent_2</color>
 
     <color name="snackbar_neutral">@color/light_grey</color>
     <color name="snackbar_positive">@color/primary</color>

@@ -35,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_circle"
-            android:backgroundTint="@color/white_translucent_2"
+            android:backgroundTint="@color/menu_pin_background"
             android:importantForAccessibility="no"
             android:padding="1dp"
             android:src="@drawable/ic_round_push_pin_10"
@@ -43,7 +43,7 @@
             android:translationY="2dp"
             app:layout_constraintBottom_toBottomOf="@+id/icon"
             app:layout_constraintEnd_toEndOf="@+id/icon"
-            app:tint="@color/white_translucent" />
+            app:tint="@color/menu_pin_foreground" />
 
         <TextView
             android:id="@+id/text"
