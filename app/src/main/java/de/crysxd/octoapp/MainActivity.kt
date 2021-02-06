@@ -39,7 +39,7 @@ import de.crysxd.octoapp.base.usecase.execute
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.socket.Event
-import de.crysxd.octoapp.widgets.webcam.BaseWebcamWidget.Companion.notifyWidgetDataChanged
+import de.crysxd.octoapp.widgets.webcam.BaseWebcamAppWidget.Companion.notifyWidgetDataChanged
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy

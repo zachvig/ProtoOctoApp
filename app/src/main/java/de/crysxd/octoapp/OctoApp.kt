@@ -16,7 +16,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.widgets.WidgetSupportBroadcastReceiver
+import de.crysxd.octoapp.widgets.AppWidgetSupportBroadcastReceiver
 import timber.log.Timber
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
 import de.crysxd.octoapp.connect_printer.di.Injector as ConnectPrintInjector
@@ -118,6 +118,6 @@ class OctoApp : Application() {
         ResourcesCompat.getFont(this, R.font.roboto_regular, callback, handler)
 
         // BroadcastReceiver to support widgets (will register itself)
-        WidgetSupportBroadcastReceiver(this)
+        AppWidgetSupportBroadcastReceiver(this)
     }
 }

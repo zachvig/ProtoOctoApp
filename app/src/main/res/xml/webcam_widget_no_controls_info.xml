@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:configure="de.crysxd.octoapp.widgets.ConfigureWidgetActivity"
-    android:initialKeyguardLayout="@layout/webcam_widget"
-    android:initialLayout="@layout/webcam_widget"
+    android:configure="de.crysxd.octoapp.widgets.webcam.ConfigureWebcamWidgetActivity"
+    android:initialKeyguardLayout="@layout/app_widget_webcam"
+    android:initialLayout="@layout/app_widget_webcam"
     android:minWidth="110dp"
     android:minHeight="60dp"
     android:previewImage="@drawable/widget_preview_webcam"
