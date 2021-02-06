@@ -232,6 +232,7 @@ class ConnectPrinterViewModel(
     }
 
     fun beginConnect() {
+        Timber.i("Connection initiated")
         userAllowedConnectAt = System.currentTimeMillis()
         manualTrigger.postValue(Unit)
     }
