@@ -145,9 +145,9 @@
 
     <View
         android:id="@+id/estimationIndicator"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:layout_marginStart="6dp"
+        android:layout_width="@dimen/eta_estimation_ball_diameter"
+        android:layout_height="@dimen/eta_estimation_ball_diameter"
+        android:layout_marginStart="@dimen/margin_0_1"
         android:background="@drawable/bg_circle"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"

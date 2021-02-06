@@ -1,30 +1,27 @@
 package de.crysxd.octoapp.widgets.webcam
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.view.View
 import android.widget.RemoteViews
-import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_WEB_URL
-import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
-import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.usecase.GetWebcamSnapshotUseCase
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import de.crysxd.octoapp.widgets.AppWidgetPreferences
+import de.crysxd.octoapp.widgets.createLaunchAppIntent
+import de.crysxd.octoapp.widgets.createUpdateIntent
+import de.crysxd.octoapp.widgets.createUpdatedNowText
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.text.DateFormat
-import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
@@ -185,34 +182,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             .getWebcamSnapshotUseCase()
             .execute(GetWebcamSnapshotUseCase.Params(octoPrintInfo, BITMAP_WIDTH, sampleRateMs, R.dimen.widget_corner_radius))
 
-        private fun createUpdateIntent(context: Context, widgetId: Int, playLive: Boolean) = PendingIntent.getBroadcast(
-            context,
-            "$widgetId$playLive".hashCode(),
-            Intent(REFRESH_ACTION).also {
-                if (playLive) {
-                    it.putExtra(ARG_WIDGET_ID, widgetId)
-                    it.putExtra(ARG_PLAY_LIVE, playLive)
-                }
-            },
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        private fun createLaunchAppIntent(context: Context, webUrl: String?) = PendingIntent.getActivity(
-            context,
-            "launch_main_with_url_$webUrl".hashCode(),
-            Intent(context, MainActivity::class.java).also {
-                if (BillingManager.isFeatureEnabled("quick_switch")) {
-                    it.putExtra(EXTRA_TARGET_OCTOPRINT_WEB_URL, webUrl)
-                }
-            },
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        private fun getTime() = DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
-
         private fun createLiveForText(liveSinceSecs: Int) = "Live for ${LIVE_FOR_SECS - liveSinceSecs}s"
-
-        private fun createUpdatedNowText() = "Updated at ${getTime()}"
 
         private fun createUpdateFailedText(appWidgetId: Int) = AppWidgetPreferences.getLastImageForWidgetId(appWidgetId).takeIf { it > 0 }?.let {
             "Update failed, last image at ${DateFormat.getTimeInstance(DateFormat.SHORT).format(it)}"

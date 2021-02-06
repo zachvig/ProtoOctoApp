@@ -39,6 +39,16 @@
                 android:resource="@xml/webcam_widget_no_controls_info" />
         </receiver>
 
+        <receiver android:name=".widgets.progress.ProgressAppWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/progress_widget_info" />
+        </receiver>
+
         <activity
             android:name=".widgets.webcam.ConfigureWebcamWidgetActivity"
             android:theme="@style/OctoTheme.Transparent">
