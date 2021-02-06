@@ -3,6 +3,8 @@ package de.crysxd.octoapp.base.models
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.system.SystemCommand
 
+private const val M115_MASK = "{m155 response}"
+
 data class OctoPrintInstanceInformationV1(
     val hostName: String,
     val port: Int,
@@ -29,4 +31,11 @@ data class OctoPrintInstanceInformationV2(
     )
 
     val isWebcamSupported get() = settings?.webcam?.webcamEnabled == true
+
+    // We do not want to log the M115 response all over the place. It clutters the logs.
+    override fun toString(): String = if (m115Response != null && m115Response != M115_MASK) {
+        copy(m115Response = M115_MASK).toString()
+    } else {
+        super.toString()
+    }
 }

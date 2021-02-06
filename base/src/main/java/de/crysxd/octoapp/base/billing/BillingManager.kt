@@ -217,11 +217,11 @@ object BillingManager {
     }
 
     private fun logError(description: String, billingResult: BillingResult?) {
-        Timber.e(Exception("$description. responseCode=${billingResult?.responseCode} message=${billingResult?.debugMessage}"))
+        Timber.e(Exception("$description. responseCode=${billingResult?.responseCode} message=${billingResult?.debugMessage} billingResult=${billingResult?.let { "non-null" }}"))
     }
 
     private fun queryPurchases() = GlobalScope.launch(Dispatchers.IO) {
-        suspend fun queryPurchases(@BillingClient.SkuType type: String): List<Purchase> {
+        fun queryPurchases(@BillingClient.SkuType type: String): List<Purchase> {
             val purchaseResult = billingClient?.queryPurchases(type)
             if (purchaseResult?.billingResult?.responseCode != BillingClient.BillingResponseCode.OK) {
                 logError("Unable to query purchases", purchaseResult?.billingResult)
