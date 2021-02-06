@@ -28,10 +28,10 @@ class ConfigureWebcamWidgetActivity : Activity() {
         overridePendingTransition(0, 0)
 
         val instances = Injector.get().octorPrintRepository().getAll()
-        val titles = instances.map { it.settings?.appearance?.name ?: it.webUrl.replace("https://", "").replace("http://", "") }
+        val titles = instances.map { it.settings?.appearance?.name ?: it.webUrl.replace("https://", "").replace("http://", "") }.map { "Always $it" }
         val webUrls = instances.map { it.webUrl }
 
-        val allTitles = listOf(listOf("Synced with the one selected in the app"), titles).flatten()
+        val allTitles = listOf(listOf("Synced with the app"), titles).flatten()
         val allWebUrls = listOf(listOf(null), webUrls).flatten()
 
         MaterialAlertDialogBuilder(this)
