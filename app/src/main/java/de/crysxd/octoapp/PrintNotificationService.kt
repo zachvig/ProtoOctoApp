@@ -61,6 +61,7 @@ class PrintNotificationService : Service() {
     private var didSeePrintBeingActive = false
     private var didSeeFilamentChangeAt = 0L
     private var pausedBecauseOfFilamentChange = false
+    private var notPrintingCounter = 0
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -119,7 +120,7 @@ class PrintNotificationService : Service() {
         try {
             when (event) {
                 is Event.Disconnected -> {
-                    ProgressAppWidget.notifyWidgetDataChanged()
+                    ProgressAppWidget.notifyWidgetOffline()
                     createDisconnectedNotification()
                 }
                 is Event.Connected -> createInitialNotification()
@@ -155,16 +156,23 @@ class PrintNotificationService : Service() {
         val flags = message.state?.flags
         Timber.v(message.toString())
         if (flags == null || !listOf(flags.printing, flags.paused, flags.pausing, flags.cancelling).any { it }) {
-            if (message.progress?.completion?.toInt() == maxProgress && didSeePrintBeingActive) {
-                didSeePrintBeingActive = false
-                Timber.i("Print done, showing notification")
-                val name = message.job?.file?.display
-                notificationManager.notify((3242..4637).random(), createCompletedNotification(name))
-            }
+            // OctoPrint sometimes reports not printing when we resume a print but only for a split second.
+            // We need to count the updates with not printing before exiting the service
+            notPrintingCounter++
+            if (flags == null || notPrintingCounter > 3) {
+                if (message.progress?.completion?.toInt() == maxProgress && didSeePrintBeingActive) {
+                    didSeePrintBeingActive = false
+                    Timber.i("Print done, showing notification")
+                    val name = message.job?.file?.display
+                    notificationManager.notify((3242..4637).random(), createCompletedNotification(name))
+                }
 
-            Timber.i("Not printing, stopping self")
-            stopSelf()
-            return null
+                Timber.i("Not printing, stopping self")
+                stopSelf()
+                return null
+            }
+        } else {
+            notPrintingCounter = 0
         }
 
         // Update notification

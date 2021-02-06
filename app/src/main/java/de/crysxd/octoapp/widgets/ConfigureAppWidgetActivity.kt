@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.widgets.webcam
+package de.crysxd.octoapp.widgets
 
 import android.app.Activity
 import android.appwidget.AppWidgetManager
@@ -7,11 +7,11 @@ import android.os.Bundle
 import android.os.Handler
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.widgets.AppWidgetPreferences
+import de.crysxd.octoapp.widgets.AppWidgetPreferences.ACTIVE_WEB_URL_MARKER
 import de.crysxd.octoapp.widgets.webcam.BaseWebcamAppWidget.Companion.updateAppWidget
 import timber.log.Timber
 
-class ConfigureWebcamWidgetActivity : Activity() {
+class ConfigureAppWidgetActivity : Activity() {
     private val appWidgetId
         get() = intent.extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
             ?: AppWidgetManager.INVALID_APPWIDGET_ID
@@ -32,7 +32,7 @@ class ConfigureWebcamWidgetActivity : Activity() {
         val webUrls = instances.map { it.webUrl }
 
         val allTitles = listOf(listOf("Synced with the app"), titles).flatten()
-        val allWebUrls = listOf(listOf(null), webUrls).flatten()
+        val allWebUrls = listOf(listOf(ACTIVE_WEB_URL_MARKER), webUrls).flatten()
 
         MaterialAlertDialogBuilder(this)
             .setTitle("Which OctoPrint should this widget use?")

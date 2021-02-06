@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 class CreateProgressAppWidgetDataUseCase @Inject constructor(
@@ -73,6 +74,7 @@ class CreateProgressAppWidgetDataUseCase @Inject constructor(
         val printProgress: Float?,
         val printTimeLeft: Int?,
         val printTimeLeftOrigin: String?,
-        val webUrl: String
+        val webUrl: String,
+        val createdAt: Date = Date()
     ) : Parcelable
 }

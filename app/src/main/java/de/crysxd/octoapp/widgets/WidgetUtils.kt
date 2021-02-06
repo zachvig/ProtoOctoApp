@@ -36,3 +36,7 @@ internal fun createUpdateIntent(context: Context, widgetId: Int, playLive: Boole
 internal fun createUpdatedNowText() = "Updated at ${getTime()}"
 
 internal fun getTime() = DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
+
+internal fun createUpdateFailedText(appWidgetId: Int) = AppWidgetPreferences.getLastUpdateTime(appWidgetId).takeIf { it > 0 }?.let {
+    "Offline since ${DateFormat.getTimeInstance(DateFormat.SHORT).format(it)}"
+} ?: "Update failed"

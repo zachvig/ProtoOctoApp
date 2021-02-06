@@ -12,16 +12,12 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.usecase.GetWebcamSnapshotUseCase
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
-import de.crysxd.octoapp.widgets.AppWidgetPreferences
-import de.crysxd.octoapp.widgets.createLaunchAppIntent
-import de.crysxd.octoapp.widgets.createUpdateIntent
-import de.crysxd.octoapp.widgets.createUpdatedNowText
+import de.crysxd.octoapp.widgets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import timber.log.Timber
 import java.lang.ref.WeakReference
-import java.text.DateFormat
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
@@ -127,7 +123,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                 }
 
                 if (frame != null) {
-                    AppWidgetPreferences.setLastImageForWidgetId(appWidgetId)
+                    AppWidgetPreferences.setLastUpdateTime(appWidgetId)
                 }
             })
         }
@@ -183,10 +179,6 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             .execute(GetWebcamSnapshotUseCase.Params(octoPrintInfo, BITMAP_WIDTH, sampleRateMs, R.dimen.widget_corner_radius))
 
         private fun createLiveForText(liveSinceSecs: Int) = "Live for ${LIVE_FOR_SECS - liveSinceSecs}s"
-
-        private fun createUpdateFailedText(appWidgetId: Int) = AppWidgetPreferences.getLastImageForWidgetId(appWidgetId).takeIf { it > 0 }?.let {
-            "Update failed, last image at ${DateFormat.getTimeInstance(DateFormat.SHORT).format(it)}"
-        } ?: "Update failed"
 
         private fun createViews(
             context: Context,

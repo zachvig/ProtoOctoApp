@@ -7,6 +7,8 @@ import timber.log.Timber
 
 object AppWidgetPreferences {
 
+    const val ACTIVE_WEB_URL_MARKER = "active"
+
     private val sharedPreferences by lazy { Injector.get().context().getSharedPreferences("widget_preferences", Context.MODE_PRIVATE) }
 
     fun setInstanceForWidgetId(widgetId: Int, webUrl: String?) = sharedPreferences.edit {
@@ -14,9 +16,9 @@ object AppWidgetPreferences {
         putString("${widgetId}_webUrl", webUrl)
     }
 
-    fun getInstanceForWidgetId(widgetId: Int) = sharedPreferences.getString("${widgetId}_webUrl", null)
+    fun getInstanceForWidgetId(widgetId: Int) = sharedPreferences.getString("${widgetId}_webUrl", null).takeIf { it != ACTIVE_WEB_URL_MARKER }
 
-    fun getWidgetIdsForInstance(webUrl: String) = sharedPreferences.all.keys.filter {
+    fun getWidgetIdsForInstance(webUrl: String?) = sharedPreferences.all.keys.filter {
         it.endsWith("_webUrl") && sharedPreferences.getString(it, null) == webUrl
     }.map {
         it.replace("_webUrl", "").toInt()
@@ -32,12 +34,12 @@ object AppWidgetPreferences {
         sharedPreferences.getInt("${widgetId}_image_height", 1)
     )
 
-    fun setLastImageForWidgetId(widgetId: Int) = sharedPreferences.edit {
-        putLong("${widgetId}_last_image_time", System.currentTimeMillis())
+    fun setLastUpdateTime(widgetId: Int) = sharedPreferences.edit {
+        putLong("${widgetId}_last_update_time", System.currentTimeMillis())
     }
 
-    fun getLastImageForWidgetId(widgetId: Int) =
-        sharedPreferences.getLong("${widgetId}_last_image_time", 0)
+    fun getLastUpdateTime(widgetId: Int) =
+        sharedPreferences.getLong("${widgetId}_last_update_time", 0)
 
     fun deletePreferencesForWidgetId(widgetId: Int) = sharedPreferences.edit {
         Timber.i("Deleting preferences for widget $widgetId")

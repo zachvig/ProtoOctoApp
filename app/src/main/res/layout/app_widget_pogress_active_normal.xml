@@ -50,18 +50,18 @@
         android:id="@+id/buttonRefresh"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_alignBottom="@+id/cancelPrint"
+        android:layout_alignBottom="@+id/buttonCancel"
         android:layout_gravity="bottom|end"
         android:layout_marginStart="@dimen/margin_1"
         android:layout_marginEnd="@dimen/margin_0_1"
-        android:layout_toStartOf="@id/pausePrint"
+        android:layout_toStartOf="@id/buttonPause"
         android:background="@drawable/widget_button_background"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_round_refresh_24"
         android:tint="@color/black_translucent" />
 
     <ImageButton
-        android:id="@+id/cancelPrint"
+        android:id="@+id/buttonCancel"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentEnd="true"
@@ -75,30 +75,29 @@
         android:tint="@color/black_translucent" />
 
     <ImageButton
-        android:id="@+id/resumePrint"
+        android:id="@+id/buttonResume"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_alignBottom="@id/cancelPrint"
+        android:layout_alignBottom="@id/buttonCancel"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/margin_0_1"
-        android:layout_toStartOf="@id/cancelPrint"
+        android:layout_toStartOf="@id/buttonCancel"
         android:background="@drawable/widget_button_background"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_round_play_arrow_24"
         android:tint="@color/black_translucent" />
 
     <ImageButton
-        android:id="@+id/pausePrint"
+        android:id="@+id/buttonPause"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_alignBottom="@id/cancelPrint"
+        android:layout_alignBottom="@id/buttonCancel"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/margin_0_1"
-        android:layout_toStartOf="@id/resumePrint"
+        android:layout_toStartOf="@id/buttonResume"
         android:background="@drawable/widget_button_background"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_round_pause_24"
-        android:tint="@color/black_translucent"
-        android:visibility="gone" />
+        android:tint="@color/black_translucent" />
 
 </RelativeLayout>
