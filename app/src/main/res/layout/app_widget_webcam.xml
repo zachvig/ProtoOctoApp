@@ -1,7 +1,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:minHeight="110dp">
 
     <LinearLayout
         android:id="@+id/noImageCont"
@@ -58,8 +59,6 @@
         android:layout_gravity="top|end"
         android:layout_margin="@dimen/margin_1"
         android:background="@drawable/widget_chip_background"
-        android:paddingHorizontal="@dimen/margin_1"
-        android:paddingVertical="@dimen/margin_0"
         android:gravity="end"
         android:text="Updated 23:41"
         android:textAppearance="@style/OctoTheme.TextAppearance"
@@ -93,7 +92,7 @@
             android:layout_marginStart="@dimen/margin_1"
             android:background="@drawable/widget_chip_background"
             android:importantForAccessibility="no"
-            android:src="@drawable/ic_round_play_arrow_24"
+            android:src="@drawable/ic_round_videocam_24"
             android:tint="@color/white" />
 
         <ImageButton
@@ -115,7 +114,7 @@
             android:layout_marginStart="@dimen/margin_1"
             android:background="@drawable/widget_chip_background"
             android:importantForAccessibility="no"
-            android:src="@drawable/ic_round_pause_24"
+            android:src="@drawable/ic_round_videocam_off_24"
             android:tint="@color/white" />
     </LinearLayout>
 

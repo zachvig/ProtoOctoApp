@@ -1,0 +1,62 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center|start"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_0"
+        android:gravity="center|start"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|start"
+            android:text="80%"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_0"
+            android:gravity="center_vertical|start"
+            android:maxLines="1"
+            android:text="Printing..."
+            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+            android:textColor="@color/black_translucent" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center|start"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/eta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text="1:42h left, ETA 23:45"
+            android:textColor="@color/black_translucent" />
+
+        <ImageView
+            android:id="@+id/etaIndicator"
+            android:layout_width="@dimen/eta_estimation_ball_diameter"
+            android:layout_height="@dimen/eta_estimation_ball_diameter"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_0_1"
+            android:src="@drawable/circle" />
+
+    </LinearLayout>
+
+</LinearLayout>

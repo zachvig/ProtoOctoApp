@@ -1,34 +1,31 @@
 package de.crysxd.octoapp.widgets.webcam
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.view.View
 import android.widget.RemoteViews
-import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_WEB_URL
-import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
-import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.usecase.GetWebcamSnapshotUseCase
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
-import de.crysxd.octoapp.widgets.WidgetPreferences
+import de.crysxd.octoapp.widgets.AppWidgetPreferences
+import de.crysxd.octoapp.widgets.createLaunchAppIntent
+import de.crysxd.octoapp.widgets.createUpdateIntent
+import de.crysxd.octoapp.widgets.createUpdatedNowText
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.text.DateFormat
-import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-abstract class BaseWebcamWidget : AppWidgetProvider() {
+abstract class BaseWebcamAppWidget : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         // There may be multiple widgets active, so update all of them
@@ -41,7 +38,7 @@ abstract class BaseWebcamWidget : AppWidgetProvider() {
         // When the user deletes the widget, delete the preference associated with it.
         for (appWidgetId in appWidgetIds) {
             lastUpdateJobs[appWidgetId]?.get()?.cancel()
-            WidgetPreferences.deletePreferencesForWidgetId(appWidgetId)
+            AppWidgetPreferences.deletePreferencesForWidgetId(appWidgetId)
         }
     }
 
@@ -63,10 +60,10 @@ abstract class BaseWebcamWidget : AppWidgetProvider() {
         internal fun notifyWidgetDataChanged() {
             val context = Injector.get().context()
             val manager = AppWidgetManager.getInstance(context)
-            manager.getAppWidgetIds(ComponentName(context, NoControlsWebcamWidget::class.java)).forEach {
+            manager.getAppWidgetIds(ComponentName(context, NoControlsWebcamAppWidget::class.java)).forEach {
                 updateAppWidget(context, it)
             }
-            manager.getAppWidgetIds(ComponentName(context, ControlsWebcamWidget::class.java)).forEach {
+            manager.getAppWidgetIds(ComponentName(context, ControlsWebcamAppWidget::class.java)).forEach {
                 updateAppWidget(context, it)
             }
         }
@@ -77,8 +74,8 @@ abstract class BaseWebcamWidget : AppWidgetProvider() {
                 Timber.i("Updating webcam widget $appWidgetId")
 
                 val appWidgetManager = AppWidgetManager.getInstance(context)
-                val hasControls = appWidgetManager.getAppWidgetInfo(appWidgetId).provider.className == ControlsWebcamWidget::class.java.name
-                val webUrl = WidgetPreferences.getInstanceForWidgetId(appWidgetId)
+                val hasControls = appWidgetManager.getAppWidgetInfo(appWidgetId).provider.className == ControlsWebcamAppWidget::class.java.name
+                val webUrl = AppWidgetPreferences.getInstanceForWidgetId(appWidgetId)
                 var webCamSettings: WebcamSettings? = null
 
                 // Load frame or do live stream
@@ -126,11 +123,11 @@ abstract class BaseWebcamWidget : AppWidgetProvider() {
                 views.setViewVisibility(R.id.buttonLive, if (hasControls) View.VISIBLE else View.GONE)
                 appWidgetManager.updateAppWidget(appWidgetId, views)
                 frame?.let {
-                    WidgetPreferences.setImageDimensionsForWidgetId(appWidgetId, it.width, it.height)
+                    AppWidgetPreferences.setImageDimensionsForWidgetId(appWidgetId, it.width, it.height)
                 }
 
                 if (frame != null) {
-                    WidgetPreferences.setLastImageForWidgetId(appWidgetId)
+                    AppWidgetPreferences.setLastImageForWidgetId(appWidgetId)
                 }
             })
         }
@@ -185,36 +182,9 @@ abstract class BaseWebcamWidget : AppWidgetProvider() {
             .getWebcamSnapshotUseCase()
             .execute(GetWebcamSnapshotUseCase.Params(octoPrintInfo, BITMAP_WIDTH, sampleRateMs, R.dimen.widget_corner_radius))
 
-        private fun createUpdateIntent(context: Context, widgetId: Int, playLive: Boolean) = PendingIntent.getBroadcast(
-            context,
-            "$widgetId$playLive".hashCode(),
-            Intent(REFRESH_ACTION).also {
-                if (playLive) {
-                    it.putExtra(ARG_WIDGET_ID, widgetId)
-                    it.putExtra(ARG_PLAY_LIVE, playLive)
-                }
-            },
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        private fun createLaunchAppIntent(context: Context, webUrl: String?) = PendingIntent.getActivity(
-            context,
-            "launch_main_with_url_$webUrl".hashCode(),
-            Intent(context, MainActivity::class.java).also {
-                if (BillingManager.isFeatureEnabled("quick_switch")) {
-                    it.putExtra(EXTRA_TARGET_OCTOPRINT_WEB_URL, webUrl)
-                }
-            },
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        private fun getTime() = DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
-
         private fun createLiveForText(liveSinceSecs: Int) = "Live for ${LIVE_FOR_SECS - liveSinceSecs}s"
 
-        private fun createUpdatedNowText() = "Updated at ${getTime()}"
-
-        private fun createUpdateFailedText(appWidgetId: Int) = WidgetPreferences.getLastImageForWidgetId(appWidgetId).takeIf { it > 0 }?.let {
+        private fun createUpdateFailedText(appWidgetId: Int) = AppWidgetPreferences.getLastImageForWidgetId(appWidgetId).takeIf { it > 0 }?.let {
             "Update failed, last image at ${DateFormat.getTimeInstance(DateFormat.SHORT).format(it)}"
         } ?: "Update failed"
 
@@ -227,7 +197,7 @@ abstract class BaseWebcamWidget : AppWidgetProvider() {
             live: Boolean,
             frame: Bitmap?
         ): RemoteViews {
-            val views = RemoteViews(context.packageName, R.layout.webcam_widget)
+            val views = RemoteViews(context.packageName, R.layout.app_widget_webcam)
             frame?.let {
                 views.setImageViewBitmap(R.id.webcamContent, it)
             } ?: run {
@@ -249,7 +219,7 @@ abstract class BaseWebcamWidget : AppWidgetProvider() {
             return views
         }
 
-        private fun generateImagePlaceHolder(widgetId: Int) = WidgetPreferences.getImageDimensionsForWidgetId(widgetId).let {
+        private fun generateImagePlaceHolder(widgetId: Int) = AppWidgetPreferences.getImageDimensionsForWidgetId(widgetId).let {
             Bitmap.createBitmap(it.first, it.second, Bitmap.Config.ARGB_8888)
         }
     }

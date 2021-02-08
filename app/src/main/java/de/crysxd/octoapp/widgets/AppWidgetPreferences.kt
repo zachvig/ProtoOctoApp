@@ -5,7 +5,7 @@ import androidx.core.content.edit
 import de.crysxd.octoapp.base.di.Injector
 import timber.log.Timber
 
-object WidgetPreferences {
+object AppWidgetPreferences {
 
     private val sharedPreferences by lazy { Injector.get().context().getSharedPreferences("widget_preferences", Context.MODE_PRIVATE) }
 
