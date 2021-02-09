@@ -6,6 +6,14 @@
     android:background="@drawable/widget_background"
     android:minHeight="110dp">
 
+    <ImageView
+        android:id="@+id/colorStrip"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:importantForAccessibility="no"
+        android:src="@drawable/widget_color_strip" />
+
     <include
         layout="@layout/app_widget_pogress_active_content"
         android:layout_width="0dp"

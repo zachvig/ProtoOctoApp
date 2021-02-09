@@ -3,6 +3,8 @@ package de.crysxd.octoapp.base.usecase
 import android.os.Parcelable
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.ui.ColorTheme
+import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +45,8 @@ class CreateProgressAppWidgetDataUseCase @Inject constructor(
             printProgress = job.progress?.completion?.let { it / 100f },
             printTimeLeft = job.progress?.printTimeLeft,
             printTimeLeftOrigin = job.progress?.printTimeLeftOrigin,
-            webUrl = webUrl
+            webUrl = webUrl,
+            colorTheme = getColorTheme(webUrl),
         )
     }
 
@@ -57,7 +60,11 @@ class CreateProgressAppWidgetDataUseCase @Inject constructor(
         printTimeLeft = currentMessage.progress?.printTimeLeft,
         printTimeLeftOrigin = currentMessage.progress?.printTimeLeftOrigin,
         webUrl = webUrl,
+        colorTheme = getColorTheme(webUrl),
     )
+
+    private fun getColorTheme(webUrl: String) =
+        octoPrintRepository.getAll().firstOrNull { it.webUrl == webUrl }?.colorTheme ?: ColorTheme.default
 
     data class Params(
         val currentMessage: Message.CurrentMessage?,
@@ -75,6 +82,7 @@ class CreateProgressAppWidgetDataUseCase @Inject constructor(
         val printTimeLeft: Int?,
         val printTimeLeftOrigin: String?,
         val webUrl: String,
-        val createdAt: Date = Date()
+        val colorTheme: ColorTheme,
+        val createdAt: Date = Date(),
     ) : Parcelable
 }

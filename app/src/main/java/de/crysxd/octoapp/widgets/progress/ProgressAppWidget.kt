@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
+import de.crysxd.octoapp.base.ui.ColorTheme
 import de.crysxd.octoapp.base.usecase.CreateProgressAppWidgetDataUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.widgets.*
@@ -165,6 +166,7 @@ class ProgressAppWidget : AppWidgetProvider() {
                     else -> ""
                 }
             )
+            views.setViewVisibility(R.id.colorStrip, if (data.colorTheme == ColorTheme.default) View.GONE else View.VISIBLE)
             views.setViewVisibility(R.id.updatedAt, if (data.isLive) View.GONE else View.VISIBLE)
             views.setViewVisibility(R.id.live, if (data.isLive) View.VISIBLE else View.GONE)
             views.setViewVisibility(R.id.eta, if (eta.isNullOrBlank()) View.GONE else View.VISIBLE)
@@ -178,6 +180,8 @@ class ProgressAppWidget : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.buttonPause, ExecuteWidgetActionActivity.createPauseTaskPendingIntent(context))
             views.setOnClickPendingIntent(R.id.buttonResume, ExecuteWidgetActionActivity.createResumeTaskPendingIntent(context))
             views.setInt(R.id.etaIndicator, "setColorFilter", ContextCompat.getColor(context, etaIndicatorColor))
+            views.setInt(R.id.colorStrip, "setImageLevel", 2500)
+            views.setInt(R.id.colorStrip, "setColorFilter", data.colorTheme.dark)
             manager.updateAppWidget(appWidgetId, views)
         }
     }

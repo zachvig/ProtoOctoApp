@@ -1,18 +1,22 @@
 package de.crysxd.octoapp.base.ui
 
 import android.graphics.Color
+import android.os.Parcelable
 import android.view.View
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import kotlinx.android.parcel.Parcelize
 import timber.log.Timber
 
-class ColorTheme(@ColorRes val colorRes: Int) {
+
+@Parcelize
+class ColorTheme(@ColorRes val colorRes: Int) : Parcelable {
 
     val light = getWithAlpha(128)
-    val dark = getWithAlpha(242)
+    val dark = getWithAlpha(255)
 
     private fun getWithAlpha(alpha: Int): Int {
         val colorInt = ContextCompat.getColor(Injector.get().context(), colorRes)
