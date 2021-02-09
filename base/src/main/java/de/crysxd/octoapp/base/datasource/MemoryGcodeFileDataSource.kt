@@ -8,12 +8,12 @@ import timber.log.Timber
 
 class MemoryGcodeFileDataSource : GcodeFileDataSource {
 
-    private var cache = mutableMapOf<String, Gcode>()
+    private var cache = mutableMapOf<Int, Gcode>()
 
-    override fun canLoadFile(file: FileObject.File) = cache.containsKey(file.path)
+    override fun canLoadFile(file: FileObject.File) = cache.containsKey(file.cacheId)
 
     override fun loadFile(file: FileObject.File, allowLargeFileDownloads: Boolean): Flow<GcodeFileDataSource.LoadState> = flow {
-        cache[file.path]?.also {
+        cache[file.cacheId]?.also {
             Timber.i("Restore from memory: ${file.path}")
             emit(GcodeFileDataSource.LoadState.Ready(it))
         } ?: emit(GcodeFileDataSource.LoadState.Failed(IllegalStateException("Requested item from memory cache which is not cached")))
@@ -23,6 +23,8 @@ class MemoryGcodeFileDataSource : GcodeFileDataSource {
         // We only cache one
         Timber.i("Cache in memory: ${file.path}")
         cache.clear()
-        cache[file.path] = gcode
+        cache[file.cacheId] = gcode
     }
+
+    val FileObject.File.cacheId get() = "$path$date".hashCode()
 }
