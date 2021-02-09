@@ -11,6 +11,7 @@
     <dimen name="common_corner_radius">@dimen/margin_2</dimen>
 
     <dimen name="max_bottom_sheet_width">600dp</dimen>
+    <dimen name="eta_estimation_ball_diameter">10dp</dimen>
 
     <dimen name="margin_0">2dp</dimen>
     <dimen name="margin_0_1">5dp</dimen>

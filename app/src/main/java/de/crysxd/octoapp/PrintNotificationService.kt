@@ -15,6 +15,7 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
+import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -103,6 +104,7 @@ class PrintNotificationService : Service() {
         Timber.i("Destroying notification service")
         notificationManager.cancel(NOTIFICATION_ID)
         coroutineJob.cancel()
+        ProgressAppWidget.notifyWidgetDataChanged()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -113,26 +115,28 @@ class PrintNotificationService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun onEventReceived(event: Event) {
-        GlobalScope.launch {
-            try {
-                when (event) {
-                    is Event.Disconnected -> createDisconnectedNotification()
-                    is Event.Connected -> createInitialNotification()
-                    is Event.MessageReceived -> {
-                        (event.message as? Message.CurrentMessage)?.let { message ->
-                            updateFilamentChangeNotification(message)
-                            updatePrintNotification(message)
-                        }
-                    }
-                    else -> null
-                }?.let {
-                    Timber.v("Updating notification")
-                    notificationManager.notify(NOTIFICATION_ID, it)
+    private suspend fun onEventReceived(event: Event) {
+        try {
+            when (event) {
+                is Event.Disconnected -> {
+                    ProgressAppWidget.notifyWidgetDataChanged()
+                    createDisconnectedNotification()
                 }
-            } catch (e: Exception) {
-                Timber.e(e)
+                is Event.Connected -> createInitialNotification()
+                is Event.MessageReceived -> {
+                    (event.message as? Message.CurrentMessage)?.let { message ->
+                        ProgressAppWidget.notifyWidgetDataChanged(message)
+                        updateFilamentChangeNotification(message)
+                        updatePrintNotification(message)
+                    }
+                }
+                else -> null
+            }?.let {
+                Timber.v("Updating notification")
+                notificationManager.notify(NOTIFICATION_ID, it)
             }
+        } catch (e: Exception) {
+            Timber.e(e)
         }
     }
 

@@ -14,17 +14,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
 import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidgetViewModel
 import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
-import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage.ProgressInformation.Companion.ORIGIN_ANALYSIS
-import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage.ProgressInformation.Companion.ORIGIN_AVERAGE
-import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage.ProgressInformation.Companion.ORIGIN_ESTIMATE
-import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage.ProgressInformation.Companion.ORIGIN_LINEAR
-import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage.ProgressInformation.Companion.ORIGIN_MIXED_ANALYSIS
-import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage.ProgressInformation.Companion.ORIGIN_MIXED_AVERAGE
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.injectViewModel
 import kotlinx.android.synthetic.main.widget_progress.view.*
@@ -104,18 +99,7 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
                 view.textViewTimeSpent.text = it.progress?.printTime?.toLong()?.let { formatDuration(it) }
                 view.textViewTimeLeft.text = it.progress?.printTimeLeft?.toLong()?.let { formatDuration(it) }
                 view.textVieEta.text = it.progress?.let { Injector.get().formatEtaUseCase().execute(it.printTimeLeft) }
-                view.estimationIndicator.background?.setTint(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        when (it.progress?.printTimeLeftOrigin) {
-                            ORIGIN_LINEAR -> R.color.analysis_bad
-                            ORIGIN_ANALYSIS, ORIGIN_MIXED_ANALYSIS -> R.color.analysis_normal
-                            ORIGIN_AVERAGE, ORIGIN_MIXED_AVERAGE, ORIGIN_ESTIMATE -> R.color.analysis_good
-                            else -> android.R.color.transparent
-                        }
-                    )
-                )
-
+                view.estimationIndicator.background?.setTint(ContextCompat.getColor(requireContext(), it.progress?.printTimeLeftOrigin.asPrintTimeLeftOriginColor()))
                 view.textViewProgressPercent.isVisible = true
                 view.textViewPrintName.isVisible = true
                 view.textViewTimeSpent.isVisible = true

@@ -2,8 +2,9 @@ package de.crysxd.octoapp.octoprint.models.socket
 
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
-import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
+import de.crysxd.octoapp.octoprint.models.job.JobInformation
+import de.crysxd.octoapp.octoprint.models.job.ProgressInformation
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 
 sealed class Message {
@@ -21,30 +22,7 @@ sealed class Message {
         val job: JobInformation?,
         val serverTime: Double,
         val isHistoryMessage: Boolean
-    ) : Message() {
-
-        data class ProgressInformation(
-            val completion: Float,
-            val filepos: Long,
-            val printTime: Int,
-            val printTimeLeft: Int,
-            val printTimeLeftOrigin: String
-        ) {
-
-            companion object {
-                const val ORIGIN_LINEAR = "linear"
-                const val ORIGIN_ANALYSIS = "analysis"
-                const val ORIGIN_ESTIMATE = "estimate"
-                const val ORIGIN_AVERAGE = "average"
-                const val ORIGIN_MIXED_ANALYSIS = "mixed-analysis"
-                const val ORIGIN_MIXED_AVERAGE = "mixed-average"
-            }
-        }
-
-        data class JobInformation(
-            val file: FileObject.File
-        )
-    }
+    ) : Message()
 
     data class UnknownPluginMessage(
         val data: JsonObject
