@@ -132,7 +132,7 @@ class LocalGcodeFileDataSource(
     private fun getCacheEntry(cacheKey: String) =
         gson.fromJson(sharedPreferences.getString(cacheKey, null), CacheEntry::class.java)
 
-    private val FileObject.File.cacheKey get() = path
+    private val FileObject.File.cacheKey get() = "$path@$date"
 
     private fun createCacheFile() = File(cacheRoot, UUID.randomUUID().toString())
 
