@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.base.ui
 
-import android.graphics.Color
 import android.os.Parcelable
 import android.view.View
 import androidx.annotation.ColorRes
@@ -13,29 +12,21 @@ import timber.log.Timber
 
 
 @Parcelize
-class ColorTheme(@ColorRes val colorRes: Int) : Parcelable {
+class ColorTheme(@ColorRes val colorRes: Int, @ColorRes val lightColorRes: Int) : Parcelable {
 
-    val light = getWithAlpha(128)
-    val dark = getWithAlpha(255)
-
-    private fun getWithAlpha(alpha: Int): Int {
-        val colorInt = ContextCompat.getColor(Injector.get().context(), colorRes)
-        return Color.argb(
-            alpha,
-            Color.red(colorInt),
-            Color.green(colorInt),
-            Color.blue(colorInt),
-        )
-    }
+    val light = ContextCompat.getColor(Injector.get().context(), lightColorRes)
+    val dark = ContextCompat.getColor(Injector.get().context(), colorRes)
 
     companion object {
-        val default = ColorTheme(R.color.primary)
-        val red = ColorTheme(R.color.red)
-        val orange = ColorTheme(R.color.orange)
-        val yellow = ColorTheme(R.color.yellow)
-        val green = ColorTheme(R.color.green_2)
-        val blue = ColorTheme(R.color.blue)
-        val violet = ColorTheme(R.color.violet)
+        val default = ColorTheme(R.color.default_color_scheme, R.color.default_color_scheme_light)
+        val red = ColorTheme(R.color.red_color_scheme, R.color.red_color_scheme_light)
+        val orange = ColorTheme(R.color.orange_color_scheme, R.color.orange_color_scheme_light)
+        val yellow = ColorTheme(R.color.yellow_color_scheme, R.color.yellow_color_scheme_light)
+        val green = ColorTheme(R.color.green_color_scheme, R.color.green_color_scheme_light)
+        val blue = ColorTheme(R.color.blue_color_scheme, R.color.blue_color_scheme_light)
+        val violet = ColorTheme(R.color.violet_color_scheme, R.color.violet_color_scheme_light)
+        val black = ColorTheme(R.color.black_color_scheme, R.color.black_color_scheme_light)
+        val white = ColorTheme(R.color.white_color_scheme, R.color.white_color_scheme_light)
 
         private val callbacks = mutableMapOf<View, (ColorTheme) -> Unit>()
         var activeColorTheme = default
@@ -70,5 +61,7 @@ val OctoPrintInstanceInformationV2?.colorTheme
         "green" -> ColorTheme.green
         "blue" -> ColorTheme.blue
         "violet" -> ColorTheme.violet
+        "white" -> ColorTheme.white
+        "black" -> ColorTheme.black
         else -> ColorTheme.default
     }

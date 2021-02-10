@@ -1,24 +1,25 @@
 package de.crysxd.octoapp.base.ui.common
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.ViewGroup
+import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.res.use
 import androidx.core.view.children
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.ui.ColorTheme
 import java.lang.Math.random
 
 class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, style: Int = 0) : AppCompatImageView(context, attrs, style) {
 
-    private val swimDrawable = AnimatedVectorDrawableCompat.create(context, R.drawable.octo_swim)
-        ?: resources.getDrawable(R.drawable.octo_swim, context.theme)
-
-    private val idleDrawable = AnimatedVectorDrawableCompat.create(context, R.drawable.octo_blink)
-        ?: resources.getDrawable(R.drawable.octo_blink, context.theme)
+    private var swimDrawable: Drawable? = null
+    private var idleDrawable: Drawable? = null
+    private var swimming = false
 
     private val loopCallback = object : Animatable2Compat.AnimationCallback() {
         override fun onAnimationEnd(drawable: Drawable) {
@@ -35,9 +36,6 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     }
 
     init {
-        (swimDrawable as? AnimatedVectorDrawableCompat)?.registerAnimationCallback(loopCallback)
-        (idleDrawable as? AnimatedVectorDrawableCompat)?.registerAnimationCallback(loopCallback)
-
         context.theme.obtainStyledAttributes(
             attrs,
             R.styleable.OctoView,
@@ -49,31 +47,63 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
                 else -> idle()
             }
         }
+
+        ColorTheme.notifyAboutColorChangesUntilDetachedFromWindow(this) {
+            (swimDrawable as? AnimatedVectorDrawableCompat)?.clearAnimationCallbacks()
+            (idleDrawable as? AnimatedVectorDrawableCompat)?.clearAnimationCallbacks()
+
+            swimDrawable = loadAnimatedDrawable(
+                when (it.colorRes) {
+                    R.color.blue_color_scheme -> R.drawable.octo_swim_blue
+                    R.color.yellow_color_scheme -> R.drawable.octo_swim_yellow
+                    R.color.red_color_scheme -> R.drawable.octo_swim_red
+                    R.color.green_color_scheme -> R.drawable.octo_swim_green
+                    R.color.violet_color_scheme -> R.drawable.octo_swim_violet
+                    R.color.orange_color_scheme -> R.drawable.octo_swim_orange
+                    R.color.white_color_scheme -> R.drawable.octo_swim_white
+                    R.color.black_color_scheme -> R.drawable.octo_swim_black
+                    else -> R.drawable.octo_swim
+                }
+            )
+            idleDrawable = loadAnimatedDrawable(
+                when (it.colorRes) {
+                    R.color.blue_color_scheme -> R.drawable.octo_blink_blue
+                    R.color.yellow_color_scheme -> R.drawable.octo_blink_yellow
+                    R.color.red_color_scheme -> R.drawable.octo_blink_red
+                    R.color.green_color_scheme -> R.drawable.octo_blink_green
+                    R.color.violet_color_scheme -> R.drawable.octo_blink_violet
+                    R.color.orange_color_scheme -> R.drawable.octo_blink_orange
+                    R.color.white_color_scheme -> R.drawable.octo_blink_white
+                    R.color.black_color_scheme -> R.drawable.octo_blink_black
+                    else -> R.drawable.octo_blink
+                }
+            )
+
+            (swimDrawable as? AnimatedVectorDrawableCompat)?.registerAnimationCallback(loopCallback)
+            (idleDrawable as? AnimatedVectorDrawableCompat)?.registerAnimationCallback(loopCallback)
+
+            if (swimming) {
+                swim()
+            } else {
+                idle()
+            }
+        }
     }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private fun loadAnimatedDrawable(@DrawableRes res: Int) = AnimatedVectorDrawableCompat.create(context, res)
+        ?: resources.getDrawable(res, context.theme)
 
     @Suppress("MemberVisibilityCanBePrivate", "Unused")
     fun swim() {
-        setState(swimDrawable)
+        setImageDrawable(swimDrawable)
+        swimming = true
     }
 
     @Suppress("MemberVisibilityCanBePrivate", "Unused")
     fun idle() {
-        setState(idleDrawable)
-    }
-
-    private fun setState(d: Drawable?) {
-        val current = drawable
-        if (current is AnimatedVectorDrawableCompat && current.isRunning) {
-            current.registerAnimationCallback(object : Animatable2Compat.AnimationCallback() {
-                override fun onAnimationEnd(drawable: Drawable) {
-                    setState(d)
-                }
-            })
-        } else {
-            setImageDrawable(d)
-            currentDrawable = d
-            (d as? AnimatedVectorDrawableCompat)?.start()
-        }
+        setImageDrawable(idleDrawable)
+        swimming = false
     }
 
     private fun getLoopDelay(d: Drawable?) = when (d) {

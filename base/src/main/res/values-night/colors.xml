@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#0E8101</color>
     <color name="primary_dark">#106101</color>
-    <color name="primary_light">#6A9C63</color>
-    <color name="accent">#0A90FA</color>
 
     <color name="window_background">@color/dark_grey</color>
     <color name="input_background">@color/dark_grey_2</color>
@@ -18,9 +15,19 @@
     <color name="button_disabled">#393939</color>
     <color name="menu_pin_foreground">@color/white_translucent</color>
     <color name="menu_pin_background">@color/white_translucent_2</color>
+    <color name="default_color_scheme_light">#6A9C63</color>
+    <color name="red_color_scheme_light">#9E5858</color>
+    <color name="white_color_scheme">#656565</color>
+    <color name="white_color_scheme_light">#989898</color>
+    <color name="black_color_scheme_light">#707070</color>
+    <color name="progress_bar_track">@color/input_background</color>
 
     <color name="temperature_text">@color/white</color>
     <color name="swim_lines">#757FB5</color>
     <color name="status_bar_scrim">#80000000</color>
+
+
+    <color name="blue">#0A90FA</color>
+    <color name="green">#106101</color>
 
 </resources>

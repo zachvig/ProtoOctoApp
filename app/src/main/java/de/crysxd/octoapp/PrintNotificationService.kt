@@ -3,6 +3,7 @@ package de.crysxd.octoapp
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.media.AudioAttributes
 import android.net.Uri
 import android.os.Build
@@ -10,8 +11,8 @@ import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
@@ -307,7 +308,7 @@ class PrintNotificationService : Service() {
 
     private fun createNotificationBuilder(notificationChannelId: String = normalNotificationChannelId) = NotificationCompat.Builder(this, notificationChannelId)
         .setColorized(true)
-        .setColor(ContextCompat.getColor(this, R.color.primary_light))
+        .setColor(Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.colorTheme?.light ?: Color.WHITE)
         .setSmallIcon(R.drawable.ic_notification_default)
         .setContentIntent(createStartAppPendingIntent())
 
