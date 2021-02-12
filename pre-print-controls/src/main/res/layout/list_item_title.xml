@@ -7,6 +7,7 @@
     android:layout_marginBottom="@dimen/margin_2"
     android:ellipsize="end"
     android:lines="1"
+    android:textColor="@color/dark_text"
     android:textAppearance="@style/OctoTheme.TextAppearance.Title"
     app:layout_constraintStart_toEndOf="@+id/imageViewFileIcon"
     app:layout_constraintTop_toTopOf="parent"
