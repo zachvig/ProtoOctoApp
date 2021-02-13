@@ -37,13 +37,13 @@ object AppWidgetPreferences {
     }
 
     fun getImageDimensionsForWidgetId(widgetId: Int) = Pair(
-        sharedPreferences.getInt("${widgetId}_image_width", 1280),
-        sharedPreferences.getInt("${widgetId}_image_height", 720)
+        sharedPreferences.getInt("${widgetId}_image_width", 0),
+        sharedPreferences.getInt("${widgetId}_image_height", 0)
     )
 
     fun getWidgetDimensionsForWidgetId(widgetId: Int) = Pair(
-        sharedPreferences.getInt("${widgetId}_width", 1),
-        sharedPreferences.getInt("${widgetId}_height", 1)
+        sharedPreferences.getInt("${widgetId}_width", 0),
+        sharedPreferences.getInt("${widgetId}_height", 0)
     )
 
     fun setLastUpdateTime(widgetId: Int) = sharedPreferences.edit {
