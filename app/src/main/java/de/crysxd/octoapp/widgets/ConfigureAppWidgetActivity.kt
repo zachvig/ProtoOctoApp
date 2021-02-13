@@ -11,6 +11,8 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.annotation.RequiresApi
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_WEB_URL
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
@@ -32,7 +34,7 @@ class ConfigureAppWidgetActivity : Activity() {
         Timber.i("Starting ConfigureWidgetActivity for widget $appWidgetId")
         overridePendingTransition(0, 0)
 
-        val maxWidgetCount = 1
+        val maxWidgetCount = Firebase.remoteConfig.getLong("number_of_free_app_widgets")
         if (getWidgetCount(this) > maxWidgetCount || BillingManager.isFeatureEnabled("infinite_app_widgets")) {
             MaterialAlertDialogBuilder(this)
                 .setMessage("You can only have $maxWidgetCount widgets without supporting OctoApp. You can support OctoApp from the app's main menu.")
