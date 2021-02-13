@@ -14,6 +14,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_WEB_URL
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.widgets.AppWidgetPreferences.ACTIVE_WEB_URL_MARKER
@@ -31,7 +32,14 @@ class ConfigureAppWidgetActivity : Activity() {
         Timber.i("Starting ConfigureWidgetActivity for widget $appWidgetId")
         overridePendingTransition(0, 0)
 
-        when (intent.action) {
+        val maxWidgetCount = 1
+        if (getWidgetCount(this) > maxWidgetCount || BillingManager.isFeatureEnabled("infinite_app_widgets")) {
+            MaterialAlertDialogBuilder(this)
+                .setMessage("You can only have $maxWidgetCount widgets without supporting OctoApp. You can support OctoApp from the app's main menu.")
+                .setPositiveButton("Ok", null)
+                .setOnDismissListener { finish() }
+                .show()
+        } else when (intent.action) {
             AppWidgetManager.ACTION_APPWIDGET_CONFIGURE -> configureAppWidget()
             Intent.ACTION_CREATE_SHORTCUT -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 configureShortcut()
@@ -43,6 +51,11 @@ class ConfigureAppWidgetActivity : Activity() {
                 finish()
             }
         }
+    }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(0, 0)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -117,9 +130,6 @@ class ConfigureAppWidgetActivity : Activity() {
 
                     setResult(RESULT_OK, result(selectedUrl))
                     finish()
-
-                    // Remove exit animation, dialog is moving out already
-                    overridePendingTransition(0, 0)
                 }, 300)
             }
             .show()

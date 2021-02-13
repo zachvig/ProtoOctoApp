@@ -145,10 +145,12 @@ class MainActivity : OctoActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        intent?.getStringExtra(EXTRA_TARGET_OCTOPRINT_WEB_URL)?.let { webUrl ->
-            val repo = Injector.get().octorPrintRepository()
-            repo.getAll().firstOrNull { it.webUrl == webUrl }?.let {
-                repo.setActive(it)
+        if (BillingManager.isFeatureEnabled("quick_switch")) {
+            intent?.getStringExtra(EXTRA_TARGET_OCTOPRINT_WEB_URL)?.let { webUrl ->
+                val repo = Injector.get().octorPrintRepository()
+                repo.getAll().firstOrNull { it.webUrl == webUrl }?.let {
+                    repo.setActive(it)
+                }
             }
         }
     }
