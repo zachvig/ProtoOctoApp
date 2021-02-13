@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.TypedValue
 import android.widget.RemoteViews
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
@@ -20,6 +21,7 @@ import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
+import kotlin.math.max
 
 abstract class BaseWebcamAppWidget : AppWidgetProvider() {
 
@@ -100,7 +102,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                     if (playLive) {
                         doLiveStream(context, octoPrintInfo, webCamSettings, webUrl, appWidgetManager, appWidgetId)
                     } else {
-                        createBitmapFlow(octoPrintInfo).first()
+                        createBitmapFlow(octoPrintInfo, appWidgetId, context).first()
                     }
                 } catch (e: Exception) {
                     Timber.e(e)
@@ -146,7 +148,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             withTimeoutOrNull(LIVE_FOR_SECS * 1000L) {
                 // Thread A: Load webcam images
                 launch(Dispatchers.IO) {
-                    createBitmapFlow(octoPrintInfo, sampleRateMs = sampleRateMs).collect {
+                    createBitmapFlow(octoPrintInfo, sampleRateMs = sampleRateMs, appWidgetId = appWidgetId, context = context).collect {
                         Timber.v("Received frame")
                         lock.withLock { frame = it }
                     }
@@ -178,9 +180,35 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             return frame
         }
 
-        private suspend fun createBitmapFlow(octoPrintInfo: OctoPrintInstanceInformationV2?, sampleRateMs: Long = 1) = Injector.get()
-            .getWebcamSnapshotUseCase()
-            .execute(GetWebcamSnapshotUseCase.Params(octoPrintInfo, BITMAP_WIDTH, sampleRateMs, R.dimen.widget_corner_radius))
+        private suspend fun createBitmapFlow(octoPrintInfo: OctoPrintInstanceInformationV2?, appWidgetId: Int, context: Context, sampleRateMs: Long = 1) =
+            Injector.get().getWebcamSnapshotUseCase().execute(
+                GetWebcamSnapshotUseCase.Params(
+                    instanceInfo = octoPrintInfo,
+                    maxWidthPx = BITMAP_WIDTH,
+                    sampleRateMs = sampleRateMs,
+                    cornerRadiusPx = calculateCornerRadius(context, appWidgetId)
+                )
+            )
+
+        private fun calculateCornerRadius(context: Context, appWidgetId: Int): Float {
+            val displayMetrics = context.resources.displayMetrics
+            val widgetSize = AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).let {
+                Pair(
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, it.first.toFloat(), displayMetrics),
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, it.second.toFloat(), displayMetrics),
+                )
+            }
+            val imageSize = AppWidgetPreferences.getImageDimensionsForWidgetId(appWidgetId)
+            val cornerRadiusDp = context.resources.getDimension(R.dimen.widget_corner_radius)
+
+            if (listOf(widgetSize.first, widgetSize.second, imageSize.first, imageSize.second).any { it == 0 }) {
+                return cornerRadiusDp
+            }
+
+            val widthScale = imageSize.first / widgetSize.first
+            val heightScale = imageSize.second / widgetSize.second
+            return max(widthScale, heightScale) * cornerRadiusDp
+        }
 
         private fun createLiveForText(liveSinceSecs: Int) = "Live for ${LIVE_FOR_SECS - liveSinceSecs}s"
 
@@ -227,8 +255,8 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             views.setViewVisibility(R.id.noImageUrl, AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first > 190)
         }
 
-        private fun generateImagePlaceHolder(widgetId: Int) = AppWidgetPreferences.getImageDimensionsForWidgetId(widgetId).let {
-            Bitmap.createBitmap(it.first, it.second, Bitmap.Config.ARGB_8888)
+        private fun generateImagePlaceHolder(widgetId: Int) = AppWidgetPreferences.getImageDimensionsForWidgetId(widgetId).let { size ->
+            Bitmap.createBitmap(size.first.takeIf { it > 0 } ?: 1280, size.second.takeIf { it > 0 } ?: 720, Bitmap.Config.ARGB_8888)
         }
     }
 }
