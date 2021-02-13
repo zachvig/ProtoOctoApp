@@ -11,6 +11,7 @@ import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
 import de.crysxd.octoapp.base.ui.ColorTheme
+import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.base.usecase.CreateProgressAppWidgetDataUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.widgets.*
@@ -31,6 +32,7 @@ class ProgressAppWidget : AppWidgetProvider() {
     override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, newOptions: Bundle) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
         AppWidgetPreferences.setWidgetDimensionsForWidgetId(appWidgetId, newOptions)
+        updateLayout(appWidgetId, context, appWidgetManager)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
@@ -91,7 +93,7 @@ class ProgressAppWidget : AppWidgetProvider() {
         private fun notifyWidgetDataChanged(data: CreateProgressAppWidgetDataUseCase.Result) {
             val context = Injector.get().context()
             getAppWidgetIdsForWebUrl(data.webUrl).forEach {
-                updateAppWidget(context, it, data)
+                updateAppWidget(context, it, data, data.webUrl)
             }
         }
 
@@ -99,7 +101,7 @@ class ProgressAppWidget : AppWidgetProvider() {
             Timber.i("Widgets for instance $webUrl are offline")
             val context = Injector.get().context()
             getAppWidgetIdsForWebUrl(webUrl).forEach {
-                updateAppWidget(context, it, data = null)
+                updateAppWidget(context, it, data = null, webUrl = webUrl)
             }
         }
 
@@ -107,7 +109,7 @@ class ProgressAppWidget : AppWidgetProvider() {
             Timber.i("Widgets for instance $webUrl are offline")
             val context = Injector.get().context()
             getAppWidgetIdsForWebUrl(webUrl).forEach {
-                updateAppWidget(context, it, data = null, loading = true)
+                updateAppWidget(context, it, data = null, webUrl = webUrl, loading = true)
             }
         }
 
@@ -120,33 +122,36 @@ class ProgressAppWidget : AppWidgetProvider() {
             return listOfNotNull(fixed, dynamic).flatten()
         }
 
-        private fun updateAppWidget(context: Context, appWidgetId: Int, data: CreateProgressAppWidgetDataUseCase.Result?, loading: Boolean = false) {
+        private fun updateAppWidget(context: Context, appWidgetId: Int, data: CreateProgressAppWidgetDataUseCase.Result?, webUrl: String, loading: Boolean = false) {
             Timber.i("Updating progress widget $appWidgetId with data $data")
             val manager = AppWidgetManager.getInstance(context)
 
             when {
                 data != null -> updateAppWidgetForData(manager, context, appWidgetId, data)
                 loading -> updateAppWidgetForLoading(manager, context, appWidgetId)
-                else -> updateAppWidgetForOffline(manager, context, appWidgetId)
+                else -> updateAppWidgetForOffline(manager, context, appWidgetId, webUrl)
             }
         }
 
-        private fun updateAppWidgetForOffline(manager: AppWidgetManager, context: Context, appWidgetId: Int) {
-            val views = RemoteViews(context.packageName, R.layout.app_widget_pogress_idle_normal)
+        private fun updateAppWidgetForOffline(manager: AppWidgetManager, context: Context, appWidgetId: Int, webUrl: String) {
+            val views = RemoteViews(context.packageName, R.layout.app_widget_pogress_idle)
             val text = createUpdateFailedText(appWidgetId)
             views.setViewVisibility(R.id.live, View.GONE)
             views.setTextViewText(R.id.idleMessage, "No data")
             views.setTextViewText(R.id.updatedAt, text)
             views.setOnClickPendingIntent(R.id.buttonRefresh, createUpdateIntent(context, appWidgetId))
             views.setViewVisibility(R.id.updatedAt, !text.isNullOrBlank())
+            applyScaling(appWidgetId, views)
+            applyColorTheme(views, webUrl)
             manager.partiallyUpdateAppWidget(appWidgetId, views)
         }
 
         private fun updateAppWidgetForLoading(manager: AppWidgetManager, context: Context, appWidgetId: Int) {
-            val views = RemoteViews(context.packageName, R.layout.app_widget_pogress_idle_normal)
+            val views = RemoteViews(context.packageName, R.layout.app_widget_pogress_idle)
             views.setViewVisibility(R.id.updatedAt, View.VISIBLE)
             views.setViewVisibility(R.id.live, View.GONE)
             views.setTextViewText(R.id.updatedAt, "Updating...")
+            applyScaling(appWidgetId, views)
             manager.partiallyUpdateAppWidget(appWidgetId, views)
         }
 
@@ -158,9 +163,9 @@ class ProgressAppWidget : AppWidgetProvider() {
             }
             val etaIndicatorColor = data.printTimeLeftOrigin.asPrintTimeLeftOriginColor()
             val views = if (data.isPrinting || data.isCancelling || data.isPaused || data.isPausing) {
-                RemoteViews(context.packageName, R.layout.app_widget_pogress_active_normal)
+                RemoteViews(context.packageName, R.layout.app_widget_pogress_active)
             } else {
-                RemoteViews(context.packageName, R.layout.app_widget_pogress_idle_normal)
+                RemoteViews(context.packageName, R.layout.app_widget_pogress_idle)
             }
 
             views.setTextViewText(R.id.progress, progress)
@@ -175,7 +180,6 @@ class ProgressAppWidget : AppWidgetProvider() {
                     else -> ""
                 }
             )
-            views.setViewVisibility(R.id.colorStrip, data.colorTheme != ColorTheme.default)
             views.setViewVisibility(R.id.updatedAt, !data.isLive)
             views.setViewVisibility(R.id.live, data.isLive)
             views.setViewVisibility(R.id.eta, !eta.isNullOrBlank())
@@ -190,8 +194,28 @@ class ProgressAppWidget : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.buttonResume, ExecuteWidgetActionActivity.createResumeTaskPendingIntent(context))
             views.setInt(R.id.etaIndicator, "setColorFilter", ContextCompat.getColor(context, etaIndicatorColor))
             views.setInt(R.id.colorStrip, "setImageLevel", 2500)
-            views.setInt(R.id.colorStrip, "setColorFilter", data.colorTheme.dark)
+            applyScaling(appWidgetId, views)
+            applyColorTheme(views, data.webUrl)
             manager.updateAppWidget(appWidgetId, views)
+        }
+
+        private fun applyColorTheme(views: RemoteViews, webUrl: String) {
+            val colorTheme = Injector.get().octorPrintRepository().getAll().firstOrNull { it.webUrl == webUrl }?.colorTheme ?: ColorTheme.default
+            views.setViewVisibility(R.id.colorStrip, colorTheme != ColorTheme.default)
+            views.setInt(R.id.colorStrip, "setColorFilter", colorTheme.dark)
+        }
+
+        private fun updateLayout(appWidgetId: Int, context: Context, manager: AppWidgetManager) {
+            val views = RemoteViews(context.packageName, R.layout.app_widget_pogress_idle)
+            applyScaling(appWidgetId, views)
+            manager.partiallyUpdateAppWidget(appWidgetId, views)
+        }
+
+        private fun applyScaling(appWidgetId: Int, views: RemoteViews) {
+            views.setViewVisibility(R.id.buttonRefresh, AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first > 190)
+            views.setViewVisibility(R.id.buttonPause, AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first > 200)
+            views.setViewVisibility(R.id.buttonResume, AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first > 200)
+            views.setViewVisibility(R.id.buttonCancel, AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first > 200)
         }
     }
 }

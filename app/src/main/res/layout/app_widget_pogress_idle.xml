@@ -27,6 +27,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Updating..."
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textAppearance="@style/OctoTheme.TextAppearance.Title"
             android:textColor="@color/black" />
 

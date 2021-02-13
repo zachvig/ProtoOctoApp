@@ -52,7 +52,8 @@
         android:paddingStart="@dimen/margin_2"
         android:text="@string/cd_live"
         android:textAppearance="@style/OctoTheme.TextAppearance"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        android:visibility="gone" />
 
     <ImageButton
         android:id="@+id/buttonRefresh"
@@ -66,7 +67,8 @@
         android:background="@drawable/widget_button_background"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_round_refresh_24"
-        android:tint="@color/black_translucent" />
+        android:tint="@color/black_translucent"
+        android:visibility="gone" />
 
     <ImageButton
         android:id="@+id/buttonCancel"
@@ -80,7 +82,8 @@
         android:background="@drawable/widget_button_background"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_round_close_24"
-        android:tint="@color/black_translucent" />
+        android:tint="@color/black_translucent"
+        android:visibility="gone" />
 
     <ImageButton
         android:id="@+id/buttonResume"
@@ -93,7 +96,8 @@
         android:background="@drawable/widget_button_background"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_round_play_arrow_24"
-        android:tint="@color/black_translucent" />
+        android:tint="@color/black_translucent"
+        android:visibility="gone" />
 
     <ImageButton
         android:id="@+id/buttonPause"
@@ -106,6 +110,7 @@
         android:background="@drawable/widget_button_background"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_round_pause_24"
-        android:tint="@color/black_translucent" />
+        android:tint="@color/black_translucent"
+        android:visibility="gone" />
 
 </RelativeLayout>

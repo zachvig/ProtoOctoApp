@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:configure="de.crysxd.octoapp.widgets.ConfigureAppWidgetActivity"
-    android:initialKeyguardLayout="@layout/app_widget_pogress_idle_normal"
-    android:initialLayout="@layout/app_widget_pogress_idle_normal"
+    android:initialKeyguardLayout="@layout/app_widget_pogress_idle"
+    android:initialLayout="@layout/app_widget_pogress_idle"
     android:minWidth="110dp"
     android:minHeight="60dp"
     android:previewImage="@drawable/bg_circle"
