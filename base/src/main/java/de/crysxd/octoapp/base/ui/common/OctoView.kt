@@ -36,18 +36,6 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     }
 
     init {
-        context.theme.obtainStyledAttributes(
-            attrs,
-            R.styleable.OctoView,
-            0,
-            0
-        ).use {
-            when (it.getInt(R.styleable.OctoView_octoActivity, 0)) {
-                1 -> swim()
-                else -> idle()
-            }
-        }
-
         ColorTheme.notifyAboutColorChangesUntilDetachedFromWindow(this) {
             (swimDrawable as? AnimatedVectorDrawableCompat)?.clearAnimationCallbacks()
             (idleDrawable as? AnimatedVectorDrawableCompat)?.clearAnimationCallbacks()
@@ -86,6 +74,18 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
                 swim()
             } else {
                 idle()
+            }
+        }
+
+        context.theme.obtainStyledAttributes(
+            attrs,
+            R.styleable.OctoView,
+            0,
+            0
+        ).use {
+            when (it.getInt(R.styleable.OctoView_octoActivity, 0)) {
+                1 -> swim()
+                else -> idle()
             }
         }
     }
