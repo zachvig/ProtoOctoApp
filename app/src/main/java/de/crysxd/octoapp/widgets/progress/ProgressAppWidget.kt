@@ -197,8 +197,10 @@ class ProgressAppWidget : AppWidgetProvider() {
             views.setViewVisibility(R.id.updatedAt, !data.isLive)
             views.setViewVisibility(R.id.live, data.isLive)
             views.setViewVisibility(R.id.eta, !eta.isNullOrBlank())
-            views.setViewVisibility(R.id.buttonResume, data.isPaused)
-            views.setViewVisibility(R.id.buttonPause, data.isPrinting)
+            views.setViewVisibility(R.id.buttonResume, data.isPaused && isLargeSize(appWidgetId))
+            views.setViewVisibility(R.id.buttonPause, data.isPrinting && isLargeSize(appWidgetId))
+            views.setViewVisibility(R.id.buttonCancel, isLargeSize(appWidgetId))
+            views.setViewVisibility(R.id.buttonRefresh, isLargeSize(appWidgetId))
             views.setBoolean(R.id.buttonPause, "setEnabled", !data.isPaused && !data.isPausing)
             views.setBoolean(R.id.buttonCancel, "setEnabled", !data.isCancelling)
             views.setOnClickPendingIntent(R.id.root, createLaunchAppIntent(context, data.webUrl))
@@ -208,7 +210,6 @@ class ProgressAppWidget : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.buttonResume, ExecuteWidgetActionActivity.createResumeTaskPendingIntent(context))
             views.setInt(R.id.etaIndicator, "setColorFilter", ContextCompat.getColor(context, etaIndicatorColor))
             views.setInt(R.id.colorStrip, "setImageLevel", 2500)
-            applyScaling(appWidgetId, views)
             applyColorTheme(views, data.webUrl)
             applyDebugOptions(views, appWidgetId)
             manager.updateAppWidget(appWidgetId, views)
@@ -227,10 +228,15 @@ class ProgressAppWidget : AppWidgetProvider() {
         }
 
         private fun applyScaling(appWidgetId: Int, views: RemoteViews) {
-            views.setViewVisibility(R.id.buttonRefresh, AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first > 190)
-            views.setViewVisibility(R.id.buttonPause, AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first > 200)
-            views.setViewVisibility(R.id.buttonResume, AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first > 200)
-            views.setViewVisibility(R.id.buttonCancel, AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first > 200)
+            if (!isLargeSize(appWidgetId)) {
+                views.setViewVisibility(R.id.buttonResume, false)
+                views.setViewVisibility(R.id.buttonPause, false)
+                views.setViewVisibility(R.id.buttonCancel, false)
+            }
+            views.setViewVisibility(R.id.buttonRefresh, isMediumSize(appWidgetId))
         }
+
+        private fun isMediumSize(appWidgetId: Int) = AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first > 190
+        private fun isLargeSize(appWidgetId: Int) = AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first > 200
     }
 }
