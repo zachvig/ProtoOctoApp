@@ -56,6 +56,13 @@
         android:scaleType="centerInside"
         android:src="@drawable/webcam_placeholder" />
 
+    <ImageView
+        android:id="@+id/colorStrip"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:src="@drawable/widget_color_strip" />
+
     <TextView
         android:id="@+id/updatedAt"
         android:layout_width="wrap_content"
@@ -65,7 +72,7 @@
         android:background="@drawable/widget_chip_background"
         android:gravity="end"
         android:text="Updating..."
-        android:textAppearance="@style/OctoTheme.TextAppearance"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Label"
         android:textColor="@color/white" />
 
     <TextView
@@ -79,7 +86,7 @@
         android:paddingVertical="@dimen/margin_0"
         android:paddingStart="@dimen/margin_2"
         android:text="Live for 15s"
-        android:textAppearance="@style/OctoTheme.TextAppearance"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Label"
         android:textColor="@color/white"
         android:visibility="gone" />
 
@@ -88,13 +95,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/margin_1"
+        android:divider="@drawable/margin_0_1_divider"
+        android:showDividers="middle"
         android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/buttonLive"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginStart="@dimen/margin_1"
             android:background="@drawable/widget_button_background"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_round_videocam_24"
@@ -106,7 +114,6 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="bottom|end"
-            android:layout_marginStart="@dimen/margin_1"
             android:background="@drawable/widget_button_background"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_round_refresh_24"
@@ -117,7 +124,6 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="bottom|end"
-            android:layout_marginStart="@dimen/margin_1"
             android:background="@drawable/widget_button_background"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_round_videocam_off_24"
@@ -130,7 +136,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_1"
-        android:gravity="top|start"
+        android:gravity="bottom|start"
         android:textColor="#f00" />
 
 </FrameLayout>

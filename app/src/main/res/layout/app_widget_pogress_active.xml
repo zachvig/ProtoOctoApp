@@ -23,7 +23,7 @@
         android:layout_marginStart="@dimen/margin_1_2"
         android:layout_marginTop="@dimen/margin_1"
         android:layout_marginBottom="@dimen/margin_1"
-        android:layout_toStartOf="@+id/buttonRefresh" />
+        android:layout_toStartOf="@+id/buttonList" />
 
     <TextView
         android:id="@+id/updatedAt"
@@ -33,6 +33,7 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="@dimen/margin_1"
         android:background="@drawable/widget_chip_background"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Label"
         android:textColor="@color/white"
         android:visibility="gone"
         tools:text="Updated at 18:45" />
@@ -51,67 +52,67 @@
         android:paddingVertical="@dimen/margin_0"
         android:paddingStart="@dimen/margin_2"
         android:text="@string/cd_live"
-        android:textAppearance="@style/OctoTheme.TextAppearance"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Label"
         android:textColor="@color/white"
         android:visibility="gone" />
 
-    <ImageButton
-        android:id="@+id/buttonRefresh"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignBottom="@+id/buttonCancel"
-        android:layout_gravity="bottom|end"
-        android:layout_marginStart="@dimen/margin_1"
-        android:layout_marginEnd="@dimen/margin_0_1"
-        android:layout_toStartOf="@id/buttonPause"
-        android:background="@drawable/widget_button_background"
-        android:importantForAccessibility="no"
-        android:src="@drawable/ic_round_refresh_24"
-        android:tint="@color/white"
-        android:visibility="gone" />
-
-    <ImageButton
-        android:id="@+id/buttonCancel"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+    <LinearLayout
+        android:id="@+id/buttonList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/margin_1"
+        android:layout_marginHorizontal="@dimen/margin_1"
         android:layout_marginBottom="@dimen/margin_1"
-        android:background="@drawable/widget_button_background"
-        android:importantForAccessibility="no"
-        android:src="@drawable/ic_round_close_24"
-        android:tint="@color/white"
-        android:visibility="gone" />
+        android:divider="@drawable/margin_0_1_divider"
+        android:orientation="horizontal"
+        android:showDividers="middle">
 
-    <ImageButton
-        android:id="@+id/buttonResume"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignBottom="@id/buttonCancel"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/margin_0_1"
-        android:layout_toStartOf="@id/buttonCancel"
-        android:background="@drawable/widget_button_background"
-        android:importantForAccessibility="no"
-        android:src="@drawable/ic_round_play_arrow_24"
-        android:tint="@color/white"
-        android:visibility="gone" />
+        <ImageButton
+            android:id="@+id/buttonResume"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/widget_button_background"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_round_play_arrow_24"
+            android:tint="@color/white"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
-    <ImageButton
-        android:id="@+id/buttonPause"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignBottom="@id/buttonCancel"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/margin_0_1"
-        android:layout_toStartOf="@id/buttonResume"
-        android:background="@drawable/widget_button_background"
-        android:importantForAccessibility="no"
-        android:src="@drawable/ic_round_pause_24"
-        android:tint="@color/white"
-        android:visibility="gone" />
+        <ImageButton
+            android:id="@+id/buttonPause"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/widget_button_background"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_round_pause_24"
+            android:tint="@color/white"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/buttonCancel"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom|end"
+            android:background="@drawable/widget_button_background"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_round_close_24"
+            android:tint="@color/white"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/buttonRefresh"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom|end"
+            android:background="@drawable/widget_button_background"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_round_refresh_24"
+            android:tint="@color/white"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/widgetId"
@@ -119,6 +120,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:gravity="bottom|start"
         android:layout_margin="@dimen/margin_1"
         android:textColor="#f00" />
 

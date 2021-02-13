@@ -29,13 +29,14 @@
             android:text="Updating..."
             android:ellipsize="end"
             android:maxLines="1"
-            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+            android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
             android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/updatedAt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
             android:textColor="@color/black_translucent"
             android:visibility="gone" />
 
@@ -62,6 +63,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:gravity="bottom|start"
         android:layout_margin="@dimen/margin_1"
         android:textColor="#f00" />
 

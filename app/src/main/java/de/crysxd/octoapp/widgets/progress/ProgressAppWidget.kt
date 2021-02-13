@@ -209,14 +209,15 @@ class ProgressAppWidget : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.buttonPause, ExecuteWidgetActionActivity.createPauseTaskPendingIntent(context))
             views.setOnClickPendingIntent(R.id.buttonResume, ExecuteWidgetActionActivity.createResumeTaskPendingIntent(context))
             views.setInt(R.id.etaIndicator, "setColorFilter", ContextCompat.getColor(context, etaIndicatorColor))
-            views.setInt(R.id.colorStrip, "setImageLevel", 2500)
             applyColorTheme(views, data.webUrl)
             applyDebugOptions(views, appWidgetId)
+            applyScaling(appWidgetId, views)
             manager.updateAppWidget(appWidgetId, views)
         }
 
         private fun applyColorTheme(views: RemoteViews, webUrl: String) {
             val colorTheme = Injector.get().octorPrintRepository().getAll().firstOrNull { it.webUrl == webUrl }?.colorTheme ?: ColorTheme.default
+            views.setInt(R.id.colorStrip, "setImageLevel", 2500)
             views.setViewVisibility(R.id.colorStrip, colorTheme != ColorTheme.default)
             views.setInt(R.id.colorStrip, "setColorFilter", colorTheme.dark)
         }
@@ -228,6 +229,7 @@ class ProgressAppWidget : AppWidgetProvider() {
         }
 
         private fun applyScaling(appWidgetId: Int, views: RemoteViews) {
+            Timber.d("Scaling app widget for ${getWidgetWidth(appWidgetId)}")
             if (!isLargeSize(appWidgetId)) {
                 views.setViewVisibility(R.id.buttonResume, false)
                 views.setViewVisibility(R.id.buttonPause, false)
@@ -236,7 +238,8 @@ class ProgressAppWidget : AppWidgetProvider() {
             views.setViewVisibility(R.id.buttonRefresh, isMediumSize(appWidgetId))
         }
 
-        private fun isMediumSize(appWidgetId: Int) = AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first > 190
-        private fun isLargeSize(appWidgetId: Int) = AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first > 200
+        private fun isMediumSize(appWidgetId: Int) = getWidgetWidth(appWidgetId) > 400
+        private fun isLargeSize(appWidgetId: Int) = getWidgetWidth(appWidgetId) > 520
+        private fun getWidgetWidth(appWidgetId: Int) = AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first
     }
 }

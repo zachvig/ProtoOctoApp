@@ -19,7 +19,7 @@ class CreateProgressAppWidgetDataUseCase @Inject constructor(
 ) : UseCase<CreateProgressAppWidgetDataUseCase.Params, CreateProgressAppWidgetDataUseCase.Result>() {
 
     init {
-        //suppressLogging = true
+        suppressLogging = true
     }
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) =
