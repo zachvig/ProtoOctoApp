@@ -363,5 +363,5 @@
     <string name="app_widget___update_failed">Echec de la mise à jour</string>
     <string name="app_widget___no_image">Pas d\'image</string>
     <string name="app_widget___no_data">Pas de données</string>
-    <string name="main_menu___item_auto_connect_printer">Imprimante à connexion automatique</string>
+    <string name="main_menu___item_auto_connect_printer">Imprimante à connexion auto.</string>
 </resources>
