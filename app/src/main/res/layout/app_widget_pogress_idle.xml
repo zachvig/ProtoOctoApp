@@ -26,9 +26,9 @@
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Updating..."
             android:ellipsize="end"
             android:maxLines="1"
+            android:text="@string/app_widget___updating"
             android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
             android:textColor="@color/black" />
 
@@ -45,17 +45,15 @@
 
     <ImageButton
         android:id="@+id/buttonRefresh"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        style="@style/OctoTheme.AppWidget.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/margin_1"
         android:layout_marginStart="@dimen/margin_1"
-        android:background="@drawable/widget_button_background"
         android:importantForAccessibility="no"
-        android:src="@drawable/ic_round_refresh_24"
-        android:tint="@color/white" />
+        android:src="@drawable/ic_round_refresh_24" />
 
     <TextView
         android:id="@+id/widgetId"
@@ -63,8 +61,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:gravity="bottom|start"
         android:layout_margin="@dimen/margin_1"
+        android:gravity="bottom|start"
         android:textColor="#f00" />
 
 </RelativeLayout>

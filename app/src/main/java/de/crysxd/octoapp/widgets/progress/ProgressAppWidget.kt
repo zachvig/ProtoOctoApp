@@ -4,7 +4,6 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.os.Bundle
-import android.view.View
 import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.R
@@ -116,7 +115,7 @@ class ProgressAppWidget : AppWidgetProvider() {
         }
 
         private fun notifyWidgetLoading(webUrl: String) {
-            Timber.i("Widgets for instance $webUrl are offline")
+            Timber.i("Widgets for instance $webUrl are loading")
             val context = Injector.get().context()
             getAppWidgetIdsForWebUrl(webUrl).forEach {
                 updateAppWidget(context, it, data = null, webUrl = webUrl, loading = true)
@@ -133,8 +132,12 @@ class ProgressAppWidget : AppWidgetProvider() {
         }
 
         private fun updateAppWidget(context: Context, appWidgetId: Int, data: CreateProgressAppWidgetDataUseCase.Result?, webUrl: String, loading: Boolean = false) {
-            Timber.v("Updating progress widget $appWidgetId with data $data")
             val manager = AppWidgetManager.getInstance(context)
+            if (data?.isLive == true) {
+                Timber.v("Updating progress widget $appWidgetId with data $data")
+            } else {
+                Timber.i("Updating progress widget $appWidgetId with data $data")
+            }
 
             when {
                 data != null -> updateAppWidgetForData(manager, context, appWidgetId, data)
@@ -145,9 +148,9 @@ class ProgressAppWidget : AppWidgetProvider() {
 
         private fun updateAppWidgetForOffline(manager: AppWidgetManager, context: Context, appWidgetId: Int, webUrl: String) {
             val views = RemoteViews(context.packageName, R.layout.app_widget_pogress_idle)
-            val text = createUpdateFailedText(appWidgetId)
-            views.setViewVisibility(R.id.live, View.GONE)
-            views.setTextViewText(R.id.title, "No data")
+            val text = createUpdateFailedText(context, appWidgetId)
+            views.setViewVisibility(R.id.live, false)
+            views.setTextViewText(R.id.title, context.getString(R.string.app_widget___no_data))
             views.setTextViewText(R.id.updatedAt, text)
             views.setOnClickPendingIntent(R.id.buttonRefresh, createUpdateIntent(context, appWidgetId))
             views.setOnClickPendingIntent(R.id.root, createLaunchAppIntent(context, webUrl))
@@ -160,9 +163,9 @@ class ProgressAppWidget : AppWidgetProvider() {
 
         private fun updateAppWidgetForLoading(manager: AppWidgetManager, context: Context, appWidgetId: Int) {
             val views = RemoteViews(context.packageName, R.layout.app_widget_pogress_idle)
-            views.setViewVisibility(R.id.updatedAt, View.VISIBLE)
-            views.setViewVisibility(R.id.live, View.GONE)
-            views.setTextViewText(R.id.updatedAt, "Updating...")
+            views.setViewVisibility(R.id.updatedAt, true)
+            views.setViewVisibility(R.id.live, false)
+            views.setTextViewText(R.id.updatedAt, context.getString(R.string.app_widget___updating))
             applyScaling(appWidgetId, views)
             applyDebugOptions(views, appWidgetId)
             manager.partiallyUpdateAppWidget(appWidgetId, views)
@@ -186,12 +189,12 @@ class ProgressAppWidget : AppWidgetProvider() {
             views.setTextViewText(R.id.updatedAt, createUpdatedNowText())
             views.setTextViewText(
                 R.id.title, when {
-                    data.isPausing -> context.getString(R.string.notification_pausing_title)
-                    data.isPaused -> context.getString(R.string.notification_paused_title)
-                    data.isCancelling -> context.getString(R.string.notification_cancelling_title)
-                    data.isPrinting -> context.getString(R.string.notification_printing_title)
-                    data.isPrinterConnected -> "Idle"
-                    else -> "No printer connected"
+                    data.isPausing -> context.getString(R.string.print_notification___pausing_title)
+                    data.isPaused -> context.getString(R.string.print_notification___paused_title)
+                    data.isCancelling -> context.getString(R.string.print_notification___cancelling_title)
+                    data.isPrinting -> context.getString(R.string.print_notification___printing_title)
+                    data.isPrinterConnected -> context.getString(R.string.app_widget___idle)
+                    else -> context.getString(R.string.app_widget___no_printer)
                 }
             )
             views.setViewVisibility(R.id.updatedAt, !data.isLive)

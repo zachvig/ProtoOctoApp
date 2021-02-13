@@ -31,10 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/margin_1"
-        android:background="@drawable/widget_chip_background"
-        android:textAppearance="@style/OctoTheme.TextAppearance.Label"
-        android:textColor="@color/white"
+        style="@style/OctoTheme.AppWidget.Chip"
         android:visibility="gone"
         tools:text="Updated at 18:45" />
 
@@ -44,16 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_gravity="top|end"
-        android:layout_margin="@dimen/margin_1"
-        android:layout_marginBottom="@dimen/margin_1"
-        android:background="@drawable/widget_chip_live_background"
-        android:paddingHorizontal="@dimen/margin_1"
-        android:paddingVertical="@dimen/margin_0"
-        android:paddingStart="@dimen/margin_2"
-        android:text="@string/cd_live"
-        android:textAppearance="@style/OctoTheme.TextAppearance.Label"
-        android:textColor="@color/white"
+        style="@style/OctoTheme.AppWidget.Chip.Live"
         android:visibility="gone" />
 
     <LinearLayout
@@ -91,10 +79,9 @@
 
         <ImageButton
             android:id="@+id/buttonCancel"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="bottom|end"
-            android:background="@drawable/widget_button_background"
+            style="@style/OctoTheme.AppWidget.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_round_close_24"
             android:tint="@color/white"
@@ -102,13 +89,11 @@
 
         <ImageButton
             android:id="@+id/buttonRefresh"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="bottom|end"
-            android:background="@drawable/widget_button_background"
+            style="@style/OctoTheme.AppWidget.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_round_refresh_24"
-            android:tint="@color/white"
             android:visibility="gone"
             tools:visibility="visible" />
 

@@ -182,11 +182,11 @@ class PrintNotificationService : Service() {
             val progress = it.completion.toInt()
             val left = formatDurationUseCase.execute(it.printTimeLeft.toLong())
 
-            lastEta = getString(R.string.print_eta_x, Injector.get().formatEtaUseCase().execute(it.printTimeLeft))
-            val detail = getString(R.string.notification_printing_message, progress, left)
+            lastEta = getString(R.string.print_notification___print_eta_x, Injector.get().formatEtaUseCase().execute(it.printTimeLeft))
+            val detail = getString(R.string.print_notification___printing_message, progress, left)
             val title = getString(
                 when {
-                    flags.pausing -> R.string.notification_pausing_title
+                    flags.pausing -> R.string.print_notification___pausing_title
                     flags.paused -> {
                         // If we are paused and we saw a filament change command just before,
                         // we assume we where paused because of the filament change
@@ -195,16 +195,16 @@ class PrintNotificationService : Service() {
                         }
 
                         if (pausedBecauseOfFilamentChange) {
-                            R.string.notification_paused_filamet_change_title
+                            R.string.print_notification___paused_filamet_change_title
                         } else {
-                            R.string.notification_paused_title
+                            R.string.print_notification___paused_title
                         }
                     }
-                    flags.cancelling -> R.string.notification_cancelling_title
+                    flags.cancelling -> R.string.print_notification___cancelling_title
                     else -> {
                         pausedBecauseOfFilamentChange = false
                         notificationManager.cancel(FILAMENT_CHANGE_NOTIFICATION_ID)
-                        R.string.notification_printing_title
+                        R.string.print_notification___printing_title
                     }
                 }
             )
@@ -220,7 +220,7 @@ class PrintNotificationService : Service() {
         notificationManager.createNotificationChannel(
             NotificationChannel(
                 normalNotificationChannelId,
-                getString(R.string.notification_channel_print_progress),
+                getString(R.string.notification_channel___print_progress),
                 NotificationManager.IMPORTANCE_HIGH
             )
         )
@@ -260,7 +260,7 @@ class PrintNotificationService : Service() {
         .build()
 
     private fun createCompletedNotification(name: String?) = createNotificationBuilder()
-        .setContentTitle(getString(R.string.notification_print_done_title))
+        .setContentTitle(getString(R.string.print_notification___print_done_title))
         .apply {
             name?.let {
                 setContentText(it)
@@ -271,13 +271,13 @@ class PrintNotificationService : Service() {
         .build()
 
     private fun createFilamentChangeNotification() = createNotificationBuilder(filamentNotificationChannelId)
-        .setContentTitle(getString(R.string.notification_filament_change_required))
+        .setContentTitle(getString(R.string.print_notification___filament_change_required))
         .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
         .setDefaults(Notification.DEFAULT_VIBRATE)
         .build()
 
     private fun createDisconnectedNotification() = createNotificationBuilder()
-        .setContentTitle(getString(R.string.notification_printing_lost_connection_message))
+        .setContentTitle(getString(R.string.print_notification___printing_lost_connection_message))
         .setContentText(lastEta)
         .setProgress(maxProgress, 0, true)
         .addCloseAction()
@@ -286,7 +286,7 @@ class PrintNotificationService : Service() {
         .build()
 
     private fun createInitialNotification() = createNotificationBuilder()
-        .setContentTitle(getString(R.string.notification_printing_title))
+        .setContentTitle(getString(R.string.print_notification___printing_title))
         .setProgress(maxProgress, 0, true)
         .setOngoing(true)
         .addCloseAction()
@@ -296,7 +296,7 @@ class PrintNotificationService : Service() {
     private fun NotificationCompat.Builder.addCloseAction() = addAction(
         NotificationCompat.Action.Builder(
             null,
-            getString(R.string.close),
+            getString(R.string.print_notification___close),
             PendingIntent.getService(
                 this@PrintNotificationService,
                 0,

@@ -58,7 +58,7 @@ private fun formatDate(time: Long) = DateFormat.getDateInstance(DateFormat.SHORT
 
 private fun formatTime(time: Long) = DateFormat.getTimeInstance(DateFormat.SHORT).format(time)
 
-internal fun createUpdateFailedText(appWidgetId: Int) = AppWidgetPreferences.getLastUpdateTime(appWidgetId).takeIf { it > 0 }?.let {
+internal fun createUpdateFailedText(context: Context, appWidgetId: Int) = AppWidgetPreferences.getLastUpdateTime(appWidgetId).takeIf { it > 0 }?.let {
     val date = formatDate(it)
     val today = formatDate(System.currentTimeMillis())
     val since = if (date == today) {
@@ -66,8 +66,8 @@ internal fun createUpdateFailedText(appWidgetId: Int) = AppWidgetPreferences.get
     } else {
         date
     }
-    "Offline since $since"
-} ?: "Update failed"
+    context.getString(R.string.app_widget___offline_since_x, since)
+} ?: context.getString(R.string.app_widget___update_failed)
 
 internal fun applyDebugOptions(views: RemoteViews, appWidgetId: Int) {
     views.setTextViewText(R.id.widgetId, "$appWidgetId")

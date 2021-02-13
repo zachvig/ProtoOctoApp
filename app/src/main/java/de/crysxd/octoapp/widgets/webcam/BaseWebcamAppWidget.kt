@@ -74,7 +74,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             views.setViewVisibility(R.id.updatedAt, true)
             views.setViewVisibility(R.id.live, false)
             views.setImageViewBitmap(R.id.webcamContentPlaceholder, generateImagePlaceHolder(appWidgetId))
-            views.setTextViewText(R.id.updatedAt, "Updating...")
+            views.setTextViewText(R.id.updatedAt, context.getString(R.string.app_widget___updating))
             AppWidgetManager.getInstance(context).partiallyUpdateAppWidget(appWidgetId, views)
         }
 
@@ -115,7 +115,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                     widgetId = appWidgetId,
                     webUrl = webUrl,
                     webcamSettings = webCamSettings,
-                    updatedAtText = (if (frame == null) createUpdateFailedText(appWidgetId) else createUpdatedNowText()).takeIf { hasControls },
+                    updatedAtText = (if (frame == null) createUpdateFailedText(context, appWidgetId) else createUpdatedNowText()).takeIf { hasControls },
                     live = false,
                     frame = frame
                 )
@@ -165,7 +165,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                             widgetId = appWidgetId,
                             webUrl = webUrl,
                             webcamSettings = webcamSettings,
-                            updatedAtText = createLiveForText(secsLeft.toInt()),
+                            updatedAtText = createLiveForText(context, secsLeft.toInt()),
                             live = true,
                             frame = savedFrame
                         )
@@ -210,7 +210,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             return max(widthScale, heightScale) * cornerRadiusDp
         }
 
-        private fun createLiveForText(liveSinceSecs: Int) = "Live for ${LIVE_FOR_SECS - liveSinceSecs}s"
+        private fun createLiveForText(context: Context, liveSinceSecs: Int) = context.getString(R.string.app_widget___live_for_x, LIVE_FOR_SECS - liveSinceSecs)
 
         private fun createViews(
             context: Context,

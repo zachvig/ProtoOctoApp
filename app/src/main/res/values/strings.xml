@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_widget___updating">Updating…</string>
+    <string name="app_widget___idle">Idle</string>
+    <string name="app_widget___no_printer">No printer connected</string>
+    <string name="app_widget___live_for_x">Live for %ds</string>
+    <string name="app_widget___live">Live</string>
+    <string name="app_widget___free_widgets_exceeded_action">@android:string/ok</string>
+    <string name="app_widget___free_widgets_exceeded_message">You can only have %d widgets without supporting OctoApp. You can support OctoApp from the app\'s main menu.</string>
+    <string name="app_widget___link_widget_title">Which OctoPrint should this widget use?</string>
+    <string name="app_widget___link_widget__option_x">Always %s</string>
+    <string name="app_widget___link_widget__option_synced">Sync with app</string>
+    <string name="app_widget___offline_since_x">Offline since %s</string>
+    <string name="app_widget___update_failed">Update failed</string>
+    <string name="app_widget___no_image">No image</string>
+    <string name="app_widget___no_data">No data</string>
+</resources>

@@ -37,8 +37,8 @@ class ConfigureAppWidgetActivity : Activity() {
         val maxWidgetCount = Firebase.remoteConfig.getLong("number_of_free_app_widgets")
         if (getWidgetCount(this) > maxWidgetCount || BillingManager.isFeatureEnabled("infinite_app_widgets")) {
             MaterialAlertDialogBuilder(this)
-                .setMessage("You can only have $maxWidgetCount widgets without supporting OctoApp. You can support OctoApp from the app's main menu.")
-                .setPositiveButton("Ok", null)
+                .setMessage(getString(R.string.app_widget___free_widgets_exceeded_message, maxWidgetCount))
+                .setPositiveButton(R.string.app_widget___free_widgets_exceeded_action, null)
                 .setOnDismissListener { finish() }
                 .show()
         } else when (intent.action) {
@@ -114,14 +114,14 @@ class ConfigureAppWidgetActivity : Activity() {
 
     private fun showSelectionDialog(result: (webUrl: String?) -> Intent?) {
         val instances = Injector.get().octorPrintRepository().getAll()
-        val titles = instances.map { it.label }.map { "Always $it" }
+        val titles = instances.map { it.label }.map { getString(R.string.app_widget___link_widget__option_x, it) }
         val webUrls = instances.map { it.webUrl }
 
-        val allTitles = listOf(listOf("Synced with the app"), titles).flatten()
+        val allTitles = listOf(listOf(getString(R.string.app_widget___link_widget__option_synced)), titles).flatten()
         val allWebUrls = listOf(listOf(ACTIVE_WEB_URL_MARKER), webUrls).flatten()
         var selectedUrl: String? = null
         MaterialAlertDialogBuilder(this)
-            .setTitle("Which OctoPrint should this widget use?")
+            .setTitle(R.string.app_widget___link_widget_title)
             .setItems(allTitles.toTypedArray()) { _, selected ->
                 selectedUrl = allWebUrls[selected]
 

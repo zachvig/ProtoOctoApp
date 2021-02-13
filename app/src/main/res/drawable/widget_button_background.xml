@@ -4,6 +4,9 @@
     <item>
         <shape android:shape="oval">
             <solid android:color="@color/app_widget_button_background" />
+            <size
+                android:width="40dp"
+                android:height="40dp" />
         </shape>
     </item>
 
