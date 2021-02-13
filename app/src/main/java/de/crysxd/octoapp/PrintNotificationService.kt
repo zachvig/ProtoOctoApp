@@ -3,6 +3,7 @@ package de.crysxd.octoapp
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.media.AudioAttributes
 import android.net.Uri
 import android.os.Build
@@ -10,8 +11,8 @@ import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
@@ -61,6 +62,7 @@ class PrintNotificationService : Service() {
     private var didSeePrintBeingActive = false
     private var didSeeFilamentChangeAt = 0L
     private var pausedBecauseOfFilamentChange = false
+    private var notPrintingCounter = 0
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -119,7 +121,7 @@ class PrintNotificationService : Service() {
         try {
             when (event) {
                 is Event.Disconnected -> {
-                    ProgressAppWidget.notifyWidgetDataChanged()
+                    ProgressAppWidget.notifyWidgetOffline()
                     createDisconnectedNotification()
                 }
                 is Event.Connected -> createInitialNotification()
@@ -155,16 +157,23 @@ class PrintNotificationService : Service() {
         val flags = message.state?.flags
         Timber.v(message.toString())
         if (flags == null || !listOf(flags.printing, flags.paused, flags.pausing, flags.cancelling).any { it }) {
-            if (message.progress?.completion?.toInt() == maxProgress && didSeePrintBeingActive) {
-                didSeePrintBeingActive = false
-                Timber.i("Print done, showing notification")
-                val name = message.job?.file?.display
-                notificationManager.notify((3242..4637).random(), createCompletedNotification(name))
-            }
+            // OctoPrint sometimes reports not printing when we resume a print but only for a split second.
+            // We need to count the updates with not printing before exiting the service
+            notPrintingCounter++
+            if (flags == null || notPrintingCounter > 3) {
+                if (message.progress?.completion?.toInt() == maxProgress && didSeePrintBeingActive) {
+                    didSeePrintBeingActive = false
+                    Timber.i("Print done, showing notification")
+                    val name = message.job?.file?.display
+                    notificationManager.notify((3242..4637).random(), createCompletedNotification(name))
+                }
 
-            Timber.i("Not printing, stopping self")
-            stopSelf()
-            return null
+                Timber.i("Not printing, stopping self")
+                stopSelf()
+                return null
+            }
+        } else {
+            notPrintingCounter = 0
         }
 
         // Update notification
@@ -173,11 +182,11 @@ class PrintNotificationService : Service() {
             val progress = it.completion.toInt()
             val left = formatDurationUseCase.execute(it.printTimeLeft.toLong())
 
-            lastEta = getString(R.string.print_eta_x, Injector.get().formatEtaUseCase().execute(it.printTimeLeft))
-            val detail = getString(R.string.notification_printing_message, progress, left)
+            lastEta = getString(R.string.print_notification___print_eta_x, Injector.get().formatEtaUseCase().execute(it.printTimeLeft))
+            val detail = getString(R.string.print_notification___printing_message, progress, left)
             val title = getString(
                 when {
-                    flags.pausing -> R.string.notification_pausing_title
+                    flags.pausing -> R.string.print_notification___pausing_title
                     flags.paused -> {
                         // If we are paused and we saw a filament change command just before,
                         // we assume we where paused because of the filament change
@@ -186,16 +195,16 @@ class PrintNotificationService : Service() {
                         }
 
                         if (pausedBecauseOfFilamentChange) {
-                            R.string.notification_paused_filamet_change_title
+                            R.string.print_notification___paused_filamet_change_title
                         } else {
-                            R.string.notification_paused_title
+                            R.string.print_notification___paused_title
                         }
                     }
-                    flags.cancelling -> R.string.notification_cancelling_title
+                    flags.cancelling -> R.string.print_notification___cancelling_title
                     else -> {
                         pausedBecauseOfFilamentChange = false
                         notificationManager.cancel(FILAMENT_CHANGE_NOTIFICATION_ID)
-                        R.string.notification_printing_title
+                        R.string.print_notification___printing_title
                     }
                 }
             )
@@ -211,7 +220,7 @@ class PrintNotificationService : Service() {
         notificationManager.createNotificationChannel(
             NotificationChannel(
                 normalNotificationChannelId,
-                getString(R.string.notification_channel_print_progress),
+                getString(R.string.notification_channel___print_progress),
                 NotificationManager.IMPORTANCE_HIGH
             )
         )
@@ -251,7 +260,7 @@ class PrintNotificationService : Service() {
         .build()
 
     private fun createCompletedNotification(name: String?) = createNotificationBuilder()
-        .setContentTitle(getString(R.string.notification_print_done_title))
+        .setContentTitle(getString(R.string.print_notification___print_done_title))
         .apply {
             name?.let {
                 setContentText(it)
@@ -262,13 +271,13 @@ class PrintNotificationService : Service() {
         .build()
 
     private fun createFilamentChangeNotification() = createNotificationBuilder(filamentNotificationChannelId)
-        .setContentTitle(getString(R.string.notification_filament_change_required))
+        .setContentTitle(getString(R.string.print_notification___filament_change_required))
         .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
         .setDefaults(Notification.DEFAULT_VIBRATE)
         .build()
 
     private fun createDisconnectedNotification() = createNotificationBuilder()
-        .setContentTitle(getString(R.string.notification_printing_lost_connection_message))
+        .setContentTitle(getString(R.string.print_notification___printing_lost_connection_message))
         .setContentText(lastEta)
         .setProgress(maxProgress, 0, true)
         .addCloseAction()
@@ -277,7 +286,7 @@ class PrintNotificationService : Service() {
         .build()
 
     private fun createInitialNotification() = createNotificationBuilder()
-        .setContentTitle(getString(R.string.notification_printing_title))
+        .setContentTitle(getString(R.string.print_notification___printing_title))
         .setProgress(maxProgress, 0, true)
         .setOngoing(true)
         .addCloseAction()
@@ -287,7 +296,7 @@ class PrintNotificationService : Service() {
     private fun NotificationCompat.Builder.addCloseAction() = addAction(
         NotificationCompat.Action.Builder(
             null,
-            getString(R.string.close),
+            getString(R.string.print_notification___close),
             PendingIntent.getService(
                 this@PrintNotificationService,
                 0,
@@ -299,7 +308,7 @@ class PrintNotificationService : Service() {
 
     private fun createNotificationBuilder(notificationChannelId: String = normalNotificationChannelId) = NotificationCompat.Builder(this, notificationChannelId)
         .setColorized(true)
-        .setColor(ContextCompat.getColor(this, R.color.primary_light))
+        .setColor(Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.colorTheme?.light ?: Color.WHITE)
         .setSmallIcon(R.drawable.ic_notification_default)
         .setContentIntent(createStartAppPendingIntent())
 

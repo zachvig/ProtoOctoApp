@@ -2,7 +2,6 @@
 <resources>
     <color name="primary">@color/green</color>
     <color name="primary_dark">#169300</color>
-    <color name="primary_light">#D0F3CC</color>
     <color name="accent">@color/blue</color>
 
     <color name="window_background">@color/white</color>
@@ -26,6 +25,27 @@
     <color name="button_disabled">@color/very_light_grey</color>
     <color name="menu_pin_foreground">@color/white</color>
     <color name="menu_pin_background">@color/black_translucent_2</color>
+    <color name="progress_bar_track">@color/black_translucent_3</color>
+    <color name="app_widget_button_background">#48000000</color>
+
+    <color name="default_color_scheme">@color/primary</color>
+    <color name="default_color_scheme_light">#D0F3CC</color>
+    <color name="red_color_scheme">@color/red</color>
+    <color name="red_color_scheme_light">#FFE4E4</color>
+    <color name="orange_color_scheme">@color/orange</color>
+    <color name="orange_color_scheme_light">#FFE6C1</color>
+    <color name="yellow_color_scheme">@color/yellow</color>
+    <color name="yellow_color_scheme_light">#FFF2CD</color>
+    <color name="green_color_scheme">@color/green_2</color>
+    <color name="green_color_scheme_light">#CDEFDB</color>
+    <color name="blue_color_scheme">@color/dark_blue</color>
+    <color name="blue_color_scheme_light">#CCCFEAFF</color>
+    <color name="violet_color_scheme">@color/violet</color>
+    <color name="violet_color_scheme_light">#F6E3FD</color>
+    <color name="white_color_scheme">@color/light_grey</color>
+    <color name="white_color_scheme_light">#E8E7E7</color>
+    <color name="black_color_scheme">@color/black</color>
+    <color name="black_color_scheme_light">#BCBCBC</color>
 
     <color name="snackbar_neutral">@color/light_grey</color>
     <color name="snackbar_positive">@color/primary</color>
@@ -37,6 +57,8 @@
     <color name="red_translucent">#26EE3F3F</color>
     <color name="blue">#389AE5</color>
     <color name="blue_translucent">#1A389AE5</color>
+    <color name="dark_blue">#104F80</color>
+    <color name="dark_blue_transparent">#1A104F80</color>
     <color name="yellow">#FFC000</color>
     <color name="yellow_translucent">#1FFFC000</color>
     <color name="green">#27AE60</color>
@@ -53,6 +75,7 @@
     <color name="light_blue">#F0F9FF</color>
     <color name="black_translucent">#B4000000</color>
     <color name="black_translucent_2">#1A000000</color>
+    <color name="black_translucent_3">#0D000000</color>
     <color name="white_translucent">#B5FFFFFF</color>
     <color name="status_bar_scrim">#80FFFFFF</color>
     <color name="white_translucent_2">#2AFFFFFF</color>

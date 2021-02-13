@@ -50,12 +50,19 @@
         </receiver>
 
         <activity
-            android:name=".widgets.webcam.ConfigureWebcamWidgetActivity"
+            android:name=".widgets.ConfigureAppWidgetActivity"
             android:theme="@style/OctoTheme.Transparent">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.CREATE_SHORTCUT" />
+            </intent-filter>
         </activity>
+
+        <activity
+            android:name=".widgets.ExecuteWidgetActionActivity"
+            android:theme="@style/OctoTheme.Transparent" />
 
         <activity
             android:name=".MainActivity"

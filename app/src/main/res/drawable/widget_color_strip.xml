@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<clip xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="start">
+    <shape android:shape="rectangle">
+        <corners
+            android:bottomLeftRadius="@dimen/widget_corner_radius"
+            android:topLeftRadius="@dimen/widget_corner_radius" />
+        <solid android:color="#000000" />
+        <size android:width="@dimen/widget_corner_radius" />
+    </shape>
+</clip>

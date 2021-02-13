@@ -2,6 +2,7 @@ package de.crysxd.octoapp.print_controls.ui.widget.progress
 
 import android.animation.ObjectAnimator
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.drawable.ClipDrawable
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
+import de.crysxd.octoapp.base.ui.ColorTheme
 import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
@@ -94,6 +96,7 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
                     ObjectAnimator.ofInt(this, "level", level, (10000f * progress).roundToInt()).start()
                 }
 
+                view.progressBarFill.backgroundTintList = ColorStateList.valueOf(ColorTheme.activeColorTheme.dark)
                 view.textViewProgressPercent.text = progressText
                 view.textViewPrintName.text = it.job?.file?.display
                 view.textViewTimeSpent.text = it.progress?.printTime?.toLong()?.let { formatDuration(it) }

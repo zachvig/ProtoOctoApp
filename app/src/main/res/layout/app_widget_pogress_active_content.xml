@@ -1,4 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -18,9 +20,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|start"
-            android:text="80%"
-            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
-            android:textColor="@color/black" />
+            android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+            android:textColor="@color/black"
+            tools:text="80%" />
 
         <TextView
             android:id="@+id/title"
@@ -29,9 +31,9 @@
             android:layout_marginStart="@dimen/margin_0"
             android:gravity="center_vertical|start"
             android:maxLines="1"
-            android:text="Printing..."
-            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
-            android:textColor="@color/black_translucent" />
+            android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+            android:textColor="@color/black_translucent"
+            tools:text="Printing..." />
 
     </LinearLayout>
 
@@ -39,23 +41,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center|start"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
 
         <TextView
             android:id="@+id/eta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:text="1:42h left, ETA 23:45"
-            android:textColor="@color/black_translucent" />
+            android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
+            android:textColor="@color/black_translucent"
+            tools:text="1:42h left, ETA 23:45" />
 
         <ImageView
             android:id="@+id/etaIndicator"
+            android:layout_marginStart="@dimen/margin_0"
+            android:importantForAccessibility="no"
+            android:scaleX="0.66"
             android:layout_width="@dimen/eta_estimation_ball_diameter"
             android:layout_height="@dimen/eta_estimation_ball_diameter"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/margin_0_1"
-            android:src="@drawable/circle" />
+            android:scaleY="0.66"
+            android:src="@drawable/eta_indicator"
+            android:translationY="1dp" />
 
     </LinearLayout>
 

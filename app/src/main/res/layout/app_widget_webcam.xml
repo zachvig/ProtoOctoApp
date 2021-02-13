@@ -1,4 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -11,7 +13,9 @@
         android:background="@drawable/widget_background_dark"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="@dimen/margin_1">
+        android:paddingHorizontal="@dimen/margin_1"
+        android:paddingTop="@dimen/margin_1"
+        android:paddingBottom="@dimen/margin_2">
 
         <TextView
             android:id="@+id/noImageTitle"
@@ -20,7 +24,7 @@
             android:layout_gravity="center"
             android:layout_marginHorizontal="@dimen/margin_1"
             android:gravity="center"
-            android:text="No image available"
+            android:text="@string/app_widget___no_image"
             android:textAppearance="@style/OctoTheme.TextAppearance.Title"
             android:textColor="@color/white_translucent" />
 
@@ -30,9 +34,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="No image available"
             android:textAppearance="@style/OctoTheme.TextAppearance"
-            android:textColor="@color/white_translucent" />
+            android:textColor="@color/white_translucent"
+            tools:text="http://webcamstream" />
 
     </LinearLayout>
 
@@ -50,72 +54,67 @@
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:importantForAccessibility="no"
-        android:scaleType="centerInside" />
+        android:scaleType="centerInside"
+        android:src="@drawable/webcam_placeholder" />
 
     <TextView
         android:id="@+id/updatedAt"
+        style="@style/OctoTheme.AppWidget.Chip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
-        android:layout_margin="@dimen/margin_1"
-        android:background="@drawable/widget_chip_background"
-        android:gravity="end"
-        android:text="Updated 23:41"
-        android:textAppearance="@style/OctoTheme.TextAppearance"
-        android:textColor="@color/white" />
+        android:layout_gravity="top|end" />
 
     <TextView
         android:id="@+id/live"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/OctoTheme.AppWidget.Chip.Live"
         android:layout_gravity="top|end"
-        android:layout_margin="@dimen/margin_1"
-        android:background="@drawable/widget_chip_live_background"
-        android:paddingHorizontal="@dimen/margin_1"
-        android:paddingVertical="@dimen/margin_0"
-        android:paddingStart="@dimen/margin_2"
-        android:text="Live for 15s"
-        android:textAppearance="@style/OctoTheme.TextAppearance"
-        android:textColor="@color/white" />
+        android:visibility="gone"
+        tools:text="Live for 15s" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/margin_1"
-        android:orientation="horizontal">
+        android:divider="@drawable/margin_0_1_divider"
+        android:orientation="horizontal"
+        android:showDividers="middle">
 
         <ImageButton
             android:id="@+id/buttonLive"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="@dimen/margin_1"
-            android:background="@drawable/widget_chip_background"
+            style="@style/OctoTheme.AppWidget.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_round_videocam_24"
-            android:tint="@color/white" />
+            android:visibility="gone" />
 
         <ImageButton
             android:id="@+id/buttonRefresh"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="bottom|end"
-            android:layout_marginStart="@dimen/margin_1"
-            android:background="@drawable/widget_chip_background"
+            style="@style/OctoTheme.AppWidget.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:importantForAccessibility="no"
-            android:src="@drawable/ic_round_refresh_24"
-            android:tint="@color/white" />
+            android:src="@drawable/ic_round_refresh_24" />
 
         <ImageButton
             android:id="@+id/buttonCancelLive"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="bottom|end"
-            android:layout_marginStart="@dimen/margin_1"
-            android:background="@drawable/widget_chip_background"
+            style="@style/OctoTheme.AppWidget.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_round_videocam_off_24"
-            android:tint="@color/white" />
+            android:visibility="gone" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/widgetId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_1"
+        android:gravity="bottom|start"
+        android:textColor="#f00" />
 
 </FrameLayout>

@@ -2,24 +2,20 @@ package de.crysxd.octoapp.widgets.progress
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
-import android.content.ComponentName
 import android.content.Context
-import android.view.View
+import android.os.Bundle
 import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
+import de.crysxd.octoapp.base.ui.ColorTheme
+import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.base.usecase.CreateProgressAppWidgetDataUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Message
-import de.crysxd.octoapp.widgets.AppWidgetPreferences
-import de.crysxd.octoapp.widgets.createLaunchAppIntent
-import de.crysxd.octoapp.widgets.createUpdateIntent
-import de.crysxd.octoapp.widgets.createUpdatedNowText
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import de.crysxd.octoapp.widgets.*
+import de.crysxd.octoapp.widgets.AppWidgetPreferences.ACTIVE_WEB_URL_MARKER
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.lang.ref.WeakReference
 
@@ -29,69 +25,163 @@ class ProgressAppWidget : AppWidgetProvider() {
         notifyWidgetDataChanged()
     }
 
+    override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, newOptions: Bundle) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+        AppWidgetPreferences.setWidgetDimensionsForWidgetId(appWidgetId, newOptions)
+        updateLayout(appWidgetId, context, appWidgetManager)
+    }
+
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         // When the user deletes the widget, delete the preference associated with it.
         for (appWidgetId in appWidgetIds) {
-            lastUpdateJobs[appWidgetId]?.get()?.cancel()
             AppWidgetPreferences.deletePreferencesForWidgetId(appWidgetId)
         }
     }
 
     companion object {
-        internal const val REFRESH_ACTION = "de.crysxd.octoapp.widgets.ACTION_REFRESH"
-        internal const val ARG_WIDGET_ID = "widgetId"
-        private var lastUpdateJobs = mutableMapOf<Int, WeakReference<Job>>()
+        private var lastUpdateJobs = mutableMapOf<String, WeakReference<Job>>()
+
+        internal fun notifyWidgetOffline() {
+            Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.let {
+                notifyWidgetOffline(it.webUrl)
+            }
+        }
+
+        internal fun cancelAllUpdates() {
+            lastUpdateJobs.entries.toList().forEach {
+                it.value.get()?.cancel()
+                lastUpdateJobs.remove(it.key)
+            }
+        }
 
         internal fun notifyWidgetDataChanged(currentMessage: Message.CurrentMessage) {
+            // Cancel last update job and start new one
             Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.let {
                 GlobalScope.launch {
                     try {
                         val data = Injector.get().createProgressAppWidgetDataUseCase()
                             .execute(CreateProgressAppWidgetDataUseCase.Params(currentMessage = currentMessage, webUrl = it.webUrl))
                         notifyWidgetDataChanged(data)
+                    } catch (e: CancellationException) {
+                        Timber.i("Update cancelled")
+                        return@launch
                     } catch (e: Exception) {
                         Timber.e(e)
-                        // TODO push error
+                        notifyWidgetOffline(it.webUrl)
                     }
                 }
             }
         }
 
         internal fun notifyWidgetDataChanged() {
-            Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.let {
-                GlobalScope.launch {
+            // General update, we update all instances for which there is at least one widget.
+            Injector.get().octorPrintRepository().getAll().filter {
+                // Do not update instances where we don't have any widgets
+                getAppWidgetIdsForWebUrl(it.webUrl).isNotEmpty()
+            }.forEach {
+                // Cancel old update, launch update
+                lastUpdateJobs[it.webUrl]?.get()?.cancel()
+                val job = GlobalScope.launch {
                     try {
+                        notifyWidgetLoading(it.webUrl)
                         val data = Injector.get().createProgressAppWidgetDataUseCase()
                             .execute(CreateProgressAppWidgetDataUseCase.Params(currentMessage = null, webUrl = it.webUrl))
                         notifyWidgetDataChanged(data)
+                    } catch (e: CancellationException) {
+                        Timber.i("Update cancelled")
+                        return@launch
                     } catch (e: Exception) {
                         Timber.e(e)
-                        // TODO push error
+                        notifyWidgetOffline(it.webUrl)
                     }
                 }
+                lastUpdateJobs[it.webUrl] = WeakReference(job)
             }
         }
 
-        internal fun notifyWidgetDataChanged(data: CreateProgressAppWidgetDataUseCase.Result) {
+        private fun notifyWidgetDataChanged(data: CreateProgressAppWidgetDataUseCase.Result) {
             val context = Injector.get().context()
-            val manager = AppWidgetManager.getInstance(context)
-            manager.getAppWidgetIds(ComponentName(context, ProgressAppWidget::class.java)).forEach {
-                updateAppWidget(context, it, data)
+            getAppWidgetIdsForWebUrl(data.webUrl).forEach {
+                updateAppWidget(context, it, data, data.webUrl)
             }
         }
 
-        internal fun updateAppWidget(context: Context, appWidgetId: Int, data: CreateProgressAppWidgetDataUseCase.Result) {
-            Timber.i("Updating progress widget $appWidgetId with data $data")
+        private fun notifyWidgetOffline(webUrl: String) {
+            Timber.i("Widgets for instance $webUrl are offline")
+            val context = Injector.get().context()
+            getAppWidgetIdsForWebUrl(webUrl).forEach {
+                updateAppWidget(context, it, data = null, webUrl = webUrl)
+            }
+        }
+
+        private fun notifyWidgetLoading(webUrl: String) {
+            Timber.i("Widgets for instance $webUrl are loading")
+            val context = Injector.get().context()
+            getAppWidgetIdsForWebUrl(webUrl).forEach {
+                updateAppWidget(context, it, data = null, webUrl = webUrl, loading = true)
+            }
+        }
+
+        private fun getAppWidgetIdsForWebUrl(webUrl: String): List<Int> {
+            val manager = AppWidgetManager.getInstance(Injector.get().context())
+            val isActiveWebUrl = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl == webUrl
+            val filter = { widgetId: Int -> manager.getAppWidgetInfo(widgetId)?.provider?.className == ProgressAppWidget::class.java.name }
+            val fixed = AppWidgetPreferences.getWidgetIdsForInstance(webUrl).filter(filter)
+            val dynamic = AppWidgetPreferences.getWidgetIdsForInstance(ACTIVE_WEB_URL_MARKER).filter(filter).takeIf { isActiveWebUrl }
+            return listOfNotNull(fixed, dynamic).flatten()
+        }
+
+        private fun updateAppWidget(context: Context, appWidgetId: Int, data: CreateProgressAppWidgetDataUseCase.Result?, webUrl: String, loading: Boolean = false) {
             val manager = AppWidgetManager.getInstance(context)
+            if (data?.isLive == true) {
+                Timber.v("Updating progress widget $appWidgetId with data $data")
+            } else {
+                Timber.i("Updating progress widget $appWidgetId with data $data")
+            }
+
+            when {
+                data != null -> updateAppWidgetForData(manager, context, appWidgetId, data)
+                loading -> updateAppWidgetForLoading(manager, context, appWidgetId)
+                else -> updateAppWidgetForOffline(manager, context, appWidgetId, webUrl)
+            }
+        }
+
+        private fun updateAppWidgetForOffline(manager: AppWidgetManager, context: Context, appWidgetId: Int, webUrl: String) {
+            val views = RemoteViews(context.packageName, R.layout.app_widget_pogress_idle)
+            val text = createUpdateFailedText(context, appWidgetId)
+            views.setViewVisibility(R.id.live, false)
+            views.setTextViewText(R.id.title, context.getString(R.string.app_widget___no_data))
+            views.setTextViewText(R.id.updatedAt, text)
+            views.setOnClickPendingIntent(R.id.buttonRefresh, createUpdateIntent(context, appWidgetId))
+            views.setOnClickPendingIntent(R.id.root, createLaunchAppIntent(context, webUrl))
+            views.setViewVisibility(R.id.updatedAt, text.isNotBlank())
+            applyScaling(appWidgetId, views)
+            applyColorTheme(views, webUrl)
+            applyDebugOptions(views, appWidgetId)
+            manager.partiallyUpdateAppWidget(appWidgetId, views)
+        }
+
+        private fun updateAppWidgetForLoading(manager: AppWidgetManager, context: Context, appWidgetId: Int) {
+            val views = RemoteViews(context.packageName, R.layout.app_widget_pogress_idle)
+            views.setViewVisibility(R.id.updatedAt, true)
+            views.setViewVisibility(R.id.live, false)
+            views.setTextViewText(R.id.updatedAt, context.getString(R.string.app_widget___updating))
+            applyScaling(appWidgetId, views)
+            applyDebugOptions(views, appWidgetId)
+            manager.partiallyUpdateAppWidget(appWidgetId, views)
+        }
+
+        private fun updateAppWidgetForData(manager: AppWidgetManager, context: Context, appWidgetId: Int, data: CreateProgressAppWidgetDataUseCase.Result) {
+            AppWidgetPreferences.setLastUpdateTime(appWidgetId)
             val progress = data.printProgress?.let { context.getString(R.string.x_percent, it * 100).replace(" ", "") }
             val eta = runBlocking {
                 data.printTimeLeft?.let { Injector.get().formatEtaUseCase().execute(it) }
             }
             val etaIndicatorColor = data.printTimeLeftOrigin.asPrintTimeLeftOriginColor()
             val views = if (data.isPrinting || data.isCancelling || data.isPaused || data.isPausing) {
-                RemoteViews(context.packageName, R.layout.app_widget_pogress_active_normal)
+                RemoteViews(context.packageName, R.layout.app_widget_pogress_active)
             } else {
-                RemoteViews(context.packageName, R.layout.app_widget_pogress_idle_normal)
+                RemoteViews(context.packageName, R.layout.app_widget_pogress_idle)
             }
 
             views.setTextViewText(R.id.progress, progress)
@@ -99,20 +189,60 @@ class ProgressAppWidget : AppWidgetProvider() {
             views.setTextViewText(R.id.updatedAt, createUpdatedNowText())
             views.setTextViewText(
                 R.id.title, when {
-                    data.isPausing -> context.getString(R.string.notification_pausing_title)
-                    data.isPaused -> context.getString(R.string.notification_paused_title)
-                    data.isCancelling -> context.getString(R.string.notification_cancelling_title)
-                    data.isPrinting -> context.getString(R.string.notification_printing_title)
-                    else -> ""
+                    data.isPausing -> context.getString(R.string.print_notification___pausing_title)
+                    data.isPaused -> context.getString(R.string.print_notification___paused_title)
+                    data.isCancelling -> context.getString(R.string.print_notification___cancelling_title)
+                    data.isPrinting -> context.getString(R.string.print_notification___printing_title)
+                    data.isPrinterConnected -> context.getString(R.string.app_widget___idle)
+                    else -> context.getString(R.string.app_widget___no_printer)
                 }
             )
-            views.setViewVisibility(R.id.updatedAt, if (data.isLive) View.GONE else View.VISIBLE)
-            views.setViewVisibility(R.id.live, if (data.isLive) View.VISIBLE else View.GONE)
-            views.setViewVisibility(R.id.eta, if (eta.isNullOrBlank()) View.GONE else View.VISIBLE)
+            views.setViewVisibility(R.id.updatedAt, !data.isLive)
+            views.setViewVisibility(R.id.live, data.isLive)
+            views.setViewVisibility(R.id.eta, !eta.isNullOrBlank())
+            views.setViewVisibility(R.id.buttonResume, data.isPaused && isLargeSize(appWidgetId))
+            views.setViewVisibility(R.id.buttonPause, data.isPrinting && isLargeSize(appWidgetId))
+            views.setViewVisibility(R.id.buttonCancel, isLargeSize(appWidgetId))
+            views.setViewVisibility(R.id.buttonRefresh, isLargeSize(appWidgetId))
+            views.setBoolean(R.id.buttonPause, "setEnabled", !data.isPaused && !data.isPausing)
+            views.setBoolean(R.id.buttonCancel, "setEnabled", !data.isCancelling)
             views.setOnClickPendingIntent(R.id.root, createLaunchAppIntent(context, data.webUrl))
             views.setOnClickPendingIntent(R.id.buttonRefresh, createUpdateIntent(context, appWidgetId))
+            views.setOnClickPendingIntent(R.id.buttonCancel, ExecuteWidgetActionActivity.createCancelTaskPendingIntent(context))
+            views.setOnClickPendingIntent(R.id.buttonPause, ExecuteWidgetActionActivity.createPauseTaskPendingIntent(context))
+            views.setOnClickPendingIntent(R.id.buttonResume, ExecuteWidgetActionActivity.createResumeTaskPendingIntent(context))
             views.setInt(R.id.etaIndicator, "setColorFilter", ContextCompat.getColor(context, etaIndicatorColor))
+            applyColorTheme(views, data.webUrl)
+            applyDebugOptions(views, appWidgetId)
+            applyScaling(appWidgetId, views)
             manager.updateAppWidget(appWidgetId, views)
         }
+
+        private fun applyColorTheme(views: RemoteViews, webUrl: String) {
+            val colorTheme = Injector.get().octorPrintRepository().getAll().firstOrNull { it.webUrl == webUrl }?.colorTheme ?: ColorTheme.default
+            views.setInt(R.id.colorStrip, "setImageLevel", 2500)
+            views.setViewVisibility(R.id.colorStrip, colorTheme != ColorTheme.default)
+            views.setInt(R.id.colorStrip, "setColorFilter", colorTheme.dark)
+        }
+
+        private fun updateLayout(appWidgetId: Int, context: Context, manager: AppWidgetManager) {
+            val views = RemoteViews(context.packageName, R.layout.app_widget_pogress_idle)
+            applyScaling(appWidgetId, views)
+            manager.partiallyUpdateAppWidget(appWidgetId, views)
+        }
+
+        private fun applyScaling(appWidgetId: Int, views: RemoteViews) {
+            Timber.d("Scaling app widget for ${getWidgetWidth(appWidgetId)}")
+            if (!isLargeSize(appWidgetId)) {
+                views.setViewVisibility(R.id.buttonResume, false)
+                views.setViewVisibility(R.id.buttonPause, false)
+                views.setViewVisibility(R.id.buttonCancel, false)
+            }
+            views.setViewVisibility(R.id.buttonRefresh, isMediumSize(appWidgetId))
+        }
+
+        private fun isMediumSize(appWidgetId: Int) = getWidgetWidth(appWidgetId) > 250
+        private fun isLargeSize(appWidgetId: Int) = getWidgetWidth(appWidgetId) > 350
+        private fun getWidgetWidth(appWidgetId: Int) = AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first
     }
 }

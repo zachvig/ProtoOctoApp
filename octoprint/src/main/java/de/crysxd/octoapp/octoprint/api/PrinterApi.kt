@@ -37,7 +37,7 @@ interface PrinterApi {
         suspend fun executeToolCommand(command: ToolCommand) {
             when (command) {
                 is ToolCommand.SetTargetTemperatureToolCommand -> postInterpolatedMessage(toolTargetTemp = command.targets.tool0.toFloat())
-                is ToolCommand.SetTemperatureOffsetToolCommand -> postInterpolatedMessage(bedOffset = command.offsets.tool0.toFloat())
+                is ToolCommand.SetTemperatureOffsetToolCommand -> postInterpolatedMessage(toolOffset = command.offsets.tool0.toFloat())
             }
 
             wrapped.executeToolCommand(command)

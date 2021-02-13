@@ -6,9 +6,9 @@ import android.os.Handler
 import android.os.Looper
 import android.text.method.LinkMovementMethod
 import android.view.Gravity
+import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.updateLayoutParams
@@ -44,7 +44,7 @@ abstract class OctoActivity : LocaleActivity() {
     private var dialog: AlertDialog? = null
     abstract val octoToolbar: OctoToolbar
     abstract val octo: OctoView
-    abstract val coordinatorLayout: CoordinatorLayout
+    abstract val rootLayout: FrameLayout
     private val handler = Handler(Looper.getMainLooper())
     private val snackbarMessageChannel = ConflatedBroadcastChannel<Message.SnackbarMessage?>()
 
@@ -83,7 +83,7 @@ abstract class OctoActivity : LocaleActivity() {
 
     private fun doShowSnackbar(message: Message.SnackbarMessage) = handler.post {
         snackbarMessageChannel.offer(null)
-        Snackbar.make(coordinatorLayout, message.text(this), message.duration).apply {
+        Snackbar.make(rootLayout, message.text(this), message.duration).apply {
             message.actionText(this@OctoActivity)?.let {
                 setAction(it) { message.action(this@OctoActivity) }
             }
@@ -103,7 +103,7 @@ abstract class OctoActivity : LocaleActivity() {
             setActionTextColor(foregroundColor)
         }.also {
             it.view.translationY = octoToolbar.top.toFloat()
-            it.view.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+            it.view.updateLayoutParams<FrameLayout.LayoutParams> {
                 gravity = Gravity.TOP
             }
         }.show()

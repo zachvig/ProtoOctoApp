@@ -66,8 +66,7 @@ class SwitchInstanceMenuItem(private val webUrl: String) : MenuItem {
     override suspend fun isVisible(destinationId: Int) = instanceInfo != null && isQuickSwitchEnabled &&
             Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl != webUrl
 
-    override suspend fun getTitle(context: Context) = instanceInfo?.settings?.appearance?.name?.takeIf { it.isNotBlank() }
-        ?: webUrl.replace("http://", "").replace("https://", "")
+    override suspend fun getTitle(context: Context) = instanceInfo?.label ?: webUrl
 
     override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
         val repo = Injector.get().octorPrintRepository()

@@ -132,7 +132,7 @@ class AutoConnectPrinterMenuItem : ToggleMenuItem() {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_hdr_auto_24px
 
-    override suspend fun getTitle(context: Context) = "Auto connect printer"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_auto_connect_printer)
     override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
         Injector.get().octoPreferences().isAutoConnectPrinter = enabled
     }

@@ -13,7 +13,7 @@ class GetAppLanguageUseCase @Inject constructor(
 ) : UseCase<Unit, GetAppLanguageUseCase.Result>() {
 
     override suspend fun doExecute(param: Unit, timber: Timber.Tree): Result {
-        val confirmedLanguages = listOf("de") // If device language is listed here, it will be used as default
+        val confirmedLanguages = listOf("de", "fr") // If device language is listed here, it will be used as default
         val deviceLanguage = ConfigurationCompat.getLocales(Resources.getSystem().configuration)[0].language
         val appLanguage = octoPreferences.appLanguage ?: deviceLanguage.takeIf { confirmedLanguages.contains(it) } ?: "en"
 
@@ -24,7 +24,7 @@ class GetAppLanguageUseCase @Inject constructor(
             appLanguage != "en" -> "Use OctoApp in English"
             deviceLanguage == "de" -> "Nutze OctoApp in Deutsch"
             deviceLanguage == "nl" -> "Gebruik in het Nederlands (Beta)"
-            deviceLanguage == "fr" -> "Utilisation en français (Beta)"
+            deviceLanguage == "fr" -> "Utilisation en français"
             deviceLanguage == "es" -> "Uso en español (Beta)"
             deviceLanguage == "it" -> "Uso in italiano (Beta)"
             else -> null

@@ -2,21 +2,21 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item>
-        <shape android:shape="rectangle">
-
-            <padding
-                android:bottom="@dimen/margin_0"
-                android:left="@dimen/margin_1"
-                android:right="@dimen/margin_1"
-                android:top="@dimen/margin_0" />
-            <solid android:color="@color/black_translucent_2" />
-            <corners android:radius="@dimen/widget_corner_radius" />
-
+        <shape android:shape="oval">
+            <solid android:color="@color/app_widget_button_background" />
+            <size
+                android:width="40dp"
+                android:height="40dp" />
         </shape>
     </item>
 
     <item>
-        <ripple android:color="@color/accent" />
+        <ripple android:color="@color/accent">
+            <item android:id="@android:id/mask">
+                <shape android:shape="oval">
+                    <solid android:color="#ffffff" />
+                </shape>
+            </item>
+        </ripple>
     </item>
-
 </layer-list>
