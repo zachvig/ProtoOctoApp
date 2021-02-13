@@ -47,9 +47,6 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
     }
 
     companion object {
-        internal const val REFRESH_ACTION = "de.crysxd.octoapp.widgets.ACTION_REFRESH"
-        internal const val ARG_WIDGET_ID = "widgetId"
-        internal const val ARG_PLAY_LIVE = "playLive"
         private const val LIVE_FOR_SECS = 30
         private const val BITMAP_WIDTH = 1080
         private var lastUpdateJobs = mutableMapOf<Int, WeakReference<Job>>()
@@ -75,6 +72,8 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
         private fun showUpdating(context: Context, appWidgetId: Int) {
             val views = RemoteViews(context.packageName, R.layout.app_widget_webcam)
             views.setViewVisibility(R.id.updatedAt, true)
+            views.setViewVisibility(R.id.live, false)
+            views.setImageViewBitmap(R.id.webcamContentPlaceholder, generateImagePlaceHolder(appWidgetId))
             views.setTextViewText(R.id.updatedAt, "Updating...")
             AppWidgetManager.getInstance(context).partiallyUpdateAppWidget(appWidgetId, views)
         }

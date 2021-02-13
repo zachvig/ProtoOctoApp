@@ -48,6 +48,13 @@ class ProgressAppWidget : AppWidgetProvider() {
             }
         }
 
+        internal fun cancelAllUpdates() {
+            lastUpdateJobs.entries.toList().forEach {
+                it.value.get()?.cancel()
+                lastUpdateJobs.remove(it.key)
+            }
+        }
+
         internal fun notifyWidgetDataChanged(currentMessage: Message.CurrentMessage) {
             // Cancel last update job and start new one
             Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.let {

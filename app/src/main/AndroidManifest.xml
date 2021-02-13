@@ -58,7 +58,7 @@
         </activity>
 
         <activity
-            android:name=".widgets.progress.ExecuteWidgetActionActivity"
+            android:name=".widgets.ExecuteWidgetActionActivity"
             android:theme="@style/OctoTheme.Transparent" />
 
         <activity

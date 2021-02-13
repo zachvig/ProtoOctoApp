@@ -32,6 +32,11 @@ internal fun updateAllWidgets() {
     ProgressAppWidget.notifyWidgetDataChanged()
 }
 
+internal fun cancelAllUpdates() {
+    BaseWebcamAppWidget.cancelAllUpdates()
+    ProgressAppWidget.cancelAllUpdates()
+}
+
 internal fun createLaunchAppIntent(context: Context, webUrl: String?) = PendingIntent.getActivity(
     context,
     "launch_main_with_url_$webUrl".hashCode(),
@@ -43,17 +48,8 @@ internal fun createLaunchAppIntent(context: Context, webUrl: String?) = PendingI
     PendingIntent.FLAG_UPDATE_CURRENT
 )
 
-internal fun createUpdateIntent(context: Context, widgetId: Int, playLive: Boolean = false) = PendingIntent.getBroadcast(
-    context,
-    "$widgetId$playLive".hashCode(),
-    Intent(BaseWebcamAppWidget.REFRESH_ACTION).also {
-        if (playLive) {
-            it.putExtra(BaseWebcamAppWidget.ARG_WIDGET_ID, widgetId)
-            it.putExtra(BaseWebcamAppWidget.ARG_PLAY_LIVE, playLive)
-        }
-    },
-    PendingIntent.FLAG_UPDATE_CURRENT
-)
+internal fun createUpdateIntent(context: Context, widgetId: Int, playLive: Boolean = false) =
+    ExecuteWidgetActionActivity.createRefreshTaskPendingIntent(context, widgetId, playLive)
 
 internal fun createUpdatedNowText() = getTime()
 
