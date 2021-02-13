@@ -50,7 +50,7 @@ internal fun createUpdateIntent(context: Context, widgetId: Int, playLive: Boole
     PendingIntent.FLAG_UPDATE_CURRENT
 )
 
-internal fun createUpdatedNowText() = "Updated at ${getTime()}"
+internal fun createUpdatedNowText() = getTime()
 
 internal fun getTime() = DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
 

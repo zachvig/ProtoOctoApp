@@ -70,6 +70,15 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             }
         }
 
+        private fun showUpdating(context: Context, appWidgetId: Int) {
+            val views = RemoteViews(context.packageName, R.layout.app_widget_webcam)
+            views.setViewVisibility(R.id.buttonRefresh, false)
+            views.setViewVisibility(R.id.buttonLive, false)
+            views.setViewVisibility(R.id.updatedAt, true)
+            views.setTextViewText(R.id.updatedAt, "Updating...")
+            AppWidgetManager.getInstance(context).partiallyUpdateAppWidget(appWidgetId, views)
+        }
+
         internal fun updateAppWidget(context: Context, appWidgetId: Int, playLive: Boolean = false) {
             lastUpdateJobs[appWidgetId]?.get()?.cancel()
             lastUpdateJobs[appWidgetId] = WeakReference(GlobalScope.launch {
@@ -86,18 +95,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                     webCamSettings = Injector.get().getWebcamSettingsUseCase().execute(octoPrintInfo)
 
                     // Push loading state
-                    appWidgetManager.updateAppWidget(
-                        appWidgetId, createViews(
-                            context = context,
-                            webUrl = webUrl,
-                            widgetId = appWidgetId,
-                            webcamSettings = webCamSettings,
-                            updatedAtText = if (playLive) createLiveForText(0) else "Updating...",
-                            live = false,
-                            frame = null
-                        )
-                    )
-
+                    showUpdating(context, appWidgetId)
 
                     if (playLive) {
                         doLiveStream(context, octoPrintInfo, webCamSettings, webUrl, appWidgetManager, appWidgetId)
