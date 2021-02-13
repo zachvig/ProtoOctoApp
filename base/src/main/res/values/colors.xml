@@ -26,6 +26,7 @@
     <color name="menu_pin_foreground">@color/white</color>
     <color name="menu_pin_background">@color/black_translucent_2</color>
     <color name="progress_bar_track">@color/black_translucent_2</color>
+    <color name="app_widget_button_background">#48000000</color>
 
     <color name="default_color_scheme">@color/primary</color>
     <color name="default_color_scheme_light">#D0F3CC</color>

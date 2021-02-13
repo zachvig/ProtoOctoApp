@@ -55,7 +55,7 @@
         android:background="@drawable/widget_button_background"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_round_refresh_24"
-        android:tint="@color/black_translucent" />
+        android:tint="@color/white" />
 
     <TextView
         android:id="@+id/widgetId"
