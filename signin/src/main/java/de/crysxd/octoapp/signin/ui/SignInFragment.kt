@@ -14,9 +14,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.ktx.Firebase
@@ -24,13 +22,10 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.composeErrorMessage
-import de.crysxd.octoapp.base.ui.BaseFragment
-import de.crysxd.octoapp.base.ui.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootingFragmentArgs
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.ext.setTextAppearanceCompat
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchOctoPrintMenu
@@ -40,7 +35,6 @@ import de.crysxd.octoapp.octoprint.exceptions.BasicAuthRequiredException
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintHttpsException
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.databinding.FragmentSigninBinding
-import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInViewState
 import de.crysxd.octoapp.signin.usecases.SignInUseCase.Warning.TooNewServerVersion
@@ -48,7 +42,7 @@ import timber.log.Timber
 import java.net.URL
 import java.security.cert.Certificate
 
-class SignInFragment : BaseFragment(), InsetAwareScreen {
+class \SignInFragment : BaseFragment(), InsetAwareScreen {
 
     private lateinit var binding: FragmentSigninBinding
     override val viewModel: SignInViewModel by injectViewModel()
