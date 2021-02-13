@@ -3,6 +3,7 @@ package de.crysxd.octoapp.widgets.progress
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.os.Bundle
 import android.view.View
 import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
@@ -25,6 +26,11 @@ class ProgressAppWidget : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         notifyWidgetDataChanged()
+    }
+
+    override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, newOptions: Bundle) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+        AppWidgetPreferences.setWidgetDimensionsForWidgetId(appWidgetId, newOptions)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
@@ -129,8 +135,10 @@ class ProgressAppWidget : AppWidgetProvider() {
             val views = RemoteViews(context.packageName, R.layout.app_widget_pogress_idle_normal)
             val text = createUpdateFailedText(appWidgetId)
             views.setViewVisibility(R.id.live, View.GONE)
+            views.setTextViewText(R.id.idleMessage, "No data")
             views.setTextViewText(R.id.updatedAt, text)
-            views.setViewVisibility(R.id.updatedAt, if (text.isNullOrBlank()) View.GONE else View.VISIBLE)
+            views.setOnClickPendingIntent(R.id.buttonRefresh, createUpdateIntent(context, appWidgetId))
+            views.setViewVisibility(R.id.updatedAt, !text.isNullOrBlank())
             manager.partiallyUpdateAppWidget(appWidgetId, views)
         }
 
@@ -167,12 +175,12 @@ class ProgressAppWidget : AppWidgetProvider() {
                     else -> ""
                 }
             )
-            views.setViewVisibility(R.id.colorStrip, if (data.colorTheme == ColorTheme.default) View.GONE else View.VISIBLE)
-            views.setViewVisibility(R.id.updatedAt, if (data.isLive) View.GONE else View.VISIBLE)
-            views.setViewVisibility(R.id.live, if (data.isLive) View.VISIBLE else View.GONE)
-            views.setViewVisibility(R.id.eta, if (eta.isNullOrBlank()) View.GONE else View.VISIBLE)
-            views.setViewVisibility(R.id.buttonResume, if (data.isPaused) View.VISIBLE else View.GONE)
-            views.setViewVisibility(R.id.buttonPause, if (data.isPrinting) View.VISIBLE else View.GONE)
+            views.setViewVisibility(R.id.colorStrip, data.colorTheme != ColorTheme.default)
+            views.setViewVisibility(R.id.updatedAt, !data.isLive)
+            views.setViewVisibility(R.id.live, data.isLive)
+            views.setViewVisibility(R.id.eta, !eta.isNullOrBlank())
+            views.setViewVisibility(R.id.buttonResume, data.isPaused)
+            views.setViewVisibility(R.id.buttonPause, data.isPrinting)
             views.setBoolean(R.id.buttonPause, "setEnabled", !data.isPaused && !data.isPausing)
             views.setBoolean(R.id.buttonCancel, "setEnabled", !data.isCancelling)
             views.setOnClickPendingIntent(R.id.root, createLaunchAppIntent(context, data.webUrl))

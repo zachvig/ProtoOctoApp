@@ -1,6 +1,8 @@
 package de.crysxd.octoapp.widgets
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
+import android.os.Bundle
 import androidx.core.content.edit
 import de.crysxd.octoapp.base.di.Injector
 import timber.log.Timber
@@ -29,9 +31,19 @@ object AppWidgetPreferences {
         putInt("${widgetId}_image_height", height)
     }
 
+    fun setWidgetDimensionsForWidgetId(widgetId: Int, newOptions: Bundle) = sharedPreferences.edit {
+        putInt("${widgetId}_width", newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, 1))
+        putInt("${widgetId}_height", newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 1))
+    }
+
     fun getImageDimensionsForWidgetId(widgetId: Int) = Pair(
         sharedPreferences.getInt("${widgetId}_image_width", 1280),
         sharedPreferences.getInt("${widgetId}_image_height", 720)
+    )
+
+    fun getWidgetDimensionsForWidgetId(widgetId: Int) = Pair(
+        sharedPreferences.getInt("${widgetId}_width", 1),
+        sharedPreferences.getInt("${widgetId}_height", 1)
     )
 
     fun setLastUpdateTime(widgetId: Int) = sharedPreferences.edit {

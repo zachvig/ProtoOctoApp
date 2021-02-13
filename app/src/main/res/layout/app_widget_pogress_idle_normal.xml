@@ -26,7 +26,7 @@
             android:id="@+id/idleMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Printer is idle"
+            android:text="Updating..."
             android:textAppearance="@style/OctoTheme.TextAppearance.Title"
             android:textColor="@color/black" />
 
@@ -34,7 +34,8 @@
             android:id="@+id/updatedAt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black_translucent" />
+            android:textColor="@color/black_translucent"
+            android:visibility="gone" />
 
     </LinearLayout>
 

@@ -11,7 +11,9 @@
         android:background="@drawable/widget_background_dark"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="@dimen/margin_1">
+        android:paddingHorizontal="@dimen/margin_1"
+        android:paddingTop="@dimen/margin_1"
+        android:paddingBottom="@dimen/margin_2">
 
         <TextView
             android:id="@+id/noImageTitle"
@@ -60,7 +62,7 @@
         android:layout_margin="@dimen/margin_1"
         android:background="@drawable/widget_chip_background"
         android:gravity="end"
-        android:text="Updated 23:41"
+        android:text="Updating..."
         android:textAppearance="@style/OctoTheme.TextAppearance"
         android:textColor="@color/white" />
 
@@ -70,14 +72,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
         android:layout_margin="@dimen/margin_1"
-        android:visibility="gone"
         android:background="@drawable/widget_chip_live_background"
         android:paddingHorizontal="@dimen/margin_1"
         android:paddingVertical="@dimen/margin_0"
         android:paddingStart="@dimen/margin_2"
         android:text="Live for 15s"
         android:textAppearance="@style/OctoTheme.TextAppearance"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -90,12 +92,12 @@
             android:id="@+id/buttonLive"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:visibility="gone"
             android:layout_marginStart="@dimen/margin_1"
             android:background="@drawable/widget_button_background"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_round_videocam_24"
-            android:tint="@color/white" />
+            android:tint="@color/white"
+            android:visibility="gone" />
 
         <ImageButton
             android:id="@+id/buttonRefresh"
@@ -114,11 +116,11 @@
             android:layout_height="40dp"
             android:layout_gravity="bottom|end"
             android:layout_marginStart="@dimen/margin_1"
-            android:visibility="gone"
             android:background="@drawable/widget_button_background"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_round_videocam_off_24"
-            android:tint="@color/white" />
+            android:tint="@color/white"
+            android:visibility="gone" />
     </LinearLayout>
 
 </FrameLayout>

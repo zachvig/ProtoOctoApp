@@ -5,7 +5,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.graphics.Bitmap
-import android.view.View
+import android.os.Bundle
 import android.widget.RemoteViews
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
@@ -28,6 +28,12 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
         for (appWidgetId in appWidgetIds) {
             updateAppWidget(context, appWidgetId)
         }
+    }
+
+    override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, newOptions: Bundle) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+        AppWidgetPreferences.setWidgetDimensionsForWidgetId(appWidgetId, newOptions)
+        updateLayout(appWidgetId, context, appWidgetManager)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
@@ -115,8 +121,8 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                 )
                 views.setOnClickPendingIntent(R.id.buttonRefresh, createUpdateIntent(context, appWidgetId, false))
                 views.setOnClickPendingIntent(R.id.buttonLive, createUpdateIntent(context, appWidgetId, true))
-                views.setViewVisibility(R.id.buttonRefresh, if (hasControls) View.VISIBLE else View.GONE)
-                views.setViewVisibility(R.id.buttonLive, if (hasControls) View.VISIBLE else View.GONE)
+                views.setViewVisibility(R.id.buttonRefresh, hasControls)
+                views.setViewVisibility(R.id.buttonLive, hasControls)
                 appWidgetManager.updateAppWidget(appWidgetId, views)
                 frame?.let {
                     AppWidgetPreferences.setImageDimensionsForWidgetId(appWidgetId, it.width, it.height)
@@ -163,7 +169,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                             live = true,
                             frame = savedFrame
                         )
-                        views.setViewVisibility(R.id.buttonCancelLive, View.VISIBLE)
+                        views.setViewVisibility(R.id.buttonCancelLive, true)
                         views.setOnClickPendingIntent(R.id.buttonCancelLive, createUpdateIntent(context, appWidgetId, false))
                         appWidgetManager.updateAppWidget(appWidgetId, views)
                         Timber.v("Pushed frame")
@@ -200,15 +206,26 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             views.setTextViewText(R.id.noImageUrl, webcamSettings?.streamUrl)
             views.setTextViewText(R.id.updatedAt, updatedAtText)
             views.setTextViewText(R.id.live, updatedAtText)
-            views.setViewVisibility(R.id.updatedAt, if (live) View.GONE else View.VISIBLE)
-            views.setViewVisibility(R.id.live, if (live) View.VISIBLE else View.GONE)
-            views.setViewVisibility(R.id.buttonCancelLive, View.GONE)
-            views.setViewVisibility(R.id.buttonRefresh, View.GONE)
-            views.setViewVisibility(R.id.buttonLive, View.GONE)
-            views.setViewVisibility(R.id.updatedAt, if (updatedAtText.isNullOrBlank()) View.GONE else View.VISIBLE)
-            views.setViewVisibility(R.id.noImageCont, if (frame == null) View.VISIBLE else View.GONE)
+            views.setViewVisibility(R.id.updatedAt, !live)
+            views.setViewVisibility(R.id.live, live)
+            views.setViewVisibility(R.id.buttonCancelLive, false)
+            views.setViewVisibility(R.id.buttonRefresh, false)
+            views.setViewVisibility(R.id.buttonLive, false)
+            views.setViewVisibility(R.id.updatedAt, !updatedAtText.isNullOrBlank())
+            views.setViewVisibility(R.id.noImageCont, frame == null)
             views.setOnClickPendingIntent(R.id.root, createLaunchAppIntent(context, webUrl))
+            applyScaling(widgetId, views)
             return views
+        }
+
+        private fun updateLayout(appWidgetId: Int, context: Context, manager: AppWidgetManager) {
+            val views = RemoteViews(context.packageName, R.layout.app_widget_webcam)
+            applyScaling(appWidgetId, views)
+            manager.partiallyUpdateAppWidget(appWidgetId, views)
+        }
+
+        private fun applyScaling(appWidgetId: Int, views: RemoteViews) {
+            views.setViewVisibility(R.id.noImageUrl, AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first > 190)
         }
 
         private fun generateImagePlaceHolder(widgetId: Int) = AppWidgetPreferences.getImageDimensionsForWidgetId(widgetId).let {
