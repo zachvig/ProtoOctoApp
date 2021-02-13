@@ -27,6 +27,11 @@ internal fun updateAppWidget(context: Context, widgetId: Int) {
     }
 }
 
+internal fun updateAllWidgets() {
+    BaseWebcamAppWidget.notifyWidgetDataChanged()
+    ProgressAppWidget.notifyWidgetDataChanged()
+}
+
 internal fun createLaunchAppIntent(context: Context, webUrl: String?) = PendingIntent.getActivity(
     context,
     "launch_main_with_url_$webUrl".hashCode(),
