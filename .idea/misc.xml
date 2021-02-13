@@ -3,9 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/webcam_placeholder.xml" value="0.4197916666666667" />
+        <entry key="app/src/main/res/drawable/widget_background_dark.xml" value="0.4197916666666667" />
         <entry key="app/src/main/res/layout/app_widget_pogress_active.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/app_widget_pogress_active_content.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/app_widget_pogress_active_normal.xml" value="0.4036458333333333" />
+        <entry key="app/src/main/res/layout/app_widget_pogress_idle.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/app_widget_pogress_idle_normal.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/app_widget_webcam.xml" value="0.4036458333333333" />
       </map>
