@@ -133,7 +133,7 @@ class ProgressAppWidget : AppWidgetProvider() {
         }
 
         private fun updateAppWidget(context: Context, appWidgetId: Int, data: CreateProgressAppWidgetDataUseCase.Result?, webUrl: String, loading: Boolean = false) {
-            Timber.i("Updating progress widget $appWidgetId with data $data")
+            Timber.v("Updating progress widget $appWidgetId with data $data")
             val manager = AppWidgetManager.getInstance(context)
 
             when {
@@ -238,8 +238,8 @@ class ProgressAppWidget : AppWidgetProvider() {
             views.setViewVisibility(R.id.buttonRefresh, isMediumSize(appWidgetId))
         }
 
-        private fun isMediumSize(appWidgetId: Int) = getWidgetWidth(appWidgetId) > 400
-        private fun isLargeSize(appWidgetId: Int) = getWidgetWidth(appWidgetId) > 520
+        private fun isMediumSize(appWidgetId: Int) = getWidgetWidth(appWidgetId) > 250
+        private fun isLargeSize(appWidgetId: Int) = getWidgetWidth(appWidgetId) > 350
         private fun getWidgetWidth(appWidgetId: Int) = AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first
     }
 }
