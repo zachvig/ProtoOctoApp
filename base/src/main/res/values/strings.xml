@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="error_general">Something went wrong! Please try again.</string>
     <string name="error_general_with_details"><![CDATA[
         Something went wrong! Please try again.<br/><br/><small><font color="#%1$06X">%2$s</font></small>
@@ -71,7 +70,7 @@
     <string name="never">Never</string>
     <string name="loading">Loading…</string>
     <string name="you_can_change_this_limit_in_octoprint_settings">You can change this limit in OctoPrint settings</string>
-    <string name="this_file_exceeds_the_limit_for_mobile_downloads">This file exceeds the limit\nfor mobile downloads</string>
+    <string name="this_file_exceeds_the_limit_for_mobile_downloads">This file exceeds the limit for app downloads</string>
     <string name="download_x">Download %s</string>
     <string name="sign_out">Sign out</string>
     <string name="error_unable_to_load_gcode">Something went wrong, unable to load Gcode</string>
@@ -229,7 +228,6 @@
     <string name="flow_rate_label">Flow Rate (%)</string>
     <string name="feed_rate_label_active">Feed rate as number (100 is default)</string>
     <string name="feed_rate_label">Feed Rate (%)</string>
-
     <string name="ip_address">IP Address</string>
     <string name="api_key">API key</string>
     <string name="sign_in">Sign in</string>
@@ -357,4 +355,18 @@
     <string name="connect_printer___begin_connection_cofirmation_positive">Connect Printer</string>
     <string name="connect_printer___begin_connection_cofirmation_negative">@string/cancel</string>
     <string name="connect_printer___begin_connection_confirmation_message"><![CDATA[Start connecting the printer?<br><small>This will interrupt ongoing prints from SD card!</small>]]></string>
+    <string name="app_widget___updating">Updating…</string>
+    <string name="app_widget___idle">Ready</string>
+    <string name="app_widget___no_printer">No printer connected</string>
+    <string name="app_widget___live_for_x">Live for %ds</string>
+    <string name="app_widget___live">Live</string>
+    <string name="app_widget___free_widgets_exceeded_action">@android:string/ok</string>
+    <string name="app_widget___free_widgets_exceeded_message">You can only have %d widgets without supporting OctoApp. You can support OctoApp from the app\'s main menu.</string>
+    <string name="app_widget___link_widget_title">Which OctoPrint should this widget use?</string>
+    <string name="app_widget___link_widget__option_x">Always „%s‟</string>
+    <string name="app_widget___link_widget__option_synced">Sync with app</string>
+    <string name="app_widget___offline_since_x">Offline since %s</string>
+    <string name="app_widget___update_failed">Update failed</string>
+    <string name="app_widget___no_image">No image</string>
+    <string name="app_widget___no_data">No data</string>
 </resources>

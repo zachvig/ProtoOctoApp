@@ -68,7 +68,7 @@
     <string name="never">Nooit</string>
     <string name="loading">Laden…</string>
     <string name="you_can_change_this_limit_in_octoprint_settings">Je kunt deze limiet wijzigen in OctoPrint instellingen</string>
-    <string name="this_file_exceeds_the_limit_for_mobile_downloads">Dit bestand overschrijdt de limiet voor mobiele downloads</string>
+    <string name="this_file_exceeds_the_limit_for_mobile_downloads">Dit bestand overschrijdt de limiet voor app downloads</string>
     <string name="download_x">Download %s</string>
     <string name="error_unable_to_load_gcode">Er is iets misgegaan, waardoor Gcode niet kon worden geladen</string>
     <string name="try_again">Probeer het nog eens</string>
@@ -221,7 +221,6 @@
     <string name="flow_rate_label">Stroomsnelheid (%)</string>
     <string name="feed_rate_label_active">Aanvoersnelheid als getal (100 is standaard)</string>
     <string name="feed_rate_label">Voedingssnelheid (%)</string>
-
     <string name="ip_address">IP-adres</string>
     <string name="api_key">API-sleutel</string>
     <string name="sign_in">Aanmelden</string>
@@ -336,4 +335,31 @@
     <string name="announcement___new_version_detail">Deze versie introduceert een aanpasbaar hoofdmenu, ondersteuning voor meerdere OctoPrint, evenals stroomregelingen voor IKEA Trådfri, TP-Link en Tasmoa slimme stekkers (bijpassende OctoPrint plugin vereist)</string>
     <string name="announcement___new_version_title">Welkom in OctoApp 1.5!</string>
     <string name="main_menu___system_command_executed">\"%s\" uitgevoerd</string>
+    <string name="notification_channel_filament_change">Verandering van filament</string>
+    <string name="print_notification___paused_filamet_change_title">Pauze, filament leeg</string>
+    <string name="print_notification___filament_change_required">Vervanging van filament vereist</string>
+    <string name="menu___executing_command">Uitvoeren: „%s‟</string>
+    <string name="menu___completed_command">Succes: „%s‟</string>
+    <string name="main_menu___item_cancel_print_keep_temp">Afdrukken annuleren (temp. vasthouden)</string>
+    <string name="main_menu___show_webcam">Toon webcam</string>
+    <string name="connect_printer___waiting_for_user_title">Maak verbinding als je er klaar voor bent</string>
+    <string name="connect_printer___waiting_for_user_subtitle">U kunt auto-connect inschakelen in de instellingen</string>
+    <string name="connect_printer___begin_connection_cofirmation_positive">Printer aansluiten</string>
+    <string name="connect_printer___begin_connection">Printer aansluiten</string>
+    <string name="connect_printer___begin_connection_cofirmation_negative">\@string/cancel</string>
+    <string name="connect_printer___begin_connection_confirmation_message"><![CDATA[Start het aansluiten van de printer?<br><small>Dit zal lopende afdrukken van de SD-kaart onderbreken!</small>]]></string>
+    <string name="app_widget___updating">Bijwerken…</string>
+    <string name="app_widget___idle">Klaar</string>
+    <string name="app_widget___no_printer">Geen printer aangesloten</string>
+    <string name="app_widget___live_for_x">Live voor %ds</string>
+    <string name="app_widget___live">Live</string>
+    <string name="app_widget___free_widgets_exceeded_action">\@android:string/ok</string>
+    <string name="app_widget___free_widgets_exceeded_message">U kunt slechts %d widgets hebben zonder OctoApp te ondersteunen. U kunt OctoApp ondersteunen vanuit het hoofdmenu van de app.</string>
+    <string name="app_widget___link_widget_title">Welke OctoPrint moet deze widget gebruiken?</string>
+    <string name="app_widget___link_widget__option_x">Altijd „%s‟</string>
+    <string name="app_widget___link_widget__option_synced">Synchroniseren met app</string>
+    <string name="app_widget___offline_since_x">Offline sinds %s</string>
+    <string name="app_widget___update_failed">Update mislukt</string>
+    <string name="app_widget___no_image">Geen beeld</string>
+    <string name="app_widget___no_data">Geen gegevens</string>
 </resources>

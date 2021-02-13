@@ -25,7 +25,7 @@
     <color name="button_disabled">@color/very_light_grey</color>
     <color name="menu_pin_foreground">@color/white</color>
     <color name="menu_pin_background">@color/black_translucent_2</color>
-    <color name="progress_bar_track">@color/black_translucent_2</color>
+    <color name="progress_bar_track">@color/black_translucent_3</color>
     <color name="app_widget_button_background">#48000000</color>
 
     <color name="default_color_scheme">@color/primary</color>
@@ -75,6 +75,7 @@
     <color name="light_blue">#F0F9FF</color>
     <color name="black_translucent">#B4000000</color>
     <color name="black_translucent_2">#1A000000</color>
+    <color name="black_translucent_3">#0D000000</color>
     <color name="white_translucent">#B5FFFFFF</color>
     <color name="status_bar_scrim">#80FFFFFF</color>
     <color name="white_translucent_2">#2AFFFFFF</color>
