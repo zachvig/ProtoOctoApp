@@ -97,12 +97,16 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     @Suppress("MemberVisibilityCanBePrivate", "Unused")
     fun swim() {
         setImageDrawable(swimDrawable)
+        (swimDrawable as? AnimatedVectorDrawableCompat)?.start()
+        (idleDrawable as? AnimatedVectorDrawableCompat)?.stop()
         swimming = true
     }
 
     @Suppress("MemberVisibilityCanBePrivate", "Unused")
     fun idle() {
         setImageDrawable(idleDrawable)
+        (idleDrawable as? AnimatedVectorDrawableCompat)?.start()
+        (swimDrawable as? AnimatedVectorDrawableCompat)?.stop()
         swimming = false
     }
 
