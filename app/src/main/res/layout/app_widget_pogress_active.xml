@@ -3,9 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/widget_background"
-    android:minHeight="110dp">
+    android:layout_height="90dp"
+    android:background="@drawable/widget_background">
 
     <ImageView
         android:id="@+id/colorStrip"

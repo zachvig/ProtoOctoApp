@@ -4,7 +4,7 @@
     android:initialKeyguardLayout="@layout/app_widget_pogress_idle"
     android:initialLayout="@layout/app_widget_pogress_idle"
     android:minWidth="110dp"
-    android:minHeight="60dp"
+    android:minHeight="40dp"
     android:previewImage="@drawable/widget_preview_progress"
     android:resizeMode="horizontal"
     android:updatePeriodMillis="3600000"
