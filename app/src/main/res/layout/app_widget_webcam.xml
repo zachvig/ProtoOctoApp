@@ -63,9 +63,7 @@
         android:layout_gravity="top|end"
         android:layout_margin="@dimen/margin_1"
         android:background="@drawable/widget_chip_background"
-        android:ellipsize="end"
         android:gravity="end"
-        android:maxLines="1"
         android:text="Updating..."
         android:textAppearance="@style/OctoTheme.TextAppearance"
         android:textColor="@color/white" />

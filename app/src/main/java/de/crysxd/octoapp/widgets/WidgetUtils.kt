@@ -16,7 +16,6 @@ import de.crysxd.octoapp.widgets.webcam.ControlsWebcamAppWidget
 import de.crysxd.octoapp.widgets.webcam.NoControlsWebcamAppWidget
 import timber.log.Timber
 import java.text.DateFormat
-import java.util.*
 
 internal fun updateAppWidget(context: Context, widgetId: Int) {
     val manager = AppWidgetManager.getInstance(context)
@@ -53,10 +52,21 @@ internal fun createUpdateIntent(context: Context, widgetId: Int, playLive: Boole
 
 internal fun createUpdatedNowText() = getTime()
 
-internal fun getTime() = DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
+internal fun getTime() = formatTime(System.currentTimeMillis())
+
+private fun formatDate(time: Long) = DateFormat.getDateInstance(DateFormat.SHORT).format(time)
+
+private fun formatTime(time: Long) = DateFormat.getTimeInstance(DateFormat.SHORT).format(time)
 
 internal fun createUpdateFailedText(appWidgetId: Int) = AppWidgetPreferences.getLastUpdateTime(appWidgetId).takeIf { it > 0 }?.let {
-    "Offline since ${DateFormat.getTimeInstance(DateFormat.SHORT).format(it)}"
+    val date = formatDate(it)
+    val today = formatDate(System.currentTimeMillis())
+    val since = if (date == today) {
+        formatTime(it)
+    } else {
+        date
+    }
+    "Offline since $since"
 } ?: "Update failed"
 
 internal fun applyDebugOptions(views: RemoteViews, appWidgetId: Int) {
