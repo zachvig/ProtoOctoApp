@@ -39,4 +39,4 @@ internal fun getTime() = DateFormat.getTimeInstance(DateFormat.SHORT).format(Dat
 
 internal fun createUpdateFailedText(appWidgetId: Int) = AppWidgetPreferences.getLastUpdateTime(appWidgetId).takeIf { it > 0 }?.let {
     "Offline since ${DateFormat.getTimeInstance(DateFormat.SHORT).format(it)}"
-} ?: "Update failed"
+}

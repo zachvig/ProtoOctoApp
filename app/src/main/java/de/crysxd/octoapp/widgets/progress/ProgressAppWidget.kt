@@ -127,9 +127,10 @@ class ProgressAppWidget : AppWidgetProvider() {
 
         private fun updateAppWidgetForOffline(manager: AppWidgetManager, context: Context, appWidgetId: Int) {
             val views = RemoteViews(context.packageName, R.layout.app_widget_pogress_idle_normal)
-            views.setViewVisibility(R.id.updatedAt, View.VISIBLE)
+            val text = createUpdateFailedText(appWidgetId)
             views.setViewVisibility(R.id.live, View.GONE)
-            views.setTextViewText(R.id.updatedAt, createUpdateFailedText(appWidgetId))
+            views.setTextViewText(R.id.updatedAt, text)
+            views.setViewVisibility(R.id.updatedAt, if (text.isNullOrBlank()) View.GONE else View.VISIBLE)
             manager.partiallyUpdateAppWidget(appWidgetId, views)
         }
 

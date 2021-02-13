@@ -20,7 +20,7 @@
             android:layout_gravity="center"
             android:layout_marginHorizontal="@dimen/margin_1"
             android:gravity="center"
-            android:text="No image available"
+            android:text="No image"
             android:textAppearance="@style/OctoTheme.TextAppearance.Title"
             android:textColor="@color/white_translucent" />
 
@@ -70,6 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
         android:layout_margin="@dimen/margin_1"
+        android:visibility="gone"
         android:background="@drawable/widget_chip_live_background"
         android:paddingHorizontal="@dimen/margin_1"
         android:paddingVertical="@dimen/margin_0"
@@ -89,6 +90,7 @@
             android:id="@+id/buttonLive"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:visibility="gone"
             android:layout_marginStart="@dimen/margin_1"
             android:background="@drawable/widget_button_background"
             android:importantForAccessibility="no"
@@ -112,6 +114,7 @@
             android:layout_height="40dp"
             android:layout_gravity="bottom|end"
             android:layout_marginStart="@dimen/margin_1"
+            android:visibility="gone"
             android:background="@drawable/widget_button_background"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_round_videocam_off_24"
