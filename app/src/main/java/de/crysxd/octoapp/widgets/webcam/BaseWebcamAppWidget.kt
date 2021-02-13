@@ -74,8 +74,6 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
 
         private fun showUpdating(context: Context, appWidgetId: Int) {
             val views = RemoteViews(context.packageName, R.layout.app_widget_webcam)
-            views.setViewVisibility(R.id.buttonRefresh, false)
-            views.setViewVisibility(R.id.buttonLive, false)
             views.setViewVisibility(R.id.updatedAt, true)
             views.setTextViewText(R.id.updatedAt, "Updating...")
             AppWidgetManager.getInstance(context).partiallyUpdateAppWidget(appWidgetId, views)
