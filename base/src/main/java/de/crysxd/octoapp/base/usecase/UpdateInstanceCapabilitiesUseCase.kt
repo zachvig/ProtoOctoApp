@@ -19,9 +19,9 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
     private val octoPrintProvider: OctoPrintProvider,
     private val octoPrintRepository: OctoPrintRepository,
     private val executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase,
-) : UseCase<Unit, Unit>() {
+) : UseCase<UpdateInstanceCapabilitiesUseCase.Params, Unit>() {
 
-    override suspend fun doExecute(param: Unit, timber: Timber.Tree) {
+    override suspend fun doExecute(param: Params, timber: Timber.Tree) {
         withContext(Dispatchers.IO) {
             octoPrintRepository.updateActive { current ->
                 // Gather all info in parallel
@@ -38,7 +38,11 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
 
                 val m115 = async {
                     try {
-                        executeM115()
+                        if (param.updateM115) {
+                            executeM115()
+                        } else {
+                            null
+                        }
                     } catch (e: Exception) {
                         Timber.e(e)
                         null
@@ -46,7 +50,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                 }
 
                 val updated = current.copy(
-                    m115Response = m115.await(),
+                    m115Response = m115.await() ?: current.m115Response,
                     settings = settings.await(),
                     systemCommands = commands.await()?.all
                 )
@@ -91,4 +95,8 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
         // We do not escalate this error. Fallback to empty.
         null
     }
+
+    data class Params(
+        val updateM115: Boolean = true
+    )
 }

@@ -104,4 +104,8 @@
         <key>billing_active</key>
         <value>true</value>
     </entry>
+    <entry>
+        <key>help_url_sign_in</key>
+        <value>https://www.youtube.com/watch?v=71nX2FNGK6Q</value>
+    </entry>
 </defaultsMap>

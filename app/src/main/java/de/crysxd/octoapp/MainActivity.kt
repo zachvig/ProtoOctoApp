@@ -35,7 +35,7 @@ import de.crysxd.octoapp.base.ui.OctoActivity
 import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
-import de.crysxd.octoapp.base.usecase.execute
+import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.socket.Event
@@ -335,7 +335,7 @@ class MainActivity : OctoActivity() {
         lifecycleScope.launchWhenCreated {
             try {
                 lastSuccessfulCapabilitiesUpdate = System.currentTimeMillis()
-                Injector.get().updateInstanceCapabilitiesUseCase().execute()
+                Injector.get().updateInstanceCapabilitiesUseCase().execute(UpdateInstanceCapabilitiesUseCase.Params(updateM115 = escalateError))
                 notifyWidgetDataChanged()
             } catch (e: Exception) {
                 lastSuccessfulCapabilitiesUpdate = 0
