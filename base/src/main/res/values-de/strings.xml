@@ -346,14 +346,14 @@
     <string name="connect_printer___waiting_for_user_subtitle">Du  kannst die automatische Verbindung in den Einstellungen aktivieren</string>
     <string name="connect_printer___begin_connection">Drucker verbinden</string>
     <string name="connect_printer___begin_connection_cofirmation_positive">Drucker verbinden</string>
-    <string name="connect_printer___begin_connection_cofirmation_negative">\@string/cancel</string>
+    <string name="connect_printer___begin_connection_cofirmation_negative">@string/cancel</string>
     <string name="connect_printer___begin_connection_confirmation_message"><![CDATA[Drucker verbinden?<br><small>Dies unterbricht laufende Drucke von der SD-Karte!</small>]]></string>
     <string name="app_widget___updating">Aktualisieren…</string>
     <string name="app_widget___idle">Bereit</string>
     <string name="app_widget___no_printer">Kein Drucker angeschlossen</string>
     <string name="app_widget___live_for_x">Live für %ds</string>
     <string name="app_widget___live">Live</string>
-    <string name="app_widget___free_widgets_exceeded_action">\@android:string/ok</string>
+    <string name="app_widget___free_widgets_exceeded_action">@android:string/ok</string>
     <string name="app_widget___free_widgets_exceeded_message">Du kannst nur %d Widgets haben, ohne OctoApp zu unterstützen. Du kannst OctoApp über das Hauptmenü der App unterstützen.</string>
     <string name="app_widget___link_widget_title">Welches OctoPrint soll dieses Widget verwenden?</string>
     <string name="app_widget___link_widget__option_x">Immer „%s‟</string>
