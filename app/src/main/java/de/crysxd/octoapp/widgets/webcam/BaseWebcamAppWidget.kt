@@ -158,7 +158,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                 launch {
                     val start = System.currentTimeMillis()
                     while (true) {
-                        val savedFrame = lock.withLock { frame }
+                        val savedFrame = lock.withLock { frame } ?: continue // No frame yet, we keep "Updating..."
                         val secsLeft = (System.currentTimeMillis() - start) / 1000
                         val views = createViews(
                             context = context,

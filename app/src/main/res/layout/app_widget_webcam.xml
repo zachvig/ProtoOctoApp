@@ -56,13 +56,6 @@
         android:scaleType="centerInside"
         android:src="@drawable/webcam_placeholder" />
 
-    <ImageView
-        android:id="@+id/colorStrip"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:importantForAccessibility="no"
-        android:src="@drawable/widget_color_strip" />
-
     <TextView
         android:id="@+id/updatedAt"
         android:layout_width="wrap_content"
