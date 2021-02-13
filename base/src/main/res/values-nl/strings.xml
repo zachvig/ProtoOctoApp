@@ -362,4 +362,5 @@
     <string name="app_widget___update_failed">Update mislukt</string>
     <string name="app_widget___no_image">Geen beeld</string>
     <string name="app_widget___no_data">Geen gegevens</string>
+    <string name="main_menu___item_auto_connect_printer">Printer automatisch aansluiten</string>
 </resources>

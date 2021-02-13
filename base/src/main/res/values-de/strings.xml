@@ -362,4 +362,5 @@
     <string name="app_widget___update_failed">Update fehlgeschlagen</string>
     <string name="app_widget___no_image">Kein Bild</string>
     <string name="app_widget___no_data">Keine Daten</string>
+    <string name="main_menu___item_auto_connect_printer">Drucker automatisch anschließen</string>
 </resources>
