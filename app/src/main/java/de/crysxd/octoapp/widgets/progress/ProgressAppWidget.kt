@@ -179,7 +179,8 @@ class ProgressAppWidget : AppWidgetProvider() {
                     data.isPaused -> context.getString(R.string.notification_paused_title)
                     data.isCancelling -> context.getString(R.string.notification_cancelling_title)
                     data.isPrinting -> context.getString(R.string.notification_printing_title)
-                    else -> "Idle"
+                    data.isPrinterConnected -> "Idle"
+                    else -> "No printer connected"
                 }
             )
             views.setViewVisibility(R.id.updatedAt, !data.isLive)
