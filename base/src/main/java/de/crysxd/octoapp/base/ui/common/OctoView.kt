@@ -94,20 +94,21 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     private fun loadAnimatedDrawable(@DrawableRes res: Int) = AnimatedVectorDrawableCompat.create(context, res)
         ?: resources.getDrawable(res, context.theme)
 
-    @Suppress("MemberVisibilityCanBePrivate", "Unused")
     fun swim() {
         setImageDrawable(swimDrawable)
-        (swimDrawable as? AnimatedVectorDrawableCompat)?.start()
-        (idleDrawable as? AnimatedVectorDrawableCompat)?.stop()
-        swimming = true
     }
 
-    @Suppress("MemberVisibilityCanBePrivate", "Unused")
     fun idle() {
         setImageDrawable(idleDrawable)
-        (idleDrawable as? AnimatedVectorDrawableCompat)?.start()
+    }
+
+    override fun setImageDrawable(drawable: Drawable?) {
+        super.setImageDrawable(drawable)
         (swimDrawable as? AnimatedVectorDrawableCompat)?.stop()
-        swimming = false
+        (idleDrawable as? AnimatedVectorDrawableCompat)?.stop()
+        swimming = drawable == swimDrawable
+        currentDrawable = drawable
+        (drawable as? AnimatedVectorDrawableCompat)?.start()
     }
 
     private fun getLoopDelay(d: Drawable?) = when (d) {
