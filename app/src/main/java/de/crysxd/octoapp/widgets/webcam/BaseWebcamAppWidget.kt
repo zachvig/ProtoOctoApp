@@ -102,6 +102,9 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                     } else {
                         createBitmapFlow(octoPrintInfo, appWidgetId, context).first()
                     }
+                } catch (e: CancellationException) {
+                    Timber.i("Update cancelled")
+                    return@launch
                 } catch (e: Exception) {
                     Timber.e(e)
                     null

@@ -16,10 +16,7 @@ import de.crysxd.octoapp.base.usecase.CreateProgressAppWidgetDataUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.widgets.*
 import de.crysxd.octoapp.widgets.AppWidgetPreferences.ACTIVE_WEB_URL_MARKER
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.lang.ref.WeakReference
 
@@ -59,6 +56,9 @@ class ProgressAppWidget : AppWidgetProvider() {
                         val data = Injector.get().createProgressAppWidgetDataUseCase()
                             .execute(CreateProgressAppWidgetDataUseCase.Params(currentMessage = currentMessage, webUrl = it.webUrl))
                         notifyWidgetDataChanged(data)
+                    } catch (e: CancellationException) {
+                        Timber.i("Update cancelled")
+                        return@launch
                     } catch (e: Exception) {
                         Timber.e(e)
                         notifyWidgetOffline(it.webUrl)
@@ -81,6 +81,9 @@ class ProgressAppWidget : AppWidgetProvider() {
                         val data = Injector.get().createProgressAppWidgetDataUseCase()
                             .execute(CreateProgressAppWidgetDataUseCase.Params(currentMessage = null, webUrl = it.webUrl))
                         notifyWidgetDataChanged(data)
+                    } catch (e: CancellationException) {
+                        Timber.i("Update cancelled")
+                        return@launch
                     } catch (e: Exception) {
                         Timber.e(e)
                         notifyWidgetOffline(it.webUrl)
