@@ -8,7 +8,6 @@ import android.os.Handler
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.widgets.AppWidgetPreferences.ACTIVE_WEB_URL_MARKER
-import de.crysxd.octoapp.widgets.webcam.BaseWebcamAppWidget.Companion.updateAppWidget
 import timber.log.Timber
 
 class ConfigureAppWidgetActivity : Activity() {

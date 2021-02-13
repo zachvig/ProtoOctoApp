@@ -215,6 +215,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             views.setViewVisibility(R.id.noImageCont, frame == null)
             views.setOnClickPendingIntent(R.id.root, createLaunchAppIntent(context, webUrl))
             applyScaling(widgetId, views)
+            applyDebugOptions(views, widgetId)
             return views
         }
 

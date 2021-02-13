@@ -137,12 +137,13 @@ class ProgressAppWidget : AppWidgetProvider() {
             val views = RemoteViews(context.packageName, R.layout.app_widget_pogress_idle)
             val text = createUpdateFailedText(appWidgetId)
             views.setViewVisibility(R.id.live, View.GONE)
-            views.setTextViewText(R.id.idleMessage, "No data")
+            views.setTextViewText(R.id.title, "No data")
             views.setTextViewText(R.id.updatedAt, text)
             views.setOnClickPendingIntent(R.id.buttonRefresh, createUpdateIntent(context, appWidgetId))
             views.setViewVisibility(R.id.updatedAt, !text.isNullOrBlank())
             applyScaling(appWidgetId, views)
             applyColorTheme(views, webUrl)
+            applyDebugOptions(views, appWidgetId)
             manager.partiallyUpdateAppWidget(appWidgetId, views)
         }
 
@@ -152,6 +153,7 @@ class ProgressAppWidget : AppWidgetProvider() {
             views.setViewVisibility(R.id.live, View.GONE)
             views.setTextViewText(R.id.updatedAt, "Updating...")
             applyScaling(appWidgetId, views)
+            applyDebugOptions(views, appWidgetId)
             manager.partiallyUpdateAppWidget(appWidgetId, views)
         }
 
@@ -177,7 +179,7 @@ class ProgressAppWidget : AppWidgetProvider() {
                     data.isPaused -> context.getString(R.string.notification_paused_title)
                     data.isCancelling -> context.getString(R.string.notification_cancelling_title)
                     data.isPrinting -> context.getString(R.string.notification_printing_title)
-                    else -> ""
+                    else -> "Idle"
                 }
             )
             views.setViewVisibility(R.id.updatedAt, !data.isLive)
@@ -196,6 +198,7 @@ class ProgressAppWidget : AppWidgetProvider() {
             views.setInt(R.id.colorStrip, "setImageLevel", 2500)
             applyScaling(appWidgetId, views)
             applyColorTheme(views, data.webUrl)
+            applyDebugOptions(views, appWidgetId)
             manager.updateAppWidget(appWidgetId, views)
         }
 
