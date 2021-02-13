@@ -126,7 +126,7 @@ class ProgressAppWidget : AppWidgetProvider() {
         private fun getAppWidgetIdsForWebUrl(webUrl: String): List<Int> {
             val manager = AppWidgetManager.getInstance(Injector.get().context())
             val isActiveWebUrl = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl == webUrl
-            val filter = { widgetId: Int -> manager.getAppWidgetInfo(widgetId).provider.className == ProgressAppWidget::class.java.name }
+            val filter = { widgetId: Int -> manager.getAppWidgetInfo(widgetId)?.provider?.className == ProgressAppWidget::class.java.name }
             val fixed = AppWidgetPreferences.getWidgetIdsForInstance(webUrl).filter(filter)
             val dynamic = AppWidgetPreferences.getWidgetIdsForInstance(ACTIVE_WEB_URL_MARKER).filter(filter).takeIf { isActiveWebUrl }
             return listOfNotNull(fixed, dynamic).flatten()
