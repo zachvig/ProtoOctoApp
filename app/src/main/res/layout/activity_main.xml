@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -22,16 +22,16 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/margin_3"
+        android:paddingTop="@dimen/margin_2"
         app:layout_constraintTop_toTopOf="parent" />
 
     <de.crysxd.octoapp.base.ui.common.OctoView
         android:id="@+id/toolbarOctoView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:translationY="-15dp"
         android:layout_gravity="end"
         android:rotation="270"
+        android:translationY="-20dp"
         android:translationX="60dp" />
 
     <androidx.fragment.app.FragmentContainerView
@@ -70,4 +70,4 @@
 
     </LinearLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</FrameLayout>

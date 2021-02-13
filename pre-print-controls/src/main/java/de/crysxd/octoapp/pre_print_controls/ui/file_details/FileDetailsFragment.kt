@@ -29,6 +29,7 @@ class FileDetailsFragment : BaseFragment(R.layout.fragment_file_details), InsetA
 
     override val viewModel: FileDetailsViewModel by injectViewModel(Injector.get().viewModelFactory())
     private val file by lazy { navArgs<FileDetailsFragmentArgs>().value.file }
+    private val originalOctoTranslationY by lazy { requireOctoActivity().octo.translationY }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -100,7 +101,7 @@ class FileDetailsFragment : BaseFragment(R.layout.fragment_file_details), InsetA
             }.translationY(toolbarTranslation).start()
             requireOctoActivity().octo.animate().also {
                 it.duration = 150
-            }.translationY(toolbarTranslation).start()
+            }.translationY(toolbarTranslation + originalOctoTranslationY).start()
         }
     }
 
@@ -122,12 +123,15 @@ class FileDetailsFragment : BaseFragment(R.layout.fragment_file_details), InsetA
         requireOctoActivity().octo.isVisible = true
         scrollView.setupWithToolbar(requireOctoActivity(), bottomAction, tabs)
         viewPager.currentItem = 0
+
+        // Save translation
+        originalOctoTranslationY
     }
 
     override fun onPause() {
         super.onPause()
         requireOctoActivity().octoToolbar.translationY = 0f
-        requireOctoActivity().octo.translationY = 0f
+        requireOctoActivity().octo.translationY = originalOctoTranslationY
     }
 
     override fun handleInsets(insets: Rect) {

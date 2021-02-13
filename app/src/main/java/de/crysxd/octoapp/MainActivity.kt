@@ -8,7 +8,7 @@ import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import android.widget.FrameLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -59,11 +59,15 @@ class MainActivity : OctoActivity() {
 
     override val octoToolbar: OctoToolbar by lazy { toolbar }
     override val octo: OctoView by lazy { toolbarOctoView }
-    override val coordinatorLayout: CoordinatorLayout by lazy { coordinator }
+    override val rootLayout by lazy { coordinator }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Fix fullscreen layout under system bars for frame layout
+        rootLayout.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
 
         val observer = Observer(this::onEventReceived)
         val events = ConnectPrinterInjector.get().octoprintProvider().eventFlow("MainActivity@events").asLiveData()
@@ -169,8 +173,8 @@ class MainActivity : OctoActivity() {
     private fun applyInsetsToScreen(screen: Fragment, topOverwrite: Int? = null) {
         val disconnectHeight = disconnectedMessage.height.takeIf { disconnectedMessage.isVisible }
         Timber.v("Applying insets: disconnectedMessage=$disconnectHeight topOverwrite=$topOverwrite")
-        toolbar.updateLayoutParams<CoordinatorLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
-        octo.updateLayoutParams<CoordinatorLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
+        toolbar.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
+        octo.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
 
         if (screen is InsetAwareScreen) {
             screen.handleInsets(
@@ -316,12 +320,12 @@ class MainActivity : OctoActivity() {
             top = disconnectedMessage.paddingBottom + lastInsets.top,
         )
         disconnectedMessage.measure(
-            View.MeasureSpec.makeMeasureSpec(coordinatorLayout.width, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(rootLayout.width, View.MeasureSpec.EXACTLY),
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
         )
         val height = disconnectedMessage.measuredHeight
 
-        TransitionManager.beginDelayedTransition(coordinatorLayout, TransitionSet().apply {
+        TransitionManager.beginDelayedTransition(rootLayout, TransitionSet().apply {
             addTransition(Explode())
             addTransition(ChangeBounds())
             findCurrentScreen()?.view?.let {
