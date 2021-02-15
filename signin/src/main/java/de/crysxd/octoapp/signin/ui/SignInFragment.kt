@@ -161,10 +161,11 @@ class SignInFragment : BaseFragment(), InsetAwareScreen {
 
             // SSL error and we can "force trust" this server if user agrees
             if (res.exception is OctoPrintHttpsException && res.exception.serverCertificates.isNotEmpty()) {
+                val weakHostname = res.exception.weakHostnameVerificationRequired
                 MaterialAlertDialogBuilder(requireContext())
-                    .setMessage(R.string.error_certificate_not_trusted)
+                    .setMessage(if (weakHostname) R.string.error_certificate_not_trusted_and_weak_hostname_required else R.string.error_certificate_not_trusted)
                     .setPositiveButton(R.string.trust_server_and_try_again) { _, _ ->
-                        signIn(res.exception.serverCertificates)
+                        signIn(res.exception.serverCertificates, weakHostname)
                     }
                     .setNegativeButton(android.R.string.cancel, null)
                     .show()
@@ -252,12 +253,13 @@ class SignInFragment : BaseFragment(), InsetAwareScreen {
         }
     }
 
-    private fun signIn(trustedCerts: List<Certificate>? = null) {
+    private fun signIn(trustedCerts: List<Certificate>? = null, weakHostNameVerificationRequired: Boolean = false) {
         viewModel.startSignIn(
             SignInInformation(
                 webUrl = binding.inputWebUrl.editText.text.toString(),
                 apiKey = binding.inputApiKey.editText.text.toString(),
-                trustedCerts = trustedCerts
+                trustedCerts = trustedCerts,
+                weakHostNameVerificationRequired = weakHostNameVerificationRequired,
             )
         )
     }

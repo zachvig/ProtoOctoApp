@@ -242,7 +242,7 @@ class ProgressAppWidget : AppWidgetProvider() {
         }
 
         private fun isMediumSize(appWidgetId: Int) = getWidgetWidth(appWidgetId) > 250
-        private fun isLargeSize(appWidgetId: Int) = getWidgetWidth(appWidgetId) > 350
+        private fun isLargeSize(appWidgetId: Int) = getWidgetWidth(appWidgetId) > 300
         private fun getWidgetWidth(appWidgetId: Int) = AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first
     }
 }
