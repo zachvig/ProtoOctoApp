@@ -27,7 +27,8 @@ class WebcamViewModel(
     private val uiStateMediator = MediatorLiveData<UiState>()
     val uiState = uiStateMediator.map { it }
     private val octoPrintLiveData = octoPrintRepository.instanceInformationFlow()
-        .distinctUntilChangedBy { it?.settings?.webcam }
+        .map { it?.settings?.webcam }
+        .distinctUntilChangedBy { it }
         .asLiveData()
 
     init {
@@ -42,6 +43,7 @@ class WebcamViewModel(
         val liveData = BillingManager.billingFlow().map {
             flow {
                 try {
+                    Timber.i("Refresh")
                     emit(UiState.Loading)
 
                     // Load settings

@@ -23,6 +23,13 @@ internal inline fun <reified VM : ViewModel> OctoWidget.injectViewModel(provider
     vm
 }
 
+
+internal inline fun <reified VM : ViewModel> OctoWidget.injectActivityViewModel(provider: ViewModelProvider.Factory = Injector.get().viewModelFactory()) = lazy {
+    val vm = ViewModelProvider(this.parent.requireActivity(), provider)[VM::class.java]
+    (vm as? BaseViewModel)?.let { this.setupBaseViewModel(it) }
+    vm
+}
+
 /**
  * For Fragments, allows declarations like
  * ```

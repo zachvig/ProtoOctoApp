@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.di.injectViewModel
+import de.crysxd.octoapp.base.di.injectActivityViewModel
 import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState
@@ -29,7 +29,7 @@ class WebcamWidget(
     parent: Fragment,
     private val isFullscreen: Boolean = false
 ) : OctoWidget(parent) {
-    private val viewModel: WebcamViewModel by injectViewModel()
+    private val viewModel: WebcamViewModel by injectActivityViewModel()
 
     override fun getTitle(context: Context) = context.getString(R.string.webcam)
     override fun getAnalyticsName() = "webcam"
@@ -87,11 +87,6 @@ class WebcamWidget(
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.connect()
     }
 
     override fun onPause() {

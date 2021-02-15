@@ -24,6 +24,12 @@ const val DEFAULT_HEADER_BOUNDARY = "[_a-zA-Z0-9]*boundary"
 
 class MjpegConnection(private val streamUrl: String) {
 
+    private val instanceId = instanceCounter++
+
+    companion object {
+        private var instanceCounter = 0
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     @Suppress("BlockingMethodInNonBlockingContext")
     fun load() = flow {
@@ -34,7 +40,7 @@ class MjpegConnection(private val streamUrl: String) {
             val connection = connect()
             val boundaryPattern = createHeaderBoundaryPattern(connection)
             val input = BufferedInputStream(connection.inputStream)
-            Timber.i("Connected to $streamUrl")
+            Timber.i("[$instanceId] Connected to $streamUrl")
 
             // Read frames
             val buffer = ByteArray(4096)
@@ -44,7 +50,7 @@ class MjpegConnection(private val streamUrl: String) {
                 // Read data
                 val bufferLength = input.read(buffer)
                 if (bufferLength < 0) {
-                    throw SocketException("Socket closed")
+                    throw SocketException("[$instanceId] Socket closed")
                 }
 
                 // Append to image
@@ -71,10 +77,10 @@ class MjpegConnection(private val streamUrl: String) {
                         emit(MjpegSnapshot.Frame(outputImg))
                     } else {
                         lostFrameCount++
-                        Timber.e("Lost frame due to decoding error (lostFrames=$lostFrameCount)")
+                        Timber.e("[$instanceId] Lost frame due to decoding error (lostFrames=$lostFrameCount)")
 
                         if (lostFrameCount > TOLERATED_FRAME_LOSS_STREAK) {
-                            throw IOException("Too many lost frames ($lostFrameCount)")
+                            throw IOException("[$instanceId] Too many lost frames ($lostFrameCount)")
                         }
                     }
 
@@ -86,9 +92,9 @@ class MjpegConnection(private val streamUrl: String) {
             }
         }
     }.onCompletion {
-        Timber.i("Stopped stream")
+        Timber.i("[$instanceId] Stopped stream")
     }.onStart {
-        Timber.i("Starting stream")
+        Timber.i("[$instanceId] Starting stream")
     }.flowOn(Dispatchers.IO)
 
     private fun connect(): HttpURLConnection {
