@@ -10,6 +10,7 @@ import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.OctoPrint
+import de.crysxd.octoapp.octoprint.SubjectAlternativeNameCompatVerifier
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.GlobalScope
@@ -115,6 +116,7 @@ class OctoPrintProvider(
             apiKey = it.apiKey,
             interceptors = listOf(invalidApiKeyInterceptor),
             keyStore = sslKeyStoreHandler.loadKeyStore(),
+            hostnameVerifier = SubjectAlternativeNameCompatVerifier().takeIf { _ -> sslKeyStoreHandler.isWeakVerificationForHost(it.webUrl) },
             webSocketConnectTimeoutMs = Firebase.remoteConfig.getLong("web_socket_connect_timeout_ms"),
             webSocketPingPongTimeoutMs = Firebase.remoteConfig.getLong("web_socket_ping_pong_timeout_ms")
         ).also { octoPrint ->
