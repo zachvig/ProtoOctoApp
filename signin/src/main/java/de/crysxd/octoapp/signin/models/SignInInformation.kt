@@ -6,5 +6,6 @@ import java.security.cert.Certificate
 data class SignInInformation(
     val webUrl: String,
     val apiKey: String,
-    val trustedCerts: List<Certificate>? = null
+    val trustedCerts: List<Certificate>? = null,
+    val weakHostNameVerificationRequired: Boolean = false
 ) : Serializable

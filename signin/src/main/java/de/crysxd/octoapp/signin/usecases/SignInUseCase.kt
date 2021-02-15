@@ -24,6 +24,9 @@ class SignInUseCase(
             timber.i("Trusting ${it.size} custom certificates")
             sslKeyStoreHandler.storeCertificates(it)
         }
+        if (param.weakHostNameVerificationRequired) {
+            sslKeyStoreHandler.enforceWeakVerificationForHost(param.webUrl)
+        }
 
         // Create OctoPrint
         val octoprintInstanceInformation = OctoPrintInstanceInformationV2(param.webUrl, param.apiKey)

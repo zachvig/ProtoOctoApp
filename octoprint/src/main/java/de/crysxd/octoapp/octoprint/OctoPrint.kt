@@ -27,10 +27,7 @@ import java.net.URI
 import java.security.KeyStore
 import java.security.SecureRandom
 import java.util.logging.Logger
-import javax.net.ssl.KeyManagerFactory
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManagerFactory
-import javax.net.ssl.X509TrustManager
+import javax.net.ssl.*
 
 
 class OctoPrint(
@@ -38,6 +35,7 @@ class OctoPrint(
     private val apiKey: String,
     private val interceptors: List<Interceptor> = emptyList(),
     private val keyStore: KeyStore?,
+    private val hostnameVerifier: HostnameVerifier?,
     webSocketPingPongTimeoutMs: Long,
     webSocketConnectTimeoutMs: Long,
 ) {
@@ -112,6 +110,7 @@ class OctoPrint(
         logger.parent = getLogger()
         logger.useParentHandlers = true
 
+        hostnameVerifier?.let(::hostnameVerifier)
         keyStore?.let { ks ->
             val customTrustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).also {
                 it.init(ks)
