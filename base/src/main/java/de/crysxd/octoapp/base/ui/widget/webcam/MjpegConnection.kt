@@ -100,6 +100,8 @@ class MjpegConnection(private val streamUrl: String) {
     private fun connect(): HttpURLConnection {
         val url = URL(streamUrl)
         val connection = url.openConnection() as HttpURLConnection
+        connection.connectTimeout = 5000
+        connection.readTimeout = 5000
 
         // Basic Auth
         url.userInfo?.let {
