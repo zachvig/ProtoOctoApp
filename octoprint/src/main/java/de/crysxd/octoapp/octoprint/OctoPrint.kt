@@ -26,6 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.net.URI
 import java.security.KeyStore
 import java.security.SecureRandom
+import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 import javax.net.ssl.*
 
@@ -34,10 +35,10 @@ class OctoPrint(
     rawWebUrl: String,
     private val apiKey: String,
     private val interceptors: List<Interceptor> = emptyList(),
-    private val keyStore: KeyStore?,
-    private val hostnameVerifier: HostnameVerifier?,
-    webSocketPingPongTimeoutMs: Long,
-    webSocketConnectTimeoutMs: Long,
+    private val keyStore: KeyStore? = null,
+    private val hostnameVerifier: HostnameVerifier? = null,
+    val readWriteTimeout: Long = 5000,
+    val connectTimeoutMs: Long = 10000,
 ) {
 
     val webUrl = "${rawWebUrl.removeSuffix("/")}/"
@@ -48,8 +49,8 @@ class OctoPrint(
         gson = createGsonWithTypeAdapters(),
         logger = getLogger(),
         loginApi = createLoginApi(),
-        pingPongTimeoutMs = webSocketPingPongTimeoutMs,
-        connectionTimeoutMs = webSocketConnectTimeoutMs
+        pingPongTimeoutMs = readWriteTimeout,
+        connectionTimeoutMs = connectTimeoutMs
     )
 
     fun getEventWebSocket() = webSocket
@@ -130,6 +131,9 @@ class OctoPrint(
         addInterceptor(BasicAuthInterceptor(webUrl))
         addInterceptor(ApiKeyInterceptor(apiKey))
         addInterceptor(GenerateExceptionInterceptor())
+        connectTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)
+        readTimeout(readWriteTimeout, TimeUnit.MILLISECONDS)
+        writeTimeout(readWriteTimeout, TimeUnit.MILLISECONDS)
         addInterceptor(
             HttpLoggingInterceptor(LoggingInterceptorLogger(logger))
                 .setLevel(HttpLoggingInterceptor.Level.HEADERS)
