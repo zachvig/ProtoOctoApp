@@ -1,6 +1,8 @@
 package de.crysxd.octoapp.octoprint.exceptions
 
-class OctoPrintUnavailableException(e: Exception? = null) : OctoPrintException(
-    cause = e,
+import okhttp3.HttpUrl
+
+class OctoPrintUnavailableException(e: Exception? = null, webUrl: HttpUrl) : OctoPrintException(
+    cause = e?.let { ProxyException(it, webUrl.toString()) },
     userFacingMessage = e?.localizedMessage ?: e?.message ?: "Unable to connect to OctoPrint"
 )

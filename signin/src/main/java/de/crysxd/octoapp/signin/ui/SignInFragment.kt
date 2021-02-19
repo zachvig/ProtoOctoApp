@@ -150,7 +150,6 @@ class SignInFragment : BaseFragment(), InsetAwareScreen {
             OctoAnalytics.logEvent(
                 OctoAnalytics.Event.SignInFailed,
                 bundleOf(
-                    "reason_messsage" to res.exception.message,
                     "reason" to res.exception::class.java.simpleName
                 )
             )

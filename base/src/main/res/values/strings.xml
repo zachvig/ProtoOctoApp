@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="error_general">Something went wrong! Please try again.</string>
-    <string name="error_general_with_details"><![CDATA[
-        Something went wrong! Please try again.<br/><br/><small><font color="#%1$06X">%2$s</font></small>
-    ]]></string>
     <string name="error_no_printer_connected">No printer is connected to OctoPrint</string>
     <string name="error_invalid_octoprint_instance_information">OctoPrint declined the API key</string>
     <string name="temperature_x">%1$s\u2009°C</string>
@@ -371,4 +368,5 @@
     <string name="app_widget___no_image">No image</string>
     <string name="app_widget___no_data">No data</string>
     <string name="main_menu___item_auto_connect_printer">Auto connect printer</string>
+    <string name="error_general_with_details"><![CDATA[         Something went wrong! Please try again.<br/><br/><small><font color="#%1$06X">%2$s</font></small>     ]]></string>
 </resources>

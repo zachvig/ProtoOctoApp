@@ -127,7 +127,7 @@ class OctoPrint(
             sslSocketFactory(sslContext.socketFactory, x509TrustManager)
         }
 
-        addInterceptor(CatchAllInterceptor())
+        addInterceptor(CatchAllInterceptor(webUrl, apiKey))
         addInterceptor(BasicAuthInterceptor(webUrl))
         addInterceptor(ApiKeyInterceptor(apiKey))
         addInterceptor(GenerateExceptionInterceptor())

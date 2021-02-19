@@ -7,6 +7,7 @@ import androidx.core.text.HtmlCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.models.exceptions.UserMessageException
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintException
+import de.crysxd.octoapp.octoprint.exceptions.ProxyException
 
 fun Throwable.composeErrorMessage(context: Context, @StringRes baseStringRes: Int = R.string.error_general_with_details): CharSequence = HtmlCompat.fromHtml(
     (this as? UserMessageException)?.userMessage?.let { context.getString(it) }?.htmlify()
@@ -14,22 +15,22 @@ fun Throwable.composeErrorMessage(context: Context, @StringRes baseStringRes: In
         ?: context.getString(
             baseStringRes,
             ContextCompat.getColor(context, R.color.light_text),
-            localizedMessage?.htmlify()
-                ?: cause?.localizedMessage?.htmlify()
-                ?: this::class.java.simpleName
+            (this as? ProxyException)?.originalMessage?.htmlify() ?: localizedMessage?.htmlify()
+            ?: cause?.localizedMessage?.htmlify()
+            ?: this::class.java.simpleName
         ), HtmlCompat.FROM_HTML_MODE_LEGACY
 )
 
 fun Throwable.composeMessageStack(): CharSequence {
     val messageBuilder = StringBuilder()
     messageBuilder.append("<b>Error:</b> ")
-    messageBuilder.append(localizedMessage ?: this::class.java.simpleName)
+    messageBuilder.append((this as? ProxyException)?.originalMessage ?: localizedMessage ?: this::class.java.simpleName)
 
     var cause = cause
     while (cause != null) {
         messageBuilder.append("<br/><br/>")
         messageBuilder.append("<b>Caused by:</b> ")
-        messageBuilder.append(cause.localizedMessage?.htmlify())
+        messageBuilder.append(((this as? ProxyException)?.originalMessage ?: cause.localizedMessage)?.htmlify())
         cause = cause.cause
     }
 

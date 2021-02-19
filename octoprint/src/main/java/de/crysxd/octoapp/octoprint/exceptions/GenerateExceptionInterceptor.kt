@@ -13,9 +13,10 @@ import javax.net.ssl.SSLHandshakeException
 class GenerateExceptionInterceptor : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
         try {
             val response = try {
-                chain.proceed(chain.request())
+                chain.proceed(request)
             } catch (e: SocketTimeoutException) {
                 throw IOException("Caught exception in response to ${chain.request().url}", e)
             }
@@ -23,20 +24,20 @@ class GenerateExceptionInterceptor : Interceptor {
             return when (response.code) {
                 101 -> response
                 in 200..204 -> response
-                409 -> throw PrinterNotOperationalException(response.request.url)
+                409 -> throw PrinterNotOperationalException(request.url)
                 401 -> throw generate401Exception(response)
-                403 -> throw InvalidApiKeyException(response.request.url)
+                403 -> throw InvalidApiKeyException(request.url)
                 in 501..599 -> throw OctoPrintBootingException()
                 else -> throw generateGenericException(response)
             }
         } catch (e: ConnectException) {
-            throw OctoPrintUnavailableException(e)
+            throw OctoPrintUnavailableException(e, request.url)
         } catch (e: HttpException) {
-            throw OctoPrintUnavailableException(e)
+            throw OctoPrintUnavailableException(e, request.url)
         } catch (e: SSLHandshakeException) {
-            throw OctoPrintHttpsException(chain.request().url.toUrl(), e)
+            throw OctoPrintHttpsException(chain.request().url, e)
         } catch (e: CertPathValidatorException) {
-            throw OctoPrintHttpsException(chain.request().url.toUrl(), e)
+            throw OctoPrintHttpsException(chain.request().url, e)
         }
     }
 

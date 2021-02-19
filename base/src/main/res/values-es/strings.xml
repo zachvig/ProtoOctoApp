@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="error_general">¡Algo salió mal! Por favor, inténtelo de nuevo.</string>
-    <string name="error_general_with_details">¡Algo salió mal! Por favor, inténtalo de nuevo.</string>
+    <string name="error_general_with_details"><![CDATA[ ¡Algo ha ido mal! Por favor, inténtelo de nuevo.<br/><br/><small><font color="#%1$06X">%2$s</font></small> ]]></string>
     <string name="error_no_printer_connected">Ninguna impresora está conectada a OctoPrint</string>
     <string name="error_invalid_octoprint_instance_information">OctoPrint rechazó la clave API</string>
     <string name="temperature_x">%1$s\u2009°C</string>

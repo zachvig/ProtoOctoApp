@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.octoprint.exceptions
 
 import de.crysxd.octoapp.octoprint.SubjectAlternativeNameCompatVerifier
+import okhttp3.HttpUrl
 import java.net.URL
 import java.security.SecureRandom
 import java.security.cert.Certificate
@@ -10,10 +11,10 @@ import java.util.logging.Logger
 import javax.net.ssl.*
 
 class OctoPrintHttpsException(
-    url: URL,
+    url: HttpUrl,
     cause: Throwable
 ) : OctoPrintException(
-    cause = cause,
+    cause = ProxyException(cause, url.toString()),
     userFacingMessage = "HTTPS connection could not be established. Make sure you installed all required certificates on your phone."
 ) {
 
@@ -22,7 +23,7 @@ class OctoPrintHttpsException(
         private set
 
     init {
-        serverCertificates = extractCertificates(url)
+        serverCertificates = extractCertificates(url.toUrl())
     }
 
     private fun extractCertificates(url: URL, hostnameVerifier: HostnameVerifier? = null): List<Certificate> = try {
