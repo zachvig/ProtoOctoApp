@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.TypedValue
@@ -25,17 +26,21 @@ import kotlin.math.max
 
 abstract class BaseWebcamAppWidget : AppWidgetProvider() {
 
+    override fun onReceive(context: Context?, intent: Intent?) {
+        super.onReceive(Injector.get().localizedContext(), intent)
+    }
+
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         // There may be multiple widgets active, so update all of them
         for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetId)
+            updateAppWidget(appWidgetId)
         }
     }
 
     override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, newOptions: Bundle) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
         AppWidgetPreferences.setWidgetDimensionsForWidgetId(appWidgetId, newOptions)
-        updateLayout(appWidgetId, context, appWidgetManager)
+        updateLayout(appWidgetId, Injector.get().localizedContext(), appWidgetManager)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
@@ -62,13 +67,13 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
         internal fun notifyWidgetDataChanged() {
             cancelAllUpdates()
 
-            val context = Injector.get().context()
+            val context = Injector.get().localizedContext()
             val manager = AppWidgetManager.getInstance(context)
             manager.getAppWidgetIds(ComponentName(context, NoControlsWebcamAppWidget::class.java)).forEach {
-                updateAppWidget(context, it)
+                updateAppWidget(it)
             }
             manager.getAppWidgetIds(ComponentName(context, ControlsWebcamAppWidget::class.java)).forEach {
-                updateAppWidget(context, it)
+                updateAppWidget(it)
             }
         }
 
@@ -94,11 +99,12 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             AppWidgetManager.getInstance(context).partiallyUpdateAppWidget(appWidgetId, views)
         }
 
-        internal fun updateAppWidget(context: Context, appWidgetId: Int, playLive: Boolean = false) {
+        internal fun updateAppWidget(appWidgetId: Int, playLive: Boolean = false) {
             lastUpdateJobs[appWidgetId]?.get()?.cancel()
             lastUpdateJobs[appWidgetId] = WeakReference(GlobalScope.launch {
                 Timber.i("Updating webcam widget $appWidgetId")
 
+                val context = Injector.get().localizedContext()
                 val appWidgetManager = AppWidgetManager.getInstance(context)
                 val hasControls = appWidgetManager.getAppWidgetInfo(appWidgetId).provider.className == ControlsWebcamAppWidget::class.java.name
                 val webUrl = AppWidgetPreferences.getInstanceForWidgetId(appWidgetId)

@@ -5,10 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.ui.LocaleActivity
+import de.crysxd.octoapp.base.ui.LocalizedActivity
 
 
-class FullscreenWebcamActivity : LocaleActivity() {
+class FullscreenWebcamActivity : LocalizedActivity() {
 
     companion object {
         fun start(activity: Activity) {

@@ -14,6 +14,7 @@ import de.crysxd.octoapp.base.logging.TimberCacheTree
 import de.crysxd.octoapp.base.repository.*
 import de.crysxd.octoapp.base.ui.BaseViewModelFactory
 import de.crysxd.octoapp.base.usecase.*
+import javax.inject.Named
 
 @BaseScope
 @Component(
@@ -30,6 +31,8 @@ import de.crysxd.octoapp.base.usecase.*
 interface BaseComponent {
 
     // AndroidModule
+    @Named(AndroidModule.LOCALIZED)
+    fun localizedContext(): Context
     fun context(): Context
     fun app(): Application
     fun sharedPreferences(): SharedPreferences

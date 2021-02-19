@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
-abstract class OctoActivity : LocaleActivity() {
+abstract class OctoActivity : LocalizedActivity() {
 
     internal companion object {
         lateinit var instance: OctoActivity

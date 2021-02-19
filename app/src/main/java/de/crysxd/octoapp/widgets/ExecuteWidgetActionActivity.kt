@@ -6,10 +6,10 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ui.LocalizedActivity
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
 import de.crysxd.octoapp.widgets.webcam.BaseWebcamAppWidget
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
-class ExecuteWidgetActionActivity : AppCompatActivity() {
+class ExecuteWidgetActionActivity : LocalizedActivity() {
 
     companion object {
         private const val EXTRA_TASK = "de.crysxd.octoapp.widgets.progress.TASK"
@@ -87,7 +87,7 @@ class ExecuteWidgetActionActivity : AppCompatActivity() {
 
             when {
                 progressWidgetIds.contains(id) -> ProgressAppWidget.notifyWidgetDataChanged()
-                webcamWidgetIds.contains(id) -> BaseWebcamAppWidget.updateAppWidget(this, id, live)
+                webcamWidgetIds.contains(id) -> BaseWebcamAppWidget.updateAppWidget(id, live)
             }
         } ?: updateAllWidgets()
 

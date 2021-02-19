@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import de.crysxd.octoapp.base.di.Injector
 import kotlinx.coroutines.runBlocking
 
-abstract class LocaleActivity : AppCompatActivity() {
+abstract class LocalizedActivity : AppCompatActivity() {
 
     override fun attachBaseContext(newBase: Context) {
         val language = runBlocking {

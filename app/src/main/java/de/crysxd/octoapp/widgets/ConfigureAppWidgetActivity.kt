@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.widgets
 
-import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.content.pm.ShortcutInfo
@@ -18,12 +17,13 @@ import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ui.LocalizedActivity
 import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.widgets.AppWidgetPreferences.ACTIVE_WEB_URL_MARKER
 import timber.log.Timber
 import java.util.*
 
-class ConfigureAppWidgetActivity : Activity() {
+class ConfigureAppWidgetActivity : LocalizedActivity() {
     private val appWidgetId
         get() = intent.extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
             ?: AppWidgetManager.INVALID_APPWIDGET_ID
@@ -103,7 +103,7 @@ class ConfigureAppWidgetActivity : Activity() {
         showSelectionDialog {
             // It is the responsibility of the configuration activity to update the app widget
             AppWidgetPreferences.setInstanceForWidgetId(appWidgetId, it)
-            updateAppWidget(this, appWidgetId)
+            updateAppWidget(appWidgetId)
 
             // Create result intnet
             Intent().apply {

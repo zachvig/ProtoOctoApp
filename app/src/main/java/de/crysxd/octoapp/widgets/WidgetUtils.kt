@@ -10,6 +10,7 @@ import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_WEB_URL
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
 import de.crysxd.octoapp.widgets.webcam.BaseWebcamAppWidget
 import de.crysxd.octoapp.widgets.webcam.ControlsWebcamAppWidget
@@ -17,10 +18,11 @@ import de.crysxd.octoapp.widgets.webcam.NoControlsWebcamAppWidget
 import timber.log.Timber
 import java.text.DateFormat
 
-internal fun updateAppWidget(context: Context, widgetId: Int) {
+internal fun updateAppWidget(widgetId: Int) {
+    val context = Injector.get().localizedContext()
     val manager = AppWidgetManager.getInstance(context)
     when (val name = manager.getAppWidgetInfo(widgetId).provider.className) {
-        ControlsWebcamAppWidget::class.java.name, NoControlsWebcamAppWidget::class.java.name -> BaseWebcamAppWidget.updateAppWidget(context, widgetId)
+        ControlsWebcamAppWidget::class.java.name, NoControlsWebcamAppWidget::class.java.name -> BaseWebcamAppWidget.updateAppWidget(widgetId)
         ProgressAppWidget::class.java.name -> ProgressAppWidget.notifyWidgetDataChanged()
         else -> Timber.e(IllegalArgumentException("Supposed to update widget $widgetId with unknown provider $name"))
     }
@@ -29,6 +31,7 @@ internal fun updateAppWidget(context: Context, widgetId: Int) {
 internal fun updateAllWidgets() {
     BaseWebcamAppWidget.notifyWidgetDataChanged()
     ProgressAppWidget.notifyWidgetDataChanged()
+
 }
 
 internal fun cancelAllUpdates() {
