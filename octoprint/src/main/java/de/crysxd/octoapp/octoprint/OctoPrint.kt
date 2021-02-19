@@ -24,6 +24,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.URI
+import java.net.URL
 import java.security.KeyStore
 import java.security.SecureRandom
 import java.util.concurrent.TimeUnit
@@ -41,7 +42,15 @@ class OctoPrint(
     val connectTimeoutMs: Long = 10000,
 ) {
 
-    val webUrl = "${rawWebUrl.removeSuffix("/")}/"
+    private val fullWebUrl = rawWebUrl.sanitizeUrl()
+    val webUrl = URL(rawWebUrl).let { url ->
+        url.userInfo?.let {
+            url.toString().replaceFirst("$it@", "")
+        } ?: url.toString()
+        url.toString()
+    }.sanitizeUrl()
+
+    private fun String.sanitizeUrl() = "${this.removeSuffix("/")}/"
 
     private val webSocket = EventWebSocket(
         httpClient = createOkHttpClient(),
@@ -128,7 +137,7 @@ class OctoPrint(
         }
 
         addInterceptor(CatchAllInterceptor(webUrl, apiKey))
-        addInterceptor(BasicAuthInterceptor(webUrl))
+        addInterceptor(BasicAuthInterceptor(fullWebUrl))
         addInterceptor(ApiKeyInterceptor(apiKey))
         addInterceptor(GenerateExceptionInterceptor())
         connectTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)
