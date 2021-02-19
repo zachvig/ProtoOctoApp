@@ -55,10 +55,6 @@ class OctoApp : Application() {
         Timber.plant(BaseInjector.get().timberCacheTree())
         Timber.plant(BaseInjector.get().firebaseTree())
 
-        // Setup analytics
-        Firebase.analytics.setAnalyticsCollectionEnabled(BaseInjector.get().octoPreferences().isAnalyticsEnabled)
-        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(BaseInjector.get().octoPreferences().isCrashReportingEnabled)
-
         // Setup RemoteConfig
         Firebase.remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
         Firebase.remoteConfig.setConfigSettingsAsync(remoteConfigSettings {
@@ -105,8 +101,10 @@ class OctoApp : Application() {
 
         // Setup analytics
         // Do not enable if we are in a TestLab environment
-        val testLabSetting = Settings.System.getString(contentResolver, "firebase.test.lab")
-        Firebase.analytics.setAnalyticsCollectionEnabled("true" != testLabSetting && !BuildConfig.DEBUG)
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(BaseInjector.get().octoPreferences().isCrashReportingEnabled && !BuildConfig.DEBUG)
+        val analyticsSuppressed = Settings.System.getString(contentResolver, "firebase.test.lab") != "true" && !BuildConfig.DEBUG
+        val analyticsEnabled = BaseInjector.get().octoPreferences().isAnalyticsEnabled
+        Firebase.analytics.setAnalyticsCollectionEnabled(analyticsEnabled && !analyticsSuppressed)
         if (BuildConfig.DEBUG) {
             Firebase.analytics.setUserProperty("debug", "true")
         }
