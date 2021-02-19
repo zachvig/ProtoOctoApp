@@ -23,7 +23,8 @@
         android:layout_marginTop="@dimen/margin_0_1"
         android:gravity="center"
         android:textAppearance="@style/OctoTheme.TextAppearance"
-        android:textColor="@color/light_text" />
+        android:textColor="@color/light_text"
+        android:textColorLink="@color/normal_text" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

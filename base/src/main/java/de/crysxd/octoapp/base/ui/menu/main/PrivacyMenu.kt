@@ -13,8 +13,12 @@ class PrivacyMenu : Menu {
 
     override fun getTitle(context: Context) = "Privacy"
 
-    override fun getSubtitle(context: Context) = "OctoApp does not collect any personalized information. I do not have any data about you" +
-            " like your email address. Even if you are having a active subscription, you are completely anonymous."
+    override fun getSubtitle(context: Context) = HtmlCompat.fromHtml(
+        "OctoApp does not collect any personalized information. I do not have any data about you" +
+                " like your email address. Even if you are having a active subscription, you are completely anonymous.<br><br>OctoApp is a " +
+                "<a href=\"https://gitlab.com/crysxd/octoapp\">open source</a> project.",
+        HtmlCompat.FROM_HTML_MODE_COMPACT
+    )
 
     override fun getBottomText(context: Context) = HtmlCompat.fromHtml(
         "If you have any questions,<br>please reach out to <a href=\"mailto:hello@octoapp.eu\">hello@octoapp.eu</a><br><br><a href=\"https://octoapp-4e438.web.app/privacy\">Data privacy statement</a>",
