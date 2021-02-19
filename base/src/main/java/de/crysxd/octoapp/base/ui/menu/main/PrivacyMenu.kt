@@ -15,7 +15,7 @@ class PrivacyMenu : Menu {
 
     override fun getSubtitle(context: Context) = HtmlCompat.fromHtml(
         "OctoApp does not collect any personalized information. I do not have any data about you" +
-                " like your email address. Even if you are having a active subscription, you are completely anonymous.<br><br>OctoApp is a " +
+                " like your email address. Even if you are having a active subscription, you are completely anonymous.<br><br>OctoApp is an " +
                 "<a href=\"https://gitlab.com/crysxd/octoapp\">open source</a> project.",
         HtmlCompat.FROM_HTML_MODE_COMPACT
     )
