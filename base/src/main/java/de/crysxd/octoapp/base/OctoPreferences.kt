@@ -2,6 +2,9 @@ package de.crysxd.octoapp.base
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import java.util.*
@@ -19,6 +22,8 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_HIDE_THUMBNAIL_HINT_UNTIL = "hide_thumbnail_hin_until"
         private const val KEY_ACTIVE_INSTANCE_WEB_URL = "active_instance_web_url"
         private const val KEY_AUTO_CONNECT_PRINTER = "auto_connect_printer"
+        private const val KEY_CRASH_REPORTING = "crash_reporting_enabled"
+        private const val KEY_ANALYTICS = "analytics_enabled"
     }
 
     private val updatedChannel = ConflatedBroadcastChannel(Unit)
@@ -28,6 +33,20 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         sharedPreferences.edit(action = block)
         updatedChannel.offer(Unit)
     }
+
+    var isAnalyticsEnabled: Boolean
+        get() = sharedPreferences.getBoolean(KEY_ANALYTICS, true)
+        set(value) {
+            edit { putBoolean(KEY_ANALYTICS, value) }
+            Firebase.analytics.setAnalyticsCollectionEnabled(value)
+        }
+
+    var isCrashReportingEnabled: Boolean
+        get() = sharedPreferences.getBoolean(KEY_CRASH_REPORTING, true)
+        set(value) {
+            edit { putBoolean(KEY_CRASH_REPORTING, value) }
+            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(value)
+        }
 
     var activeInstanceWebUrl: String?
         get() = sharedPreferences.getString(KEY_ACTIVE_INSTANCE_WEB_URL, null)

@@ -21,6 +21,7 @@ interface MenuItem {
     val icon: Int
 
     suspend fun getTitle(context: Context): CharSequence
+    suspend fun getDescription(context: Context): CharSequence? = null
     suspend fun isVisible(@IdRes destinationId: Int) = true
     suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor) = true
 }

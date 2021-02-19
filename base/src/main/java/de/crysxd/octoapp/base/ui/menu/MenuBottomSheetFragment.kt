@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.MenuBottomSheetFragmentBinding
@@ -82,7 +83,12 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     }
 
     fun showMenu(settingsMenu: Menu) {
-        beginDelayedTransition()
+        viewBinding.bottom.movementMethod = null
+        beginDelayedTransition {
+            // Need to be applied after transition to prevent glitches
+            viewBinding.bottom.movementMethod = settingsMenu.getBottomMovementMethod(this)
+        }
+
         adapter.menu = settingsMenu
         viewBinding.title.text = settingsMenu.getTitle(requireContext())
         viewBinding.title.isVisible = viewBinding.title.text.isNotBlank()
@@ -100,7 +106,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         true
     }
 
-    private fun beginDelayedTransition(smallChange: Boolean = false) {
+    private fun beginDelayedTransition(smallChange: Boolean = false, endAction: () -> Unit = {}) {
         view?.rootView?.let {
             // We need a offset if the view does not span the entire screen as the epicenter is in screen coordinates (?)
             val epicenterX = getScreenWidth() / 2
@@ -110,7 +116,17 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                 InstantAutoTransition(
                     explode = !smallChange,
                     explodeEpicenter = Rect(epicenterX, epicenterY, epicenterX, epicenterY)
-                )
+                ).also { t ->
+                    t.addListener(
+                        object : Transition.TransitionListener {
+                            override fun onTransitionStart(transition: Transition) = Unit
+                            override fun onTransitionCancel(transition: Transition) = Unit
+                            override fun onTransitionPause(transition: Transition) = Unit
+                            override fun onTransitionResume(transition: Transition) = Unit
+                            override fun onTransitionEnd(transition: Transition) = endAction()
+                        }
+                    )
+                }
             )
         }
     }
@@ -145,6 +161,8 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             val item = menuItems[position]
             val title = runBlocking { item.getTitle(requireContext()) }
             holder.binding.text.text = title
+            holder.binding.description.text = runBlocking { item.getDescription(requireContext()) }
+            holder.binding.description.isVisible = holder.binding.description.text.isNotBlank()
             holder.binding.button.setOnClickListener {
                 if (item is ToggleMenuItem) {
                     executeFlipToggle(holder, item)

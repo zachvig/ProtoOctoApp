@@ -7,6 +7,7 @@ import androidx.core.text.HtmlCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
+import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
 import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchOctoPrintMenu
@@ -36,6 +37,17 @@ class SettingsMenu : Menu {
         ),
         HtmlCompat.FROM_HTML_MODE_COMPACT
     )
+
+    override fun getBottomMovementMethod(host: MenuBottomSheetFragment) = LinkClickMovementMethod(object : LinkClickMovementMethod.OpenWithIntentLinkClickedListener() {
+        override fun onLinkClicked(context: Context, url: String?): Boolean {
+            return if (url == "privacy") {
+                host.pushMenu(PrivacyMenu())
+                true
+            } else {
+                super.onLinkClicked(context, url)
+            }
+        }
+    })
 }
 
 class SendFeedbackMenuItem : MenuItem {

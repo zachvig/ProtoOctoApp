@@ -11,6 +11,7 @@ import android.provider.Settings
 import androidx.core.content.res.ResourcesCompat
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -53,6 +54,10 @@ class OctoApp : Application() {
         // Add cache for logging and report to firebase
         Timber.plant(BaseInjector.get().timberCacheTree())
         Timber.plant(BaseInjector.get().firebaseTree())
+
+        // Setup analytics
+        Firebase.analytics.setAnalyticsCollectionEnabled(BaseInjector.get().octoPreferences().isAnalyticsEnabled)
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(BaseInjector.get().octoPreferences().isCrashReportingEnabled)
 
         // Setup RemoteConfig
         Firebase.remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)

@@ -312,7 +312,7 @@
     <string name="main_menu___item_emergency_stop">Arresto di emergenza</string>
     <string name="main_menu___item_cancel_print">Annulla la stampa</string>
     <string name="main_menu___menu_settings_title">Opzioni</string>
-    <string name="main_menu___about_text"><![CDATA[Versione <font color="%1$06x"><b>%2$s</b></font> è stato fatto<br/><font color="%1$06x"><b>per te</b></font> con amore in Europa 🇪🇺]]></string>
+    <string name="main_menu___about_text"><![CDATA[Versione <font color="%1$06x"><b>%2$s</b></font> è stato fatto<br/><font color="%1$06x"><b>per te</b></font> con amore in Europa 🇪🇺<br><a href="privacy">Data privacy</a>]]></string>
     <string name="main_menu___item_send_feedback">Invia feedback</string>
     <string name="main_menu___item_open_octoprint">Aprire OctoPrint</string>
     <string name="main_menu___item_change_octoprint_instance">Interruttore OctoPrint</string>

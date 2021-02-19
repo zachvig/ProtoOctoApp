@@ -324,7 +324,7 @@
     <string name="main_menu___item_cancel_print_keep_temp">Cancel Print (keep temperature)</string>
     <string name="main_menu___show_webcam">Show webcam</string>
     <string name="main_menu___menu_settings_title">Settings</string>
-    <string name="main_menu___about_text"><![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> was<br/>made <font color="%1$06x"><b>for you</b></font> with love in Europe 🇪🇺]]></string>
+    <string name="main_menu___about_text"><![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> was<br/>made <font color="%1$06x"><b>for you</b></font> with love in Europe 🇪🇺<br><a href="privacy">Data privacy</a>]]></string>
     <string name="main_menu___item_send_feedback">Send Feedback</string>
     <string name="main_menu___item_open_octoprint">Open OctoPrint</string>
     <string name="main_menu___item_change_octoprint_instance">Switch OctoPrint</string>

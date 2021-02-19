@@ -30,7 +30,7 @@ class OctoPrintMenu : Menu {
             HtmlCompat.FROM_HTML_MODE_COMPACT
         )
     } else {
-        null
+        ""
     }
 }
 

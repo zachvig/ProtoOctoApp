@@ -312,7 +312,7 @@
     <string name="main_menu___item_emergency_stop">Noodstop</string>
     <string name="main_menu___item_cancel_print">Afdrukken annuleren</string>
     <string name="main_menu___menu_settings_title">Opties</string>
-    <string name="main_menu___about_text"><![CDATA[Versie <font color="%1$06x"><b>%2$s</b></font> was <br/>gemaakt <font color="%1$06x"><b>voor u</b></font> met liefde in Europa 🇪🇺]]></string>
+    <string name="main_menu___about_text"><![CDATA[Versie <font color="%1$06x"><b>%2$s</b></font> was <br/>gemaakt <font color="%1$06x"><b>voor u</b></font> met liefde in Europa 🇪🇺<br><a href="privacy">Data privacy</a>]]></string>
     <string name="main_menu___item_send_feedback">Feedback sturen</string>
     <string name="main_menu___item_open_octoprint">Open OctoPrint</string>
     <string name="main_menu___item_change_octoprint_instance">Wissel OctoPrint</string>

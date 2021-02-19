@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -81,7 +82,14 @@
             app:layout_constraintVertical_bias="0.3"
             tools:checked="true" />
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/margin_1"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
+        android:textColor="@color/normal_text" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -310,7 +310,7 @@
     <string name="main_menu___item_emergency_stop">Not-Aus</string>
     <string name="main_menu___item_cancel_print">Druck abbrechen</string>
     <string name="main_menu___menu_settings_title">Optionen</string>
-    <string name="main_menu___about_text"><![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> wurde <font color="%1$06x"><b>für dich</b><br/></font> mit Liebe in Europa gemacht 🇪🇺]]></string>
+    <string name="main_menu___about_text"><![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> wurde <font color="%1$06x"><b>für dich</b><br/></font> mit Liebe in Europa gemacht 🇪🇺<br><a href="privacy">Data privacy</a>]]></string>
     <string name="main_menu___item_send_feedback">Feedback senden</string>
     <string name="main_menu___item_open_octoprint">OctoPrint öffnen</string>
     <string name="main_menu___item_change_octoprint_instance">OctoPrint wechseln</string>
