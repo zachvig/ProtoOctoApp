@@ -8,11 +8,28 @@ class SensitiveDataMask {
 
     private val lock = ReentrantLock()
     private var sensitiveData = mutableListOf<SensitiveData>()
-    private val basicAuthRegex = Regex("(http[s]?)://(.*)@")
 
     fun registerWebUrl(webUrl: String) {
         try {
-            registerSensitiveData(Uri.parse(webUrl).host ?: webUrl, "octoprint_host")
+            val uri = Uri.parse(webUrl)
+            registerSensitiveData(uri.host ?: webUrl, "octoprint_host")
+            uri.userInfo?.let {
+                registerSensitiveData(it, "octoprint_user_info")
+            }
+        } catch (e: Exception) {
+            registerSensitiveData(webUrl, "octoprint_host")
+        }
+    }
+
+    fun registerWebcamUrl(webUrl: String) {
+        try {
+            val uri = Uri.parse(webUrl)
+            uri.host?.let {
+                registerSensitiveData(uri.host ?: webUrl, "webcam_host")
+            }
+            uri.userInfo?.let {
+                registerSensitiveData(it, "webcam_user_info")
+            }
         } catch (e: Exception) {
             registerSensitiveData(webUrl, "octoprint_host")
         }
@@ -34,10 +51,6 @@ class SensitiveDataMask {
 
         sensitiveData.forEach {
             output = output.replace(it.sensitiveData, "\${${it.replacement}}")
-        }
-
-        if (output.contains("@")) {
-            output = output.replace(basicAuthRegex, "$1://\\\${user}:\\\${password}@")
         }
 
         return output

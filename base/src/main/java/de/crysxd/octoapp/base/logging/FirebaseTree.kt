@@ -31,7 +31,7 @@ class FirebaseTree(
                         if (priority >= Log.ERROR) {
                             FirebaseCrashlytics.getInstance().recordException(t)
                         } else {
-                            FirebaseCrashlytics.getInstance().log("ERROR: ${t::class.java.name}: ${t.message}")
+                            FirebaseCrashlytics.getInstance().log("ERROR: ${t::class.java.name}: ${mask.mask(t.message ?: "")}")
                         }
                     }
                 }

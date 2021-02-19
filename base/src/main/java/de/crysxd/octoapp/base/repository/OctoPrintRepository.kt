@@ -42,6 +42,9 @@ class OctoPrintRepository(
         activeInstance?.let {
             sensitiveDataMask.registerWebUrl(it.webUrl)
             sensitiveDataMask.registerApiKey(it.apiKey)
+            it.settings?.webcam?.streamUrl?.let { url ->
+                sensitiveDataMask.registerWebcamUrl(url)
+            }
         }
         instanceInformationChannel.offer(activeInstance)
     }
