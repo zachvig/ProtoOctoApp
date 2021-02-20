@@ -15,22 +15,29 @@ fun Throwable.composeErrorMessage(context: Context, @StringRes baseStringRes: In
         ?: context.getString(
             baseStringRes,
             ContextCompat.getColor(context, R.color.light_text),
-            (this as? ProxyException)?.originalMessage?.htmlify() ?: localizedMessage?.htmlify()
-            ?: cause?.localizedMessage?.htmlify()
-            ?: this::class.java.simpleName
+            (this as? ProxyException)?.original?.localizedMessage?.htmlify()
+                ?: localizedMessage?.htmlify()
+                ?: cause?.localizedMessage?.htmlify()
+                ?: (this as? ProxyException)?.original?.let { it::class.java.simpleName }
+                ?: this::class.java.simpleName
         ), HtmlCompat.FROM_HTML_MODE_LEGACY
 )
 
 fun Throwable.composeMessageStack(): CharSequence {
     val messageBuilder = StringBuilder()
     messageBuilder.append("<b>Error:</b> ")
-    messageBuilder.append((this as? ProxyException)?.originalMessage ?: localizedMessage ?: this::class.java.simpleName)
+    messageBuilder.append(
+        (this as? ProxyException)?.original?.localizedMessage
+            ?: localizedMessage
+            ?: (this as? ProxyException)?.original?.let { it::class.java.simpleName }
+            ?: this::class.java.simpleName
+    )
 
     var cause = cause
     while (cause != null) {
         messageBuilder.append("<br/><br/>")
         messageBuilder.append("<b>Caused by:</b> ")
-        messageBuilder.append(((this as? ProxyException)?.originalMessage ?: cause.localizedMessage)?.htmlify())
+        messageBuilder.append(((this as? ProxyException)?.original?.localizedMessage ?: cause.localizedMessage)?.htmlify())
         cause = cause.cause
     }
 

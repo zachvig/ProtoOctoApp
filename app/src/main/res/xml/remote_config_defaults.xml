@@ -112,4 +112,12 @@
         <key>number_of_free_app_widgets</key>
         <value>1</value>
     </entry>
+    <entry>
+        <key>read_write_timeout_ms</key>
+        <value>30000</value>
+    </entry>
+    <entry>
+        <key>connection_timeout_ms</key>
+        <value>5000</value>
+    </entry>
 </defaultsMap>

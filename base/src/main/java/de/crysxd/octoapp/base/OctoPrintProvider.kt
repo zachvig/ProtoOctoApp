@@ -117,8 +117,10 @@ class OctoPrintProvider(
             interceptors = listOf(invalidApiKeyInterceptor),
             keyStore = sslKeyStoreHandler.loadKeyStore(),
             hostnameVerifier = SubjectAlternativeNameCompatVerifier().takeIf { _ -> sslKeyStoreHandler.isWeakVerificationForHost(it.webUrl) },
-            connectTimeoutMs = Firebase.remoteConfig.getLong("web_socket_connect_timeout_ms"),
-            readWriteTimeout = Firebase.remoteConfig.getLong("web_socket_ping_pong_timeout_ms")
+            connectTimeoutMs = Firebase.remoteConfig.getLong("connection_timeout_ms"),
+            readWriteTimeout = Firebase.remoteConfig.getLong("read_write_timeout_ms"),
+            webSocketConnectionTimeout = Firebase.remoteConfig.getLong("web_socket_connect_timeout_ms"),
+            webSocketPingPongTimeout = Firebase.remoteConfig.getLong("web_socket_ping_pong_timeout_ms")
         ).also { octoPrint ->
             val logger = octoPrint.getLogger()
             logger.handlers.forEach { logger.removeHandler(it) }

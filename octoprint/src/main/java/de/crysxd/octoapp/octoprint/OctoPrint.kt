@@ -40,6 +40,8 @@ class OctoPrint(
     private val hostnameVerifier: HostnameVerifier? = null,
     val readWriteTimeout: Long = 5000,
     val connectTimeoutMs: Long = 10000,
+    val webSocketConnectionTimeout: Long = 5000,
+    val webSocketPingPongTimeout: Long = 5000,
 ) {
 
     private val fullWebUrl = rawWebUrl.sanitizeUrl()
@@ -58,8 +60,8 @@ class OctoPrint(
         gson = createGsonWithTypeAdapters(),
         logger = getLogger(),
         loginApi = createLoginApi(),
-        pingPongTimeoutMs = readWriteTimeout,
-        connectionTimeoutMs = connectTimeoutMs
+        pingPongTimeoutMs = webSocketPingPongTimeout,
+        connectionTimeoutMs = webSocketConnectionTimeout
     )
 
     fun getEventWebSocket() = webSocket
