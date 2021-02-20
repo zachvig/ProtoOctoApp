@@ -280,7 +280,7 @@
     <string name="print_notification___cancelling_title">Cancelar…</string>
     <string name="print_notification___printing_title">La impresión…</string>
     <string name="print_notification___printing_message">%1$d%% completado, %2$s restantes</string>
-    <string name="print_notification___printing_lost_connection_message">Reconectando…</string>
+    <string name="print_notification___printing_lost_reconnecting_title">Reconectando…</string>
     <string name="print_notification___print_done_title">Impresión completada</string>
     <string name="print_notification___close">Cerrar</string>
     <string name="capabilities_validation_error">No pude verificar la capacidad de sus servidores. Algunas características de la aplicación podrían no funcionar como se esperaba.</string>
@@ -366,4 +366,6 @@
     <string name="error_certificate_not_trusted_and_weak_hostname_required">Android no confía en el certificado proporcionado por este servidor. Este es el caso habitual de los certificados autofirmados.  Además, el certificado no proporciona un campo de \"subject alternative name\" (SAN) que es necesario a partir de Android 9. OctoApp debe utilizar una comprobación de nombre de host débil para evitar este problema. Esto reducirá la seguridad de su conexión.  ¿Desea confiar en este servidor y utilizar una verificación de nombre de host más débil?</string>
     <string name="announcement___learn_more">Vídeo de introducción</string>
     <string name="x_left">Quedan %s</string>
+    <string name="print_notification___disconnected_title">Se ha perdido la conexión</string>
+    <string name="print_notification___disconnected_message">Último %s, abre la aplicación para volver a conectarte</string>
 </resources>

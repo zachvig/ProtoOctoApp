@@ -288,8 +288,10 @@
     <string name="print_notification___cancelling_title">Cancelling…</string>
     <string name="print_notification___printing_title">Printing…</string>
     <string name="print_notification___printing_message">%1$d%% completed, %2$s</string>
-    <string name="print_notification___printing_lost_connection_message">Reconnecting…</string>
+    <string name="print_notification___printing_lost_reconnecting_title">Reconnecting…</string>
     <string name="print_notification___print_done_title">Print completed</string>
+    <string name="print_notification___disconnected_title">Lost connection</string>
+    <string name="print_notification___disconnected_message">Last %s, open app to reconnect</string>
     <string name="print_notification___filament_change_required">Filament change required</string>
     <string name="print_notification___close">Close</string>
     <string name="capabilities_validation_error">Couldn\'t verify your servers capabilities. Some features of the app might not work as expected.</string>

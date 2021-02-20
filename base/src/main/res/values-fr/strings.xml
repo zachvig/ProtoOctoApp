@@ -282,7 +282,7 @@
     <string name="print_notification___cancelling_title">Annulation…</string>
     <string name="print_notification___printing_title">Impression…</string>
     <string name="print_notification___printing_message">%1$d%% achevés, %2$s restants</string>
-    <string name="print_notification___printing_lost_connection_message">Reconnexion…</string>
+    <string name="print_notification___printing_lost_reconnecting_title">Reconnexion…</string>
     <string name="print_notification___print_done_title">Impression terminée</string>
     <string name="print_notification___close">Fermer</string>
     <string name="capabilities_validation_error">Impossible de vérifier les capacités de vos serveurs. Certaines fonctionnalités de l\'application peuvent ne pas fonctionner comme prévu.</string>
@@ -366,4 +366,6 @@
     <string name="error_certificate_not_trusted_and_weak_hostname_required">Android ne fait pas confiance au certificat fourni par ce serveur. C\'est généralement le cas pour les certificats autosignés.  En outre, le certificat ne fournit pas de champ de \"subject alternative name\" (SAN), qui est requis à partir d\'Android 9. OctoApp doit utiliser un contrôle de nom d\'hôte faible pour contourner ce problème. Cela réduira la sécurité de votre connexion.  Voulez-vous faire confiance à ce serveur et utiliser une vérification de nom d\'hôte plus faible ?</string>
     <string name="announcement___learn_more">Vidéo d\'introduction</string>
     <string name="x_left">%s restantes</string>
+    <string name="print_notification___disconnected_title">Perte de la connexion</string>
+    <string name="print_notification___disconnected_message">Derniers %s, ouvrir l\'application pour se reconnecter</string>
 </resources>

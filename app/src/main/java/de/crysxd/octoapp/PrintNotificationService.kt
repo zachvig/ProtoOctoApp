@@ -23,6 +23,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 const val ACTION_STOP = "stop"
 const val DISCONNECT_IF_NO_MESSAGE_FOR_MS = 60_000L
@@ -33,7 +34,7 @@ const val FILAMENT_CHANGE_NOTIFICATION_ID = 3100
 class PrintNotificationService : Service() {
 
     companion object {
-        const val NOTIFICATION_ID = 3249
+        const val NOTIFICATION_ID = 2999
         private val isNotificationEnabled get() = Injector.get().octoPreferences().isPrintNotificationEnabled
 
         fun start(context: Context) {
@@ -63,6 +64,7 @@ class PrintNotificationService : Service() {
     private var didSeeFilamentChangeAt = 0L
     private var pausedBecauseOfFilamentChange = false
     private var notPrintingCounter = 0
+    private var lastMessageReceivedAt = System.currentTimeMillis()
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -122,10 +124,19 @@ class PrintNotificationService : Service() {
             when (event) {
                 is Event.Disconnected -> {
                     ProgressAppWidget.notifyWidgetOffline()
-                    createDisconnectedNotification()
+                    val minSinceLastMessage = TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - lastMessageReceivedAt)
+                    if (minSinceLastMessage >= 3) {
+                        Timber.i("No connection since $minSinceLastMessage min, stopping self")
+                        stopSelf()
+                        createDisconnectedNotification()
+                    } else {
+                        Timber.i("No connection since $minSinceLastMessage min, attempting to reconnect")
+                        creareReconnectingNotification()
+                    }
                 }
                 is Event.Connected -> createInitialNotification()
                 is Event.MessageReceived -> {
+                    lastMessageReceivedAt = System.currentTimeMillis()
                     (event.message as? Message.CurrentMessage)?.let { message ->
                         ProgressAppWidget.notifyWidgetDataChanged(message)
                         updateFilamentChangeNotification(message)
@@ -165,7 +176,7 @@ class PrintNotificationService : Service() {
                     didSeePrintBeingActive = false
                     Timber.i("Print done, showing notification")
                     val name = message.job?.file?.display
-                    notificationManager.notify((3242..4637).random(), createCompletedNotification(name))
+                    notificationManager.notify((3000..3500).random(), createCompletedNotification(name))
                 }
 
                 Timber.i("Not printing, stopping self")
@@ -247,7 +258,7 @@ class PrintNotificationService : Service() {
         markDisconnectedJob?.cancel()
         markDisconnectedJob = GlobalScope.launch(coroutineJob) {
             delay(DISCONNECT_IF_NO_MESSAGE_FOR_MS)
-            notificationManager.notify(NOTIFICATION_ID, createDisconnectedNotification())
+            notificationManager.notify(NOTIFICATION_ID, creareReconnectingNotification())
         }
     }
 
@@ -277,13 +288,21 @@ class PrintNotificationService : Service() {
         .setDefaults(Notification.DEFAULT_VIBRATE)
         .build()
 
-    private fun createDisconnectedNotification() = createNotificationBuilder()
-        .setContentTitle(getString(R.string.print_notification___printing_lost_connection_message))
+    private fun creareReconnectingNotification() = createNotificationBuilder()
+        .setContentTitle(getString(R.string.print_notification___printing_lost_reconnecting_title))
         .setContentText(lastEta)
         .setProgress(maxProgress, 0, true)
         .addCloseAction()
         .setOngoing(false)
         .setNotificationSilent()
+        .build()
+
+    private fun createDisconnectedNotification() = createNotificationBuilder()
+        .setContentTitle(getString(R.string.print_notification___disconnected_title))
+        .setContentText(getString(R.string.print_notification___disconnected_message, lastEta))
+        .setOngoing(false)
+        .setNotificationSilent()
+        .setAutoCancel(true)
         .build()
 
     private fun createInitialNotification() = createNotificationBuilder()
