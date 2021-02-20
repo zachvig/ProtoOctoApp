@@ -2,11 +2,13 @@ package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.retry
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.*
 import java.net.HttpURLConnection
@@ -124,10 +126,6 @@ class MjpegConnection(private val streamUrl: String) {
         Timber.i("Stopped stream")
     }.onStart {
         Timber.i("Starting stream")
-    }.retry {
-        Timber.e(it)
-        delay(RECONNECT_TIMEOUT_MS)
-        true
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
