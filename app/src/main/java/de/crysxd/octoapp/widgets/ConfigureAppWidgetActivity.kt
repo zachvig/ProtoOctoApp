@@ -117,6 +117,12 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
         val titles = instances.map { it.label }.map { getString(R.string.app_widget___link_widget__option_x, it) }
         val webUrls = instances.map { it.webUrl }
 
+        if (webUrls.size <= 1) {
+            Timber.i("Only ${webUrls.size} options, auto picking sync option")
+            setResult(RESULT_OK, result(ACTIVE_WEB_URL_MARKER))
+            finish()
+        }
+
         val allTitles = listOf(listOf(getString(R.string.app_widget___link_widget__option_synced)), titles).flatten()
         val allWebUrls = listOf(listOf(ACTIVE_WEB_URL_MARKER), webUrls).flatten()
         var selectedUrl: String? = null
