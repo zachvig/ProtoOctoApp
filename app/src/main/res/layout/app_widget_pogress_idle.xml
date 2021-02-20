@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,102 +8,106 @@
     <ImageView
         android:id="@+id/colorStrip"
         android:layout_width="wrap_content"
-        android:layout_height="10dp"
-        android:layout_alignParentStart="true"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
         android:importantForAccessibility="no"
-        android:layout_alignTop="@id/rightContent"
-        android:layout_alignBottom="@id/rightContent"
         android:src="@drawable/widget_color_strip" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="@dimen/margin_1_2"
-        android:layout_toStartOf="@+id/buttonRefresh"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="@string/app_widget___updating"
-            android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
-            android:textColor="@color/black" />
-
-        <TextView
-            android:id="@+id/updatedAt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
-            android:textColor="@color/black_translucent"
-            android:visibility="gone" />
-
-    </LinearLayout>
-
-
-    <ImageButton
-        android:id="@+id/buttonRefresh"
-        style="@style/OctoTheme.AppWidget.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="@dimen/margin_1"
-        android:layout_marginStart="@dimen/margin_1"
-        android:importantForAccessibility="no"
-        android:src="@drawable/ic_round_refresh_24" />
-
-    <!-- Hack to keep height between idle and active the same -->
-    <LinearLayout
-        android:id="@+id/rightContent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:gravity="end"
-        android:orientation="vertical"
-        android:visibility="invisible">
-
-        <TextView
-            android:id="@+id/dummyLive"
-            style="@style/OctoTheme.AppWidget.Chip.Live"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <LinearLayout
-            android:id="@+id/dummyList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin_1"
-            android:divider="@drawable/margin_0_1_divider"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/margin_1"
-            android:showDividers="middle">
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/margin_1_2"
+            android:layout_toStartOf="@+id/buttonRefresh"
+            android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/dummyButton"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/widget_button_background"
-                android:importantForAccessibility="no"
-                android:src="@drawable/ic_round_play_arrow_24"
-                android:tint="@color/white" />
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/app_widget___updating"
+                android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/updatedAt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
+                android:textColor="@color/black_translucent"
+                android:visibility="gone" />
 
         </LinearLayout>
 
-    </LinearLayout>
 
-    <TextView
-        android:id="@+id/widgetId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="@dimen/margin_1"
-        android:gravity="bottom|start"
-        android:textColor="#f00" />
+        <ImageButton
+            android:id="@+id/buttonRefresh"
+            style="@style/OctoTheme.AppWidget.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/margin_1"
+            android:layout_marginStart="@dimen/margin_1"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_round_refresh_24" />
 
-</RelativeLayout>
+        <!-- Hack to keep height between idle and active the same -->
+        <LinearLayout
+            android:id="@+id/rightContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:gravity="end"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <TextView
+                android:id="@+id/dummyLive"
+                style="@style/OctoTheme.AppWidget.Chip.Live"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:id="@+id/dummyList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_1"
+                android:divider="@drawable/margin_0_1_divider"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/margin_1"
+                android:showDividers="middle">
+
+                <ImageButton
+                    android:id="@+id/dummyButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/widget_button_background"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_round_play_arrow_24"
+                    android:tint="@color/white" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/widgetId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="@dimen/margin_1"
+            android:gravity="bottom|start"
+            android:textColor="#f00" />
+
+    </RelativeLayout>
+
+</FrameLayout>
