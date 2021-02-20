@@ -279,7 +279,7 @@
     <string name="print_notification___cancelling_title">Annuleren…</string>
     <string name="print_notification___printing_title">Afdrukken…</string>
     <string name="print_notification___printing_message">%1$d%% voltooid, %2$s over</string>
-    <string name="print_notification___printing_lost_reconnecting_title">Opnieuw verbinden…</string>
+    <string name="print_notification___reconnecting_title">Opnieuw verbinden…</string>
     <string name="print_notification___print_done_title">Afdrukken voltooid</string>
     <string name="print_notification___close">Sluit</string>
     <string name="capabilities_validation_error">Kon je de mogelijkheden van je servers niet controleren. Sommige functies van de app werken misschien niet zoals verwacht.</string>

@@ -120,7 +120,8 @@ class OctoApp : Application() {
         ResourcesCompat.getFont(this, R.font.roboto_light, callback, handler)
         ResourcesCompat.getFont(this, R.font.roboto_regular, callback, handler)
 
-        // BroadcastReceiver to support widgets (will register itself)
+        // BroadcastReceiver to support widgets and print notification (will register itself)
         AppWidgetSupportBroadcastReceiver(this)
+        PrintNotificationSupportBroadcastReceiver(this)
     }
 }

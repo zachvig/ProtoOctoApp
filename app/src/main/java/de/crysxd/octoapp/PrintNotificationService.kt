@@ -65,11 +65,13 @@ class PrintNotificationService : Service() {
     private var pausedBecauseOfFilamentChange = false
     private var notPrintingCounter = 0
     private var lastMessageReceivedAt = System.currentTimeMillis()
+    private var preserveNotificationOnStop = false
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
+        Injector.get().octoPreferences().wasPrintNotificationDisconnected = false
         if (isNotificationEnabled) {
             Timber.i("Creating notification service")
             GlobalScope.launch(coroutineJob) {
@@ -106,7 +108,10 @@ class PrintNotificationService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         Timber.i("Destroying notification service")
-        notificationManager.cancel(NOTIFICATION_ID)
+        if (!Injector.get().octoPreferences().wasPrintNotificationDisconnected) {
+            // Only destroy notification if we were not disconnected. Otherwise we currently show the disconnected notification.
+            notificationManager.cancel(NOTIFICATION_ID)
+        }
         coroutineJob.cancel()
         ProgressAppWidget.notifyWidgetDataChanged()
     }
@@ -128,6 +133,7 @@ class PrintNotificationService : Service() {
                     if (minSinceLastMessage >= 3) {
                         Timber.i("No connection since $minSinceLastMessage min, stopping self")
                         stopSelf()
+                        Injector.get().octoPreferences().wasPrintNotificationDisconnected = true
                         createDisconnectedNotification()
                     } else {
                         Timber.i("No connection since $minSinceLastMessage min, attempting to reconnect")
@@ -289,7 +295,7 @@ class PrintNotificationService : Service() {
         .build()
 
     private fun creareReconnectingNotification() = createNotificationBuilder()
-        .setContentTitle(getString(R.string.print_notification___printing_lost_reconnecting_title))
+        .setContentTitle(getString(R.string.print_notification___reconnecting_title))
         .setContentText(lastEta)
         .setProgress(maxProgress, 0, true)
         .addCloseAction()
@@ -306,7 +312,7 @@ class PrintNotificationService : Service() {
         .build()
 
     private fun createInitialNotification() = createNotificationBuilder()
-        .setContentTitle(getString(R.string.print_notification___printing_title))
+        .setContentTitle(getString(R.string.print_notification___reconnecting_title))
         .setProgress(maxProgress, 0, true)
         .setOngoing(true)
         .addCloseAction()

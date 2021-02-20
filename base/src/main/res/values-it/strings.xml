@@ -279,7 +279,7 @@
     <string name="print_notification___cancelling_title">Cancellare…</string>
     <string name="print_notification___printing_title">In stampa…</string>
     <string name="print_notification___printing_message">%1$d%% completato, %2$s rimanenti</string>
-    <string name="print_notification___printing_lost_reconnecting_title">Riconnessione…</string>
+    <string name="print_notification___reconnecting_title">Riconnessione…</string>
     <string name="print_notification___print_done_title">Stampa completata</string>
     <string name="print_notification___close">Chiudi</string>
     <string name="capabilities_validation_error">Non ho potuto verificare le capacità dei tuoi server. Alcune funzionalità dell\'app potrebbero non funzionare come previsto.</string>

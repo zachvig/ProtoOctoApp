@@ -279,7 +279,7 @@
     <string name="print_notification___cancelling_title">Abbrechen…</string>
     <string name="print_notification___printing_title">Drucken…</string>
     <string name="print_notification___printing_message">%1$d%% abgeschlossen, %2$s übrig</string>
-    <string name="print_notification___printing_lost_reconnecting_title">Verbindung wird wiederhergestelt…</string>
+    <string name="print_notification___reconnecting_title">Verbindung wird wiederhergestelt…</string>
     <string name="print_notification___print_done_title">Drucken abgeschlossen</string>
     <string name="print_notification___close">Schließen</string>
     <string name="capabilities_validation_error">Konnte die Fähigkeiten deines Servers nicht verifizieren. Einige Funktionen der App könnten nicht wie erwartet funktionieren.</string>

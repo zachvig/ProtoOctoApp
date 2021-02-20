@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
+import android.net.NetworkCapabilities
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
@@ -49,9 +50,8 @@ class NetworkStateViewModel(
         }
     }
 
-    @Suppress("DEPRECATION")
     private fun updateNetworkState() {
-        val wifiConnected = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)?.isConnected == true
+        val wifiConnected = manager.allNetworks.any { manager.getNetworkCapabilities(it)?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true }
         Timber.i("Update network state: $wifiConnected")
         mutableNetworkState.postValue(if (wifiConnected) NetworkState.WifiConnected else NetworkState.WifiNotConnected)
     }

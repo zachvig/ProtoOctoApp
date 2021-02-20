@@ -288,7 +288,7 @@
     <string name="print_notification___cancelling_title">Cancelling…</string>
     <string name="print_notification___printing_title">Printing…</string>
     <string name="print_notification___printing_message">%1$d%% completed, %2$s</string>
-    <string name="print_notification___printing_lost_reconnecting_title">Reconnecting…</string>
+    <string name="print_notification___reconnecting_title">Reconnecting…</string>
     <string name="print_notification___print_done_title">Print completed</string>
     <string name="print_notification___disconnected_title">Lost connection</string>
     <string name="print_notification___disconnected_message">Last %s, open app to reconnect</string>

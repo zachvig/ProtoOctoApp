@@ -282,7 +282,7 @@
     <string name="print_notification___cancelling_title">Annulation…</string>
     <string name="print_notification___printing_title">Impression…</string>
     <string name="print_notification___printing_message">%1$d%% achevés, %2$s restants</string>
-    <string name="print_notification___printing_lost_reconnecting_title">Reconnexion…</string>
+    <string name="print_notification___reconnecting_title">Reconnexion…</string>
     <string name="print_notification___print_done_title">Impression terminée</string>
     <string name="print_notification___close">Fermer</string>
     <string name="capabilities_validation_error">Impossible de vérifier les capacités de vos serveurs. Certaines fonctionnalités de l\'application peuvent ne pas fonctionner comme prévu.</string>

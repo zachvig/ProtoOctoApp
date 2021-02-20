@@ -24,6 +24,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_AUTO_CONNECT_PRINTER = "auto_connect_printer"
         private const val KEY_CRASH_REPORTING = "crash_reporting_enabled"
         private const val KEY_ANALYTICS = "analytics_enabled"
+        private const val KEY_PRINT_NOTIFICATION_WAS_DISCONNECTED = "print_notification_was_disconnected"
     }
 
     private val updatedChannel = ConflatedBroadcastChannel(Unit)
@@ -33,6 +34,12 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         sharedPreferences.edit(action = block)
         updatedChannel.offer(Unit)
     }
+
+    var wasPrintNotificationDisconnected: Boolean
+        get() = sharedPreferences.getBoolean(KEY_PRINT_NOTIFICATION_WAS_DISCONNECTED, true)
+        set(value) {
+            edit { putBoolean(KEY_PRINT_NOTIFICATION_WAS_DISCONNECTED, value) }
+        }
 
     var isAnalyticsEnabled: Boolean
         get() = sharedPreferences.getBoolean(KEY_ANALYTICS, true)

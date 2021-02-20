@@ -280,7 +280,7 @@
     <string name="print_notification___cancelling_title">Cancelar…</string>
     <string name="print_notification___printing_title">La impresión…</string>
     <string name="print_notification___printing_message">%1$d%% completado, %2$s restantes</string>
-    <string name="print_notification___printing_lost_reconnecting_title">Reconectando…</string>
+    <string name="print_notification___reconnecting_title">Reconectando…</string>
     <string name="print_notification___print_done_title">Impresión completada</string>
     <string name="print_notification___close">Cerrar</string>
     <string name="capabilities_validation_error">No pude verificar la capacidad de sus servidores. Algunas características de la aplicación podrían no funcionar como se esperaba.</string>
