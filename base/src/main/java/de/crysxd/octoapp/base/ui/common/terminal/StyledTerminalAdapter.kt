@@ -8,7 +8,6 @@ import de.crysxd.octoapp.base.models.SerialCommunication
 import de.crysxd.octoapp.base.ui.common.AutoBindViewHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.util.regex.Pattern
 
 class StyledTerminalAdapter : TerminalAdapter<StyledTerminalAdapter.ViewHolder>() {
@@ -36,7 +35,6 @@ class StyledTerminalAdapter : TerminalAdapter<StyledTerminalAdapter.ViewHolder>(
     }
 
     override suspend fun appendItem(item: SerialCommunication) = withContext(Dispatchers.Main) {
-        Timber.i("Append ${item.content}")
         val items = mapItem(item)
         serialCommunications.addAll(items)
 
