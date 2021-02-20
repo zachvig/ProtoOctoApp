@@ -81,6 +81,7 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
     }
 
     private fun removeWidget(appWidgetId: Int) {
+        AppWidgetPreferences.deletePreferencesForWidgetId(appWidgetId)
         val host = AppWidgetHost(this, 1)
         host.deleteAppWidgetId(appWidgetId)
     }
