@@ -36,7 +36,7 @@ class EventWebSocket(
 ) {
 
     private val reconnectTimeout = connectionTimeoutMs + RECONNECT_DELAY_MS
-    private val stalledTimeout = reconnectTimeout * 3
+    private val stalledTimeout = reconnectTimeout * 5
 
     private var reconnectJob: Job? = null
     private var reportDisconnectedJob: Job? = null

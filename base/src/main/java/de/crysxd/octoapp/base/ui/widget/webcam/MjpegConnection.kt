@@ -94,7 +94,7 @@ class MjpegConnection(private val streamUrl: String) {
                 }
             }
         } catch (e: Exception) {
-            throw ProxyException(e, streamUrl)
+            throw ProxyException.create(e, streamUrl)
         }
     }.onCompletion {
         Timber.i("[$instanceId] Stopped stream")

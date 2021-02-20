@@ -26,10 +26,10 @@ class CatchAllInterceptor(
         } catch (e: IOException) {
             // We create a "proxy exception" as the first line of defense against data leaks.
             // The proxy exception will have the original stack trace but the message will be scrubbed to remove sensitive data
-            throw ProxyException(e, baseUrl, apiKey)
+            throw ProxyException.create(e, baseUrl, apiKey)
         } catch (e: Throwable) {
             // Let's wrap in OctoprintException (extends IOException)
-            throw OctoPrintException(ProxyException(e, baseUrl, apiKey), ProxyException.mask("Uncaught exception while requesting: $url", baseUrl, apiKey))
+            throw OctoPrintException(ProxyException.create(e, baseUrl, apiKey), ProxyException.mask("Uncaught exception while requesting: $url", baseUrl, apiKey))
         }
     }
 }

@@ -28,6 +28,7 @@ class GetWebcamSnapshotUseCase @Inject constructor(
             val streamSettings = getWebcamSettingsUseCase.execute(param.instanceInfo)
             val mjpegConnection = MjpegConnection(streamSettings.streamUrl ?: throw IllegalStateException("No stream URL"))
             mjpegConnection.load().mapNotNull { it as? MjpegConnection.MjpegSnapshot.Frame }.sample(param.sampleRateMs).map {
+                timber.i("Transforming image")
                 measureTime("transform_frame_for_widget") {
                     val transformed = applyWebcamTransformationsUseCase.execute(ApplyWebcamTransformationsUseCase.Params(it.frame, streamSettings))
                     val width = transformed.width.coerceAtMost(param.maxWidthPx)
@@ -41,6 +42,7 @@ class GetWebcamSnapshotUseCase @Inject constructor(
                         drawBitmap(transformed, Rect(0, 0, transformed.width, transformed.height), Rect(0, 0, width, height), paint)
                     }
                     transformed.recycle()
+                    timber.i("Image transformed")
                     final
                 }
             }
