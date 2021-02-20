@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.widgets
 
+import android.appwidget.AppWidgetHost
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.content.pm.ShortcutInfo
@@ -23,7 +24,9 @@ import de.crysxd.octoapp.widgets.AppWidgetPreferences.ACTIVE_WEB_URL_MARKER
 import timber.log.Timber
 import java.util.*
 
+
 class ConfigureAppWidgetActivity : LocalizedActivity() {
+    private var canceled = false
     private val appWidgetId
         get() = intent.extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
             ?: AppWidgetManager.INVALID_APPWIDGET_ID
@@ -34,30 +37,59 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
         Timber.i("Starting ConfigureWidgetActivity for widget $appWidgetId")
         overridePendingTransition(0, 0)
 
+        val activeWidgetCount = getWidgetCount(this)
+        Timber.i("Widgets active: $activeWidgetCount")
         val maxWidgetCount = Firebase.remoteConfig.getLong("number_of_free_app_widgets")
-        if (getWidgetCount(this) > maxWidgetCount || BillingManager.isFeatureEnabled("infinite_app_widgets")) {
+        if (activeWidgetCount > maxWidgetCount || BillingManager.isFeatureEnabled("infinite_app_widgets")) {
             MaterialAlertDialogBuilder(this)
                 .setMessage(getString(R.string.app_widget___free_widgets_exceeded_message, maxWidgetCount))
                 .setPositiveButton(R.string.app_widget___free_widgets_exceeded_action, null)
-                .setOnDismissListener { finish() }
+                .setOnDismissListener { finishWithCancel() }
                 .show()
         } else when (intent.action) {
             AppWidgetManager.ACTION_APPWIDGET_CONFIGURE -> configureAppWidget()
             Intent.ACTION_CREATE_SHORTCUT -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 configureShortcut()
             } else {
-                finish()
+                finishWithCancel()
             }
             else -> {
                 Timber.e(IllegalArgumentException("Invalid action ${intent.action}"))
-                finish()
+                finishWithCancel()
             }
         }
+    }
+
+    private fun createAppWidgetResultIntent() = Intent().apply {
+        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+    }
+
+    private fun finishWithSuccess(intent: Intent? = null) {
+        setResult(RESULT_OK, intent)
+        finish()
+    }
+
+    private fun finishWithCancel(intent: Intent? = null) {
+        setResult(RESULT_CANCELED, intent)
+        canceled = true
+        finish()
     }
 
     override fun finish() {
         super.finish()
         overridePendingTransition(0, 0)
+    }
+
+    private fun removeWidget(appWidgetId: Int) {
+        val host = AppWidgetHost(this, 1)
+        host.deleteAppWidgetId(appWidgetId)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (canceled && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+            removeWidget(appWidgetId)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -96,7 +128,7 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
 
     private fun configureAppWidget() {
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-            finish()
+            finishWithCancel()
             return
         }
 
@@ -106,9 +138,7 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
             updateAppWidget(appWidgetId)
 
             // Create result intnet
-            Intent().apply {
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            }
+            createAppWidgetResultIntent()
         }
     }
 
@@ -119,8 +149,8 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
 
         if (webUrls.size <= 1) {
             Timber.i("Only ${webUrls.size} options, auto picking sync option")
-            setResult(RESULT_OK, result(ACTIVE_WEB_URL_MARKER))
-            finish()
+            finishWithSuccess(result(ACTIVE_WEB_URL_MARKER))
+            return
         }
 
         val allTitles = listOf(listOf(getString(R.string.app_widget___link_widget__option_synced)), titles).flatten()
@@ -134,10 +164,13 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
             }
             .setOnDismissListener {
                 Handler().postDelayed({
-                    Timber.i("Closing ConfigureWidgetActivity")
+                    Timber.i("Closing ConfigureWidgetActivity, selected $selectedUrl")
 
-                    setResult(RESULT_OK, result(selectedUrl))
-                    finish()
+                    if (selectedUrl != null) {
+                        finishWithSuccess(result(selectedUrl))
+                    } else {
+                        finishWithCancel(createAppWidgetResultIntent())
+                    }
                 }, 300)
             }
             .show()
