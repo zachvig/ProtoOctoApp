@@ -12,6 +12,7 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.WebcamFragmentBinding
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
+import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import kotlinx.coroutines.flow.collectLatest
 
 class WebcamFragment : Fragment(R.layout.webcam_fragment) {
@@ -95,7 +96,7 @@ class WebcamFragment : Fragment(R.layout.webcam_fragment) {
                         getString(R.string.time_left_x, Injector.get().formatDurationUseCase().execute(it))
                     }
                     binding.textViewEta.text = message.progress?.printTimeLeft?.let {
-                        getString(R.string.eta_x, Injector.get().formatEtaUseCase().execute(it))
+                        Injector.get().formatEtaUseCase().execute(FormatEtaUseCase.Params(it.toLong(), false))
                     }
                 } else {
                     binding.textViewProgress.text = ""

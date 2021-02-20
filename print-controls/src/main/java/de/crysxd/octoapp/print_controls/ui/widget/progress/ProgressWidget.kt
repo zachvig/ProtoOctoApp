@@ -22,6 +22,7 @@ import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidgetViewModel
 import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
+import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.injectViewModel
 import kotlinx.android.synthetic.main.widget_progress.view.*
@@ -31,6 +32,7 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
 
     private val viewModel: ProgressWidgetViewModel by injectViewModel()
     private val formatDurationUseCase: FormatDurationUseCase = Injector.get().formatDurationUseCase()
+    private val formatEtaUseCase = Injector.get().formatEtaUseCase()
     private var lastProgress: Float? = null
 
     override fun getTitle(context: Context) = context.getString(R.string.progress)
@@ -101,7 +103,7 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
                 view.textViewPrintName.text = it.job?.file?.display
                 view.textViewTimeSpent.text = it.progress?.printTime?.toLong()?.let { formatDuration(it) }
                 view.textViewTimeLeft.text = it.progress?.printTimeLeft?.toLong()?.let { formatDuration(it) }
-                view.textVieEta.text = it.progress?.let { Injector.get().formatEtaUseCase().execute(it.printTimeLeft) }
+                view.textVieEta.text = it.progress?.printTimeLeft?.toLong()?.let { formatEta(it) }
                 view.estimationIndicator.background?.setTint(ContextCompat.getColor(requireContext(), it.progress?.printTimeLeftOrigin.asPrintTimeLeftOriginColor()))
                 view.textViewProgressPercent.isVisible = true
                 view.textViewPrintName.isVisible = true
@@ -116,5 +118,6 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
     }
 
     private suspend fun formatDuration(seconds: Long) = formatDurationUseCase.execute(seconds)
+    private suspend fun formatEta(seconds: Long) = formatEtaUseCase.execute(FormatEtaUseCase.Params(seconds, false))
 
 }

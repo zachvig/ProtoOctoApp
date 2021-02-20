@@ -13,7 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.colorTheme
-import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
+import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
@@ -57,7 +57,7 @@ class PrintNotificationService : Service() {
     private val normalNotificationChannelId = "print_progress"
     private val filamentNotificationChannelId = "filament_change"
     private val notificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
-    private val formatDurationUseCase: FormatDurationUseCase = Injector.get().formatDurationUseCase()
+    private val formatEtaUseCase = Injector.get().formatEtaUseCase()
     private var lastEta: String = ""
     private var didSeePrintBeingActive = false
     private var didSeeFilamentChangeAt = 0L
@@ -179,11 +179,12 @@ class PrintNotificationService : Service() {
         // Update notification
         didSeePrintBeingActive = true
         message.progress?.let {
+            val leftSecs = it.printTimeLeft.toLong()
             val progress = it.completion.toInt()
-            val left = formatDurationUseCase.execute(it.printTimeLeft.toLong())
+            val smartEta = formatEtaUseCase.execute(FormatEtaUseCase.Params(leftSecs, allowRelative = false))
+            lastEta = formatEtaUseCase.execute(FormatEtaUseCase.Params(leftSecs, allowRelative = false))
 
-            lastEta = getString(R.string.print_notification___print_eta_x, Injector.get().formatEtaUseCase().execute(it.printTimeLeft))
-            val detail = getString(R.string.print_notification___printing_message, progress, left)
+            val detail = getString(R.string.print_notification___printing_message, progress, smartEta)
             val title = getString(
                 when {
                     flags.pausing -> R.string.print_notification___pausing_title

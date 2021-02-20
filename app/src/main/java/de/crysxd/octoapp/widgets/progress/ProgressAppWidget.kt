@@ -12,6 +12,7 @@ import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
 import de.crysxd.octoapp.base.ui.ColorTheme
 import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.base.usecase.CreateProgressAppWidgetDataUseCase
+import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.widgets.*
 import de.crysxd.octoapp.widgets.AppWidgetPreferences.ACTIVE_WEB_URL_MARKER
@@ -175,7 +176,7 @@ class ProgressAppWidget : AppWidgetProvider() {
             AppWidgetPreferences.setLastUpdateTime(appWidgetId)
             val progress = data.printProgress?.let { context.getString(R.string.x_percent, it * 100).replace(" ", "") }
             val eta = runBlocking {
-                data.printTimeLeft?.let { Injector.get().formatEtaUseCase().execute(it) }
+                data.printTimeLeft?.let { Injector.get().formatEtaUseCase().execute(FormatEtaUseCase.Params(it.toLong(), true)) }
             }
             val etaIndicatorColor = data.printTimeLeftOrigin.asPrintTimeLeftOriginColor()
             val views = if (data.isPrinting || data.isCancelling || data.isPaused || data.isPausing) {
@@ -185,7 +186,7 @@ class ProgressAppWidget : AppWidgetProvider() {
             }
 
             views.setTextViewText(R.id.progress, progress)
-            views.setTextViewText(R.id.eta, context.getString(R.string.eta_x, eta))
+            views.setTextViewText(R.id.eta, eta)
             views.setTextViewText(R.id.updatedAt, createUpdatedNowText())
             views.setTextViewText(
                 R.id.title, when {

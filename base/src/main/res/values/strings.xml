@@ -62,6 +62,7 @@
     <string name="x_percent">%.0f %%</string>
     <string name="x_percent_int">%d %%</string>
     <string name="time_left_x">Time left: %s</string>
+    <string name="x_left">%s left</string>
     <string name="eta_x">ETA: %s</string>
     <string name="message">Message</string>
     <string name="never">Never</string>
@@ -286,12 +287,11 @@
     <string name="print_notification___paused_filamet_change_title">Paused, filament empty</string>
     <string name="print_notification___cancelling_title">Cancelling…</string>
     <string name="print_notification___printing_title">Printing…</string>
-    <string name="print_notification___printing_message">%1$d%% completed, %2$s left</string>
+    <string name="print_notification___printing_message">%1$d%% completed, %2$s</string>
     <string name="print_notification___printing_lost_connection_message">Reconnecting…</string>
     <string name="print_notification___print_done_title">Print completed</string>
     <string name="print_notification___filament_change_required">Filament change required</string>
     <string name="print_notification___close">Close</string>
-    <string name="print_notification___print_eta_x">ETA: %s</string>
     <string name="capabilities_validation_error">Couldn\'t verify your servers capabilities. Some features of the app might not work as expected.</string>
     <string name="connection_lost_reconnecting">Connection lost, reconnecting…</string>
     <string name="error_please_enter_a_message">Please enter a message</string>
