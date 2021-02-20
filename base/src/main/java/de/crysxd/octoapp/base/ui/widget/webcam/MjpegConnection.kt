@@ -177,8 +177,11 @@ class MjpegConnection(private val streamUrl: String) {
         }
         if (extractedBoundary == null) {
             throw Exception("Unable to find mjpeg boundary")
+        } else if (extractedBoundary.first() == '"' && extractedBoundary.last() == '"') {
+            extractedBoundary.removePrefix("\"").removeSuffix("\"")
+        } else {
+            extractedBoundary
         }
-        extractedBoundary
     } catch (e: Exception) {
         Timber.w("Unable to extract header boundary")
         null
