@@ -30,7 +30,7 @@ class GetWebcamSnapshotUseCase @Inject constructor(
             mjpegConnection.load().mapNotNull { it as? MjpegConnection.MjpegSnapshot.Frame }.sample(param.sampleRateMs).map {
                 timber.i("Transforming image")
                 measureTime("transform_frame_for_widget") {
-                    val transformed = applyWebcamTransformationsUseCase.execute(ApplyWebcamTransformationsUseCase.Params(it.frame, streamSettings))
+                    val transformed = applyWebcamTransformationsUseCase.execute(ApplyWebcamTransformationsUseCase.Params(it.frame, settings = streamSettings))
                     val width = transformed.width.coerceAtMost(param.maxWidthPx)
                     val height = ((width / transformed.width.toFloat()) * transformed.height).toInt()
                     val final = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)

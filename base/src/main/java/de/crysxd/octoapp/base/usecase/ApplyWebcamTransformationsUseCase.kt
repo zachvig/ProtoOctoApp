@@ -26,9 +26,7 @@ class ApplyWebcamTransformationsUseCase @Inject constructor() : UseCase<ApplyWeb
                 param.frame.height / 2f
             )
 
-            val transformed = Bitmap.createBitmap(param.frame, 0, 0, param.frame.width, param.frame.height, matrix, true)
-            param.frame.recycle()
-            transformed
+            Bitmap.createBitmap(param.frame, 0, 0, param.frame.width, param.frame.height, matrix, true)
         } else {
             param.frame
         }

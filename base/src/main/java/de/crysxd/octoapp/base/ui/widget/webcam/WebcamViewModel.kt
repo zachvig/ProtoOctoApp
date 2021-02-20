@@ -1,10 +1,8 @@
 package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.graphics.Bitmap
-import android.graphics.Matrix
 import android.net.Uri
 import android.widget.ImageView
-import androidx.core.graphics.applyCanvas
 import androidx.lifecycle.*
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.ext.isHlsStreamUrl
@@ -65,22 +63,15 @@ class WebcamViewModel(
                             emit(UiState.HlsStreamReady(Uri.parse(streamUrl), webcamSettings.streamRatio))
                         }
                     } else {
-                        var reuseBitmap: Bitmap? = null
                         MjpegConnection(streamUrl)
                             .load()
                             .map {
                                 when (it) {
                                     is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading
-                                    is MjpegConnection.MjpegSnapshot.Frame -> {
-                                        if (reuseBitmap == null) {
-                                            reuseBitmap = Bitmap.createBitmap(it.frame.width, it.frame.height, Bitmap.Config.ARGB_8888)
-                                            applyTransformations(it.frame, reuseBitmap!!, webcamSettings)
-                                            UiState.MjpegStreamReady(frame = reuseBitmap!!, aspectRation = webcamSettings.streamRatio)
-                                        } else {
-                                            applyTransformations(it.frame, reuseBitmap!!, webcamSettings)
-                                            UiState.MjpegStreamUpdated
-                                        }
-                                    }
+                                    is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
+                                        frame = applyTransformations(it.frame, webcamSettings),
+                                        aspectRation = webcamSettings.streamRatio
+                                    )
                                 }
                             }
                             .flowOn(Dispatchers.Default)
@@ -129,35 +120,15 @@ class WebcamViewModel(
 
     fun getInitialAspectRatio() = octoPrintRepository.getActiveInstanceSnapshot()?.settings?.webcam?.streamRatio ?: "16:9"
 
-    private fun applyTransformations(src: Bitmap, dest: Bitmap, webcamSettings: WebcamSettings) {
-        val matrix = Matrix()
-
-        if (webcamSettings.rotate90) {
-            matrix.postRotate(-90f)
-        }
-
-        matrix.postScale(
-            if (webcamSettings.flipH) -1f else 1f,
-            if (webcamSettings.flipV) -1f else 1f,
-            src.width / 2f,
-            src.height / 2f
-        )
-
-        dest.applyCanvas {
-            save()
-            concat(matrix)
-            drawBitmap(src, 0f, 0f, null)
-            restore()
-        }
-    }
+    private suspend fun applyTransformations(frame: Bitmap, webcamSettings: WebcamSettings) =
+        applyWebcamTransformationsUseCase.execute(ApplyWebcamTransformationsUseCase.Params(frame, webcamSettings))
 
     sealed class UiState {
         object Loading : UiState()
         object WebcamNotConfigured : UiState()
         object HlsStreamDisabled : UiState()
-        data class MjpegStreamReady(val frame: Bitmap, val aspectRation: String) : UiState()
+        data class FrameReady(val frame: Bitmap, val aspectRation: String) : UiState()
         data class HlsStreamReady(val uri: Uri, val aspectRation: String) : UiState()
-        object MjpegStreamUpdated : UiState()
         data class Error(val isManualReconnect: Boolean, val streamUrl: String? = null, val aspectRation: String? = null) : UiState()
     }
 }

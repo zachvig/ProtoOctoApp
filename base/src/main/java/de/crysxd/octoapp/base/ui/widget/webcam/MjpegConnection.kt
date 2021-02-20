@@ -21,6 +21,12 @@ const val DEFAULT_HEADER_BOUNDARY = "[_a-zA-Z0-9]*boundary"
 
 class MjpegConnection(private val streamUrl: String) {
 
+    companion object {
+        var instanceCounter = 0
+    }
+
+    private val instanceId = instanceCounter++
+
     @Suppress("BlockingMethodInNonBlockingContext", "ExperimentalApiUsage")
     fun load() = flow {
         while (true) {
@@ -30,7 +36,7 @@ class MjpegConnection(private val streamUrl: String) {
             val connection = connect()
             val boundaryPattern = createHeaderBoundaryPattern(connection)
             val input = BufferedInputStream(connection.inputStream)
-            Timber.i("Connected to $streamUrl")
+            Timber.i("[$instanceId] Connected to $streamUrl")
 
             // Read frames
             val buffer = ByteArray(4096)
@@ -43,7 +49,7 @@ class MjpegConnection(private val streamUrl: String) {
                 // Read data
                 val bufferLength = input.read(buffer)
                 if (bufferLength < 0) {
-                    throw SocketException("Socket closed")
+                    throw SocketException("[$instanceId] Socket closed")
                 }
 
                 // Combine buffers and search for boundary
@@ -67,7 +73,7 @@ class MjpegConnection(private val streamUrl: String) {
                     if (imageBuffer.size() - boundary.length > 0) {
                         // Create the bitmap options. This allows use to reuse the same Bitmap over and over
                         if (bitmapOptions == null) {
-                            Timber.i("Init options")
+                            Timber.i("[$instanceId] Init options")
                             // Read bitmap bounds
                             bitmapOptions = BitmapFactory.Options()
                             bitmapOptions.inJustDecodeBounds = true
@@ -80,7 +86,7 @@ class MjpegConnection(private val streamUrl: String) {
                             bitmapOptions.inBitmap = bitmap
                             bitmapOptions.inJustDecodeBounds = false
                             bitmapOptions.inSampleSize = 1
-                            Timber.i("Options created (${bitmapOptions.outWidth}x${bitmapOptions.outHeight} px)")
+                            Timber.i("[$instanceId] Options created (${bitmapOptions.outWidth}x${bitmapOptions.outHeight} px)")
                         }
                         readBitmap(imageBuffer, bitmapOptions)
                         val bitmap = bitmapOptions.inBitmap
@@ -89,10 +95,10 @@ class MjpegConnection(private val streamUrl: String) {
                             emit(MjpegSnapshot.Frame(bitmapOptions.inBitmap))
                         } else {
                             lostFrameCount++
-                            Timber.e("Lost frame due to decoding error (lostFrames=$lostFrameCount)")
+                            Timber.e("[$instanceId] Lost frame due to decoding error (lostFrames=$lostFrameCount)")
 
                             if (lostFrameCount > TOLERATED_FRAME_LOSS_STREAK) {
-                                throw IOException("Too many lost frames ($lostFrameCount)")
+                                throw IOException("[$instanceId] Too many lost frames ($lostFrameCount)")
                             }
                         }
                     }

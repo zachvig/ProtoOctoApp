@@ -111,7 +111,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     }
 
     private fun applyState(oldState: WebcamState?, newState: WebcamState) {
-        if (newState === oldState) {
+        if (newState == oldState) {
             return
         }
 
@@ -373,7 +373,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     }
 
     inner class ScaleGestureListener : ScaleGestureDetector.OnScaleGestureListener {
-        var hintShown = false
+        private var hintShown = false
         override fun onScale(detector: ScaleGestureDetector): Boolean {
             if (!scaleToFill) {
                 // Check if we increase or decrease zoom

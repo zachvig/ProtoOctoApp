@@ -68,16 +68,12 @@ class WebcamFragment : Fragment(R.layout.webcam_fragment) {
                     requireActivity().finish()
                     WebcamView.WebcamState.HlsStreamDisabled
                 }
-                is WebcamViewModel.UiState.MjpegStreamReady -> WebcamView.WebcamState.MjpegFrameReady(it.frame)
+                is WebcamViewModel.UiState.FrameReady -> WebcamView.WebcamState.MjpegFrameReady(it.frame)
                 is WebcamViewModel.UiState.HlsStreamReady -> WebcamView.WebcamState.HlsStreamReady(it.uri)
                 is WebcamViewModel.UiState.Error -> if (it.isManualReconnect) {
                     WebcamView.WebcamState.Error(it.streamUrl)
                 } else {
                     WebcamView.WebcamState.Reconnecting
-                }
-                else -> {
-                    binding.webcamView.invalidateMjpegFrame()
-                    binding.webcamView.state
                 }
             }
         }
