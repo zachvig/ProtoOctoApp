@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 import de.crysxd.octoapp.octoprint.plugins.power.tasmota.TasmotaPowerDevice
 import de.crysxd.octoapp.octoprint.plugins.power.tplinkplug.TpLinkSmartPlugPowerDevice
 import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TradfriPowerDevice
+import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TuyaPowerDevice
 
 
 data class Settings(
@@ -46,6 +47,10 @@ data class Settings(
 
     data class TradfriSettings(
         @SerializedName("selected_devices") val devices: List<TradfriPowerDevice>
+    ) : PluginSettings
+
+    data class TuyaSettings(
+        @SerializedName("arrSmartplugs") val devices: List<TuyaPowerDevice>
     ) : PluginSettings
 
     data class TpLinkSmartPlugSettings(
