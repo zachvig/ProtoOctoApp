@@ -111,6 +111,10 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     }
 
     private fun applyState(oldState: WebcamState?, newState: WebcamState) {
+        if (newState === oldState) {
+            return
+        }
+
         hideLiveIndicatorJob?.cancel()
         if (oldState == null || oldState::class != newState::class) {
             beginDelayedTransition()
@@ -121,6 +125,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         if (state !is WebcamState.MjpegFrameReady) {
             binding.mjpegSurface.setImageBitmap(null)
         }
+
 
         when (newState) {
             WebcamState.Loading -> binding.loadingState.isVisible = true
@@ -234,6 +239,40 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         }
     }
 
+    fun invalidateMjpegFrame() {
+        binding.playingState.isGatedVisible = true
+        binding.hlsSurface.isGatedVisible = false
+        binding.mjpegSurface.isGatedVisible = true
+        usedLiveIndicator?.isGatedVisible = true
+        binding.loadingState.isGatedVisible = false
+        binding.streamStalledIndicator.isGatedVisible = false
+
+        // Hide live indicator if no new frame arrives within 3s
+        // Show stalled indicator if no new frame arrives within 10s
+        hideLiveIndicatorJob?.cancel()
+        hideLiveIndicatorJob = coroutineScope.launchWhenCreated {
+            delay(NOT_LIVE_IF_NO_FRAME_FOR_MS)
+            beginDelayedTransition()
+            usedLiveIndicator?.isVisible = false
+
+            delay(STALLED_IF_NO_FRAME_FOR_MS - NOT_LIVE_IF_NO_FRAME_FOR_MS)
+            beginDelayedTransition()
+            val seconds = TimeUnit.MILLISECONDS.toSeconds(STALLED_IF_NO_FRAME_FOR_MS)
+            binding.streamStalledIndicatorDetail.text = context.getString(R.string.no_frames_since_xs, seconds)
+            binding.streamStalledIndicator.isVisible = true
+        }
+
+        invalidate()
+    }
+
+    private var View.isGatedVisible
+        get() = isVisible
+        set(value) {
+            if (isVisible != value) {
+                isVisible = value
+            }
+        }
+
     private fun displayMjpegFrame(state: WebcamState.MjpegFrameReady) {
         // Do not update frame if a transition is active
         if (transitionActive) {
@@ -246,29 +285,10 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             beginDelayedTransition()
         }
 
-        binding.playingState.isVisible = true
-        binding.hlsSurface.isVisible = false
-        binding.mjpegSurface.isVisible = true
-        usedLiveIndicator?.isVisible = true
-        binding.loadingState.isVisible = false
-        binding.streamStalledIndicator.isVisible = false
-
         binding.mjpegSurface.setImageBitmap(state.frame)
         applyAspectRatio(state.frame.width, state.frame.height)
 
-        // Hide live indicator if no new frame arrives within 3s
-        // Show stalled indicator if no new frame arrives within 10s
-        hideLiveIndicatorJob = coroutineScope.launchWhenCreated {
-            delay(NOT_LIVE_IF_NO_FRAME_FOR_MS)
-            beginDelayedTransition()
-            usedLiveIndicator?.isVisible = false
-
-            delay(STALLED_IF_NO_FRAME_FOR_MS - NOT_LIVE_IF_NO_FRAME_FOR_MS)
-            beginDelayedTransition()
-            val seconds = TimeUnit.MILLISECONDS.toSeconds(STALLED_IF_NO_FRAME_FOR_MS)
-            binding.streamStalledIndicatorDetail.text = context.getString(R.string.no_frames_since_xs, seconds)
-            binding.streamStalledIndicator.isVisible = true
-        }
+        invalidateMjpegFrame()
     }
 
     private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(this, InstantAutoTransition().also {

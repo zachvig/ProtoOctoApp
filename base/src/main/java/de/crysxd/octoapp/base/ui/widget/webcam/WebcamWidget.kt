@@ -66,24 +66,27 @@ class WebcamWidget(
     }
 
     private fun onUiStateChanged(state: UiState) {
-        webcamView.state = when (state) {
+        when (state) {
             Loading -> WebcamView.WebcamState.Loading
             UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
             UiState.HlsStreamDisabled -> WebcamView.WebcamState.HlsStreamDisabled
-            is UiState.FrameReady -> {
+            is UiState.MjpegStreamReady -> {
                 applyAspectRatio(state.aspectRation)
-                WebcamView.WebcamState.MjpegFrameReady(state.frame)
+                webcamView.state = WebcamView.WebcamState.MjpegFrameReady(state.frame)
+            }
+            is UiState.MjpegStreamUpdated -> {
+                webcamView.invalidateMjpegFrame()
             }
             is UiState.HlsStreamReady -> {
                 applyAspectRatio(state.aspectRation)
-                WebcamView.WebcamState.HlsStreamReady(state.uri)
+                webcamView.state = WebcamView.WebcamState.HlsStreamReady(state.uri)
             }
             is Error -> {
                 state.aspectRation?.let(::applyAspectRatio)
                 if (state.isManualReconnect) {
-                    WebcamView.WebcamState.Error(state.streamUrl)
+                    webcamView.state = WebcamView.WebcamState.Error(state.streamUrl)
                 } else {
-                    WebcamView.WebcamState.Reconnecting
+                    webcamView.state = WebcamView.WebcamState.Reconnecting
                 }
             }
         }

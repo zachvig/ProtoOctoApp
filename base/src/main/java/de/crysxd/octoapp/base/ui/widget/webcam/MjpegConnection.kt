@@ -2,17 +2,13 @@ package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import de.crysxd.octoapp.octoprint.exceptions.ProxyException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
-import okhttp3.Credentials
+import kotlinx.coroutines.flow.retry
 import timber.log.Timber
-import java.io.BufferedInputStream
-import java.io.IOException
+import java.io.*
 import java.net.HttpURLConnection
 import java.net.SocketException
 import java.net.URL
@@ -25,103 +21,129 @@ const val DEFAULT_HEADER_BOUNDARY = "[_a-zA-Z0-9]*boundary"
 
 class MjpegConnection(private val streamUrl: String) {
 
-    private val instanceId = instanceCounter++
-
-    companion object {
-        private var instanceCounter = 0
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Suppress("BlockingMethodInNonBlockingContext")
+    @Suppress("BlockingMethodInNonBlockingContext", "ExperimentalApiUsage")
     fun load() = flow {
-        try {
+        while (true) {
+            emit(MjpegSnapshot.Loading)
+
+            // Connect
+            val connection = connect()
+            val boundaryPattern = createHeaderBoundaryPattern(connection)
+            val input = BufferedInputStream(connection.inputStream)
+            Timber.i("Connected to $streamUrl")
+
+            // Read frames
+            val buffer = ByteArray(4096)
+            val lastBuffer = ByteArray(buffer.size * 2)
+            var lastBufferLength = 0
+            val imageBuffer = ByteArrayOutputStream()
+            var lostFrameCount = 0
+            var bitmapOptions: BitmapFactory.Options? = null
             while (true) {
-                emit(MjpegSnapshot.Loading)
+                // Read data
+                val bufferLength = input.read(buffer)
+                if (bufferLength < 0) {
+                    throw SocketException("Socket closed")
+                }
 
-                // Connect
-                val connection = connect()
-                val boundaryPattern = createHeaderBoundaryPattern(connection)
-                val input = BufferedInputStream(connection.inputStream)
-                Timber.i("[$instanceId] Connected to $streamUrl")
+                // Combine buffers and search for boundary
+                System.arraycopy(buffer, 0, lastBuffer, lastBufferLength, bufferLength)
+                val bufferStr = String(lastBuffer, 0, lastBufferLength + bufferLength, Charset.forName("ASCII"))
 
-                // Read frames
-                val buffer = ByteArray(4096)
-                var image = ByteArray(0)
-                var lostFrameCount = 0
-                while (true) {
-                    // Read data
-                    val bufferLength = input.read(buffer)
-                    if (bufferLength < 0) {
-                        throw SocketException("[$instanceId] Socket closed")
+                // Check if frame is completed
+                val matcher = boundaryPattern.matcher(bufferStr)
+                if (matcher.find()) {
+                    // Find boundary
+                    val boundary = matcher.group(0)!!
+                    val boundaryIndex = bufferStr.indexOf(boundary)
+
+                    // Write missing data into imageBuffer
+                    val missingLength = (boundaryIndex + boundary.length) - lastBufferLength
+                    if (missingLength > 0) {
+                        imageBuffer.write(lastBuffer, lastBufferLength, missingLength)
                     }
 
-                    // Append to image
-                    val tmpCheckBoundry = addByte(image, buffer, 0, bufferLength)
-                    val checkHeaderStr = String(tmpCheckBoundry, Charset.forName("ASCII"))
+                    // Create bitmap
+                    if (imageBuffer.size() - boundary.length > 0) {
+                        // Create the bitmap options. This allows use to reuse the same Bitmap over and over
+                        if (bitmapOptions == null) {
+                            Timber.i("Init options")
+                            // Read bitmap bounds
+                            bitmapOptions = BitmapFactory.Options()
+                            bitmapOptions.inJustDecodeBounds = true
+                            readBitmap(imageBuffer, bitmapOptions)
 
-                    // Check if frame is completed
-                    val matcher = boundaryPattern.matcher(checkHeaderStr)
-                    if (matcher.find()) {
-                        // Finalize image buffer
-                        val boundary = matcher.group(0)!!
-                        var boundaryIndex = checkHeaderStr.indexOf(boundary)
-                        boundaryIndex -= image.size
-                        image = if (boundaryIndex > 0) {
-                            addByte(image, buffer, 0, boundaryIndex)
-                        } else {
-                            delByte(image, -boundaryIndex)
+                            // Create the bitmap we will continue to reuse
+                            val bitmap = Bitmap.createBitmap(bitmapOptions.outHeight, bitmapOptions.outWidth, Bitmap.Config.ARGB_8888)
+
+                            // Configure options to reuse bitmap
+                            bitmapOptions.inBitmap = bitmap
+                            bitmapOptions.inJustDecodeBounds = false
+                            bitmapOptions.inSampleSize = 1
+                            Timber.i("Options created (${bitmapOptions.outWidth}x${bitmapOptions.outHeight} px)")
                         }
-
-                        // Read bitmap
-                        val outputImg = BitmapFactory.decodeByteArray(image, 0, image.size)
-                        if (outputImg != null) {
+                        readBitmap(imageBuffer, bitmapOptions)
+                        val bitmap = bitmapOptions.inBitmap
+                        if (bitmap != null) {
                             lostFrameCount = 0
-                            emit(MjpegSnapshot.Frame(outputImg))
+                            emit(MjpegSnapshot.Frame(bitmapOptions.inBitmap))
                         } else {
                             lostFrameCount++
-                            Timber.e("[$instanceId] Lost frame due to decoding error (lostFrames=$lostFrameCount)")
+                            Timber.e("Lost frame due to decoding error (lostFrames=$lostFrameCount)")
 
                             if (lostFrameCount > TOLERATED_FRAME_LOSS_STREAK) {
-                                throw IOException("[$instanceId] Too many lost frames ($lostFrameCount)")
+                                throw IOException("Too many lost frames ($lostFrameCount)")
                             }
                         }
-
-                        val headerIndex: Int = boundaryIndex + boundary.length
-                        image = addByte(ByteArray(0), buffer, headerIndex, bufferLength - headerIndex)
-                    } else {
-                        image = addByte(image, buffer, 0, bufferLength)
                     }
+
+                    // Reset imageBuffer and write rest of data (next image)
+                    imageBuffer.reset()
+                    val afterBoundaryIndex = boundaryIndex + boundary.length
+                    val afterBoundaryLength = (lastBufferLength + bufferLength) - afterBoundaryIndex
+                    imageBuffer.write(lastBuffer, afterBoundaryIndex, afterBoundaryLength)
+                    System.arraycopy(lastBuffer, afterBoundaryIndex, lastBuffer, 0, afterBoundaryLength)
+                    lastBufferLength = afterBoundaryLength
+                } else {
+                    // Write data
+                    imageBuffer.write(buffer, 0, bufferLength)
+
+                    // Store for next iteration
+                    System.arraycopy(buffer, 0, lastBuffer, 0, bufferLength)
+                    lastBufferLength = bufferLength
                 }
             }
-        } catch (e: Exception) {
-            throw ProxyException.create(e, streamUrl)
         }
     }.onCompletion {
-        Timber.i("[$instanceId] Stopped stream")
+        Timber.i("Stopped stream")
     }.onStart {
-        Timber.i("[$instanceId] Starting stream")
-    }.flowOn(Dispatchers.IO)
+        Timber.i("Starting stream")
+    }.retry {
+        Timber.e(it)
+        delay(RECONNECT_TIMEOUT_MS)
+        true
+    }
 
-    private fun connect(): HttpURLConnection {
-        val url = URL(streamUrl)
-        val connection = url.openConnection() as HttpURLConnection
-        connection.connectTimeout = 5000
-        connection.readTimeout = 5000
-
-        // Basic Auth
-        url.userInfo?.let {
+    @Suppress("BlockingMethodInNonBlockingContext")
+    private suspend fun readBitmap(image: ByteArrayOutputStream, options: BitmapFactory.Options) = withContext(Dispatchers.IO) {
+        val inStream = PipedInputStream()
+        val outStream = PipedOutputStream(inStream)
+        val job = launch {
             try {
-                val components = it.split(":")
-                val credentials = Credentials.basic(components[0], components[1])
-                connection.setRequestProperty("Authorization", credentials)
-            } catch (e: Exception) {
-                Timber.e(e)
+                image.writeTo(outStream)
+                outStream.close()
+            } catch (e: IOException) {
+                // Usual exception when only reading bounds of the bitmap (caused be calling close after decodeStream())
             }
         }
+        BitmapFactory.decodeStream(inStream, null, options)
+        outStream.close()
+        job.cancelAndJoin()
+    }
 
-        connection.doInput = true
-        connection.connect()
-        return connection
+    private fun connect() = (URL(streamUrl).openConnection() as HttpURLConnection).also {
+        it.doInput = true
+        it.connect()
     }
 
     private fun createHeaderBoundaryPattern(connection: HttpURLConnection): Pattern {
@@ -129,16 +151,16 @@ class MjpegConnection(private val streamUrl: String) {
 
         // Determine boundary pattern
         // Use the whole header as separator in case boundary locate in difference chunks
-        return Pattern.compile("--$headerBoundary\\s+(.*)\\r\\n\\r\\n", Pattern.DOTALL)
+        return Pattern.compile("(\\r\\n)?--$headerBoundary\\s+(.*)\\r\\n\\r\\n", Pattern.DOTALL)
     }
 
     private fun extractBoundary(connection: HttpURLConnection): String? = try {
         // Try to extract a boundary from HTTP header first.
         // If the information is not presented, throw an exception and use default value instead.
-        val contentType: String = connection.getHeaderField("Content-Type") ?: throw java.lang.Exception("Unable to get content type")
+        val contentType: String = connection.getHeaderField("Content-Type") ?: throw Exception("Unable to get content type")
         val types = contentType.split(";".toRegex()).toTypedArray()
-        if (types.size == 0) {
-            throw java.lang.Exception("Content type was empty")
+        if (types.isEmpty()) {
+            throw Exception("Content type was empty")
         }
         var extractedBoundary: String? = null
         for (ct in types) {
@@ -148,25 +170,12 @@ class MjpegConnection(private val streamUrl: String) {
             }
         }
         if (extractedBoundary == null) {
-            throw java.lang.Exception("Unable to find mjpeg boundary")
+            throw Exception("Unable to find mjpeg boundary")
         }
         extractedBoundary
-    } catch (e: java.lang.Exception) {
+    } catch (e: Exception) {
         Timber.w("Unable to extract header boundary")
         null
-    }
-
-    private fun addByte(base: ByteArray, add: ByteArray, addIndex: Int, length: Int): ByteArray {
-        val tmp = ByteArray(base.size + length)
-        System.arraycopy(base, 0, tmp, 0, base.size)
-        System.arraycopy(add, addIndex, tmp, base.size, length)
-        return tmp
-    }
-
-    private fun delByte(base: ByteArray, del: Int): ByteArray {
-        val tmp = ByteArray(base.size - del)
-        System.arraycopy(base, 0, tmp, 0, tmp.size)
-        return tmp
     }
 
     sealed class MjpegSnapshot {
