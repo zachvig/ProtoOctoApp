@@ -63,7 +63,7 @@ class WebcamViewModel(
                             emit(UiState.HlsStreamReady(Uri.parse(streamUrl), webcamSettings.streamRatio))
                         }
                     } else {
-                        MjpegConnection(streamUrl)
+                        MjpegConnection(streamUrl, "vm")
                             .load()
                             .map {
                                 when (it) {

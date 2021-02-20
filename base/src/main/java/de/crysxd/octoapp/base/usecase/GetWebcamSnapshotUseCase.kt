@@ -26,7 +26,7 @@ class GetWebcamSnapshotUseCase @Inject constructor(
     override suspend fun doExecute(param: Params, timber: Timber.Tree) = withContext(Dispatchers.IO) {
         withTimeout(10000) {
             val streamSettings = getWebcamSettingsUseCase.execute(param.instanceInfo)
-            val mjpegConnection = MjpegConnection(streamSettings.streamUrl ?: throw IllegalStateException("No stream URL"))
+            val mjpegConnection = MjpegConnection(streamSettings.streamUrl ?: throw IllegalStateException("No stream URL"), "widget")
             mjpegConnection.load().mapNotNull { it as? MjpegConnection.MjpegSnapshot.Frame }.sample(param.sampleRateMs).map {
                 timber.i("Transforming image")
                 measureTime("transform_frame_for_widget") {
