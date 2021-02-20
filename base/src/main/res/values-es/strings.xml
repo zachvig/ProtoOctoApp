@@ -333,8 +333,8 @@
     <string name="temperature_menu___applied_confirmation">Aplicado %s</string>
     <string name="temperature_menu___applied_error">%s no encontrado, no se ha podido aplicar</string>
     <string name="main_menu___item_temperature_presets">Preselecciones de temperatura</string>
-    <string name="announcement___new_version_title">¡Bienvenido a OctoApp 1.5!</string>
-    <string name="announcement___new_version_detail">Esta versión introduce un menú principal personalizable, soporte para múltiples OctoPrint así como controles de energía para los enchufes inteligentes IKEA Trådfri, TP-Link y Tasmoa (se requiere el plugin OctoPrint correspondiente)</string>
+    <string name="announcement___new_version_title">¡Bienvenido a OctoApp 1.6!</string>
+    <string name="announcement___new_version_detail">Esta versión introduce widgets en la pantalla de inicio y mejora las capacidades de las impresoras múltiples al introducir los temas de OctoPrint en la aplicación.</string>
     <string name="main_menu___system_command_executed">\"%s\" ejecutado</string>
     <string name="notification_channel_filament_change">Cambio de filamento</string>
     <string name="print_notification___paused_filamet_change_title">Pausado, filamento vacío</string>
@@ -364,4 +364,6 @@
     <string name="app_widget___no_image">No hay imagen</string>
     <string name="app_widget___no_data">No hay datos</string>
     <string name="main_menu___item_auto_connect_printer">Conectar automáticamente la impresora</string>
+    <string name="error_certificate_not_trusted_and_weak_hostname_required">Android no confía en el certificado proporcionado por este servidor. Este es el caso habitual de los certificados autofirmados.  Además, el certificado no proporciona un campo de \"subject alternative name\" (SAN) que es necesario a partir de Android 9. OctoApp debe utilizar una comprobación de nombre de host débil para evitar este problema. Esto reducirá la seguridad de su conexión.  ¿Desea confiar en este servidor y utilizar una verificación de nombre de host más débil?</string>
+    <string name="announcement___learn_more">Vídeo de introducción</string>
 </resources>

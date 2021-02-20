@@ -242,7 +242,6 @@
         Unable to connect to OctoPrint with the provided information.<br/><br/><small><font color="#%1$06X">%2$s</font></small>
     ]]></string>
     <string name="error_certificate_not_trusted">Android does not trust the certificate provided by this server. This is usually the case for self signed certificates.\n\nDo you want to trust this server?</string>
-    <string name="error_certificate_not_trusted_and_weak_hostname_required">Android does not trust the certificate provided by this server. This is usually the case for self signed certificates.\n\nFurther, the certificate does not provide a subject alternative name field which is required from Android 9 onwards. OctoApp must use a weak hostname check to circumvent this issue. This will reduce the security of your connection.\n\nDo you want to trust this server and use a weaker hostname verification?</string>
     <string name="scan_the_qr_code">Scan the QR code</string>
     <string name="you_can_find_the_api_key_in_octoprint_s_settings_under_api">You can find the API key in OctoPrint\'s settings under API</string>
     <string name="you_can_find_the_api_key_in_octoprint_s_settings">You can find the API key in OctoPrint\'s settings</string>
@@ -344,8 +343,9 @@
     <string name="temperature_menu___applied_confirmation">Applied %s</string>
     <string name="temperature_menu___applied_error">%s not found, could not apply</string>
     <string name="main_menu___item_temperature_presets">Temperature presets</string>
-    <string name="announcement___new_version_detail">This version introduces a customizable main menu, support for multiple OctoPrint as well as power controls for IKEA Trådfri, TP-Link and Tasmoa smart plugs (matching OctoPrint plugin required)</string>
-    <string name="announcement___new_version_title">Welcome to OctoApp 1.5!</string>
+    <string name="announcement___new_version_detail">This version introduces home screen widgets and improves multi printer capabilities by introducing OctoPrint\'s themes into the app!</string>
+    <string name="announcement___new_version_title">Welcome to OctoApp 1.6!</string>
+    <string name="announcement___learn_more">Watch the video</string>
     <string name="main_menu___system_command_executed">\"%s\" executed</string>
     <string name="connect_printer___waiting_for_user_title">Connect when you are ready</string>
     <string name="connect_printer___waiting_for_user_subtitle">You can enable auto-connect in the settings</string>
@@ -369,4 +369,5 @@
     <string name="app_widget___no_data">No data</string>
     <string name="main_menu___item_auto_connect_printer">Auto connect printer</string>
     <string name="error_general_with_details"><![CDATA[         Something went wrong! Please try again.<br/><br/><small><font color="#%1$06X">%2$s</font></small>     ]]></string>
+    <string name="error_certificate_not_trusted_and_weak_hostname_required">Android does not trust the certificate provided by this server. This is usually the case for self signed certificates.  Further, the certificate does not provide a \"subject alternative name\" (SAN) field which is required from Android 9 onwards. OctoApp must use a weak hostname check to circumvent this issue. This will reduce the security of your connection.  Do you want to trust this server and use a weaker hostname verification?</string>
 </resources>

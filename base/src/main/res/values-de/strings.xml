@@ -332,8 +332,8 @@
     <string name="temperature_menu___subtitle">Du kannst diese Voreinstellungen in den OctoPrint-Einstellungen ändern</string>
     <string name="temperature_menu___item_preheat">%s vorheizen</string>
     <string name="temperature_menu___applied_confirmation">%s angewendet</string>
-    <string name="announcement___new_version_detail">Diese Version führt ein anpassbares Hauptmenü, Unterstützung für mehrere OctoPrint sowie Stromkontrollen für IKEA Trådfri, TP-Link und Tasmoa Smart Plugs ein (passendes OctoPrint-Plugin erforderlich)</string>
-    <string name="announcement___new_version_title">Willkommen in OctoApp 1.5!</string>
+    <string name="announcement___new_version_detail">Diese Version führt Widgets für den Startbildschirm ein und verbessert die Multidrucker-Fähigkeiten durch die Einführung der OctoPrint-Themen in die App!</string>
+    <string name="announcement___new_version_title">Willkommen in OctoApp 1.6!</string>
     <string name="main_menu___system_command_executed">\"%s\" ausgeführt</string>
     <string name="notification_channel_filament_change">Filamentwechsel</string>
     <string name="print_notification___paused_filamet_change_title">Pausiert, Filament leer</string>
@@ -363,4 +363,6 @@
     <string name="app_widget___no_image">Kein Bild</string>
     <string name="app_widget___no_data">Keine Daten</string>
     <string name="main_menu___item_auto_connect_printer">Drucker automatisch anschließen</string>
+    <string name="error_certificate_not_trusted_and_weak_hostname_required">Android vertraut dem von diesem Server bereitgestellten Zertifikat nicht. Dies ist normalerweise bei selbstsignierten Zertifikaten der Fall.  Außerdem bietet das Zertifikat kein Feld für einen \"subject alternative name\" (SAN), der ab Android 9 erforderlich ist. OctoApp muss eine schwache Hostnamenprüfung verwenden, um dieses Problem zu umgehen. Dadurch wird die Sicherheit Ihrer Verbindung reduziert.  Möchten Sie diesem Server vertrauen und eine schwächere Hostnamenüberprüfung verwenden?</string>
+    <string name="announcement___learn_more">Intro-Video</string>
 </resources>
