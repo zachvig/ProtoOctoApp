@@ -6,20 +6,29 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.menu.*
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ACTIVATE_MATERIAL
 import de.crysxd.octoapp.base.usecase.ActivateMaterialUseCase
+import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
+import de.crysxd.octoapp.octoprint.models.files.FileObject
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-class MaterialPluginMenu : Menu {
+class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) : Menu {
 
-    override fun getTitle(context: Context) = "Materials"
-    override fun getSubtitle(context: Context) =
+    override fun getTitle(context: Context) = if (startPrintAfterSelection != null) "Select material to use" else "Materials"
+    override fun getSubtitle(context: Context) = if (startPrintAfterSelection != null) {
+        "The selected material will be activated for the print. You can edit the materials in the web interface."
+    } else {
         "You can edit these materials in the web interface. Materials are provided by the SpoolManager or FilamentManager plugin."
-
-    override suspend fun getMenuItem() = Injector.get().getMaterialsUseCase().execute(Unit).map {
-        ActivateMaterialMenuItem(it.uniqueId, it.displayName)
     }
 
-    class ActivateMaterialMenuItem(private val uniqueMaterialId: String, private val displayName: String) : MenuItem {
+    override suspend fun getMenuItem() = Injector.get().getMaterialsUseCase().execute(Unit).map {
+        ActivateMaterialMenuItem(it.uniqueId, it.displayName, startPrintAfterSelection)
+    }
+
+    class ActivateMaterialMenuItem(
+        private val uniqueMaterialId: String,
+        private val displayName: String,
+        private val startPrintAfterSelection: FileObject.File? = null
+    ) : MenuItem {
         companion object {
             fun forItemId(itemId: String): ActivateMaterialMenuItem {
                 val parts = itemId.split("/")
@@ -36,6 +45,9 @@ class MaterialPluginMenu : Menu {
         override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
             executeAsync {
                 Injector.get().activateMaterialUseCase().execute(ActivateMaterialUseCase.Params(uniqueMaterialId))
+                startPrintAfterSelection?.let {
+                    Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
+                }
             }
             return true
         }

@@ -13,6 +13,10 @@ class MaterialManagerPluginsCollection(retrofit: Retrofit) {
         FilamentManagerPlugin(),
     )
 
+    fun isMaterialManagerAvailable(settings: Settings) = plugins.any {
+        settings.plugins.containsKey(it.pluginId)
+    }
+
     suspend fun getMaterials(settings: Settings) = plugins.filter {
         settings.plugins.containsKey(it.pluginId)
     }.map {
