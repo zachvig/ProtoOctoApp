@@ -15,7 +15,7 @@ class SpoolManagerPlugin(private val spoolManagerApi: SpoolManagerApi) : Materia
                 color = it.color,
                 pluginDisplayName = "SpoolManager",
                 pluginId = pluginId,
-                isActivated = response.selectedSpool.databaseId == it.databaseId
+                isActivated = response.selectedSpool?.databaseId == it.databaseId
             )
         }
     }
