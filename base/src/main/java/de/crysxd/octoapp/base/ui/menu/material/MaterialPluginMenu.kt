@@ -1,8 +1,10 @@
 package de.crysxd.octoapp.base.ui.menu.material
 
 import android.content.Context
+import androidx.core.text.HtmlCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.menu.*
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ACTIVATE_MATERIAL
 import de.crysxd.octoapp.base.usecase.ActivateMaterialUseCase
@@ -15,10 +17,17 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
 
     override fun getTitle(context: Context) = if (startPrintAfterSelection != null) "Select material to use" else "Materials"
     override fun getSubtitle(context: Context) = if (startPrintAfterSelection != null) {
-        "The selected material will be activated for the print. You can edit the materials in the web interface."
+        "The selected material will be activated for the print."
     } else {
-        "You can edit these materials in the web interface. Materials are provided by the SpoolManager or FilamentManager plugin."
+        "You can edit these materials in the web interface."
     }
+
+    override fun getBottomText(context: Context) = HtmlCompat.fromHtml(
+        "<small>Materials are provided by the <a href=\"https://plugins.octoprint.org/plugins/SpoolManager/\">SpoolManager</a> or <a href=\"https://plugins.octoprint.org/plugins/filamentmanager/\">FilamentManager</a> plugin and can be edited in the web interface.</small>",
+        HtmlCompat.FROM_HTML_MODE_COMPACT
+    )
+
+    override fun getBottomMovementMethod(host: MenuBottomSheetFragment) = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener())
 
     override suspend fun getMenuItem() = Injector.get().getMaterialsUseCase().execute(Unit).map {
         ActivateMaterialMenuItem(it.uniqueId, it.displayName, startPrintAfterSelection)
