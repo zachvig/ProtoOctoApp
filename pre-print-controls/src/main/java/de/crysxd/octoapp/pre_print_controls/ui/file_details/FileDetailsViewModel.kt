@@ -15,15 +15,27 @@ class FileDetailsViewModel(
 
     lateinit var file: FileObject.File
 
+    private val mutableViewEvents = MutableLiveData<ViewEvent>()
     private val mutableLoading = MutableLiveData(false)
     val loading = mutableLoading.map { it }
+    val viewEvents = mutableViewEvents.map { it }
 
     fun startPrint() = viewModelScope.launch(coroutineExceptionHandler) {
         mutableLoading.postValue(true)
+
         try {
-            startPrintJobUseCase.execute(file)
+            val result = startPrintJobUseCase.execute(StartPrintJobUseCase.Params(file = file, materialSelectionConfirmed = false))
+            if (result == StartPrintJobUseCase.Result.MaterialSelectionRequired) {
+                mutableViewEvents.postValue(ViewEvent.MaterialSelectionRequired())
+            }
         } finally {
             mutableLoading.postValue(false)
         }
+    }
+
+    sealed class ViewEvent {
+        var isConsumed = false
+
+        class MaterialSelectionRequired : ViewEvent()
     }
 }

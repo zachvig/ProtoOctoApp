@@ -12,7 +12,7 @@ private val sysCommands get() = Injector.get().octorPrintRepository().getActiveI
 
 @Parcelize
 class OctoPrintMenu : Menu {
-    override fun getMenuItem() =
+    override suspend fun getMenuItem() =
         listOfNotNull(
             listOf(
                 OpenOctoPrintMenuItem()

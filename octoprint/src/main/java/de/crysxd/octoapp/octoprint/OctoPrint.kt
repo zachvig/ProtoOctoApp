@@ -16,6 +16,7 @@ import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.socket.Message
+import de.crysxd.octoapp.octoprint.plugins.materialmanager.MaterialManagerPluginsCollection
 import de.crysxd.octoapp.octoprint.plugins.power.PowerPluginsCollection
 import de.crysxd.octoapp.octoprint.websocket.EventWebSocket
 import okhttp3.Interceptor
@@ -93,6 +94,8 @@ class OctoPrint(
 
     fun createPowerPluginsCollection() = PowerPluginsCollection(createRetrofit())
 
+    fun createMaterialManagerPluginsCollection() = MaterialManagerPluginsCollection(createRetrofit("."))
+
     fun createConnectionApi(): ConnectionApi.Wrapper =
         ConnectionApi.Wrapper((createRetrofit().create(ConnectionApi::class.java)))
 
@@ -101,8 +104,8 @@ class OctoPrint(
 
     fun getLogger(): Logger = Logger.getLogger("OctoPrint")
 
-    private fun createRetrofit() = Retrofit.Builder()
-        .baseUrl(URI.create(webUrl).resolve("api/").toURL())
+    private fun createRetrofit(path: String = "api/") = Retrofit.Builder()
+        .baseUrl(URI.create(webUrl).resolve(path).toURL())
         .addConverterFactory(GsonConverterFactory.create(createGsonWithTypeAdapters()))
         .client(createOkHttpClient())
         .build()

@@ -19,6 +19,8 @@ import de.crysxd.octoapp.base.ui.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewFragment
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.material.MaterialPluginMenu
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.Injector
@@ -38,6 +40,17 @@ class FileDetailsFragment : BaseFragment(R.layout.fragment_file_details), InsetA
         viewModel.loading.observe(viewLifecycleOwner) {
             buttonStartPrint.isEnabled = !it
             buttonStartPrint.setText(if (it) R.string.loading else R.string.start_printing)
+        }
+        viewModel.viewEvents.observe(viewLifecycleOwner) {
+            if (!it.isConsumed) {
+                it.isConsumed = true
+                when (it) {
+                    is FileDetailsViewModel.ViewEvent.MaterialSelectionRequired ->
+                        MenuBottomSheetFragment.createForMenu(MaterialPluginMenu(startPrintAfterSelection = file))
+                            .show(childFragmentManager)
+
+                }
+            }
         }
 
         buttonStartPrint.setOnClickListener {
@@ -89,10 +102,10 @@ class FileDetailsFragment : BaseFragment(R.layout.fragment_file_details), InsetA
             scrollView.isUserInputEnabled = position == 0
             scrollView.isBottomActionAnimationEnabled = false
             scrollView.post {
-                scrollView.smoothScrollTo(0, if (position == 0) 0 else Int.MAX_VALUE)
+                scrollView?.smoothScrollTo(0, if (position == 0) 0 else Int.MAX_VALUE)
             }
             bottomAction.animate().translationY(if (position == 0) 0f else bottomAction.height.toFloat()).withEndAction {
-                scrollView.isBottomActionAnimationEnabled = position == 0
+                scrollView?.isBottomActionAnimationEnabled = position == 0
             }.start()
 
             val toolbarTranslation = if (position == 0) 0f else -requireOctoActivity().octoToolbar.bottom.toFloat()

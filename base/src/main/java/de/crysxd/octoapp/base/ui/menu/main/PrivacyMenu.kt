@@ -27,7 +27,7 @@ class PrivacyMenu : Menu {
 
     override fun getBottomMovementMethod(host: MenuBottomSheetFragment) = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener())
 
-    override fun getMenuItem(): List<MenuItem> = listOf(
+    override suspend fun getMenuItem(): List<MenuItem> = listOf(
         CrashReportingMenuItem(),
         AnalyticsMenuItem(),
     )

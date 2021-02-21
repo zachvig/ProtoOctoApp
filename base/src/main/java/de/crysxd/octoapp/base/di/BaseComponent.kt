@@ -82,6 +82,8 @@ interface BaseComponent {
     fun getWebcamSettingsUseCase(): GetWebcamSettingsUseCase
     fun getWebcamSnapshotUseCase(): GetWebcamSnapshotUseCase
     fun createProgressAppWidgetDataUseCase(): CreateProgressAppWidgetDataUseCase
+    fun getMaterialsUseCase(): GetMaterialsUseCase
+    fun activateMaterialUseCase(): ActivateMaterialUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory
