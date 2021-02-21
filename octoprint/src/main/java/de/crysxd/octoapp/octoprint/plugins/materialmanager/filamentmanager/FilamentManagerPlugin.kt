@@ -2,19 +2,29 @@ package de.crysxd.octoapp.octoprint.plugins.materialmanager.filamentmanager
 
 import de.crysxd.octoapp.octoprint.plugins.materialmanager.Material
 import de.crysxd.octoapp.octoprint.plugins.materialmanager.MaterialManagerPlugin
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 
 class FilamentManagerPlugin(private val filamentManagerApi: FilamentManagerApi) : MaterialManagerPlugin {
     override val pluginId = "filamentmanager"
 
-    override suspend fun getMaterials() = filamentManagerApi.listSpools().spools.map {
-        Material(
-            id = it.id,
-            displayName = it.name,
-            color = null,
-            pluginDisplayName = "FilamentManager",
-            pluginId = pluginId
-        )
+    override suspend fun getMaterials() = withContext(Dispatchers.IO) {
+        val spools = async { filamentManagerApi.listSpools().spools }
+        val selection = filamentManagerApi.getSelections()
+
+        spools.await().map { spool ->
+            Material(
+                id = spool.id,
+                displayName = spool.name,
+                color = null,
+                pluginDisplayName = "FilamentManager",
+                pluginId = pluginId,
+                isActivated = selection.selections.any { it.spool.id == spool.id }
+            )
+        }
     }
+
 
     override suspend fun activateSpool(id: String) = filamentManagerApi.selectSpool(
         SelectSpoolBody(
