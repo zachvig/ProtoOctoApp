@@ -92,7 +92,7 @@ class FileDetailsFragment : BaseFragment(R.layout.fragment_file_details), InsetA
                 scrollView.smoothScrollTo(0, if (position == 0) 0 else Int.MAX_VALUE)
             }
             bottomAction.animate().translationY(if (position == 0) 0f else bottomAction.height.toFloat()).withEndAction {
-                scrollView.isBottomActionAnimationEnabled = position == 0
+                scrollView?.isBottomActionAnimationEnabled = position == 0
             }.start()
 
             val toolbarTranslation = if (position == 0) 0f else -requireOctoActivity().octoToolbar.bottom.toFloat()
