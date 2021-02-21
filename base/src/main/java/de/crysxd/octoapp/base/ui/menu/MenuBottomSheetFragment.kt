@@ -90,6 +90,13 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         showMenu(settingsMenu)
     }
 
+    fun onFavoriteChanged() {
+        // We need to reload the main menu if a favorite was changed in case it was removed
+        if (viewModel.menuBackStack.last() is MainMenu) {
+            showMenu(viewModel.menuBackStack.last())
+        }
+    }
+
     fun showMenu(settingsMenu: Menu) {
         val internal = suspend {
             try {
@@ -251,7 +258,8 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
 
                     beginDelayedTransition(true)
                     Injector.get().pinnedMenuItemsRepository().toggleMenuItemPinned(item.itemId)
-                    notifyDataSetChanged()
+                    menuItems = menuItems
+                    onFavoriteChanged()
                     true
                 }
             }
