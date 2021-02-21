@@ -41,7 +41,7 @@ class SensitiveDataMask {
 
     private fun registerSensitiveData(data: String, replacement: String) = lock.withLock {
         val d = SensitiveData(data, replacement)
-        if (!sensitiveData.contains(d)) {
+        if (!sensitiveData.contains(d) && data.length >= 4) {
             sensitiveData.add(d)
         }
     }
