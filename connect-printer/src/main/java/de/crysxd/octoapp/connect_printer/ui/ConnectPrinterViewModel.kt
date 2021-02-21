@@ -21,8 +21,6 @@ import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse.ConnectionState.MAYBE_ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -60,14 +58,8 @@ class ConnectPrinterViewModel(
         uiStateMediator.value = UiState.Initializing
 
         viewModelScope.launch {
-            val liveData = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(false)).onEach {
-                Timber.i("Power devices: %s", it.joinToString { d -> d.first.displayName })
-                isPsuSupported = it.isNotEmpty()
-            }.catch {
-                Timber.e(it)
-                coroutineExceptionHandler.handleException(coroutineContext, it)
-            }.asLiveData()
-            uiStateMediator.addSource(liveData) { updateUiState() }
+            isPsuSupported = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(false)).isNotEmpty()
+            computeUiState()
         }
     }
 

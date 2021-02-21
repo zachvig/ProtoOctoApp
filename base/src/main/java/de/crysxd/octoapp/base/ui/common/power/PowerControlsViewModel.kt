@@ -35,7 +35,7 @@ class PowerControlsViewModel(
         // Try to perform the action with the cache value
         try {
             val simpleDevices = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(false))
-            if (attemptAutoHandle(simpleDevices.first())) {
+            if (attemptAutoHandle(simpleDevices)) {
                 Timber.i("Used default device for $action")
                 return@launch
             }
@@ -54,27 +54,10 @@ class PowerControlsViewModel(
             isInitialised = true
             var isFirst = true
             val start = System.currentTimeMillis()
-            val powerDevices = flow {
-                emit(getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(true)))
-            }.flatMapLatest { it }
-                .onEach {
-                    if (isFirst) {
-                        // Load at least 500 ms to make the initial load animation nice
-                        delay((500 - (System.currentTimeMillis() - start)).coerceAtLeast(0))
-                    }
-
-                    // Only update UI if this is the first load or we still show the devices
-                    // We must not jump from a second locaing state (when action is executed) or from completed back to devices
-                    if (isFirst || mutableViewState.value is ViewState.PowerDevicesLoaded) {
-                        mutableViewState.postValue(ViewState.PowerDevicesLoaded(it))
-                    }
-
-                    isFirst = false
-                }
-                .asLiveData()
+            val powerDevices = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(true))
 
             // Hook up flow to view state
-            mutableViewState.addSource(powerDevices) { }
+            mutableViewState.postValue(ViewState.PowerDevicesLoaded(powerDevices))
         }
     }
 

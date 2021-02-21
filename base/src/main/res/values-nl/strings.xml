@@ -306,7 +306,7 @@
     <string name="main_menu___item_news">Nieuws</string>
     <string name="main_menu___menu_printer_title">Printer</string>
     <string name="main_menu___submenu_subtitle">Druk op een item om het vast te zetten</string>
-    <string name="main_menu___item_open_power_controls">Open power controls</string>
+    <string name="main_menu___item_open_power_controls">Power controls</string>
     <string name="main_menu___item_turn_psu_off">Zet de printer uit</string>
     <string name="main_menu___item_emergency_stop">Noodstop</string>
     <string name="main_menu___item_cancel_print">Afdrukken annuleren</string>
