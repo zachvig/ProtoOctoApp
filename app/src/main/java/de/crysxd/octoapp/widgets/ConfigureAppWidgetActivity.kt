@@ -40,7 +40,7 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
         val activeWidgetCount = getWidgetCount(this)
         Timber.i("Widgets active: $activeWidgetCount")
         val maxWidgetCount = Firebase.remoteConfig.getLong("number_of_free_app_widgets")
-        if (activeWidgetCount > maxWidgetCount || BillingManager.isFeatureEnabled("infinite_app_widgets")) {
+        if (activeWidgetCount > maxWidgetCount && !BillingManager.isFeatureEnabled("infinite_app_widgets")) {
             MaterialAlertDialogBuilder(this)
                 .setMessage(getString(R.string.app_widget___free_widgets_exceeded_message, maxWidgetCount))
                 .setPositiveButton(R.string.app_widget___free_widgets_exceeded_action, null)
