@@ -337,8 +337,8 @@
     <string name="notification_channel_filament_change">Verandering van filament</string>
     <string name="print_notification___paused_filamet_change_title">Pauze, filament leeg</string>
     <string name="print_notification___filament_change_required">Vervanging van filament vereist</string>
-    <string name="menu___executing_command">Uitvoeren: „%s‟</string>
-    <string name="menu___completed_command">Succes: „%s‟</string>
+    <string name="menu___executing_command">Uitvoeren: „%s“</string>
+    <string name="menu___completed_command">Succes: „%s“</string>
     <string name="main_menu___item_cancel_print_keep_temp">Afdrukken annuleren (temp. vasthouden)</string>
     <string name="main_menu___show_webcam">Toon webcam</string>
     <string name="connect_printer___waiting_for_user_title">Maak verbinding als je er klaar voor bent</string>
@@ -355,7 +355,7 @@
     <string name="app_widget___free_widgets_exceeded_action">@android:string/ok</string>
     <string name="app_widget___free_widgets_exceeded_message">U kunt slechts %d widgets hebben zonder OctoApp te ondersteunen. U kunt OctoApp ondersteunen vanuit het hoofdmenu van de app.</string>
     <string name="app_widget___link_widget_title">Welke OctoPrint moet deze widget gebruiken?</string>
-    <string name="app_widget___link_widget__option_x">Altijd „%s‟</string>
+    <string name="app_widget___link_widget__option_x">Altijd „%s“</string>
     <string name="app_widget___link_widget__option_synced">Synchroniseren met app</string>
     <string name="app_widget___offline_since_x">Offline sinds %s</string>
     <string name="app_widget___update_failed">Update mislukt</string>

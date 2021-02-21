@@ -338,8 +338,8 @@
     <string name="notification_channel_filament_change">Changement de filament</string>
     <string name="print_notification___paused_filamet_change_title">Pause, filament vide</string>
     <string name="print_notification___filament_change_required">Changement de filament nécessaire</string>
-    <string name="menu___executing_command">Exécution: „%s‟</string>
-    <string name="menu___completed_command">Le succès: „%s‟</string>
+    <string name="menu___executing_command">Exécution: „%s“</string>
+    <string name="menu___completed_command">Le succès: „%s“</string>
     <string name="main_menu___item_cancel_print_keep_temp">Annuler l\'impression (maintenir la temp.)</string>
     <string name="main_menu___show_webcam">Afficher la webcam</string>
     <string name="connect_printer___waiting_for_user_title">Connecte-toi quand tu es prêt</string>
@@ -356,7 +356,7 @@
     <string name="app_widget___free_widgets_exceeded_action">@android:string/ok</string>
     <string name="app_widget___free_widgets_exceeded_message">Vous ne pouvez avoir que des widgets %d sans supporter OctoApp. Vous pouvez supporter OctoApp depuis le menu principal de l\'application.</string>
     <string name="app_widget___link_widget_title">Quel OctoPrint ce widget doit-il utiliser ?</string>
-    <string name="app_widget___link_widget__option_x">Toujours „%s‟</string>
+    <string name="app_widget___link_widget__option_x">Toujours „%s“</string>
     <string name="app_widget___link_widget__option_synced">Sync avec l\'application</string>
     <string name="app_widget___offline_since_x">Hors ligne depuis %s</string>
     <string name="app_widget___update_failed">Echec de la mise à jour</string>

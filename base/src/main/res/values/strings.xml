@@ -311,8 +311,8 @@
     <string name="power_controls___cycle">Cycle</string>
     <string name="power_controls___always_use_this_device">Always use this device for this action</string>
     <string name="power_controls___x_offline">%s (offline)</string>
-    <string name="menu___executing_command">Executing: „%s‟</string>
-    <string name="menu___completed_command">Success:  „%s‟</string>
+    <string name="menu___executing_command">Executing: „%s“</string>
+    <string name="menu___completed_command">Success:  „%s“</string>
     <string name="main_menu___item_support_octoapp">Support OctoApp</string>
     <string name="main_menu___item_show_settings">Settings</string>
     <string name="main_menu___item_news">News</string>
@@ -363,7 +363,7 @@
     <string name="app_widget___free_widgets_exceeded_action">@android:string/ok</string>
     <string name="app_widget___free_widgets_exceeded_message">You can only have %d widgets without supporting OctoApp. You can support OctoApp from the app\'s main menu.</string>
     <string name="app_widget___link_widget_title">Which OctoPrint should this widget use?</string>
-    <string name="app_widget___link_widget__option_x">Always „%s‟</string>
+    <string name="app_widget___link_widget__option_x">Always „%s“</string>
     <string name="app_widget___link_widget__option_synced">Sync with app</string>
     <string name="app_widget___offline_since_x">Offline since %s</string>
     <string name="app_widget___update_failed">Update failed</string>
