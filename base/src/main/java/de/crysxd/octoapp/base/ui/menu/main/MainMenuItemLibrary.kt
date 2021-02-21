@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.ui.menu.main
 
 import de.crysxd.octoapp.base.ui.menu.MenuItem
+import de.crysxd.octoapp.base.ui.menu.material.MaterialPluginMenu
 import de.crysxd.octoapp.base.ui.menu.switchprinter.AddInstanceMenuItem
 import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchInstanceMenuItem
 import de.crysxd.octoapp.base.ui.menu.temperature.ApplyTemperaturePresetMenuItem
@@ -34,6 +35,7 @@ const val MENU_ITEM_ENABLE_QUICK_SWITCH = "switch___enable_quick_switch"
 const val MENU_ITEM_APPLY_TEMPERATURE_PRESET = "temp___apply_temperature_preset/"
 const val MENU_ITEM_TEMPERATURE_MENU = "printer___temp_menu"
 const val MENU_ITEM_MATERIAL_MENU = "printer___material_menu"
+const val MENU_ITEM_ACTIVATE_MATERIAL = "material___activate_material"
 
 
 class MenuItemLibrary {
@@ -66,6 +68,7 @@ class MenuItemLibrary {
         itemId.startsWith(MENU_ITEM_SWITCH_INSTANCE) -> SwitchInstanceMenuItem.forItemId(itemId)
         itemId.startsWith(MENU_ITEM_APPLY_TEMPERATURE_PRESET) -> ApplyTemperaturePresetMenuItem.forItemId(itemId)
         itemId.startsWith(MENU_EXECUTE_SYSTEM_COMMAND) -> ExecuteSystemCommandMenuItem.forItemId(itemId)
+        itemId.startsWith(MENU_ITEM_ACTIVATE_MATERIAL) -> MaterialPluginMenu.ActivateMaterialMenuItem.forItemId(itemId)
         else -> null
     }
 }

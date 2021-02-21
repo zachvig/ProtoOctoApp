@@ -5,6 +5,7 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.common.power.PowerControlsBottomSheet
 import de.crysxd.octoapp.base.ui.menu.*
+import de.crysxd.octoapp.base.ui.menu.material.MaterialPluginMenu
 import de.crysxd.octoapp.base.ui.menu.temperature.TemperatureMenu
 import de.crysxd.octoapp.base.ui.widget.webcam.FullscreenWebcamActivity
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
@@ -14,7 +15,7 @@ import kotlinx.coroutines.flow.first
 
 @Parcelize
 class PrinterMenu : Menu {
-    override fun getMenuItem() = listOf(
+    override suspend fun getMenuItem() = listOf(
         CancelPrintMenuItem(),
         CancelPrintKeepTemperaturesMenuItem(),
         EmergencyStopMenuItem(),
@@ -22,6 +23,7 @@ class PrinterMenu : Menu {
         ShowWebcamMenuItem(),
         TurnPsuOffMenuItem(),
         OpenPowerControlsMenuItem(),
+        ShowMaterialPluginMenuItem(),
     )
 
     override fun getTitle(context: Context) = context.getString(R.string.main_menu___menu_printer_title)
@@ -45,10 +47,26 @@ class ShowTemperatureMenuItem : MenuItem {
     }
 }
 
+class ShowMaterialPluginMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_MATERIAL_MENU
+    override var groupId = ""
+    override val order = 320
+    override val style = MenuItemStyle.Printer
+    override val icon = R.drawable.ic_round_layers_24
+    override val showAsSubMenu = true
+
+    override suspend fun isVisible(destinationId: Int) = destinationId != R.id.workspaceConnect
+    override suspend fun getTitle(context: Context) = "Materials"
+    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+        host.pushMenu(MaterialPluginMenu())
+        return false
+    }
+}
+
 class ShowWebcamMenuItem : MenuItem {
     override val itemId = MENU_ITEM_SHOW_WEBCAM
     override var groupId = ""
-    override val order = 311
+    override val order = 330
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_videocam_24
 
@@ -63,7 +81,7 @@ class ShowWebcamMenuItem : MenuItem {
 class OpenPowerControlsMenuItem : MenuItem {
     override val itemId = MENU_ITEM_POWER_CONTROLS
     override var groupId = ""
-    override val order = 311
+    override val order = 340
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_power_settings_new_24
 
@@ -81,7 +99,7 @@ class OpenPowerControlsMenuItem : MenuItem {
 class TurnPsuOffMenuItem : MenuItem {
     override val itemId = MENU_ITEM_TURN_PSU_OFF
     override var groupId = ""
-    override val order = 312
+    override val order = 341
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_baseline_power_off_24
 
@@ -102,7 +120,7 @@ class TurnPsuOffMenuItem : MenuItem {
 class EmergencyStopMenuItem : ConfirmedMenuItem() {
     override val itemId = MENU_ITEM_EMERGENCY_STOP
     override var groupId = ""
-    override val order = 330
+    override val order = 350
     override val style = MenuItemStyle.Printer
 
     override val icon = R.drawable.ic_round_offline_bolt_24
@@ -121,7 +139,7 @@ class EmergencyStopMenuItem : ConfirmedMenuItem() {
 class CancelPrintKeepTemperaturesMenuItem : ConfirmedMenuItem() {
     override val itemId = MENU_ITEM_CANCEL_PRINT_KEEP_TEMPS
     override var groupId = ""
-    override val order = 331
+    override val order = 351
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_cancel_24
 
@@ -140,7 +158,7 @@ class CancelPrintKeepTemperaturesMenuItem : ConfirmedMenuItem() {
 class CancelPrintMenuItem : ConfirmedMenuItem() {
     override val itemId = MENU_ITEM_CANCEL_PRINT
     override var groupId = ""
-    override val order = 332
+    override val order = 352
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_cancel_24
 
