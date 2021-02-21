@@ -33,6 +33,7 @@ const val MENU_ITEM_ADD_INSTANCE = "switch___add_instance"
 const val MENU_ITEM_ENABLE_QUICK_SWITCH = "switch___enable_quick_switch"
 const val MENU_ITEM_APPLY_TEMPERATURE_PRESET = "temp___apply_temperature_preset/"
 const val MENU_ITEM_TEMPERATURE_MENU = "printer___temp_menu"
+const val MENU_ITEM_MATERIAL_MENU = "printer___material_menu"
 
 
 class MenuItemLibrary {

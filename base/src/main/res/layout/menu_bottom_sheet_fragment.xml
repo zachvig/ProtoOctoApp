@@ -1,49 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:maxWidth="500dp"
-    android:orientation="vertical">
+    android:maxWidth="500dp">
 
-    <TextView
-        android:id="@+id/title"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin_2"
-        android:layout_marginTop="@dimen/margin_3"
-        android:gravity="center"
-        android:textAppearance="@style/OctoTheme.TextAppearance.Title"
-        android:textColor="@color/dark_text" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/subtitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin_2"
-        android:layout_marginTop="@dimen/margin_0_1"
-        android:gravity="center"
-        android:textAppearance="@style/OctoTheme.TextAppearance"
-        android:textColor="@color/light_text"
-        android:textColorLink="@color/normal_text" />
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_2"
+            android:layout_marginTop="@dimen/margin_3"
+            android:gravity="center"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+            android:textColor="@color/dark_text" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:paddingVertical="@dimen/margin_2"
-        android:paddingStart="@dimen/margin_2"
-        android:paddingEnd="@dimen/margin_1_2" />
+        <TextView
+            android:id="@+id/subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_2"
+            android:layout_marginTop="@dimen/margin_0_1"
+            android:gravity="center"
+            android:textAppearance="@style/OctoTheme.TextAppearance"
+            android:textColor="@color/light_text"
+            android:textColorLink="@color/normal_text" />
 
-    <TextView
-        android:id="@+id/bottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin_2"
-        android:layout_marginBottom="@dimen/margin_2"
-        android:gravity="center"
-        android:textAppearance="@style/OctoTheme.TextAppearance"
-        android:textColor="@color/light_text"
-        android:textColorLink="@color/light_text" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:paddingVertical="@dimen/margin_2"
+            android:paddingStart="@dimen/margin_2"
+            android:paddingEnd="@dimen/margin_1_2" />
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+        <TextView
+            android:id="@+id/bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_2"
+            android:layout_marginBottom="@dimen/margin_2"
+            android:gravity="center"
+            android:textAppearance="@style/OctoTheme.TextAppearance"
+            android:textColor="@color/light_text"
+            android:textColorLink="@color/light_text" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <ProgressBar
+        android:id="@+id/loadingSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:alpha="0"
+        android:visibility="gone" />
+
+</FrameLayout>

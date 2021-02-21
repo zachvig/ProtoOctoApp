@@ -28,7 +28,7 @@ class SwitchOctoPrintMenu : Menu {
         if (isQuickSwitchEnabled) R.string.main_menu___submenu_subtitle else R.string.main_menu___subtitle_quick_switch_disabled
     )
 
-    override fun getMenuItem() = if (isQuickSwitchEnabled) {
+    override suspend fun getMenuItem() = if (isQuickSwitchEnabled) {
         val items = Injector.get().octorPrintRepository().getAll().map {
             SwitchInstanceMenuItem(webUrl = it.webUrl)
         }

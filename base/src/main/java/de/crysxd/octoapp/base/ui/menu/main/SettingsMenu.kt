@@ -17,7 +17,7 @@ import timber.log.Timber
 
 @Parcelize
 class SettingsMenu : Menu {
-    override fun getMenuItem() = listOf(
+    override suspend fun getMenuItem() = listOf(
         SendFeedbackMenuItem(),
         ChangeLanguageMenuItem(),
         NightThemeMenuItem(),

@@ -15,6 +15,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,6 +40,13 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     override val viewModel by injectViewModel<MenuBottomSheetViewModel>()
     private lateinit var viewBinding: MenuBottomSheetFragmentBinding
     private val adapter = Adapter()
+    private var isLoading = false
+        set(value) {
+            field = value
+            viewBinding.content.animate().alpha(if (value) 0.33f else 1f).start()
+            viewBinding.loadingSpinner.isVisible = true
+            viewBinding.loadingSpinner.animate().alpha(if (value) 1f else 0f).withEndAction { viewBinding.loadingSpinner.isVisible = !field }.start()
+        }
 
     companion object {
         private const val KEY_MENU = "menu"
@@ -83,19 +91,48 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     }
 
     fun showMenu(settingsMenu: Menu) {
-        viewBinding.bottom.movementMethod = null
-        beginDelayedTransition {
-            // Need to be applied after transition to prevent glitches
-            viewBinding.bottom.movementMethod = settingsMenu.getBottomMovementMethod(this)
+        val internal = suspend {
+            try {
+                // Load items
+                isLoading = settingsMenu !is MainMenu
+                val currentDestination = findNavController().currentDestination?.id ?: 0
+                val items = settingsMenu.getMenuItem().filter {
+                    it.isVisible(currentDestination)
+                }.sortedWith(compareBy { it.order })
+                isLoading = false
+
+                // Prepare animation
+                viewBinding.bottom.movementMethod = null
+                beginDelayedTransition {
+                    // Need to be applied after transition to prevent glitches
+                    viewBinding.bottom.movementMethod = settingsMenu.getBottomMovementMethod(this@MenuBottomSheetFragment)
+                }
+
+                // Show menu
+                adapter.menuItems = items
+                viewBinding.title.text = settingsMenu.getTitle(requireContext())
+                viewBinding.title.isVisible = viewBinding.title.text.isNotBlank()
+                viewBinding.subtitle.text = settingsMenu.getSubtitle(requireContext())
+                viewBinding.subtitle.isVisible = viewBinding.subtitle.text.isNotBlank()
+                viewBinding.bottom.text = settingsMenu.getBottomText(requireContext())
+                viewBinding.bottom.isVisible = viewBinding.bottom.text.isNotBlank()
+
+                // Update bottom sheet size
+                forceResizeBottomSheet()
+            } catch (e: Exception) {
+                Timber.e(e)
+                requireOctoActivity().showDialog(e)
+                dismissAllowingStateLoss()
+            }
         }
 
-        adapter.menu = settingsMenu
-        viewBinding.title.text = settingsMenu.getTitle(requireContext())
-        viewBinding.title.isVisible = viewBinding.title.text.isNotBlank()
-        viewBinding.subtitle.text = settingsMenu.getSubtitle(requireContext())
-        viewBinding.subtitle.isVisible = viewBinding.subtitle.text.isNotBlank()
-        viewBinding.bottom.text = settingsMenu.getBottomText(requireContext())
-        viewBinding.bottom.isVisible = viewBinding.bottom.text.isNotBlank()
+        // We don't want the loading state to flash in when opening main menu and we also don't need to
+        // build it async -> run blocking for main menu
+        if (settingsMenu is MainMenu) {
+            runBlocking { internal() }
+        } else {
+            viewLifecycleOwner.lifecycleScope.launchWhenCreated { internal() }
+        }
     }
 
     private fun popMenu(): Boolean = if (viewModel.menuBackStack.size <= 1) {
@@ -131,27 +168,61 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         }
     }
 
+    private fun executeClick(item: MenuItem, title: CharSequence) {
+        if (isLoading) return
+
+        val activity = requireOctoActivity()
+        viewModel.execute {
+            val closeBottomSheet = item.onClicked(this@MenuBottomSheetFragment) { action ->
+                GlobalScope.launch {
+                    delay(100)
+
+                    try {
+                        // Start confirmation
+                        Timber.i("Action start")
+                        activity.showSnackbar(
+                            OctoActivity.Message.SnackbarMessage(
+                                text = { it.getString(R.string.menu___executing_command, title) },
+                                debounce = true
+                            )
+                        )
+
+                        // Execute
+                        action()
+
+                        // End confirmation
+                        Timber.i("Action end")
+                        activity.showSnackbar(
+                            OctoActivity.Message.SnackbarMessage(
+                                text = { it.getString(R.string.menu___completed_command, title) },
+                                type = OctoActivity.Message.SnackbarMessage.Type.Positive
+                            )
+                        )
+                    } catch (e: Exception) {
+                        Timber.e(e, "Action failed")
+                        activity.showErrorDetailsDialog(e)
+                    }
+                }
+            }
+
+            if (closeBottomSheet) {
+                dismiss()
+            }
+        }
+    }
+
     private inner class SpanSizeLookUp : GridLayoutManager.SpanSizeLookup() {
         override fun getSpanSize(position: Int) = if (adapter.menuItems[position].showAsHalfWidth) 1 else 2
     }
 
     private inner class Adapter : RecyclerView.Adapter<MenuItemHolder>() {
-        var menu: Menu? = null
-            set(value) {
-                field = value
-                val currentDestination = findNavController().currentDestination?.id ?: 0
-                pinnedItemIds = Injector.get().pinnedMenuItemsRepository().getPinnedMenuItems()
-                menuItems = value?.getMenuItem()?.filter {
-                    runBlocking {
-                        it.isVisible(currentDestination)
-                    }
-                }?.sortedWith(compareBy({ it.order }, { it.itemId })) ?: emptyList()
-                notifyDataSetChanged()
-            }
-
         var pinnedItemIds: Set<String> = emptySet()
         var menuItems: List<MenuItem> = emptyList()
-            private set
+            set(value) {
+                pinnedItemIds = Injector.get().pinnedMenuItemsRepository().getPinnedMenuItems()
+                field = value
+                notifyDataSetChanged()
+            }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MenuItemHolder(parent)
 
@@ -180,7 +251,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
 
                     beginDelayedTransition(true)
                     Injector.get().pinnedMenuItemsRepository().toggleMenuItemPinned(item.itemId)
-                    menu = menu
+                    notifyDataSetChanged()
                     true
                 }
             }
@@ -197,7 +268,6 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             val iconEnd = R.drawable.ic_round_chevron_right_24.takeIf { item.showAsSubMenu } ?: 0
             holder.binding.text.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, iconEnd, 0)
             holder.binding.icon.setImageResource(iconStart)
-            //  holder.binding.pin.setImageResource(iconEnd)
 
             // Margins
             val nextItem = menuItems.getOrNull(position + 1)
@@ -226,47 +296,6 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     holder.binding.toggle.isChecked = item.isEnabled
                 } catch (e: Exception) {
                     requireOctoActivity().showErrorDetailsDialog(e)
-                }
-            }
-        }
-
-        private fun executeClick(item: MenuItem, title: CharSequence) {
-            val activity = requireOctoActivity()
-            viewModel.execute {
-                val closeBottomSheet = item.onClicked(this@MenuBottomSheetFragment) { action ->
-                    GlobalScope.launch {
-                        delay(100)
-
-                        try {
-                            // Start confirmation
-                            Timber.i("Action start")
-                            activity.showSnackbar(
-                                OctoActivity.Message.SnackbarMessage(
-                                    text = { it.getString(R.string.menu___executing_command, title) },
-                                    debounce = true
-                                )
-                            )
-
-                            // Execute
-                            action()
-
-                            // End confirmation
-                            Timber.i("Action end")
-                            activity.showSnackbar(
-                                OctoActivity.Message.SnackbarMessage(
-                                    text = { it.getString(R.string.menu___completed_command, title) },
-                                    type = OctoActivity.Message.SnackbarMessage.Type.Positive
-                                )
-                            )
-                        } catch (e: Exception) {
-                            Timber.e(e, "Action failed")
-                            activity.showErrorDetailsDialog(e)
-                        }
-                    }
-                }
-
-                if (closeBottomSheet) {
-                    dismiss()
                 }
             }
         }
