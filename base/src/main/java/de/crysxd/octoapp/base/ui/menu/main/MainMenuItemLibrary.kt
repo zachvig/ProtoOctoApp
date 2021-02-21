@@ -61,7 +61,7 @@ class MenuItemLibrary {
         MENU_ITEM_CANCEL_PRINT_KEEP_TEMPS to CancelPrintKeepTemperaturesMenuItem::class,
         MENU_ITEM_TEMPERATURE_MENU to ShowTemperatureMenuItem::class,
         MENU_ITEM_AUTO_CONNECT_PRINTER to AutoConnectPrinterMenuItem::class,
-        MENU_ITEM_MATERIAL_MENU to MaterialPluginMenu::class,
+        MENU_ITEM_MATERIAL_MENU to ShowMaterialPluginMenuItem::class,
     )
 
     operator fun get(itemId: String): MenuItem? = when {

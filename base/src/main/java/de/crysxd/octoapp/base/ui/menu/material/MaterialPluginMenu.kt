@@ -23,19 +23,20 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
     }
 
     override fun getBottomText(context: Context) = HtmlCompat.fromHtml(
-        "<small>Materials are provided by the <a href=\"https://plugins.octoprint.org/plugins/SpoolManager/\">SpoolManager</a> or <a href=\"https://plugins.octoprint.org/plugins/filamentmanager/\">FilamentManager</a> plugin and can be edited in the web interface.</small>",
+        "<small>„A“ means activated. Materials are provided by <a href=\"https://plugins.octoprint.org/plugins/SpoolManager/\">SpoolManager</a> or <a href=\"https://plugins.octoprint.org/plugins/filamentmanager/\">FilamentManager</a> and can be edited in the web interface.</small>",
         HtmlCompat.FROM_HTML_MODE_COMPACT
     )
 
     override fun getBottomMovementMethod(host: MenuBottomSheetFragment) = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener())
 
     override suspend fun getMenuItem() = Injector.get().getMaterialsUseCase().execute(Unit).map {
-        ActivateMaterialMenuItem(it.uniqueId, it.displayName, startPrintAfterSelection)
+        ActivateMaterialMenuItem(it.uniqueId, it.displayName, it.isActivated, startPrintAfterSelection)
     }
 
     class ActivateMaterialMenuItem(
         private val uniqueMaterialId: String,
         private val displayName: String,
+        private val isActive: Boolean = false,
         private val startPrintAfterSelection: FileObject.File? = null
     ) : MenuItem {
         companion object {
@@ -49,8 +50,8 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
         override var groupId = ""
         override val order = 321
         override val style = MenuItemStyle.Printer
-        override val icon = R.drawable.ic_round_layers_24
-        override suspend fun getTitle(context: Context) = "Activate „$displayName“"
+        override val icon = if (isActive) R.drawable.ic_round_layers_active_24 else R.drawable.ic_round_layers_24
+        override suspend fun getTitle(context: Context) = if (startPrintAfterSelection != null) "Print with „$displayName“" else "Activate „$displayName“"
         override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
             executeAsync {
                 Injector.get().activateMaterialUseCase().execute(ActivateMaterialUseCase.Params(uniqueMaterialId))
