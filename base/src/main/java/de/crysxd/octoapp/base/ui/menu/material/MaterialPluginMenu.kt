@@ -23,7 +23,7 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
     }
 
     override fun getBottomText(context: Context) = HtmlCompat.fromHtml(
-        "<small>A means activated. Materials are provided by <a href=\"https://plugins.octoprint.org/plugins/SpoolManager/\">SpoolManager</a> or <a href=\"https://plugins.octoprint.org/plugins/filamentmanager/\">FilamentManager</a> and can be edited in the web interface.</small>",
+        "<small>„A“ means activated. Materials are provided by <a href=\"https://plugins.octoprint.org/plugins/SpoolManager/\">SpoolManager</a> or <a href=\"https://plugins.octoprint.org/plugins/filamentmanager/\">FilamentManager</a> and can be edited in the web interface.</small>",
         HtmlCompat.FROM_HTML_MODE_COMPACT
     )
 
