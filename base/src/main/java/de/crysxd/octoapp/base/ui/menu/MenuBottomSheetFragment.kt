@@ -47,6 +47,11 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             viewBinding.loadingSpinner.isVisible = true
             viewBinding.loadingSpinner.animate().alpha(if (value) 1f else 0f).withEndAction { viewBinding.loadingSpinner.isVisible = !field }.start()
         }
+    var isCheckBoxChecked
+        get() = viewBinding.checkbox.isChecked
+        set(value) {
+            viewBinding.checkbox.isChecked = value
+        }
 
     companion object {
         private const val KEY_MENU = "menu"
@@ -97,35 +102,43 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         }
     }
 
-    fun showMenu(settingsMenu: Menu) {
+    private fun showMenu(settingsMenu: Menu) {
         val internal = suspend {
             try {
-                // Load items
+                // Run pre-show routine and load items
                 isLoading = settingsMenu !is MainMenu
-                val currentDestination = findNavController().currentDestination?.id ?: 0
-                val items = settingsMenu.getMenuItem().filter {
-                    it.isVisible(currentDestination)
-                }.sortedWith(compareBy { it.order })
-                isLoading = false
+                if (settingsMenu.beforeShow(this@MenuBottomSheetFragment)) {
+                    // The menu rejected to be shown, cancel and dismiss
+                    dismissAllowingStateLoss()
+                } else {
+                    isLoading = false
+                    val currentDestination = findNavController().currentDestination?.id ?: 0
+                    val items = settingsMenu.getMenuItem().filter {
+                        it.isVisible(currentDestination)
+                    }.sortedWith(compareBy { it.order })
 
-                // Prepare animation
-                viewBinding.bottom.movementMethod = null
-                beginDelayedTransition {
-                    // Need to be applied after transition to prevent glitches
-                    viewBinding.bottom.movementMethod = settingsMenu.getBottomMovementMethod(this@MenuBottomSheetFragment)
+                    // Prepare animation
+                    viewBinding.bottom.movementMethod = null
+                    beginDelayedTransition {
+                        // Need to be applied after transition to prevent glitches
+                        viewBinding.bottom.movementMethod = settingsMenu.getBottomMovementMethod(this@MenuBottomSheetFragment)
+                    }
+
+                    // Show menu
+                    adapter.menuItems = items
+                    viewBinding.title.text = settingsMenu.getTitle(requireContext())
+                    viewBinding.title.isVisible = viewBinding.title.text.isNotBlank()
+                    viewBinding.subtitle.text = settingsMenu.getSubtitle(requireContext())
+                    viewBinding.subtitle.isVisible = viewBinding.subtitle.text.isNotBlank()
+                    viewBinding.bottom.text = settingsMenu.getBottomText(requireContext())
+                    viewBinding.bottom.isVisible = viewBinding.bottom.text.isNotBlank()
+                    viewBinding.checkbox.text = settingsMenu.getCheckBoxText(requireContext())
+                    viewBinding.checkbox.isVisible = viewBinding.checkbox.text.isNotBlank()
+                    viewBinding.checkbox.isChecked = false
+
+                    // Update bottom sheet size
+                    forceResizeBottomSheet()
                 }
-
-                // Show menu
-                adapter.menuItems = items
-                viewBinding.title.text = settingsMenu.getTitle(requireContext())
-                viewBinding.title.isVisible = viewBinding.title.text.isNotBlank()
-                viewBinding.subtitle.text = settingsMenu.getSubtitle(requireContext())
-                viewBinding.subtitle.isVisible = viewBinding.subtitle.text.isNotBlank()
-                viewBinding.bottom.text = settingsMenu.getBottomText(requireContext())
-                viewBinding.bottom.isVisible = viewBinding.bottom.text.isNotBlank()
-
-                // Update bottom sheet size
-                forceResizeBottomSheet()
             } catch (e: Exception) {
                 Timber.e(e)
                 requireOctoActivity().showDialog(e)
@@ -182,8 +195,6 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         viewModel.execute {
             val closeBottomSheet = item.onClicked(this@MenuBottomSheetFragment) { action ->
                 GlobalScope.launch {
-                    delay(100)
-
                     try {
                         // Start confirmation
                         Timber.i("Action start")

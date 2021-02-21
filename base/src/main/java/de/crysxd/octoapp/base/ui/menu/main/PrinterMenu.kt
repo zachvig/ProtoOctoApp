@@ -3,7 +3,6 @@ package de.crysxd.octoapp.base.ui.menu.main
 import android.content.Context
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ui.common.power.PowerControlsBottomSheet
 import de.crysxd.octoapp.base.ui.menu.*
 import de.crysxd.octoapp.base.ui.menu.material.MaterialPluginMenu
 import de.crysxd.octoapp.base.ui.menu.power.PowerControlsMenu
@@ -104,11 +103,8 @@ class TurnPsuOffMenuItem : MenuItem {
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_turn_psu_off)
     override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
-        PowerControlsBottomSheet.createForAction(
-            PowerControlsBottomSheet.Action.TurnOff,
-            PowerControlsBottomSheet.DeviceType.PrinterPsu
-        ).show(host.parentFragmentManager)
-        return true
+        host.pushMenu(PowerControlsMenu(PowerControlsMenu.DeviceType.PrinterPsu, PowerControlsMenu.Action.TurnOff))
+        return false
     }
 }
 

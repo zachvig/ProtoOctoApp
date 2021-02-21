@@ -14,10 +14,39 @@ import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_POWER_DEVICE_OFF
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_POWER_DEVICE_ON
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SHOW_POWER_DEVICE_ACTIONS
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
+import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import kotlinx.android.parcel.Parcelize
+import java.util.*
 
 @Parcelize
 class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val action: Action = Action.Unspecified) : Menu {
+
+    override suspend fun beforeShow(host: MenuBottomSheetFragment): Boolean {
+        // Let's try to solve the task at hand without the user selecting somehting
+
+        val deviceToUse = when (type) {
+            DeviceType.PrinterPsu -> Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.appSettings?.defaultPowerDevices?.get(type.prefKey)
+            DeviceType.Unspecified -> null
+        }?.let {
+            Injector.get().getPowerDevicesUseCase().execute(GetPowerDevicesUseCase.Params(queryState = false, onlyGetDeviceWithUniqueId = it)).first().first
+        }
+
+        return if (action != Action.Unspecified && deviceToUse != null) {
+            // We already know what to do!
+            when (action) {
+                Action.TurnOn -> Injector.get().turnOnPsuUseCase().execute(deviceToUse)
+                Action.TurnOff -> Injector.get().turnOffPsuUseCase().execute(deviceToUse)
+                Action.Cycle -> Injector.get().cyclePsuUseCase().execute(deviceToUse)
+                Action.Unspecified -> Unit
+            }
+            host.handleAction(action, type, deviceToUse)
+            true
+        } else {
+            false
+        }
+    }
+
+    override fun getCheckBoxText(context: Context) = "Always use this device in the future".takeIf { type != DeviceType.Unspecified && action != Action.Unspecified }
 
     override suspend fun getMenuItem() = Injector.get().getPowerDevicesUseCase().execute(GetPowerDevicesUseCase.Params(queryState = true)).map {
         val name = it.first.displayName
@@ -27,21 +56,30 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
 
         when (action) {
             Action.Unspecified -> ShowPowerDeviceActionsMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, state = state)
-            Action.Cycle -> CyclePowerDeviceMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, state = state, showName = true)
-            Action.TurnOff -> TurnPowerDeviceOffMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, state = state, showName = true)
-            Action.TurnOn -> TurnPowerDeviceOnMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, state = state, showName = true)
+            Action.Cycle -> CyclePowerDeviceMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, state = state, showName = true, deviceType = type)
+            Action.TurnOff -> TurnPowerDeviceOffMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, state = state, showName = true, deviceType = type)
+            Action.TurnOn -> TurnPowerDeviceOnMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, state = state, showName = true, deviceType = type)
         }
     }
 
     override fun getTitle(context: Context) = when (action) {
-        Action.TurnOn -> "Select Device to Turn On"
-        Action.TurnOff -> "Select Device to Turn Off"
-        Action.Cycle -> "Select Device to Cycle"
         Action.Unspecified -> "Power devices"
+        else -> "Select device"
     }
 
     override fun getBottomText(context: Context) = "<small>Power devices are provided by a <a href=\"https://google.com\">supported plugin</a></small>".toHtml()
     override fun getBottomMovementMethod(host: MenuBottomSheetFragment) = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener())
+
+    companion object {
+        private suspend fun MenuBottomSheetFragment.handleAction(action: Action, deviceType: DeviceType, device: PowerDevice) {
+            (parentFragment as? PowerControlsCallback)?.onPowerActionCompleted(action, device)
+            if (isCheckBoxChecked) {
+                Injector.get().octorPrintRepository().updateAppSettingsForActive {
+                    it.copy(defaultPowerDevices = (it.defaultPowerDevices ?: emptyMap()).toMutableMap().apply { this[deviceType.prefKey] = device.uniqueId })
+                }
+            }
+        }
+    }
 
     class ShowPowerDeviceActionsMenuItem(
         val uniqueDeviceId: String,
@@ -70,7 +108,8 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         val name: String,
         val pluginName: String,
         val showName: Boolean = true,
-        val state: GetPowerDevicesUseCase.PowerState = GetPowerDevicesUseCase.PowerState.Unknown
+        val state: GetPowerDevicesUseCase.PowerState = GetPowerDevicesUseCase.PowerState.Unknown,
+        val deviceType: DeviceType = DeviceType.Unspecified,
     ) : MenuItem {
         companion object {
             fun forItemId(itemId: String): TurnPowerDeviceOffMenuItem {
@@ -87,14 +126,17 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
 
         override suspend fun getTitle(context: Context) = if (showName) "Turn $name off" else "Turn off"
         override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+            val device = Injector.get().getPowerDevicesUseCase().execute(
+                GetPowerDevicesUseCase.Params(
+                    queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
+                )
+            ).first().first
+
             executeAsync {
-                val device = Injector.get().getPowerDevicesUseCase().execute(
-                    GetPowerDevicesUseCase.Params(
-                        queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
-                    )
-                ).first().first
                 Injector.get().turnOffPsuUseCase().execute(device)
             }
+
+            host.handleAction(Action.TurnOff, deviceType, device)
             return true
         }
     }
@@ -104,7 +146,8 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         val name: String,
         val pluginName: String,
         val showName: Boolean = true,
-        val state: GetPowerDevicesUseCase.PowerState = GetPowerDevicesUseCase.PowerState.Unknown
+        val state: GetPowerDevicesUseCase.PowerState = GetPowerDevicesUseCase.PowerState.Unknown,
+        val deviceType: DeviceType = DeviceType.Unspecified,
     ) : MenuItem {
         companion object {
             fun forItemId(itemId: String): TurnPowerDeviceOnMenuItem {
@@ -121,14 +164,17 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
 
         override suspend fun getTitle(context: Context) = if (showName) "Turn $name on" else "Turn on"
         override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+            val device = Injector.get().getPowerDevicesUseCase().execute(
+                GetPowerDevicesUseCase.Params(
+                    queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
+                )
+            ).first().first
+
             executeAsync {
-                val device = Injector.get().getPowerDevicesUseCase().execute(
-                    GetPowerDevicesUseCase.Params(
-                        queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
-                    )
-                ).first().first
                 Injector.get().turnOnPsuUseCase().execute(device)
             }
+
+            host.handleAction(Action.TurnOn, deviceType, device)
             return true
         }
     }
@@ -138,7 +184,8 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         val name: String,
         val pluginName: String,
         val showName: Boolean = true,
-        val state: GetPowerDevicesUseCase.PowerState = GetPowerDevicesUseCase.PowerState.Unknown
+        val state: GetPowerDevicesUseCase.PowerState = GetPowerDevicesUseCase.PowerState.Unknown,
+        val deviceType: DeviceType = DeviceType.Unspecified,
     ) : MenuItem {
         companion object {
             fun forItemId(itemId: String): CyclePowerDeviceMenuItem {
@@ -155,20 +202,28 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
 
         override suspend fun getTitle(context: Context) = if (showName) "Cycle $name" else "Cycle"
         override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+            val device = Injector.get().getPowerDevicesUseCase().execute(
+                GetPowerDevicesUseCase.Params(
+                    queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
+                )
+            ).first().first
+
             executeAsync {
-                val device = Injector.get().getPowerDevicesUseCase().execute(
-                    GetPowerDevicesUseCase.Params(
-                        queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
-                    )
-                ).first().first
                 Injector.get().cyclePsuUseCase().execute(device)
             }
+
+            host.handleAction(Action.Cycle, deviceType, device)
             return true
         }
     }
 
+    interface PowerControlsCallback {
+        fun onPowerActionCompleted(action: Action, device: PowerDevice)
+    }
 
     sealed class DeviceType : Parcelable {
+        val prefKey get() = this::class.java.simpleName.toLowerCase(Locale.ENGLISH)
+
         @Parcelize
         object PrinterPsu : DeviceType()
 

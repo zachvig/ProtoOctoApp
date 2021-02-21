@@ -11,9 +11,9 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.BaseFragment
 import de.crysxd.octoapp.base.ui.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
-import de.crysxd.octoapp.base.ui.common.power.PowerControlsBottomSheet
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.power.PowerControlsMenu
 import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.connect_printer.databinding.ConnectPrinterFragmentBinding
 import de.crysxd.octoapp.connect_printer.di.injectViewModel
@@ -21,7 +21,7 @@ import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import kotlinx.coroutines.delay
 import timber.log.Timber
 
-class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
+class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCallback {
 
     private val networkViewModel: NetworkStateViewModel by injectViewModel(Injector.get().viewModelFactory())
     override val viewModel: ConnectPrinterViewModel by injectViewModel()
@@ -100,12 +100,12 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
 
             is ConnectPrinterViewModel.UiState.WaitingForPrinterToComeOnline -> {
                 binding.buttonTurnOnPsu.setOnClickListener {
-                    PowerControlsBottomSheet.createForAction(PowerControlsBottomSheet.Action.TurnOn, PowerControlsBottomSheet.DeviceType.PrinterPsu)
-                        .show(childFragmentManager, "select-device")
+                    MenuBottomSheetFragment.createForMenu(PowerControlsMenu(type = PowerControlsMenu.DeviceType.PrinterPsu, action = PowerControlsMenu.Action.TurnOn))
+                        .show(childFragmentManager)
                 }
                 binding.buttonTurnOffPsu.setOnClickListener {
-                    PowerControlsBottomSheet.createForAction(PowerControlsBottomSheet.Action.TurnOff, PowerControlsBottomSheet.DeviceType.PrinterPsu)
-                        .show(childFragmentManager, "select-device")
+                    MenuBottomSheetFragment.createForMenu(PowerControlsMenu(type = PowerControlsMenu.DeviceType.PrinterPsu, action = PowerControlsMenu.Action.TurnOff))
+                        .show(childFragmentManager)
                 }
                 binding.psuTurnOnControls.isVisible = state.psuIsOn == false
                 binding.psuTurnOffControls.isVisible = state.psuIsOn == true
@@ -129,7 +129,12 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
                 binding.psuTurnOnControls.isVisible = true
                 binding.buttonTurnOnPsu.setOnClickListener {
                     if (state.psuSupported) {
-                        PowerControlsBottomSheet.createForAction(PowerControlsBottomSheet.Action.Cycle, PowerControlsBottomSheet.DeviceType.PrinterPsu)
+                        MenuBottomSheetFragment.createForMenu(
+                            PowerControlsMenu(
+                                type = PowerControlsMenu.DeviceType.PrinterPsu,
+                                action = PowerControlsMenu.Action.Cycle
+                            )
+                        )
                             .show(childFragmentManager)
                     } else {
                         viewModel.retryConnectionFromOfflineState()
@@ -194,10 +199,12 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsBottomSheet.Parent {
         requireOctoActivity().octo.isVisible = false
     }
 
-    override fun onPowerDeviceSelected(device: PowerDevice, action: PowerControlsBottomSheet.Action?) = when (action) {
-        PowerControlsBottomSheet.Action.TurnOn -> viewModel.setDeviceOn(device, true)
-        PowerControlsBottomSheet.Action.TurnOff -> viewModel.setDeviceOn(device, false)
-        PowerControlsBottomSheet.Action.Cycle -> viewModel.cyclePsu(device)
-        else -> null
+    override fun onPowerActionCompleted(action: PowerControlsMenu.Action, device: PowerDevice) {
+        when (action) {
+            PowerControlsMenu.Action.TurnOn -> viewModel.setDeviceOn(device, true)
+            PowerControlsMenu.Action.TurnOff -> viewModel.setDeviceOn(device, false)
+            PowerControlsMenu.Action.Cycle -> viewModel.cyclePsu(device)
+            else -> Unit
+        }
     }
 }
