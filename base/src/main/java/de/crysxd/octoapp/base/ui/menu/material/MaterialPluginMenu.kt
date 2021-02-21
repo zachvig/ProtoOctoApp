@@ -41,7 +41,7 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
         override val order = 321
         override val style = MenuItemStyle.Printer
         override val icon = R.drawable.ic_round_layers_24
-        override suspend fun getTitle(context: Context) = "Activate „$displayName‟"
+        override suspend fun getTitle(context: Context) = "Activate „$displayName“"
         override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
             executeAsync {
                 Injector.get().activateMaterialUseCase().execute(ActivateMaterialUseCase.Params(uniqueMaterialId))

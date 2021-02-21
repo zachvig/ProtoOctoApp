@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.octoprint.plugins.materialmanager
 
 import de.crysxd.octoapp.octoprint.models.settings.Settings
+import de.crysxd.octoapp.octoprint.plugins.materialmanager.filamentmanager.FilamentManagerApi
 import de.crysxd.octoapp.octoprint.plugins.materialmanager.filamentmanager.FilamentManagerPlugin
 import de.crysxd.octoapp.octoprint.plugins.materialmanager.spoolmanager.SpoolManagerApi
 import de.crysxd.octoapp.octoprint.plugins.materialmanager.spoolmanager.SpoolManagerPlugin
@@ -10,7 +11,7 @@ class MaterialManagerPluginsCollection(retrofit: Retrofit) {
 
     val plugins = listOf(
         SpoolManagerPlugin(retrofit.create(SpoolManagerApi::class.java)),
-        FilamentManagerPlugin(),
+        FilamentManagerPlugin(retrofit.create(FilamentManagerApi::class.java)),
     )
 
     fun isMaterialManagerAvailable(settings: Settings) = plugins.any {
