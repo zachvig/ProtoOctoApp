@@ -71,7 +71,6 @@ class PrintNotificationService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        Injector.get().octoPreferences().wasPrintNotificationDisconnected = false
         if (isNotificationEnabled) {
             Timber.i("Creating notification service")
             GlobalScope.launch(coroutineJob) {

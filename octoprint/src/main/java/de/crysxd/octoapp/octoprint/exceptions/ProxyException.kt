@@ -15,7 +15,7 @@ import java.util.logging.Logger
  * the program flow.
  */
 class ProxyException private constructor(val original: Throwable, webUrl: String, apiKey: String? = null) : IOException(
-    "${mask(original.message, webUrl, apiKey)} [Proxy for ${original::class.java.name}]",
+    "${mask(original.message, webUrl, apiKey)} [Proxy for ${original::class.java.name}, URL: $webUrl]",
     original.cause?.let { create(it, webUrl, apiKey) }
 ) {
     init {

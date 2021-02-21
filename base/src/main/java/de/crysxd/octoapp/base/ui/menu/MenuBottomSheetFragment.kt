@@ -69,7 +69,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?) = super.onCreateDialog(savedInstanceState).also {
         it.setOnKeyListener { _, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP && !popMenu()) {
-                dismiss()
+                dismissAllowingStateLoss()
             }
             true
         }
