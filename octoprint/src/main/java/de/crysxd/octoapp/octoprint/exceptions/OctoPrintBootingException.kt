@@ -1,3 +1,3 @@
 package de.crysxd.octoapp.octoprint.exceptions
 
-class OctoPrintBootingException() : OctoPrintException()
+class OctoPrintBootingException() : OctoPrintException(webUrl = null)
