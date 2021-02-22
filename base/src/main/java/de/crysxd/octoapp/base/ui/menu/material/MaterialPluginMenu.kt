@@ -29,14 +29,17 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
 
     override fun getBottomMovementMethod(host: MenuBottomSheetFragment) = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener())
 
-    override suspend fun getMenuItem() = Injector.get().getMaterialsUseCase().execute(Unit).map {
-        ActivateMaterialMenuItem(it.uniqueId, it.displayName, it.isActivated, startPrintAfterSelection)
-    }
+    override suspend fun getMenuItem() = listOf(
+        Injector.get().getMaterialsUseCase().execute(Unit).map {
+            ActivateMaterialMenuItem(it.uniqueId, it.displayName, it.isActivated, startPrintAfterSelection)
+        },
+        listOf(PrintWithoutMaterialSelection(startPrintAfterSelection))
+    ).flatten()
 
     class ActivateMaterialMenuItem(
         private val uniqueMaterialId: String,
         private val displayName: String,
-        private val isActive: Boolean = false,
+        isActive: Boolean = false,
         private val startPrintAfterSelection: FileObject.File? = null
     ) : MenuItem {
         companion object {
@@ -51,10 +54,32 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
         override val order = 321
         override val style = MenuItemStyle.Printer
         override val icon = if (isActive) R.drawable.ic_round_layers_active_24 else R.drawable.ic_round_layers_24
-        override suspend fun getTitle(context: Context) = if (startPrintAfterSelection != null) "Print with „$displayName“" else "Activate „$displayName“"
+        override suspend fun getTitle(context: Context) = if (startPrintAfterSelection != null) displayName else "Activate „$displayName“"
         override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
             executeAsync {
                 Injector.get().activateMaterialUseCase().execute(ActivateMaterialUseCase.Params(uniqueMaterialId))
+                startPrintAfterSelection?.let {
+                    Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
+                }
+            }
+            return true
+        }
+    }
+
+    class PrintWithoutMaterialSelection(
+        private val startPrintAfterSelection: FileObject.File? = null
+    ) : MenuItem {
+
+        override val itemId = "noid"
+        override var groupId = ""
+        override val order = 322
+        override val canBePinned = false
+        override suspend fun isVisible(destinationId: Int) = startPrintAfterSelection != null
+        override val style = MenuItemStyle.Printer
+        override val icon = R.drawable.ic_round_layers_clear_24
+        override suspend fun getTitle(context: Context) = "Print without selection"
+        override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+            executeAsync {
                 startPrintAfterSelection?.let {
                     Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
                 }
