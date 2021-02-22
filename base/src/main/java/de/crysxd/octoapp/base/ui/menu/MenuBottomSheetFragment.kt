@@ -225,7 +225,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     item.handleToggleFlipped(this@MenuBottomSheetFragment, !item.isEnabled)
                     holder.binding.toggle.isChecked = item.isEnabled
                 } catch (e: Exception) {
-                    requireOctoActivity().showErrorDetailsDialog(e)
+                    requireOctoActivity().showDialog(e)
                 }
             }
         }
@@ -260,7 +260,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                             )
                         } catch (e: Exception) {
                             Timber.e(e, "Action failed")
-                            activity.showErrorDetailsDialog(e)
+                            activity.showDialog(e)
                         }
                     }
                 }
