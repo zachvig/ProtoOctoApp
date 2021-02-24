@@ -78,8 +78,14 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     fun show(fm: FragmentManager) = show(fm, "main-menu")
 
     fun pushMenu(settingsMenu: Menu) {
-        viewModel.menuBackStack.add(settingsMenu)
-        showMenu(settingsMenu)
+        // Samsung Android 11 decides to crash if we trigger this method
+        // from a link click, posting resolves this issue
+        view?.post {
+            if (isAdded) {
+                viewModel.menuBackStack.add(settingsMenu)
+                showMenu(settingsMenu)
+            }
+        }
     }
 
     fun showMenu(settingsMenu: Menu) {
