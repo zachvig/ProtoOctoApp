@@ -7,8 +7,10 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
-import android.os.Build
 import de.crysxd.octoapp.base.di.Injector
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
@@ -21,22 +23,25 @@ class PrintNotificationSupportBroadcastReceiver(context: Context) : BroadcastRec
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        try {
-            val wasDisconnected = Injector.get().octoPreferences().wasPrintNotificationDisconnected
-            Injector.get().octoPreferences().wasPrintNotificationDisconnected = false
-            val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val hasWifi = manager.allNetworks.map { manager.getNetworkCapabilities(it) }.any { it?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true }
+        GlobalScope.launch {
+            try {
+                val wasDisconnected = Injector.get().octoPreferences().wasPrintNotificationDisconnected
+                val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                val hasWifi = manager.allNetworks.map { manager.getNetworkCapabilities(it) }.any { it?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true }
 
-            if (wasDisconnected && hasWifi) {
-                Timber.i("Network state changed, wifi now connected. Print notification was disconnected before, attempting reconnect")
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    context.startForegroundService(Intent(context, PrintNotificationService::class.java))
+                if (wasDisconnected && hasWifi) {
+                    Injector.get().octoPreferences().wasPrintNotificationDisconnected = false
+                    Timber.i("Network state changed, wifi now connected. Print notification was disconnected before, attempting to reconnect in 5s")
+
+                    // Delay for 5s to get the network settled and then connect
+                    delay(5000)
+                    PrintNotificationService.start(context)
                 } else {
-                    context.startService(Intent(context, PrintNotificationService::class.java))
+                    Timber.v("Not starting service (wasDisconnected=$wasDisconnected, hasWifi=$hasWifi)")
                 }
+            } catch (e: Exception) {
+                Timber.e(e)
             }
-        } catch (e: Exception) {
-            Timber.e(e)
         }
     }
 }
