@@ -32,6 +32,7 @@ import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.main.MainMenu
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
+import kotlinx.android.synthetic.main.fragment_gcode_render.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -45,7 +46,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             field = value
             viewBinding.content.animate().alpha(if (value) 0.33f else 1f).start()
             viewBinding.loadingSpinner.isVisible = true
-            viewBinding.loadingSpinner.animate().alpha(if (value) 1f else 0f).withEndAction { viewBinding.loadingSpinner.isVisible = !field }.start()
+            viewBinding.loadingSpinner.animate().alpha(if (value) 1f else 0f).withEndAction { viewBinding.loadingSpinner.isVisible = field }.start()
         }
     var isCheckBoxChecked
         get() = viewBinding.checkbox.isChecked
@@ -126,13 +127,15 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     // The menu rejected to be shown, cancel and dismiss
                     dismissAllowingStateLoss()
                 } else {
-                    isLoading = false
                     val currentDestination = findNavController().currentDestination?.id ?: 0
-                    val items = settingsMenu.getMenuItem().filter {
-                        it.isVisible(currentDestination)
-                    }.sortedWith(compareBy { it.order })
+                    val items = withContext(Dispatchers.IO) {
+                        settingsMenu.getMenuItem().filter {
+                            it.isVisible(currentDestination)
+                        }.sortedWith(compareBy { it.order })
+                    }
 
                     // Prepare animation
+                    isLoading = false
                     viewBinding.bottom.movementMethod = null
                     beginDelayedTransition {
                         // Need to be applied after transition to prevent glitches
@@ -155,7 +158,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     forceResizeBottomSheet()
                 }
             } catch (e: Exception) {
-                Timber.e(e)
+                Timber.e(e, "Error while inflating menu")
                 requireOctoActivity().showDialog(e)
                 dismissAllowingStateLoss()
             }
@@ -164,8 +167,10 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         // We don't want the loading state to flash in when opening main menu and we also don't need to
         // build it async -> run blocking for main menu
         if (settingsMenu is MainMenu) {
+            Timber.i("Using blocking method to inflate main menu")
             runBlocking { internal() }
         } else {
+            Timber.i("Using async method to inflate $settingsMenu")
             viewLifecycleOwner.lifecycleScope.launchWhenCreated { internal() }
         }
     }
