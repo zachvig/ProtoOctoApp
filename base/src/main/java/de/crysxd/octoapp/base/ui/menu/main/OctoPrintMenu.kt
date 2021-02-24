@@ -45,7 +45,7 @@ class OpenOctoPrintMenuItem : MenuItem {
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_octoprint)
     override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
         executeAsync {
-            Injector.get().openOctoPrintWebUseCase().execute(host.requireContext())
+            Injector.get().openOctoPrintWebUseCase().execute(Injector.get().context())
         }
         return true
     }
