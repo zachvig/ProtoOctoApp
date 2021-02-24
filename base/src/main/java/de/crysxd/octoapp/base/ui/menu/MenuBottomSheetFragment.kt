@@ -41,12 +41,21 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     override val viewModel by injectViewModel<MenuBottomSheetViewModel>()
     private lateinit var viewBinding: MenuBottomSheetFragmentBinding
     private val adapter = Adapter()
+    private val showLoadingRunnable = Runnable {
+        viewBinding.content.animate().alpha(if (isLoading) 0.33f else 1f).start()
+        viewBinding.loadingSpinner.isVisible = true
+        viewBinding.loadingSpinner.animate().alpha(if (isLoading) 1f else 0f).withEndAction { viewBinding.loadingSpinner.isVisible = isLoading }.start()
+    }
     private var isLoading = false
         set(value) {
             field = value
-            viewBinding.content.animate().alpha(if (value) 0.33f else 1f).start()
-            viewBinding.loadingSpinner.isVisible = true
-            viewBinding.loadingSpinner.animate().alpha(if (value) 1f else 0f).withEndAction { viewBinding.loadingSpinner.isVisible = field }.start()
+            if (value) {
+                view?.postDelayed(showLoadingRunnable, 200L)
+            } else {
+                showLoadingRunnable.run()
+                view?.removeCallbacks(showLoadingRunnable)
+            }
+
         }
     var isCheckBoxChecked
         get() = viewBinding.checkbox.isChecked
