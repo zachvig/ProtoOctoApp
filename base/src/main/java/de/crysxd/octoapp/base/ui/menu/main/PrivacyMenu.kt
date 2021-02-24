@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.core.text.HtmlCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.menu.*
 import kotlinx.android.parcel.Parcelize
@@ -15,17 +16,25 @@ class PrivacyMenu : Menu {
 
     override fun getSubtitle(context: Context) = HtmlCompat.fromHtml(
         "OctoApp does not collect any personalized information. I do not have any data about you, such as your email address. Even if you have an " +
-                "active subscription, you are completely anonymous.<br><br>OctoApp is an " +
-                "<a href=\"https://gitlab.com/crysxd/octoapp\">open source</a> project.",
+                "active subscription, you are completely anonymous.",
         HtmlCompat.FROM_HTML_MODE_COMPACT
     )
 
     override fun getBottomText(context: Context) = HtmlCompat.fromHtml(
-        "If you have any questions,<br>please reach out to <a href=\"mailto:hello@octoapp.eu\">hello@octoapp.eu</a><br><br><a href=\"https://octoapp-4e438.web.app/privacy\">Data privacy statement</a>",
+        "If you have any questions,<br>please reach out to <a href=\"mailto\">hello@octoapp.eu</a><br><br><a href=\"https://octoapp-4e438.web.app/privacy\">Data privacy statement</a><br><br>OctoApp is an <a href=\"https://gitlab.com/crysxd/octoapp\">open source</a> project.",
         HtmlCompat.FROM_HTML_MODE_COMPACT
     )
 
-    override fun getBottomMovementMethod(host: MenuBottomSheetFragment) = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener())
+    override fun getBottomMovementMethod(host: MenuBottomSheetFragment) = LinkClickMovementMethod(object : LinkClickMovementMethod.OpenWithIntentLinkClickedListener() {
+        override fun onLinkClicked(context: Context, url: String?): Boolean {
+            return if (url == "mailto") {
+                SendFeedbackDialog().show(host.childFragmentManager, "feedback")
+                true
+            } else {
+                super.onLinkClicked(context, url)
+            }
+        }
+    })
 
     override fun getMenuItem(): List<MenuItem> = listOf(
         CrashReportingMenuItem(),
