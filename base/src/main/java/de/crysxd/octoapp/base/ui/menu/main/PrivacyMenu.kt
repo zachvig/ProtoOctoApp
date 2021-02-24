@@ -14,8 +14,8 @@ class PrivacyMenu : Menu {
     override fun getTitle(context: Context) = "Privacy"
 
     override fun getSubtitle(context: Context) = HtmlCompat.fromHtml(
-        "OctoApp does not collect any personalized information. I do not have any data about you" +
-                " like your email address. Even if you are having a active subscription, you are completely anonymous.<br><br>OctoApp is an " +
+        "OctoApp does not collect any personalized information. I do not have any data about you, such as your email address. Even if you have an " +
+                "active subscription, you are completely anonymous.<br><br>OctoApp is an " +
                 "<a href=\"https://gitlab.com/crysxd/octoapp\">open source</a> project.",
         HtmlCompat.FROM_HTML_MODE_COMPACT
     )
@@ -42,10 +42,10 @@ class PrivacyMenu : Menu {
         override val canBePinned = false
         override suspend fun getTitle(context: Context) = "Anonymous crash reporting"
         override suspend fun getDescription(context: Context) =
-            "If enabled, OctoApp sends automated crash reports to Firebase Crashlytics helping me to make the app stable for all users and devices. This reports are anonymous and deleted " +
-                    "after 90 days. They contain generic information about your device (like model or Android version) and also the most recent logs collected by the " +
-                    "app. Crash reports do not contain any sensitive data as all API keys, host names or Basic Auth credentials were scrubbed (best effort) " +
-                    "while the error was created and again before the logs were cached."
+            "If enabled, OctoApp sends automated crash reports to Firebase Crashlytics, helping me make the app stable for all users and devices. These reports are " +
+                    "anonymous and deleted after 90 days. They contain generic information about your device, such as the model or Android version and the most recent " +
+                    "logs collected by the app. Crash reports do not contain any sensitive data as all API keys, host names or Basic Auth credentials are scrubbed " +
+                    "(best effort) when any error is created and again before the logs are cached."
 
         override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
             Injector.get().octoPreferences().isCrashReportingEnabled = enabled
@@ -62,11 +62,11 @@ class PrivacyMenu : Menu {
         override val canBePinned = false
         override suspend fun getTitle(context: Context) = "Anonymous usage statistics"
         override suspend fun getDescription(context: Context) =
-            "If enabled, OctoApp sends anonymous usage information to Firebase Analytics which will be deleted after 90 days. This information helps me to determine which features of the " +
-                    "app are used the most and where I should spend time improving the app to benefit the most users. This information does not contain any data " +
-                    "except which features of the app are used and basic information about your setup, e.g. which plugins are installed or which OctoPrint version " +
-                    "is used. The data is not linked to any advertisement profile or something similar, if you reinstall the app or switch your device I don't have" +
-                    " any means to connect your data."
+            "If enabled, OctoApp sends anonymous usage information to Firebase Analytics which will be deleted after 90 days. This information helps me in " +
+                    "determining which features of the app are used the most, and where I should spend time on improving to benefit users. This information does not " +
+                    "contain any data except which features of the app are used and basic information about your setup, such as which plugins are installed or the " +
+                    "OctoPrint version. The data is not linked to any advertisement profile or anything similar. If you reinstall the app or switch your device, I do " +
+                    "not have any means to connect your data. "
 
         override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
             Injector.get().octoPreferences().isAnalyticsEnabled = enabled
