@@ -142,6 +142,8 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                             it.isVisible(currentDestination)
                         }.sortedWith(compareBy { it.order })
                     }
+                    val subtitle = settingsMenu.getSubtitle(requireContext())
+                    val title = settingsMenu.getTitle(requireContext())
 
                     // Prepare animation
                     isLoading = false
@@ -153,9 +155,9 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
 
                     // Show menu
                     adapter.menuItems = items
-                    viewBinding.title.text = settingsMenu.getTitle(requireContext())
+                    viewBinding.title.text = title
                     viewBinding.title.isVisible = viewBinding.title.text.isNotBlank()
-                    viewBinding.subtitle.text = settingsMenu.getSubtitle(requireContext())
+                    viewBinding.subtitle.text = subtitle
                     viewBinding.subtitle.isVisible = viewBinding.subtitle.text.isNotBlank()
                     viewBinding.bottom.text = settingsMenu.getBottomText(requireContext())
                     viewBinding.bottom.isVisible = viewBinding.bottom.text.isNotBlank()

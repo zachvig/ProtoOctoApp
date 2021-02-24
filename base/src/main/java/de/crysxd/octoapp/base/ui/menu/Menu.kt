@@ -7,9 +7,9 @@ import android.text.method.MovementMethod
 interface Menu : Parcelable {
     suspend fun getMenuItem(): List<MenuItem>
     suspend fun beforeShow(host: MenuBottomSheetFragment) = false
+    suspend fun getTitle(context: Context): CharSequence? = null
+    suspend fun getSubtitle(context: Context): CharSequence? = null
     fun getCheckBoxText(context: Context): CharSequence? = null
-    fun getTitle(context: Context): CharSequence? = null
-    fun getSubtitle(context: Context): CharSequence? = null
     fun getBottomText(context: Context): CharSequence = ""
     fun getBottomMovementMethod(host: MenuBottomSheetFragment): MovementMethod? = null
 }

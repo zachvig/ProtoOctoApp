@@ -48,29 +48,21 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
 
     override fun getCheckBoxText(context: Context) = "Always use this device in the future".takeIf { type != DeviceType.Unspecified && action != Action.Unspecified }
 
-    override suspend fun getMenuItem() = Injector.get().getPowerDevicesUseCase().execute(GetPowerDevicesUseCase.Params(queryState = action == Action.Unspecified))
+    override suspend fun getMenuItem() = Injector.get().getPowerDevicesUseCase().execute(GetPowerDevicesUseCase.Params(queryState = false))
         .map {
             val name = it.first.displayName
             val id = it.first.uniqueId
             val pluginName = it.first.pluginDisplayName
-            val state = it.second
 
             when (action) {
-                Action.Unspecified -> ShowPowerDeviceActionsMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, state = state)
-                Action.Cycle -> CyclePowerDeviceMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, state = state, showName = true, deviceType = type)
-                Action.TurnOff -> TurnPowerDeviceOffMenuItem(
-                    uniqueDeviceId = id,
-                    pluginName = pluginName,
-                    name = name,
-                    state = state,
-                    showName = true,
-                    deviceType = type
-                )
-                Action.TurnOn -> TurnPowerDeviceOnMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, state = state, showName = true, deviceType = type)
+                Action.Unspecified -> ShowPowerDeviceActionsMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name)
+                Action.Cycle -> CyclePowerDeviceMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, showName = true, deviceType = type)
+                Action.TurnOff -> TurnPowerDeviceOffMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, showName = true, deviceType = type)
+                Action.TurnOn -> TurnPowerDeviceOnMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, showName = true, deviceType = type)
             }
         }
 
-    override fun getTitle(context: Context) = when (type) {
+    override suspend fun getTitle(context: Context) = when (type) {
         DeviceType.Unspecified -> "Power devices"
         DeviceType.PrinterPsu -> "Which device is the printer?"
     }
@@ -94,11 +86,9 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
     }
 
     class ShowPowerDeviceActionsMenuItem(
-
         val uniqueDeviceId: String,
         val name: String,
         val pluginName: String,
-        val state: GetPowerDevicesUseCase.PowerState = GetPowerDevicesUseCase.PowerState.Unknown
     ) : SubMenuItem() {
         companion object {
             fun forItemId(itemId: String): ShowPowerDeviceActionsMenuItem {
@@ -107,7 +97,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
             }
         }
 
-        override val subMenu get() = PowerDeviceMenu(uniqueDeviceId = uniqueDeviceId, name = name, pluginName = pluginName, powerState = state)
+        override val subMenu get() = PowerDeviceMenu(uniqueDeviceId = uniqueDeviceId, name = name, pluginName = pluginName)
         override val itemId = "$MENU_ITEM_SHOW_POWER_DEVICE_ACTIONS/$uniqueDeviceId/${name.urlEncode()}/${pluginName.urlEncode()}"
         override var groupId = ""
         override val order = 332
@@ -121,7 +111,6 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         val name: String,
         val pluginName: String,
         val showName: Boolean = true,
-        val state: GetPowerDevicesUseCase.PowerState = GetPowerDevicesUseCase.PowerState.Unknown,
         val deviceType: DeviceType = DeviceType.Unspecified,
     ) : MenuItem {
         companion object {
@@ -159,7 +148,6 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         val name: String,
         val pluginName: String,
         val showName: Boolean = true,
-        val state: GetPowerDevicesUseCase.PowerState = GetPowerDevicesUseCase.PowerState.Unknown,
         val deviceType: DeviceType = DeviceType.Unspecified,
     ) : MenuItem {
         companion object {
@@ -197,7 +185,6 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         val name: String,
         val pluginName: String,
         val showName: Boolean = true,
-        val state: GetPowerDevicesUseCase.PowerState = GetPowerDevicesUseCase.PowerState.Unknown,
         val deviceType: DeviceType = DeviceType.Unspecified,
     ) : MenuItem {
         companion object {

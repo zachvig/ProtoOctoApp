@@ -22,8 +22,8 @@ class OctoPrintMenu : Menu {
             }
         ).flatten()
 
-    override fun getTitle(context: Context) = "OctoPrint"
-    override fun getSubtitle(context: Context) = context.getString(R.string.main_menu___submenu_subtitle)
+    override suspend fun getTitle(context: Context) = "OctoPrint"
+    override suspend fun getSubtitle(context: Context) = context.getString(R.string.main_menu___submenu_subtitle)
     override fun getBottomText(context: Context) = if (sysCommands == null) {
         HtmlCompat.fromHtml(
             "<small><b>Info:</b> Unable to load system commands. Your API key might not have relevant permissions.</small>",

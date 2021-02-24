@@ -25,8 +25,8 @@ class PrinterMenu : Menu {
         ShowMaterialPluginMenuItem(),
     )
 
-    override fun getTitle(context: Context) = context.getString(R.string.main_menu___menu_printer_title)
-    override fun getSubtitle(context: Context) = context.getString(R.string.main_menu___submenu_subtitle)
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___menu_printer_title)
+    override suspend fun getSubtitle(context: Context) = context.getString(R.string.main_menu___submenu_subtitle)
 }
 
 

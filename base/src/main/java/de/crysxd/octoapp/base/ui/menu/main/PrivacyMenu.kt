@@ -12,9 +12,9 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 class PrivacyMenu : Menu {
 
-    override fun getTitle(context: Context) = "Privacy"
+    override suspend fun getTitle(context: Context) = "Privacy"
 
-    override fun getSubtitle(context: Context) = HtmlCompat.fromHtml(
+    override suspend fun getSubtitle(context: Context) = HtmlCompat.fromHtml(
         "OctoApp does not collect any personalized information. I do not have any data about you, such as your email address. Even if you have an " +
                 "active subscription, you are completely anonymous.",
         HtmlCompat.FROM_HTML_MODE_COMPACT
