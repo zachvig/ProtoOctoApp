@@ -12,8 +12,10 @@ class OpenOctoprintWebUseCase @Inject constructor(
 ) : UseCase<Context, Unit>() {
 
     override suspend fun doExecute(param: Context, timber: Timber.Tree) {
-        octoPrintProvider.octoPrint().webUrl.let {
-            param.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
+        octoPrintProvider.octoPrint().webUrl.let { webUrl ->
+            param.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(webUrl)).also {
+                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            })
         }
     }
 }
