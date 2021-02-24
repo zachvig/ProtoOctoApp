@@ -76,6 +76,6 @@ class ExtrudeFilamentUseCase @Inject constructor(
         val extrudeLengthMm: Int
     )
 
-    class ColdExtrusionException(override val userMessage: Int = R.string.error_cold_extrusion, val minTemp: Int, val currentTemp: Int) : OctoPrintException(),
-        UserMessageException
+    class ColdExtrusionException(override val userMessage: Int = R.string.error_cold_extrusion, val minTemp: Int, val currentTemp: Int) :
+        OctoPrintException(webUrl = null), UserMessageException
 }

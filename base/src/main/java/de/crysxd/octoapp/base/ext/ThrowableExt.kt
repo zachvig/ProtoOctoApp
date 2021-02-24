@@ -15,7 +15,7 @@ fun Throwable.composeErrorMessage(context: Context, @StringRes baseStringRes: In
         ?: context.getString(
             baseStringRes,
             ContextCompat.getColor(context, R.color.light_text),
-            (this as? ProxyException)?.original?.localizedMessage?.htmlify()
+            (this as? OctoPrintException)?.userFacingMessage?.htmlify()
                 ?: localizedMessage?.htmlify()
                 ?: cause?.localizedMessage?.htmlify()
                 ?: (this as? ProxyException)?.original?.let { it::class.java.simpleName }
@@ -27,8 +27,9 @@ fun Throwable.composeMessageStack(): CharSequence {
     val messageBuilder = StringBuilder()
     messageBuilder.append("<b>Error:</b> ")
     messageBuilder.append(
-        (this as? ProxyException)?.original?.localizedMessage
-            ?: localizedMessage
+        (this as? ProxyException)?.original?.message?.htmlify()
+            ?: (this as? OctoPrintException)?.technicalMessage?.htmlify()
+            ?: message?.htmlify()
             ?: (this as? ProxyException)?.original?.let { it::class.java.simpleName }
             ?: this::class.java.simpleName
     )
@@ -37,7 +38,9 @@ fun Throwable.composeMessageStack(): CharSequence {
     while (cause != null) {
         messageBuilder.append("<br/><br/>")
         messageBuilder.append("<b>Caused by:</b> ")
-        messageBuilder.append(((this as? ProxyException)?.original?.localizedMessage ?: cause.localizedMessage)?.htmlify())
+        messageBuilder.append(
+            ((this as? ProxyException)?.original?.message ?: ((this as? OctoPrintException)?.technicalMessage ?: cause.localizedMessage)?.htmlify())
+        )
         cause = cause.cause
     }
 

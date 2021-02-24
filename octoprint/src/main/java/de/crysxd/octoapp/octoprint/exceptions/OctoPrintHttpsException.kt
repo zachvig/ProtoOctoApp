@@ -14,7 +14,8 @@ class OctoPrintHttpsException(
     url: HttpUrl,
     cause: Throwable
 ) : OctoPrintException(
-    cause = ProxyException.create(cause, url.toString()),
+    cause = cause,
+    webUrl = url.toString(),
     userFacingMessage = "HTTPS connection could not be established. Make sure you installed all required certificates on your phone."
 ) {
 
