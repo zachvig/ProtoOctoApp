@@ -32,6 +32,7 @@ import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.main.MainMenu
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
+import kotlinx.android.synthetic.main.fragment_gcode_render.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -40,12 +41,26 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     override val viewModel by injectViewModel<MenuBottomSheetViewModel>()
     private lateinit var viewBinding: MenuBottomSheetFragmentBinding
     private val adapter = Adapter()
+    private val showLoadingRunnable = Runnable {
+        viewBinding.content.animate().alpha(if (isLoading) 0.33f else 1f).start()
+        viewBinding.loadingSpinner.isVisible = true
+        viewBinding.loadingSpinner.animate().alpha(if (isLoading) 1f else 0f).withEndAction { viewBinding.loadingSpinner.isVisible = isLoading }.start()
+    }
     private var isLoading = false
         set(value) {
             field = value
-            viewBinding.content.animate().alpha(if (value) 0.33f else 1f).start()
-            viewBinding.loadingSpinner.isVisible = true
-            viewBinding.loadingSpinner.animate().alpha(if (value) 1f else 0f).withEndAction { viewBinding.loadingSpinner.isVisible = !field }.start()
+            if (value) {
+                view?.postDelayed(showLoadingRunnable, 200L)
+            } else {
+                showLoadingRunnable.run()
+                view?.removeCallbacks(showLoadingRunnable)
+            }
+
+        }
+    var isCheckBoxChecked
+        get() = viewBinding.checkbox.isChecked
+        set(value) {
+            viewBinding.checkbox.isChecked = value
         }
 
     companion object {
@@ -86,8 +101,23 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     fun show(fm: FragmentManager) = show(fm, "main-menu")
 
     fun pushMenu(settingsMenu: Menu) {
-        viewModel.menuBackStack.add(settingsMenu)
-        showMenu(settingsMenu)
+        fun internalPushMenu(settingsMenu: Menu) {
+            viewModel.menuBackStack.add(settingsMenu)
+            showMenu(settingsMenu)
+        }
+
+
+        // Samsung Android 11 decides to crash if we trigger this method
+        // from a link click, posting resolves this issue
+        if (viewModel.menuBackStack.isEmpty()) {
+            internalPushMenu(settingsMenu)
+        } else {
+            view?.post {
+                if (isAdded) {
+                    internalPushMenu(settingsMenu)
+                }
+            }
+        }
     }
 
     fun onFavoriteChanged() {
@@ -97,37 +127,49 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         }
     }
 
-    fun showMenu(settingsMenu: Menu) {
+    private fun showMenu(settingsMenu: Menu) {
         val internal = suspend {
             try {
-                // Load items
+                // Run pre-show routine and load items
                 isLoading = settingsMenu !is MainMenu
-                val currentDestination = findNavController().currentDestination?.id ?: 0
-                val items = settingsMenu.getMenuItem().filter {
-                    it.isVisible(currentDestination)
-                }.sortedWith(compareBy { it.order })
-                isLoading = false
+                if (settingsMenu.beforeShow(this@MenuBottomSheetFragment)) {
+                    // The menu rejected to be shown, cancel and dismiss
+                    dismissAllowingStateLoss()
+                } else {
+                    val currentDestination = findNavController().currentDestination?.id ?: 0
+                    val items = withContext(Dispatchers.IO) {
+                        settingsMenu.getMenuItem().filter {
+                            it.isVisible(currentDestination)
+                        }.sortedWith(compareBy { it.order })
+                    }
+                    val subtitle = settingsMenu.getSubtitle(requireContext())
+                    val title = settingsMenu.getTitle(requireContext())
 
-                // Prepare animation
-                viewBinding.bottom.movementMethod = null
-                beginDelayedTransition {
-                    // Need to be applied after transition to prevent glitches
-                    viewBinding.bottom.movementMethod = settingsMenu.getBottomMovementMethod(this@MenuBottomSheetFragment)
+                    // Prepare animation
+                    isLoading = false
+                    viewBinding.bottom.movementMethod = null
+                    beginDelayedTransition {
+                        // Need to be applied after transition to prevent glitches
+                        viewBinding.bottom.movementMethod = settingsMenu.getBottomMovementMethod(this@MenuBottomSheetFragment)
+                    }
+
+                    // Show menu
+                    adapter.menuItems = items
+                    viewBinding.title.text = title
+                    viewBinding.title.isVisible = viewBinding.title.text.isNotBlank()
+                    viewBinding.subtitle.text = subtitle
+                    viewBinding.subtitle.isVisible = viewBinding.subtitle.text.isNotBlank()
+                    viewBinding.bottom.text = settingsMenu.getBottomText(requireContext())
+                    viewBinding.bottom.isVisible = viewBinding.bottom.text.isNotBlank()
+                    viewBinding.checkbox.text = settingsMenu.getCheckBoxText(requireContext())
+                    viewBinding.checkbox.isVisible = viewBinding.checkbox.text.isNotBlank()
+                    viewBinding.checkbox.isChecked = false
+
+                    // Update bottom sheet size
+                    forceResizeBottomSheet()
                 }
-
-                // Show menu
-                adapter.menuItems = items
-                viewBinding.title.text = settingsMenu.getTitle(requireContext())
-                viewBinding.title.isVisible = viewBinding.title.text.isNotBlank()
-                viewBinding.subtitle.text = settingsMenu.getSubtitle(requireContext())
-                viewBinding.subtitle.isVisible = viewBinding.subtitle.text.isNotBlank()
-                viewBinding.bottom.text = settingsMenu.getBottomText(requireContext())
-                viewBinding.bottom.isVisible = viewBinding.bottom.text.isNotBlank()
-
-                // Update bottom sheet size
-                forceResizeBottomSheet()
             } catch (e: Exception) {
-                Timber.e(e)
+                Timber.e(e, "Error while inflating menu")
                 requireOctoActivity().showDialog(e)
                 dismissAllowingStateLoss()
             }
@@ -136,8 +178,10 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         // We don't want the loading state to flash in when opening main menu and we also don't need to
         // build it async -> run blocking for main menu
         if (settingsMenu is MainMenu) {
+            Timber.i("Using blocking method to inflate main menu")
             runBlocking { internal() }
         } else {
+            Timber.i("Using async method to inflate $settingsMenu")
             viewLifecycleOwner.lifecycleScope.launchWhenCreated { internal() }
         }
     }
@@ -182,8 +226,6 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         viewModel.execute {
             val closeBottomSheet = item.onClicked(this@MenuBottomSheetFragment) { action ->
                 GlobalScope.launch {
-                    delay(100)
-
                     try {
                         // Start confirmation
                         Timber.i("Action start")

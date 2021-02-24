@@ -9,7 +9,9 @@ import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.livedata.OctoTransformations.map
 import de.crysxd.octoapp.base.livedata.PollingLiveData
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.ui.menu.power.PowerControlsMenu
 import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase
 import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase.Params
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
@@ -20,9 +22,6 @@ import de.crysxd.octoapp.octoprint.exceptions.OctoPrintBootingException
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse.ConnectionState.MAYBE_ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -33,6 +32,7 @@ class ConnectPrinterViewModel(
     private val getPrinterConnectionUseCase: GetPrinterConnectionUseCase,
     private val getPowerDevicesUseCase: GetPowerDevicesUseCase,
     private val octoPreferences: OctoPreferences,
+    private val octoPrintRepository: OctoPrintRepository,
 ) : BaseViewModel() {
 
     private val connectionTimeoutNs = TimeUnit.SECONDS.toNanos(Firebase.remoteConfig.getLong("printer_connection_timeout_sec"))
@@ -43,31 +43,34 @@ class ConnectPrinterViewModel(
         getPrinterConnectionUseCase.execute()
     }
 
-    private var isPsuTurnedOn: Boolean? = null
     private var isPsuSupported = false
     private val uiStateMediator = MediatorLiveData<UiState>()
-    private val psuState = MutableLiveData<Boolean>()
+    private val manualPsuState = MutableLiveData<Boolean?>(null)
     private var userAllowedConnectAt = 0L
     private var manualTrigger = MutableLiveData(Unit)
     val uiState = uiStateMediator.map { it }.distinctUntilChanged()
+    private val psuPollingLiveData = PollingLiveData(5000) {
+        // Check if the default device is turned on or off
+        octoPrintRepository.getActiveInstanceSnapshot()?.appSettings?.defaultPowerDevices?.get(PowerControlsMenu.DeviceType.PrinterPsu.prefKey)?.let {
+            val state = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(queryState = true, onlyGetDeviceWithUniqueId = it)).firstOrNull()
+            Timber.i("PSU state: $state")
+            manualPsuState.postValue(state?.second == GetPowerDevicesUseCase.PowerState.On)
+        }
+        Unit
+    }
 
     init {
         uiStateMediator.addSource(octoPreferences.updatedFlow.asLiveData()) { updateUiState() }
         uiStateMediator.addSource(availableSerialConnections) { updateUiState() }
-        uiStateMediator.addSource(psuState) { updateUiState() }
+        uiStateMediator.addSource(manualPsuState) { updateUiState() }
+        uiStateMediator.addSource(psuPollingLiveData) { updateUiState() }
         uiStateMediator.addSource(psuCyclingState) { updateUiState() }
         uiStateMediator.addSource(manualTrigger) { updateUiState() }
         uiStateMediator.value = UiState.Initializing
 
         viewModelScope.launch {
-            val liveData = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(false)).onEach {
-                Timber.i("Power devices: %s", it.joinToString { d -> d.first.displayName })
-                isPsuSupported = it.isNotEmpty()
-            }.catch {
-                Timber.e(it)
-                coroutineExceptionHandler.handleException(coroutineContext, it)
-            }.asLiveData()
-            uiStateMediator.addSource(liveData) { updateUiState() }
+            isPsuSupported = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(false)).isNotEmpty()
+            computeUiState()
         }
     }
 
@@ -84,7 +87,7 @@ class ConnectPrinterViewModel(
             // PSU
             val psuCyclingState = psuCyclingState.value ?: PsuCycledState.NotCycled
             val isPsuTurnedOn = if (isPsuSupported) {
-                isPsuTurnedOn ?: false
+                manualPsuState.value
             } else {
                 null
             }
@@ -93,12 +96,11 @@ class ConnectPrinterViewModel(
             val isAutoConnect = octoPreferences.isAutoConnectPrinter ||
                     TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - userAllowedConnectAt) < 3
 
-            viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-                Timber.d("-----")
-                Timber.d("ConnectionResult: $connectionResult")
-                Timber.d("PsuSupported: $isPsuSupported")
-                Timber.d("PsuCycled: $psuCyclingState")
-            }
+            Timber.d("-----")
+            Timber.d("ConnectionResult: $connectionResult")
+            Timber.d("PsuSupported: $isPsuSupported")
+            Timber.d("PsuCycled: $psuCyclingState")
+            Timber.d("PsuState: $isPsuTurnedOn")
 
             if (connectionResponse != null) {
                 return when {
@@ -208,21 +210,18 @@ class ConnectPrinterViewModel(
     }
 
     fun setDeviceOn(device: PowerDevice, on: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
-        val wasPsuTurnedOn = isPsuTurnedOn
+        val wasPsuTurnedOn = manualPsuState.value
         try {
-            isPsuTurnedOn = on
-            psuState.postValue(on)
+            manualPsuState.postValue(on)
         } catch (e: Exception) {
-            isPsuTurnedOn = wasPsuTurnedOn
-            psuState.postValue(wasPsuTurnedOn)
+            manualPsuState.postValue(wasPsuTurnedOn)
             throw e
         }
     }
 
     fun cyclePsu(device: PowerDevice) = viewModelScope.launch(coroutineExceptionHandler) {
         psuCyclingState.postValue(PsuCycledState.Cycled)
-        isPsuTurnedOn = true
-        psuState.postValue(true)
+        manualPsuState.postValue(true)
         resetConnectionAttempt()
     }
 

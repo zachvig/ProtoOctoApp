@@ -36,7 +36,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
     }
 
     var wasPrintNotificationDisconnected: Boolean
-        get() = sharedPreferences.getBoolean(KEY_PRINT_NOTIFICATION_WAS_DISCONNECTED, true)
+        get() = sharedPreferences.getBoolean(KEY_PRINT_NOTIFICATION_WAS_DISCONNECTED, false)
         set(value) {
             edit { putBoolean(KEY_PRINT_NOTIFICATION_WAS_DISCONNECTED, value) }
         }

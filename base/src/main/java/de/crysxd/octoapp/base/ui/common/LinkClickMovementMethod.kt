@@ -34,7 +34,9 @@ class LinkClickMovementMethod(private val mOnLinkClickedListener: OnLinkClickedL
                 val handled = mOnLinkClickedListener.onLinkClicked(widget.context, url)
                 return if (handled) {
                     true
-                } else super.onTouchEvent(widget, buffer, event)
+                } else {
+                    super.onTouchEvent(widget, buffer, event)
+                }
             }
         }
         return super.onTouchEvent(widget, buffer, event)
@@ -46,14 +48,14 @@ class LinkClickMovementMethod(private val mOnLinkClickedListener: OnLinkClickedL
 
     open class OpenWithIntentLinkClickedListener : OnLinkClickedListener {
         override fun onLinkClicked(context: Context, url: String?): Boolean {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            return if (context.packageManager.resolveActivity(intent, 0) != null) {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).also { it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+            if (context.packageManager.resolveActivity(intent, 0) != null) {
                 context.startActivity(intent)
-                true
             } else {
                 Toast.makeText(context, "Unable to open link, no app found", Toast.LENGTH_SHORT).show()
-                false
             }
+
+            return true
         }
     }
 }

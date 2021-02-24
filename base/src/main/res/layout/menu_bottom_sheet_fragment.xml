@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:maxWidth="500dp">
@@ -39,6 +40,18 @@
             android:paddingVertical="@dimen/margin_2"
             android:paddingStart="@dimen/margin_2"
             android:paddingEnd="@dimen/margin_1_2" />
+
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginHorizontal="@dimen/margin_2"
+            android:layout_marginBottom="@dimen/margin_1"
+            android:textAppearance="@style/OctoTheme.TextAppearance"
+            android:visibility="gone"
+            tools:text="This is a checkbox"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/bottom"

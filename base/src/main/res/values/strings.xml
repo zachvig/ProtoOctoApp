@@ -318,7 +318,7 @@
     <string name="main_menu___item_news">News</string>
     <string name="main_menu___menu_printer_title">Printer</string>
     <string name="main_menu___submenu_subtitle">Long-press any item to pin it to start</string>
-    <string name="main_menu___item_open_power_controls">Open power controls</string>
+    <string name="main_menu___item_open_power_controls">Power controls</string>
     <string name="main_menu___item_turn_psu_off">Turn printer off</string>
     <string name="main_menu___item_emergency_stop">Emergency Stop</string>
     <string name="main_menu___item_cancel_print">Cancel Print</string>

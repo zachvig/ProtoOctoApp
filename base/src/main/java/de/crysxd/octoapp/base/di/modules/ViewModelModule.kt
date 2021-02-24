@@ -18,7 +18,6 @@ import de.crysxd.octoapp.base.ui.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
 import de.crysxd.octoapp.base.ui.common.gcodeshortcut.GcodeShortcutEditViewModel
-import de.crysxd.octoapp.base.ui.common.power.PowerControlsViewModel
 import de.crysxd.octoapp.base.ui.common.terminal.TerminalViewModel
 import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootViewModel
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetViewModel
@@ -154,23 +153,6 @@ open class ViewModelModule {
         application: Application
     ): ViewModel = NetworkStateViewModel(
         application = application
-    )
-
-    @Provides
-    @IntoMap
-    @ViewModelKey(PowerControlsViewModel::class)
-    open fun provideSelectPowerDeviceViewModel(
-        getPowerDevicesUseCase: GetPowerDevicesUseCase,
-        turnOffPsuUseCase: TurnOffPsuUseCase,
-        turnOnPsuUseCase: TurnOnPsuUseCase,
-        cyclePsuUseCase: CyclePsuUseCase,
-        octoPrintRepository: OctoPrintRepository,
-    ): ViewModel = PowerControlsViewModel(
-        turnOffPsuUseCase = turnOffPsuUseCase,
-        turnOnPsuUseCase = turnOnPsuUseCase,
-        cyclePsuUseCase = cyclePsuUseCase,
-        getPowerDevicesUseCase = getPowerDevicesUseCase,
-        octoPrintRepository = octoPrintRepository
     )
 
     @Provides

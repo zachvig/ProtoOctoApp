@@ -27,8 +27,8 @@ class SettingsMenu : Menu {
         ChangeOctoPrintInstanceMenuItem(),
     )
 
-    override fun getTitle(context: Context) = context.getString(R.string.main_menu___menu_settings_title)
-    override fun getSubtitle(context: Context) = context.getString(R.string.main_menu___submenu_subtitle)
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___menu_settings_title)
+    override suspend fun getSubtitle(context: Context) = context.getString(R.string.main_menu___submenu_subtitle)
     override fun getBottomText(context: Context) = HtmlCompat.fromHtml(
         context.getString(
             R.string.main_menu___about_text,
