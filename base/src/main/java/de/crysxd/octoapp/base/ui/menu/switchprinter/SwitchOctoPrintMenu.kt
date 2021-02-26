@@ -20,11 +20,11 @@ private val isAnyActive get() = Injector.get().octorPrintRepository().getActiveI
 @Parcelize
 class SwitchOctoPrintMenu : Menu {
 
-    override fun getTitle(context: Context) = context.getString(
+    override suspend fun getTitle(context: Context) = context.getString(
         if (isQuickSwitchEnabled) R.string.main_menu___title_quick_switch else R.string.main_menu___title_quick_switch_disabled
     )
 
-    override fun getSubtitle(context: Context) = context.getString(
+    override suspend fun getSubtitle(context: Context) = context.getString(
         if (isQuickSwitchEnabled) R.string.main_menu___submenu_subtitle else R.string.main_menu___subtitle_quick_switch_disabled
     )
 

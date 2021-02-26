@@ -11,6 +11,6 @@ abstract class PowerDevice {
     abstract suspend fun isOn(): Boolean
 
     val uniqueId
-        get() = "$pluginId/$id"
+        get() = "$pluginId:$id"
 
 }

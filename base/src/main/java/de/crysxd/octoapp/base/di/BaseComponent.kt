@@ -84,6 +84,7 @@ interface BaseComponent {
     fun createProgressAppWidgetDataUseCase(): CreateProgressAppWidgetDataUseCase
     fun getMaterialsUseCase(): GetMaterialsUseCase
     fun activateMaterialUseCase(): ActivateMaterialUseCase
+    fun cyclePsuUseCase(): CyclePsuUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

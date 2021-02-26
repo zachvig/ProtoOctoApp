@@ -37,6 +37,7 @@ open class ViewModelModule {
         autoConnectPrinterUseCase,
         getPrinterConnectionUseCase,
         getPowerDevicesUseCase,
-        octoPreferences
+        octoPreferences,
+        octoPrintRepository,
     )
 }

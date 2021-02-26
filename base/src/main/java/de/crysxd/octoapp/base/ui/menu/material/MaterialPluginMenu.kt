@@ -15,8 +15,8 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) : Menu {
 
-    override fun getTitle(context: Context) = if (startPrintAfterSelection != null) "Select material to use" else "Materials"
-    override fun getSubtitle(context: Context) = if (startPrintAfterSelection != null) {
+    override suspend fun getTitle(context: Context) = if (startPrintAfterSelection != null) "Select material to use" else "Materials"
+    override suspend fun getSubtitle(context: Context) = if (startPrintAfterSelection != null) {
         "The selected material will be activated for the print."
     } else {
         "You can edit these materials in the web interface."
