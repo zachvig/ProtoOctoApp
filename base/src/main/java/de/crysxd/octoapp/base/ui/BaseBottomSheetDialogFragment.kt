@@ -1,7 +1,6 @@
 package de.crysxd.octoapp.base.ui
 
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.View
@@ -10,7 +9,6 @@ import android.view.WindowManager
 import androidx.annotation.CallSuper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.doOnLayout
-import androidx.core.view.updatePadding
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -35,22 +33,6 @@ abstract class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-
-        // Fixes dialog hides nav bar on Android O
-        if (dialog != null && dialog!!.window != null && Build.VERSION_CODES.O >= Build.VERSION.SDK_INT && Build.VERSION_CODES.Q <= Build.VERSION.SDK_INT) {
-            val window = dialog!!.window
-            window!!.findViewById<View>(com.google.android.material.R.id.container).fitsSystemWindows = false
-
-            // dark navigation bar icons
-            val decorView = window.decorView
-            if (!requireContext().resources.getBoolean(R.bool.night_mode)) {
-                decorView.systemUiVisibility = decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-            }
-
-            requireView().updatePadding(
-                bottom = (activity?.window?.decorView?.rootWindowInsets?.systemWindowInsetBottom ?: 0)
-            )
-        }
 
         // Fix bottom sheet not fully shown on tablet in landscape
         forceResizeBottomSheet()
