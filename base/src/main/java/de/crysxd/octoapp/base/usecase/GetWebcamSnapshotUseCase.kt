@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.base.usecase
 
-import android.content.Context
 import android.graphics.*
 import androidx.core.graphics.applyCanvas
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
@@ -18,19 +17,20 @@ import javax.inject.Inject
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class GetWebcamSnapshotUseCase @Inject constructor(
-    private val context: Context,
     private val getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
     private val applyWebcamTransformationsUseCase: ApplyWebcamTransformationsUseCase,
 ) : UseCase<GetWebcamSnapshotUseCase.Params, Flow<Bitmap>>() {
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) = withContext(Dispatchers.IO) {
         withTimeout(10000) {
-            val streamSettings = getWebcamSettingsUseCase.execute(param.instanceInfo)
-            val mjpegConnection = MjpegConnection(streamSettings.streamUrl ?: throw IllegalStateException("No stream URL"), "widget")
+            val activeIndex = param.instanceInfo?.appSettings?.activeWebcamIndex ?: 0
+            val allWebcamSettings = getWebcamSettingsUseCase.execute(param.instanceInfo)
+            val webcamSettings = allWebcamSettings.getOrElse(activeIndex) { allWebcamSettings.firstOrNull() }
+            val mjpegConnection = MjpegConnection(webcamSettings?.streamUrl ?: throw IllegalStateException("No stream URL"), "widget")
             mjpegConnection.load().mapNotNull { it as? MjpegConnection.MjpegSnapshot.Frame }.sample(param.sampleRateMs).map {
                 timber.i("Transforming image")
                 measureTime("transform_frame_for_widget") {
-                    val transformed = applyWebcamTransformationsUseCase.execute(ApplyWebcamTransformationsUseCase.Params(it.frame, settings = streamSettings))
+                    val transformed = applyWebcamTransformationsUseCase.execute(ApplyWebcamTransformationsUseCase.Params(it.frame, settings = webcamSettings))
                     val width = transformed.width.coerceAtMost(param.maxWidthPx)
                     val height = ((width / transformed.width.toFloat()) * transformed.height).toInt()
                     val final = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)

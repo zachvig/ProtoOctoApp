@@ -40,6 +40,7 @@ class WebcamFragment : Fragment(R.layout.webcam_fragment) {
                 isFullscreen = true
             )
         }
+        binding.webcamView.onSwitchWebcamClicked = { viewModel.nextWebcam() }
         binding.webcamView.scaleToFill = viewModel.getScaleType(isFullscreen = true, ImageView.ScaleType.FIT_CENTER) != ImageView.ScaleType.FIT_CENTER
         binding.webcamView.onFullscreenClicked = {
             requireActivity().finish()
@@ -60,10 +61,11 @@ class WebcamFragment : Fragment(R.layout.webcam_fragment) {
         }
 
         viewModel.uiState.observe(viewLifecycleOwner) {
+            binding.webcamView.canSwitchWebcam = it.canSwitchWebcam
             binding.webcamView.state = when (it) {
                 WebcamViewModel.UiState.Loading -> WebcamView.WebcamState.Loading
                 WebcamViewModel.UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
-                WebcamViewModel.UiState.HlsStreamDisabled -> {
+                is WebcamViewModel.UiState.HlsStreamDisabled -> {
                     // We can't launch the purchase flow in fullscreen. Finish activity.
                     requireActivity().finish()
                     WebcamView.WebcamState.HlsStreamDisabled

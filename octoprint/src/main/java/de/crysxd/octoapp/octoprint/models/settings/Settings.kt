@@ -60,4 +60,9 @@ data class Settings(
     data class TasmotaSettings(
         @SerializedName("arrSmartplugs") val devices: List<TasmotaPowerDevice>
     ) : PluginSettings
+
+
+    data class MultiCamSettings(
+        @SerializedName("multicam_profiles") val profiles: List<WebcamSettings>
+    ) : PluginSettings
 }

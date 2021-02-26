@@ -69,9 +69,15 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             field = value
         }
 
+    var onSwitchWebcamClicked: () -> Unit = {}
     var onResetConnection: () -> Unit = {}
     var onFullscreenClicked: () -> Unit = {}
     var onScaleToFillChanged: () -> Unit = {}
+    var canSwitchWebcam: Boolean
+        get() = binding.imageButtonSwitchCamera.isVisible
+        set(value) {
+            binding.imageButtonSwitchCamera.isGatedVisible = value
+        }
     var fullscreenIconResource: Int
         get() = 0
         set(value) {
@@ -93,6 +99,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         usedLiveIndicator = binding.liveIndicator
         binding.buttonReconnect.setOnClickListener { onResetConnection() }
         binding.imageButtonFullscreen.setOnClickListener { onFullscreenClicked() }
+        binding.imageButtonSwitchCamera.setOnClickListener { onSwitchWebcamClicked() }
     }
 
     @SuppressLint("ClickableViewAccessibility")

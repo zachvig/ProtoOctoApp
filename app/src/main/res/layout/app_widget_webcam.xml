@@ -28,16 +28,6 @@
             android:textAppearance="@style/OctoTheme.TextAppearance.Title"
             android:textColor="@color/white_translucent" />
 
-        <TextView
-            android:id="@+id/noImageUrl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:textAppearance="@style/OctoTheme.TextAppearance"
-            android:textColor="@color/white_translucent"
-            tools:text="http://webcamstream" />
-
     </LinearLayout>
 
     <ImageView

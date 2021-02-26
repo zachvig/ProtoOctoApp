@@ -14,6 +14,7 @@ import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
@@ -27,13 +28,27 @@ class WebcamViewModel(
     private val uiStateMediator = MediatorLiveData<UiState>()
     val uiState = uiStateMediator.map { it }
     private val octoPrintLiveData = octoPrintRepository.instanceInformationFlow()
-        .map { it?.settings?.webcam }
+        .map { getWebcamSettings().first?.streamUrl }
         .distinctUntilChangedBy { it }
         .asLiveData()
 
     init {
         uiStateMediator.addSource(octoPrintLiveData) { connect() }
         uiStateMediator.postValue(UiState.Loading)
+    }
+
+    private suspend fun getWebcamSettings(): Pair<WebcamSettings?, Int> {
+        // Load settings
+        val activeWebcamIndex = octoPrintRepository.getActiveInstanceSnapshot()?.appSettings?.activeWebcamIndex ?: 0
+        val allWebcamSettings = getWebcamSettingsUseCase.execute(null)
+        val preferredSettings = allWebcamSettings.getOrNull(activeWebcamIndex)
+        val webcamSettings = preferredSettings ?: allWebcamSettings.firstOrNull()
+
+        if (preferredSettings == null) {
+            switchWebcam(0)
+        }
+
+        return webcamSettings to allWebcamSettings.size
     }
 
     fun connect() {
@@ -43,24 +58,24 @@ class WebcamViewModel(
         val liveData = BillingManager.billingFlow().map {
             flow {
                 try {
-                    Timber.i("Refresh")
                     emit(UiState.Loading)
 
-                    // Load settings
-                    val webcamSettings = getWebcamSettingsUseCase.execute(null)
-                    val streamUrl = webcamSettings.streamUrl
+                    val (webcamSettings, webcamCount) = getWebcamSettings()
+                    val streamUrl = webcamSettings?.streamUrl
+                    val canSwitchWebcam = webcamCount > 1
+                    Timber.i("Refresh with streamUrl: $streamUrl")
 
                     // Check if webcam is configured
-                    if (!webcamSettings.webcamEnabled || streamUrl.isNullOrBlank()) {
+                    if (webcamSettings?.webcamEnabled == false || streamUrl.isNullOrBlank()) {
                         return@flow emit(UiState.WebcamNotConfigured)
                     }
 
                     // Open stream
                     if (streamUrl.isHlsStreamUrl) {
                         if (!BillingManager.isFeatureEnabled("hls_webcam")) {
-                            emit(UiState.HlsStreamDisabled)
+                            emit(UiState.HlsStreamDisabled(canSwitchWebcam = canSwitchWebcam))
                         } else {
-                            emit(UiState.HlsStreamReady(Uri.parse(streamUrl), webcamSettings.streamRatio))
+                            emit(UiState.HlsStreamReady(Uri.parse(streamUrl), webcamSettings.streamRatio, canSwitchWebcam = canSwitchWebcam))
                         }
                     } else {
                         MjpegConnection(streamUrl, "vm")
@@ -69,19 +84,22 @@ class WebcamViewModel(
                                 when (it) {
                                     is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading
                                     is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
-                                        frame = applyTransformations(it.frame, webcamSettings),
-                                        aspectRation = webcamSettings.streamRatio
+                                        frame = it.lock.withLock { applyTransformations(it.frame, webcamSettings) },
+                                        aspectRation = webcamSettings.streamRatio,
+                                        canSwitchWebcam = canSwitchWebcam,
                                     )
                                 }
                             }
                             .flowOn(Dispatchers.Default)
                             .catch {
+                                Timber.i("ERROR")
                                 Timber.e(it)
                                 emit(
                                     UiState.Error(
                                         isManualReconnect = true,
                                         streamUrl = webcamSettings.streamUrl,
-                                        aspectRation = webcamSettings.streamRatio
+                                        aspectRation = webcamSettings.streamRatio,
+                                        canSwitchWebcam = canSwitchWebcam,
                                     )
                                 )
                             }
@@ -91,7 +109,7 @@ class WebcamViewModel(
                     }
                 } catch (e: Exception) {
                     Timber.e(e)
-                    emit(UiState.Error(true))
+                    emit(UiState.Error(true, canSwitchWebcam = false))
                 }
             }
         }.flatMapLatest {
@@ -99,7 +117,8 @@ class WebcamViewModel(
         }.asLiveData()
 
         previousSource = liveData
-        uiStateMediator.addSource(liveData) { uiStateMediator.postValue(it) }
+        uiStateMediator.addSource(liveData)
+        { uiStateMediator.postValue(it) }
     }
 
     fun storeScaleType(scaleType: ImageView.ScaleType, isFullscreen: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
@@ -109,6 +128,16 @@ class WebcamViewModel(
             } else {
                 it.copy(webcamScaleType = scaleType.ordinal)
             }
+        }
+    }
+
+    fun nextWebcam() = switchWebcam(null)
+
+    private fun switchWebcam(index: Int?) = viewModelScope.launch(coroutineExceptionHandler) {
+        octoPrintRepository.updateAppSettingsForActive {
+            val activeIndex = index ?: it.activeWebcamIndex + 1
+            Timber.i("Switching to webcam $index")
+            it.copy(activeWebcamIndex = activeIndex)
         }
     }
 
@@ -123,12 +152,13 @@ class WebcamViewModel(
     private suspend fun applyTransformations(frame: Bitmap, webcamSettings: WebcamSettings) =
         applyWebcamTransformationsUseCase.execute(ApplyWebcamTransformationsUseCase.Params(frame, webcamSettings))
 
-    sealed class UiState {
-        object Loading : UiState()
-        object WebcamNotConfigured : UiState()
-        object HlsStreamDisabled : UiState()
-        data class FrameReady(val frame: Bitmap, val aspectRation: String) : UiState()
-        data class HlsStreamReady(val uri: Uri, val aspectRation: String) : UiState()
-        data class Error(val isManualReconnect: Boolean, val streamUrl: String? = null, val aspectRation: String? = null) : UiState()
+    sealed class UiState(open val canSwitchWebcam: Boolean) {
+        object Loading : UiState(false)
+        object WebcamNotConfigured : UiState(false)
+        data class HlsStreamDisabled(override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
+        data class FrameReady(val frame: Bitmap, val aspectRation: String, override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
+        data class HlsStreamReady(val uri: Uri, val aspectRation: String, override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
+        data class Error(val isManualReconnect: Boolean, val streamUrl: String? = null, val aspectRation: String? = null, override val canSwitchWebcam: Boolean) :
+            UiState(canSwitchWebcam)
     }
 }

@@ -75,7 +75,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
         settings.webcam.streamUrl?.isHlsStreamUrl == true -> "hls"
         settings.webcam.streamUrl != null -> "mjpeg"
         else -> null
-    }.takeIf { settings.webcam.webcamEnabled }
+    }.takeIf { settings.webcam.webcamEnabled != false }
 
     private suspend fun executeM115() = try {
         withTimeout(5000L) {

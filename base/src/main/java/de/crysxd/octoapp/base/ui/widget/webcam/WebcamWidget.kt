@@ -62,14 +62,16 @@ class WebcamWidget(
             )
         }
         webcamView.scaleToFill = viewModel.getScaleType(isFullscreen = false, ImageView.ScaleType.FIT_CENTER) != ImageView.ScaleType.FIT_CENTER
+        webcamView.onSwitchWebcamClicked = { viewModel.nextWebcam() }
         viewModel.uiState.observe(parent, ::onUiStateChanged)
     }
 
     private fun onUiStateChanged(state: UiState) {
+        webcamView.canSwitchWebcam = state.canSwitchWebcam
         webcamView.state = when (state) {
             Loading -> WebcamView.WebcamState.Loading
             UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
-            UiState.HlsStreamDisabled -> WebcamView.WebcamState.HlsStreamDisabled
+            is UiState.HlsStreamDisabled -> WebcamView.WebcamState.HlsStreamDisabled
             is UiState.FrameReady -> {
                 applyAspectRatio(state.aspectRation)
                 WebcamView.WebcamState.MjpegFrameReady(state.frame)

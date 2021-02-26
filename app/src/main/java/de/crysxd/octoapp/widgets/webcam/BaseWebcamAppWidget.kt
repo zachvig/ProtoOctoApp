@@ -13,7 +13,6 @@ import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.usecase.GetWebcamSnapshotUseCase
-import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import de.crysxd.octoapp.widgets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
@@ -108,7 +107,6 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                 val appWidgetManager = AppWidgetManager.getInstance(context)
                 val hasControls = appWidgetManager.getAppWidgetInfo(appWidgetId).provider.className == ControlsWebcamAppWidget::class.java.name
                 val webUrl = AppWidgetPreferences.getInstanceForWidgetId(appWidgetId)
-                var webCamSettings: WebcamSettings? = null
 
                 // Load frame or do live stream
                 try {
@@ -118,14 +116,12 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                             ?: throw IllegalStateException("Unable to find info")
                     }
 
-                    webCamSettings = Injector.get().getWebcamSettingsUseCase().execute(octoPrintInfo)
-
                     // Push loading state
                     showUpdating(context, appWidgetId)
 
                     val frame = withContext(Dispatchers.IO) {
                         if (playLive) withTimeoutOrNull(LIVE_FOR_MS) {
-                            doLiveStream(context, octoPrintInfo, webCamSettings, webUrl, appWidgetManager, appWidgetId)
+                            doLiveStream(context, octoPrintInfo, webUrl, appWidgetManager, appWidgetId)
                         } else withTimeout(FETCH_TIMEOUT_MS) {
                             createBitmapFlow(octoPrintInfo, appWidgetId, context).first()
                         }
@@ -136,7 +132,6 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                         context = context,
                         widgetId = appWidgetId,
                         webUrl = webUrl,
-                        webcamSettings = webCamSettings,
                         updatedAtText = (if (frame == null) createUpdateFailedText(context, appWidgetId) else createUpdatedNowText()).takeIf { hasControls },
                         live = false,
                         frame = frame
@@ -166,7 +161,6 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
         private suspend fun doLiveStream(
             context: Context,
             octoPrintInfo: OctoPrintInstanceInformationV2?,
-            webcamSettings: WebcamSettings,
             webUrl: String?,
             appWidgetManager: AppWidgetManager,
             appWidgetId: Int
@@ -192,7 +186,6 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                         context = context,
                         widgetId = appWidgetId,
                         webUrl = webUrl,
-                        webcamSettings = webcamSettings,
                         updatedAtText = createLiveForText(context, secsLeft.toInt()),
                         live = true,
                         frame = savedFrame
@@ -243,7 +236,6 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             context: Context,
             widgetId: Int,
             webUrl: String?,
-            webcamSettings: WebcamSettings?,
             updatedAtText: String?,
             live: Boolean,
             frame: Bitmap?
@@ -256,7 +248,6 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                 // We set it to a separate view as the webcamContent might already have a "real" image we don't know about
                 views.setImageViewBitmap(R.id.webcamContentPlaceholder, generateImagePlaceHolder(widgetId))
             }
-            views.setTextViewText(R.id.noImageUrl, webcamSettings?.streamUrl)
             views.setTextViewText(R.id.updatedAt, updatedAtText)
             views.setTextViewText(R.id.live, updatedAtText)
             views.setViewVisibility(R.id.updatedAt, !live)
@@ -267,19 +258,13 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             views.setViewVisibility(R.id.updatedAt, !updatedAtText.isNullOrBlank())
             views.setViewVisibility(R.id.noImageCont, frame == null)
             views.setOnClickPendingIntent(R.id.root, createLaunchAppIntent(context, webUrl))
-            applyScaling(widgetId, views)
             applyDebugOptions(views, widgetId)
             return views
         }
 
         private fun updateLayout(appWidgetId: Int, context: Context, manager: AppWidgetManager) {
             val views = RemoteViews(context.packageName, R.layout.app_widget_webcam)
-            applyScaling(appWidgetId, views)
             manager.partiallyUpdateAppWidget(appWidgetId, views)
-        }
-
-        private fun applyScaling(appWidgetId: Int, views: RemoteViews) {
-            views.setViewVisibility(R.id.noImageUrl, AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first > 190)
         }
 
         private fun generateImagePlaceHolder(widgetId: Int) = AppWidgetPreferences.getImageDimensionsForWidgetId(widgetId).let { size ->

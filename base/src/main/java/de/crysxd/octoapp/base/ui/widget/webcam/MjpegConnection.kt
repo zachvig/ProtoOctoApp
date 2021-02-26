@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.*
@@ -35,6 +37,7 @@ class MjpegConnection(private val streamUrl: String, private val name: String) {
             emit(MjpegSnapshot.Loading)
 
             // Connect
+            val lock = Mutex()
             val connection = connect()
             val boundaryPattern = createHeaderBoundaryPattern(connection)
             val input = BufferedInputStream(connection.inputStream)
@@ -90,11 +93,15 @@ class MjpegConnection(private val streamUrl: String, private val name: String) {
                             bitmapOptions.inSampleSize = 1
                             Timber.i("[$instanceId/$name] Options created (${bitmapOptions.outWidth}x${bitmapOptions.outHeight} px)")
                         }
-                        readBitmap(imageBuffer, bitmapOptions)
+
+                        lock.withLock {
+                            readBitmap(imageBuffer, bitmapOptions)
+                        }
+
                         val bitmap = bitmapOptions.inBitmap
                         if (bitmap != null) {
                             lostFrameCount = 0
-                            emit(MjpegSnapshot.Frame(bitmapOptions.inBitmap))
+                            emit(MjpegSnapshot.Frame(bitmapOptions.inBitmap, lock))
                         } else {
                             lostFrameCount++
                             Timber.e("[$instanceId/$name] Lost frame due to decoding error (lostFrames=$lostFrameCount)")
@@ -104,6 +111,7 @@ class MjpegConnection(private val streamUrl: String, private val name: String) {
                             }
                         }
                     }
+
 
                     // Reset imageBuffer and write rest of data (next image)
                     imageBuffer.reset()
@@ -187,6 +195,6 @@ class MjpegConnection(private val streamUrl: String, private val name: String) {
 
     sealed class MjpegSnapshot {
         object Loading : MjpegSnapshot()
-        data class Frame(val frame: Bitmap) : MjpegSnapshot()
+        data class Frame(val frame: Bitmap, val lock: Mutex) : MjpegSnapshot()
     }
 }
