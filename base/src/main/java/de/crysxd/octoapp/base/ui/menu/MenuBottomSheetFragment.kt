@@ -137,10 +137,18 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     dismissAllowingStateLoss()
                 } else {
                     val currentDestination = findNavController().currentDestination?.id ?: 0
+                    val context = requireContext()
                     val items = withContext(Dispatchers.IO) {
-                        settingsMenu.getMenuItem().filter {
-                            it.isVisible(currentDestination)
-                        }.sortedWith(compareBy { it.order })
+                        settingsMenu.getMenuItem().map {
+                            PreparedMenuItem(
+                                menuItem = it,
+                                title = it.getTitle(context),
+                                description = it.getDescription(context),
+                                isVisible = it.isVisible(currentDestination)
+                            )
+                        }.filter {
+                            it.isVisible
+                        }.sortedWith(compareBy<PreparedMenuItem> { it.menuItem.order }.thenBy { it.title.toString() })
                     }
                     val subtitle = settingsMenu.getSubtitle(requireContext())
                     val title = settingsMenu.getTitle(requireContext())
@@ -261,12 +269,19 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     }
 
     private inner class SpanSizeLookUp : GridLayoutManager.SpanSizeLookup() {
-        override fun getSpanSize(position: Int) = if (adapter.menuItems[position].showAsHalfWidth) 1 else 2
+        override fun getSpanSize(position: Int) = if (adapter.menuItems[position].menuItem.showAsHalfWidth) 1 else 2
     }
+
+    private data class PreparedMenuItem(
+        val menuItem: MenuItem,
+        val title: CharSequence,
+        val description: CharSequence?,
+        val isVisible: Boolean
+    )
 
     private inner class Adapter : RecyclerView.Adapter<MenuItemHolder>() {
         var pinnedItemIds: Set<String> = emptySet()
-        var menuItems: List<MenuItem> = emptyList()
+        var menuItems: List<PreparedMenuItem> = emptyList()
             set(value) {
                 pinnedItemIds = Injector.get().pinnedMenuItemsRepository().getPinnedMenuItems()
                 field = value
@@ -278,16 +293,16 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         override fun getItemCount() = menuItems.size
 
         override fun onBindViewHolder(holder: MenuItemHolder, position: Int) {
-            val item = menuItems[position]
-            val title = runBlocking { item.getTitle(requireContext()) }
-            holder.binding.text.text = title
-            holder.binding.description.text = runBlocking { item.getDescription(requireContext()) }
+            val preparedItem = menuItems[position]
+            val item = preparedItem.menuItem
+            holder.binding.text.setText(preparedItem.title)
+            holder.binding.description.text = preparedItem.description
             holder.binding.description.isVisible = holder.binding.description.text.isNotBlank()
             holder.binding.button.setOnClickListener {
                 if (item is ToggleMenuItem) {
                     executeFlipToggle(holder, item)
                 } else {
-                    executeClick(item, title)
+                    executeClick(item, preparedItem.title)
                 }
             }
 
@@ -320,7 +335,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             holder.binding.icon.setImageResource(iconStart)
 
             // Margins
-            val nextItem = menuItems.getOrNull(position + 1)
+            val nextItem = menuItems.getOrNull(position + 1)?.menuItem
             val groupChanged = nextItem != null && nextItem.groupId != item.groupId
             holder.itemView.updateLayoutParams<GridLayoutManager.LayoutParams> {
                 bottomMargin = requireContext().resources.getDimension(if (groupChanged) R.dimen.margin_2 else R.dimen.margin_0_1).toInt()
