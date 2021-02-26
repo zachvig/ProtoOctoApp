@@ -28,6 +28,7 @@ import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewFragmentArgs
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.octoprint.models.files.FileObject
+import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.injectActivityViewModel
 import de.crysxd.octoapp.print_controls.ui.PrintControlsFragment
@@ -233,6 +234,7 @@ class GcodePreviewWidget(parent: Fragment) : OctoWidget(parent) {
         view.renderView.renderParams = GcodeRenderView.RenderParams(
             renderContext = state.renderContext!!,
             renderStyle = state.renderStyle!!,
+            originInCenter = state.printerProfile?.volume?.origin == PrinterProfiles.Origin.Center,
             printBedSizeMm = PointF(printerProfile.volume.width, printerProfile.volume.depth),
             extrusionWidthMm = printerProfile.extruder.nozzleDiameter,
         )

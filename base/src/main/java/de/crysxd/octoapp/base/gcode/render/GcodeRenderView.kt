@@ -283,6 +283,9 @@ class GcodeRenderView @JvmOverloads constructor(
         canvas.restore()
         canvas.translate(xOffset, yOffset + printBedHeightPx)
         canvas.scale(totalFactor, -totalFactor)
+        if (params.originInCenter) {
+            canvas.translate(params.printBedSizeMm.x * 0.5f, params.printBedSizeMm.y * 0.5f)
+        }
 
         // Render Gcode
         params.renderContext.paths.forEach {
@@ -360,5 +363,6 @@ class GcodeRenderView @JvmOverloads constructor(
         val renderStyle: RenderStyle,
         val printBedSizeMm: PointF,
         val extrusionWidthMm: Float = 0.5f,
+        val originInCenter: Boolean
     )
 }

@@ -23,6 +23,7 @@ import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.octoprint.models.files.FileObject
+import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import kotlinx.android.synthetic.main.fragment_gcode_render.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -226,6 +227,7 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
         renderView.renderParams = GcodeRenderView.RenderParams(
             renderContext = state.renderContext,
             renderStyle = state.renderStyle,
+            originInCenter = state.printerProfile.volume.origin == PrinterProfiles.Origin.Center,
             printBedSizeMm = PointF(state.printerProfile.volume.width, state.printerProfile.volume.depth),
             extrusionWidthMm = state.printerProfile.extruder.nozzleDiameter,
         )
