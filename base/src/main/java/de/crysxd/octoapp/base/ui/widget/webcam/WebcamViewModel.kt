@@ -11,6 +11,7 @@ import de.crysxd.octoapp.base.ui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ApplyWebcamTransformationsUseCase
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -34,7 +35,7 @@ class WebcamViewModel(
 
     init {
         uiStateMediator.addSource(octoPrintLiveData) { connect() }
-        uiStateMediator.postValue(UiState.Loading)
+        uiStateMediator.postValue(UiState.Loading(false))
     }
 
     private suspend fun getWebcamSettings(): Pair<WebcamSettings?, Int> {
@@ -58,12 +59,13 @@ class WebcamViewModel(
         val liveData = BillingManager.billingFlow().map {
             flow {
                 try {
-                    emit(UiState.Loading)
+                    emit(UiState.Loading(false))
 
                     val (webcamSettings, webcamCount) = getWebcamSettings()
                     val streamUrl = webcamSettings?.streamUrl
                     val canSwitchWebcam = webcamCount > 1
                     Timber.i("Refresh with streamUrl: $streamUrl")
+                    emit(UiState.Loading(canSwitchWebcam))
 
                     // Check if webcam is configured
                     if (webcamSettings?.webcamEnabled == false || streamUrl.isNullOrBlank()) {
@@ -82,7 +84,7 @@ class WebcamViewModel(
                             .load()
                             .map {
                                 when (it) {
-                                    is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading
+                                    is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading(canSwitchWebcam)
                                     is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
                                         frame = it.lock.withLock { applyTransformations(it.frame, webcamSettings) },
                                         aspectRation = webcamSettings.streamRatio,
@@ -107,14 +109,14 @@ class WebcamViewModel(
                                 emit(it)
                             }
                     }
+                } catch (e: CancellationException) {
+                    Timber.w("Webcam stream cancelled")
                 } catch (e: Exception) {
                     Timber.e(e)
                     emit(UiState.Error(true, canSwitchWebcam = false))
                 }
             }
-        }.flatMapLatest {
-            it
-        }.asLiveData()
+        }.flatMapLatest { it }.asLiveData()
 
         previousSource = liveData
         uiStateMediator.addSource(liveData)
@@ -153,7 +155,7 @@ class WebcamViewModel(
         applyWebcamTransformationsUseCase.execute(ApplyWebcamTransformationsUseCase.Params(frame, webcamSettings))
 
     sealed class UiState(open val canSwitchWebcam: Boolean) {
-        object Loading : UiState(false)
+        data class Loading(override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
         object WebcamNotConfigured : UiState(false)
         data class HlsStreamDisabled(override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
         data class FrameReady(val frame: Bitmap, val aspectRation: String, override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)

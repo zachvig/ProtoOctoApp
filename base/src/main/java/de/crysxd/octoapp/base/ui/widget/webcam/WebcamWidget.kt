@@ -69,7 +69,7 @@ class WebcamWidget(
     private fun onUiStateChanged(state: UiState) {
         webcamView.canSwitchWebcam = state.canSwitchWebcam
         webcamView.state = when (state) {
-            Loading -> WebcamView.WebcamState.Loading
+            is Loading -> WebcamView.WebcamState.Loading
             UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
             is UiState.HlsStreamDisabled -> WebcamView.WebcamState.HlsStreamDisabled
             is UiState.FrameReady -> {

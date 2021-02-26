@@ -63,7 +63,7 @@ class WebcamFragment : Fragment(R.layout.webcam_fragment) {
         viewModel.uiState.observe(viewLifecycleOwner) {
             binding.webcamView.canSwitchWebcam = it.canSwitchWebcam
             binding.webcamView.state = when (it) {
-                WebcamViewModel.UiState.Loading -> WebcamView.WebcamState.Loading
+                is WebcamViewModel.UiState.Loading -> WebcamView.WebcamState.Loading
                 WebcamViewModel.UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
                 is WebcamViewModel.UiState.HlsStreamDisabled -> {
                     // We can't launch the purchase flow in fullscreen. Finish activity.

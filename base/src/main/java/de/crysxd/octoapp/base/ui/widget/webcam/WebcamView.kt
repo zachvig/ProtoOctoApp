@@ -16,8 +16,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.findNavController
-import androidx.transition.Transition
-import androidx.transition.TransitionManager
+import androidx.transition.*
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.LoadEventInfo
@@ -26,7 +25,6 @@ import com.google.android.exoplayer2.video.VideoListener
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.WebcamViewBinding
 import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootingFragmentArgs
-import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import timber.log.Timber
@@ -126,7 +124,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         if (oldState == null || oldState::class != newState::class) {
             beginDelayedTransition()
             Timber.i("Moving to state ${newState::class.java.simpleName} ($this)")
-            children.filter { it != binding.loadingState }.forEach { it.isVisible = false }
+            children.filter { it != binding.loadingState && it != binding.imageButtonSwitchCamera }.forEach { it.isVisible = false }
         }
 
         if (state !is WebcamState.MjpegFrameReady) {
@@ -298,7 +296,9 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         invalidateMjpegFrame()
     }
 
-    private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(this, InstantAutoTransition().also {
+    private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(this, TransitionSet().also {
+        it.addTransition(Fade())
+        it.addTransition(ChangeImageTransform())
         it.addListener(object : Transition.TransitionListener {
             override fun onTransitionStart(transition: Transition) {
                 transitionActive = true
