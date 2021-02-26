@@ -35,7 +35,7 @@
         app:layout_constraintEnd_toEndOf="@+id/imageViewFileIcon"
         app:layout_constraintStart_toEndOf="@+id/imageViewFileIcon"
         app:layout_constraintTop_toBottomOf="@+id/imageViewFileIcon"
-        app:tint="@color/white_translucent" />
+        app:tint="@color/light_text" />
 
     <TextView
         android:id="@+id/textViewTitle"
