@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.Animatable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -26,6 +28,7 @@ import de.crysxd.octoapp.base.databinding.MenuBottomSheetFragmentBinding
 import de.crysxd.octoapp.base.databinding.MenuItemBinding
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.OctoActivity
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
@@ -162,13 +165,23 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     }
 
                     // Show menu
+                    val emptyStateIcon = settingsMenu.getEmptyStateIcon()
+                    val emptyStateAction = settingsMenu.getEmptyStateActionText(context)
+                    val emptyStateUrl = settingsMenu.getEmptyStateActionUrl(context)
                     adapter.menuItems = items
+                    viewBinding.emptyStateIcon.setImageResource(emptyStateIcon)
+                    (viewBinding.emptyStateIcon.drawable as? Animatable)?.let { viewBinding.root.postDelayed({ it.start() }, 500) }
+                    viewBinding.emptyStateAction.text = emptyStateAction
+                    viewBinding.emptyStateAction.setOnClickListener { Uri.parse(emptyStateUrl).open(context) }
+                    viewBinding.emptyStateAction.isVisible = emptyStateAction != null && emptyStateUrl != null
+                    viewBinding.emptyState.isVisible = emptyStateIcon != 0 && items.isEmpty()
+                    viewBinding.recyclerView.isVisible = !viewBinding.emptyState.isVisible
                     viewBinding.title.text = title
                     viewBinding.title.isVisible = viewBinding.title.text.isNotBlank()
-                    viewBinding.subtitle.text = subtitle
+                    viewBinding.subtitle.text = settingsMenu.getEmptyStateSubtitle(context).takeIf { items.isEmpty() } ?: subtitle
                     viewBinding.subtitle.isVisible = viewBinding.subtitle.text.isNotBlank()
                     viewBinding.bottom.text = settingsMenu.getBottomText(requireContext())
-                    viewBinding.bottom.isVisible = viewBinding.bottom.text.isNotBlank()
+                    viewBinding.bottom.isVisible = viewBinding.bottom.text.isNotBlank() && viewBinding.recyclerView.isVisible
                     viewBinding.checkbox.text = settingsMenu.getCheckBoxText(requireContext())
                     viewBinding.checkbox.isVisible = viewBinding.checkbox.text.isNotBlank()
                     viewBinding.checkbox.isChecked = false

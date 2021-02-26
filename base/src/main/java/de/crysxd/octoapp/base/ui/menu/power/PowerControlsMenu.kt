@@ -2,6 +2,8 @@ package de.crysxd.octoapp.base.ui.menu.power
 
 import android.content.Context
 import android.os.Parcelable
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.toHtml
@@ -46,7 +48,12 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         }
     }
 
+    override fun getEmptyStateIcon() = R.drawable.octo_power_devices
+    override fun getEmptyStateActionText(context: Context) = "Learn more"
+    override fun getEmptyStateActionUrl(context: Context) = Firebase.remoteConfig.getString("help_url_power_devices")
     override fun getCheckBoxText(context: Context) = "Always use this device in the future".takeIf { type != DeviceType.Unspecified && action != Action.Unspecified }
+    override fun getEmptyStateSubtitle(context: Context) =
+        "OctoApp can control your printer’s power supply and other devices with supported plugins. Once set up, they will show up here!"
 
     override suspend fun getMenuItem() = Injector.get().getPowerDevicesUseCase().execute(GetPowerDevicesUseCase.Params(queryState = false))
         .map {

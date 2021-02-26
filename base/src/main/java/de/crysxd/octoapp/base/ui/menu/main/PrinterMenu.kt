@@ -82,11 +82,6 @@ class OpenPowerControlsMenuItem : SubMenuItem() {
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_power_settings_new_24
     override val subMenu = PowerControlsMenu()
-
-    override suspend fun isVisible(destinationId: Int) = Injector.get().getPowerDevicesUseCase().execute(
-        GetPowerDevicesUseCase.Params(false)
-    ).isNotEmpty()
-
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_power_controls)
 }
 

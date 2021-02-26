@@ -120,4 +120,8 @@
         <key>connection_timeout_ms</key>
         <value>5000</value>
     </entry>
+    <entry>
+        <key>help_url_power_devices</key>
+        <value>https://google.com</value>
+    </entry>
 </defaultsMap>

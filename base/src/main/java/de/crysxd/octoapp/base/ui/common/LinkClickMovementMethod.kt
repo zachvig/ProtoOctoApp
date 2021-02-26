@@ -1,14 +1,13 @@
 package de.crysxd.octoapp.base.ui.common
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.text.Spannable
 import android.text.method.LinkMovementMethod
 import android.text.style.URLSpan
 import android.view.MotionEvent
 import android.widget.TextView
-import android.widget.Toast
+import de.crysxd.octoapp.base.ext.open
 
 /**
  * Set this on a textview and then you can potentially open links locally if applicable
@@ -48,13 +47,7 @@ class LinkClickMovementMethod(private val mOnLinkClickedListener: OnLinkClickedL
 
     open class OpenWithIntentLinkClickedListener : OnLinkClickedListener {
         override fun onLinkClicked(context: Context, url: String?): Boolean {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).also { it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
-            if (context.packageManager.resolveActivity(intent, 0) != null) {
-                context.startActivity(intent)
-            } else {
-                Toast.makeText(context, "Unable to open link, no app found", Toast.LENGTH_SHORT).show()
-            }
-
+            Uri.parse(url).open(context)
             return true
         }
     }
