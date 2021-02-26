@@ -41,7 +41,7 @@ class GetAppLanguageUseCase @Inject constructor(
         }
 
         return Result(
-            appLanguageLocale = appLanguage?.let { Locale.forLanguageTag(it) },
+            appLanguageLocale = appLanguage.let { Locale.forLanguageTag(it) },
             canSwitchLocale = switchLanguageText != null,
             switchLanguageText = switchLanguageText,
             switchLanguageLocale = switchLanguageLocale
