@@ -15,7 +15,6 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
@@ -65,6 +64,7 @@ class WebcamViewModel(
                     val streamUrl = webcamSettings?.streamUrl
                     val canSwitchWebcam = webcamCount > 1
                     Timber.i("Refresh with streamUrl: $streamUrl")
+                    Timber.i("Webcam count: $webcamCount")
                     emit(UiState.Loading(canSwitchWebcam))
 
                     // Check if webcam is configured
@@ -86,7 +86,7 @@ class WebcamViewModel(
                                 when (it) {
                                     is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading(canSwitchWebcam)
                                     is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
-                                        frame = it.lock.withLock { applyTransformations(it.frame, webcamSettings) },
+                                        frame = applyTransformations(it.frame, webcamSettings),
                                         aspectRation = webcamSettings.streamRatio,
                                         canSwitchWebcam = canSwitchWebcam,
                                     )

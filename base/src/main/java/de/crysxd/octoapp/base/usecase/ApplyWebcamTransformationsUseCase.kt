@@ -28,8 +28,7 @@ class ApplyWebcamTransformationsUseCase @Inject constructor() : UseCase<ApplyWeb
 
             Bitmap.createBitmap(param.frame, 0, 0, param.frame.width, param.frame.height, matrix, true)
         } else {
-            // We need to de-couple the frame from the server connection and from the UI
-            Bitmap.createBitmap(param.frame, 0, 0, param.frame.width, param.frame.height)
+            param.frame
         }
 
     data class Params(
