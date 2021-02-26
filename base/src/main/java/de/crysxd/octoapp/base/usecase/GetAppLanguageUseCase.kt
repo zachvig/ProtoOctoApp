@@ -12,6 +12,10 @@ class GetAppLanguageUseCase @Inject constructor(
     private val octoPreferences: OctoPreferences
 ) : UseCase<Unit, GetAppLanguageUseCase.Result>() {
 
+    init {
+        suppressLogging = true
+    }
+
     override suspend fun doExecute(param: Unit, timber: Timber.Tree): Result {
         val confirmedLanguages = listOf("de", "fr") // If device language is listed here, it will be used as default
         val deviceLanguage = ConfigurationCompat.getLocales(Resources.getSystem().configuration)[0].language
@@ -37,7 +41,7 @@ class GetAppLanguageUseCase @Inject constructor(
         }
 
         return Result(
-            appLanguageLocale = appLanguage?.let { Locale.forLanguageTag(it) },
+            appLanguageLocale = appLanguage.let { Locale.forLanguageTag(it) },
             canSwitchLocale = switchLanguageText != null,
             switchLanguageText = switchLanguageText,
             switchLanguageLocale = switchLanguageLocale

@@ -7,7 +7,6 @@ cache:
     - .gradle/
 
 stages:
-  - test
   - build
   - deploy
 
@@ -26,20 +25,8 @@ after_script:
   - rm local.properties
   - eval "$DEBUGGING_STATEMENT_AFTER"
 
-test:
-  stage: test
-  needs: []
-  script:
-    - ./gradlew test
-  artifacts:
-    when: always
-    paths:
-      - app/build/reports/
-      - app/build/outputs/apk/release/app-release.apk
-
 build:
   stage: build
-  needs: ["test"]
   only: 
     - tags
     - /^release\/.*$/
@@ -56,7 +43,6 @@ build:
 
 deploy_google_play:
   stage: deploy
-  needs: ["test"]
   script:
     - ./gradlew publishReleaseBundle
   artifacts:
