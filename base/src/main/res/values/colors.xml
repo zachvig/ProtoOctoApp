@@ -28,6 +28,17 @@
     <color name="progress_bar_track">@color/black_translucent_3</color>
     <color name="app_widget_button_background">#48000000</color>
 
+    <color name="menu_style_support_foreground">@color/red</color>
+    <color name="menu_style_support_background">@color/red_translucent</color>
+    <color name="menu_style_settings_foreground">@color/yellow</color>
+    <color name="menu_style_settings_background">@color/yellow_translucent</color>
+    <color name="menu_style_printer_foreground">@color/blue</color>
+    <color name="menu_style_printer_background">@color/blue_translucent</color>
+    <color name="menu_style_octoprint_foreground">@color/green</color>
+    <color name="menu_style_octoprint_background">@color/green_translucent</color>
+    <color name="menu_style_neutral_foreground">@color/light_grey</color>
+    <color name="menu_style_neutral_background">@color/light_grey_translucent</color>
+
     <color name="default_color_scheme">@color/primary</color>
     <color name="default_color_scheme_light">#D0F3CC</color>
     <color name="red_color_scheme">@color/red</color>
@@ -66,6 +77,7 @@
     <color name="orange">#FF9800</color>
     <color name="orange_translucent">#26FF9800</color>
     <color name="green_2">#13C100</color>
+    <color name="green_3">#249318</color>
     <color name="violet">#BB6BD9</color>
     <color name="light_grey">#999</color>
     <color name="light_grey_translucent">#2D999999</color>

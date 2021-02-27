@@ -7,9 +7,9 @@ sealed class MenuItemStyle(
     @ColorRes val backgroundColor: Int,
     @ColorRes val highlightColor: Int,
 ) {
-    object Support : MenuItemStyle(R.color.red_translucent, R.color.red)
-    object Settings : MenuItemStyle(R.color.yellow_translucent, R.color.yellow)
-    object OctoPrint : MenuItemStyle(R.color.green_translucent, R.color.green)
-    object Printer : MenuItemStyle(R.color.blue_translucent, R.color.blue)
-    object Neutral : MenuItemStyle(R.color.light_grey_translucent, R.color.light_grey)
+    object Support : MenuItemStyle(R.color.menu_style_support_background, R.color.menu_style_support_foreground)
+    object Settings : MenuItemStyle(R.color.menu_style_settings_background, R.color.menu_style_settings_foreground)
+    object OctoPrint : MenuItemStyle(R.color.menu_style_octoprint_background, R.color.menu_style_octoprint_foreground)
+    object Printer : MenuItemStyle(R.color.menu_style_printer_background, R.color.menu_style_printer_foreground)
+    object Neutral : MenuItemStyle(R.color.menu_style_neutral_background, R.color.menu_style_neutral_foreground)
 }
