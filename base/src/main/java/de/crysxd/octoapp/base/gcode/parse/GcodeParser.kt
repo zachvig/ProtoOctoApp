@@ -6,10 +6,7 @@ import de.crysxd.octoapp.base.gcode.parse.models.Layer
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import timber.log.Timber
 import java.io.InputStream
-import kotlin.math.acos
-import kotlin.math.pow
-import kotlin.math.roundToInt
-import kotlin.math.sqrt
+import kotlin.math.*
 
 class GcodeParser {
 
@@ -160,10 +157,13 @@ class GcodeParser {
         // α = arccos[(xa * xb + ya * yb) / (√(xa^2 + ya^2) * √(xb^2 + yb^2))]
         fun Float.toDegrees() = (this * 180f / Math.PI).toFloat()
         fun getAndroidAngle(xa: Float, ya: Float, xb: Float = centerToControlX, yb: Float = centerToControlY) =
-            acos((xa * xb + ya * yb) / (sqrt(xa.pow(2) + ya.pow(2)) * sqrt(xb.pow(2) + yb.pow(2))))
+//            acos((xa * xb + ya * yb) / (sqrt(xa.pow(2) + ya.pow(2)) * sqrt(xb.pow(2) + yb.pow(2))))
+            atan2(xb * ya - yb * xa, xb * xa + yb * ya)
 
         val angleToStart = getAndroidAngle(centerToStartX, centerToStartY).toDegrees()
         val angleToEnd = getAndroidAngle(centerToEndX, centerToEndY).toDegrees()
+        val isFlipSide = angleToStart.absoluteValue == 180f
+        val fixedAngleToEnd = if (isFlipSide) -angleToEnd else angleToEnd
 
         return Move.ArcMove(
             arc = Move.Arc(
@@ -175,7 +175,7 @@ class GcodeParser {
                 topY = centerY - r,
                 r = r,
                 startAngle = angleToStart,
-                sweepAngle = angleToEnd - angleToStart,
+                sweepAngle = if (isFlipSide) angleToStart - fixedAngleToEnd else fixedAngleToEnd - angleToStart,
             ),
             endX = endX,
             endY = endY,
