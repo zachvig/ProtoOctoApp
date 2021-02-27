@@ -170,7 +170,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     val emptyStateUrl = settingsMenu.getEmptyStateActionUrl(context)
                     adapter.menuItems = items
                     viewBinding.emptyStateIcon.setImageResource(emptyStateIcon)
-                    (viewBinding.emptyStateIcon.drawable as? Animatable)?.let { viewBinding.root.postDelayed({ it.start() }, 500) }
+                    (viewBinding.emptyStateIcon.drawable as? Animatable)?.start()
                     viewBinding.emptyStateAction.text = emptyStateAction
                     viewBinding.emptyStateAction.setOnClickListener { Uri.parse(emptyStateUrl).open(context) }
                     viewBinding.emptyStateAction.isVisible = emptyStateAction != null && emptyStateUrl != null

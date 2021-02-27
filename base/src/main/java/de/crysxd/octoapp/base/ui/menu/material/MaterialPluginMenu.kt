@@ -2,6 +2,8 @@ package de.crysxd.octoapp.base.ui.menu.material
 
 import android.content.Context
 import androidx.core.text.HtmlCompat
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
@@ -21,6 +23,13 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
     } else {
         "You can edit these materials in the web interface."
     }
+
+    override fun getEmptyStateSubtitle(context: Context) =
+        "OctoApp integrates with the FilamentManager and the SpoolManager plugins to let you keep track of your materials. Once set up, you'll find your spools here."
+
+    override fun getEmptyStateActionText(context: Context) = "Learn more"
+    override fun getEmptyStateActionUrl(context: Context) = Firebase.remoteConfig.getString("help_url_materials")
+    override fun getEmptyStateIcon() = R.drawable.octo_materials
 
     override fun getBottomText(context: Context) = HtmlCompat.fromHtml(
         "<small>„A“ means activated. Materials are provided by <a href=\"https://plugins.octoprint.org/plugins/SpoolManager/\">SpoolManager</a> or <a href=\"https://plugins.octoprint.org/plugins/filamentmanager/\">FilamentManager</a> and can be edited in the web interface.</small>",

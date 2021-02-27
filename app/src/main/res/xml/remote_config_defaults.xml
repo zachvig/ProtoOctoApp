@@ -124,4 +124,8 @@
         <key>help_url_power_devices</key>
         <value>https://google.com</value>
     </entry>
+    <entry>
+        <key>help_url_materials</key>
+        <value>https://google.com</value>
+    </entry>
 </defaultsMap>

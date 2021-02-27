@@ -54,7 +54,7 @@
                 android:id="@+id/emptyStateIcon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin_2"
+                android:layout_marginHorizontal="@dimen/margin_1"
                 android:layout_marginVertical="@dimen/margin_3"
                 android:adjustViewBounds="true"
                 android:importantForAccessibility="no"
