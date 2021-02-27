@@ -289,7 +289,12 @@ class GcodeRenderView @JvmOverloads constructor(
 
         // Render Gcode
         params.renderContext.paths.forEach {
-            canvas.drawLines(it.points, it.offset, it.count, style.paintPalette(it.type))
+            val paint = style.paintPalette(it.type)
+            canvas.drawLines(it.points, it.offset, it.count, paint)
+            it.arcs.forEach { arc ->
+                val d = 2 * arc.r
+                canvas.drawArc(arc.leftX, arc.topY, arc.leftX + d, arc.topY + d, arc.startAngle, arc.sweepAngle, false, paint)
+            }
         }
 
         // Tool position

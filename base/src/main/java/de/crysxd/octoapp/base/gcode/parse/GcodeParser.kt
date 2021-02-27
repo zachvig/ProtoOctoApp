@@ -6,7 +6,10 @@ import de.crysxd.octoapp.base.gcode.parse.models.Layer
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import timber.log.Timber
 import java.io.InputStream
+import kotlin.math.acos
+import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 class GcodeParser {
 
@@ -99,8 +102,8 @@ class GcodeParser {
         // Get positions (don't use regex, it's slower)
         val x = extractValue("X", line)
         val y = extractValue("Y", line)
-        val i = extractValue("I", line)
-        val j = extractValue("J", line)
+        val i = extractValue("I", line) ?: 0f
+        val j = extractValue("J", line) ?: 0f
         val r = extractValue("R", line)
         val z = extractValue("Z", line) ?: lastPositionZ
         val e = extractValue("E", line) ?: 0f
@@ -108,29 +111,58 @@ class GcodeParser {
 
         // Convert to absolute position
         // X and Y might be null. If so, we use the last known position as there was no movement
-        val (absoluteX, absoluteY, absoluteZ) = toAbsolutePosition(x = x, y = y, z = z)
+        val (_, _, absoluteZ) = toAbsolutePosition(x = 0f, y = 0f, z = z)
         val type = handleExtrusion(e = e, absoluteZ = absoluteZ, positionInFile = positionInFile)
 
         val move = when {
-            r != null -> parseRFormArcMove(absoluteX = absoluteX, absoluteY = absoluteY, r = r, clockwise = clockwise, type = type)
-            j != null || i != null -> parseIjFormArcMove(absoluteX = absoluteX, absoluteY = absoluteY, i = i ?: 0f, j = j ?: 0f, clockwise = clockwise, type = type)
+            r != null -> parseRFormArcMove(x = x, y = y, r = r, clockwise = clockwise, type = type, positionInFile = positionInFile)
+
+            j != 0f || i != 0f -> parseIjFormArcMove(x = x, y = y, i = i, j = j, clockwise = clockwise, type = type, positionInFile = positionInFile)
+
             else -> throw IllegalArgumentException("Arc move without r or j or i value: $line")
         }
 
         addMove(
             move = move,
-            fromX = lastPosition?.x ?: absoluteX,
-            fromY = lastPosition?.y ?: absoluteY,
-            toX = absoluteX,
-            toY = absoluteY
+            fromX = lastPosition?.x ?: 0f,
+            fromY = lastPosition?.y ?: 0f,
+            toX = move.endX,
+            toY = move.endY
         )
     }
 
-    private fun parseIjFormArcMove(absoluteX: Float, absoluteY: Float, i: Float, j: Float, clockwise: Boolean, type: Move.Type): Move {
-        TODO()
+    private fun parseIjFormArcMove(x: Float?, y: Float?, i: Float, j: Float, clockwise: Boolean, type: Move.Type, positionInFile: Int): Move.ArcMove {
+        // End positions are either the given X Y (always absolute) or if they are missing the last known ones
+        val endX = x ?: lastPosition?.x ?: throw IllegalArgumentException("Missing param X")
+        val endY = y ?: lastPosition?.y ?: throw IllegalArgumentException("Missing param Y")
+        val startX = lastPosition?.x ?: throw java.lang.IllegalArgumentException("Missing start X")
+        val startY = lastPosition?.y ?: throw java.lang.IllegalArgumentException("Missing start Y")
+        val centerX = startX + i
+        val centerY = startY + j
+        val r = sqrt(i.pow(2) + j.pow(2))
+        val startAngle = acos((j.pow(2) + r.pow(2) - i.pow(2)) / (2 * j * r))
+        val jEnd = endY - centerY
+        val iEnd = endX - centerX
+        val endAngle = acos((jEnd.pow(2) + r.pow(2) - iEnd.pow(2)) / (2 * jEnd * r))
+
+        return Move.ArcMove(
+            arc = Move.Arc(
+                leftX = centerX - r,
+                topY = centerY - r,
+                r = r,
+                startAngle = (startAngle * 180f / Math.PI).toFloat(),
+                sweepAngle = ((endAngle - startAngle) * 180f / Math.PI).toFloat(),
+            ),
+            endX = endX,
+            endY = endY,
+            type = type,
+            positionInLayer = moveCountInLayer,
+            positionInFile = positionInFile,
+
+            )
     }
 
-    private fun parseRFormArcMove(absoluteX: Float, absoluteY: Float, r: Float, clockwise: Boolean, type: Move.Type): Move {
+    private fun parseRFormArcMove(x: Float?, y: Float?, r: Float, clockwise: Boolean, type: Move.Type, positionInFile: Int): Move.ArcMove {
         TODO()
     }
 
