@@ -26,6 +26,10 @@ class GcodeParser {
         layers.clear()
         initNewLayer()
         lastLayerChangeAtPositionInFile = 0
+        lastPosition = null
+        lastExtrusionZ = 0f
+        lastExtrusionZ = 0f
+        isAbsolutePositioningActive = true
         var positionInFile = 0
         var lastUpdatePercent = 0
 
@@ -140,18 +144,38 @@ class GcodeParser {
         val centerX = startX + i
         val centerY = startY + j
         val r = sqrt(i.pow(2) + j.pow(2))
-        val startAngle = acos((j.pow(2) + r.pow(2) - i.pow(2)) / (2 * j * r))
-        val jEnd = endY - centerY
-        val iEnd = endX - centerX
-        val endAngle = acos((jEnd.pow(2) + r.pow(2) - iEnd.pow(2)) / (2 * jEnd * r))
+
+        // Vector from the center to the start point
+        val centerToStartX = startX - centerX
+        val centerToStartY = startY - centerY
+
+        // Vector from the center to the end point
+        val centerToEndX = endX - centerX
+        val centerToEndY = endY - centerY
+
+        // Vector from the center along what Android considers the 0deg axis
+        val centerToControlX = 10f
+        val centerToControlY = 0f
+
+        // α = arccos[(xa * xb + ya * yb) / (√(xa^2 + ya^2) * √(xb^2 + yb^2))]
+        fun Float.toDegrees() = (this * 180f / Math.PI).toFloat()
+        fun getAndroidAngle(xa: Float, ya: Float, xb: Float = centerToControlX, yb: Float = centerToControlY) =
+            acos((xa * xb + ya * yb) / (sqrt(xa.pow(2) + ya.pow(2)) * sqrt(xb.pow(2) + yb.pow(2))))
+
+        val angleToStart = getAndroidAngle(centerToStartX, centerToStartY).toDegrees()
+        val angleToEnd = getAndroidAngle(centerToEndX, centerToEndY).toDegrees()
 
         return Move.ArcMove(
             arc = Move.Arc(
+                x0 = startX,
+                y0 = startY,
+                x1 = endX,
+                y1 = endY,
                 leftX = centerX - r,
                 topY = centerY - r,
                 r = r,
-                startAngle = (startAngle * 180f / Math.PI).toFloat(),
-                sweepAngle = ((endAngle - startAngle) * 180f / Math.PI).toFloat(),
+                startAngle = angleToStart,
+                sweepAngle = angleToEnd - angleToStart,
             ),
             endX = endX,
             endY = endY,

@@ -25,6 +25,10 @@ sealed class Move(
     ) : Move()
 
     data class Arc(
+        val x0: Float,
+        val y0: Float,
+        val x1: Float,
+        val y1: Float,
         val leftX: Float,
         val topY: Float,
         val r: Float,

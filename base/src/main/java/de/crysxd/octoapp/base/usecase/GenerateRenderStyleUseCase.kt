@@ -16,21 +16,21 @@ class GenerateRenderStyleUseCase @Inject constructor() : UseCase<OctoPrintInstan
             style = Paint.Style.STROKE
             isAntiAlias = true
             color = Color.WHITE
-            strokeCap = Paint.Cap.ROUND
+//            strokeCap = Paint.Cap.ROUND
         }
 
         private val travelPaint = Paint().apply {
             style = Paint.Style.STROKE
             isAntiAlias = true
             color = Color.GREEN
-            strokeCap = Paint.Cap.ROUND
+//            strokeCap = Paint.Cap.ROUND
         }
 
         private val printHeadPaint = Paint().apply {
             style = Paint.Style.FILL
             isAntiAlias = true
             color = Color.RED
-            strokeCap = Paint.Cap.ROUND
+//            strokeCap = Paint.Cap.ROUND
         }
 
         val defaultStyle = RenderStyle(
