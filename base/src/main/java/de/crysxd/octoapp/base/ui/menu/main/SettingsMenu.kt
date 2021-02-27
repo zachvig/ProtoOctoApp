@@ -59,9 +59,8 @@ class SendFeedbackMenuItem : MenuItem {
     override val icon = R.drawable.ic_round_rate_review_24
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_send_feedback)
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment) {
         SendFeedbackDialog().show(host.parentFragmentManager, "feedback")
-        return true
     }
 }
 
@@ -75,10 +74,9 @@ class ChangeLanguageMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = Injector.get().getAppLanguageUseCase().execute(Unit).canSwitchLocale
     override suspend fun getTitle(context: Context) = Injector.get().getAppLanguageUseCase().execute(Unit).switchLanguageText ?: ""
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment) {
         val newLocale = Injector.get().getAppLanguageUseCase().execute(Unit).switchLanguageLocale
         Injector.get().setAppLanguageUseCase().execute(SetAppLanguageUseCase.Param(newLocale, host.requireActivity()))
-        return true
     }
 }
 
@@ -160,8 +158,7 @@ class ChangeOctoPrintInstanceMenuItem : MenuItem {
     override val showAsSubMenu = true
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_change_octoprint_instance)
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment) {
         host.pushMenu(SwitchOctoPrintMenu())
-        return false
     }
 }

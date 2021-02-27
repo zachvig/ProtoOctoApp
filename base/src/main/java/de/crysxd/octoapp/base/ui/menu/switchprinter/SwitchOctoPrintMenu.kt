@@ -7,7 +7,10 @@ import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ui.menu.*
+import de.crysxd.octoapp.base.ui.menu.Menu
+import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.MenuItem
+import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ADD_INSTANCE
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ENABLE_QUICK_SWITCH
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SIGN_OUT
@@ -68,10 +71,9 @@ class SwitchInstanceMenuItem(private val webUrl: String) : MenuItem {
 
     override suspend fun getTitle(context: Context) = instanceInfo?.label ?: webUrl
 
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment) {
         val repo = Injector.get().octorPrintRepository()
         instanceInfo?.let { repo.setActive(it) }
-        return true
     }
 }
 
@@ -84,9 +86,8 @@ class AddInstanceMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = isQuickSwitchEnabled && isAnyActive
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_add_instance)
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment) {
         Injector.get().octorPrintRepository().clearActive()
-        return true
     }
 }
 
@@ -100,9 +101,8 @@ class SignOutMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = !isQuickSwitchEnabled && isAnyActive
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_sign_out)
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment) {
         Injector.get().octorPrintRepository().clearActive()
-        return true
     }
 }
 
@@ -116,9 +116,8 @@ class EnableQuickSwitchMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = !isQuickSwitchEnabled
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___enable_quick_switch)
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "switch_menu"))
         host.findNavController().navigate(R.id.action_show_purchase_flow)
-        return false
     }
 }

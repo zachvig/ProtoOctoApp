@@ -40,9 +40,8 @@ class ShowTemperatureMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = destinationId != R.id.workspaceConnect
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_temperature_presets)
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment) {
         host.pushMenu(TemperatureMenu())
-        return false
     }
 }
 
@@ -69,9 +68,8 @@ class ShowWebcamMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.isWebcamSupported == true
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___show_webcam)
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment) {
         FullscreenWebcamActivity.start(host.requireActivity())
-        return true
     }
 }
 
@@ -97,9 +95,8 @@ class TurnPsuOffMenuItem : MenuItem {
     ).isNotEmpty() && destinationId == R.id.workspacePrePrint
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_turn_psu_off)
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment) {
         host.pushMenu(PowerControlsMenu(PowerControlsMenu.DeviceType.PrinterPsu, PowerControlsMenu.Action.TurnOff))
-        return false
     }
 }
 
@@ -114,11 +111,8 @@ class EmergencyStopMenuItem : ConfirmedMenuItem() {
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.emergency_stop_confirmation_action)
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_emergency_stop)
-    override suspend fun onConfirmed(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
-        executeAsync {
-            Injector.get().emergencyStopUseCase().execute(Unit)
-        }
-        return true
+    override suspend fun onConfirmed(host: MenuBottomSheetFragment) {
+        Injector.get().emergencyStopUseCase().execute(Unit)
     }
 }
 
@@ -133,11 +127,8 @@ class CancelPrintKeepTemperaturesMenuItem : ConfirmedMenuItem() {
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.cancel_print_confirmation_action)
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_cancel_print_keep_temp)
-    override suspend fun onConfirmed(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
-        executeAsync {
-            Injector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(restoreTemperatures = true))
-        }
-        return true
+    override suspend fun onConfirmed(host: MenuBottomSheetFragment) {
+        Injector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(restoreTemperatures = true))
     }
 }
 
@@ -152,10 +143,7 @@ class CancelPrintMenuItem : ConfirmedMenuItem() {
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.cancel_print_confirmation_action)
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_cancel_print)
-    override suspend fun onConfirmed(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
-        executeAsync {
-            Injector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(restoreTemperatures = false))
-        }
-        return true
+    override suspend fun onConfirmed(host: MenuBottomSheetFragment) {
+        Injector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(restoreTemperatures = false))
     }
 }

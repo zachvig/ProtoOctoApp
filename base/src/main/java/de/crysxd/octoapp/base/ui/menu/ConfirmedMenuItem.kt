@@ -10,10 +10,10 @@ import java.util.concurrent.CountDownLatch
 abstract class ConfirmedMenuItem : MenuItem {
     abstract fun getConfirmMessage(context: Context): CharSequence
     abstract fun getConfirmPositiveAction(context: Context): CharSequence
-    abstract suspend fun onConfirmed(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean
+    abstract suspend fun onConfirmed(host: MenuBottomSheetFragment)
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean = withContext(Dispatchers.Main) {
+    override suspend fun onClicked(host: MenuBottomSheetFragment) = withContext(Dispatchers.Main) {
         var confirmed = false
         val latch = CountDownLatch(1)
 
@@ -33,9 +33,7 @@ abstract class ConfirmedMenuItem : MenuItem {
 
         // Run action
         if (confirmed) {
-            onConfirmed(host, executeAsync)
-        } else {
-            false
+            onConfirmed(host)
         }
     }
 }

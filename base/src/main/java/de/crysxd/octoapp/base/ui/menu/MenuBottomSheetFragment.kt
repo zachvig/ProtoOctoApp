@@ -30,7 +30,6 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
-import de.crysxd.octoapp.base.ui.OctoActivity
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.main.MainMenu
@@ -45,9 +44,8 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     private lateinit var viewBinding: MenuBottomSheetFragmentBinding
     private val adapter = Adapter()
     private val showLoadingRunnable = Runnable {
-        viewBinding.content.animate().alpha(if (isLoading) 0.33f else 1f).start()
-        viewBinding.loadingSpinner.isVisible = true
-        viewBinding.loadingSpinner.animate().alpha(if (isLoading) 1f else 0f).withEndAction { viewBinding.loadingSpinner.isVisible = isLoading }.start()
+        viewBinding.loadingOverlay.isVisible = true
+        viewBinding.loadingOverlay.animate().alpha(if (isLoading) 1f else 0f).withEndAction { viewBinding.loadingOverlay.isVisible = isLoading }.start()
     }
     private var isLoading = false
         set(value) {
@@ -135,10 +133,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             try {
                 // Run pre-show routine and load items
                 isLoading = settingsMenu !is MainMenu
-                if (settingsMenu.beforeShow(this@MenuBottomSheetFragment)) {
-                    // The menu rejected to be shown, cancel and dismiss
-                    dismissAllowingStateLoss()
-                } else {
+                if (settingsMenu.shouldShowMenu(this@MenuBottomSheetFragment)) {
                     val currentDestination = findNavController().currentDestination?.id ?: 0
                     val context = requireContext()
                     val items = withContext(Dispatchers.IO) {
@@ -188,11 +183,11 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
 
                     // Update bottom sheet size
                     forceResizeBottomSheet()
-                }
+                } else Unit
             } catch (e: Exception) {
                 Timber.e(e, "Error while inflating menu")
                 requireOctoActivity().showDialog(e)
-                dismissAllowingStateLoss()
+                popMenu()
             }
         }
 
@@ -243,40 +238,12 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     private fun executeClick(item: MenuItem, title: CharSequence) {
         if (isLoading) return
 
-        val activity = requireOctoActivity()
         viewModel.execute {
-            val closeBottomSheet = item.onClicked(this@MenuBottomSheetFragment) { action ->
-                GlobalScope.launch {
-                    try {
-                        // Start confirmation
-                        Timber.i("Action start")
-                        activity.showSnackbar(
-                            OctoActivity.Message.SnackbarMessage(
-                                text = { it.getString(R.string.menu___executing_command, title) },
-                                debounce = true
-                            )
-                        )
-
-                        // Execute
-                        action()
-
-                        // End confirmation
-                        Timber.i("Action end")
-                        activity.showSnackbar(
-                            OctoActivity.Message.SnackbarMessage(
-                                text = { it.getString(R.string.menu___completed_command, title) },
-                                type = OctoActivity.Message.SnackbarMessage.Type.Positive
-                            )
-                        )
-                    } catch (e: Exception) {
-                        Timber.e(e, "Action failed")
-                        activity.showDialog(e)
-                    }
-                }
-            }
-
-            if (closeBottomSheet) {
-                dismiss()
+            try {
+                isLoading = true
+                item.onClicked(this@MenuBottomSheetFragment)
+            } finally {
+                isLoading = false
             }
         }
     }

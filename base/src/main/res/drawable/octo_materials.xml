@@ -12,7 +12,7 @@
                     android:name="path"
                     android:pathData="M 121 134.96 C 131.215 130.387 153.116 120.792 159 119"
                     android:strokeWidth="4"
-                    android:strokeColor="#000000"
+                    android:strokeColor="@color/dark_text"
                     android:strokeLineCap="round"
                     android:trimPathEnd="0" />
                 <path
@@ -20,7 +20,7 @@
                     android:fillColor="#000"
                     android:pathData="M 112.333 50 C 113.268 57.245 114.577 73.489 112.333 80.5 M 126.707 51.402 C 127.982 56.621 130.608 69.115 130.914 77.345 M 122.5 78.046 C 121.261 71.247 119.007 56.119 119.899 50 M 92 76.994 C 103.686 71.268 128.74 59.255 135.471 57.011 M 104.27 51.402 C 104.854 59.232 105.672 75.802 104.27 79.448 M 67 115.56 C 77.215 110.987 99.116 101.392 105 99.6 M 90.057 92 C 89.126 99.853 87.822 117.46 90.057 125.06 M 75.734 93.52 C 74.463 99.176 71.847 112.719 71.542 121.64 M 79.926 122.4 C 81.16 115.03 83.407 98.633 82.518 92 M 98.093 93.52 C 97.51 102.007 96.695 119.968 98.093 123.92 M 135.612 106 C 136.495 114.314 137.73 132.954 135.612 141 M 149.182 107.609 C 150.385 113.597 152.865 127.935 153.154 137.379 M 145.21 138.184 C 144.041 130.382 141.913 113.022 142.755 106 M 128 107.609 C 128.552 116.594 129.324 135.609 128 139.793"
                     android:strokeWidth="4"
-                    android:strokeColor="#000000"
+                    android:strokeColor="@color/dark_text"
                     android:strokeLineCap="round" />
             </group>
             <group android:name="octo">
@@ -96,7 +96,7 @@
             <group android:name="diagram">
                 <path
                     android:name="path_17"
-                    android:fillColor="#000000"
+                    android:fillColor="@color/dark_text"
                     android:pathData="M 436 128 L 436 56"
                     android:strokeWidth="10"
                     android:strokeColor="#ee3f3f"
@@ -128,7 +128,7 @@
                     android:name="path_16"
                     android:pathData="M 421 50 L 421 130 L 501 130"
                     android:strokeWidth="5"
-                    android:strokeColor="#000000"
+                    android:strokeColor="@color/dark_text"
                     android:strokeLineCap="round"
                     android:strokeLineJoin="round" />
             </group>

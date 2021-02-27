@@ -43,11 +43,9 @@ class OpenOctoPrintMenuItem : MenuItem {
     override val icon = R.drawable.ic_round_open_in_browser_24
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_octoprint)
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
-        executeAsync {
-            Injector.get().openOctoPrintWebUseCase().execute(Injector.get().context())
-        }
-        return true
+    override suspend fun onClicked(host: MenuBottomSheetFragment) {
+        Injector.get().openOctoPrintWebUseCase().execute(Injector.get().context())
+
     }
 }
 
@@ -77,11 +75,7 @@ class ExecuteSystemCommandMenuItem(val source: String, val action: String) : Con
     override suspend fun getTitle(context: Context) = systemCommand?.name ?: "Unknown system command"
     override fun getConfirmMessage(context: Context) = HtmlCompat.fromHtml(systemCommand?.confirm ?: "Execute?", HtmlCompat.FROM_HTML_MODE_COMPACT)
     override fun getConfirmPositiveAction(context: Context) = systemCommand?.name ?: context.getString(android.R.string.ok)
-    override suspend fun onConfirmed(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
-        executeAsync {
-            Injector.get().executeSystemCommandUseCase().execute(systemCommand!!)
-        }
-
-        return true
+    override suspend fun onConfirmed(host: MenuBottomSheetFragment) {
+        Injector.get().executeSystemCommandUseCase().execute(systemCommand!!)
     }
 }

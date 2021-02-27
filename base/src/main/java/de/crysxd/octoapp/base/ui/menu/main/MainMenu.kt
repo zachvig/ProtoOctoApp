@@ -45,10 +45,9 @@ class SupportOctoAppMenuItem : MenuItem {
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_support_octoapp)
     override suspend fun isVisible(@IdRes destinationId: Int) = BillingManager.shouldAdvertisePremium()
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "main_menu"))
         host.findNavController().navigate(R.id.action_show_purchase_flow)
-        return true
     }
 }
 
@@ -88,9 +87,8 @@ class ShowOctoPrintMenuItem : MenuItem {
     override val icon = R.drawable.ic_octoprint_24px
 
     override suspend fun getTitle(context: Context) = "OctoPrint"
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment) {
         host.pushMenu(OctoPrintMenu())
-        return false
     }
 }
 
@@ -104,10 +102,9 @@ class ShowNewsMenuItem : MenuItem {
     override val icon = R.drawable.ic_twitter_24px
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_news)
-    override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+    override suspend fun onClicked(host: MenuBottomSheetFragment) {
         val i = Intent(Intent.ACTION_VIEW)
         i.data = Uri.parse("https://twitter.com/realoctoapp")
         host.startActivity(i)
-        return false
     }
 }
