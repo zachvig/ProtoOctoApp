@@ -30,7 +30,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
             DeviceType.PrinterPsu -> Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.appSettings?.defaultPowerDevices?.get(type.prefKey)
             DeviceType.Unspecified -> null
         }?.let {
-            Injector.get().getPowerDevicesUseCase().execute(GetPowerDevicesUseCase.Params(queryState = false, onlyGetDeviceWithUniqueId = it)).first().first
+            Injector.get().getPowerDevicesUseCase().execute(GetPowerDevicesUseCase.Params(queryState = false, onlyGetDeviceWithUniqueId = it)).firstOrNull()?.first
         }
 
         return if (action != Action.Unspecified && deviceToUse != null) {
