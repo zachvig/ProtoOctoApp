@@ -21,23 +21,29 @@ sealed class GcodeRenderContextFactory {
             val layer = gcode.layers.last { it.positionInFile <= byte }
 
             val paths = layer.moves.map {
-                val move = it.value.first.lastOrNull { i -> i.positionInFile <= byte }
-                val count = move?.let { i -> i.positionInArray + 4 } ?: 0
+                val moves = it.value.first.takeWhile { i -> i.positionInFile <= byte }
+                val lastLinearMove = it.value.first.mapNotNull { it as? Move.LinearMove }.lastOrNull { i -> i.positionInFile <= byte }
+                val count = lastLinearMove?.let { i -> i.positionInArray + 4 } ?: 0
                 val path = GcodePath(
+                    arcs = moves.mapNotNull { m -> (m as? Move.ArcMove)?.arc },
                     type = it.key,
                     offset = 0,
                     count = count,
                     points = it.value.second
                 )
-                Pair(move, path)
+                moves to path
             }
 
-            val printHeadPosition = paths.mapNotNull { it.first }.maxByOrNull { it.positionInFile }?.let {
-                layer.moves[it.type]?.let { moves ->
-                    val x = moves.second[it.positionInArray + 2]
-                    val y = moves.second[it.positionInArray + 3]
-                    PointF(x, y)
+            val printHeadPosition = when (val lastMove = paths.map { it.first.last() }.maxByOrNull { it.positionInFile }) {
+                is Move.ArcMove -> PointF(lastMove.endX, lastMove.endY)
+                is Move.LinearMove -> {
+                    layer.moves[lastMove.type]?.let { moves ->
+                        val x = moves.second[lastMove.positionInArray + 2]
+                        val y = moves.second[lastMove.positionInArray + 3]
+                        PointF(x, y)
+                    }
                 }
+                null -> PointF(0f, 0f)
             }
 
             return GcodeRenderContext(
@@ -56,13 +62,17 @@ sealed class GcodeRenderContextFactory {
             val layer = gcode.layers[layer]
             val moveCount = layer.moveCount * progress
             val paths = layer.moves.map {
-                val count = it.value.first.lastOrNull { i -> i.positionInLayer <= moveCount }?.let { i -> i.positionInArray + 4 } ?: 0
-                GcodePath(
+                val moves = it.value.first.takeWhile { i -> i.positionInLayer <= moveCount }
+                val count = moves.mapNotNull { m -> m as? Move.LinearMove }.lastOrNull()?.let { m -> m.positionInArray + 4 } ?: 0
+                val path = GcodePath(
+                    arcs = moves.mapNotNull { m -> (m as? Move.ArcMove)?.arc },
                     type = it.key,
                     offset = 0,
                     count = count,
                     points = it.value.second
                 )
+
+                path
             }
 
             return GcodeRenderContext(
@@ -71,7 +81,6 @@ sealed class GcodeRenderContextFactory {
                 layerNumber = this.layer + 1,
                 layerCount = gcode.layers.size,
                 layerZHeight = layer.zHeight,
-
                 layerProgress = progress
             )
         }
