@@ -11,11 +11,12 @@ import de.crysxd.octoapp.octoprint.exceptions.InvalidApiKeyException
 import de.crysxd.octoapp.octoprint.models.login.LoginResponse
 import de.crysxd.octoapp.signin.models.SignInInformation
 import timber.log.Timber
+import javax.inject.Inject
 
 
-class SignInUseCase(
+class SignInUseCase @Inject constructor(
     private val octoPrintProvider: OctoPrintProvider,
-    private val sslKeyStoreHandler: SslKeyStoreHandler
+    private val sslKeyStoreHandler: SslKeyStoreHandler,
 ) : UseCase<SignInInformation, SignInUseCase.Result>() {
 
     override suspend fun doExecute(param: SignInInformation, timber: Timber.Tree) = try {

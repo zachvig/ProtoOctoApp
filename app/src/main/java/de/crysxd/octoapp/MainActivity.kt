@@ -82,6 +82,7 @@ class MainActivity : OctoActivity() {
                 Timber.i("Instance information received")
                 updateAllWidgets()
                 if (it != null && it.apiKey.isNotBlank()) {
+                    updateCapabilities("instance_change")
                     navigate(R.id.action_connect_printer)
                     events.observe(this, observer)
                 } else {
