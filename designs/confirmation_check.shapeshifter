@@ -1,0 +1,164 @@
+{
+  "version": 1,
+  "layers": {
+    "vectorLayer": {
+      "id": "114",
+      "name": "vector",
+      "type": "vector",
+      "width": 52,
+      "height": 52,
+      "children": [
+        {
+          "id": "3497",
+          "name": "group",
+          "type": "group",
+          "scaleX": 0,
+          "scaleY": 0,
+          "pivotX": 26,
+          "pivotY": 26,
+          "children": [
+            {
+              "id": "92",
+              "name": "path",
+              "type": "path",
+              "pathData": "M 26 0 C 19.107 0 12.489 2.741 7.615 7.615 C 2.741 12.489 0 19.107 0 26 C 0 32.893 2.741 39.511 7.615 44.385 C 12.489 49.259 19.107 52 26 52 C 32.893 52 39.511 49.259 44.385 44.385 C 49.259 39.511 52 32.893 52 26 C 52 19.107 49.259 12.489 44.385 7.615 C 39.511 2.741 32.893 0 26 0 Z",
+              "fillColor": "#27ae60",
+              "strokeWidth": 1
+            },
+            {
+              "id": "112",
+              "name": "path_2",
+              "type": "path",
+              "pathData": "M 38.5 16.5 L 24.5 30.5 L 20.5 26.5 C 17.833 23.5 2 11 2 26 C 2 41 15.5 50 25 50 C 34.5 50 50 41 50 26 C 50 11 39 3 25 2.5",
+              "strokeColor": "#ffffff",
+              "strokeWidth": 3,
+              "strokeLinecap": "round",
+              "strokeLinejoin": "round",
+              "trimPathEnd": 0
+            }
+          ]
+        }
+      ]
+    },
+    "hiddenLayerIds": []
+  },
+  "timeline": {
+    "animation": {
+      "id": "116",
+      "name": "anim",
+      "duration": 1500,
+      "blocks": [
+        {
+          "id": "120",
+          "layerId": "112",
+          "propertyName": "trimPathStart",
+          "startTime": 0,
+          "endTime": 301,
+          "interpolator": "FAST_OUT_SLOW_IN",
+          "type": "number",
+          "fromValue": 0.66,
+          "toValue": 0.025
+        },
+        {
+          "id": "121",
+          "layerId": "112",
+          "propertyName": "trimPathEnd",
+          "startTime": 50,
+          "endTime": 322,
+          "interpolator": "FAST_OUT_SLOW_IN",
+          "type": "number",
+          "fromValue": 0.66,
+          "toValue": 0.16
+        },
+        {
+          "id": "122",
+          "layerId": "112",
+          "propertyName": "strokeAlpha",
+          "startTime": 30,
+          "endTime": 256,
+          "interpolator": "FAST_OUT_SLOW_IN",
+          "type": "number",
+          "fromValue": 0.66,
+          "toValue": 1
+        },
+        {
+          "id": "3498",
+          "layerId": "3497",
+          "propertyName": "scaleX",
+          "startTime": 1252,
+          "endTime": 1500,
+          "interpolator": "FAST_OUT_SLOW_IN",
+          "type": "number",
+          "fromValue": 1,
+          "toValue": 0
+        },
+        {
+          "id": "3499",
+          "layerId": "3497",
+          "propertyName": "scaleY",
+          "startTime": 1252,
+          "endTime": 1500,
+          "interpolator": "FAST_OUT_SLOW_IN",
+          "type": "number",
+          "fromValue": 1,
+          "toValue": 0
+        },
+        {
+          "id": "3885",
+          "layerId": "112",
+          "propertyName": "trimPathEnd",
+          "startTime": 974,
+          "endTime": 1163,
+          "interpolator": "ACCELERATE",
+          "type": "number",
+          "fromValue": 0.16,
+          "toValue": 0
+        },
+        {
+          "id": "3989",
+          "layerId": "112",
+          "propertyName": "strokeAlpha",
+          "startTime": 1110,
+          "endTime": 1154,
+          "interpolator": "FAST_OUT_SLOW_IN",
+          "type": "number",
+          "fromValue": 1,
+          "toValue": 0
+        },
+        {
+          "id": "4146",
+          "layerId": "92",
+          "propertyName": "fillAlpha",
+          "startTime": 1260,
+          "endTime": 1496,
+          "interpolator": "FAST_OUT_SLOW_IN",
+          "type": "number",
+          "fromValue": 1,
+          "toValue": 0
+        },
+        {
+          "id": "4317",
+          "layerId": "3497",
+          "propertyName": "scaleX",
+          "startTime": 0,
+          "endTime": 149,
+          "interpolator": "DECELERATE",
+          "type": "number",
+          "fromValue": 0,
+          "toValue": 1
+        },
+        {
+          "id": "4318",
+          "layerId": "3497",
+          "propertyName": "scaleY",
+          "startTime": 0,
+          "endTime": 149,
+          "interpolator": "DECELERATE",
+          "type": "number",
+          "fromValue": 0,
+          "toValue": 1
+        }
+      ]
+    }
+  }
+}

@@ -5,12 +5,15 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.Animatable
+import android.graphics.drawable.Animatable2
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.*
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -31,12 +34,14 @@ import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
+import de.crysxd.octoapp.base.ui.ext.oneOffEndAction
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.main.MainMenu
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import kotlinx.android.synthetic.main.fragment_gcode_render.*
 import kotlinx.coroutines.*
 import timber.log.Timber
+import java.lang.ref.WeakReference
 
 
 class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
@@ -102,23 +107,8 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     fun show(fm: FragmentManager) = show(fm, "main-menu")
 
     fun pushMenu(settingsMenu: Menu) {
-        fun internalPushMenu(settingsMenu: Menu) {
-            viewModel.menuBackStack.add(settingsMenu)
-            showMenu(settingsMenu)
-        }
-
-
-        // Samsung Android 11 decides to crash if we trigger this method
-        // from a link click, posting resolves this issue
-        if (viewModel.menuBackStack.isEmpty()) {
-            internalPushMenu(settingsMenu)
-        } else {
-            view?.post {
-                if (isAdded) {
-                    internalPushMenu(settingsMenu)
-                }
-            }
-        }
+        viewModel.menuBackStack.add(settingsMenu)
+        showMenu(settingsMenu)
     }
 
     fun onFavoriteChanged() {
@@ -235,13 +225,30 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         }
     }
 
-    private fun executeClick(item: MenuItem, title: CharSequence) {
+    private fun executeClick(item: MenuItem, holder: MenuItemHolder) {
         if (isLoading) return
 
         viewModel.execute {
             try {
                 isLoading = true
+                val before = viewModel.menuBackStack.last()
                 item.onClicked(this@MenuBottomSheetFragment)
+                val after = viewModel.menuBackStack.last()
+
+                // We did not change the menu, the holder is still showing the same item and the OS is fancy
+                // Play success animation
+                if (after == before && holder.currentItem?.get() == item && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    (holder.binding.successFeedback.drawable as? Animatable2)?.let {
+                        holder.binding.successFeedback.isVisible = true
+                        holder.binding.pin.animate().scaleX(0f).scaleY(0f).start()
+                        holder.binding.icon.animate().scaleX(0f).scaleY(0f).setInterpolator(AccelerateInterpolator()).start()
+                        it.oneOffEndAction {
+                            holder.binding.pin.animate().scaleX(1f).scaleY(1f).setInterpolator(DecelerateInterpolator()).start()
+                            holder.binding.icon.animate().scaleX(1f).scaleY(1f).setInterpolator(DecelerateInterpolator()).start()
+                        }
+                        it.start()
+                    }
+                }
             } finally {
                 isLoading = false
             }
@@ -275,6 +282,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         override fun onBindViewHolder(holder: MenuItemHolder, position: Int) {
             val preparedItem = menuItems[position]
             val item = preparedItem.menuItem
+            holder.currentItem = WeakReference(item)
             holder.binding.text.setText(preparedItem.title)
             holder.binding.description.text = preparedItem.description
             holder.binding.description.isVisible = holder.binding.description.text.isNotBlank()
@@ -282,7 +290,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                 if (item is ToggleMenuItem) {
                     executeFlipToggle(holder, item)
                 } else {
-                    executeClick(item, preparedItem.title)
+                    executeClick(item, holder)
                 }
             }
 
@@ -348,6 +356,8 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
 
     private inner class MenuItemHolder(parent: ViewGroup) :
         ViewBindingHolder<MenuItemBinding>(MenuItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)) {
+        var currentItem: WeakReference<MenuItem>? = null
+
         init {
             // In this list we don't recycle so we can use TransitionManager easily
             setIsRecyclable(false)
