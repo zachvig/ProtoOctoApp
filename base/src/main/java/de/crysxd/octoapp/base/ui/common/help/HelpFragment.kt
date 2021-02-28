@@ -28,7 +28,7 @@ import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
-class HelpOverviewFragment : Fragment() {
+class HelpFragment : Fragment() {
 
     private lateinit var binding: HelpOverviewFragmentBinding
 

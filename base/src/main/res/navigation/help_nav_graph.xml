@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/helpOverviewFragment"
-        android:name="de.crysxd.octoapp.base.ui.common.help.HelpOverviewFragment"
+        android:name="de.crysxd.octoapp.base.ui.common.help.HelpFragment"
         android:label="HelpOverviewFragment" />
 
 </navigation>
