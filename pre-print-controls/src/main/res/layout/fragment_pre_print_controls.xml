@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="de.crysxd.octoapp.base.ui.OctoActivity">
+    tools:context="de.crysxd.octoapp.base.ui.base.OctoActivity">
 
     <!--
     We use the scroll state to animate the button on the bottom.

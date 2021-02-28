@@ -7,9 +7,9 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.di.ViewModelFactory
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.ui.ViewModelFactory
 import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.base.usecase.GetPrinterConnectionUseCase

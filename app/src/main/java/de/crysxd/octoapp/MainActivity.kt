@@ -30,8 +30,8 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.PurchaseConfirmationDialog
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.ColorTheme
-import de.crysxd.octoapp.base.ui.InsetAwareScreen
-import de.crysxd.octoapp.base.ui.OctoActivity
+import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
+import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
@@ -173,7 +173,7 @@ class MainActivity : OctoActivity() {
 
     private fun applyInsetsToScreen(screen: Fragment, topOverwrite: Int? = null) {
         val disconnectHeight = disconnectedMessage.height.takeIf { disconnectedMessage.isVisible }
-        Timber.v("Applying insets: disconnectedMessage=$disconnectHeight topOverwrite=$topOverwrite")
+        Timber.v("Applying insets: disconnectedMessage=$disconnectHeight topOverwrite=$topOverwrite screen=$screen")
         toolbar.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
         octo.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
 

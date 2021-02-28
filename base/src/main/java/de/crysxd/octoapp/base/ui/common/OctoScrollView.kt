@@ -14,7 +14,7 @@ import androidx.annotation.StyleRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.NestedScrollView
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.ui.OctoActivity
+import de.crysxd.octoapp.base.ui.base.OctoActivity
 import kotlin.math.roundToInt
 
 class OctoScrollView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, @StyleRes defStyle: Int = 0) :

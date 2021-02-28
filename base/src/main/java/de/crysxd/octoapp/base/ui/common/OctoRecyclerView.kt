@@ -9,7 +9,7 @@ import android.view.animation.DecelerateInterpolator
 import androidx.annotation.StyleRes
 import androidx.recyclerview.widget.RecyclerView
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.ui.OctoActivity
+import de.crysxd.octoapp.base.ui.base.OctoActivity
 import kotlin.math.roundToInt
 
 class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, @StyleRes defStyle: Int = 0) :

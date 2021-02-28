@@ -18,7 +18,7 @@ import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ui.LocalizedActivity
+import de.crysxd.octoapp.base.ui.base.LocalizedActivity
 import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.widgets.AppWidgetPreferences.ACTIVE_WEB_URL_MARKER
 import timber.log.Timber

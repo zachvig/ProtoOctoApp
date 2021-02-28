@@ -9,7 +9,7 @@ import android.os.Bundle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ui.LocalizedActivity
+import de.crysxd.octoapp.base.ui.base.LocalizedActivity
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
 import de.crysxd.octoapp.widgets.webcam.BaseWebcamAppWidget

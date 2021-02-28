@@ -65,7 +65,7 @@
             app:layout_constraintStart_toEndOf="@id/icon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_goneMarginEnd="@dimen/margin_0_1"
-            app:layout_goneMarginStart="@dimen/margin_1" />
+            app:layout_goneMarginStart="@dimen/margin_2" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/toggle"

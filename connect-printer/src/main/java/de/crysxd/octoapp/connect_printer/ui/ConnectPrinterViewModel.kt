@@ -7,10 +7,9 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.livedata.OctoTransformations.map
 import de.crysxd.octoapp.base.livedata.PollingLiveData
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.menu.power.PowerControlsMenu
 import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase
 import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase.Params
@@ -187,7 +186,7 @@ class ConnectPrinterViewModel(
                 if (connectionResponse.current.state == MAYBE_ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT) {
                     // TODO Ask user which port to select
                     val app = Injector.get().app()
-                    Toast.makeText(app, app.getString(R.string.auto_selection_failed), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(app, app.getString(R.string.connect_printer___auto_selection_failed), Toast.LENGTH_SHORT).show()
                     OctoAnalytics.logEvent(OctoAnalytics.Event.PrinterAutoConnectFailed)
                     Params(connectionResponse.options.ports.first())
                 } else {

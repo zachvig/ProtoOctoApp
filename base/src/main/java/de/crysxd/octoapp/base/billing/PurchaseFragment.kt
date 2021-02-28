@@ -22,8 +22,8 @@ import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
-import de.crysxd.octoapp.base.ui.BaseFragment
-import de.crysxd.octoapp.base.ui.InsetAwareScreen
+import de.crysxd.octoapp.base.ui.base.BaseFragment
+import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition

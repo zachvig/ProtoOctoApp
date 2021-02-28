@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.ui.LocalizedActivity
+import de.crysxd.octoapp.base.ui.base.LocalizedActivity
 
 
 class FullscreenWebcamActivity : LocalizedActivity() {

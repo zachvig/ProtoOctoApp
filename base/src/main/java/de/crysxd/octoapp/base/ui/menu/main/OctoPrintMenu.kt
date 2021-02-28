@@ -43,7 +43,7 @@ class OpenOctoPrintMenuItem : MenuItem {
     override val icon = R.drawable.ic_round_open_in_browser_24
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_octoprint)
-    override suspend fun onClicked(host: MenuBottomSheetFragment) {
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
         Injector.get().openOctoPrintWebUseCase().execute(Injector.get().context())
 
     }

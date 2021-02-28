@@ -8,8 +8,8 @@ import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ui.BaseFragment
-import de.crysxd.octoapp.base.ui.NetworkStateViewModel
+import de.crysxd.octoapp.base.ui.base.BaseFragment
+import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
@@ -50,7 +50,7 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
                     binding.psuTurnOnControls,
                     binding.psuUnvailableControls,
                     binding.textViewState,
-                    binding.textViewSubState
+                    binding.octoprintConnectedInfo
                 )
                 val duration = view.animate().duration
                 if (lastState != state) {
@@ -85,17 +85,23 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
     private fun handleUiStateUpdate(state: ConnectPrinterViewModel.UiState) {
         binding.psuTurnOnControls.isVisible = false
         binding.psuTurnOffControls.isVisible = false
+        binding.octoprintConnectedInfo.isVisible = !listOf(
+            ConnectPrinterViewModel.UiState.Initializing,
+            ConnectPrinterViewModel.UiState.OctoPrintNotAvailable,
+            ConnectPrinterViewModel.UiState.OctoPrintStarting
+        ).contains(state)
+        binding.noWifiWarning.alpha = if (binding.octoprintConnectedInfo.isVisible) 0f else 1f
 
         when (state) {
             ConnectPrinterViewModel.UiState.OctoPrintNotAvailable -> {
                 showStatus(
-                    R.string.octoprint_is_not_available,
-                    R.string.check_your_network_connection
+                    R.string.connect_printer___octoprint_not_available_title,
+                    R.string.connect_printer___octoprint_not_available_detail
                 )
             }
 
             ConnectPrinterViewModel.UiState.OctoPrintStarting -> showStatus(
-                R.string.octoprint_is_starting_up
+                R.string.connect_printer___octoprint_starting_title
             )
 
             is ConnectPrinterViewModel.UiState.WaitingForPrinterToComeOnline -> {
@@ -109,20 +115,20 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
                 }
                 binding.psuTurnOnControls.isVisible = state.psuIsOn == false
                 binding.psuTurnOffControls.isVisible = state.psuIsOn == true
-                binding.buttonTurnOnPsu.text = getString(R.string.turn_psu_on)
-                binding.buttonTurnOffPsu.text = getString(R.string.turn_off_psu)
+                binding.buttonTurnOnPsu.text = getString(R.string.connect_printer___action_turn_psu_on)
+                binding.buttonTurnOffPsu.text = getString(R.string.connect_printer___action_turn_psu_off)
                 showStatus(
                     if (state.psuIsOn == true) {
-                        R.string.psu_turned_on_waiting_for_printer_to_boot
+                        R.string.connect_printer___psu_on_waiting_for_printer_title
                     } else {
-                        R.string.waiting_for_printer_to_come_online
+                        R.string.connect_printer___waiting_for_printer_title
                     },
-                    R.string.octoapp_will_auto_connect_the_printer_once_available
+                    R.string.connect_printer___waiting_for_printer_detail
                 )
             }
 
             ConnectPrinterViewModel.UiState.PrinterConnecting -> showStatus(
-                R.string.printer_is_connecting
+                R.string.connect_printer___printer_is_connecting_title
             )
 
             is ConnectPrinterViewModel.UiState.PrinterOffline -> {
@@ -142,23 +148,23 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
                 }
                 binding.buttonTurnOnPsu.setText(
                     if (state.psuSupported) {
-                        R.string.cycle_psu
+                        R.string.connect_printer___action_cycle_psu
                     } else {
-                        R.string.retry_connection
+                        R.string.connect_printer___action_retry
                     }
                 )
                 showStatus(
-                    R.string.printer_is_offline,
+                    R.string.connect_printer___printer_offline_title,
                     if (state.psuSupported) {
-                        R.string.cycle_psu_to_reset_the_printer
+                        R.string.connect_printer___printer_offline_detail_with_psu
                     } else {
-                        R.string.turn_the_printer_off_and_on_again_to_reset_it
+                        R.string.connect_printer___printer_offline_detail
                     }
                 )
             }
 
             is ConnectPrinterViewModel.UiState.PrinterPsuCycling -> showStatus(
-                R.string.psu_is_being_cycled
+                R.string.connect_printer___psu_cycling_title
             )
 
             ConnectPrinterViewModel.UiState.WaitingForUser -> {
@@ -170,11 +176,11 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
             }
 
             ConnectPrinterViewModel.UiState.Initializing -> showStatus(
-                R.string.searching_for_octoprint
+                R.string.connect_printer___searching_for_octoprint_title
             )
 
             ConnectPrinterViewModel.UiState.PrinterConnected -> showStatus(
-                R.string.printer_connected
+                R.string.connect_printer___printer_connected_title
             )
 
             ConnectPrinterViewModel.UiState.Unknown -> showStatus(

@@ -30,19 +30,15 @@ class PrinterMenu : Menu {
 }
 
 
-class ShowTemperatureMenuItem : MenuItem {
+class ShowTemperatureMenuItem : SubMenuItem() {
     override val itemId = MENU_ITEM_TEMPERATURE_MENU
     override var groupId = ""
     override val order = 310
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_local_fire_department_24
-    override val showAsSubMenu = true
-
+    override val subMenu: Menu get() = TemperatureMenu()
     override suspend fun isVisible(destinationId: Int) = destinationId != R.id.workspaceConnect
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_temperature_presets)
-    override suspend fun onClicked(host: MenuBottomSheetFragment) {
-        host.pushMenu(TemperatureMenu())
-    }
 }
 
 class ShowMaterialPluginMenuItem : SubMenuItem() {
@@ -68,8 +64,8 @@ class ShowWebcamMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.isWebcamSupported == true
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___show_webcam)
-    override suspend fun onClicked(host: MenuBottomSheetFragment) {
-        FullscreenWebcamActivity.start(host.requireActivity())
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        host?.activity?.let { FullscreenWebcamActivity.start(it) }
     }
 }
 
@@ -95,8 +91,8 @@ class TurnPsuOffMenuItem : MenuItem {
     ).isNotEmpty() && destinationId == R.id.workspacePrePrint
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_turn_psu_off)
-    override suspend fun onClicked(host: MenuBottomSheetFragment) {
-        host.pushMenu(PowerControlsMenu(PowerControlsMenu.DeviceType.PrinterPsu, PowerControlsMenu.Action.TurnOff))
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        host?.pushMenu(PowerControlsMenu(PowerControlsMenu.DeviceType.PrinterPsu, PowerControlsMenu.Action.TurnOff))
     }
 }
 

@@ -6,7 +6,7 @@ import androidx.lifecycle.map
 import de.crysxd.octoapp.base.livedata.PollingLiveData
 import de.crysxd.octoapp.base.models.SerialCommunication
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
-import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import kotlinx.coroutines.Job

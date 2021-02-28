@@ -14,6 +14,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 class TemperatureMenu : Menu {
+    override fun shouldLoadBlocking() = true
     override suspend fun getSubtitle(context: Context) = context.getString(R.string.temperature_menu___subtitle)
     override suspend fun getTitle(context: Context) = context.getString(R.string.temperature_menu___title)
     override suspend fun getMenuItem() = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()
@@ -34,7 +35,7 @@ class ApplyTemperaturePresetMenuItem(val presetName: String) : MenuItem {
     override val icon = R.drawable.ic_round_local_fire_department_24
     override suspend fun getTitle(context: Context) = context.getString(R.string.temperature_menu___item_preheat, presetName)
     override suspend fun isVisible(destinationId: Int) = destinationId != R.id.workspaceConnect
-    override suspend fun onClicked(host: MenuBottomSheetFragment) {
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
         Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.settings?.temperature?.profiles?.firstOrNull {
             it.name == presetName
         }?.let {

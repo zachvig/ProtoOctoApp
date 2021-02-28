@@ -1,53 +1,35 @@
 package de.crysxd.octoapp.base.ui.menu
 
-import android.content.Context
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.Animatable
-import android.graphics.drawable.Animatable2
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
 import android.view.*
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.DecelerateInterpolator
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
-import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
-import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.MenuBottomSheetFragmentBinding
-import de.crysxd.octoapp.base.databinding.MenuItemBinding
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
-import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
-import de.crysxd.octoapp.base.ui.ext.oneOffEndAction
+import de.crysxd.octoapp.base.ui.base.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.main.MainMenu
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import kotlinx.android.synthetic.main.fragment_gcode_render.*
 import kotlinx.coroutines.*
 import timber.log.Timber
-import java.lang.ref.WeakReference
 
 
-class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
+open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     override val viewModel by injectViewModel<MenuBottomSheetViewModel>()
     private lateinit var viewBinding: MenuBottomSheetFragmentBinding
-    private val adapter = Adapter()
+    private val adapter = MenuAdapter(::executeClick, ::executeLongClick)
     private val showLoadingRunnable = Runnable {
         viewBinding.loadingOverlay.isVisible = true
         viewBinding.loadingOverlay.animate().alpha(if (isLoading) 1f else 0f).withEndAction { viewBinding.loadingOverlay.isVisible = isLoading }.start()
@@ -109,13 +91,6 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     fun pushMenu(settingsMenu: Menu) {
         viewModel.menuBackStack.add(settingsMenu)
         showMenu(settingsMenu)
-    }
-
-    fun onFavoriteChanged() {
-        // We need to reload the main menu if a favorite was changed in case it was removed
-        if (viewModel.menuBackStack.last() is MainMenu) {
-            showMenu(viewModel.menuBackStack.last())
-        }
     }
 
     private fun showMenu(settingsMenu: Menu) {
@@ -183,7 +158,7 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
 
         // We don't want the loading state to flash in when opening main menu and we also don't need to
         // build it async -> run blocking for main menu
-        if (settingsMenu is MainMenu) {
+        if (settingsMenu.shouldLoadBlocking()) {
             Timber.i("Using blocking method to inflate main menu")
             runBlocking { internal() }
         } else {
@@ -209,7 +184,8 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                 it as ViewGroup,
                 InstantAutoTransition(
                     explode = !smallChange,
-                    explodeEpicenter = Rect(epicenterX, epicenterY, epicenterX, epicenterY)
+                    explodeEpicenter = Rect(epicenterX, epicenterY, epicenterX, epicenterY),
+                    fadeText = !smallChange
                 ).also { t ->
                     t.addListener(
                         object : Transition.TransitionListener {
@@ -225,30 +201,37 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         }
     }
 
-    private fun executeClick(item: MenuItem, holder: MenuItemHolder) {
+    private fun executeLongClick(item: MenuItem) {
+        val repo = Injector.get().pinnedMenuItemsRepository()
+        repo.toggleMenuItemPinned(item.itemId)
+
+        // We need to reload the main menu if a favorite was changed in case it was removed
+        beginDelayedTransition(true)
+        showMenu(viewModel.menuBackStack.last())
+    }
+
+    private fun executeClick(item: MenuItem) {
         if (isLoading) return
 
         viewModel.execute {
             try {
                 isLoading = true
-                val before = viewModel.menuBackStack.last()
-                item.onClicked(this@MenuBottomSheetFragment)
-                val after = viewModel.menuBackStack.last()
+                if (item is ToggleMenuItem) {
+                    item.handleToggleFlipped(this@MenuBottomSheetFragment, !item.isEnabled)
+                    adapter.setToggle(item, item.isEnabled)
+                } else {
+                    val before = viewModel.menuBackStack.last()
 
-                // We did not change the menu, the holder is still showing the same item and the OS is fancy
-                // Play success animation
-                if (after == before && holder.currentItem?.get() == item && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    (holder.binding.successFeedback.drawable as? Animatable2)?.let {
-                        holder.binding.successFeedback.isVisible = true
-                        holder.binding.pin.animate().scaleX(0f).scaleY(0f).start()
-                        holder.binding.icon.animate().scaleX(0f).scaleY(0f).setInterpolator(AccelerateInterpolator()).start()
-                        it.oneOffEndAction {
-                            holder.binding.pin.animate().scaleX(1f).scaleY(1f).setInterpolator(DecelerateInterpolator()).start()
-                            holder.binding.icon.animate().scaleX(1f).scaleY(1f).setInterpolator(DecelerateInterpolator()).start()
-                        }
-                        it.start()
+                    item.onClicked(this@MenuBottomSheetFragment)
+
+                    // We did not change the menu, the holder is still showing the same item and the OS is fancy
+                    // Play success animation
+                    val after = viewModel.menuBackStack.last()
+                    if (after == before) {
+                        adapter.playSuccessAnimationForItem(item)
                     }
                 }
+
             } finally {
                 isLoading = false
             }
@@ -257,110 +240,5 @@ class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
 
     private inner class SpanSizeLookUp : GridLayoutManager.SpanSizeLookup() {
         override fun getSpanSize(position: Int) = if (adapter.menuItems[position].menuItem.showAsHalfWidth) 1 else 2
-    }
-
-    private data class PreparedMenuItem(
-        val menuItem: MenuItem,
-        val title: CharSequence,
-        val description: CharSequence?,
-        val isVisible: Boolean
-    )
-
-    private inner class Adapter : RecyclerView.Adapter<MenuItemHolder>() {
-        var pinnedItemIds: Set<String> = emptySet()
-        var menuItems: List<PreparedMenuItem> = emptyList()
-            set(value) {
-                pinnedItemIds = Injector.get().pinnedMenuItemsRepository().getPinnedMenuItems()
-                field = value
-                notifyDataSetChanged()
-            }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MenuItemHolder(parent)
-
-        override fun getItemCount() = menuItems.size
-
-        override fun onBindViewHolder(holder: MenuItemHolder, position: Int) {
-            val preparedItem = menuItems[position]
-            val item = preparedItem.menuItem
-            holder.currentItem = WeakReference(item)
-            holder.binding.text.setText(preparedItem.title)
-            holder.binding.description.text = preparedItem.description
-            holder.binding.description.isVisible = holder.binding.description.text.isNotBlank()
-            holder.binding.button.setOnClickListener {
-                if (item is ToggleMenuItem) {
-                    executeFlipToggle(holder, item)
-                } else {
-                    executeClick(item, holder)
-                }
-            }
-
-            if (item.canBePinned) {
-                holder.binding.button.setOnLongClickListener {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        (requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator)
-                            .vibrate(VibrationEffect.createOneShot(30, 255))
-                    }
-
-                    beginDelayedTransition(true)
-                    Injector.get().pinnedMenuItemsRepository().toggleMenuItemPinned(item.itemId)
-                    menuItems = menuItems
-                    onFavoriteChanged()
-                    true
-                }
-            }
-
-            // Toggle
-            holder.binding.toggle.isVisible = item is ToggleMenuItem
-            holder.binding.toggle.isChecked = (item as? ToggleMenuItem)?.isEnabled == true
-
-            // Pin
-            holder.binding.pin.isVisible = pinnedItemIds.contains(item.itemId)
-
-            // Icons
-            val iconStart = item.icon
-            val iconEnd = R.drawable.ic_round_chevron_right_24.takeIf { item.showAsSubMenu } ?: 0
-            holder.binding.text.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, iconEnd, 0)
-            holder.binding.icon.setImageResource(iconStart)
-
-            // Margins
-            val nextItem = menuItems.getOrNull(position + 1)?.menuItem
-            val groupChanged = nextItem != null && nextItem.groupId != item.groupId
-            holder.itemView.updateLayoutParams<GridLayoutManager.LayoutParams> {
-                bottomMargin = requireContext().resources.getDimension(if (groupChanged) R.dimen.margin_2 else R.dimen.margin_0_1).toInt()
-                marginEnd = requireContext().resources.getDimension(R.dimen.margin_0_1).toInt()
-            }
-
-            // Colors
-            val background = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), item.style.backgroundColor))
-            val foreground = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), item.style.highlightColor))
-            val transparent = ColorStateList.valueOf(Color.TRANSPARENT)
-            holder.binding.button.backgroundTintList = if (item.showAsHalfWidth) transparent else background
-            TextViewCompat.setCompoundDrawableTintList(holder.binding.button, foreground)
-            TextViewCompat.setCompoundDrawableTintList(holder.binding.text, foreground)
-            holder.binding.icon.setColorFilter(foreground.defaultColor)
-            holder.binding.button.strokeColor = if (item.showAsHalfWidth) foreground else transparent
-            holder.binding.button.rippleColor = if (item.showAsHalfWidth) foreground else background
-        }
-
-        private fun executeFlipToggle(holder: MenuItemHolder, item: ToggleMenuItem) {
-            viewModel.execute {
-                try {
-                    item.handleToggleFlipped(this@MenuBottomSheetFragment, !item.isEnabled)
-                    holder.binding.toggle.isChecked = item.isEnabled
-                } catch (e: Exception) {
-                    requireOctoActivity().showDialog(e)
-                }
-            }
-        }
-    }
-
-    private inner class MenuItemHolder(parent: ViewGroup) :
-        ViewBindingHolder<MenuItemBinding>(MenuItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)) {
-        var currentItem: WeakReference<MenuItem>? = null
-
-        init {
-            // In this list we don't recycle so we can use TransitionManager easily
-            setIsRecyclable(false)
-        }
     }
 }
