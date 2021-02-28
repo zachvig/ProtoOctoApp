@@ -173,7 +173,7 @@ class MainActivity : OctoActivity() {
 
     private fun applyInsetsToScreen(screen: Fragment, topOverwrite: Int? = null) {
         val disconnectHeight = disconnectedMessage.height.takeIf { disconnectedMessage.isVisible }
-        Timber.v("Applying insets: disconnectedMessage=$disconnectHeight topOverwrite=$topOverwrite")
+        Timber.v("Applying insets: disconnectedMessage=$disconnectHeight topOverwrite=$topOverwrite screen=$screen")
         toolbar.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
         octo.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
 
