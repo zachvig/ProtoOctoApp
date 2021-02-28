@@ -44,7 +44,7 @@ import timber.log.Timber
 import java.lang.ref.WeakReference
 
 
-class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
+open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     override val viewModel by injectViewModel<MenuBottomSheetViewModel>()
     private lateinit var viewBinding: MenuBottomSheetFragmentBinding
     private val adapter = Adapter()

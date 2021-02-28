@@ -10,14 +10,12 @@ import de.crysxd.octoapp.base.billing.PurchaseViewModel
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.feedback.SendFeedbackViewModel
 import de.crysxd.octoapp.base.repository.GcodeFileRepository
-import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModelFactory
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
-import de.crysxd.octoapp.base.ui.common.gcodeshortcut.GcodeShortcutEditViewModel
 import de.crysxd.octoapp.base.ui.common.terminal.TerminalViewModel
 import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootViewModel
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetViewModel
@@ -127,16 +125,6 @@ open class ViewModelModule {
         generateRenderStyleUseCase = generateRenderStyleUseCase,
         getCurrentPrinterProfileUseCase = getCurrentPrinterProfileUseCase,
         gcodeFileRepository = gcodeFileRepository
-    )
-
-
-    @Provides
-    @IntoMap
-    @ViewModelKey(GcodeShortcutEditViewModel::class)
-    open fun provideGcodeShortcutEditViewModel(
-        gcodeHistoryRepository: GcodeHistoryRepository
-    ): ViewModel = GcodeShortcutEditViewModel(
-        gcodeHistoryRepository = gcodeHistoryRepository
     )
 
     @Provides
