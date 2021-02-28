@@ -14,6 +14,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 class TemperatureMenu : Menu {
+    override fun shouldLoadBlocking() = true
     override suspend fun getSubtitle(context: Context) = context.getString(R.string.temperature_menu___subtitle)
     override suspend fun getTitle(context: Context) = context.getString(R.string.temperature_menu___title)
     override suspend fun getMenuItem() = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()

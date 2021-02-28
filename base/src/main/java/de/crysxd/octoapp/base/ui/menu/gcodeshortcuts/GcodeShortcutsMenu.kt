@@ -22,7 +22,7 @@ import kotlinx.coroutines.withContext
 
 @Parcelize
 class GcodeShortcutsMenu(private val command: GcodeHistoryItem, @IgnoredOnParcel private val insertCallback: ((GcodeHistoryItem) -> Unit)? = null) : Menu {
-
+    override fun shouldLoadBlocking() = true
     override suspend fun getTitle(context: Context) = command.name
     override suspend fun getSubtitle(context: Context) = if (command.name == command.oneLineCommand) null else command.oneLineCommand
     override suspend fun getMenuItem(): List<MenuItem> {

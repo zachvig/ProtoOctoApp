@@ -183,7 +183,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
 
         // We don't want the loading state to flash in when opening main menu and we also don't need to
         // build it async -> run blocking for main menu
-        if (settingsMenu is MainMenu) {
+        if (settingsMenu.shouldLoadBlocking()) {
             Timber.i("Using blocking method to inflate main menu")
             runBlocking { internal() }
         } else {

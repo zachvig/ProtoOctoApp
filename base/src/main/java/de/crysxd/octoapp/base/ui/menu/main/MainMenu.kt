@@ -15,6 +15,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 class MainMenu : Menu {
+    override fun shouldLoadBlocking() = true
     override suspend fun getMenuItem(): List<MenuItem> {
         val base = listOf(
             SupportOctoAppMenuItem(),
