@@ -47,9 +47,9 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, @IgnoredOnParcel
         override val order = 1
         override val icon = R.drawable.ic_round_push_pin_24
         override suspend fun getTitle(context: Context) = context.getString(R.string.toggle_favorite)
-        override suspend fun onClicked(host: MenuBottomSheetFragment) {
+        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
             repo.setFavorite(command.command, !command.isFavorite)
-            host.dismissAllowingStateLoss()
+            host?.dismissAllowingStateLoss()
         }
     }
 
@@ -58,9 +58,9 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, @IgnoredOnParcel
         override val order = 2
         override val icon = R.drawable.ic_round_content_paste_24
         override suspend fun getTitle(context: Context) = context.getString(R.string.insert)
-        override suspend fun onClicked(host: MenuBottomSheetFragment) {
+        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
             callback(command)
-            host.dismissAllowingStateLoss()
+            host?.dismissAllowingStateLoss()
         }
     }
 
@@ -68,7 +68,8 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, @IgnoredOnParcel
         override val order = 3
         override val icon = R.drawable.ic_round_label_24
         override suspend fun getTitle(context: Context) = context.getString(R.string.enter_label)
-        override suspend fun onClicked(host: MenuBottomSheetFragment) {
+        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+            host ?: return
             val result = NavigationResultMediator.registerResultCallback<String?>()
             val context = host.requireContext()
 
@@ -98,9 +99,9 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, @IgnoredOnParcel
         override val order = 4
         override val icon = R.drawable.ic_round_label_off_24
         override suspend fun getTitle(context: Context) = context.getString(R.string.clear_lebel)
-        override suspend fun onClicked(host: MenuBottomSheetFragment) {
+        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
             repo.setLabelForGcode(command.command, null)
-            host.dismissAllowingStateLoss()
+            host?.dismissAllowingStateLoss()
         }
     }
 
@@ -108,9 +109,9 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, @IgnoredOnParcel
         override val order = 5
         override val icon = R.drawable.ic_round_delete_24
         override suspend fun getTitle(context: Context) = context.getString(R.string.remove_shortcut)
-        override suspend fun onClicked(host: MenuBottomSheetFragment) {
+        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
             repo.removeEntry(command.command)
-            host.dismissAllowingStateLoss()
+            host?.dismissAllowingStateLoss()
         }
     }
 }

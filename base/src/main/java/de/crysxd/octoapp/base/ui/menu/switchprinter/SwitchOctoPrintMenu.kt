@@ -71,7 +71,7 @@ class SwitchInstanceMenuItem(private val webUrl: String) : MenuItem {
 
     override suspend fun getTitle(context: Context) = instanceInfo?.label ?: webUrl
 
-    override suspend fun onClicked(host: MenuBottomSheetFragment) {
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
         val repo = Injector.get().octorPrintRepository()
         instanceInfo?.let { repo.setActive(it) }
     }
@@ -86,7 +86,7 @@ class AddInstanceMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = isQuickSwitchEnabled && isAnyActive
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_add_instance)
-    override suspend fun onClicked(host: MenuBottomSheetFragment) {
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
         Injector.get().octorPrintRepository().clearActive()
     }
 }
@@ -101,7 +101,7 @@ class SignOutMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = !isQuickSwitchEnabled && isAnyActive
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_sign_out)
-    override suspend fun onClicked(host: MenuBottomSheetFragment) {
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
         Injector.get().octorPrintRepository().clearActive()
     }
 }
@@ -116,8 +116,8 @@ class EnableQuickSwitchMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = !isQuickSwitchEnabled
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___enable_quick_switch)
-    override suspend fun onClicked(host: MenuBottomSheetFragment) {
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "switch_menu"))
-        host.findNavController().navigate(R.id.action_show_purchase_flow)
+        host?.findNavController()?.navigate(R.id.action_show_purchase_flow)
     }
 }

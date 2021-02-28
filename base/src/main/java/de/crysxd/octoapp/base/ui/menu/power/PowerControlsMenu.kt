@@ -134,7 +134,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val icon = R.drawable.ic_round_power_off_24
 
         override suspend fun getTitle(context: Context) = if (showName) name else "Turn off"
-        override suspend fun onClicked(host: MenuBottomSheetFragment) {
+        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
             val device = Injector.get().getPowerDevicesUseCase().execute(
                 GetPowerDevicesUseCase.Params(
                     queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
@@ -142,7 +142,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
             ).first().first
 
             Injector.get().turnOffPsuUseCase().execute(device)
-            host.handleAction(Action.TurnOff, deviceType, device)
+            host?.handleAction(Action.TurnOff, deviceType, device)
         }
     }
 
@@ -167,7 +167,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val icon = R.drawable.ic_round_power_24
 
         override suspend fun getTitle(context: Context) = if (showName) "Turn $name on" else "Turn on"
-        override suspend fun onClicked(host: MenuBottomSheetFragment) {
+        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
             val device = Injector.get().getPowerDevicesUseCase().execute(
                 GetPowerDevicesUseCase.Params(
                     queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
@@ -175,7 +175,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
             ).first().first
 
             Injector.get().turnOnPsuUseCase().execute(device)
-            host.handleAction(Action.TurnOn, deviceType, device)
+            host?.handleAction(Action.TurnOn, deviceType, device)
         }
     }
 
@@ -200,7 +200,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val icon = R.drawable.ic_round_power_cycle_24px
 
         override suspend fun getTitle(context: Context) = if (showName) "Cycle $name" else "Cycle"
-        override suspend fun onClicked(host: MenuBottomSheetFragment) {
+        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
             val device = Injector.get().getPowerDevicesUseCase().execute(
                 GetPowerDevicesUseCase.Params(
                     queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
@@ -208,7 +208,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
             ).first().first
 
             Injector.get().cyclePsuUseCase().execute(device)
-            host.handleAction(Action.Cycle, deviceType, device)
+            host?.handleAction(Action.Cycle, deviceType, device)
         }
     }
 

@@ -13,9 +13,11 @@ abstract class ConfirmedMenuItem : MenuItem {
     abstract suspend fun onConfirmed(host: MenuBottomSheetFragment)
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    override suspend fun onClicked(host: MenuBottomSheetFragment) = withContext(Dispatchers.Main) {
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) = withContext(Dispatchers.Main) {
         var confirmed = false
         val latch = CountDownLatch(1)
+
+        host ?: return@withContext
 
         // Show confirmation dialog
         MaterialAlertDialogBuilder(host.requireContext())

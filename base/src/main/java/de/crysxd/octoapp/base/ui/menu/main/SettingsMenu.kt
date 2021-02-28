@@ -61,9 +61,11 @@ class SendFeedbackMenuItem : MenuItem {
     override val icon = R.drawable.ic_round_rate_review_24
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_send_feedback)
-    override suspend fun onClicked(host: MenuBottomSheetFragment) {
-        SendFeedbackDialog().show(host.parentFragmentManager, "feedback")
-        host.dismissAllowingStateLoss()
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        host?.let {
+            SendFeedbackDialog().show(it.parentFragmentManager, "feedback")
+            it.dismissAllowingStateLoss()
+        }
     }
 }
 
@@ -76,9 +78,9 @@ class HelpMenuItem : MenuItem {
     override val icon = R.drawable.ic_round_help_outline_24
 
     override suspend fun getTitle(context: Context) = "FAQ & other help"
-    override suspend fun onClicked(host: MenuBottomSheetFragment) {
-        host.findNavController().navigate(R.id.action_help)
-        host.dismissAllowingStateLoss()
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        host?.findNavController()?.navigate(R.id.action_help)
+        host?.dismissAllowingStateLoss()
     }
 }
 
@@ -92,9 +94,11 @@ class ChangeLanguageMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = Injector.get().getAppLanguageUseCase().execute(Unit).canSwitchLocale
     override suspend fun getTitle(context: Context) = Injector.get().getAppLanguageUseCase().execute(Unit).switchLanguageText ?: ""
-    override suspend fun onClicked(host: MenuBottomSheetFragment) {
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
         val newLocale = Injector.get().getAppLanguageUseCase().execute(Unit).switchLanguageLocale
-        Injector.get().setAppLanguageUseCase().execute(SetAppLanguageUseCase.Param(newLocale, host.requireActivity()))
+        host?.activity?.let {
+            Injector.get().setAppLanguageUseCase().execute(SetAppLanguageUseCase.Param(newLocale, it))
+        }
     }
 }
 
@@ -166,17 +170,14 @@ class AutoConnectPrinterMenuItem : ToggleMenuItem() {
     }
 }
 
-class ChangeOctoPrintInstanceMenuItem : MenuItem {
+class ChangeOctoPrintInstanceMenuItem : SubMenuItem() {
     override val itemId = MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE
     override var groupId = ""
     override val order = 150
     override val style = MenuItemStyle.Settings
     override val enforceSingleLine = false
     override val icon = R.drawable.ic_round_swap_horiz_24
-    override val showAsSubMenu = true
+    override val subMenu: Menu get() = SwitchOctoPrintMenu()
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_change_octoprint_instance)
-    override suspend fun onClicked(host: MenuBottomSheetFragment) {
-        host.pushMenu(SwitchOctoPrintMenu())
-    }
 }
