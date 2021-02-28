@@ -33,7 +33,7 @@
         android:layout_marginTop="@dimen/margin_3"
         android:layout_marginEnd="@dimen/margin_3"
         android:gravity="center"
-        android:text="@string/searching_for_octoprint"
+        android:text="@string/connect_printer___searching_for_octoprint_title"
         android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
         android:textColor="?android:attr/textColorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
@@ -62,11 +62,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_2"
-        android:drawableStart="@drawable/ic_wifi_unavailable"
         android:drawablePadding="@dimen/margin_1"
         android:gravity="center"
         android:text="@string/no_wifi_connection"
         android:visibility="gone"
+        app:drawableStartCompat="@drawable/ic_wifi_unavailable"
+        app:layout_constraintBottom_toTopOf="@+id/bottomActionBarrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/octoprintConnectedInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_2"
+        android:drawablePadding="@dimen/margin_1"
+        android:gravity="center"
+        android:text="@string/connect_printer___octoprint_connected"
+        android:visibility="gone"
+        app:drawableStartCompat="@drawable/ic_octoprint_connected"
         app:layout_constraintBottom_toTopOf="@+id/bottomActionBarrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -88,7 +103,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/turn_off_psu" />
+            android:text="@string/connect_printer___action_turn_psu_off" />
 
         <Button
             android:id="@+id/buttonMore1"
@@ -114,7 +129,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/turn_psu_on" />
+            android:text="@string/connect_printer___action_turn_psu_on" />
 
         <Button
             android:id="@+id/buttonMore2"

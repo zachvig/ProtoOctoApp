@@ -187,7 +187,7 @@ class ConnectPrinterViewModel(
                 if (connectionResponse.current.state == MAYBE_ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT) {
                     // TODO Ask user which port to select
                     val app = Injector.get().app()
-                    Toast.makeText(app, app.getString(R.string.auto_selection_failed), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(app, app.getString(R.string.connect_printer___auto_selection_failed), Toast.LENGTH_SHORT).show()
                     OctoAnalytics.logEvent(OctoAnalytics.Event.PrinterAutoConnectFailed)
                     Params(connectionResponse.options.ports.first())
                 } else {
