@@ -14,7 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import de.crysxd.octoapp.base.databinding.HelpOverviewFragmentBinding
+import de.crysxd.octoapp.base.databinding.HelpFragmentBinding
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ext.suspendedAwait
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
@@ -30,10 +30,10 @@ import java.util.concurrent.TimeUnit
 
 class HelpFragment : Fragment() {
 
-    private lateinit var binding: HelpOverviewFragmentBinding
+    private lateinit var binding: HelpFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
-        HelpOverviewFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
+        HelpFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -105,7 +105,7 @@ class HelpFragment : Fragment() {
     private fun createFaqItems() = Firebase.remoteConfig.getString("faq").let {
         Gson().fromJson<List<Faq>>(it, object : TypeToken<ArrayList<Faq>>() {}.type)
     }.filter {
-        it.title.isNullOrBlank() || it.content.isNullOrBlank()
+        !it.title.isNullOrBlank() && !it.content.isNullOrBlank()
     }.map {
         HelpMenuItem(style = MenuItemStyle.Yellow, title = it.title ?: "") {
             showFaq(it)
@@ -122,7 +122,7 @@ class HelpFragment : Fragment() {
     }
 
     private fun showFaq(faq: Faq) {
-
+        findNavController().navigate(HelpFragmentDirections.actionShowFaq(faq))
     }
 
     override fun onStart() {

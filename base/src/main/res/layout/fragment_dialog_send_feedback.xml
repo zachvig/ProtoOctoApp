@@ -70,6 +70,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/checkboxLogs" />
 
+
+        <TextView
+            android:id="@+id/contactTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_2"
+            android:layout_marginTop="@dimen/margin_1"
+            android:gravity="center"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Label"
+            app:layout_constraintTop_toBottomOf="@id/checkboxScreenshot" />
+
         <Button
             android:id="@+id/buttonOpenEmail"
             android:layout_width="0dp"
@@ -78,7 +89,7 @@
             android:text="@string/open_email"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/checkboxScreenshot" />
+            app:layout_constraintTop_toBottomOf="@+id/contactTime" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/messageInput"

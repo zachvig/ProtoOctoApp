@@ -370,4 +370,5 @@
     <string name="main_menu___item_auto_connect_printer">Auto connect printer</string>
     <string name="error_general_with_details"><![CDATA[         Something went wrong! Please try again.<br/><br/><small><font color="#%1$06X">%2$s</font></small>     ]]></string>
     <string name="error_certificate_not_trusted_and_weak_hostname_required">Android does not trust the certificate provided by this server. This is usually the case for self signed certificates.  Further, the certificate does not provide a \"subject alternative name\" (SAN) field which is required from Android 9 onwards. OctoApp must use a weak hostname check to circumvent this issue. This will reduce the security of your connection.  Do you want to trust this server and use a weaker hostname verification?</string>
+    <string name="help___contact_detail_information">I speak English and German. My current local time is %1$s (%2$s).</string>
 </resources>
