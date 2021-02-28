@@ -76,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_2"
-            android:layout_marginTop="@dimen/margin_1"
+            android:layout_marginTop="@dimen/margin_3"
             android:gravity="center"
             android:textAppearance="@style/OctoTheme.TextAppearance.Label"
             app:layout_constraintTop_toBottomOf="@id/checkboxScreenshot" />
@@ -85,7 +85,7 @@
             android:id="@+id/buttonOpenEmail"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_3"
+            android:layout_marginTop="@dimen/margin_1"
             android:text="@string/open_email"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

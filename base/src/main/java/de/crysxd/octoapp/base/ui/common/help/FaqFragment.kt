@@ -11,6 +11,9 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.content.res.use
+import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.squareup.picasso.Picasso
@@ -44,7 +47,7 @@ class FaqFragment : Fragment(), InsetAwareScreen {
             .build()
             .setMarkdown(binding.content, faq.content ?: "")
 
-        if (faq.youtubeThumbnailUrl != null && faq.youtubeUrl != null) {
+        if (!faq.youtubeThumbnailUrl.isNullOrBlank() && !faq.youtubeUrl.isNullOrBlank()) {
             Picasso.get().load(faq.youtubeThumbnailUrl).into(binding.videoThumbnail)
             binding.videoThumbnailContainer.setOnClickListener {
                 Uri.parse(faq.youtubeUrl).open(it.context)
