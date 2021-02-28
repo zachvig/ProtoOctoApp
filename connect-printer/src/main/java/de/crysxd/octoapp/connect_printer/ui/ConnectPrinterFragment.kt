@@ -86,6 +86,7 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
         binding.psuTurnOnControls.isVisible = false
         binding.psuTurnOffControls.isVisible = false
         binding.octoprintConnectedInfo.isVisible = !listOf(
+            ConnectPrinterViewModel.UiState.Initializing,
             ConnectPrinterViewModel.UiState.OctoPrintNotAvailable,
             ConnectPrinterViewModel.UiState.OctoPrintStarting
         ).contains(state)
