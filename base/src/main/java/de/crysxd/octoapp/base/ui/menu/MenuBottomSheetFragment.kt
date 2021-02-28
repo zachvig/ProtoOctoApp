@@ -32,7 +32,7 @@ import de.crysxd.octoapp.base.databinding.MenuItemBinding
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
+import de.crysxd.octoapp.base.ui.base.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.base.ui.ext.oneOffEndAction
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity

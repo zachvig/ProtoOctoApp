@@ -24,9 +24,9 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.composeErrorMessage
-import de.crysxd.octoapp.base.ui.BaseFragment
-import de.crysxd.octoapp.base.ui.InsetAwareScreen
-import de.crysxd.octoapp.base.ui.NetworkStateViewModel
+import de.crysxd.octoapp.base.ui.base.BaseFragment
+import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
+import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootingFragmentArgs
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard

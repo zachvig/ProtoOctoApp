@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui
+package de.crysxd.octoapp.base.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

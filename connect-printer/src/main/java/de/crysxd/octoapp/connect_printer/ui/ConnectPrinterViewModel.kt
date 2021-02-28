@@ -10,7 +10,7 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.livedata.OctoTransformations.map
 import de.crysxd.octoapp.base.livedata.PollingLiveData
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.menu.power.PowerControlsMenu
 import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase
 import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase.Params

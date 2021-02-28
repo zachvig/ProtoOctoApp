@@ -6,10 +6,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.di.ViewModelFactory
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
-import de.crysxd.octoapp.base.ui.ViewModelFactory
 import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidgetViewModel
 import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.print_controls.ui.PrintControlsViewModel

@@ -30,8 +30,8 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.PurchaseConfirmationDialog
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.ColorTheme
-import de.crysxd.octoapp.base.ui.InsetAwareScreen
-import de.crysxd.octoapp.base.ui.OctoActivity
+import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
+import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView

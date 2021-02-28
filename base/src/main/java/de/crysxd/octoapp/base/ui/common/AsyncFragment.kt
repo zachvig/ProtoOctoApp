@@ -8,7 +8,7 @@ import android.widget.FrameLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
-import de.crysxd.octoapp.base.ui.BaseFragment
+import de.crysxd.octoapp.base.ui.base.BaseFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext

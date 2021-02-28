@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui
+package de.crysxd.octoapp.base.ui.base
 
 import android.os.Bundle
 import android.view.View

@@ -3,8 +3,8 @@ package de.crysxd.octoapp.base.ui.widget.gcode
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.ui.BaseViewModel
-import de.crysxd.octoapp.base.ui.OctoActivity
+import de.crysxd.octoapp.base.ui.base.BaseViewModel
+import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase.Response.RecordedResponse
 import de.crysxd.octoapp.base.usecase.GetGcodeShortcutsUseCase

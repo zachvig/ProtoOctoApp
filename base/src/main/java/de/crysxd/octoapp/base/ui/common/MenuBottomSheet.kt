@@ -22,7 +22,7 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
-import de.crysxd.octoapp.base.ui.BaseBottomSheetDialogFragment
+import de.crysxd.octoapp.base.ui.base.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
 import kotlinx.android.synthetic.main.fragment_menu_bottom_sheet.*

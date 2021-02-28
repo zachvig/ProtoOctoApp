@@ -4,8 +4,8 @@ import android.content.Context
 import android.text.InputType
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
-import de.crysxd.octoapp.base.ui.BaseViewModel
-import de.crysxd.octoapp.base.ui.OctoActivity
+import de.crysxd.octoapp.base.ui.base.BaseViewModel
+import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.ExtrudeFilamentUseCase

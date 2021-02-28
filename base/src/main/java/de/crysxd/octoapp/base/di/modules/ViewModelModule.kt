@@ -13,8 +13,8 @@ import de.crysxd.octoapp.base.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
-import de.crysxd.octoapp.base.ui.BaseViewModelFactory
-import de.crysxd.octoapp.base.ui.NetworkStateViewModel
+import de.crysxd.octoapp.base.ui.base.BaseViewModelFactory
+import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
 import de.crysxd.octoapp.base.ui.common.gcodeshortcut.GcodeShortcutEditViewModel

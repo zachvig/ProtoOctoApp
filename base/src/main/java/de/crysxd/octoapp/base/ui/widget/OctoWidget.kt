@@ -8,8 +8,8 @@ import androidx.annotation.DrawableRes
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.ui.BaseFragment
-import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.ui.base.BaseFragment
+import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.extensions.LayoutContainer
 

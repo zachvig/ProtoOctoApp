@@ -9,7 +9,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
-import de.crysxd.octoapp.base.ui.BaseFragment
+import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requestFocusAndOpenSoftKeyboard
