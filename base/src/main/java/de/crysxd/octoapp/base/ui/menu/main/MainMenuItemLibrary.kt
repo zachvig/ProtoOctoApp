@@ -13,6 +13,7 @@ const val MENU_ITEM_PRINTER_MENU = "main___printer_menu"
 const val MENU_ITEM_NEWS = "main___news"
 const val MENU_ITEM_OCTOPRINT = "main___octoprint"
 const val MENU_ITEM_SEND_FEEDBACK = "settings___send_feedback"
+const val MENU_ITEM_HELP = "settings___help"
 const val MENU_ITEM_CRASH_REPORTING = "privacy___crash_reporting"
 const val MENU_ITEM_ANALYTICS = "privacy___analytics"
 const val MENU_ITEM_CHANGE_LANGUAGE = "settings___change_language"
@@ -67,6 +68,7 @@ class MenuItemLibrary {
         MENU_ITEM_TEMPERATURE_MENU to ShowTemperatureMenuItem::class,
         MENU_ITEM_AUTO_CONNECT_PRINTER to AutoConnectPrinterMenuItem::class,
         MENU_ITEM_MATERIAL_MENU to ShowMaterialPluginMenuItem::class,
+        MENU_ITEM_HELP to HelpMenuItem::class,
     )
 
     operator fun get(itemId: String): MenuItem? = when {

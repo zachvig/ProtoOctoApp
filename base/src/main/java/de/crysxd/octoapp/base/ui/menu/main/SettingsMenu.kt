@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
@@ -19,6 +20,7 @@ import timber.log.Timber
 class SettingsMenu : Menu {
     override suspend fun getMenuItem() = listOf(
         SendFeedbackMenuItem(),
+        HelpMenuItem(),
         ChangeLanguageMenuItem(),
         NightThemeMenuItem(),
         PrintNotificationMenuItem(),
@@ -61,13 +63,29 @@ class SendFeedbackMenuItem : MenuItem {
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_send_feedback)
     override suspend fun onClicked(host: MenuBottomSheetFragment) {
         SendFeedbackDialog().show(host.parentFragmentManager, "feedback")
+        host.dismissAllowingStateLoss()
+    }
+}
+
+class HelpMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_HELP
+    override var groupId = ""
+    override val order = 101
+    override val enforceSingleLine = false
+    override val style = MenuItemStyle.Settings
+    override val icon = R.drawable.ic_round_help_outline_24
+
+    override suspend fun getTitle(context: Context) = "FAQ & other help"
+    override suspend fun onClicked(host: MenuBottomSheetFragment) {
+        host.findNavController().navigate(R.id.action_help)
+        host.dismissAllowingStateLoss()
     }
 }
 
 class ChangeLanguageMenuItem : MenuItem {
     override val itemId = MENU_ITEM_CHANGE_LANGUAGE
     override var groupId = ""
-    override val order = 101
+    override val order = 102
     override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_translate_24
