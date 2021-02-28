@@ -114,6 +114,7 @@ class MenuAdapter(
         val iconEnd = R.drawable.ic_round_chevron_right_24.takeIf { item.showAsSubMenu } ?: 0
         holder.binding.text.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, iconEnd, 0)
         holder.binding.icon.setImageResource(iconStart)
+        holder.binding.icon.isVisible = iconStart != 0
 
         // Margins
         val nextItem = menuItems.getOrNull(position + 1)?.menuItem

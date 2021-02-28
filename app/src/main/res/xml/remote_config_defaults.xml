@@ -128,4 +128,8 @@
         <key>help_url_materials</key>
         <value>https://google.com</value>
     </entry>
+    <entry>
+        <key>faq</key>
+        <value>[]</value>
+    </entry>
 </defaultsMap>
