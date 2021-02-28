@@ -167,6 +167,17 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView7"
                 tools:layout_editor_absoluteX="20dp" />
 
+            <TextView
+                android:id="@+id/dataPrivacy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_2"
+                android:text="Data privacy"
+                android:textColor="@color/green"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/contactOptions" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </de.crysxd.octoapp.base.ui.common.OctoScrollView>

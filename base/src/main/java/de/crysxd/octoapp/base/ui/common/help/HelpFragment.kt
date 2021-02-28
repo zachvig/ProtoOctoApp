@@ -20,10 +20,8 @@ import de.crysxd.octoapp.base.ext.suspendedAwait
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import de.crysxd.octoapp.base.ui.menu.MenuAdapter
-import de.crysxd.octoapp.base.ui.menu.MenuItem
-import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
-import de.crysxd.octoapp.base.ui.menu.PreparedMenuItem
+import de.crysxd.octoapp.base.ui.menu.*
+import de.crysxd.octoapp.base.ui.menu.main.PrivacyMenu
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -40,7 +38,11 @@ class HelpFragment : Fragment() {
 
         lifecycleScope.launchWhenCreated {
             binding.introductionView.setOnClickListener {
-                Uri.parse("https://www.youtube.com/watch?v=lKJhWnLUrHA").open(it.context)
+                Uri.parse(Firebase.remoteConfig.getString("introduction_video_url")).open(it.context)
+            }
+
+            binding.dataPrivacy.setOnClickListener {
+                MenuBottomSheetFragment.createForMenu(PrivacyMenu()).show(childFragmentManager)
             }
 
             binding.contactOptions.adapter = MenuAdapter(
