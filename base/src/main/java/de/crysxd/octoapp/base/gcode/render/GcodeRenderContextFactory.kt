@@ -68,7 +68,7 @@ sealed class GcodeRenderContextFactory {
             return GcodeRenderContext(
                 paths = paths.sortedBy { it.priority },
                 printHeadPosition = null,
-                layerNumber = this.layer + 1,
+                layerNumber = this.layer,
                 layerCount = gcode.layers.size,
                 layerZHeight = layer.zHeight,
 

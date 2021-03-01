@@ -212,7 +212,7 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
 
         val layerHeightMm = DecimalFormat("0.0#").format(state.renderContext.layerZHeight)
         val layerProgressPercent = layerProgressSeekBar.progress / LAYER_PROGRESS_STEPS.toFloat()
-        layerNumber.text = getString(R.string.x_of_y, layerSeekBar.progress + 1, state.renderContext.layerCount)
+        layerNumber.text = getString(R.string.x_of_y, state.renderContext.layerNumber + 1, state.renderContext.layerCount)
         layerHeight.text = getString(R.string.x_mm, layerHeightMm)
         layerProgress.text = String.format("%.0f %%", layerProgressPercent * 100)
 
