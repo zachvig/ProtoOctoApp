@@ -160,6 +160,12 @@ class PrintNotificationService : Service() {
                     ProgressAppWidget.notifyWidgetOffline()
                     val minSinceLastMessage = TimeUnit.MILLISECONDS.toMinutes(SystemClock.uptimeMillis() - (lastMessageReceivedAt ?: 0))
                     when {
+                        lastMessageReceivedAt == null && reconnectionAttempts >= 2 -> {
+                            Timber.w(event.exception, "Unable to connect, stopping self")
+                            stopSelf()
+                            null
+                        }
+
                         minSinceLastMessage >= 2 && reconnectionAttempts >= 2 -> {
                             Timber.i("No connection since $minSinceLastMessage min and after $reconnectionAttempts attempts, stopping self with disconnect message")
                             Injector.get().octoPreferences().wasPrintNotificationDisconnected = true
