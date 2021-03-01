@@ -28,7 +28,7 @@ class GcodeParser {
 
         content.reader().useLines { lines ->
             lines.iterator().forEach {
-                parseLine(it, positionInFile)
+                parseLine(it.takeWhile { c -> c != ';' }, positionInFile)
                 positionInFile += it.length + 1
 
                 val progress = (positionInFile / totalSize.toFloat())
@@ -49,7 +49,8 @@ class GcodeParser {
     private fun parseLine(line: String, positionInFile: Int) = when {
         isAbsolutePositioningCommand(line) -> isAbsolutePositioningActive = true
         isRelativePositioningCommand(line) -> isAbsolutePositioningActive = false
-        isMoveCommand(line) -> interpretMove(line.takeWhile { it != ';' }, positionInFile)
+        isLinearMoveCommand(line) -> interpretMove(line, positionInFile, false)
+        isArcMoveCommand(line) -> interpretMove(line, positionInFile, true)
         else -> Unit
     }
 
@@ -67,7 +68,10 @@ class GcodeParser {
         }
     }
 
-    private fun interpretMove(line: String, positionInFile: Int) {
+    private fun interpretMove(line: String, positionInFile: Int, isArc: Boolean) {
+        if (isArc) {
+            Timber.i("ARC")
+        }
         // Get positions (don't use regex, it's slower)
         val x = extractValue("X", line)
         val y = extractValue("Y", line)
@@ -97,10 +101,10 @@ class GcodeParser {
         }
 
         // Get type
-        val type = if (e == 0f) {
-            Move.Type.Travel
-        } else {
-            Move.Type.Extrude
+        val type = when {
+            isArc -> Move.Type.Unsupported
+            e == 0f -> Move.Type.Travel
+            else -> Move.Type.Extrude
         }
 
         // Check if a new layer was started
@@ -128,11 +132,14 @@ class GcodeParser {
         )
     }
 
-    private fun isMoveCommand(line: String) = line.startsWith("G1", true) || line.startsWith("G0", true)
-
-    private fun isAbsolutePositioningCommand(line: String) = line.startsWith("G90", true)
-
-    private fun isRelativePositioningCommand(line: String) = line.startsWith("G91", true)
+    private fun isLinearMoveCommand(line: String) = isCommand(line = line, command = "G0") || isCommand(line = line, command = "G1")
+    private fun isArcMoveCommand(line: String) = isCommand(line = line, command = "G2") || isCommand(line = line, command = "G3")
+    private fun isAbsolutePositioningCommand(line: String) = isCommand(line = line, command = "G90")
+    private fun isRelativePositioningCommand(line: String) = isCommand(line = line, command = "G91")
+    private fun isCommand(line: String, command: String) =
+        line.startsWith("$command ", ignoreCase = true) ||
+                line.startsWith("$command;", ignoreCase = true) ||
+                line.equals(command, ignoreCase = true)
 
     private fun startNewLayer(positionInFile: Int) {
         // Only add layer if we have any extrusion moves
@@ -156,8 +163,9 @@ class GcodeParser {
     private fun initNewLayer() {
         moves.clear()
         moveCountInLayer = 0
-        moves[Move.Type.Travel] = Pair(mutableListOf(), mutableListOf())
-        moves[Move.Type.Extrude] = Pair(mutableListOf(), mutableListOf())
+        Move.Type.values().forEach {
+            moves[it] = Pair(mutableListOf(), mutableListOf())
+        }
     }
 
     private fun addMove(type: Move.Type, positionInFile: Int, fromX: Float, fromY: Float, toX: Float, toY: Float) {

@@ -10,8 +10,9 @@ sealed class GcodeRenderContextFactory {
 
     protected val GcodePath.priority
         get() = when (type) {
-            Move.Type.Travel -> 1
-            Move.Type.Extrude -> 0
+            Move.Type.Travel -> 2
+            Move.Type.Extrude -> 1
+            Move.Type.Unsupported -> 0
         }
 
     abstract fun extractMoves(gcode: Gcode): GcodeRenderContext
@@ -68,7 +69,7 @@ sealed class GcodeRenderContextFactory {
             return GcodeRenderContext(
                 paths = paths.sortedBy { it.priority },
                 printHeadPosition = null,
-                layerNumber = this.layer + 1,
+                layerNumber = this.layer,
                 layerCount = gcode.layers.size,
                 layerZHeight = layer.zHeight,
 

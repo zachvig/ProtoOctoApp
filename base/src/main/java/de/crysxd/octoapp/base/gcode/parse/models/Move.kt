@@ -9,6 +9,6 @@ data class Move(
     val type: Type
 ) : Serializable {
     enum class Type {
-        Travel, Extrude
+        Travel, Extrude, Unsupported
     }
 }
