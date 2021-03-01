@@ -8,6 +8,7 @@ import android.media.AudioAttributes
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
+import android.os.SystemClock
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -69,6 +70,7 @@ class PrintNotificationService : Service() {
     private var pausedBecauseOfFilamentChange = false
     private var notPrintingCounter = 0
     private var lastMessageReceivedAt: Long? = null
+    private var reconnectionAttempts = 0
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -76,6 +78,23 @@ class PrintNotificationService : Service() {
         super.onCreate()
         if (isNotificationEnabled) {
             Timber.i("Creating notification service")
+
+            // Register notification channel
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                createNotificationChannels()
+            }
+
+            // Check preconditions
+            GlobalScope.launch(coroutineJob) {
+                if (!checkPreconditions()) {
+                    Timber.i("Preconditions not met, stopping self")
+                    stopSelf()
+                } else {
+                    Timber.i("Preconditions, allowing connection")
+                }
+            }
+
+            // Hook into event flow to receive updates
             GlobalScope.launch(coroutineJob) {
                 eventFlow.onEach {
                     onEventReceived(it)
@@ -87,6 +106,7 @@ class PrintNotificationService : Service() {
                 }.collect()
             }
 
+            // Observe changes in preferences
             GlobalScope.launch(coroutineJob) {
                 Injector.get().octoPreferences().updatedFlow.collectLatest {
                     if (!isNotificationEnabled) {
@@ -96,15 +116,21 @@ class PrintNotificationService : Service() {
                 }
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                createNotificationChannels()
-            }
-
+            // Start notification
             startForeground(NOTIFICATION_ID, createInitialNotification())
         } else {
             Timber.i("Notification service disabled, skipping creation")
             stopSelf()
         }
+    }
+
+    private suspend fun checkPreconditions(): Boolean {
+        if (!isNotificationEnabled) {
+            return false
+        }
+
+        val flags = Injector.get().octoPrintProvider().octoPrint().createPrinterApi().getPrinterState().state?.flags
+        return flags?.isPrinting() == true
     }
 
     override fun onDestroy() {
@@ -132,15 +158,16 @@ class PrintNotificationService : Service() {
             when (event) {
                 is Event.Disconnected -> {
                     ProgressAppWidget.notifyWidgetOffline()
-                    val minSinceLastMessage = TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - (lastMessageReceivedAt ?: 0))
+                    val minSinceLastMessage = TimeUnit.MILLISECONDS.toMinutes(SystemClock.uptimeMillis() - (lastMessageReceivedAt ?: 0))
                     when {
-                        lastMessageReceivedAt == null -> {
+                        lastMessageReceivedAt == null && reconnectionAttempts >= 2 -> {
                             Timber.w(event.exception, "Unable to connect, stopping self")
                             stopSelf()
                             null
                         }
-                        minSinceLastMessage >= 2 -> {
-                            Timber.i("No connection since $minSinceLastMessage, stopping self with disconnect message")
+
+                        minSinceLastMessage >= 2 && reconnectionAttempts >= 2 -> {
+                            Timber.i("No connection since $minSinceLastMessage min and after $reconnectionAttempts attempts, stopping self with disconnect message")
                             Injector.get().octoPreferences().wasPrintNotificationDisconnected = true
                             stopSelf()
                             createDisconnectedNotification()
@@ -148,6 +175,7 @@ class PrintNotificationService : Service() {
 
                         else -> {
                             Timber.i("No connection since $minSinceLastMessage min, attempting to reconnect")
+                            reconnectionAttempts++
                             creareReconnectingNotification()
                         }
                     }
@@ -155,13 +183,13 @@ class PrintNotificationService : Service() {
 
                 is Event.Connected -> {
                     Timber.i("Connected")
+                    reconnectionAttempts = 0
                     createInitialNotification()
                 }
 
                 is Event.MessageReceived -> {
                     (event.message as? Message.CurrentMessage)?.let { message ->
-                        Timber.v("Message received ${message.copy(logs = emptyList(), temps = emptyList())}")
-                        lastMessageReceivedAt = System.currentTimeMillis()
+                        lastMessageReceivedAt = SystemClock.uptimeMillis()
                         ProgressAppWidget.notifyWidgetDataChanged(message)
                         updateFilamentChangeNotification(message)
                         updatePrintNotification(message)
@@ -169,7 +197,6 @@ class PrintNotificationService : Service() {
                 }
                 else -> null
             }?.let {
-                Timber.v("Updating notification")
                 notificationManager.notify(NOTIFICATION_ID, it)
             }
         } catch (e: Exception) {
@@ -180,7 +207,7 @@ class PrintNotificationService : Service() {
 
     private fun updateFilamentChangeNotification(message: Message.CurrentMessage) {
         if (message.logs.any { it.contains("M600") }) {
-            didSeeFilamentChangeAt = System.currentTimeMillis()
+            didSeeFilamentChangeAt = SystemClock.uptimeMillis()
             notificationManager.notify(FILAMENT_CHANGE_NOTIFICATION_ID, createFilamentChangeNotification())
         }
     }
@@ -191,7 +218,7 @@ class PrintNotificationService : Service() {
 
         // Check if still printing
         val flags = message.state?.flags
-        if (flags == null || !listOf(flags.printing, flags.paused, flags.pausing, flags.cancelling).any { it }) {
+        if (flags == null || !flags.isPrinting()) {
             // OctoPrint sometimes reports not printing when we resume a print but only for a split second.
             // We need to count the updates with not printing before exiting the service
             // We immediately quit if null, print is completed or closedOrError
@@ -228,7 +255,7 @@ class PrintNotificationService : Service() {
                     flags.paused -> {
                         // If we are paused and we saw a filament change command just before,
                         // we assume we where paused because of the filament change
-                        if ((System.currentTimeMillis() - didSeeFilamentChangeAt) < 10000) {
+                        if ((SystemClock.uptimeMillis() - didSeeFilamentChangeAt) < 10000) {
                             pausedBecauseOfFilamentChange = true
                         }
 

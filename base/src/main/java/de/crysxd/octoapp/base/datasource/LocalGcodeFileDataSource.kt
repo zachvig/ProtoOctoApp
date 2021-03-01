@@ -30,16 +30,25 @@ class LocalGcodeFileDataSource(
     private val sharedPreferences: SharedPreferences
 ) : GcodeFileDataSource {
 
-    private val cacheRoot = File(context.cacheDir, "gcode")
+    private val cacheRoot = File(context.cacheDir, "gcode2")
+    private val oldCacheRoots = listOf(
+        File(context.cacheDir, "gcode")
+    )
     private val fstConfig = FSTConfiguration.createAndroidDefaultConfiguration()
 
     init {
+        try {
+            oldCacheRoots.filter { it.exists() }.forEach { it.deleteRecursively() }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+
         fstConfig.registerClass(Gcode::class.java)
         fstConfig.registerClass(Layer::class.java)
         fstConfig.registerClass(Move::class.java)
         fstConfig.registerClass(Move.Type::class.java)
     }
-
+g
     override fun canLoadFile(file: FileObject.File): Boolean = getCacheEntry(file.cacheKey)?.let {
         // Cache hit if the file exists and the file was not changed at the server since it was cached
         it.localFile.exists() && it.fileDate == file.date

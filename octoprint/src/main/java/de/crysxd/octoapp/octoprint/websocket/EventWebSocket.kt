@@ -36,7 +36,6 @@ class EventWebSocket(
 ) {
 
     private val reconnectTimeout = connectionTimeoutMs + RECONNECT_DELAY_MS
-    private val stalledTimeout = reconnectTimeout * 10
 
     private var reconnectJob: Job? = null
     private var reportDisconnectedJob: Job? = null
@@ -134,12 +133,8 @@ class EventWebSocket(
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             super.onMessage(webSocket, text)
-            logger.log(Level.FINEST, "Message received: ${text.substring(0, 128.coerceAtMost(text.length))} ")
-
-            // Report disconnected after a delay. The delay is reset the next time we receive a message,
-            // so the disconnect is propagated if we do not receive a message after a set delay
-            // This is only the case if we still receive pings but no messages (otherwise connecting fails)
-            reportDisconnectedAfterDelay(WebSocketStalledException(), stalledTimeout)
+            logger.log(Level.FINEST, "Message received: ${text.substring(0, 256.coerceAtMost(text.length))} ")
+            reportDisconnectedJob?.cancel()
 
             // OkHttp sometimes leaks connections.
             // If we are no longer supposed to be cIncreonnected, we crash the socket

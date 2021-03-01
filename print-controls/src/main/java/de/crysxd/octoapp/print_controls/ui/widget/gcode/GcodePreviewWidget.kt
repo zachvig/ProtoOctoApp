@@ -226,7 +226,7 @@ class GcodePreviewWidget(parent: Fragment) : OctoWidget(parent) {
             }
         }
 
-        view.layer.text = requireContext().getString(de.crysxd.octoapp.base.R.string.x_of_y, renderContext.layerNumber, renderContext.layerCount)
+        view.layer.text = requireContext().getString(de.crysxd.octoapp.base.R.string.x_of_y, renderContext.layerNumber + 1, renderContext.layerCount)
         view.layerPorgess.text = String.format("%.0f %%", renderContext.layerProgress * 100)
 
         view.renderView.isAcceptTouchInput = false

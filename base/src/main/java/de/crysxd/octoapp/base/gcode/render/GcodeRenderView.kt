@@ -262,8 +262,8 @@ class GcodeRenderView @JvmOverloads constructor(
         // Calc line width and do not use less than 2px after the totalFactor is applied
         // Then divide by total as Canvas will apply scale later on the GPU
         val strokeWidth = (params.extrusionWidthMm * totalFactor * 0.8f).coerceAtLeast(2f) / totalFactor
+        Move.Type.values().forEach { style.paintPalette(it).strokeWidth = strokeWidth * 0.5f }
         style.paintPalette(Move.Type.Extrude).strokeWidth = strokeWidth
-        style.paintPalette(Move.Type.Travel).strokeWidth = strokeWidth * 0.5f
 
         // Scale and transform so the desired are is visible
         canvas.save()

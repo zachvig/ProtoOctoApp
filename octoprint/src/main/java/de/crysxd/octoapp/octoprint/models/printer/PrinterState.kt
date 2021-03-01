@@ -20,11 +20,15 @@ data class PrinterState(
         val error: Boolean,
         val ready: Boolean,
         val closedOrError: Boolean
-    )
+    ) {
+        fun isPrinting() = listOf(printing, paused, pausing, cancelling).any { it }
+        fun isOperational() = listOf(operational).any { it }
+        fun isError() = listOf(error, closedOrError).any { it }
+    }
 
     data class PrinterTemperature(
         val bed: ComponentTemperature,
-        val tool0 : ComponentTemperature
+        val tool0: ComponentTemperature
     )
 
     data class ComponentTemperature(

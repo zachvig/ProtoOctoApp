@@ -6,10 +6,10 @@ import retrofit2.http.POST
 
 interface TasmotaApi {
 
-    @POST("plugin/tplinksmartplug")
+    @POST("plugin/tasmota")
     suspend fun sendCommand(@Body command: TasmotaCommand): Response<Unit>
 
-    @POST("plugin/tplinksmartplug")
+    @POST("plugin/tasmota")
     suspend fun sendCommandWithResponse(@Body command: TasmotaCommand): TasmotaResponse
 
 }

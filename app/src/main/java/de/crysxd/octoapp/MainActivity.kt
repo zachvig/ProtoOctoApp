@@ -82,7 +82,7 @@ class MainActivity : OctoActivity() {
                 Timber.i("Instance information received")
                 updateAllWidgets()
                 if (it != null && it.apiKey.isNotBlank()) {
-                    updateCapabilities("instance_change")
+                    updateCapabilities("instance_change", updateM115 = true, escalateError = false)
                     navigate(R.id.action_connect_printer)
                     events.observe(this, observer)
                 } else {
@@ -201,7 +201,7 @@ class MainActivity : OctoActivity() {
         Timber.i("UI started")
         // OctoPrint might not be available, this is more like a fire and forget
         // Don't bother user with error messages
-        updateCapabilities("ui_start", escalateError = false)
+        updateCapabilities("ui_start", updateM115 = false, escalateError = false)
     }
 
     override fun onStop() {
@@ -273,13 +273,13 @@ class MainActivity : OctoActivity() {
         navigate(
             when {
                 // We encountered an error, try reconnecting
-                flags == null || flags.closedOrError || flags.error -> {
+                flags == null || flags.isError() -> {
                     PrintNotificationService.stop(this)
                     R.id.action_connect_printer
                 }
 
                 // We are printing
-                flags.printing || flags.paused || flags.pausing || flags.cancelling -> {
+                flags.isPrinting() -> {
                     try {
                         PrintNotificationService.start(this)
                     } catch (e: IllegalStateException) {
@@ -289,12 +289,12 @@ class MainActivity : OctoActivity() {
                 }
 
                 // We are connected
-                flags.operational -> {
+                flags.isOperational() -> {
                     PrintNotificationService.stop(this)
                     R.id.action_printer_connected
                 }
 
-                !flags.operational && !flags.paused && !flags.cancelling && !flags.printing && !flags.pausing -> {
+                !flags.isOperational() && !flags.isPrinting() -> {
                     PrintNotificationService.stop(this)
                     R.id.action_connect_printer
                 }
@@ -308,7 +308,7 @@ class MainActivity : OctoActivity() {
     private fun onEventMessageReceived(e: SocketMessage.EventMessage) = when (e) {
         is SocketMessage.EventMessage.Connected, is SocketMessage.EventMessage.SettingsUpdated -> {
             // New printer connected or settings updated, let's update capabilities
-            updateCapabilities("settings_updated")
+            updateCapabilities("settings_updated", updateM115 = false)
         }
         else -> Unit
     }
@@ -337,12 +337,12 @@ class MainActivity : OctoActivity() {
         findCurrentScreen()?.let { applyInsetsToScreen(it, height.takeIf { visible }) }
     }
 
-    private fun updateCapabilities(trigger: String, escalateError: Boolean = true) {
+    private fun updateCapabilities(trigger: String, updateM115: Boolean = true, escalateError: Boolean = true) {
         Timber.i("Updating capabities (trigger=$trigger)")
         lifecycleScope.launchWhenCreated {
             try {
                 lastSuccessfulCapabilitiesUpdate = System.currentTimeMillis()
-                Injector.get().updateInstanceCapabilitiesUseCase().execute(UpdateInstanceCapabilitiesUseCase.Params(updateM115 = escalateError))
+                Injector.get().updateInstanceCapabilitiesUseCase().execute(UpdateInstanceCapabilitiesUseCase.Params(updateM115 = updateM115))
                 updateAllWidgets()
             } catch (e: Exception) {
                 lastSuccessfulCapabilitiesUpdate = 0
