@@ -19,6 +19,7 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectActivityViewModel
 import de.crysxd.octoapp.base.ext.asStyleFileSize
+import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -215,6 +216,7 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
         layerNumber.text = getString(R.string.x_of_y, state.renderContext.layerNumber + 1, state.renderContext.layerCount)
         layerHeight.text = getString(R.string.x_mm, layerHeightMm)
         layerProgress.text = String.format("%.0f %%", layerProgressPercent * 100)
+        arcs.isVisible = state.renderContext.paths.any { it.type == Move.Type.Unsupported && it.points.isNotEmpty() }
 
         // Only switch to async render if the view recommends it.
         // This way we have smooth scrolling as long as possible but never block the UI thread

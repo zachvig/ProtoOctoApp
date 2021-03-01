@@ -30,10 +30,19 @@ class LocalGcodeFileDataSource(
     private val sharedPreferences: SharedPreferences
 ) : GcodeFileDataSource {
 
-    private val cacheRoot = File(context.cacheDir, "gcode")
+    private val cacheRoot = File(context.cacheDir, "gcode2")
+    private val oldCacheRoots = listOf(
+        File(context.cacheDir, "gcode")
+    )
     private val fstConfig = FSTConfiguration.createAndroidDefaultConfiguration()
 
     init {
+        try {
+            oldCacheRoots.filter { it.exists() }.forEach { it.deleteRecursively() }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+
         fstConfig.registerClass(Gcode::class.java)
         fstConfig.registerClass(Layer::class.java)
         fstConfig.registerClass(Move::class.java)
