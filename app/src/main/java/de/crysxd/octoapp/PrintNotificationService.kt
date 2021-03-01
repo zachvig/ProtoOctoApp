@@ -8,6 +8,7 @@ import android.media.AudioAttributes
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
+import android.os.SystemClock
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -69,6 +70,7 @@ class PrintNotificationService : Service() {
     private var pausedBecauseOfFilamentChange = false
     private var notPrintingCounter = 0
     private var lastMessageReceivedAt: Long? = null
+    private var reconnectionAttempts = 0
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -132,15 +134,15 @@ class PrintNotificationService : Service() {
             when (event) {
                 is Event.Disconnected -> {
                     ProgressAppWidget.notifyWidgetOffline()
-                    val minSinceLastMessage = TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - (lastMessageReceivedAt ?: 0))
+                    val minSinceLastMessage = TimeUnit.MILLISECONDS.toMinutes(SystemClock.uptimeMillis() - (lastMessageReceivedAt ?: 0))
                     when {
                         lastMessageReceivedAt == null -> {
                             Timber.w(event.exception, "Unable to connect, stopping self")
                             stopSelf()
                             null
                         }
-                        minSinceLastMessage >= 2 -> {
-                            Timber.i("No connection since $minSinceLastMessage, stopping self with disconnect message")
+                        minSinceLastMessage >= 2 && reconnectionAttempts >= 2 -> {
+                            Timber.i("No connection since $minSinceLastMessage and after $reconnectionAttempts, stopping self with disconnect message")
                             Injector.get().octoPreferences().wasPrintNotificationDisconnected = true
                             stopSelf()
                             createDisconnectedNotification()
@@ -148,6 +150,7 @@ class PrintNotificationService : Service() {
 
                         else -> {
                             Timber.i("No connection since $minSinceLastMessage min, attempting to reconnect")
+                            reconnectionAttempts++
                             creareReconnectingNotification()
                         }
                     }
@@ -155,13 +158,14 @@ class PrintNotificationService : Service() {
 
                 is Event.Connected -> {
                     Timber.i("Connected")
+                    reconnectionAttempts = 0
                     createInitialNotification()
                 }
 
                 is Event.MessageReceived -> {
                     (event.message as? Message.CurrentMessage)?.let { message ->
                         Timber.v("Message received ${message.copy(logs = emptyList(), temps = emptyList())}")
-                        lastMessageReceivedAt = System.currentTimeMillis()
+                        lastMessageReceivedAt = SystemClock.uptimeMillis()
                         ProgressAppWidget.notifyWidgetDataChanged(message)
                         updateFilamentChangeNotification(message)
                         updatePrintNotification(message)
@@ -180,7 +184,7 @@ class PrintNotificationService : Service() {
 
     private fun updateFilamentChangeNotification(message: Message.CurrentMessage) {
         if (message.logs.any { it.contains("M600") }) {
-            didSeeFilamentChangeAt = System.currentTimeMillis()
+            didSeeFilamentChangeAt = SystemClock.uptimeMillis()
             notificationManager.notify(FILAMENT_CHANGE_NOTIFICATION_ID, createFilamentChangeNotification())
         }
     }
@@ -228,7 +232,7 @@ class PrintNotificationService : Service() {
                     flags.paused -> {
                         // If we are paused and we saw a filament change command just before,
                         // we assume we where paused because of the filament change
-                        if ((System.currentTimeMillis() - didSeeFilamentChangeAt) < 10000) {
+                        if ((SystemClock.uptimeMillis() - didSeeFilamentChangeAt) < 10000) {
                             pausedBecauseOfFilamentChange = true
                         }
 
