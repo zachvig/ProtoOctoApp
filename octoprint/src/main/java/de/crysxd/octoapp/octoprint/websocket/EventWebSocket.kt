@@ -136,10 +136,6 @@ class EventWebSocket(
             super.onMessage(webSocket, text)
             logger.log(Level.FINEST, "Message received: ${text.substring(0, 128.coerceAtMost(text.length))} ")
 
-            // Report disconnected after a delay. The delay is reset the next time we receive a message,
-            // so the disconnect is propagated if we do not receive a message after a set delay
-            // This is only the case if we still receive pings but no messages (otherwise connecting fails)
-            reportDisconnectedAfterDelay(WebSocketStalledException(), stalledTimeout)
 
             // OkHttp sometimes leaks connections.
             // If we are no longer supposed to be cIncreonnected, we crash the socket
