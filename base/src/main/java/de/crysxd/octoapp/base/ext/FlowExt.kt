@@ -12,3 +12,12 @@ inline fun <reified T : Message> Flow<Event>.filterEventsForMessageType(): Flow<
 }.map {
     (it as Event.MessageReceived).message as T
 }
+
+fun <T> Flow<T>.smartSample(sampleRateMs: Long): Flow<T> {
+    var last = 0L
+    return this.filter {
+        val pass = (System.currentTimeMillis() - last) > sampleRateMs
+        last = System.currentTimeMillis()
+        pass
+    }
+}
