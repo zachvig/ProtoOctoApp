@@ -278,7 +278,7 @@
     <string name="print_notification___paused_title">Gepauzeerd</string>
     <string name="print_notification___cancelling_title">Annuleren…</string>
     <string name="print_notification___printing_title">Afdrukken…</string>
-    <string name="print_notification___printing_message">%1$d%% voltooid, %2$s over</string>
+    <string name="print_notification___printing_message">%1$d%% voltooid, %2$s</string>
     <string name="print_notification___reconnecting_title">Opnieuw verbinden…</string>
     <string name="print_notification___print_done_title">Afdrukken voltooid</string>
     <string name="print_notification___close">Sluit</string>

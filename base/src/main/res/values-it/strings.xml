@@ -278,7 +278,7 @@
     <string name="print_notification___paused_title">In pausa</string>
     <string name="print_notification___cancelling_title">Cancellare…</string>
     <string name="print_notification___printing_title">In stampa…</string>
-    <string name="print_notification___printing_message">%1$d%% completato, %2$s rimanenti</string>
+    <string name="print_notification___printing_message">%1$d%% completato, %2$s</string>
     <string name="print_notification___reconnecting_title">Riconnessione…</string>
     <string name="print_notification___print_done_title">Stampa completata</string>
     <string name="print_notification___close">Chiudi</string>
@@ -365,7 +365,7 @@
     <string name="main_menu___item_auto_connect_printer">Collegamento automatico della stampante</string>
     <string name="error_certificate_not_trusted_and_weak_hostname_required">Android non si fida del certificato fornito da questo server. Questo è di solito il caso dei certificati autofirmati.  Inoltre, il certificato non fornisce un campo \"subject alternative name\" (SAN) che è richiesto da Android 9 in poi. OctoApp deve utilizzare un controllo debole del nome dell\'host per aggirare questo problema. Questo ridurrà la sicurezza della tua connessione.  Vuoi fidarti di questo server e usare una verifica hostname più debole?</string>
     <string name="announcement___learn_more">Video introduttivo</string>
-    <string name="x_left">Mancano %s</string>
+    <string name="x_left">mancano %s</string>
     <string name="print_notification___disconnected_title">Perso il collegamento</string>
     <string name="print_notification___disconnected_message">Ultimo %s, apri l\'app per ricollegarti</string>
 </resources>
