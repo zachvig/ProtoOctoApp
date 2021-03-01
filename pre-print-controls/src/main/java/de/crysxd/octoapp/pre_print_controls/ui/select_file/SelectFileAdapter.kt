@@ -15,6 +15,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import de.crysxd.octoapp.base.ext.asStyleFileSize
+import de.crysxd.octoapp.base.ext.format
 import de.crysxd.octoapp.base.ui.common.AutoBindViewHolder
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
@@ -23,7 +24,6 @@ import kotlinx.android.synthetic.main.list_item_file.*
 import kotlinx.android.synthetic.main.list_item_no_files.view.*
 import kotlinx.android.synthetic.main.list_item_thumbnail_hint.view.*
 import kotlinx.android.synthetic.main.list_item_title.view.*
-import java.text.DateFormat
 import java.util.*
 
 class SelectFileAdapter(
@@ -43,8 +43,6 @@ class SelectFileAdapter(
     private var folderIcon: Drawable? = null
     private var printableFileIcon: Drawable? = null
     private var otherFileIcon: Drawable? = null
-
-    private val dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
 
     init {
         setHasStableIds(true)
@@ -150,7 +148,7 @@ class SelectFileAdapter(
                 is FileObject.File -> {
                     holder.textViewDetail.text = holder.itemView.context.getString(
                         R.string.x_y,
-                        dateTimeFormat.format(Date(file.date * 1000)),
+                        Date(file.date * 1000).format(),
                         file.size.asStyleFileSize()
                     )
                     holder.imageViewArrow.visibility = View.GONE

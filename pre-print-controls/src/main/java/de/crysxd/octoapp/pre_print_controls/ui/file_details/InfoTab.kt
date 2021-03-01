@@ -18,13 +18,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.squareup.picasso.Callback
 import de.crysxd.octoapp.base.ext.asStyleFileSize
+import de.crysxd.octoapp.base.ext.format
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.di.Injector
 import de.crysxd.octoapp.pre_print_controls.di.injectParentViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.CropAlphaTransformation
 import kotlinx.android.synthetic.main.fragment_info_tab.*
-import java.text.DateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -112,20 +112,14 @@ class InfoTab : Fragment(R.layout.fragment_info_tab) {
             )
             addDetail(
                 label = R.string.uploaded,
-                value = formatDate(file.date)
+                value = Date(file.date).format()
             )
 
             addTitle(R.string.history)
             addDetail(
                 label = R.string.last_print,
                 value = file.prints?.last?.let {
-                    getString(
-                        if (it.success) {
-                            R.string.last_print_at_x_success
-                        } else {
-                            R.string.last_print_at_x_failure
-                        }, formatDate(it.date)
-                    )
+                    getString(if (it.success) R.string.last_print_at_x_success else R.string.last_print_at_x_failure, Date(it.date).format())
                 } ?: getString(R.string.never)
             )
             addDetail(
@@ -153,9 +147,6 @@ class InfoTab : Fragment(R.layout.fragment_info_tab) {
             }
         }
     }
-
-    private fun formatDate(time: Long) =
-        DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Date(time * 1000))
 
     private fun addTitle(@StringRes title: Int) {
         generatedContent.addView(
