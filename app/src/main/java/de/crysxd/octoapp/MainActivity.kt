@@ -143,6 +143,7 @@ class MainActivity : OctoActivity() {
                 lastInsets.bottom = insets.systemWindowInsetBottom
                 lastInsets.right = insets.systemWindowInsetRight
                 applyInsetsToCurrentScreen()
+                setDisconnectedMessageVisible(disconnectedMessage.isVisible)
                 insets.consumeSystemWindowInsets()
             }
         }
@@ -327,8 +328,6 @@ class MainActivity : OctoActivity() {
     }
 
     private fun setDisconnectedMessageVisible(visible: Boolean) {
-        if (disconnectedMessage.isVisible == visible) return
-
         // Let disconnect message fill status bar background and measure height
         disconnectedMessage.updatePadding(
             top = disconnectedMessage.paddingBottom + lastInsets.top,
