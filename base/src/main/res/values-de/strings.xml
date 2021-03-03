@@ -119,7 +119,7 @@
     <string name="connect_printer___waiting_for_printer_title">OctoPrint verbunden, warte auf Drucker</string>
     <string name="connect_printer___waiting_for_printer_detail">OctoApp wird den Drucker automatisch verbinden, sobald er verfügbar ist</string>
     <string name="connect_printer___octoprint_not_available_title">OctoPrint ist nicht verfügbar</string>
-    <string name="connect_printer___octoprint_not_available_detail">Überprüfe deine Netzwerkverbindung</string>
+    <string name="connect_printer___octoprint_not_available_detail">Überprüfen deine Netzwerkverbindung oder ob sich die Webadresse deines OctoPrint geändert hat</string>
     <string name="connect_printer___searching_for_octoprint_title">Suche OctoPrint</string>
     <string name="connect_printer___printer_is_connecting_title">Drucker wird verbunden</string>
     <string name="connect_printer___psu_on_waiting_for_printer_title">Netzteil eingeschaltet, warten bis der Drucker startet</string>
@@ -365,4 +365,6 @@
     <string name="x_left">noch %s</string>
     <string name="print_notification___disconnected_title">Verbindung verloren</string>
     <string name="print_notification___disconnected_message">Letzte %s, App öffnen, um erneut zu verbinden</string>
+    <string name="connect_printer___printer_connected_detail_1">Vorbereiten auf das Unglaubliche...</string>
+    <string name="connect_printer___printer_connected_detail_2">Dies dauert länger als üblich. Entweder ist dein Netzwerk schwach, oder das Websocket funktioniert nicht richtig. Wenn du hier nicht weiterkommst, verwenden den Hilfebereich im Hauptmenü.</string>
 </resources>

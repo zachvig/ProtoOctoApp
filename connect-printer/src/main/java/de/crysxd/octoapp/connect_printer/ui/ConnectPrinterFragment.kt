@@ -18,6 +18,7 @@ import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.connect_printer.databinding.ConnectPrinterFragmentBinding
 import de.crysxd.octoapp.connect_printer.di.injectViewModel
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import timber.log.Timber
 
@@ -26,13 +27,13 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
     private val networkViewModel: NetworkStateViewModel by injectViewModel(Injector.get().viewModelFactory())
     override val viewModel: ConnectPrinterViewModel by injectViewModel()
     private lateinit var binding: ConnectPrinterFragmentBinding
+    private var setDelayedStatusJob: Job? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         ConnectPrinterFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         // Subscribe to network state
         networkViewModel.networkState.observe(viewLifecycleOwner) {
@@ -50,6 +51,7 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
                     binding.psuTurnOnControls,
                     binding.psuUnvailableControls,
                     binding.textViewState,
+                    binding.textViewSubState,
                     binding.octoprintConnectedInfo
                 )
                 val duration = view.animate().duration
@@ -179,9 +181,10 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
                 R.string.connect_printer___searching_for_octoprint_title
             )
 
-            ConnectPrinterViewModel.UiState.PrinterConnected -> showStatus(
-                R.string.connect_printer___printer_connected_title
-            )
+            ConnectPrinterViewModel.UiState.PrinterConnected -> {
+                showStatus(R.string.connect_printer___printer_connected_title, R.string.connect_printer___printer_connected_detail_1)
+                showStatusDelayed(R.string.connect_printer___printer_connected_title, R.string.connect_printer___printer_connected_detail_2)
+            }
 
             ConnectPrinterViewModel.UiState.Unknown -> showStatus(
                 R.string.error_general,
@@ -194,7 +197,15 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
 
     }
 
+    private fun showStatusDelayed(@StringRes state: Int, @StringRes subState: Int? = null) {
+        setDelayedStatusJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            delay(5000)
+            showStatus(state, subState)
+        }
+    }
+
     private fun showStatus(@StringRes state: Int, @StringRes subState: Int? = null) {
+        setDelayedStatusJob?.cancel()
         binding.textViewState.text = getString(state)
         binding.textViewSubState.text = subState?.let(this::getString)
     }

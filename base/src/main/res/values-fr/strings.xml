@@ -120,7 +120,7 @@
     <string name="connect_printer___waiting_for_printer_title">OctoPrint connecté, en attente de l\'imprimante...</string>
     <string name="connect_printer___waiting_for_printer_detail">OctoApp se connectera automatiquement à l\'imprimante dès qu\'elle sera disponible</string>
     <string name="connect_printer___octoprint_not_available_title">OctoPrint n\'est pas disponible</string>
-    <string name="connect_printer___octoprint_not_available_detail">Veuillez vérifier votre connexion réseau</string>
+    <string name="connect_printer___octoprint_not_available_detail">Vérifiez votre connexion réseau ou si l\'adresse web de votre OctoPrint a changé</string>
     <string name="connect_printer___searching_for_octoprint_title">Recherche d\'Octoprint</string>
     <string name="connect_printer___printer_is_connecting_title">L\'imprimante se connecte…</string>
     <string name="connect_printer___psu_on_waiting_for_printer_title">L\'imprimante est alimentée, en attente que l\'imprimante se démarre…</string>
@@ -366,4 +366,6 @@
     <string name="x_left">%s restantes</string>
     <string name="print_notification___disconnected_title">Perte de la connexion</string>
     <string name="print_notification___disconnected_message">Derniers %s, ouvrir l\'application pour se reconnecter</string>
+    <string name="connect_printer___printer_connected_detail_1">Se préparer à l\'awesomeness...</string>
+    <string name="connect_printer___printer_connected_detail_2">Cela prend plus de temps que d\'habitude. Soit votre réseau est faible, soit le socketsocket ne fonctionne pas correctement. Si vous êtes bloqué ici, utilisez la section d\'aide dans le menu principal.</string>
 </resources>

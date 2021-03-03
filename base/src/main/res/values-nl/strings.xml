@@ -119,7 +119,7 @@
     <string name="connect_printer___waiting_for_printer_title">OctoPrint aangesloten, wacht op printer</string>
     <string name="connect_printer___waiting_for_printer_detail">OctoApp maakt automatisch verbinding met de printer zodra deze beschikbaar is.</string>
     <string name="connect_printer___octoprint_not_available_title">OctoPrint is niet beschikbaar</string>
-    <string name="connect_printer___octoprint_not_available_detail">Controleer je netwerkverbinding</string>
+    <string name="connect_printer___octoprint_not_available_detail">Controleer uw netwerkverbinding of het webadres van uw OctoPrint is gewijzigd</string>
     <string name="connect_printer___searching_for_octoprint_title">Zoeken naar Octoprint</string>
     <string name="connect_printer___printer_is_connecting_title">Printer is aan het aansluiten</string>
     <string name="connect_printer___psu_on_waiting_for_printer_title">PSU ingeschakeld, wachtend op het opstarten van de printer</string>
@@ -365,4 +365,6 @@
     <string name="x_left">Nog %s</string>
     <string name="print_notification___disconnected_title">Verloor de verbinding</string>
     <string name="print_notification___disconnected_message">Laatste %s, open app om opnieuw te verbinden</string>
+    <string name="connect_printer___printer_connected_detail_1">Klaar voor awesomeness...</string>
+    <string name="connect_printer___printer_connected_detail_2">Dit duurt langer als gewoonlijk. Ofwel is uw netwerk zwak, ofwel werkt de websocket niet correct. Als u hier vastloopt, gebruik dan de help sectie in het hoofdmenu.</string>
 </resources>
