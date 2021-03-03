@@ -8,6 +8,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.ext.rateLimit
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
@@ -27,6 +28,7 @@ abstract class ControlTemperatureWidgetViewModelContract(
     val temperature = octoPrintProvider.passiveCurrentMessageFlow("temperature")
         .filter { it.temps.isNotEmpty() }
         .mapNotNull { extractComponentTemperature(it.temps.first()) }
+        .rateLimit(1000)
         .asLiveData()
 
     protected abstract suspend fun setTemperature(temp: Int)

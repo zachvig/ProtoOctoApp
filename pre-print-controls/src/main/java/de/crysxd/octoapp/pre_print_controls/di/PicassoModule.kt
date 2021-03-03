@@ -3,6 +3,7 @@ package de.crysxd.octoapp.pre_print_controls.di
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import com.squareup.picasso.LruCache
 import com.squareup.picasso.OkHttp3Downloader
@@ -19,7 +20,7 @@ class PicassoModule {
     @Provides
     @PrePrintControlsScope
     fun providePicasso(context: Context, octoPrintProvider: OctoPrintProvider): LiveData<Picasso?> =
-        octoPrintProvider.octoPrint.map {
+        octoPrintProvider.octoPrintFlow().asLiveData().map {
             it?.let { octoPrint ->
                 Picasso.Builder(context)
                     .downloader(OkHttp3Downloader(octoPrint.createOkHttpClient()))

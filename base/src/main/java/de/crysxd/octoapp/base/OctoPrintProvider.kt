@@ -1,7 +1,5 @@
 package de.crysxd.octoapp.base
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
@@ -34,22 +32,27 @@ class OctoPrintProvider(
 
     private val octoPrintMutex = Mutex()
     private var octoPrintCache: Pair<OctoPrintInstanceInformationV2, OctoPrint>? = null
-    private val currentMessageChannel = ConflatedBroadcastChannel<Message.CurrentMessage>()
-
-    @Deprecated("Use octoPrintFlow")
-    val octoPrint: LiveData<OctoPrint?> = octoPrintFlow().asLiveData()
-
-    @Deprecated("Use eventFlow")
-    val eventLiveData: LiveData<Event> = eventFlow("OctoPrintProvider@legacy").asLiveData()
+    private val currentMessageChannel = ConflatedBroadcastChannel<Message.CurrentMessage?>()
 
     init {
         // Passively collect data for the analytics profile
         // The passive event flow does not actively open a connection but piggy-backs other Flows
         GlobalScope.launch {
             passiveEventFlow()
-                .onEach {
-                    updateAnalyticsProfileWithEvents(it)
-                    ((it as? Event.MessageReceived)?.message as? Message.CurrentMessage)?.let(currentMessageChannel::offer)
+                .onEach { event ->
+                    updateAnalyticsProfileWithEvents(event)
+                    ((event as? Event.MessageReceived)?.message as? Message.CurrentMessage)?.let { message ->
+                        // If the last message had data the new one is lacking, upgrade the new one so the cached message
+                        // is always holding all information required
+                        val last = currentMessageChannel.valueOrNull
+                        val new = message.copy(
+                            temps = message.temps.takeIf { it.isNotEmpty() } ?: last?.temps ?: emptyList(),
+                            progress = message.progress ?: last?.progress,
+                            state = message.state ?: last?.state,
+                            job = message.job ?: last?.job,
+                        )
+                        currentMessageChannel.offer(new)
+                    }
                 }
                 .retry { delay(1000); true }
                 .collect()
@@ -58,6 +61,7 @@ class OctoPrintProvider(
 
     fun octoPrintFlow() = octoPrintRepository.instanceInformationFlow().map {
         octoPrintMutex.withLock {
+            currentMessageChannel.offer(null)
             when {
                 it == null -> null
                 octoPrintCache?.first != it -> {
@@ -82,7 +86,7 @@ class OctoPrintProvider(
         .flatMapLatest { it?.getEventWebSocket()?.passiveEventFlow() ?: emptyFlow() }
         .catch { e -> Timber.e(e) }
 
-    fun passiveCurrentMessageFlow(tag: String) = currentMessageChannel.asFlow()
+    fun passiveCurrentMessageFlow(tag: String) = currentMessageChannel.asFlow().filterNotNull()
         .onStart { Timber.i("Started current message flow for $tag") }
         .onCompletion { Timber.i("Completed current message flow for $tag") }
 
