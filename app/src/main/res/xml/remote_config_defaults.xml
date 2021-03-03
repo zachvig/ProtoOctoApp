@@ -133,6 +133,12 @@
         <value>[]</value>
     </entry>
     <entry>
+        <key>known_bugs</key>
+        <value>[{"title":"Notification disconnecting", "status": "Investigating", "content":"I'm aware of a issue causing the print notification to regularly
+            disconnect. I'm investigating this issue since Tuesday morning and expect a fix until tomorrow."}]
+        </value>
+    </entry>
+    <entry>
         <key>contact_timezone</key>
         <value>CET</value>
     </entry>

@@ -19,12 +19,18 @@
 
     <fragment
         android:id="@+id/faqFragment"
-        android:name="de.crysxd.octoapp.base.ui.common.help.FaqFragment"
+        android:name="de.crysxd.octoapp.base.ui.common.help.HelpDetailFragment"
         android:label="FaqFragment">
 
         <argument
             android:name="faq"
+            app:nullable="true"
             app:argType="de.crysxd.octoapp.base.ui.common.help.Faq" />
+
+        <argument
+            android:name="bug"
+            app:argType="de.crysxd.octoapp.base.ui.common.help.KnownBug"
+            app:nullable="true" />
     </fragment>
 
 </navigation>

@@ -15,6 +15,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.squareup.picasso.Picasso
 import de.crysxd.octoapp.base.R
@@ -27,9 +28,9 @@ import io.noties.markwon.core.MarkwonTheme
 import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 
-class FaqFragment : Fragment(), InsetAwareScreen {
+class HelpDetailFragment : Fragment(), InsetAwareScreen {
 
-    private val args by navArgs<FaqFragmentArgs>()
+    private val args by navArgs<HelpDetailFragmentArgs>()
     private lateinit var binding: FaqFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -38,15 +39,34 @@ class FaqFragment : Fragment(), InsetAwareScreen {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val faq = args.faq
-        binding.title.text = faq.title
-        Markwon.builder(view.context)
+        if (args.faq == null && args.bug == null) {
+            findNavController().popBackStack()
+        }
+
+
+        val markwon = Markwon.builder(view.context)
             .usePlugin(ImagesPlugin.create())
             .usePlugin(LinkifyPlugin.create())
             .usePlugin(ThemePlugin(view.context))
             .build()
-            .setMarkdown(binding.content, faq.content ?: "")
 
+        args.faq?.let { bindFaq(it, markwon) }
+        args.bug?.let { bindBug(it, markwon) }
+
+
+    }
+
+    private fun bindBug(bug: KnownBug, markwon: Markwon) {
+        binding.title.text = bug.title
+        binding.status.text = "Status: ${bug.status}"
+        markwon.setMarkdown(binding.content, bug.content ?: "")
+        binding.videoThumbnailContainer.isVisible = false
+    }
+
+    private fun bindFaq(faq: Faq, markwon: Markwon) {
+        binding.title.text = faq.title
+        binding.status.isVisible = false
+        markwon.setMarkdown(binding.content, faq.content ?: "")
         if (!faq.youtubeThumbnailUrl.isNullOrBlank() && !faq.youtubeUrl.isNullOrBlank()) {
             Picasso.get().load(faq.youtubeThumbnailUrl).into(binding.videoThumbnail)
             binding.videoThumbnailContainer.setOnClickListener {

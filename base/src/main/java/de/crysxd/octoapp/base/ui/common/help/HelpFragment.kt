@@ -67,11 +67,13 @@ class HelpFragment : Fragment() {
             }
 
             val faq = createFaqItems().prepare()
+            val bugs = createBugList().prepare()
 
-            // Show FAQ
             if (delayed) {
                 TransitionManager.beginDelayedTransition(binding.root)
             }
+
+            // Show FAQ
             binding.progressBar.isVisible = false
             binding.faqError.isVisible = faq.isEmpty()
             binding.faqOptions.adapter = MenuAdapter(
@@ -79,6 +81,16 @@ class HelpFragment : Fragment() {
                 onPinItem = {}
             ).also {
                 it.menuItems = faq
+            }
+
+            // Show bugs
+            binding.bugsTitle.isVisible = bugs.isNotEmpty()
+            binding.bugsList.isVisible = bugs.isNotEmpty()
+            binding.bugsList.adapter = MenuAdapter(
+                onClick = ::handleItemClick,
+                onPinItem = {}
+            ).also {
+                it.menuItems = bugs
             }
         }
     }
@@ -110,7 +122,17 @@ class HelpFragment : Fragment() {
         !it.title.isNullOrBlank() && !it.content.isNullOrBlank()
     }.map {
         HelpMenuItem(style = MenuItemStyle.Yellow, title = it.title ?: "") {
-            showFaq(it)
+            findNavController().navigate(HelpFragmentDirections.actionShowFaq(faq = it, bug = null))
+        }
+    }
+
+    private fun createBugList() = Firebase.remoteConfig.getString("known_bugs").let {
+        Gson().fromJson<List<KnownBug>>(it, object : TypeToken<ArrayList<KnownBug>>() {}.type)
+    }.filter {
+        !it.title.isNullOrBlank() && !it.content.isNullOrBlank()
+    }.map {
+        HelpMenuItem(style = MenuItemStyle.Red, title = it.title ?: "") {
+            findNavController().navigate(HelpFragmentDirections.actionShowFaq(faq = null, bug = it))
         }
     }
 
@@ -123,13 +145,10 @@ class HelpFragment : Fragment() {
         )
     }
 
-    private fun showFaq(faq: Faq) {
-        findNavController().navigate(HelpFragmentDirections.actionShowFaq(faq))
-    }
-
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octo.isVisible = false
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
+        binding.scrollView.setupWithToolbar(requireOctoActivity())
     }
 }
