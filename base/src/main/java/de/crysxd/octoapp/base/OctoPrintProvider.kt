@@ -61,7 +61,6 @@ class OctoPrintProvider(
 
     fun octoPrintFlow() = octoPrintRepository.instanceInformationFlow().map {
         octoPrintMutex.withLock {
-            currentMessageChannel.offer(null)
             when {
                 it == null -> null
                 octoPrintCache?.first != it -> {
