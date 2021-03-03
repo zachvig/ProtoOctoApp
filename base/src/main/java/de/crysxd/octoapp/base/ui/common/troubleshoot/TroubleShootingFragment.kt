@@ -16,7 +16,6 @@ import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.injectViewModel
-import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import kotlinx.android.synthetic.main.fragment_trouble_shooting.*
@@ -31,7 +30,7 @@ class TroubleShootingFragment : Fragment(R.layout.trouble_shooting_fragment) {
         val apiKey = navArgs.apiKey
 
         buttonMain.setOnLongClickListener {
-            SendFeedbackDialog().show(childFragmentManager, "send-feedback")
+            findNavController().navigate(R.id.action_help)
             true
         }
 
@@ -80,7 +79,7 @@ class TroubleShootingFragment : Fragment(R.layout.trouble_shooting_fragment) {
                     buttonSupport.isVisible = it.offerSupport
                     buttonSupport.setOnClickListener {
                         OctoAnalytics.logEvent(OctoAnalytics.Event.TroubleShootFailureSupportTrigger)
-                        SendFeedbackDialog().show(childFragmentManager, "send-feedback")
+                        findNavController().navigate(R.id.action_help)
                     }
                 }
 

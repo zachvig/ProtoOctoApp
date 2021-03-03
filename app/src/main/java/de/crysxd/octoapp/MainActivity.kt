@@ -61,6 +61,7 @@ class MainActivity : OctoActivity() {
     override val octoToolbar: OctoToolbar by lazy { toolbar }
     override val octo: OctoView by lazy { toolbarOctoView }
     override val rootLayout by lazy { coordinator }
+    override val navController get() = findNavController(R.id.mainNavController)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,7 +113,7 @@ class MainActivity : OctoActivity() {
             .observe(this) { ColorTheme.applyColorTheme(it.colorTheme) }
 
         lifecycleScope.launchWhenResumed {
-            findNavController(R.id.mainNavController).addOnDestinationChangedListener { _, destination, _ ->
+            navController.addOnDestinationChangedListener { _, destination, _ ->
                 Timber.i("Navigated to ${destination.label}")
                 OctoAnalytics.logEvent(OctoAnalytics.Event.ScreenShown, bundleOf(FirebaseAnalytics.Param.SCREEN_NAME to destination.label?.toString()))
 
@@ -245,7 +246,7 @@ class MainActivity : OctoActivity() {
     private fun navigate(id: Int) {
         if (id != lastNavigation) {
             lastNavigation = id
-            findNavController(R.id.mainNavController).navigate(id)
+            navController.navigate(id)
         }
     }
 

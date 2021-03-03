@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
@@ -27,6 +28,14 @@ class SendFeedbackDialog : DialogFragment() {
     private var screenshot: Bitmap? = null
     private val viewModel: SendFeedbackViewModel by injectViewModel()
 
+    companion object {
+        private const val ARG_FOR_BUG_REPORT = "forBug"
+
+        fun create(isForBugReport: Boolean = false) = SendFeedbackDialog().also {
+            it.arguments = bundleOf(ARG_FOR_BUG_REPORT to isForBugReport)
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
         inflater.inflate(R.layout.fragment_dialog_send_feedback, container, false)
 
@@ -39,6 +48,14 @@ class SendFeedbackDialog : DialogFragment() {
         if (viewModel.screenshot == null) {
             checkboxScreenshot.isChecked = false
             checkboxScreenshot.isEnabled = false
+        }
+
+        val isForBugReport = arguments?.getBoolean(ARG_FOR_BUG_REPORT, false) == true
+        if (isForBugReport) {
+            checkboxPhoneInformation.isChecked = true
+            checkboxPhoneInformation.isEnabled = false
+            checkboxOctoprintInformation.isChecked = true
+            checkboxOctoprintInformation.isEnabled = false
         }
 
         try {

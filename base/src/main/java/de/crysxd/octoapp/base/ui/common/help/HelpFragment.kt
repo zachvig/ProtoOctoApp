@@ -109,7 +109,7 @@ class HelpFragment : Fragment() {
             Uri.parse("https://discord.octoprint.org/").open(requireContext())
         },
         HelpMenuItem(style = MenuItemStyle.Green, "I want to report a bug") {
-            SendFeedbackDialog().show(childFragmentManager, "bug-report")
+            SendFeedbackDialog.create(isForBugReport = true).show(childFragmentManager, "bug-report")
         },
         HelpMenuItem(style = MenuItemStyle.Green, "I have an other question") {
             SendFeedbackDialog().show(childFragmentManager, "question")

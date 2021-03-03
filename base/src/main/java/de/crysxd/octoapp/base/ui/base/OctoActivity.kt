@@ -14,13 +14,13 @@ import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ext.composeErrorMessage
 import de.crysxd.octoapp.base.ext.composeMessageStack
-import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.models.Event
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
@@ -45,6 +45,7 @@ abstract class OctoActivity : LocalizedActivity() {
     abstract val octoToolbar: OctoToolbar
     abstract val octo: OctoView
     abstract val rootLayout: FrameLayout
+    protected abstract val navController: NavController
     private val handler = Handler(Looper.getMainLooper())
     private val snackbarMessageChannel = ConflatedBroadcastChannel<Message.SnackbarMessage?>()
 
@@ -134,7 +135,7 @@ abstract class OctoActivity : LocalizedActivity() {
         message = e.composeMessageStack(),
         neutralAction = {
             OctoAnalytics.logEvent(OctoAnalytics.Event.SupportFromErrorDetails)
-            SendFeedbackDialog().show(supportFragmentManager, "get-support")
+            navController.navigate(R.id.action_help)
         },
         neutralButton = if (offerSupport) {
             getString(R.string.get_support)
