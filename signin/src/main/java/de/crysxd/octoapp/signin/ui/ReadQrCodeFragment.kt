@@ -40,15 +40,15 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code), InsetAwareS
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
 
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             scannerView?.postDelayed({
                 scannerView?.startCamera()
             }, 300)
         } else {
-            requestPermissions(arrayOf(android.Manifest.permission.CAMERA), 1)
+            requestPermissions(arrayOf(android.Manifest.permission.CAMERA), REQUEST_CODE_PERMISSION)
         }
 
         requireActivity().window.let {
@@ -75,7 +75,7 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code), InsetAwareS
             if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                 scannerView.startCamera()
             } else {
-                findNavController().popBackStack()
+                findNavController().popBackStack(R.id.loginFragment, false)
             }
         }
     }

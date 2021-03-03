@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
-import android.text.method.LinkMovementMethod
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -93,7 +92,6 @@ class SignInFragment : BaseFragment(), InsetAwareScreen {
             OctoAnalytics.logEvent(OctoAnalytics.Event.SignInHelpOpened)
             startActivity(Intent(Intent.ACTION_VIEW, uri))
         }
-        binding.manual.movementMethod = LinkMovementMethod()
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer(this::updateViewState))
 
