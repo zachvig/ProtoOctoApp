@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.method.LinkMovementMethod
 import android.view.Gravity
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -23,6 +22,7 @@ import de.crysxd.octoapp.base.ext.composeErrorMessage
 import de.crysxd.octoapp.base.ext.composeMessageStack
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.models.Event
+import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
 import kotlinx.coroutines.CancellationException
@@ -162,7 +162,7 @@ abstract class OctoActivity : LocalizedActivity() {
                 }
                 builder.show().also {
                     // Allow links to be clicked
-                    it.findViewById<TextView>(android.R.id.message)?.movementMethod = LinkMovementMethod()
+                    it.findViewById<TextView>(android.R.id.message)?.movementMethod = LinkClickMovementMethod()
                 }
             }
         } else {
