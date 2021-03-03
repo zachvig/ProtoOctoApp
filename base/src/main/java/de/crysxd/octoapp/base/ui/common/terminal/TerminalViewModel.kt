@@ -42,7 +42,7 @@ class TerminalViewModel(
         }
 
     private var clearedFrom: Date = Date(0)
-    private val printStateFlow = octoPrintProvider.passiveCurrentMessageFlow()
+    private val printStateFlow = octoPrintProvider.passiveCurrentMessageFlow("terminal")
         .mapNotNull { it.state?.flags }
         .map { it.pausing || it.cancelling || it.printing }
     val uiState = flow {

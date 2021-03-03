@@ -60,12 +60,12 @@ class GcodePreviewViewModel(
         }
     }
 
-    val activeFile = octoPrintProvider.passiveCurrentMessageFlow().mapNotNull {
+    val activeFile = octoPrintProvider.passiveCurrentMessageFlow("gcode_preview_2").mapNotNull {
         it.job?.file ?: return@mapNotNull null
     }.distinctUntilChangedBy { it.path }.asLiveData()
 
     private val renderContextFlow: Flow<ViewState> = gcodeChannel.asFlow().filterNotNull().flatMapLatest { it }
-        .combine(octoPrintProvider.passiveCurrentMessageFlow().sample(1000)) { gcodeState, currentMessage ->
+        .combine(octoPrintProvider.passiveCurrentMessageFlow("gcode_preview_1").sample(1000)) { gcodeState, currentMessage ->
             Pair(gcodeState, currentMessage)
         }.combine(contextFactoryChannel.asFlow()) { pair, factory ->
             val (gcodeState, currentMessage) = pair

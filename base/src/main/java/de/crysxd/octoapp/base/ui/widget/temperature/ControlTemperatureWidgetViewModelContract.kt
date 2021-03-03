@@ -24,7 +24,7 @@ abstract class ControlTemperatureWidgetViewModelContract(
     octoPrintProvider: OctoPrintProvider
 ) : BaseViewModel() {
 
-    val temperature = octoPrintProvider.passiveCurrentMessageFlow()
+    val temperature = octoPrintProvider.passiveCurrentMessageFlow("temperature")
         .filter { it.temps.isNotEmpty() }
         .mapNotNull { extractComponentTemperature(it.temps.first()) }
         .asLiveData()

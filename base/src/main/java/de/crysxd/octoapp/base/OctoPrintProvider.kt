@@ -82,7 +82,9 @@ class OctoPrintProvider(
         .flatMapLatest { it?.getEventWebSocket()?.passiveEventFlow() ?: emptyFlow() }
         .catch { e -> Timber.e(e) }
 
-    fun passiveCurrentMessageFlow() = currentMessageChannel.asFlow()
+    fun passiveCurrentMessageFlow(tag: String) = currentMessageChannel.asFlow()
+        .onStart { Timber.i("Started current message flow for $tag") }
+        .onCompletion { Timber.i("Completed current message flow for $tag") }
 
     fun eventFlow(tag: String) = octoPrintFlow()
         .flatMapLatest { it?.getEventWebSocket()?.eventFlow(tag) ?: emptyFlow() }
