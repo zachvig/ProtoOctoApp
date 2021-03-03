@@ -76,13 +76,18 @@ class PrintNotificationService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        Injector.get().octoPreferences().wasPrintNotificationDisconnected = false
+        
+        // Register notification channel
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannels()
+        }
+
+        // Start notification
+        startForeground(NOTIFICATION_ID, createInitialNotification())
+
         if (isNotificationEnabled) {
             Timber.i("Creating notification service")
-
-            // Register notification channel
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                createNotificationChannels()
-            }
 
             // Check preconditions
             GlobalScope.launch(coroutineJob) {
@@ -115,22 +120,22 @@ class PrintNotificationService : Service() {
                     }
                 }
             }
-
-            // Start notification
-            startForeground(NOTIFICATION_ID, createInitialNotification())
         } else {
             Timber.i("Notification service disabled, skipping creation")
             stopSelf()
         }
     }
 
-    private suspend fun checkPreconditions(): Boolean {
+    private suspend fun checkPreconditions(): Boolean = try {
         if (!isNotificationEnabled) {
-            return false
+            false
+        } else {
+            val flags = Injector.get().octoPrintProvider().octoPrint().createPrinterApi().getPrinterState().state?.flags
+            flags?.isPrinting() == true
         }
-
-        val flags = Injector.get().octoPrintProvider().octoPrint().createPrinterApi().getPrinterState().state?.flags
-        return flags?.isPrinting() == true
+    } catch (e: Exception) {
+        Timber.e(e)
+        false
     }
 
     override fun onDestroy() {
