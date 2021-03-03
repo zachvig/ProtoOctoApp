@@ -121,7 +121,6 @@ class EventWebSocket(
 
             // Handle open event
             logger.log(Level.INFO, "Web socket open")
-            reportDisconnectedAfterDelay(WebSocketDysfunctionalException())
             dispatchEvent(Event.Connected)
 
             // In order to receive any messages on OctoPrint instances with authentication set up,
