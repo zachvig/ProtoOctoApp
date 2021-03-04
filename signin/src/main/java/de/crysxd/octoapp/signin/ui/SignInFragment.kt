@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
-import android.text.method.LinkMovementMethod
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -24,9 +23,9 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.composeErrorMessage
-import de.crysxd.octoapp.base.ui.BaseFragment
-import de.crysxd.octoapp.base.ui.InsetAwareScreen
-import de.crysxd.octoapp.base.ui.NetworkStateViewModel
+import de.crysxd.octoapp.base.ui.base.BaseFragment
+import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
+import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootingFragmentArgs
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
@@ -93,7 +92,6 @@ class SignInFragment : BaseFragment(), InsetAwareScreen {
             OctoAnalytics.logEvent(OctoAnalytics.Event.SignInHelpOpened)
             startActivity(Intent(Intent.ACTION_VIEW, uri))
         }
-        binding.manual.movementMethod = LinkMovementMethod()
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer(this::updateViewState))
 

@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui
+package de.crysxd.octoapp.base.ui.common
 
 import android.annotation.SuppressLint
 import android.app.Application

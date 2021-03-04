@@ -21,7 +21,7 @@ class PrivacyMenu : Menu {
     )
 
     override fun getBottomText(context: Context) = HtmlCompat.fromHtml(
-        "If you have any questions,<br>please reach out to <a href=\"mailto\">hello@octoapp.eu</a><br><br><a href=\"https://octoapp-4e438.web.app/privacy\">Data privacy statement</a><br><br>OctoApp is an <a href=\"https://gitlab.com/crysxd/octoapp\">open source</a> project.",
+        "All data collected is in the app's legitimate interest. If you have any questions, please reach out to <a href=\"mailto\">hello@octoapp.eu</a><br><br><a href=\"https://octoapp-4e438.web.app/privacy\">Data privacy statement</a><br><br>OctoApp is an <a href=\"https://gitlab.com/crysxd/octoapp\">open source</a> project.",
         HtmlCompat.FROM_HTML_MODE_COMPACT
     )
 

@@ -23,14 +23,14 @@ import java.util.*
 @Parcelize
 class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val action: Action = Action.Unspecified) : Menu {
 
-    override suspend fun beforeShow(host: MenuBottomSheetFragment): Boolean {
+    override suspend fun shouldShowMenu(host: MenuBottomSheetFragment): Boolean {
         // Let's try to solve the task at hand without the user selecting somehting
 
         val deviceToUse = when (type) {
             DeviceType.PrinterPsu -> Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.appSettings?.defaultPowerDevices?.get(type.prefKey)
             DeviceType.Unspecified -> null
         }?.let {
-            Injector.get().getPowerDevicesUseCase().execute(GetPowerDevicesUseCase.Params(queryState = false, onlyGetDeviceWithUniqueId = it)).first().first
+            Injector.get().getPowerDevicesUseCase().execute(GetPowerDevicesUseCase.Params(queryState = false, onlyGetDeviceWithUniqueId = it)).firstOrNull()?.first
         }
 
         return if (action != Action.Unspecified && deviceToUse != null) {
@@ -42,9 +42,9 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
                 Action.Unspecified -> Unit
             }
             host.handleAction(action, type, deviceToUse)
-            true
-        } else {
             false
+        } else {
+            true
         }
     }
 
@@ -134,19 +134,15 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val icon = R.drawable.ic_round_power_off_24
 
         override suspend fun getTitle(context: Context) = if (showName) name else "Turn off"
-        override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
             val device = Injector.get().getPowerDevicesUseCase().execute(
                 GetPowerDevicesUseCase.Params(
                     queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
                 )
             ).first().first
 
-            executeAsync {
-                Injector.get().turnOffPsuUseCase().execute(device)
-            }
-
-            host.handleAction(Action.TurnOff, deviceType, device)
-            return true
+            Injector.get().turnOffPsuUseCase().execute(device)
+            host?.handleAction(Action.TurnOff, deviceType, device)
         }
     }
 
@@ -171,19 +167,15 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val icon = R.drawable.ic_round_power_24
 
         override suspend fun getTitle(context: Context) = if (showName) "Turn $name on" else "Turn on"
-        override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
             val device = Injector.get().getPowerDevicesUseCase().execute(
                 GetPowerDevicesUseCase.Params(
                     queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
                 )
             ).first().first
 
-            executeAsync {
-                Injector.get().turnOnPsuUseCase().execute(device)
-            }
-
-            host.handleAction(Action.TurnOn, deviceType, device)
-            return true
+            Injector.get().turnOnPsuUseCase().execute(device)
+            host?.handleAction(Action.TurnOn, deviceType, device)
         }
     }
 
@@ -208,19 +200,15 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val icon = R.drawable.ic_round_power_cycle_24px
 
         override suspend fun getTitle(context: Context) = if (showName) "Cycle $name" else "Cycle"
-        override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
+        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
             val device = Injector.get().getPowerDevicesUseCase().execute(
                 GetPowerDevicesUseCase.Params(
                     queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
                 )
             ).first().first
 
-            executeAsync {
-                Injector.get().cyclePsuUseCase().execute(device)
-            }
-
-            host.handleAction(Action.Cycle, deviceType, device)
-            return true
+            Injector.get().cyclePsuUseCase().execute(device)
+            host?.handleAction(Action.Cycle, deviceType, device)
         }
     }
 

@@ -11,12 +11,13 @@ import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.format
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
 import de.crysxd.octoapp.widgets.webcam.BaseWebcamAppWidget
 import de.crysxd.octoapp.widgets.webcam.ControlsWebcamAppWidget
 import de.crysxd.octoapp.widgets.webcam.NoControlsWebcamAppWidget
 import timber.log.Timber
-import java.text.DateFormat
+import java.util.*
 
 internal fun updateAppWidget(widgetId: Int) {
     val context = Injector.get().localizedContext()
@@ -55,21 +56,10 @@ internal fun createUpdateIntent(context: Context, widgetId: Int, playLive: Boole
 
 internal fun createUpdatedNowText() = getTime()
 
-internal fun getTime() = formatTime(System.currentTimeMillis())
-
-private fun formatDate(time: Long) = DateFormat.getDateInstance(DateFormat.SHORT).format(time)
-
-private fun formatTime(time: Long) = DateFormat.getTimeInstance(DateFormat.SHORT).format(time)
+internal fun getTime() = Date().format()
 
 internal fun createUpdateFailedText(context: Context, appWidgetId: Int) = AppWidgetPreferences.getLastUpdateTime(appWidgetId).takeIf { it > 0 }?.let {
-    val date = formatDate(it)
-    val today = formatDate(System.currentTimeMillis())
-    val since = if (date == today) {
-        formatTime(it)
-    } else {
-        date
-    }
-    context.getString(R.string.app_widget___offline_since_x, since)
+    context.getString(R.string.app_widget___offline_since_x, Date(it).format())
 } ?: context.getString(R.string.app_widget___update_failed)
 
 internal fun applyDebugOptions(views: RemoteViews, appWidgetId: Int) {

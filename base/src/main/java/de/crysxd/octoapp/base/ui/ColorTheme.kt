@@ -14,8 +14,8 @@ import timber.log.Timber
 @Parcelize
 class ColorTheme(@ColorRes val colorRes: Int, @ColorRes val lightColorRes: Int) : Parcelable {
 
-    val light = ContextCompat.getColor(Injector.get().context(), lightColorRes)
-    val dark = ContextCompat.getColor(Injector.get().context(), colorRes)
+    val light get() = ContextCompat.getColor(Injector.get().context(), lightColorRes)
+    val dark get() = ContextCompat.getColor(Injector.get().context(), colorRes)
 
     companion object {
         val default = ColorTheme(R.color.default_color_scheme, R.color.default_color_scheme_light)

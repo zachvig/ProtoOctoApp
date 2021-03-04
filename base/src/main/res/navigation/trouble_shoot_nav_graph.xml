@@ -9,7 +9,7 @@
         android:id="@+id/troubleShootingFragment"
         android:name="de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootingFragment"
         android:label="TroubleShootingFragment"
-        tools:layout="@layout/fragment_trouble_shooting">>
+        tools:layout="@layout/fragment_trouble_shooting">
         <argument
             android:name="baseUrl"
             app:argType="android.net.Uri" />

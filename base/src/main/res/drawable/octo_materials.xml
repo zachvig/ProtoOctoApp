@@ -12,7 +12,7 @@
                     android:name="path"
                     android:pathData="M 121 134.96 C 131.215 130.387 153.116 120.792 159 119"
                     android:strokeWidth="4"
-                    android:strokeColor="#000000"
+                    android:strokeColor="@color/dark_text"
                     android:strokeLineCap="round"
                     android:trimPathEnd="0" />
                 <path
@@ -20,7 +20,7 @@
                     android:fillColor="#000"
                     android:pathData="M 112.333 50 C 113.268 57.245 114.577 73.489 112.333 80.5 M 126.707 51.402 C 127.982 56.621 130.608 69.115 130.914 77.345 M 122.5 78.046 C 121.261 71.247 119.007 56.119 119.899 50 M 92 76.994 C 103.686 71.268 128.74 59.255 135.471 57.011 M 104.27 51.402 C 104.854 59.232 105.672 75.802 104.27 79.448 M 67 115.56 C 77.215 110.987 99.116 101.392 105 99.6 M 90.057 92 C 89.126 99.853 87.822 117.46 90.057 125.06 M 75.734 93.52 C 74.463 99.176 71.847 112.719 71.542 121.64 M 79.926 122.4 C 81.16 115.03 83.407 98.633 82.518 92 M 98.093 93.52 C 97.51 102.007 96.695 119.968 98.093 123.92 M 135.612 106 C 136.495 114.314 137.73 132.954 135.612 141 M 149.182 107.609 C 150.385 113.597 152.865 127.935 153.154 137.379 M 145.21 138.184 C 144.041 130.382 141.913 113.022 142.755 106 M 128 107.609 C 128.552 116.594 129.324 135.609 128 139.793"
                     android:strokeWidth="4"
-                    android:strokeColor="#000000"
+                    android:strokeColor="@color/dark_text"
                     android:strokeLineCap="round" />
             </group>
             <group android:name="octo">
@@ -60,43 +60,17 @@
                     android:pathData="M 263 84.5 L 282 84.5 C 286.142 84.5 289.5 87.858 289.5 92 L 289.5 103 C 289.5 107.142 286.142 110.5 282 110.5 L 263 110.5 C 258.858 110.5 255.5 107.142 255.5 103 L 255.5 92 C 255.5 87.858 258.858 84.5 263 84.5 Z M 304 84.5 L 323 84.5 C 327.142 84.5 330.5 87.858 330.5 92 L 330.5 103 C 330.5 107.142 327.142 110.5 323 110.5 L 304 110.5 C 299.858 110.5 296.5 107.142 296.5 103 L 296.5 92 C 296.5 87.858 299.858 84.5 304 84.5 Z M 289 96.5 L 297 96.5 M 330 96.5 L 349.5 93 M 232.5 94 L 256 96.5"
                     android:strokeWidth="5"
                     android:strokeColor="#000000" />
-                <path
-                    android:name="path_11"
-                    android:fillColor="#f2f2f2"
-                    android:fillType="evenOdd"
-                    android:pathData="M 284 130 L 284 140.694 L 293 140.694 L 293 130.688 C 289.785 130.646 286.741 130.403 284 130 Z M 295 130.688 L 295 140.694 L 304 140.694 L 304 130 C 301.259 130.403 298.215 130.646 295 130.688 Z"
-                    android:strokeWidth="1" />
-                <path
-                    android:name="path_12"
-                    android:fillColor="#f2f2f2"
-                    android:fillType="evenOdd"
-                    android:pathData="M 284 130 L 284 140.694 L 293 140.694 L 293 130.688 C 289.785 130.646 286.741 130.403 284 130 Z M 295 130.688 L 295 140.694 L 304 140.694 L 304 130 C 301.259 130.403 298.215 130.646 295 130.688 Z"
-                    android:strokeWidth="1" />
-                <path
-                    android:name="path_13"
-                    android:fillColor="#A0A0A0"
-                    android:pathData="M 287 134.694 L 290 134.694 L 290 137.694 L 287 137.694 Z M 298 134.694 L 301 134.694 L 301 137.694 L 298 137.694 Z"
-                    android:strokeWidth="1" />
-                <path
-                    android:name="path_14"
-                    android:fillColor="#000"
-                    android:pathData="M 284 136.194 L 304 136.194"
-                    android:strokeWidth="1"
-                    android:strokeColor="#A0A0A0" />
-                <path
-                    android:fillColor="#27AE60"
-                    android:pathData="M280.561,127.08C279.5,126.771 278.39,127.379 278.08,128.439C277.771,129.5 278.379,130.61 279.439,130.92L280.561,127.08ZM306.796,130.835C307.809,130.395 308.274,129.218 307.835,128.204C307.395,127.191 306.218,126.726 305.204,127.165L306.796,130.835ZM279.439,130.92C289.825,133.952 300.771,133.448 306.796,130.835L305.204,127.165C300.265,129.307 290.322,129.93 280.561,127.08L279.439,130.92Z" />
-                <path
-                    android:name="path_1"
-                    android:pathData="M 269 98 L 281 98 M 305 98 L 317 98"
-                    android:strokeWidth="5"
-                    android:strokeColor="#27ae60"
-                    android:strokeLineCap="round" />
+                  <path
+                      android:name="path_1"
+                      android:pathData="M 269 98 L 281 98 M 305 98 L 317 98"
+                      android:strokeWidth="5"
+                      android:strokeColor="#27ae60"
+                      android:strokeLineCap="round" />
             </group>
             <group android:name="diagram">
                 <path
                     android:name="path_17"
-                    android:fillColor="#000000"
+                    android:fillColor="@color/dark_text"
                     android:pathData="M 436 128 L 436 56"
                     android:strokeWidth="10"
                     android:strokeColor="#ee3f3f"
@@ -128,7 +102,7 @@
                     android:name="path_16"
                     android:pathData="M 421 50 L 421 130 L 501 130"
                     android:strokeWidth="5"
-                    android:strokeColor="#000000"
+                    android:strokeColor="@color/dark_text"
                     android:strokeLineCap="round"
                     android:strokeLineJoin="round" />
             </group>

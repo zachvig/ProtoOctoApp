@@ -37,6 +37,6 @@ sealed class Move(
     )
 
     enum class Type {
-        Travel, Extrude
+        Travel, Extrude, Unsupported
     }
 }

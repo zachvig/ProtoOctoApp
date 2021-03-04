@@ -122,10 +122,24 @@
     </entry>
     <entry>
         <key>help_url_power_devices</key>
-        <value>https://google.com</value>
+        <value>https://octoapp-4e438.web.app/not_ready/</value>
     </entry>
     <entry>
         <key>help_url_materials</key>
-        <value>https://google.com</value>
+        <value>https://octoapp-4e438.web.app/not_ready/</value>
+    </entry>
+    <entry>
+        <key>faq</key>
+        <value>[]</value>
+    </entry>
+    <entry>
+        <key>known_bugs</key>
+        <value>[{"title":"Notification disconnecting", "status": "Investigating", "content":"I'm aware of a issue causing the print notification to regularly
+            disconnect. I'm investigating this issue since Tuesday morning and expect a fix until tomorrow."}]
+        </value>
+    </entry>
+    <entry>
+        <key>contact_timezone</key>
+        <value>CET</value>
     </entry>
 </defaultsMap>

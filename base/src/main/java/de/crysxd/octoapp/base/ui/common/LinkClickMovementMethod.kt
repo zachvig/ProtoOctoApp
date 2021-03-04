@@ -12,7 +12,7 @@ import de.crysxd.octoapp.base.ext.open
 /**
  * Set this on a textview and then you can potentially open links locally if applicable
  */
-class LinkClickMovementMethod(private val mOnLinkClickedListener: OnLinkClickedListener) : LinkMovementMethod() {
+class LinkClickMovementMethod(private val mOnLinkClickedListener: OnLinkClickedListener = OpenWithIntentLinkClickedListener()) : LinkMovementMethod() {
     override fun onTouchEvent(widget: TextView, buffer: Spannable, event: MotionEvent): Boolean {
         val action = event.action
 

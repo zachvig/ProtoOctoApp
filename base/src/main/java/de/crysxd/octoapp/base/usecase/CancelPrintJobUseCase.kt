@@ -20,7 +20,7 @@ class CancelPrintJobUseCase @Inject constructor(
         // Collect temps
         val current = if (param.restoreTemperatures) {
             timber.i("Capturing active temperature")
-            octoPrintProvider.passiveCurrentMessageFlow().filter { it.temps.isNotEmpty() }.first()
+            octoPrintProvider.passiveCurrentMessageFlow("cancel_print_use_case_1").filter { it.temps.isNotEmpty() }.first()
         } else {
             null
         }
@@ -32,7 +32,7 @@ class CancelPrintJobUseCase @Inject constructor(
         if (param.restoreTemperatures) {
             // Wait for print to be cancelled
             timber.i("Waiting for cancellation")
-            octoPrintProvider.passiveCurrentMessageFlow().filter {
+            octoPrintProvider.passiveCurrentMessageFlow("cancel_print_use_case_2").filter {
                 it.state?.flags?.printing == false
             }.first()
 

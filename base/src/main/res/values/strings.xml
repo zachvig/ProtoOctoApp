@@ -115,26 +115,26 @@
     <string name="gcode_preview">Gcode Preview</string>
     <string name="gcode_preview_live">Live Gcode Preview</string>
     <string name="gcode_preview_description">This feature allows you to preview Gcode before starting to print and observe the progress live during printing.</string>
-    <string name="turn_psu_on">Turn PSU on</string>
-    <string name="octoprint_is_starting_up">OctoPrint is starting up</string>
-    <string name="waiting_for_printer_to_come_online">Waiting for printer to come online</string>
-    <string name="octoapp_will_auto_connect_the_printer_once_available">OctoApp will auto-connect the printer once available</string>
-    <string name="octoprint_is_not_available">OctoPrint is not available</string>
-    <string name="check_your_network_connection">Check your network connection</string>
-    <string name="searching_for_octoprint">Searching for Octoprint</string>
-    <string name="printer_is_connecting">Printer is connecting</string>
-    <string name="psu_turned_on_waiting_for_printer_to_boot">PSU turned on, waiting for printer to boot</string>
-    <string name="this_may_happen_after_an_emergency_stop">This may happen after an emergency stop. Try restarting your printer.</string>
-    <string name="the_printer_is_offline">The printer is offline</string>
-    <string name="printer_is_offline">Printer is offline</string>
-    <string name="cycle_psu_to_reset_the_printer">Cycle the PSU to reset the printer</string>
-    <string name="turn_the_printer_off_and_on_again_to_reset_it">Turn the printer off and on again to reset it</string>
-    <string name="cycle_psu">Cycle PSU</string>
-    <string name="retry_connection">Retry connection</string>
-    <string name="psu_is_being_cycled">PSU is being cycled</string>
-    <string name="printer_connected">Printer connected</string>
-    <string name="auto_selection_failed">Unable to auto-detect port, selecting first</string>
-    <string name="turn_off_psu">Turn off PSU</string>
+    <string name="connect_printer___action_turn_psu_on">Turn PSU on</string>
+    <string name="connect_printer___octoprint_starting_title">OctoPrint is starting up</string>
+    <string name="connect_printer___waiting_for_printer_title">OctoPrint connected, waiting for printer</string>
+    <string name="connect_printer___waiting_for_printer_detail">OctoApp will auto-connect the printer once available</string>
+    <string name="connect_printer___octoprint_not_available_title">OctoPrint is not available</string>
+    <string name="connect_printer___octoprint_not_available_detail">Check your network connection or if your OctoPrint\'s web address changed</string>
+    <string name="connect_printer___searching_for_octoprint_title">Searching for Octoprint</string>
+    <string name="connect_printer___printer_is_connecting_title">Printer is connecting</string>
+    <string name="connect_printer___psu_on_waiting_for_printer_title">PSU turned on, waiting for printer to boot</string>
+    <string name="connect_printer___printer_offline_title">Printer is offline</string>
+    <string name="connect_printer___printer_offline_detail_with_psu">Cycle the PSU to reset the printer</string>
+    <string name="connect_printer___printer_offline_detail">Turn the printer off and on again to reset it</string>
+    <string name="connect_printer___action_cycle_psu">Cycle PSU</string>
+    <string name="connect_printer___action_retry">Retry connection</string>
+    <string name="connect_printer___psu_cycling_title">PSU is being cycled</string>
+    <string name="connect_printer___printer_connected_title">Printer connected</string>
+    <string name="connect_printer___printer_connected_detail_1">Getting ready for awesomeness…</string>
+    <string name="connect_printer___printer_connected_detail_2">This takes longer than usual. Either your network is weak, or the websocket does not work correctly. If you are stuck here, use the help section in the main menu.</string>
+    <string name="connect_printer___auto_selection_failed">Unable to auto-detect port, selecting first</string>
+    <string name="connect_printer___action_turn_psu_off">Turn off PSU</string>
     <string name="extrude_retract">Extrude / Retract</string>
     <string name="distance_in_mm_negative_for_retract">Distance in mm (negative for retract)</string>
     <string name="start_printing">Start Printing</string>
@@ -372,4 +372,5 @@
     <string name="main_menu___item_auto_connect_printer">Auto connect printer</string>
     <string name="error_general_with_details"><![CDATA[         Something went wrong! Please try again.<br/><br/><small><font color="#%1$06X">%2$s</font></small>     ]]></string>
     <string name="error_certificate_not_trusted_and_weak_hostname_required">Android does not trust the certificate provided by this server. This is usually the case for self signed certificates.  Further, the certificate does not provide a \"subject alternative name\" (SAN) field which is required from Android 9 onwards. OctoApp must use a weak hostname check to circumvent this issue. This will reduce the security of your connection.  Do you want to trust this server and use a weaker hostname verification?</string>
+    <string name="help___contact_detail_information" translatable="false">I speak English and German. My current local time is %1$s (%2$s).</string>
 </resources>

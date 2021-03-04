@@ -3,7 +3,7 @@ package de.crysxd.octoapp.base.billing
 import androidx.lifecycle.asLiveData
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
-import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.utils.LongDuration
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow

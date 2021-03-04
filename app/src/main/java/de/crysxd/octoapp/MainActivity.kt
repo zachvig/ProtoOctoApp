@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.map
 import androidx.navigation.findNavController
 import androidx.transition.ChangeBounds
 import androidx.transition.Explode
@@ -30,8 +31,8 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.PurchaseConfirmationDialog
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.ColorTheme
-import de.crysxd.octoapp.base.ui.InsetAwareScreen
-import de.crysxd.octoapp.base.ui.OctoActivity
+import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
+import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
@@ -60,6 +61,7 @@ class MainActivity : OctoActivity() {
     override val octoToolbar: OctoToolbar by lazy { toolbar }
     override val octo: OctoView by lazy { toolbarOctoView }
     override val rootLayout by lazy { coordinator }
+    override val navController get() = findNavController(R.id.mainNavController)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,8 +71,18 @@ class MainActivity : OctoActivity() {
         rootLayout.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
 
-        val observer = Observer(this::onEventReceived)
-        val events = ConnectPrinterInjector.get().octoprintProvider().eventFlow("MainActivity@events").asLiveData()
+        val eventObserver = Observer(this::onEventReceived)
+        val currentMessageObserver = Observer(this::onCurrentMessageReceived)
+        val events = ConnectPrinterInjector.get().octoprintProvider().eventFlow("MainActivity@events").asLiveData().map {
+            if (it is Event.MessageReceived && it.message is de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage) {
+                Timber.i("[2] Current message: ${it.message.hashCode()}")
+            }
+            it
+        }
+        val currentMessages = ConnectPrinterInjector.get().octoprintProvider().passiveCurrentMessageFlow("MainActivity@currentMessage").asLiveData().map {
+            Timber.i("[1] Current message: ${it.hashCode()}")
+            it
+        }
 
         onNewIntent(intent)
 
@@ -82,13 +94,16 @@ class MainActivity : OctoActivity() {
                 Timber.i("Instance information received")
                 updateAllWidgets()
                 if (it != null && it.apiKey.isNotBlank()) {
+                    updateCapabilities("instance_change", updateM115 = true, escalateError = false)
                     navigate(R.id.action_connect_printer)
-                    events.observe(this, observer)
+                    events.observe(this, eventObserver)
+                    currentMessages.observe(this, currentMessageObserver)
                 } else {
                     navigate(R.id.action_sign_in_required)
                     PrintNotificationService.stop(this)
                     (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).cancel(PrintNotificationService.NOTIFICATION_ID)
-                    events.removeObserver(observer)
+                    events.removeObserver(eventObserver)
+                    currentMessages.removeObserver(currentMessageObserver)
                 }
             })
 
@@ -98,7 +113,7 @@ class MainActivity : OctoActivity() {
             .observe(this) { ColorTheme.applyColorTheme(it.colorTheme) }
 
         lifecycleScope.launchWhenResumed {
-            findNavController(R.id.mainNavController).addOnDestinationChangedListener { _, destination, _ ->
+            navController.addOnDestinationChangedListener { _, destination, _ ->
                 Timber.i("Navigated to ${destination.label}")
                 OctoAnalytics.logEvent(OctoAnalytics.Event.ScreenShown, bundleOf(FirebaseAnalytics.Param.SCREEN_NAME to destination.label?.toString()))
 
@@ -129,6 +144,7 @@ class MainActivity : OctoActivity() {
                 lastInsets.bottom = insets.systemWindowInsetBottom
                 lastInsets.right = insets.systemWindowInsetRight
                 applyInsetsToCurrentScreen()
+                setDisconnectedMessageVisible(disconnectedMessage.isVisible)
                 insets.consumeSystemWindowInsets()
             }
         }
@@ -172,7 +188,7 @@ class MainActivity : OctoActivity() {
 
     private fun applyInsetsToScreen(screen: Fragment, topOverwrite: Int? = null) {
         val disconnectHeight = disconnectedMessage.height.takeIf { disconnectedMessage.isVisible }
-        Timber.v("Applying insets: disconnectedMessage=$disconnectHeight topOverwrite=$topOverwrite")
+        Timber.v("Applying insets: disconnectedMessage=$disconnectHeight topOverwrite=$topOverwrite screen=$screen")
         toolbar.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
         octo.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
 
@@ -200,7 +216,7 @@ class MainActivity : OctoActivity() {
         Timber.i("UI started")
         // OctoPrint might not be available, this is more like a fire and forget
         // Don't bother user with error messages
-        updateCapabilities("ui_start", escalateError = false)
+        updateCapabilities("ui_start", updateM115 = false, escalateError = false)
     }
 
     override fun onStop() {
@@ -230,7 +246,7 @@ class MainActivity : OctoActivity() {
     private fun navigate(id: Int) {
         if (id != lastNavigation) {
             lastNavigation = id
-            findNavController(R.id.mainNavController).navigate(id)
+            navController.navigate(id)
         }
     }
 
@@ -272,13 +288,13 @@ class MainActivity : OctoActivity() {
         navigate(
             when {
                 // We encountered an error, try reconnecting
-                flags == null || flags.closedOrError || flags.error -> {
+                flags == null || flags.isError() -> {
                     PrintNotificationService.stop(this)
                     R.id.action_connect_printer
                 }
 
                 // We are printing
-                flags.printing || flags.paused || flags.pausing || flags.cancelling -> {
+                flags.isPrinting() -> {
                     try {
                         PrintNotificationService.start(this)
                     } catch (e: IllegalStateException) {
@@ -288,12 +304,12 @@ class MainActivity : OctoActivity() {
                 }
 
                 // We are connected
-                flags.operational -> {
+                flags.isOperational() -> {
                     PrintNotificationService.stop(this)
                     R.id.action_printer_connected
                 }
 
-                !flags.operational && !flags.paused && !flags.cancelling && !flags.printing && !flags.pausing -> {
+                !flags.isOperational() && !flags.isPrinting() -> {
                     PrintNotificationService.stop(this)
                     R.id.action_connect_printer
                 }
@@ -307,14 +323,12 @@ class MainActivity : OctoActivity() {
     private fun onEventMessageReceived(e: SocketMessage.EventMessage) = when (e) {
         is SocketMessage.EventMessage.Connected, is SocketMessage.EventMessage.SettingsUpdated -> {
             // New printer connected or settings updated, let's update capabilities
-            updateCapabilities("settings_updated")
+            updateCapabilities("settings_updated", updateM115 = false)
         }
         else -> Unit
     }
 
     private fun setDisconnectedMessageVisible(visible: Boolean) {
-        if (disconnectedMessage.isVisible == visible) return
-
         // Let disconnect message fill status bar background and measure height
         disconnectedMessage.updatePadding(
             top = disconnectedMessage.paddingBottom + lastInsets.top,
@@ -336,12 +350,12 @@ class MainActivity : OctoActivity() {
         findCurrentScreen()?.let { applyInsetsToScreen(it, height.takeIf { visible }) }
     }
 
-    private fun updateCapabilities(trigger: String, escalateError: Boolean = true) {
+    private fun updateCapabilities(trigger: String, updateM115: Boolean = true, escalateError: Boolean = true) {
         Timber.i("Updating capabities (trigger=$trigger)")
         lifecycleScope.launchWhenCreated {
             try {
                 lastSuccessfulCapabilitiesUpdate = System.currentTimeMillis()
-                Injector.get().updateInstanceCapabilitiesUseCase().execute(UpdateInstanceCapabilitiesUseCase.Params(updateM115 = escalateError))
+                Injector.get().updateInstanceCapabilitiesUseCase().execute(UpdateInstanceCapabilitiesUseCase.Params(updateM115 = updateM115))
                 updateAllWidgets()
             } catch (e: Exception) {
                 lastSuccessfulCapabilitiesUpdate = 0

@@ -43,10 +43,28 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_2"
         android:layout_marginEnd="@dimen/margin_0_1"
-        android:importantForAccessibility="no"
         android:alpha="0"
+        android:importantForAccessibility="no"
         android:src="@drawable/ic_slow"
         app:layout_constraintEnd_toStartOf="@+id/live"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/arcs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_1"
+        android:layout_marginTop="@dimen/margin_2"
+        android:background="@drawable/bg_chip"
+        android:backgroundTint="@color/red"
+        android:importantForAccessibility="no"
+        android:text="Arcs interpolated (red)"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/slow"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout

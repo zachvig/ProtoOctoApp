@@ -118,6 +118,6 @@ class ProgressWidget(parent: Fragment) : OctoWidget(parent) {
     }
 
     private suspend fun formatDuration(seconds: Long) = formatDurationUseCase.execute(seconds)
-    private suspend fun formatEta(seconds: Long) = formatEtaUseCase.execute(FormatEtaUseCase.Params(seconds, false))
+    private suspend fun formatEta(seconds: Long) = formatEtaUseCase.execute(FormatEtaUseCase.Params(seconds, allowRelative = false, showLabel = false))
 
 }

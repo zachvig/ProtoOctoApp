@@ -16,14 +16,21 @@ class GenerateRenderStyleUseCase @Inject constructor() : UseCase<OctoPrintInstan
             style = Paint.Style.STROKE
             isAntiAlias = true
             color = Color.WHITE
-//            strokeCap = Paint.Cap.ROUND
+//            strokeCap = Paint.Cap.BUTT
+        }
+
+        private val unsupportedPaint = Paint().apply {
+            style = Paint.Style.STROKE
+            isAntiAlias = true
+            color = Color.RED
+            strokeCap = Paint.Cap.BUTT
         }
 
         private val travelPaint = Paint().apply {
             style = Paint.Style.STROKE
             isAntiAlias = true
             color = Color.GREEN
-//            strokeCap = Paint.Cap.ROUND
+//            strokeCap = Paint.Cap.BUTT
         }
 
         private val printHeadPaint = Paint().apply {
@@ -39,6 +46,7 @@ class GenerateRenderStyleUseCase @Inject constructor() : UseCase<OctoPrintInstan
                 when (it) {
                     Move.Type.Travel -> travelPaint
                     Move.Type.Extrude -> extrudePaint
+                    Move.Type.Unsupported -> unsupportedPaint
                 }
             },
             background = R.drawable.print_bed_generic
@@ -71,6 +79,7 @@ class GenerateRenderStyleUseCase @Inject constructor() : UseCase<OctoPrintInstan
                 when (it) {
                     Move.Type.Travel -> travelPaint
                     Move.Type.Extrude -> extrudePaint
+                    Move.Type.Unsupported -> unsupportedPaint
                 }
             },
             background = backgroundRes

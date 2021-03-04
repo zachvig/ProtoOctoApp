@@ -8,6 +8,8 @@ import androidx.core.view.children
 import androidx.fragment.app.FragmentManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
+import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.gcodeshortcuts.GcodeShortcutsMenu
 
 class GcodeShortcutLayoutManager(
     private val layout: ViewGroup,
@@ -53,7 +55,7 @@ class GcodeShortcutLayoutManager(
                 onClicked(gcode)
             }
             button.setOnLongClickListener {
-                GcodeShortcutEditBottomSheet.createForCommand(gcode, onInsert).show(childFragmentManager)
+                MenuBottomSheetFragment.createForMenu(GcodeShortcutsMenu(gcode, onInsert)).show(childFragmentManager)
                 true
             }
         }

@@ -7,7 +7,10 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
-import de.crysxd.octoapp.base.ui.menu.*
+import de.crysxd.octoapp.base.ui.menu.Menu
+import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.MenuItem
+import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ACTIVATE_MATERIAL
 import de.crysxd.octoapp.base.usecase.ActivateMaterialUseCase
 import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
@@ -64,14 +67,11 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
         override val style = MenuItemStyle.Printer
         override val icon = if (isActive) R.drawable.ic_round_layers_active_24 else R.drawable.ic_round_layers_24
         override suspend fun getTitle(context: Context) = if (startPrintAfterSelection != null) displayName else "Activate „$displayName“"
-        override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
-            executeAsync {
-                Injector.get().activateMaterialUseCase().execute(ActivateMaterialUseCase.Params(uniqueMaterialId))
-                startPrintAfterSelection?.let {
-                    Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
-                }
+        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+            Injector.get().activateMaterialUseCase().execute(ActivateMaterialUseCase.Params(uniqueMaterialId))
+            startPrintAfterSelection?.let {
+                Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
             }
-            return true
         }
     }
 
@@ -87,13 +87,10 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
         override val style = MenuItemStyle.Printer
         override val icon = R.drawable.ic_round_layers_clear_24
         override suspend fun getTitle(context: Context) = "Print without selection"
-        override suspend fun onClicked(host: MenuBottomSheetFragment, executeAsync: SuspendExecutor): Boolean {
-            executeAsync {
-                startPrintAfterSelection?.let {
-                    Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
-                }
+        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+            startPrintAfterSelection?.let {
+                Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
             }
-            return true
         }
     }
 }

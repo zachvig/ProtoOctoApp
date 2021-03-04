@@ -8,8 +8,9 @@ import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInInformationValidationResult
 import timber.log.Timber
 import java.net.URI
+import javax.inject.Inject
 
-class VerifySignInInformationUseCase(
+class VerifySignInInformationUseCase @Inject constructor(
     private val context: Context
 ) : UseCase<SignInInformation, SignInInformationValidationResult>() {
 

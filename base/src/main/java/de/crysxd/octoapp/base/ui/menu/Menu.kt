@@ -5,8 +5,9 @@ import android.os.Parcelable
 import android.text.method.MovementMethod
 
 interface Menu : Parcelable {
+    fun shouldLoadBlocking() = false
     suspend fun getMenuItem(): List<MenuItem>
-    suspend fun beforeShow(host: MenuBottomSheetFragment) = false
+    suspend fun shouldShowMenu(host: MenuBottomSheetFragment) = true
     suspend fun getTitle(context: Context): CharSequence? = null
     suspend fun getSubtitle(context: Context): CharSequence? = null
     fun getEmptyStateIcon(): Int = 0

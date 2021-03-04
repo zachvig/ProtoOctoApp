@@ -8,6 +8,7 @@ class InstantAutoTransition(
     explode: Boolean = false,
     quickTransition: Boolean = false,
     explodeEpicenter: Rect? = null,
+    fadeText: Boolean = true
 ) : TransitionSet() {
 
     init {
@@ -20,10 +21,13 @@ class InstantAutoTransition(
         addTransition(ChangeImageTransform())
         addTransition(ChangeClipBounds())
         addTransition(ChangeTextSizeTransform())
-        addTransition(ChangeText().apply {
-            changeBehavior = ChangeText.CHANGE_BEHAVIOR_OUT_IN
-            duration = this@InstantAutoTransition.duration / 3
-        })
+
+        if (fadeText) {
+            addTransition(ChangeText().apply {
+                changeBehavior = ChangeText.CHANGE_BEHAVIOR_OUT_IN
+                duration = this@InstantAutoTransition.duration / 3
+            })
+        }
 
         if (explode) {
             addTransition(Explode().apply {

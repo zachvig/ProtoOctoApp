@@ -99,7 +99,10 @@ class GcodeParser {
         )
     }
 
-    private fun parseArcMove(line: String, positionInFile: Int) {
+    private fun parseArcMove(line: String, positionInFile: Int, isArc: Boolean) {
+        if (isArc) {
+            Timber.i("ARC")
+        }
         // Get positions (don't use regex, it's slower)
         val x = extractValue("X", line)
         val y = extractValue("Y", line)
@@ -273,8 +276,9 @@ class GcodeParser {
     private fun initNewLayer() {
         moves.clear()
         moveCountInLayer = 0
-        moves[Move.Type.Travel] = Pair(mutableListOf(), mutableListOf())
-        moves[Move.Type.Extrude] = Pair(mutableListOf(), mutableListOf())
+        Move.Type.values().forEach {
+            moves[it] = Pair(mutableListOf(), mutableListOf())
+        }
     }
 
     private fun addMove(move: Move, fromX: Float, fromY: Float, toX: Float, toY: Float) {

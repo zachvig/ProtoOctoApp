@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/help_nav_graph"
+    app:startDestination="@+id/helpOverviewFragment">
+
+    <fragment
+        android:id="@+id/helpOverviewFragment"
+        android:name="de.crysxd.octoapp.base.ui.common.help.HelpFragment"
+        android:label="HelpOverviewFragment">
+        <action
+            android:id="@+id/action_show_faq"
+            app:destination="@id/faqFragment"
+            app:enterAnim="@anim/enterAnim"
+            app:exitAnim="@anim/exitAnim"
+            app:popEnterAnim="@anim/popEnterAnim"
+            app:popExitAnim="@anim/popExitAnim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/faqFragment"
+        android:name="de.crysxd.octoapp.base.ui.common.help.HelpDetailFragment"
+        android:label="FaqFragment">
+
+        <argument
+            android:name="faq"
+            app:nullable="true"
+            app:argType="de.crysxd.octoapp.base.ui.common.help.Faq" />
+
+        <argument
+            android:name="bug"
+            app:argType="de.crysxd.octoapp.base.ui.common.help.KnownBug"
+            app:nullable="true" />
+    </fragment>
+
+</navigation>

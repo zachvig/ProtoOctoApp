@@ -5,9 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
@@ -15,12 +19,22 @@ import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.android.synthetic.main.fragment_dialog_send_feedback.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.text.DateFormat
+import java.util.*
 
 
 class SendFeedbackDialog : DialogFragment() {
 
     private var screenshot: Bitmap? = null
     private val viewModel: SendFeedbackViewModel by injectViewModel()
+
+    companion object {
+        private const val ARG_FOR_BUG_REPORT = "forBug"
+
+        fun create(isForBugReport: Boolean = false) = SendFeedbackDialog().also {
+            it.arguments = bundleOf(ARG_FOR_BUG_REPORT to isForBugReport)
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
         inflater.inflate(R.layout.fragment_dialog_send_feedback, container, false)
@@ -34,6 +48,24 @@ class SendFeedbackDialog : DialogFragment() {
         if (viewModel.screenshot == null) {
             checkboxScreenshot.isChecked = false
             checkboxScreenshot.isEnabled = false
+        }
+
+        val isForBugReport = arguments?.getBoolean(ARG_FOR_BUG_REPORT, false) == true
+        if (isForBugReport) {
+            checkboxPhoneInformation.isChecked = true
+            checkboxPhoneInformation.isEnabled = false
+            checkboxOctoprintInformation.isChecked = true
+            checkboxOctoprintInformation.isEnabled = false
+        }
+
+        try {
+            val tz = Firebase.remoteConfig.getString("contact_timezone")
+            val time = Calendar.getInstance(TimeZone.getTimeZone(tz)).time
+            val formattedTime = DateFormat.getTimeInstance(DateFormat.SHORT).format(time)
+            contactTime.text = getString(R.string.help___contact_detail_information, formattedTime, tz)
+        } catch (e: java.lang.Exception) {
+            Timber.e(e)
+            contactTime.isVisible = false
         }
 
         viewModel.viewState.observe(viewLifecycleOwner) {

@@ -6,7 +6,7 @@ import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.SerialCommunication
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
-import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.GetGcodeShortcutsUseCase
 import de.crysxd.octoapp.base.usecase.GetTerminalFiltersUseCase
@@ -42,7 +42,7 @@ class TerminalViewModel(
         }
 
     private var clearedFrom: Date = Date(0)
-    private val printStateFlow = octoPrintProvider.passiveCurrentMessageFlow()
+    private val printStateFlow = octoPrintProvider.passiveCurrentMessageFlow("terminal")
         .mapNotNull { it.state?.flags }
         .map { it.pausing || it.cancelling || it.printing }
     val uiState = flow {

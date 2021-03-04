@@ -31,7 +31,7 @@ class PrintNotificationSupportBroadcastReceiver(context: Context) : BroadcastRec
 
                 if (wasDisconnected && hasWifi) {
                     Injector.get().octoPreferences().wasPrintNotificationDisconnected = false
-                    Timber.i("Network state changed, wifi now connected. Print notification was disconnected before, attempting to reconnect in 5s")
+                    Timber.i("Wifi now connected. Print notification was disconnected before, attempting to reconnect in 5s")
 
                     // Delay for 5s to get the network settled and then connect
                     delay(5000)

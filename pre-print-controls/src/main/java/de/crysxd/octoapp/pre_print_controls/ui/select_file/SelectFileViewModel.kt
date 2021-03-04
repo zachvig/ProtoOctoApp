@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.squareup.picasso.Picasso
 import de.crysxd.octoapp.base.OctoPreferences
-import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase.Params
 import de.crysxd.octoapp.octoprint.models.files.FileObject

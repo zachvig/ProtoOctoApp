@@ -29,6 +29,7 @@ class PluginSettingsDeserializer : JsonDeserializer<Settings.PluginSettingsGroup
         "ikea_tradfri" -> context.deserialize<Settings.TradfriSettings>(element, Settings.TradfriSettings::class.java)
         "tplinksmartplug" -> context.deserialize<Settings.TpLinkSmartPlugSettings>(element, Settings.TpLinkSmartPlugSettings::class.java)
         "tasmota" -> context.deserialize<Settings.TasmotaSettings>(element, Settings.TasmotaSettings::class.java)
+        "tuyasmartplug" -> context.deserialize<Settings.TasmotaSettings>(element, Settings.TuyaSettings::class.java)
         "multicam" -> context.deserialize<Settings.TasmotaSettings>(element, Settings.MultiCamSettings::class.java)
         else -> Unknown
     }

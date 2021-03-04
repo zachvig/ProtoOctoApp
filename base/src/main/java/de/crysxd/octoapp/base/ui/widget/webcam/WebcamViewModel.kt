@@ -7,7 +7,7 @@ import androidx.lifecycle.*
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.ext.isHlsStreamUrl
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.ui.BaseViewModel
+import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ApplyWebcamTransformationsUseCase
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings

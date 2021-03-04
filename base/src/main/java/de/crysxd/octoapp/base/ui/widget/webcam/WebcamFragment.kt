@@ -83,7 +83,7 @@ class WebcamFragment : Fragment(R.layout.webcam_fragment) {
         viewModel.connect()
 
         lifecycleScope.launchWhenCreated {
-            Injector.get().octoPrintProvider().passiveCurrentMessageFlow().collectLatest { message ->
+            Injector.get().octoPrintProvider().passiveCurrentMessageFlow("webcam").collectLatest { message ->
                 val flags = message.state?.flags
                 val printActive = listOf(flags?.paused, flags?.pausing, flags?.printing, flags?.cancelling).any { it == true }
 
