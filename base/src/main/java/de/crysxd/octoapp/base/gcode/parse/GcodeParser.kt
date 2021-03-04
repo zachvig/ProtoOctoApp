@@ -6,7 +6,10 @@ import de.crysxd.octoapp.base.gcode.parse.models.Layer
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import timber.log.Timber
 import java.io.InputStream
+import kotlin.math.acos
+import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 class GcodeParser {
 
@@ -23,12 +26,16 @@ class GcodeParser {
         layers.clear()
         initNewLayer()
         lastLayerChangeAtPositionInFile = 0
+        lastPosition = null
+        lastExtrusionZ = 0f
+        lastExtrusionZ = 0f
+        isAbsolutePositioningActive = true
         var positionInFile = 0
         var lastUpdatePercent = 0
 
         content.reader().useLines { lines ->
             lines.iterator().forEach {
-                parseLine(it.takeWhile { c -> c != ';' }, positionInFile)
+                parseLine(it.takeWhile { it != ';' }, positionInFile)
                 positionInFile += it.length + 1
 
                 val progress = (positionInFile / totalSize.toFloat())
@@ -49,8 +56,8 @@ class GcodeParser {
     private fun parseLine(line: String, positionInFile: Int) = when {
         isAbsolutePositioningCommand(line) -> isAbsolutePositioningActive = true
         isRelativePositioningCommand(line) -> isAbsolutePositioningActive = false
-        isLinearMoveCommand(line) -> interpretMove(line, positionInFile, false)
-        isArcMoveCommand(line) -> interpretMove(line, positionInFile, true)
+        isLinearMoveCommand(line) -> parseLinearMove(line, positionInFile)
+        isArcMoveCommand(line) -> parseArcMove(line, positionInFile)
         else -> Unit
     }
 
@@ -68,10 +75,7 @@ class GcodeParser {
         }
     }
 
-    private fun interpretMove(line: String, positionInFile: Int, isArc: Boolean) {
-        if (isArc) {
-            Timber.i("ARC")
-        }
+    private fun parseLinearMove(line: String, positionInFile: Int) {
         // Get positions (don't use regex, it's slower)
         val x = extractValue("X", line)
         val y = extractValue("Y", line)
@@ -80,6 +84,154 @@ class GcodeParser {
 
         // Convert to absolute position
         // X and Y might be null. If so, we use the last known position as there was no movement
+        val (absoluteX, absoluteY, absoluteZ) = toAbsolutePosition(x = x, y = y, z = z)
+        val type = handleExtrusion(e = e, absoluteZ = absoluteZ, positionInFile = positionInFile)
+
+        val move = Move.LinearMove(
+            positionInFile = positionInFile,
+            positionInLayer = moveCountInLayer,
+            positionInArray = 0,
+            type = type
+        )
+        addMove(
+            move = move,
+            fromX = lastPosition?.x ?: absoluteX,
+            fromY = lastPosition?.y ?: absoluteY,
+            toX = absoluteX,
+            toY = absoluteY
+        )
+    }
+
+    private fun parseArcMove(line: String, positionInFile: Int) {
+        // Get positions (don't use regex, it's slower)
+        val x = extractValue("X", line)
+        val y = extractValue("Y", line)
+        val i = extractValue("I", line) ?: 0f
+        val j = extractValue("J", line) ?: 0f
+        val r = extractValue("R", line)
+        val z = extractValue("Z", line) ?: lastPositionZ
+        val e = extractValue("E", line) ?: 0f
+        val clockwise = line.startsWith("G2")
+
+        // Convert to absolute position
+        // X and Y might be null. If so, we use the last known position as there was no movement
+        val (_, _, absoluteZ) = toAbsolutePosition(x = 0f, y = 0f, z = z)
+        val type = handleExtrusion(e = e, absoluteZ = absoluteZ, positionInFile = positionInFile)
+
+        val move = when {
+            r != null -> parseRFormArcMove(x = x, y = y, r = r, clockwise = clockwise, type = type, positionInFile = positionInFile)
+
+            j != 0f || i != 0f -> parseIjFormArcMove(x = x, y = y, i = i, j = j, clockwise = clockwise, type = type, positionInFile = positionInFile)
+
+            else -> throw IllegalArgumentException("Arc move without r or j or i value: $line")
+        }
+
+        addMove(
+            move = move,
+            fromX = lastPosition?.x ?: 0f,
+            fromY = lastPosition?.y ?: 0f,
+            toX = x ?: lastPosition?.x ?: 0f,
+            toY = y ?: lastPosition?.y ?: 0f
+        )
+    }
+
+    private fun parseIjFormArcMove(x: Float?, y: Float?, i: Float, j: Float, clockwise: Boolean, type: Move.Type, positionInFile: Int): Move.ArcMove {
+        // End positions are either the given X Y (always absolute) or if they are missing the last known ones
+        val endX = x ?: lastPosition?.x ?: throw IllegalArgumentException("Missing param X")
+        val endY = y ?: lastPosition?.y ?: throw IllegalArgumentException("Missing param Y")
+        val startX = lastPosition?.x ?: throw java.lang.IllegalArgumentException("Missing start X")
+        val startY = lastPosition?.y ?: throw java.lang.IllegalArgumentException("Missing start Y")
+        val centerX = startX + i
+        val centerY = startY + j
+        val radius = sqrt(i.pow(2) + j.pow(2))
+
+        fun Float.toDegrees() = (this * 180f / Math.PI).toFloat()
+        fun getAndroidAngle(centerX: Float, centerY: Float, pointX: Float, pointY: Float): Float {
+            // Control point marking 0deg
+            val controlPointX = centerX + radius
+            val controlPointY = centerY
+
+            // Law of cosine
+            val sideA = radius
+            val sideB = radius
+            val sideC = sqrt((pointX - controlPointX).pow(2) + (pointY - controlPointY).pow(2))
+            val angle = acos((sideA.pow(2) + sideB.pow(2) - sideC.pow(2)) / (2 * sideA * sideB))
+            val angleDegrees = angle.toDegrees()
+
+            // If the angle in reality would exceed 180 deg, we need to flip the rectangle
+            return if (pointY > centerY) {
+                angleDegrees
+            } else {
+                360 - angleDegrees
+            }
+        }
+
+        var startAngle = getAndroidAngle(centerX = centerX, centerY = centerY, pointX = startX, pointY = startY)
+        val endAngle = getAndroidAngle(centerX = centerX, centerY = centerY, pointX = endX, pointY = endY)
+        if (startAngle > endAngle) {
+            startAngle -= 360
+        }
+        val sweepAngle = if (clockwise) {
+            (endAngle - startAngle) - 360
+        } else {
+            endAngle - startAngle
+        }
+
+        return Move.ArcMove(
+            arc = Move.Arc(
+                x0 = startX,
+                y0 = startY,
+                x1 = endX,
+                y1 = endY,
+                leftX = centerX - radius,
+                topY = centerY - radius,
+                r = radius,
+                startAngle = startAngle,
+                sweepAngle = sweepAngle,
+            ),
+            endX = endX,
+            endY = endY,
+            type = type,
+            positionInLayer = moveCountInLayer,
+            positionInFile = positionInFile,
+
+            )
+    }
+
+    private fun parseRFormArcMove(x: Float?, y: Float?, r: Float, clockwise: Boolean, type: Move.Type, positionInFile: Int): Move {
+        return Move.LinearMove(
+            positionInFile = positionInFile,
+            positionInLayer = moveCountInLayer,
+            positionInArray = 0,
+            type = Move.Type.Unsupported
+        )
+    }
+
+    private fun handleExtrusion(e: Float?, absoluteZ: Float, positionInFile: Int): Move.Type {
+        // Check if a new layer was started
+        // A layer is started when we extrude (positive e, negative is retraction)
+        // on a height which is different from the last height we extruded at
+        if (e == null || e > 0) {
+            // If the Z changed since the last extrusion, we have a new layer
+            if (absoluteZ != lastExtrusionZ) {
+                startNewLayer(positionInFile)
+            }
+
+            // Update last extrusion Z height
+            lastExtrusionZ = absoluteZ
+        }
+
+        lastPositionZ = absoluteZ
+
+        // Get type
+        return if (e == 0f) {
+            Move.Type.Travel
+        } else {
+            Move.Type.Extrude
+        }
+    }
+
+    private fun toAbsolutePosition(x: Float?, y: Float?, z: Float): Triple<Float, Float, Float> {
         val absoluteX = x?.let {
             if (isAbsolutePositioningActive) {
                 it
@@ -100,42 +252,17 @@ class GcodeParser {
             lastExtrusionZ + z
         }
 
-        // Get type
-        val type = when {
-            isArc -> Move.Type.Unsupported
-            e == 0f -> Move.Type.Travel
-            else -> Move.Type.Extrude
-        }
-
-        // Check if a new layer was started
-        // A layer is started when we extrude (positive e, negative is retraction)
-        // on a height which is different from the last height we extruded at
-        if (e > 0) {
-            // If the Z changed since the last extrusion, we have a new layer
-            if (absoluteZ != lastExtrusionZ) {
-                startNewLayer(positionInFile)
-            }
-
-            // Update last extrusion Z height
-            lastExtrusionZ = absoluteZ
-        }
-
-        lastPositionZ = absoluteZ
-
-        addMove(
-            type = type,
-            positionInFile = positionInFile,
-            fromX = lastPosition?.x ?: absoluteX,
-            fromY = lastPosition?.y ?: absoluteY,
-            toX = absoluteX,
-            toY = absoluteY
-        )
+        return Triple(absoluteX, absoluteY, absoluteZ)
     }
 
     private fun isLinearMoveCommand(line: String) = isCommand(line = line, command = "G0") || isCommand(line = line, command = "G1")
+
     private fun isArcMoveCommand(line: String) = isCommand(line = line, command = "G2") || isCommand(line = line, command = "G3")
+
     private fun isAbsolutePositioningCommand(line: String) = isCommand(line = line, command = "G90")
+
     private fun isRelativePositioningCommand(line: String) = isCommand(line = line, command = "G91")
+
     private fun isCommand(line: String, command: String) =
         line.startsWith("$command ", ignoreCase = true) ||
                 line.startsWith("$command;", ignoreCase = true) ||
@@ -168,20 +295,16 @@ class GcodeParser {
         }
     }
 
-    private fun addMove(type: Move.Type, positionInFile: Int, fromX: Float, fromY: Float, toX: Float, toY: Float) {
-        moves[type]?.let {
-            val move = Move(
-                positionInFile = positionInFile,
-                positionInLayer = moveCountInLayer,
-                positionInArray = it.second.size,
-                type = type
-            )
-
-            it.first.add(move)
-            it.second.add(fromX)
-            it.second.add(fromY)
-            it.second.add(toX)
-            it.second.add(toY)
+    private fun addMove(move: Move, fromX: Float, fromY: Float, toX: Float, toY: Float) {
+        when (move) {
+            is Move.ArcMove -> moves[move.type]?.first?.add(move)
+            is Move.LinearMove -> moves[move.type]?.let {
+                it.first.add(move.copy(positionInArray = it.second.size))
+                it.second.add(fromX)
+                it.second.add(fromY)
+                it.second.add(toX)
+                it.second.add(toY)
+            }
         }
 
         moveCountInLayer++

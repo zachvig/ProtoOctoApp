@@ -123,6 +123,7 @@ abstract class OctoActivity : LocalizedActivity() {
     fun showDialog(e: Throwable) {
         // Safeguard that we don't show an error for cancellation exceptions
         if (e !is CancellationException) {
+            Timber.e(e)
             showDialog(
                 message = e.composeErrorMessage(this),
                 neutralAction = { showErrorDetailsDialog(e) },

@@ -50,7 +50,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/arcs"
+        android:id="@+id/unsupportedGcode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_1"
@@ -58,7 +58,7 @@
         android:background="@drawable/bg_chip"
         android:backgroundTint="@color/red"
         android:importantForAccessibility="no"
-        android:text="Arcs interpolated (red)"
+        android:text="Unsupported Gcode detected (red)"
         android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
         android:textColor="@color/white"
         android:visibility="gone"

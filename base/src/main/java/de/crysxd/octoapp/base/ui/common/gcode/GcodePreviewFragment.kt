@@ -216,7 +216,7 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
         layerNumber.text = getString(R.string.x_of_y, state.renderContext.layerNumber + 1, state.renderContext.layerCount)
         layerHeight.text = getString(R.string.x_mm, layerHeightMm)
         layerProgress.text = String.format("%.0f %%", layerProgressPercent * 100)
-        arcs.isVisible = state.renderContext.paths.any { it.type == Move.Type.Unsupported && it.points.isNotEmpty() }
+        unsupportedGcode.isVisible = state.renderContext.paths.any { it.type == Move.Type.Unsupported && it.points.isNotEmpty() }
 
         // Only switch to async render if the view recommends it.
         // This way we have smooth scrolling as long as possible but never block the UI thread

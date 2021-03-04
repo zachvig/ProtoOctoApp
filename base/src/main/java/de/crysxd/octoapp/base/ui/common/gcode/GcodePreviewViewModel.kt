@@ -92,6 +92,7 @@ class GcodePreviewViewModel(
                 else -> s1
             }
         }.retry(3) {
+            Timber.e(it)
             delay(500L)
             true
         }.catch { e ->

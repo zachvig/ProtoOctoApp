@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.gcode.render.models
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 
 data class GcodePath(
+    val arcs: List<Move.Arc>,
     val points: FloatArray,
     val offset: Int,
     val count: Int,
