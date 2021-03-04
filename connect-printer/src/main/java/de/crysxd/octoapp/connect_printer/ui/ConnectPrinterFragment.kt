@@ -84,6 +84,11 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
         MenuBottomSheetFragment().show(childFragmentManager)
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.uiState.value?.let(::handleUiStateUpdate)
+    }
+
     private fun handleUiStateUpdate(state: ConnectPrinterViewModel.UiState) {
         binding.psuTurnOnControls.isVisible = false
         binding.psuTurnOffControls.isVisible = false
