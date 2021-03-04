@@ -6,7 +6,10 @@ import de.crysxd.octoapp.base.gcode.parse.models.Layer
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import timber.log.Timber
 import java.io.InputStream
-import kotlin.math.*
+import kotlin.math.acos
+import kotlin.math.pow
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 class GcodeParser {
 
@@ -99,10 +102,7 @@ class GcodeParser {
         )
     }
 
-    private fun parseArcMove(line: String, positionInFile: Int, isArc: Boolean) {
-        if (isArc) {
-            Timber.i("ARC")
-        }
+    private fun parseArcMove(line: String, positionInFile: Int) {
         // Get positions (don't use regex, it's slower)
         val x = extractValue("X", line)
         val y = extractValue("Y", line)
@@ -143,30 +143,39 @@ class GcodeParser {
         val startY = lastPosition?.y ?: throw java.lang.IllegalArgumentException("Missing start Y")
         val centerX = startX + i
         val centerY = startY + j
-        val r = sqrt(i.pow(2) + j.pow(2))
+        val radius = sqrt(i.pow(2) + j.pow(2))
 
-        // Vector from the center to the start point
-        val centerToStartX = startX - centerX
-        val centerToStartY = startY - centerY
-
-        // Vector from the center to the end point
-        val centerToEndX = endX - centerX
-        val centerToEndY = endY - centerY
-
-        // Vector from the center along what Android considers the 0deg axis
-        val centerToControlX = 10f
-        val centerToControlY = 0f
-
-        // α = arccos[(xa * xb + ya * yb) / (√(xa^2 + ya^2) * √(xb^2 + yb^2))]
         fun Float.toDegrees() = (this * 180f / Math.PI).toFloat()
-        fun getAndroidAngle(xa: Float, ya: Float, xb: Float = centerToControlX, yb: Float = centerToControlY) =
-//            acos((xa * xb + ya * yb) / (sqrt(xa.pow(2) + ya.pow(2)) * sqrt(xb.pow(2) + yb.pow(2))))
-            atan2(xb * ya - yb * xa, xb * xa + yb * ya)
+        fun getAndroidAngle(centerX: Float, centerY: Float, pointX: Float, pointY: Float): Float {
+            // Control point marking 0deg
+            val controlPointX = centerX + radius
+            val controlPointY = centerY
 
-        val angleToStart = getAndroidAngle(centerToStartX, centerToStartY).toDegrees()
-        val angleToEnd = getAndroidAngle(centerToEndX, centerToEndY).toDegrees()
-        val isFlipSide = angleToStart.absoluteValue == 180f
-        val fixedAngleToEnd = if (isFlipSide) -angleToEnd else angleToEnd
+            // Law of cosine
+            val sideA = radius
+            val sideB = radius
+            val sideC = sqrt((pointX - controlPointX).pow(2) + (pointY - controlPointY).pow(2))
+            val angle = acos((sideA.pow(2) + sideB.pow(2) - sideC.pow(2)) / (2 * sideA * sideB))
+            val angleDegrees = angle.toDegrees()
+
+            // If the angle in reality would exceed 180 deg, we need to flip the rectangle
+            return if (pointY > centerY) {
+                angleDegrees
+            } else {
+                360 - angleDegrees
+            }
+        }
+
+        var startAngle = getAndroidAngle(centerX = centerX, centerY = centerY, pointX = startX, pointY = startY)
+        val endAngle = getAndroidAngle(centerX = centerX, centerY = centerY, pointX = endX, pointY = endY)
+        if (startAngle > endAngle) {
+            startAngle -= 360
+        }
+        val sweepAngle = if (clockwise) {
+            (endAngle - startAngle) - 360
+        } else {
+            endAngle - startAngle
+        }
 
         return Move.ArcMove(
             arc = Move.Arc(
@@ -174,11 +183,11 @@ class GcodeParser {
                 y0 = startY,
                 x1 = endX,
                 y1 = endY,
-                leftX = centerX - r,
-                topY = centerY - r,
-                r = r,
-                startAngle = angleToStart,
-                sweepAngle = if (isFlipSide) angleToStart - fixedAngleToEnd else fixedAngleToEnd - angleToStart,
+                leftX = centerX - radius,
+                topY = centerY - radius,
+                r = radius,
+                startAngle = startAngle,
+                sweepAngle = sweepAngle,
             ),
             endX = endX,
             endY = endY,
