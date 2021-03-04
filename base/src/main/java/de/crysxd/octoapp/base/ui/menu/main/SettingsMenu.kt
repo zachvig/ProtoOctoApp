@@ -7,7 +7,6 @@ import androidx.core.text.HtmlCompat
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
@@ -19,7 +18,6 @@ import timber.log.Timber
 @Parcelize
 class SettingsMenu : Menu {
     override suspend fun getMenuItem() = listOf(
-        SendFeedbackMenuItem(),
         HelpMenuItem(),
         ChangeLanguageMenuItem(),
         NightThemeMenuItem(),
@@ -52,23 +50,6 @@ class SettingsMenu : Menu {
     })
 }
 
-class SendFeedbackMenuItem : MenuItem {
-    override val itemId = MENU_ITEM_SEND_FEEDBACK
-    override var groupId = ""
-    override val order = 100
-    override val enforceSingleLine = false
-    override val style = MenuItemStyle.Settings
-    override val icon = R.drawable.ic_round_rate_review_24
-
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_send_feedback)
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
-        host?.let {
-            SendFeedbackDialog().show(it.parentFragmentManager, "feedback")
-            it.dismissAllowingStateLoss()
-        }
-    }
-}
-
 class HelpMenuItem : MenuItem {
     override val itemId = MENU_ITEM_HELP
     override var groupId = ""
@@ -77,7 +58,7 @@ class HelpMenuItem : MenuItem {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_help_outline_24
 
-    override suspend fun getTitle(context: Context) = "FAQ & other help"
+    override suspend fun getTitle(context: Context) = "FAQ, help & feedback"
     override suspend fun onClicked(host: MenuBottomSheetFragment?) {
         host?.findNavController()?.navigate(R.id.action_help)
         host?.dismissAllowingStateLoss()
