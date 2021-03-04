@@ -130,8 +130,8 @@ class GcodeParser {
             move = move,
             fromX = lastPosition?.x ?: 0f,
             fromY = lastPosition?.y ?: 0f,
-            toX = move.endX,
-            toY = move.endY
+            toX = x ?: lastPosition?.x ?: 0f,
+            toY = y ?: lastPosition?.y ?: 0f
         )
     }
 
@@ -198,8 +198,13 @@ class GcodeParser {
             )
     }
 
-    private fun parseRFormArcMove(x: Float?, y: Float?, r: Float, clockwise: Boolean, type: Move.Type, positionInFile: Int): Move.ArcMove {
-        TODO()
+    private fun parseRFormArcMove(x: Float?, y: Float?, r: Float, clockwise: Boolean, type: Move.Type, positionInFile: Int): Move {
+        return Move.LinearMove(
+            positionInFile = positionInFile,
+            positionInLayer = moveCountInLayer,
+            positionInArray = 0,
+            type = Move.Type.Unsupported
+        )
     }
 
     private fun handleExtrusion(e: Float?, absoluteZ: Float, positionInFile: Int): Move.Type {
