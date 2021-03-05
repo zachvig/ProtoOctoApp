@@ -250,7 +250,7 @@ class PrintNotificationService : Service() {
         message.progress?.let {
             val leftSecs = it.printTimeLeft.toLong()
             val progress = it.completion.toInt()
-            val smartEta = formatEtaUseCase.execute(FormatEtaUseCase.Params(leftSecs, allowRelative = false))
+            val smartEta = formatEtaUseCase.execute(FormatEtaUseCase.Params(leftSecs, allowRelative = true))
             lastEta = formatEtaUseCase.execute(FormatEtaUseCase.Params(leftSecs, allowRelative = false))
 
             val detail = getString(R.string.print_notification___printing_message, progress, smartEta)
