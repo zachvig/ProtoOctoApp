@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
@@ -68,7 +69,7 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         set(value) {
             if (value != null && value > 0) {
                 action.setImageResource(value)
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     (action.drawable as? AnimatedVectorDrawable)?.let {
                         it.start()
                         it.registerAnimationCallback(object : Animatable2.AnimationCallback() {
@@ -158,7 +159,10 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
 
         // Only animate if changes worth animation are detected
         if (labelVisible != label.isVisible || hintText != input.hint || actionVisible != action.isVisible) {
-            TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
+            // Animation causes glitch in font color on older Android versions
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
+            }
             label.isVisible = labelVisible
             input.hint = hintText
             action.isVisible = actionVisible
