@@ -38,16 +38,17 @@ class SettingsMenu : Menu {
         HtmlCompat.FROM_HTML_MODE_COMPACT
     )
 
-    override fun getBottomMovementMethod(host: MenuBottomSheetFragment) = LinkClickMovementMethod(object : LinkClickMovementMethod.OpenWithIntentLinkClickedListener() {
-        override fun onLinkClicked(context: Context, url: String?): Boolean {
-            return if (url == "privacy") {
-                host.pushMenu(PrivacyMenu())
-                true
-            } else {
-                super.onLinkClicked(context, url)
+    override fun getBottomMovementMethod(host: MenuBottomSheetFragment) =
+        LinkClickMovementMethod(object : LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.requireOctoActivity()) {
+            override fun onLinkClicked(context: Context, url: String?): Boolean {
+                return if (url == "privacy") {
+                    host.pushMenu(PrivacyMenu())
+                    true
+                } else {
+                    super.onLinkClicked(context, url)
+                }
             }
-        }
-    })
+        })
 }
 
 class HelpMenuItem : MenuItem {

@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui.common.help
+package de.crysxd.octoapp.help
 
 import android.content.Context
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment

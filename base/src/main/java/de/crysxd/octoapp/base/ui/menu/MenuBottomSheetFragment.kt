@@ -132,7 +132,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     viewBinding.emptyStateIcon.setImageResource(emptyStateIcon)
                     (viewBinding.emptyStateIcon.drawable as? Animatable)?.start()
                     viewBinding.emptyStateAction.text = emptyStateAction
-                    viewBinding.emptyStateAction.setOnClickListener { Uri.parse(emptyStateUrl).open(context) }
+                    viewBinding.emptyStateAction.setOnClickListener { Uri.parse(emptyStateUrl).open(requireOctoActivity()) }
                     viewBinding.emptyStateAction.isVisible = emptyStateAction != null && emptyStateUrl != null
                     viewBinding.emptyState.isVisible = emptyStateIcon != 0 && items.isEmpty()
                     viewBinding.recyclerView.isVisible = !viewBinding.emptyState.isVisible

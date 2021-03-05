@@ -8,11 +8,12 @@ import android.text.style.URLSpan
 import android.view.MotionEvent
 import android.widget.TextView
 import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.ui.base.OctoActivity
 
 /**
  * Set this on a textview and then you can potentially open links locally if applicable
  */
-class LinkClickMovementMethod(private val mOnLinkClickedListener: OnLinkClickedListener = OpenWithIntentLinkClickedListener()) : LinkMovementMethod() {
+class LinkClickMovementMethod(private val mOnLinkClickedListener: OnLinkClickedListener) : LinkMovementMethod() {
     override fun onTouchEvent(widget: TextView, buffer: Spannable, event: MotionEvent): Boolean {
         val action = event.action
 
@@ -45,9 +46,9 @@ class LinkClickMovementMethod(private val mOnLinkClickedListener: OnLinkClickedL
         fun onLinkClicked(context: Context, url: String?): Boolean
     }
 
-    open class OpenWithIntentLinkClickedListener : OnLinkClickedListener {
+    open class OpenWithIntentLinkClickedListener(private val octoActivity: OctoActivity) : OnLinkClickedListener {
         override fun onLinkClicked(context: Context, url: String?): Boolean {
-            Uri.parse(url).open(context)
+            Uri.parse(url).open(octoActivity)
             return true
         }
     }

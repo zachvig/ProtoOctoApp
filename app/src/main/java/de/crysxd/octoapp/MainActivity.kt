@@ -20,6 +20,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.map
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.transition.ChangeBounds
 import androidx.transition.Explode
 import androidx.transition.TransitionManager
@@ -74,8 +75,6 @@ class MainActivity : OctoActivity() {
         val eventObserver = Observer(this::onEventReceived)
         val currentMessageObserver = Observer(this::onCurrentMessageReceived)
         val events = ConnectPrinterInjector.get().octoprintProvider().eventFlow("MainActivity@events").asLiveData().map {
-            if (it is Event.MessageReceived && it.message is de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage) {
-            }
             it
         }
         val currentMessages = ConnectPrinterInjector.get().octoprintProvider().passiveCurrentMessageFlow("MainActivity@currentMessage").asLiveData().map {
@@ -111,6 +110,8 @@ class MainActivity : OctoActivity() {
             .observe(this) { ColorTheme.applyColorTheme(it.colorTheme) }
 
         lifecycleScope.launchWhenResumed {
+            val navHost = supportFragmentManager.findFragmentById(R.id.mainNavController) as NavHostFragment
+
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 Timber.i("Navigated to ${destination.label}")
                 OctoAnalytics.logEvent(OctoAnalytics.Event.ScreenShown, bundleOf(FirebaseAnalytics.Param.SCREEN_NAME to destination.label?.toString()))
@@ -124,7 +125,7 @@ class MainActivity : OctoActivity() {
                 }
             }
 
-            supportFragmentManager.findFragmentById(R.id.mainNavController)?.childFragmentManager?.registerFragmentLifecycleCallbacks(
+            navHost.childFragmentManager.registerFragmentLifecycleCallbacks(
                 object : FragmentManager.FragmentLifecycleCallbacks() {
                     override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
                         super.onFragmentResumed(fm, f)

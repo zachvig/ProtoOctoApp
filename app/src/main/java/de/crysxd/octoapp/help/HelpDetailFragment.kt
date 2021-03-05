@@ -1,10 +1,11 @@
-package de.crysxd.octoapp.base.ui.common.help
+package de.crysxd.octoapp.help
 
 import android.content.Context
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
+import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,45 +16,79 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.squareup.picasso.Picasso
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.databinding.FaqFragmentBinding
 import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.ext.suspendedAwait
 import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
+import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.databinding.HelpDetailFragmentBinding
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.core.MarkwonTheme
 import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
+import timber.log.Timber
 
 class HelpDetailFragment : Fragment(), InsetAwareScreen {
 
     private val args by navArgs<HelpDetailFragmentArgs>()
-    private lateinit var binding: FaqFragmentBinding
+    private lateinit var binding: HelpDetailFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
-        FaqFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
+        HelpDetailFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (args.faq == null && args.bug == null) {
+        if (args.faqId == null && args.bug == null) {
             findNavController().popBackStack()
+            return
         }
 
-
-        val markwon = Markwon.builder(view.context)
-            .usePlugin(ImagesPlugin.create())
-            .usePlugin(LinkifyPlugin.create())
-            .usePlugin(ThemePlugin(view.context))
-            .build()
-
-        args.faq?.let { bindFaq(it, markwon) }
-        args.bug?.let { bindBug(it, markwon) }
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            val markwon = Markwon.builder(view.context)
+                .usePlugin(ImagesPlugin.create())
+                .usePlugin(LinkifyPlugin.create())
+                .usePlugin(ThemePlugin(view.context))
+                .build()
 
 
+            Timber.i("Showing details for: ${args.faqId} or ${args.bug?.title}")
+            var bound = false
+            args.faqId?.let {
+                getFaq(it)?.let { faq ->
+                    bindFaq(faq, markwon)
+                    bound = true
+                }
+            }
+            args.bug?.let {
+                bindBug(it, markwon)
+                bound = true
+            }
+
+            if (bound) {
+                TransitionManager.beginDelayedTransition(binding.root)
+                binding.progress.isVisible = false
+                binding.scrollView.isVisible = true
+            }
+        }
+    }
+
+    private suspend fun getFaq(faqId: String) = try {
+        Firebase.remoteConfig.fetchAndActivate().suspendedAwait()
+        val faqs = parseFaqsFromJson(Firebase.remoteConfig.getString("faq"))
+        faqs.first { it.id == faqId }
+    } catch (e: Exception) {
+        Timber.e(e)
+        requireOctoActivity().showDialog("This content is currently not available. Try again later!", positiveAction = { findNavController().popBackStack() })
+        null
     }
 
     private fun bindBug(bug: KnownBug, markwon: Markwon) {
@@ -70,7 +105,7 @@ class HelpDetailFragment : Fragment(), InsetAwareScreen {
         if (!faq.youtubeThumbnailUrl.isNullOrBlank() && !faq.youtubeUrl.isNullOrBlank()) {
             Picasso.get().load(faq.youtubeThumbnailUrl).into(binding.videoThumbnail)
             binding.videoThumbnailContainer.setOnClickListener {
-                Uri.parse(faq.youtubeUrl).open(it.context)
+                Uri.parse(faq.youtubeUrl).open(requireOctoActivity())
             }
         } else {
             binding.videoThumbnailContainer.isVisible = false
@@ -118,5 +153,11 @@ class HelpDetailFragment : Fragment(), InsetAwareScreen {
             builder.bulletWidth(res.getDimension(R.dimen.margin_0_1).toInt())
             builder.bulletListItemStrokeWidth(res.getDimension(R.dimen.margin_2).toInt())
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
+        requireOctoActivity().octo.isVisible = false
     }
 }

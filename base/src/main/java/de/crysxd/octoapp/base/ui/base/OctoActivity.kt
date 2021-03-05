@@ -45,7 +45,7 @@ abstract class OctoActivity : LocalizedActivity() {
     abstract val octoToolbar: OctoToolbar
     abstract val octo: OctoView
     abstract val rootLayout: FrameLayout
-    protected abstract val navController: NavController
+    abstract val navController: NavController
     private val handler = Handler(Looper.getMainLooper())
     private val snackbarMessageChannel = ConflatedBroadcastChannel<Message.SnackbarMessage?>()
 
@@ -164,7 +164,8 @@ abstract class OctoActivity : LocalizedActivity() {
                 }
                 builder.show().also {
                     // Allow links to be clicked
-                    it.findViewById<TextView>(android.R.id.message)?.movementMethod = LinkClickMovementMethod()
+                    it.findViewById<TextView>(android.R.id.message)?.movementMethod =
+                        LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(this))
                 }
             }
         } else {

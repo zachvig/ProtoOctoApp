@@ -15,16 +15,6 @@
         app:popEnterAnim="@anim/popEnterAnim"
         app:popExitAnim="@anim/popExitAnim" />
 
-    <include app:graph="@navigation/help_nav_graph" />
-
-    <action
-        android:id="@+id/action_help"
-        app:destination="@id/help_nav_graph"
-        app:enterAnim="@anim/enterAnim"
-        app:exitAnim="@anim/exitAnim"
-        app:popEnterAnim="@anim/popEnterAnim"
-        app:popExitAnim="@anim/popExitAnim" />
-
     <fragment
         android:id="@id/workspaceConnect"
         android:name="de.crysxd.octoapp.connect_printer.ui.ConnectPrinterFragment"

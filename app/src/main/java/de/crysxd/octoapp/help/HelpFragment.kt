@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui.common.help
+package de.crysxd.octoapp.help
 
 import android.net.Uri
 import android.os.Bundle
@@ -12,9 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import de.crysxd.octoapp.base.databinding.HelpFragmentBinding
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ext.suspendedAwait
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
@@ -22,6 +19,7 @@ import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
 import de.crysxd.octoapp.base.ui.menu.main.PrivacyMenu
+import de.crysxd.octoapp.databinding.HelpFragmentBinding
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -38,7 +36,7 @@ class HelpFragment : Fragment() {
 
         lifecycleScope.launchWhenCreated {
             binding.introductionView.setOnClickListener {
-                Uri.parse(Firebase.remoteConfig.getString("introduction_video_url")).open(it.context)
+                Uri.parse(Firebase.remoteConfig.getString("introduction_video_url")).open(requireOctoActivity())
             }
 
             binding.dataPrivacy.setOnClickListener {
@@ -66,8 +64,19 @@ class HelpFragment : Fragment() {
                 false
             }
 
-            val faq = createFaqItems().prepare()
-            val bugs = createBugList().prepare()
+            val faq = try {
+                createFaqItems().prepare()
+            } catch (e: Exception) {
+                Timber.e(e)
+                emptyList()
+            }
+
+            val bugs = try {
+                createBugList().prepare()
+            } catch (e: Exception) {
+                Timber.e(e)
+                emptyList()
+            }
 
             if (delayed) {
                 TransitionManager.beginDelayedTransition(binding.root)
@@ -103,10 +112,10 @@ class HelpFragment : Fragment() {
 
     private fun createContactOptions() = listOf(
         HelpMenuItem(style = MenuItemStyle.Green, "OctoPrint community") {
-            Uri.parse("https://community.octoprint.org/").open(requireContext())
+            Uri.parse("https://community.octoprint.org/").open(requireOctoActivity())
         },
         HelpMenuItem(style = MenuItemStyle.Green, "OctoPrint Discord") {
-            Uri.parse("https://discord.octoprint.org/").open(requireContext())
+            Uri.parse("https://discord.octoprint.org/").open(requireOctoActivity())
         },
         HelpMenuItem(style = MenuItemStyle.Green, "I want to report a bug") {
             SendFeedbackDialog.create(isForBugReport = true).show(childFragmentManager, "bug-report")
@@ -117,22 +126,22 @@ class HelpFragment : Fragment() {
     )
 
     private fun createFaqItems() = Firebase.remoteConfig.getString("faq").let {
-        Gson().fromJson<List<Faq>>(it, object : TypeToken<ArrayList<Faq>>() {}.type)
+        parseFaqsFromJson(it)
     }.filter {
-        !it.title.isNullOrBlank() && !it.content.isNullOrBlank()
+        !it.title.isNullOrBlank() && !it.content.isNullOrBlank() && it.hidden != true
     }.map {
         HelpMenuItem(style = MenuItemStyle.Yellow, title = it.title ?: "") {
-            findNavController().navigate(HelpFragmentDirections.actionShowFaq(faq = it, bug = null))
+            findNavController().navigate(HelpFragmentDirections.actionShowFaq(faqId = it.id, bug = null))
         }
     }
 
     private fun createBugList() = Firebase.remoteConfig.getString("known_bugs").let {
-        Gson().fromJson<List<KnownBug>>(it, object : TypeToken<ArrayList<KnownBug>>() {}.type)
+        parseKnownBugsFromJson(it)
     }.filter {
         !it.title.isNullOrBlank() && !it.content.isNullOrBlank()
     }.map {
         HelpMenuItem(style = MenuItemStyle.Red, title = it.title ?: "") {
-            findNavController().navigate(HelpFragmentDirections.actionShowFaq(faq = null, bug = it))
+            findNavController().navigate(HelpFragmentDirections.actionShowFaq(faqId = null, bug = it))
         }
     }
 

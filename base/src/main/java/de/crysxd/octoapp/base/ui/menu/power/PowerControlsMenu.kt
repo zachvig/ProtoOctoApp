@@ -10,6 +10,7 @@ import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.ext.urlDecode
 import de.crysxd.octoapp.base.ext.urlEncode
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_POWER_DEVICE_CYCLE
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_POWER_DEVICE_OFF
@@ -78,7 +79,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         "<small>Power devices are provided by a <a href=\"https://google.com\">supported plugin</a></small>".toHtml()
 
     override fun getBottomMovementMethod(host: MenuBottomSheetFragment) =
-        LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener())
+        LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.requireOctoActivity()))
 
     companion object {
         private suspend fun MenuBottomSheetFragment.handleAction(action: Action, deviceType: DeviceType, device: PowerDevice) {

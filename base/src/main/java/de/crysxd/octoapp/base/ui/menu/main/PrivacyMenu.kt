@@ -6,6 +6,7 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
 import kotlinx.android.parcel.Parcelize
 
@@ -25,16 +26,17 @@ class PrivacyMenu : Menu {
         HtmlCompat.FROM_HTML_MODE_COMPACT
     )
 
-    override fun getBottomMovementMethod(host: MenuBottomSheetFragment) = LinkClickMovementMethod(object : LinkClickMovementMethod.OpenWithIntentLinkClickedListener() {
-        override fun onLinkClicked(context: Context, url: String?): Boolean {
-            return if (url == "mailto") {
-                SendFeedbackDialog().show(host.childFragmentManager, "feedback")
-                true
-            } else {
-                super.onLinkClicked(context, url)
+    override fun getBottomMovementMethod(host: MenuBottomSheetFragment) =
+        LinkClickMovementMethod(object : LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.requireOctoActivity()) {
+            override fun onLinkClicked(context: Context, url: String?): Boolean {
+                return if (url == "mailto") {
+                    SendFeedbackDialog().show(host.childFragmentManager, "feedback")
+                    true
+                } else {
+                    super.onLinkClicked(context, url)
+                }
             }
-        }
-    })
+        })
 
     override suspend fun getMenuItem(): List<MenuItem> = listOf(
         CrashReportingMenuItem(),
