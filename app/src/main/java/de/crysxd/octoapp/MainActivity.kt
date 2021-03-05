@@ -327,6 +327,12 @@ class MainActivity : OctoActivity() {
     }
 
     private fun setDisconnectedMessageVisible(visible: Boolean) {
+        // Not visible and we should not be visible? Nothing to do.
+        // If we are visible or should be visible, we need to update height as insets might have changed
+        if (!disconnectedMessage.isVisible && !visible) {
+            return
+        }
+
         // Let disconnect message fill status bar background and measure height
         disconnectedMessage.updatePadding(
             top = disconnectedMessage.paddingBottom + lastInsets.top,
@@ -340,6 +346,7 @@ class MainActivity : OctoActivity() {
         TransitionManager.beginDelayedTransition(rootLayout, TransitionSet().apply {
             addTransition(Explode())
             addTransition(ChangeBounds())
+            excludeTarget(octoToolbar, true)
             findCurrentScreen()?.view?.let {
                 excludeChildren(it, true)
             }
