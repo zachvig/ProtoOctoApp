@@ -13,7 +13,7 @@ sealed class Move(
         override val positionInFile: Int,
         override val positionInLayer: Int,
         override val type: Type
-    ) : Move()
+    ) : Move(), Serializable
 
     data class ArcMove(
         val arc: Arc,
@@ -22,7 +22,7 @@ sealed class Move(
         override val positionInFile: Int,
         override val positionInLayer: Int,
         override val type: Type
-    ) : Move()
+    ) : Move(), Serializable
 
     data class Arc(
         val x0: Float,
@@ -34,7 +34,7 @@ sealed class Move(
         val r: Float,
         val startAngle: Float,
         val sweepAngle: Float,
-    )
+    ) : Serializable
 
     enum class Type {
         Travel, Extrude, Unsupported

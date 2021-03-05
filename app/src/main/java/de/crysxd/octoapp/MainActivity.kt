@@ -75,12 +75,10 @@ class MainActivity : OctoActivity() {
         val currentMessageObserver = Observer(this::onCurrentMessageReceived)
         val events = ConnectPrinterInjector.get().octoprintProvider().eventFlow("MainActivity@events").asLiveData().map {
             if (it is Event.MessageReceived && it.message is de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage) {
-                Timber.i("[2] Current message: ${it.message.hashCode()}")
             }
             it
         }
         val currentMessages = ConnectPrinterInjector.get().octoprintProvider().passiveCurrentMessageFlow("MainActivity@currentMessage").asLiveData().map {
-            Timber.i("[1] Current message: ${it.hashCode()}")
             it
         }
 

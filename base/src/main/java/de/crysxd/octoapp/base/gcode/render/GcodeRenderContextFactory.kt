@@ -35,7 +35,7 @@ sealed class GcodeRenderContextFactory {
                 moves to path
             }
 
-            val printHeadPosition = when (val lastMove = paths.map { it.first.last() }.maxByOrNull { it.positionInFile }) {
+            val printHeadPosition = when (val lastMove = paths.map { it.first.lastOrNull() }.filterNotNull().maxByOrNull { it.positionInFile }) {
                 is Move.ArcMove -> PointF(lastMove.endX, lastMove.endY)
                 is Move.LinearMove -> {
                     layer.moves[lastMove.type]?.let { moves ->
