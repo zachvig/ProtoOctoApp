@@ -129,6 +129,10 @@
         <value>https://octoapp-4e438.web.app/not_ready/</value>
     </entry>
     <entry>
+        <key>introduction_video_url</key>
+        <value>https://youtu.be/lKJhWnLUrHA</value>
+    </entry>
+    <entry>
         <key>faq</key>
         <value>[]</value>
     </entry>
