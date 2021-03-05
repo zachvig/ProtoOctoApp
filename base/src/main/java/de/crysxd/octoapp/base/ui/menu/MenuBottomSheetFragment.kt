@@ -228,7 +228,10 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     // Play success animation
                     val after = viewModel.menuBackStack.last()
                     if (after == before) {
-                        adapter.playSuccessAnimationForItem(item)
+                        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+                            delay(100)
+                            adapter.playSuccessAnimationForItem(item)
+                        }
                     }
                 }
 
