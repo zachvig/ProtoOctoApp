@@ -41,14 +41,14 @@ class WebcamViewModel(
         // Load settings
         val activeWebcamIndex = octoPrintRepository.getActiveInstanceSnapshot()?.appSettings?.activeWebcamIndex ?: 0
         val allWebcamSettings = getWebcamSettingsUseCase.execute(null)
-        val preferredSettings = allWebcamSettings.getOrNull(activeWebcamIndex)
-        val webcamSettings = preferredSettings ?: allWebcamSettings.firstOrNull()
+        val preferredSettings = allWebcamSettings?.getOrNull(activeWebcamIndex)
+        val webcamSettings = preferredSettings ?: allWebcamSettings?.firstOrNull()
 
         if (preferredSettings == null) {
             switchWebcam(0)
         }
 
-        return webcamSettings to allWebcamSettings.size
+        return webcamSettings to (allWebcamSettings?.size ?: 0)
     }
 
     fun connect() {

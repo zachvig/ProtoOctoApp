@@ -13,10 +13,10 @@ import javax.inject.Inject
 class GetWebcamSettingsUseCase @Inject constructor(
     private val octoPrintRepository: OctoPrintRepository,
     private val octoPrintProvider: OctoPrintProvider
-) : UseCase<OctoPrintInstanceInformationV2?, List<WebcamSettings>>() {
+) : UseCase<OctoPrintInstanceInformationV2?, List<WebcamSettings>?>() {
 
-    override suspend fun doExecute(param: OctoPrintInstanceInformationV2?, timber: Timber.Tree): List<WebcamSettings> {
-        val instanceInfo = param ?: octoPrintRepository.getActiveInstanceSnapshot() ?: throw IllegalStateException("No OctoPrint available")
+    override suspend fun doExecute(param: OctoPrintInstanceInformationV2?, timber: Timber.Tree): List<WebcamSettings>? {
+        val instanceInfo = param ?: octoPrintRepository.getActiveInstanceSnapshot() ?: return null
         val octoPrint = octoPrintProvider.createAdHocOctoPrint(instanceInfo)
         val raw = instanceInfo.settings ?: octoPrint.createSettingsApi().getSettings()
         val webcamSettings = mutableListOf<WebcamSettings>()
