@@ -36,13 +36,20 @@ sealed class GcodeRenderContextFactory {
                     count = count,
                     points = it.value.second
                 )
-                moves to path
+                Triple(it.key, moves, path)
             }
 
-            val printHeadPosition = when (val lastMove = paths.map { it.first.lastOrNull() }.filterNotNull().maxByOrNull { it.positionInFile }) {
+            val last = paths.map { it.first to it.second.lastOrNull() }
+                .filter { it.second != null }
+                .map { it.first to it.second!! }
+                .maxByOrNull { it.second.positionInFile }
+            val lastMove = last?.second
+            val lastType = last?.first
+
+            val printHeadPosition = when (lastMove) {
                 is Move.ArcMove -> PointF(lastMove.endX, lastMove.endY)
                 is Move.LinearMove -> {
-                    layer.moves[lastMove.type]?.let { moves ->
+                    layer.moves[lastType]?.let { moves ->
                         val x = moves.second[lastMove.positionInArray + 2]
                         val y = moves.second[lastMove.positionInArray + 3]
                         PointF(x, y)
@@ -53,11 +60,11 @@ sealed class GcodeRenderContextFactory {
 
             GcodeRenderContext(
                 printHeadPosition = printHeadPosition,
-                paths = paths.map { it.second }.sortedBy { it.priority },
+                paths = paths.map { it.third }.sortedBy { it.priority },
                 layerCount = gcode.layers.size,
                 layerZHeight = layerInfo.zHeight,
                 layerNumber = gcode.layers.indexOf(layerInfo),
-                layerProgress = paths.sumBy { it.second.count } / layer.moves.values.sumBy { it.second.size }.toFloat()
+                layerProgress = paths.sumBy { it.third.count } / layer.moves.values.sumBy { it.second.size }.toFloat()
             )
         }
     }

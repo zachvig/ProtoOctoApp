@@ -96,10 +96,10 @@ class GcodeParser(
         val move = Move.LinearMove(
             positionInFile = positionInFile,
             positionInArray = 0,
-            type = type
         )
         addMove(
             move = move,
+            type = type,
             fromX = lastPosition?.x ?: absoluteX,
             fromY = lastPosition?.y ?: absoluteY,
             toX = absoluteX,
@@ -124,9 +124,9 @@ class GcodeParser(
         val type = handleExtrusion(e = e, absoluteZ = absoluteZ, positionInFile = positionInFile)
 
         val move = when {
-            r != null -> parseRFormArcMove(x = x, y = y, r = r, clockwise = clockwise, type = type, positionInFile = positionInFile)
+            r != null -> parseRFormArcMove(x = x, y = y, r = r, clockwise = clockwise, positionInFile = positionInFile)
 
-            j != 0f || i != 0f -> parseIjFormArcMove(x = x, y = y, i = i, j = j, clockwise = clockwise, type = type, positionInFile = positionInFile)
+            j != 0f || i != 0f -> parseIjFormArcMove(x = x, y = y, i = i, j = j, clockwise = clockwise, positionInFile = positionInFile)
 
             else -> throw IllegalArgumentException("Arc move without r or j or i value: $line")
         }
@@ -136,11 +136,12 @@ class GcodeParser(
             fromX = lastPosition?.x ?: 0f,
             fromY = lastPosition?.y ?: 0f,
             toX = x ?: lastPosition?.x ?: 0f,
-            toY = y ?: lastPosition?.y ?: 0f
+            toY = y ?: lastPosition?.y ?: 0f,
+            type = type,
         )
     }
 
-    private fun parseIjFormArcMove(x: Float?, y: Float?, i: Float, j: Float, clockwise: Boolean, type: Move.Type, positionInFile: Int): Move.ArcMove {
+    private fun parseIjFormArcMove(x: Float?, y: Float?, i: Float, j: Float, clockwise: Boolean, positionInFile: Int): Move.ArcMove {
         // End positions are either the given X Y (always absolute) or if they are missing the last known ones
         val endX = x ?: lastPosition?.x ?: throw IllegalArgumentException("Missing param X")
         val endY = y ?: lastPosition?.y ?: throw IllegalArgumentException("Missing param Y")
@@ -196,17 +197,14 @@ class GcodeParser(
             ),
             endX = endX,
             endY = endY,
-            type = type,
             positionInFile = positionInFile,
-
-            )
+        )
     }
 
-    private fun parseRFormArcMove(x: Float?, y: Float?, r: Float, clockwise: Boolean, type: Move.Type, positionInFile: Int): Move {
+    private fun parseRFormArcMove(x: Float?, y: Float?, r: Float, clockwise: Boolean, positionInFile: Int): Move {
         return Move.LinearMove(
             positionInFile = positionInFile,
             positionInArray = 0,
-            type = Move.Type.Unsupported
         )
     }
 
@@ -301,10 +299,10 @@ class GcodeParser(
         }
     }
 
-    private fun addMove(move: Move, fromX: Float, fromY: Float, toX: Float, toY: Float) {
+    private fun addMove(move: Move, type: Move.Type, fromX: Float, fromY: Float, toX: Float, toY: Float) {
         when (move) {
-            is Move.ArcMove -> moves[move.type]?.first?.add(move)
-            is Move.LinearMove -> moves[move.type]?.let {
+            is Move.ArcMove -> moves[type]?.first?.add(move)
+            is Move.LinearMove -> moves[type]?.let {
                 it.first.add(move.copy(positionInArray = it.second.size))
                 it.second.add(fromX)
                 it.second.add(fromY)
