@@ -154,10 +154,13 @@ abstract class OctoActivity : LocalizedActivity() {
     ) = handler.post {
         // Check activity state before showing dialog
         if (lifecycle.currentState >= Lifecycle.State.CREATED) {
+            // If message is aplain string, format with HTML
+            val formattedMessage = (message as? String)?.let { HtmlCompat.fromHtml(message, HtmlCompat.FROM_HTML_MODE_COMPACT) } ?: message
+
             Timber.i("Showing dialog: [message=$message, positiveButton=$positiveButton, neutralButton=$neutralButton")
             dialog?.dismiss()
             dialog = MaterialAlertDialogBuilder(this).let { builder ->
-                builder.setMessage(HtmlCompat.fromHtml(message.toString(), HtmlCompat.FROM_HTML_MODE_COMPACT))
+                builder.setMessage(formattedMessage)
                 builder.setPositiveButton(positiveButton) { _, _ -> positiveAction(this) }
                 neutralButton?.let {
                     builder.setNeutralButton(it) { _, _ -> neutralAction(this) }
