@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.google.gson.Gson
 import de.crysxd.octoapp.base.BuildConfig
+import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.parse.models.Layer
 import de.crysxd.octoapp.base.gcode.parse.models.LayerInfo
@@ -21,7 +22,7 @@ import java.util.*
 import kotlin.math.absoluteValue
 
 
-private const val MAX_CACHE_SIZE = 128 * 1024 * 1024 // 128 MB
+private const val MAX_CACHE_SIZE = 128 * 1024 * 1024L // 128 MB
 
 class LocalGcodeFileDataSource(
     context: Context,
@@ -53,10 +54,17 @@ class LocalGcodeFileDataSource(
 
     fun canLoadFile(file: FileObject.File): Boolean {
         val cacheKey = getCacheKey(file)
-        return getCacheEntry(cacheKey)?.let {
+        val cached = getCacheEntry(cacheKey)?.let {
             // Cache hit if the file exists and the file was not changed at the server since it was cached
             getDataFile(cacheKey).exists() && getIndexFile(cacheKey).exists() && it.fileDate == file.date
         } == true
+
+        // If not (completely) cached, remove all files anyways to ensure no broken files are kept
+        if (cached) {
+            removeFromCache(file)
+        }
+
+        return canLoadFile()
     }
 
     fun loadFile(file: FileObject.File): Flow<GcodeFileDataSource.LoadState> = flow {
@@ -108,19 +116,26 @@ class LocalGcodeFileDataSource(
 
     private fun cleanUp() {
         fun totalSize() = cacheRoot.walkTopDown().filter { it.isFile }.map { it.length() }.sum()
-        val cacheEntries = sharedPreferences.all.keys.map {
-            Pair(it, getCacheEntry(it))
-        }.sortedBy {
-            it.second.cachedAt
-        }.toMutableList()
+        Timber.i("Cleaning up cache")
 
         // Delete files until cache size is below max
         while (totalSize() > MAX_CACHE_SIZE) {
+            val cacheEntries = sharedPreferences.all.keys.map {
+                Pair(it, getCacheEntry(it))
+            }.sortedBy {
+                it.second.cachedAt
+            }.toMutableList()
+
+            if (cacheEntries.size == 1) {
+                Timber.i("Only one cache entry left occupying ${totalSize().asStyleFileSize()}")
+                break
+            }
+
             if (BuildConfig.DEBUG) {
                 Timber.i(
-                    "Total size exceeds maximum: %.2f / %.2f Mb",
-                    totalSize() / 1024f / 1024f,
-                    MAX_CACHE_SIZE / 1024f / 1024f
+                    "Total size exceeds maximum: %s / %s",
+                    totalSize().asStyleFileSize(),
+                    MAX_CACHE_SIZE.asStyleFileSize()
                 )
             }
 
@@ -128,6 +143,8 @@ class LocalGcodeFileDataSource(
             Timber.i("Removing from cache: ${oldest.first}")
             removeFromCache(oldest.first)
         }
+
+        Timber.i("Cache cleaned, occupying ${totalSize().asStyleFileSize()}")
     }
 
     private fun getCacheEntry(cacheKey: String) =
@@ -151,21 +168,21 @@ class LocalGcodeFileDataSource(
         private val cacheKey = dataSource.getCacheKey(file)
         private val indexFile = dataSource.getIndexFile(cacheKey)
         private val dataFile = dataSource.getDataFile(cacheKey)
-        // private val dataOutStream = dataFile.outputStream().buffered()
+        private val dataOutStream = dataFile.outputStream().buffered()
 
         init {
             val cacheEntry = CacheEntry(cachedAt = Date(), fileDate = file.date)
             dataSource.sharedPreferences.edit {
                 putString(cacheKey, dataSource.gson.toJson(cacheEntry))
             }
+            Timber.i("Cache context for ${file.path} initialized")
         }
 
         fun cacheLayer(layer: Layer): Layer {
             val positionInCacheFile = dataBytesWritten
             val bytes = ByteArrayOutputStream()
             dataSource.fstConfig.encodeToStream(bytes, layer)
-            dataFile.appendBytes(bytes.toByteArray())
-            // dataOutStream.write(bytes.toByteArray())
+            dataOutStream.write(bytes.toByteArray())
             dataBytesWritten += bytes.size()
 
             // Upgrade layer with info where in the cache the file is
@@ -173,22 +190,22 @@ class LocalGcodeFileDataSource(
         }
 
         private fun finalize(gcode: Gcode): Gcode {
-            //   dataOutStream.closeQuietly()
+            dataOutStream.close()
 
             // Delete old file exists
             val upgradedGcode = gcode.copy(cacheKey = cacheKey)
-            Timber.i("Adding to cache: cacheKey")
 
             indexFile.outputStream().use {
                 dataSource.fstConfig.encodeToStream(it, upgradedGcode)
             }
 
+            Timber.i("Added to cache: ${file.path} (cacheKey=$cacheKey)")
             dataSource.cleanUp()
             return upgradedGcode
         }
 
         private fun abort() {
-            //   dataOutStream.closeQuietly()
+            dataOutStream.close()
             dataSource.removeFromCache(file)
         }
 
