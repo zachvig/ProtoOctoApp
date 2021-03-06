@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/margin_2"
+    android:paddingRight="@dimen/margin_2"
+    android:paddingBottom="@dimen/margin_3">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_2"
+        android:paddingBottom="@dimen/margin_1"
+        android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
+        app:layout_constraintBottom_toBottomOf="@+id/action"
+        app:layout_constraintEnd_toStartOf="@+id/action"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Widget title" />
+
+    <ImageButton
+        android:id="@+id/action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_2"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cd_settings"
+        android:padding="0dp"
+        android:scaleType="fitEnd"
+        android:src="@drawable/ic_round_settings_24"
+        android:tint="@color/light_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <View
+        android:id="@+id/padding"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin_3"
+        app:layout_constraintTop_toBottomOf="@id/action" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

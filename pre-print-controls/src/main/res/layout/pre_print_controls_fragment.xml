@@ -23,12 +23,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <de.crysxd.octoapp.base.ui.widget.WidgetLayout
             android:id="@+id/widgetList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager" />
+            android:layout_height="wrap_content" />
 
     </de.crysxd.octoapp.base.ui.common.OctoScrollView>
 
@@ -37,8 +35,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:padding="@dimen/margin_2"
         app:layout_constraintBottom_toBottomOf="parent">
 

@@ -27,7 +27,7 @@
         android:id="@id/workspacePrePrint"
         android:name="de.crysxd.octoapp.pre_print_controls.ui.PrePrintControlsFragment"
         android:label="PrePrintControlsFragment"
-        tools:layout="@layout/fragment_pre_print_controls">
+        tools:layout="@layout/pre_print_controls_fragment">
         <action
             android:id="@+id/action_start_print"
             app:destination="@id/selectFileFragment"

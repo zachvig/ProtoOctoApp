@@ -7,6 +7,7 @@ import dagger.Component
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.BaseComponent
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.ui.widget.OctoWidgetRecycler
 
 @PrePrintControlsScope
 @Component(
@@ -22,6 +23,9 @@ interface PrePrintControlsComponent {
 
     // ViewModelModule
     fun viewModelFactory(): ViewModelProvider.Factory
+
+    // BaseComponent
+    fun octoWidgetRecycler(): OctoWidgetRecycler
 
     // OctoprintModule
     fun octoprintProvider(): OctoPrintProvider

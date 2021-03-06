@@ -38,6 +38,7 @@ import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
+import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
 import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
@@ -82,6 +83,10 @@ class MainActivity : OctoActivity() {
         val currentMessages = ConnectPrinterInjector.get().octoprintProvider().passiveCurrentMessageFlow("MainActivity@currentMessage").asLiveData().map {
             it
         }
+
+        // Inflate widgets
+        val recycler = Injector.get().octoWidgetRecycler()
+        recycler.preInflateWidget { AnnouncementWidget(this@MainActivity) }
 
         onNewIntent(intent)
 

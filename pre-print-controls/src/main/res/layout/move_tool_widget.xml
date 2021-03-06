@@ -90,14 +90,6 @@
                 app:layout_constraintStart_toStartOf="@id/xLabelHelper"
                 app:layout_constraintTop_toTopOf="@+id/imageButtonMoveXPositive" />
 
-            <View
-                android:id="@id/xLabelHelper"
-                android:layout_width="@dimen/margin_2"
-                android:layout_height="1dp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageButtonMoveXPositive"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/imageButtonMoveXPositive" />
-
             <TextView
                 android:id="@+id/textViewYLabel"
                 android:layout_width="wrap_content"

@@ -16,7 +16,6 @@ import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.widget.OctoWidget
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
 import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
-import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.print_controls.R
@@ -115,7 +114,7 @@ class PrintControlsFragment : WidgetHostFragment(R.layout.fragment_print_control
             widgetsList.adapter = adapter
 
             val widgets = mutableListOf<OctoWidget>()
-            widgets.add(AnnouncementWidget(this@PrintControlsFragment))
+           // widgets.add(AnnouncementWidget(this@PrintControlsFragment))
             widgets.add(ProgressWidget(this@PrintControlsFragment))
             widgets.add(ControlTemperatureWidget(this@PrintControlsFragment))
 

@@ -7,76 +7,70 @@ import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.applyCanvas
-import androidx.fragment.app.Fragment
-import de.crysxd.octoapp.base.ui.ext.suspendedInflate
-import de.crysxd.octoapp.base.ui.widget.OctoWidget
+import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
+import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.pre_print_controls.R
+import de.crysxd.octoapp.pre_print_controls.databinding.MoveToolWidgetBinding
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
-import kotlinx.android.synthetic.main.widget_move_tool.*
 
-class MoveToolWidget(parent: Fragment) : OctoWidget(parent) {
+class MoveToolWidget(context: Context) : RecyclableOctoWidget<MoveToolWidgetBinding, MoveToolWidgetViewModel>(context) {
 
-    val viewModel: MoveToolWidgetViewModel by injectViewModel()
-    val jogResolutionButtons by lazy {
-        listOf(
-            buttonJogResolution0025,
-            buttonJogResolution01,
-            buttonJogResolution1,
-            buttonJogResolution10,
-            buttonJogResolution100
-        )
+    override val binding: MoveToolWidgetBinding = MoveToolWidgetBinding.inflate(LayoutInflater.from(context))
+    private val jogResolutionButtons = listOf(
+        binding.buttonJogResolution0025,
+        binding.buttonJogResolution01,
+        binding.buttonJogResolution1,
+        binding.buttonJogResolution10,
+        binding.buttonJogResolution100
+    )
+
+    override fun onResume() {
+        initControlButtons()
+        initJogResolutionSeekBar(parent.requireContext())
     }
+
+    override fun createNewViewModel(parent: WidgetHostFragment) = parent.injectViewModel<MoveToolWidgetViewModel>().value
 
     override fun getTitle(context: Context) = context.getString(R.string.widget_move)
     override fun getAnalyticsName() = "move"
-    override fun getMoreIcon() = R.drawable.ic_round_settings_24
-    override fun showMore() {
-        viewModel.showSettings(requireContext())
-    }
-
-    override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
-        inflater.suspendedInflate(R.layout.widget_move_tool, container, false)
-
-    override fun onViewCreated(view: View) {
-        initJogResolutionSeekBar()
-        initControlButtons()
+    override fun getActionIcon() = R.drawable.ic_round_settings_24
+    override fun onAction() {
+        baseViewModel.showSettings(parent.requireContext())
     }
 
     private fun initControlButtons() {
-        imageButtonHomeZ.setOnClickListener { recordInteraction(); viewModel.homeZAxis() }
-        imageButtonHomeXy.setOnClickListener { recordInteraction(); viewModel.homeXYAxis() }
-        imageButtonMoveXPositive.setOnClickListener { recordInteraction(); viewModel.jog(x = MoveToolWidgetViewModel.Direction.Positive) }
-        imageButtonMoveXNegative.setOnClickListener { recordInteraction(); viewModel.jog(x = MoveToolWidgetViewModel.Direction.Negative) }
-        imageButtonMoveYPositive.setOnClickListener { recordInteraction(); viewModel.jog(y = MoveToolWidgetViewModel.Direction.Positive) }
-        imageButtonMoveYNegative.setOnClickListener { recordInteraction(); viewModel.jog(y = MoveToolWidgetViewModel.Direction.Negative) }
-        imageButtonMoveZPositive.setOnClickListener { recordInteraction(); viewModel.jog(z = MoveToolWidgetViewModel.Direction.Positive) }
-        imageButtonMoveZNegative.setOnClickListener { recordInteraction(); viewModel.jog(z = MoveToolWidgetViewModel.Direction.Negative) }
+        binding.imageButtonHomeZ.setOnClickListener { recordInteraction(); baseViewModel.homeZAxis() }
+        binding.imageButtonHomeXy.setOnClickListener { recordInteraction(); baseViewModel.homeXYAxis() }
+        binding.imageButtonMoveXPositive.setOnClickListener { recordInteraction(); baseViewModel.jog(x = MoveToolWidgetViewModel.Direction.Positive) }
+        binding.imageButtonMoveXNegative.setOnClickListener { recordInteraction(); baseViewModel.jog(x = MoveToolWidgetViewModel.Direction.Negative) }
+        binding.imageButtonMoveYPositive.setOnClickListener { recordInteraction(); baseViewModel.jog(y = MoveToolWidgetViewModel.Direction.Positive) }
+        binding.imageButtonMoveYNegative.setOnClickListener { recordInteraction(); baseViewModel.jog(y = MoveToolWidgetViewModel.Direction.Negative) }
+        binding.imageButtonMoveZPositive.setOnClickListener { recordInteraction(); baseViewModel.jog(z = MoveToolWidgetViewModel.Direction.Positive) }
+        binding.imageButtonMoveZNegative.setOnClickListener { recordInteraction(); baseViewModel.jog(z = MoveToolWidgetViewModel.Direction.Negative) }
     }
 
-    private fun initJogResolutionSeekBar() {
+    private fun initJogResolutionSeekBar(context: Context) {
         jogResolutionButtons.forEach { it.setOnCheckedChangeListener(this::onJogResolutionChanged) }
 
         val diameterDpRange = 12f..28f
         val step = (diameterDpRange.endInclusive - diameterDpRange.start) / jogResolutionButtons.size
         jogResolutionButtons.forEachIndexed { i, it ->
-            it.background = createJogResolutionButtonBackground(diameterDpRange.start + step * i)
+            it.background = createJogResolutionButtonBackground(context, diameterDpRange.start + step * i)
         }
 
-        jogResolutionGroup.setOnClickListener { }
+        binding.jogResolutionGroup.setOnClickListener { }
 
-        val checkedId = when (viewModel.jogResolution) {
+        val checkedId = when (baseViewModel.jogResolution) {
             0.025f -> R.id.buttonJogResolution0025
             0.1f -> R.id.buttonJogResolution01
             1f -> R.id.buttonJogResolution1
             10f -> R.id.buttonJogResolution10
             100f -> R.id.buttonJogResolution100
             else -> {
-                viewModel.jogResolution = 10f
+                baseViewModel.jogResolution = 10f
                 R.id.buttonJogResolution10
             }
         }
@@ -100,25 +94,25 @@ class MoveToolWidget(parent: Fragment) : OctoWidget(parent) {
             view.isChecked = true
         }
 
-        jogResolutionGroup.performClick()
+        binding.jogResolutionGroup.performClick()
 
         when (jogResolutionButtons.first { it.isChecked }.id) {
-            R.id.buttonJogResolution0025 -> viewModel.jogResolution = 0.025f
-            R.id.buttonJogResolution01 -> viewModel.jogResolution = 0.1f
-            R.id.buttonJogResolution1 -> viewModel.jogResolution = 1f
-            R.id.buttonJogResolution10 -> viewModel.jogResolution = 10f
-            R.id.buttonJogResolution100 -> viewModel.jogResolution = 100f
+            R.id.buttonJogResolution0025 -> baseViewModel.jogResolution = 0.025f
+            R.id.buttonJogResolution01 -> baseViewModel.jogResolution = 0.1f
+            R.id.buttonJogResolution1 -> baseViewModel.jogResolution = 1f
+            R.id.buttonJogResolution10 -> baseViewModel.jogResolution = 10f
+            R.id.buttonJogResolution100 -> baseViewModel.jogResolution = 100f
         }
     }
 
-    private fun createJogResolutionButtonBackground(diameterDp: Float): Drawable {
-        val diameterPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, diameterDp, requireContext().resources.displayMetrics).toInt()
+    private fun createJogResolutionButtonBackground(context: Context, diameterDp: Float): Drawable {
+        val diameterPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, diameterDp, context.resources.displayMetrics).toInt()
         val bitmap = Bitmap.createBitmap(diameterPx, diameterPx, Bitmap.Config.ARGB_8888)
-        val circle = ContextCompat.getDrawable(requireContext(), R.drawable.circle)
-        circle?.setTint(ContextCompat.getColor(requireContext(), R.color.accent))
+        val circle = ContextCompat.getDrawable(context, R.drawable.circle)
+        circle?.setTint(ContextCompat.getColor(context, R.color.accent))
         circle?.setBounds(0, 0, diameterPx, diameterPx)
         bitmap.applyCanvas { circle?.draw(this) }
-        return BitmapDrawable(requireContext().resources, bitmap).also {
+        return BitmapDrawable(context.resources, bitmap).also {
             it.gravity = Gravity.CENTER
         }
     }
