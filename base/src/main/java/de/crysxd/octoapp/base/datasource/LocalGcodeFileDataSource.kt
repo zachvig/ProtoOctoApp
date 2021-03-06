@@ -12,9 +12,11 @@ import de.crysxd.octoapp.base.gcode.parse.models.LayerInfo
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import org.nustaq.serialization.FSTConfiguration
 import timber.log.Timber
 import java.io.*
@@ -35,9 +37,14 @@ class LocalGcodeFileDataSource(
         File(context.cacheDir, "gcode2"),
         File(context.cacheDir, "gcode")
     )
-    private val fstConfig = FSTConfiguration.createAndroidDefaultConfiguration()
+    private lateinit var fstConfig: FSTConfiguration
+    private val initJob = GlobalScope.launch(Dispatchers.IO) {
+        fstConfig = FSTConfiguration.createAndroidDefaultConfiguration()
+        fstConfig.registerClass(Gcode::class.java)
+        fstConfig.registerClass(LayerInfo::class.java)
+        fstConfig.registerClass(Move::class.java)
+        fstConfig.registerClass(Move.Type::class.java)
 
-    init {
         try {
             oldCacheRoots.filter { it.exists() }.forEach { it.deleteRecursively() }
         } catch (e: Exception) {
@@ -45,11 +52,6 @@ class LocalGcodeFileDataSource(
         }
 
         cacheRoot.mkdirs()
-
-        fstConfig.registerClass(Gcode::class.java)
-        fstConfig.registerClass(LayerInfo::class.java)
-        fstConfig.registerClass(Move::class.java)
-        fstConfig.registerClass(Move.Type::class.java)
     }
 
     fun canLoadFile(file: FileObject.File): Boolean {
@@ -70,6 +72,7 @@ class LocalGcodeFileDataSource(
     fun loadFile(file: FileObject.File): Flow<GcodeFileDataSource.LoadState> = flow {
         try {
             emit(GcodeFileDataSource.LoadState.Loading(0f))
+            initJob.join()
 
             val gcode = try {
                 getIndexFile(getCacheKey(file)).inputStream().use {
@@ -215,6 +218,7 @@ class LocalGcodeFileDataSource(
         suspend fun use(block: suspend (CacheContext) -> Gcode): Gcode {
             try {
                 try {
+                    dataSource.initJob.join()
                     return finalize(block(this))
                 } catch (e: OutOfMemoryError) {
                     throw IOException(e)
