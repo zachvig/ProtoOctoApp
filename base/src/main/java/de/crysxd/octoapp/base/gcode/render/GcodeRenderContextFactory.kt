@@ -47,7 +47,7 @@ sealed class GcodeRenderContextFactory {
             val lastType = last?.first
 
             val printHeadPosition = when (lastMove) {
-                is Move.ArcMove -> PointF(lastMove.endX, lastMove.endY)
+                is Move.ArcMove -> lastMove.endPosition
                 is Move.LinearMove -> {
                     layer.moves[lastType]?.let { moves ->
                         val x = moves.second[lastMove.positionInArray + 2]

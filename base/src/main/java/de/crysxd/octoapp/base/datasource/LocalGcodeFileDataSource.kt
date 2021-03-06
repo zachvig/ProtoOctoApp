@@ -60,7 +60,7 @@ class LocalGcodeFileDataSource(
         } == true
 
         // If not (completely) cached, remove all files anyways to ensure no broken files are kept
-        if (cached) {
+        if (!cached) {
             removeFromCache(file)
         }
 
@@ -168,15 +168,18 @@ class LocalGcodeFileDataSource(
         private val cacheKey = dataSource.getCacheKey(file)
         private val indexFile = dataSource.getIndexFile(cacheKey)
         private val dataFile = dataSource.getDataFile(cacheKey)
-        private val dataOutStream = dataFile.outputStream().buffered()
 
         init {
+            dataFile.parentFile?.mkdirs()
             val cacheEntry = CacheEntry(cachedAt = Date(), fileDate = file.date)
             dataSource.sharedPreferences.edit {
                 putString(cacheKey, dataSource.gson.toJson(cacheEntry))
             }
             Timber.i("Cache context for ${file.path} initialized")
         }
+
+        // After init so parent file is created
+        private val dataOutStream = dataFile.outputStream().buffered()
 
         fun cacheLayer(layer: Layer): Layer {
             val positionInCacheFile = dataBytesWritten
