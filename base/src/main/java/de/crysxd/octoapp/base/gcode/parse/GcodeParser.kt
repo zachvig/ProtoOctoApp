@@ -95,7 +95,6 @@ class GcodeParser(
 
         val move = Move.LinearMove(
             positionInFile = positionInFile,
-            positionInLayer = moveCountInLayer,
             positionInArray = 0,
             type = type
         )
@@ -198,7 +197,6 @@ class GcodeParser(
             endX = endX,
             endY = endY,
             type = type,
-            positionInLayer = moveCountInLayer,
             positionInFile = positionInFile,
 
             )
@@ -207,7 +205,6 @@ class GcodeParser(
     private fun parseRFormArcMove(x: Float?, y: Float?, r: Float, clockwise: Boolean, type: Move.Type, positionInFile: Int): Move {
         return Move.LinearMove(
             positionInFile = positionInFile,
-            positionInLayer = moveCountInLayer,
             positionInArray = 0,
             type = Move.Type.Unsupported
         )
@@ -280,7 +277,8 @@ class GcodeParser(
             val info = LayerInfo(
                 zHeight = lastExtrusionZ,
                 moveCount = moves.map { it.value.first.size }.sum(),
-                positionInFile = lastLayerChangeAtPositionInFile
+                positionInFile = lastLayerChangeAtPositionInFile,
+                lengthInFile = positionInFile - lastLayerChangeAtPositionInFile
             )
             val layer = Layer(
                 info = info,

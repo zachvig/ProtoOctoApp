@@ -64,7 +64,7 @@ class LocalGcodeFileDataSource(
             removeFromCache(file)
         }
 
-        return canLoadFile()
+        return cached
     }
 
     fun loadFile(file: FileObject.File): Flow<GcodeFileDataSource.LoadState> = flow {

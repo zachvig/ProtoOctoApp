@@ -5,13 +5,11 @@ import java.io.Serializable
 sealed class Move(
 ) : Serializable {
     abstract val positionInFile: Int
-    abstract val positionInLayer: Int
     abstract val type: Type
 
     data class LinearMove(
         val positionInArray: Int,
         override val positionInFile: Int,
-        override val positionInLayer: Int,
         override val type: Type
     ) : Move(), Serializable
 
@@ -20,7 +18,6 @@ sealed class Move(
         val endX: Float,
         val endY: Float,
         override val positionInFile: Int,
-        override val positionInLayer: Int,
         override val type: Type
     ) : Move(), Serializable
 

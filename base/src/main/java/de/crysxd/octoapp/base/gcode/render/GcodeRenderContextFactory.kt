@@ -67,9 +67,9 @@ sealed class GcodeRenderContextFactory {
             val layerInfo = gcode.layers[layerNo]
             val layer = Injector.get().localGcodeFileDataSource().loadLayer(gcode.cacheKey, layerInfo)
 
-            val moveCount = layerInfo.moveCount * progress
+            val progressEnd = layerInfo.positionInFile + (layerInfo.lengthInFile * progress)
             val paths = layer.moves.map {
-                val moves = it.value.first.takeWhile { i -> i.positionInLayer <= moveCount }
+                val moves = it.value.first.takeWhile { i -> i.positionInFile <= progressEnd }
                 val count = moves.mapNotNull { m -> m as? Move.LinearMove }.lastOrNull()?.let { m -> m.positionInArray + 4 } ?: 0
                 val path = GcodePath(
                     arcs = moves.mapNotNull { m -> (m as? Move.ArcMove)?.arc },
