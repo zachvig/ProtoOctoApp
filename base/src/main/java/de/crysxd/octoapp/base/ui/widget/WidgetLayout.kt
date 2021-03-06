@@ -10,7 +10,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
-import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.di.Injector
 import kotlin.reflect.KClass
 
@@ -36,7 +35,7 @@ class WidgetLayout @JvmOverloads constructor(
     }
 
     fun showWidgets(parent: WidgetHostFragment, widgetClasses: List<KClass<out RecyclableOctoWidget<*, *>>>) {
-        TransitionManager.beginDelayedTransition(this)
+        parent.requestTransition()
 
         returnAllWidgets()
         val widgets = widgetClasses.map { widgetRecycler.rentWidget(context, it) }

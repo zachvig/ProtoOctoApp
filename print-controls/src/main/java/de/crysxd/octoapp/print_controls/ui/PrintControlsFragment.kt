@@ -124,6 +124,10 @@ class PrintControlsFragment : WidgetHostFragment(R.layout.fragment_print_control
          */
     }
 
+    override fun requestTransition() {
+        TODO("Not yet implemented")
+    }
+
     override fun reloadWidgets() {
         Timber.i("Reload widgets")
         installApplicableWidgets(viewModel.webCamSupported.value == true)

@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
+import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.pre_print_controls.databinding.PrePrintControlsFragmentBinding
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
@@ -50,9 +52,14 @@ class PrePrintControlsFragment : WidgetHostFragment() {
                 AnnouncementWidget::class,
                 ControlTemperatureWidget::class,
                 MoveToolWidget::class,
+                SendGcodeWidget::class,
                 ExtrudeWidget::class,
             )
         )
+    }
+
+    override fun requestTransition() {
+        TransitionManager.beginDelayedTransition(binding.root)
     }
 
     override fun reloadWidgets() {

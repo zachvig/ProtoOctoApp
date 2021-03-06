@@ -105,7 +105,6 @@ class TerminalFragment : BaseFragment(R.layout.fragment_terminal) {
             scroller = buttonListScrollView,
             onInsert = ::insertGcode,
             onClicked = { viewModel.executeGcode(it.command) },
-            childFragmentManager = childFragmentManager
         )
 
         // Gcode input
