@@ -43,6 +43,8 @@ import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.socket.Event
+import de.crysxd.octoapp.pre_print_controls.ui.widget.extrude.ExtrudeWidget
+import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidget
 import de.crysxd.octoapp.widgets.updateAllWidgets
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.delay
@@ -87,6 +89,8 @@ class MainActivity : OctoActivity() {
         // Inflate widgets
         val recycler = Injector.get().octoWidgetRecycler()
         recycler.preInflateWidget { AnnouncementWidget(this@MainActivity) }
+        recycler.preInflateWidget { MoveToolWidget(this@MainActivity) }
+        recycler.preInflateWidget { ExtrudeWidget(this@MainActivity) }
 
         onNewIntent(intent)
 

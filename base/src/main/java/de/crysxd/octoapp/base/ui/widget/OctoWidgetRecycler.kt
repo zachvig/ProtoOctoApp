@@ -40,6 +40,7 @@ class OctoWidgetRecycler {
             it.view.parent == null
         } ?: let {
             val newWidget = widgetClass.java.getConstructor(Context::class.java).newInstance(context)
+            Timber.i("Ad-hoc inflated $newWidget")
             registerWidget(newWidget)
             newWidget
         }) as T
