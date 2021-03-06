@@ -31,6 +31,7 @@ import de.crysxd.octoapp.base.billing.BillingEvent
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.PurchaseConfirmationDialog
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.ColorTheme
 import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.base.OctoActivity
@@ -43,6 +44,7 @@ import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.widgets.updateAllWidgets
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import timber.log.Timber
@@ -169,6 +171,16 @@ class MainActivity : OctoActivity() {
                 val repo = Injector.get().octorPrintRepository()
                 repo.getAll().firstOrNull { it.webUrl == webUrl }?.let {
                     repo.setActive(it)
+                }
+            }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            intent?.data?.let {
+                if (it.host == "app.octoapp.eu") {
+                    // Give a second for everything to settle
+                    delay(1000)
+                    it.open(this@MainActivity)
                 }
             }
         }

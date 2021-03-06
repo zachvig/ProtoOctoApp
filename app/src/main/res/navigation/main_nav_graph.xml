@@ -92,7 +92,7 @@
 
         <deepLink
             android:id="@+id/deepLink"
-            app:uri="https://app.octoapp.eu/help" />
+            app:uri="app.octoapp.eu/help" />
     </fragment>
 
     <fragment
@@ -114,7 +114,7 @@
 
         <deepLink
             android:id="@+id/deepLink"
-            app:uri="https://app.octoapp.eu/help/{faqId}" />
+            app:uri="app.octoapp.eu/help/{faqId}" />
 
     </fragment>
 

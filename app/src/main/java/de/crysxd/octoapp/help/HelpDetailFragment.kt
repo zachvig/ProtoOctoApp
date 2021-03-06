@@ -35,6 +35,7 @@ import io.noties.markwon.core.MarkwonTheme
 import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 import timber.log.Timber
+import java.util.concurrent.CancellationException
 
 class HelpDetailFragment : Fragment(), InsetAwareScreen {
 
@@ -85,9 +86,18 @@ class HelpDetailFragment : Fragment(), InsetAwareScreen {
         Firebase.remoteConfig.fetchAndActivate().suspendedAwait()
         val faqs = parseFaqsFromJson(Firebase.remoteConfig.getString("faq"))
         faqs.first { it.id == faqId }
+    } catch (e: CancellationException) {
+        // Nothing to do
+        null
     } catch (e: Exception) {
         Timber.e(e)
-        requireOctoActivity().showDialog("This content is currently not available. Try again later!", positiveAction = { findNavController().popBackStack() })
+        requireOctoActivity().showDialog("This content is currently not available. Try again later!",
+            positiveAction = {
+                if (isAdded) {
+                    findNavController().popBackStack()
+                }
+            }
+        )
         null
     }
 
