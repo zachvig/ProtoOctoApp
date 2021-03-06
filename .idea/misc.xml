@@ -11,6 +11,7 @@
         <entry key="app/src/main/res/layout/app_widget_pogress_idle.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/app_widget_pogress_idle_normal.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/app_widget_webcam.xml" value="0.4036458333333333" />
+        <entry key="base/src/main/res/layout/menu_bottom_sheet_fragment.xml" value="0.41435185185185186" />
       </map>
     </option>
   </component>

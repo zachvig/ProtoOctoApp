@@ -86,7 +86,7 @@ class ConnectPrinterViewModel(
             // PSU
             val psuCyclingState = psuCyclingState.value ?: PsuCycledState.NotCycled
             val isPsuTurnedOn = if (isPsuSupported) {
-                manualPsuState.value
+                manualPsuState.value ?: false
             } else {
                 null
             }

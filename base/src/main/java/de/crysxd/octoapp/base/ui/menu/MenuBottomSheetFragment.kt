@@ -5,6 +5,7 @@ import android.graphics.drawable.Animatable
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
@@ -13,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
+import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.MenuBottomSheetFragmentBinding
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
@@ -96,9 +98,10 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     private fun showMenu(settingsMenu: Menu) {
         val internal = suspend {
             try {
-                // Run pre-show routine and load items
+                // Check if the menu wants to be shown (e.g. power menu can auto handle some requests)
                 isLoading = settingsMenu !is MainMenu
                 if (settingsMenu.shouldShowMenu(this@MenuBottomSheetFragment)) {
+                    // Load items
                     val currentDestination = findNavController().currentDestination?.id ?: 0
                     val context = requireContext()
                     val items = withContext(Dispatchers.IO) {
@@ -148,11 +151,13 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
 
                     // Update bottom sheet size
                     forceResizeBottomSheet()
-                } else Unit
+                } else {
+                    popMenuOrDismiss()
+                }
             } catch (e: Exception) {
                 Timber.e(e, "Error while inflating menu")
                 requireOctoActivity().showDialog(e)
-                popMenu()
+                popMenuOrDismiss()
             }
         }
 
@@ -163,7 +168,20 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             runBlocking { internal() }
         } else {
             Timber.i("Using async method to inflate $settingsMenu")
-            viewLifecycleOwner.lifecycleScope.launchWhenCreated { internal() }
+            // First menu? no overlay background
+            viewBinding.loadingOverlay.setBackgroundColor(
+                ContextCompat.getColor(requireContext(), if (viewModel.menuBackStack.size == 1) android.R.color.transparent else R.color.black_translucent)
+            )
+            viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+                internal()
+                viewBinding.loadingOverlay.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black_translucent))
+            }
+        }
+    }
+
+    private fun popMenuOrDismiss() {
+        if (!popMenu()) {
+            dismissAllowingStateLoss()
         }
     }
 
