@@ -10,7 +10,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
@@ -21,6 +20,7 @@ import de.crysxd.octoapp.base.di.injectActivityViewModel
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
+import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.octoprint.models.files.FileObject
@@ -34,7 +34,7 @@ import kotlin.math.roundToInt
 
 const val NOT_LIVE_IF_NO_UPDATE_FOR_MS = 5000L
 
-class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
+class GcodePreviewFragment : BaseFragment(R.layout.fragment_gcode_render) {
 
     companion object {
         private const val ARG_FILE = "file"
@@ -52,7 +52,7 @@ class GcodePreviewFragment : Fragment(R.layout.fragment_gcode_render) {
     private val file get() = requireArguments().getSerializable(ARG_FILE) as FileObject.File
     private val useLive get() = requireArguments().getBoolean(ARG_USE_LIVE, true)
     private val isStandaloneScreen get() = requireArguments().getBoolean(ARG_STANDALONE_SCREEN)
-    private val viewModel: GcodePreviewViewModel by injectActivityViewModel(Injector.get().viewModelFactory())
+    override val viewModel: GcodePreviewViewModel by injectActivityViewModel(Injector.get().viewModelFactory())
     private val seekBarListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
         override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit

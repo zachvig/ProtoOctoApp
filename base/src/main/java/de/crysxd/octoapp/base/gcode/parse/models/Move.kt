@@ -1,40 +1,39 @@
 package de.crysxd.octoapp.base.gcode.parse.models
 
+import android.graphics.PointF
 import java.io.Serializable
+import kotlin.math.cos
+import kotlin.math.sin
 
 sealed class Move(
 ) : Serializable {
     abstract val positionInFile: Int
-    abstract val positionInLayer: Int
-    abstract val type: Type
 
     data class LinearMove(
         val positionInArray: Int,
         override val positionInFile: Int,
-        override val positionInLayer: Int,
-        override val type: Type
     ) : Move(), Serializable
 
     data class ArcMove(
-        val arc: Arc,
-        val endX: Float,
-        val endY: Float,
         override val positionInFile: Int,
-        override val positionInLayer: Int,
-        override val type: Type
-    ) : Move(), Serializable
-
-    data class Arc(
-        val x0: Float,
-        val y0: Float,
-        val x1: Float,
-        val y1: Float,
         val leftX: Float,
         val topY: Float,
         val r: Float,
         val startAngle: Float,
         val sweepAngle: Float,
-    ) : Serializable
+    ) : Move(), Serializable {
+
+        val endPosition: PointF
+            get() {
+                val cx = leftX + r
+                val cy = topY + r
+                val angleRad = (startAngle + sweepAngle) * Math.PI / 180f
+                val endX = cx + r * cos(angleRad)
+                val endY = cy + r * sin(angleRad)
+                return PointF(endX.toFloat(), endY.toFloat())
+            }
+
+    }
 
     enum class Type {
         Travel, Extrude, Unsupported

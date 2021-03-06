@@ -11,7 +11,7 @@ import kotlinx.coroutines.CancellationException
  * the program flow.
  */
 class ProxyException private constructor(val original: Throwable, webUrl: String?, apiKey: String? = null) : OctoPrintException(
-    cause = original.cause,
+    originalCause = original.cause,
     userFacingMessage = original.message,
     technicalMessage = "Proxy for ${original::class.java.simpleName}: ${original.message} [url=$webUrl, apiKey=$apiKey]",
     webUrl = webUrl,

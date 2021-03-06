@@ -24,6 +24,7 @@ sealed class FileObject(
         size: Long,
         val thumbnail: String?,
         val date: Long,
+        val hash: String,
         val gcodeAnalysis: GcodeAnalysis?,
         val prints: PrintHistory?
     ) : FileObject(display, name, origin, path, type, typePath, size, ref)

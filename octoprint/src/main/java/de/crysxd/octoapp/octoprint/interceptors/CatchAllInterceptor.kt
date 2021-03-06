@@ -21,9 +21,8 @@ class CatchAllInterceptor(
         } catch (e: Throwable) {
             // Let's wrap in OctoprintException (extends IOException)
             throw OctoPrintException(
-                cause = e,
+                originalCause = e,
                 technicalMessage = "Uncaught exception while requesting: $url",
-                userFacingMessage = "Something went wrong, that's all I know.",
                 apiKey = apiKey,
                 webUrl = url
             )

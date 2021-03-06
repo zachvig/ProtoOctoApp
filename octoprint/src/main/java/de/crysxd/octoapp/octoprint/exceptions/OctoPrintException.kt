@@ -6,12 +6,14 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 open class OctoPrintException(
-    cause: Throwable? = null,
+    val originalCause: Throwable? = null,
     open val userFacingMessage: String? = null,
     val technicalMessage: String? = userFacingMessage,
     val webUrl: String?,
     val apiKey: String? = null
-) : IOException(mask(technicalMessage, webUrl, apiKey), cause?.let { ProxyException.create(it, webUrl, apiKey) }) {
+) : IOException(mask(technicalMessage, webUrl, apiKey), originalCause?.let { ProxyException.create(it, webUrl, apiKey) }) {
+
+    override fun getLocalizedMessage() = userFacingMessage ?: originalCause?.localizedMessage ?: technicalMessage
 
     companion object {
         private fun mask(input: String?, webUrl: String?, apiKey: String? = null): String {

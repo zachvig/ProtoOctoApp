@@ -7,6 +7,7 @@ import dagger.Component
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.SslKeyStoreHandler
+import de.crysxd.octoapp.base.datasource.LocalGcodeFileDataSource
 import de.crysxd.octoapp.base.di.modules.*
 import de.crysxd.octoapp.base.logging.FirebaseTree
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
@@ -45,6 +46,9 @@ interface BaseComponent {
     fun timberCacheTree(): TimberCacheTree
     fun firebaseTree(): FirebaseTree
     fun sensitiveDataMask(): SensitiveDataMask
+
+    // DataSourceModule
+    fun localGcodeFileDataSource(): LocalGcodeFileDataSource
 
     // OctoprintModule
     fun octorPrintRepository(): OctoPrintRepository
