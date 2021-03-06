@@ -31,8 +31,9 @@ class LocalGcodeFileDataSource(
     private val sharedPreferences: SharedPreferences
 ) {
 
-    private val cacheRoot = File(context.cacheDir, "gcode2")
+    private val cacheRoot = File(context.cacheDir, "gcode3")
     private val oldCacheRoots = listOf(
+        File(context.cacheDir, "gcode2"),
         File(context.cacheDir, "gcode")
     )
     private val fstConfig = FSTConfiguration.createAndroidDefaultConfiguration()
