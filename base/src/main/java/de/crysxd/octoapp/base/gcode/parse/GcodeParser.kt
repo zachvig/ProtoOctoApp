@@ -184,17 +184,13 @@ class GcodeParser(
         }
 
         return Move.ArcMove(
-            arc = Move.Arc(
-                x0 = startX,
-                y0 = startY,
-                x1 = endX,
-                y1 = endY,
-                leftX = centerX - radius,
-                topY = centerY - radius,
-                r = radius,
-                startAngle = startAngle,
-                sweepAngle = sweepAngle,
-            ),
+            startX = startX,
+            startY = startY,
+            leftX = centerX - radius,
+            topY = centerY - radius,
+            r = radius,
+            startAngle = startAngle,
+            sweepAngle = sweepAngle,
             endX = endX,
             endY = endY,
             positionInFile = positionInFile,

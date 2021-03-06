@@ -30,7 +30,7 @@ sealed class GcodeRenderContextFactory {
                 val lastLinearMove = it.value.first.mapNotNull { it as? Move.LinearMove }.lastOrNull { i -> i.positionInFile <= byte }
                 val count = lastLinearMove?.let { i -> i.positionInArray + 4 } ?: 0
                 val path = GcodePath(
-                    arcs = moves.mapNotNull { m -> (m as? Move.ArcMove)?.arc },
+                    arcs = moves.mapNotNull { m -> (m as? Move.ArcMove) },
                     type = it.key,
                     offset = 0,
                     count = count,
@@ -79,7 +79,7 @@ sealed class GcodeRenderContextFactory {
                 val moves = it.value.first.takeWhile { i -> i.positionInFile <= progressEnd }
                 val count = moves.mapNotNull { m -> m as? Move.LinearMove }.lastOrNull()?.let { m -> m.positionInArray + 4 } ?: 0
                 val path = GcodePath(
-                    arcs = moves.mapNotNull { m -> (m as? Move.ArcMove)?.arc },
+                    arcs = moves.mapNotNull { m -> (m as? Move.ArcMove) },
                     type = it.key,
                     offset = 0,
                     count = count,
