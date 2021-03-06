@@ -16,7 +16,7 @@ class GcodeParser(
     private val content: InputStream,
     private val totalSize: Long,
     private val progressUpdate: suspend (Float) -> Unit,
-    private val layerSink: suspend (Layer) -> Unit
+    private val layerSink: suspend (Layer) -> Layer
 ) {
 
     private var layers: MutableList<LayerInfo> = mutableListOf()
@@ -288,8 +288,8 @@ class GcodeParser(
                     Pair(it.value.first, it.value.second.toFloatArray())
                 }
             )
-            layerSink(layer)
-            layers.add(info)
+            val layerWithCacheInfo = layerSink(layer)
+            layers.add(layerWithCacheInfo.info)
             lastLayerChangeAtPositionInFile = positionInFile
         }
         initNewLayer()

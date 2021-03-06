@@ -6,4 +6,6 @@ data class LayerInfo(
     val moveCount: Int,
     val zHeight: Float,
     val positionInFile: Int,
+    val positionInCacheFile: Long = 0,
+    val lengthInCacheFile: Int = 0,
 ) : Serializable

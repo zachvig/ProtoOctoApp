@@ -28,22 +28,20 @@ class RemoteGcodeFileDataSource(
 
         val gcode = measureTime("Download and parse file") {
             try {
-                octoPrintProvider.octoPrint().createFilesApi().downloadFile(file)?.use {
-                    val gcode = GcodeParser(
-                        content = it,
-                        totalSize = file.size,
-                        progressUpdate = { progress ->
-                            emit(GcodeFileDataSource.LoadState.Loading(progress))
-                        },
-                        layerSink = { layer ->
-                            localDataSource.cacheGcodeLayer(file, layer)
-                        }
-                    ).parseFile()
-                    localDataSource.cacheGcode(file, gcode)
+                octoPrintProvider.octoPrint().createFilesApi().downloadFile(file)?.use { input ->
+                    localDataSource.createCacheForFile(file).use { cache ->
+                        GcodeParser(
+                            content = input,
+                            totalSize = file.size,
+                            progressUpdate = { progress ->
+                                emit(GcodeFileDataSource.LoadState.Loading(progress))
+                            },
+                            layerSink = { cache.cacheLayer(it) }
+                        ).parseFile()
+                    }
                 }
             } catch (e: Exception) {
                 Timber.e(e)
-                localDataSource.removeFromCache(file)
                 null
             }
         } ?: return@flow emit(GcodeFileDataSource.LoadState.Failed(IllegalStateException("Unable to download or parse file")))

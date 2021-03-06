@@ -6,6 +6,8 @@ import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.models.GcodePath
 import de.crysxd.octoapp.base.gcode.render.models.GcodeRenderContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 sealed class GcodeRenderContextFactory {
 
@@ -19,7 +21,7 @@ sealed class GcodeRenderContextFactory {
     abstract suspend fun extractMoves(gcode: Gcode): GcodeRenderContext
 
     data class ForFileLocation(val byte: Int) : GcodeRenderContextFactory() {
-        override suspend fun extractMoves(gcode: Gcode): GcodeRenderContext {
+        override suspend fun extractMoves(gcode: Gcode): GcodeRenderContext = withContext(Dispatchers.IO) {
             val layerInfo = gcode.layers.last { it.positionInFile <= byte }
             val layer = Injector.get().localGcodeFileDataSource().loadLayer(gcode.cacheKey, layerInfo)
 
@@ -49,7 +51,7 @@ sealed class GcodeRenderContextFactory {
                 null -> PointF(0f, 0f)
             }
 
-            return GcodeRenderContext(
+            GcodeRenderContext(
                 printHeadPosition = printHeadPosition,
                 paths = paths.map { it.second }.sortedBy { it.priority },
                 layerCount = gcode.layers.size,
@@ -60,9 +62,9 @@ sealed class GcodeRenderContextFactory {
         }
     }
 
-    data class ForLayerProgress(val layer: Int, val progress: Float) : GcodeRenderContextFactory() {
-        override suspend fun extractMoves(gcode: Gcode): GcodeRenderContext {
-            val layerInfo = gcode.layers[layer]
+    data class ForLayerProgress(val layerNo: Int, val progress: Float) : GcodeRenderContextFactory() {
+        override suspend fun extractMoves(gcode: Gcode): GcodeRenderContext = withContext(Dispatchers.IO) {
+            val layerInfo = gcode.layers[layerNo]
             val layer = Injector.get().localGcodeFileDataSource().loadLayer(gcode.cacheKey, layerInfo)
 
             val moveCount = layerInfo.moveCount * progress
@@ -80,10 +82,10 @@ sealed class GcodeRenderContextFactory {
                 path
             }
 
-            return GcodeRenderContext(
+            GcodeRenderContext(
                 paths = paths.sortedBy { it.priority },
                 printHeadPosition = null,
-                layerNumber = this.layer,
+                layerNumber = layerNo,
                 layerCount = gcode.layers.size,
                 layerZHeight = layerInfo.zHeight,
                 layerProgress = progress

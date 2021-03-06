@@ -129,7 +129,7 @@ class GcodePreviewViewModel(
     fun useManualProgress(layer: Int, progress: Float) {
         contextFactoryChannel.offer {
             Pair(
-                GcodeRenderContextFactory.ForLayerProgress(layer = layer, progress = progress),
+                GcodeRenderContextFactory.ForLayerProgress(layerNo = layer, progress = progress),
                 true
             )
         }
