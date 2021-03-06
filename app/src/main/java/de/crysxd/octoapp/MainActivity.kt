@@ -39,6 +39,7 @@ import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
 import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
+import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
@@ -91,6 +92,7 @@ class MainActivity : OctoActivity() {
         recycler.preInflateWidget { AnnouncementWidget(this@MainActivity) }
         recycler.preInflateWidget { MoveToolWidget(this@MainActivity) }
         recycler.preInflateWidget { ExtrudeWidget(this@MainActivity) }
+        recycler.preInflateWidget { ControlTemperatureWidget(this@MainActivity) }
 
         onNewIntent(intent)
 

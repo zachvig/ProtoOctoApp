@@ -10,6 +10,7 @@ import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
+import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.pre_print_controls.databinding.PrePrintControlsFragmentBinding
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.widget.extrude.ExtrudeWidget
@@ -47,8 +48,9 @@ class PrePrintControlsFragment : WidgetHostFragment() {
             parent = this,
             widgetClasses = listOf(
                 AnnouncementWidget::class,
+                ControlTemperatureWidget::class,
                 MoveToolWidget::class,
-                ExtrudeWidget::class
+                ExtrudeWidget::class,
             )
         )
     }

@@ -2,6 +2,6 @@
 <resources>
     <string name="public_file_dir_name" translatable="false">public_files</string>
     <string name="updates_notification_channel" translatable="false">updates</string>
-    <string name="pref_key_version_announcement" translatable="false">announcement_1.7b</string>
+    <string name="pref_key_version_announcement" translatable="false">announcement_1.7d</string>
     <string name="version_announcement_learn_more_link" translatable="false">https://www.youtube.com/watch?v=pOQs6Eqm7O4</string>
 </resources>

@@ -48,14 +48,18 @@ abstract class RecyclableOctoWidget<T : ViewBinding, R : BaseViewModel>(context:
 
         createNewViewModel(parent)?.let {
             baseViewModel = it
-            parent.requireOctoActivity().observeErrorEvents(baseViewModel.errorLiveData)
-            parent.requireOctoActivity().observerMessageEvents(baseViewModel.messages)
-            baseViewModel.navContoller = parent.findNavController()
+            setUpViewModel(it)
         }
     }
 
     fun recordInteraction() {
         OctoAnalytics.logEvent(OctoAnalytics.Event.WidgetInteraction(getAnalyticsName()))
+    }
+
+    protected fun setUpViewModel(baseViewModel: BaseViewModel) {
+        parent.requireOctoActivity().observeErrorEvents(baseViewModel.errorLiveData)
+        parent.requireOctoActivity().observerMessageEvents(baseViewModel.messages)
+        baseViewModel.navContoller = parent.findNavController()
     }
 
     abstract fun createNewViewModel(parent: WidgetHostFragment): R?
