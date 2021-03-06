@@ -22,9 +22,12 @@ class OctoWidgetRecycler {
                     w
                 }
             } catch (e: Exception) {
-                val w = factory()
-                Timber.i("Sync inflated $w")
-                w
+                // Async inflate might fail for some views, retry on main thread
+                withContext(Dispatchers.Main) {
+                    val w = factory()
+                    Timber.i("Sync inflated $w")
+                    w
+                }
             }
             registerWidget(widget)
         }

@@ -13,6 +13,7 @@ import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
+import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.pre_print_controls.databinding.PrePrintControlsFragmentBinding
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.widget.extrude.ExtrudeWidget
@@ -52,6 +53,7 @@ class PrePrintControlsFragment : WidgetHostFragment() {
                 AnnouncementWidget::class,
                 ControlTemperatureWidget::class,
                 MoveToolWidget::class,
+                WebcamWidget::class,
                 SendGcodeWidget::class,
                 ExtrudeWidget::class,
             )

@@ -41,6 +41,7 @@ import de.crysxd.octoapp.base.ui.common.OctoView
 import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
+import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
@@ -95,6 +96,7 @@ class MainActivity : OctoActivity() {
         recycler.preInflateWidget { ExtrudeWidget(this@MainActivity) }
         recycler.preInflateWidget { ControlTemperatureWidget(this@MainActivity) }
         recycler.preInflateWidget { SendGcodeWidget(this@MainActivity) }
+        recycler.preInflateWidget { WebcamWidget(this@MainActivity) }
 
         onNewIntent(intent)
 

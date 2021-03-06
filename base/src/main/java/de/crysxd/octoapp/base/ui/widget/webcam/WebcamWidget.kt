@@ -1,59 +1,44 @@
 package de.crysxd.octoapp.base.ui.widget.webcam
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.di.injectActivityViewModel
-import de.crysxd.octoapp.base.ui.ext.suspendedInflate
-import de.crysxd.octoapp.base.ui.widget.OctoWidget
+import de.crysxd.octoapp.base.databinding.WidgetWebcamBinding
+import de.crysxd.octoapp.base.di.injectViewModel
+import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
+import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState.Error
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState.Loading
-import kotlinx.android.synthetic.main.widget_webcam.*
-import kotlinx.android.synthetic.main.widget_webcam.view.*
+import timber.log.Timber
 
 const val NOT_LIVE_IF_NO_FRAME_FOR_MS = 3000L
 const val STALLED_IF_NO_FRAME_FOR_MS = 5000L
 
-class WebcamWidget(
-    parent: Fragment,
-    private val isFullscreen: Boolean = false
-) : OctoWidget(parent) {
-    private val viewModel: WebcamViewModel by injectActivityViewModel()
+class WebcamWidget(context: Context) : RecyclableOctoWidget<WidgetWebcamBinding, WebcamViewModel>(context) {
+    override val binding = WidgetWebcamBinding.inflate(LayoutInflater.from(context))
+    private var lastAspectRatio: String? = null
 
-    override fun getTitle(context: Context) = context.getString(R.string.webcam)
-    override fun getAnalyticsName() = "webcam"
-
-    @SuppressLint("ClickableViewAccessibility")
-    override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup) =
-        inflater.suspendedInflate(R.layout.widget_webcam, container, false) as ViewGroup
-
-    override fun onViewCreated(view: View) {
-        applyAspectRatio(viewModel.getInitialAspectRatio())
-        webcamView.coroutineScope = parent.viewLifecycleOwner.lifecycleScope
-        webcamView.onResetConnection = {
-            if (webcamView.state == WebcamView.WebcamState.HlsStreamDisabled) {
+    init {
+        binding.webcamView.onResetConnection = {
+            if (binding.webcamView.state == WebcamView.WebcamState.HlsStreamDisabled) {
                 OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "hls_webcam_widget"))
                 view.findNavController().navigate(R.id.action_show_purchase_flow)
             } else {
-                viewModel.connect()
+                baseViewModel.connect()
             }
         }
-        webcamView.onFullscreenClicked = ::openFullscreen
-        webcamView.supportsToubleShooting = true
-        webcamView.onScaleToFillChanged = {
-            viewModel.storeScaleType(
-                if (webcamView.scaleToFill) {
+        binding.webcamView.onFullscreenClicked = ::openFullscreen
+        binding.webcamView.supportsToubleShooting = true
+        binding.webcamView.onScaleToFillChanged = {
+            baseViewModel.storeScaleType(
+                if (binding.webcamView.scaleToFill) {
                     ImageView.ScaleType.CENTER_CROP
                 } else {
                     ImageView.ScaleType.FIT_CENTER
@@ -61,14 +46,24 @@ class WebcamWidget(
                 isFullscreen = false
             )
         }
-        webcamView.scaleToFill = viewModel.getScaleType(isFullscreen = false, ImageView.ScaleType.FIT_CENTER) != ImageView.ScaleType.FIT_CENTER
-        webcamView.onSwitchWebcamClicked = { viewModel.nextWebcam() }
-        viewModel.uiState.observe(parent, ::onUiStateChanged)
+        binding.webcamView.onSwitchWebcamClicked = { baseViewModel.nextWebcam() }
+    }
+
+    override fun createNewViewModel(parent: WidgetHostFragment) = parent.injectViewModel<WebcamViewModel>().value
+    override fun getTitle(context: Context) = context.getString(R.string.webcam)
+    override fun getAnalyticsName() = "webcam"
+
+    override fun onResume() {
+        super.onResume()
+        binding.webcamView.scaleToFill = baseViewModel.getScaleType(isFullscreen = false, ImageView.ScaleType.FIT_CENTER) != ImageView.ScaleType.FIT_CENTER
+        binding.webcamView.coroutineScope = parent.viewLifecycleOwner.lifecycleScope
+        applyAspectRatio(baseViewModel.getInitialAspectRatio())
+        baseViewModel.uiState.observe(parent, ::onUiStateChanged)
     }
 
     private fun onUiStateChanged(state: UiState) {
-        webcamView.canSwitchWebcam = state.canSwitchWebcam
-        webcamView.state = when (state) {
+        binding.webcamView.canSwitchWebcam = state.canSwitchWebcam
+        binding.webcamView.state = when (state) {
             is Loading -> WebcamView.WebcamState.Loading
             UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
             is UiState.HlsStreamDisabled -> WebcamView.WebcamState.HlsStreamDisabled
@@ -93,7 +88,7 @@ class WebcamWidget(
 
     override fun onPause() {
         super.onPause()
-        webcamView.onPause()
+        binding.webcamView.onPause()
     }
 
     private fun openFullscreen() {
@@ -102,16 +97,20 @@ class WebcamWidget(
     }
 
     private fun applyAspectRatio(aspectRation: String) {
-        ConstraintSet().also {
-            it.clone(view.webcamContent)
-            it.setDimensionRatio(
-                R.id.webcamView,
-                if (isFullscreen) {
-                    null
-                } else {
+        if (lastAspectRatio != null && aspectRation != lastAspectRatio) {
+            parent.requestTransition()
+        }
+
+        if (lastAspectRatio != aspectRation) {
+            Timber.i("Applying aspect ratio: $aspectRation")
+            lastAspectRatio = aspectRation
+            ConstraintSet().also {
+                it.clone(binding.webcamContent)
+                it.setDimensionRatio(
+                    R.id.webcamView,
                     aspectRation
-                }
-            )
-        }.applyTo(view.webcamContent)
+                )
+            }.applyTo(binding.webcamContent)
+        }
     }
 }

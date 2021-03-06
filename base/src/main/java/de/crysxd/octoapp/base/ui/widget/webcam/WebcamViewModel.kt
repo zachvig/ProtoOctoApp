@@ -28,7 +28,7 @@ class WebcamViewModel(
     private val uiStateMediator = MediatorLiveData<UiState>()
     val uiState = uiStateMediator.map { it }
     private val octoPrintLiveData = octoPrintRepository.instanceInformationFlow()
-        .map { getWebcamSettings().first?.streamUrl }
+        .map { getWebcamSettings() }
         .distinctUntilChangedBy { it }
         .asLiveData()
 
@@ -115,7 +115,7 @@ class WebcamViewModel(
                     Timber.e(e)
                     emit(UiState.Error(true, canSwitchWebcam = false))
                 }
-            }
+            }.flowOn(Dispatchers.IO)
         }.flatMapLatest { it }.asLiveData()
 
         previousSource = liveData
