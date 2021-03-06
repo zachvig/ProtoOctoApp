@@ -9,9 +9,9 @@ import de.crysxd.octoapp.octoprint.plugins.power.tasmota.TasmotaPowerPlugin
 import de.crysxd.octoapp.octoprint.plugins.power.tplinkplug.TpLinkSmartPlugApi
 import de.crysxd.octoapp.octoprint.plugins.power.tplinkplug.TpLinkSmartPlugPowerPlugin
 import de.crysxd.octoapp.octoprint.plugins.power.tradfri.*
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withTimeout
 import retrofit2.Retrofit
-import java.util.concurrent.TimeoutException
 
 class PowerPluginsCollection(retrofit: Retrofit) {
 
@@ -34,7 +34,7 @@ suspend fun runWithPowerPluginFixes(powerDevice: PowerDevice, block: suspend () 
         withTimeout(2500) {
             block()
         }
-    } catch (e: TimeoutException) {
+    } catch (e: TimeoutCancellationException) {
         // Ignore
     } catch (e: OctoPrintApiException) {
         // Tradfri gives 500 on every action...ignore

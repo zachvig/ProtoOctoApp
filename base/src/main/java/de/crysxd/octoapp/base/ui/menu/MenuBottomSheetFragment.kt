@@ -36,6 +36,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         viewBinding.loadingOverlay.isVisible = true
         viewBinding.loadingOverlay.animate().alpha(if (isLoading) 1f else 0f).withEndAction { viewBinding.loadingOverlay.isVisible = isLoading }.start()
     }
+    private var lastClickedMenuItem: MenuItem? = null
     private var isLoading = false
         set(value) {
             field = value
@@ -148,16 +149,20 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     viewBinding.checkbox.text = settingsMenu.getCheckBoxText(requireContext())
                     viewBinding.checkbox.isVisible = viewBinding.checkbox.text.isNotBlank()
                     viewBinding.checkbox.isChecked = false
+                    lastClickedMenuItem = null
 
                     // Update bottom sheet size
                     forceResizeBottomSheet()
                 } else {
-                    popMenuOrDismiss()
+                    abortShowMenu(false)
+                    lastClickedMenuItem?.let { adapter.playSuccessAnimationForItem(it) }
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error while inflating menu")
                 requireOctoActivity().showDialog(e)
-                popMenuOrDismiss()
+                abortShowMenu()
+            } finally {
+                isLoading = false
             }
         }
 
@@ -179,17 +184,19 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         }
     }
 
-    private fun popMenuOrDismiss() {
-        if (!popMenu()) {
+    private fun abortShowMenu(showPrevious: Boolean = true) {
+        if (!popMenu(showPrevious)) {
             dismissAllowingStateLoss()
         }
     }
 
-    private fun popMenu(): Boolean = if (viewModel.menuBackStack.size <= 1) {
+    private fun popMenu(showPrevious: Boolean = true): Boolean = if (viewModel.menuBackStack.size <= 1) {
         false
     } else {
         viewModel.menuBackStack.removeLast()
-        showMenu(viewModel.menuBackStack.last())
+        if (showPrevious) {
+            showMenu(viewModel.menuBackStack.last())
+        }
         true
     }
 
@@ -234,6 +241,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         viewModel.execute {
             try {
                 isLoading = true
+                lastClickedMenuItem = item
                 if (item is ToggleMenuItem) {
                     item.handleToggleFlipped(this@MenuBottomSheetFragment, !item.isEnabled)
                     adapter.setToggle(item, item.isEnabled)
