@@ -8,7 +8,7 @@ import dagger.Module
 import dagger.Provides
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.datasource.*
-import de.crysxd.octoapp.base.gcode.parse.GcodeParser
+import de.crysxd.octoapp.base.di.BaseScope
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.octoprint.json.PluginSettingsDeserializer
@@ -44,13 +44,17 @@ class DataSourceModule {
         LocalPinnedMenuItemsDataSource(sharedPreferences)
 
     @Provides
-    fun providesGcodeFileDataSources(
+    @BaseScope
+    fun provideLocalGcodeFileDataSource(
         context: Context,
-        octoPrintProvider: OctoPrintProvider
-    ): GcodeFileDataSourceGroup {
-        val memory = MemoryGcodeFileDataSource()
-        val local = LocalGcodeFileDataSource(context, Gson(), context.getSharedPreferences("gcode_cache_index", Context.MODE_PRIVATE))
-        val remote = RemoteGcodeFileDataSource(GcodeParser(), octoPrintProvider)
-        return GcodeFileDataSourceGroup(listOf(memory, local, remote))
-    }
+    ) = LocalGcodeFileDataSource(context, Gson(), context.getSharedPreferences("gcode_cache_index_2", Context.MODE_PRIVATE))
+
+
+    @Provides
+    @BaseScope
+    fun provideRemoteGcodeFileDataSource(
+        octoPrintProvider: OctoPrintProvider,
+        local: LocalGcodeFileDataSource
+    ) = RemoteGcodeFileDataSource(octoPrintProvider, local)
+
 }

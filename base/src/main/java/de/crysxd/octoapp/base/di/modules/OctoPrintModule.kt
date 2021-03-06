@@ -8,7 +8,8 @@ import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.SslKeyStoreHandler
 import de.crysxd.octoapp.base.datasource.DataSource
-import de.crysxd.octoapp.base.datasource.GcodeFileDataSourceGroup
+import de.crysxd.octoapp.base.datasource.LocalGcodeFileDataSource
+import de.crysxd.octoapp.base.datasource.RemoteGcodeFileDataSource
 import de.crysxd.octoapp.base.di.BaseScope
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.logging.TimberHandler
@@ -64,8 +65,9 @@ open class OctoPrintModule {
     @BaseScope
     @Provides
     open fun provideFileRepository(
-        dataSources: GcodeFileDataSourceGroup
-    ) = GcodeFileRepository(dataSources)
+        localDataSource: LocalGcodeFileDataSource,
+        remoteDataSource: RemoteGcodeFileDataSource,
+    ) = GcodeFileRepository(localDataSource, remoteDataSource)
 
     @BaseScope
     @Provides

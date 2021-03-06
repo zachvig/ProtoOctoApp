@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.base.ui.common.gcode
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
@@ -11,6 +10,7 @@ import de.crysxd.octoapp.base.gcode.render.models.GcodeRenderContext
 import de.crysxd.octoapp.base.gcode.render.models.RenderStyle
 import de.crysxd.octoapp.base.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.GenerateRenderStyleUseCase
 import de.crysxd.octoapp.base.usecase.GetCurrentPrinterProfileUseCase
 import de.crysxd.octoapp.octoprint.models.files.FileObject
@@ -29,7 +29,7 @@ class GcodePreviewViewModel(
     generateRenderStyleUseCase: GenerateRenderStyleUseCase,
     getCurrentPrinterProfileUseCase: GetCurrentPrinterProfileUseCase,
     private val gcodeFileRepository: GcodeFileRepository
-) : ViewModel() {
+) : BaseViewModel() {
 
     init {
         Timber.i("New instance")
@@ -105,7 +105,7 @@ class GcodePreviewViewModel(
 
     private fun isFeatureEnabled() = BillingManager.isFeatureEnabled("gcode_preview")
 
-    fun downloadGcode(file: FileObject.File, allowLargeFileDownloads: Boolean) = viewModelScope.launch {
+    fun downloadGcode(file: FileObject.File, allowLargeFileDownloads: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
         Timber.i("Download file: ${file.path}")
         gcodeChannel.offer(flowOf(GcodeFileDataSource.LoadState.Loading(0f)))
 

@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import de.crysxd.octoapp.base.BuildConfig
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.parse.models.Layer
+import de.crysxd.octoapp.base.gcode.parse.models.LayerInfo
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.utils.measureTime
 import de.crysxd.octoapp.octoprint.models.files.FileObject
@@ -28,7 +29,7 @@ class LocalGcodeFileDataSource(
     context: Context,
     private val gson: Gson,
     private val sharedPreferences: SharedPreferences
-) : GcodeFileDataSource {
+) {
 
     private val cacheRoot = File(context.cacheDir, "gcode2")
     private val oldCacheRoots = listOf(
@@ -44,76 +45,117 @@ class LocalGcodeFileDataSource(
         }
 
         fstConfig.registerClass(Gcode::class.java)
-        fstConfig.registerClass(Layer::class.java)
+        fstConfig.registerClass(LayerInfo::class.java)
         fstConfig.registerClass(Move::class.java)
         fstConfig.registerClass(Move.Type::class.java)
     }
 
-    override fun canLoadFile(file: FileObject.File): Boolean = getCacheEntry(file.cacheKey)?.let {
+    fun canLoadFile(file: FileObject.File): Boolean = getCacheEntry(file.cacheKey)?.let {
         // Cache hit if the file exists and the file was not changed at the server since it was cached
-        it.localFile.exists() && it.fileDate == file.date
+        file.cacheKey.cacheDir.exists() && file.cacheKey.indexFile.exists() && it.fileDate == file.date
     } == true
 
-    override fun loadFile(file: FileObject.File, allowLargeFileDownloads: Boolean): Flow<GcodeFileDataSource.LoadState> = flow {
+    fun loadFile(file: FileObject.File): Flow<GcodeFileDataSource.LoadState> = flow {
         measureTime("Restore cache entry") {
             try {
                 emit(GcodeFileDataSource.LoadState.Loading(0f))
-                val cacheEntry = gson.fromJson(sharedPreferences.getString(file.cacheKey, null), CacheEntry::class.java)
 
                 val gcode = try {
-                    cacheEntry.localFile.inputStream().use {
+                    file.cacheKey.indexFile.inputStream().use {
                         fstConfig.decodeFromStream(it) as Gcode
                     }
                 } catch (e: OutOfMemoryError) {
-                    System.gc()
                     throw IOException(e)
                 }
 
                 emit(GcodeFileDataSource.LoadState.Ready(gcode))
             } catch (e: Exception) {
                 // Cache most likely corrupted, clean out
-                kotlin.runCatching {
-                    sharedPreferences.edit { clear() }
-                    cacheRoot.listFiles()?.forEach { it.delete() }
-                }
-
+                removeFromCache(file)
                 Timber.e(e)
                 emit(GcodeFileDataSource.LoadState.Failed(e))
             }
         }
     }.flowOn(Dispatchers.IO)
 
-    @Suppress("BlockingMethodInNonBlockingContext")
-    override suspend fun cacheGcode(file: FileObject.File, gcode: Gcode) = withContext(Dispatchers.IO) {
-        // Delete old file exists
-        getCacheEntry(file.cacheKey)?.localFile?.delete()
-
-        Timber.i("Adding to cache: ${file.cacheKey}")
-        val cacheEntry = CacheEntry(
-            cachedAt = Date(),
-            fileDate = file.date,
-            localFile = createCacheFile()
-        )
-
-        cacheRoot.mkdirs()
+    suspend fun loadLayer(cacheKey: CacheKey, layerInfo: LayerInfo) = withContext(Dispatchers.IO) {
         try {
-            cacheEntry.localFile.outputStream().use {
-                fstConfig.encodeToStream(it, gcode)
+            File(cacheKey.cacheDir, layerInfo.positionInFile.toString()).inputStream().use {
+                fstConfig.decodeFromStream(it) as Layer
             }
+        } catch (e: Exception) {
+            removeFromCache(cacheKey)
+            Timber.e(e)
+            throw e
+        }
+    }
 
-            sharedPreferences.edit {
-                putString(file.cacheKey, gson.toJson(cacheEntry))
+    @Suppress("BlockingMethodInNonBlockingContext")
+    internal suspend fun cacheGcodeLayer(file: FileObject.File, layer: Layer) = withContext(Dispatchers.IO) {
+        measureTime("Cache layer of ${file.cacheKey} at ${layer.info.zHeight}mm") {
+            try {
+                val dir = file.cacheKey.cacheDir
+                dir.mkdirs()
+                val f = File(dir, layer.info.positionInFile.toString())
+                Timber.v("Caching layer to $f")
+                f.outputStream().use {
+                    fstConfig.encodeToStream(it, layer)
+                }
+            } catch (e: OutOfMemoryError) {
+                System.gc()
+                throw IOException(e)
+            }
+        }
+    }
+
+    @Suppress("BlockingMethodInNonBlockingContext")
+    suspend fun cacheGcode(file: FileObject.File, gcode: Gcode): Gcode = withContext(Dispatchers.IO) {
+        // Delete old file exists
+        val upgradedGcode = gcode.copy(cacheKey = file.cacheKey)
+        Timber.i("Adding to cache: ${file.cacheKey}")
+        createCacheEntry(file)
+        file.cacheKey.cacheDir.mkdirs()
+        file.cacheKey.indexFile.createNewFile()
+
+        try {
+            file.cacheKey.indexFile.outputStream().use {
+                fstConfig.encodeToStream(it, upgradedGcode)
             }
         } catch (e: OutOfMemoryError) {
             System.gc()
+            removeFromCache(file)
             throw IOException(e)
         }
 
         cleanUp()
+        upgradedGcode
     }
 
+    internal fun removeFromCache(file: FileObject.File) {
+        removeFromCache(file.cacheKey)
+    }
+
+    private fun removeFromCache(cacheKey: CacheKey) {
+        cacheKey.cacheDir.deleteRecursively()
+        sharedPreferences.edit { remove(cacheKey) }
+    }
+
+    private fun createCacheEntry(file: FileObject.File): CacheEntry {
+        val cacheEntry = CacheEntry(
+            cachedAt = Date(),
+            fileDate = file.date,
+        )
+
+        sharedPreferences.edit {
+            putString(file.cacheKey, gson.toJson(cacheEntry))
+        }
+
+        return cacheEntry
+    }
+
+
     private suspend fun cleanUp() = withContext(Dispatchers.IO) {
-        fun totalSize() = cacheRoot.listFiles()?.sumByDouble { it.length().toDouble() }?.toLong() ?: 0L
+        fun totalSize() = cacheRoot.walkTopDown().filter { it.isFile }.map { it.length() }.sum()
         val cacheEntries = sharedPreferences.all.keys.map {
             Pair(it, getCacheEntry(it))
         }.sortedBy {
@@ -132,22 +174,24 @@ class LocalGcodeFileDataSource(
 
             val oldest = cacheEntries.removeAt(0)
             Timber.i("Removing from cache: ${oldest.first}")
-            sharedPreferences.edit { remove(oldest.first) }
-            oldest.second.localFile.delete()
-
+            removeFromCache(oldest.first)
         }
     }
 
     private fun getCacheEntry(cacheKey: String) =
         gson.fromJson(sharedPreferences.getString(cacheKey, null), CacheEntry::class.java)
 
-    private val FileObject.File.cacheKey get() = "$path@$date"
+    private val FileObject.File.cacheKey: CacheKey get() = "$path:$date".hashCode().toString()
 
-    private fun createCacheFile() = File(cacheRoot, UUID.randomUUID().toString())
+    private val CacheKey.cacheDir get() = File(cacheRoot, this)
+
+    private val CacheKey.indexFile get() = File(cacheDir, "index")
 
     data class CacheEntry(
         val cachedAt: Date,
         val fileDate: Long,
-        val localFile: File,
     )
 }
+
+typealias CacheKey = String
+

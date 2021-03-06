@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.gcode.render
 
 import android.graphics.PointF
+import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.models.GcodePath
@@ -15,11 +16,12 @@ sealed class GcodeRenderContextFactory {
             Move.Type.Unsupported -> 0
         }
 
-    abstract fun extractMoves(gcode: Gcode): GcodeRenderContext
+    abstract suspend fun extractMoves(gcode: Gcode): GcodeRenderContext
 
     data class ForFileLocation(val byte: Int) : GcodeRenderContextFactory() {
-        override fun extractMoves(gcode: Gcode): GcodeRenderContext {
-            val layer = gcode.layers.last { it.positionInFile <= byte }
+        override suspend fun extractMoves(gcode: Gcode): GcodeRenderContext {
+            val layerInfo = gcode.layers.last { it.positionInFile <= byte }
+            val layer = Injector.get().localGcodeFileDataSource().loadLayer(gcode.cacheKey, layerInfo)
 
             val paths = layer.moves.map {
                 val moves = it.value.first.takeWhile { i -> i.positionInFile <= byte }
@@ -51,17 +53,19 @@ sealed class GcodeRenderContextFactory {
                 printHeadPosition = printHeadPosition,
                 paths = paths.map { it.second }.sortedBy { it.priority },
                 layerCount = gcode.layers.size,
-                layerZHeight = layer.zHeight,
-                layerNumber = gcode.layers.indexOf(layer),
+                layerZHeight = layerInfo.zHeight,
+                layerNumber = gcode.layers.indexOf(layerInfo),
                 layerProgress = paths.sumBy { it.second.count } / layer.moves.values.sumBy { it.second.size }.toFloat()
             )
         }
     }
 
     data class ForLayerProgress(val layer: Int, val progress: Float) : GcodeRenderContextFactory() {
-        override fun extractMoves(gcode: Gcode): GcodeRenderContext {
-            val layer = gcode.layers[layer]
-            val moveCount = layer.moveCount * progress
+        override suspend fun extractMoves(gcode: Gcode): GcodeRenderContext {
+            val layerInfo = gcode.layers[layer]
+            val layer = Injector.get().localGcodeFileDataSource().loadLayer(gcode.cacheKey, layerInfo)
+
+            val moveCount = layerInfo.moveCount * progress
             val paths = layer.moves.map {
                 val moves = it.value.first.takeWhile { i -> i.positionInLayer <= moveCount }
                 val count = moves.mapNotNull { m -> m as? Move.LinearMove }.lastOrNull()?.let { m -> m.positionInArray + 4 } ?: 0
@@ -81,7 +85,7 @@ sealed class GcodeRenderContextFactory {
                 printHeadPosition = null,
                 layerNumber = this.layer,
                 layerCount = gcode.layers.size,
-                layerZHeight = layer.zHeight,
+                layerZHeight = layerInfo.zHeight,
                 layerProgress = progress
             )
         }
