@@ -23,6 +23,7 @@ import de.crysxd.octoapp.print_controls.databinding.FragmentPrintControlsBinding
 import de.crysxd.octoapp.print_controls.di.injectViewModel
 import de.crysxd.octoapp.print_controls.ui.widget.gcode.GcodePreviewWidget
 import de.crysxd.octoapp.print_controls.ui.widget.progress.ProgressWidget
+import de.crysxd.octoapp.print_controls.ui.widget.tune.TuneWidget
 import kotlinx.android.synthetic.main.fragment_print_controls.*
 import timber.log.Timber
 
@@ -121,6 +122,7 @@ class PrintControlsFragment : WidgetHostFragment() {
                 ControlTemperatureWidget::class,
                 WebcamWidget::class,
                 GcodePreviewWidget::class,
+                TuneWidget::class,
             ).also {
                 if (!webcamSupported) {
                     it.remove(WebcamWidget::class)
