@@ -77,6 +77,7 @@ class TuneFragment : Fragment(R.layout.fragment_tune) {
         super.onStart()
 
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Print
+        requireOctoActivity().octo.isVisible = true
         octoScrollView.setupWithToolbar(
             requireOctoActivity(),
             buttonApplyContainer
