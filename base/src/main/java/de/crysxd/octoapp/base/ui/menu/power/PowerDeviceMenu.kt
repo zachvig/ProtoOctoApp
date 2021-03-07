@@ -6,7 +6,7 @@ import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.ui.menu.Menu
 import de.crysxd.octoapp.base.ui.menu.MenuItem
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class PowerDeviceMenu(

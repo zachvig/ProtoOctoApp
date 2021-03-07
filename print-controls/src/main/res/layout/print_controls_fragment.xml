@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="de.crysxd.octoapp.base.ui.base.OctoActivity">
+    android:theme="@style/OctoTheme">
 
-    <!--
-    We use the scroll state to animate the button on the bottom.
-    RecyclerView's estimation of the scroll position is to rough to do that, thus we wrap it
-    -->
     <de.crysxd.octoapp.base.ui.common.OctoScrollView
         android:id="@+id/widgetListScroller"
         android:layout_width="match_parent"
@@ -23,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <de.crysxd.octoapp.base.ui.widget.WidgetLayout
             android:id="@+id/widgetList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,30 +27,28 @@
 
     </de.crysxd.octoapp.base.ui.common.OctoScrollView>
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/bottomAction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:clipToPadding="false"
         android:padding="@dimen/margin_2"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
-            android:id="@+id/buttonStartPrint"
+            android:id="@+id/buttonTogglePausePrint"
             style="@style/OctoTheme.Widget.Button.WithMore"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/start_printing" />
+            android:text="@string/pause" />
 
         <Button
             android:id="@+id/buttonMore"
             style="@style/OctoTheme.Widget.Button.More"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
-    </LinearLayout>
-
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

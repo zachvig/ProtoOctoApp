@@ -2,30 +2,34 @@ package de.crysxd.octoapp.print_controls.ui
 
 import android.os.Bundle
 import android.text.InputType
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionManager
+import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requestFocusAndOpenSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import de.crysxd.octoapp.print_controls.R
+import de.crysxd.octoapp.print_controls.databinding.TuneFragmentBinding
 import de.crysxd.octoapp.print_controls.di.Injector
 import de.crysxd.octoapp.print_controls.di.injectViewModel
 import de.crysxd.octoapp.print_controls.ui.widget.TuneFragmentViewModel
-import kotlinx.android.synthetic.main.fragment_tune.*
 
 const val ARG_NO_VALUE = -1
 
-class TuneFragment : Fragment(R.layout.fragment_tune) {
+class TuneFragment : BaseFragment() {
 
-    private val viewModel: TuneFragmentViewModel by injectViewModel(Injector.get().viewModelFactory())
+    override val viewModel: TuneFragmentViewModel by injectViewModel(Injector.get().viewModelFactory())
+    private lateinit var binding: TuneFragmentBinding
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+        TuneFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,14 +40,14 @@ class TuneFragment : Fragment(R.layout.fragment_tune) {
                 TransitionManager.beginDelayedTransition(view as ViewGroup)
             }
 
-            if (it.initialValue && !tutorial.isVisible) {
-                feedRateInput.editText.requestFocusAndOpenSoftKeyboard()
+            if (it.initialValue && !binding.tutorial.isVisible) {
+                binding.feedRateInput.editText.requestFocusAndOpenSoftKeyboard()
             }
 
-            buttonApply.isEnabled = !it.loading
+            binding.buttonApply.isEnabled = !it.loading
 
             if (it.operationCompleted) {
-                feedRateInput.editText.clearFocusAndHideSoftKeyboard()
+                binding.feedRateInput.editText.clearFocusAndHideSoftKeyboard()
                 findNavController().popBackStack()
             }
         }
@@ -56,20 +60,20 @@ class TuneFragment : Fragment(R.layout.fragment_tune) {
 
         // Set initial values
         val args = navArgs<TuneFragmentArgs>().value
-        feedRateInput.prepare().editText.setText(if (args.currentFeedRate == ARG_NO_VALUE) null else args.currentFeedRate.toString())
-        flowRateInput.prepare().editText.setText(if (args.currentFlowRate == ARG_NO_VALUE) null else args.currentFlowRate.toString())
-        fanSpeedInput.prepare().editText.setText(if (args.currentFanSpeed == ARG_NO_VALUE) null else args.currentFanSpeed.toString())
+        binding.feedRateInput.prepare().editText.setText(if (args.currentFeedRate == ARG_NO_VALUE) null else args.currentFeedRate.toString())
+        binding.flowRateInput.prepare().editText.setText(if (args.currentFlowRate == ARG_NO_VALUE) null else args.currentFlowRate.toString())
+        binding.fanSpeedInput.prepare().editText.setText(if (args.currentFanSpeed == ARG_NO_VALUE) null else args.currentFanSpeed.toString())
 
 
         // Apply values
-        buttonApply.setOnClickListener { applyChanges() }
+        binding.buttonApply.setOnClickListener { applyChanges() }
     }
 
     private fun applyChanges() {
         viewModel.applyChanges(
-            feedRate = feedRateInput.editText.text.toString().toIntOrNull(),
-            flowRate = flowRateInput.editText.text.toString().toIntOrNull(),
-            fanSpeed = fanSpeedInput.editText.text.toString().toIntOrNull()
+            feedRate = binding.feedRateInput.editText.text.toString().toIntOrNull(),
+            flowRate = binding.flowRateInput.editText.text.toString().toIntOrNull(),
+            fanSpeed = binding.fanSpeedInput.editText.text.toString().toIntOrNull()
         )
     }
 
@@ -77,9 +81,10 @@ class TuneFragment : Fragment(R.layout.fragment_tune) {
         super.onStart()
 
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Print
-        octoScrollView.setupWithToolbar(
+        requireOctoActivity().octo.isVisible = true
+        binding.octoScrollView.setupWithToolbar(
             requireOctoActivity(),
-            buttonApplyContainer
+            binding.buttonApplyContainer
         )
     }
 }

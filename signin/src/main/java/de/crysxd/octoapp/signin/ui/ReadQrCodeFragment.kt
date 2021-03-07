@@ -5,7 +5,9 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
@@ -14,10 +16,11 @@ import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
 import de.crysxd.octoapp.signin.R
-import kotlinx.android.synthetic.main.fragment_read_qr_code.*
+import de.crysxd.octoapp.signin.databinding.ReadQrCodeFragmentBinding
 
-class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code), InsetAwareScreen {
+class ReadQrCodeFragment : Fragment(), InsetAwareScreen {
 
+    private lateinit var binding: ReadQrCodeFragmentBinding
     private var systemUiVisibilityBackup = 0
     private var navigationBarColorBackup = Color.WHITE
 
@@ -26,16 +29,19 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code), InsetAwareS
         private const val REQUEST_CODE_PERMISSION = 100
     }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+        ReadQrCodeFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        scannerView.setResultHandler {
+        binding.scannerView.setResultHandler {
             OctoAnalytics.logEvent(OctoAnalytics.Event.QrCodeCompleted)
             findNavController().previousBackStackEntry?.savedStateHandle?.set(RESULT_API_KEY, it.text)
             findNavController().popBackStack()
         }
 
-        buttonCancel.setOnClickListener {
+        binding.buttonCancel.setOnClickListener {
             findNavController().popBackStack()
         }
     }
@@ -44,8 +50,8 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code), InsetAwareS
         super.onStart()
 
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            scannerView?.postDelayed({
-                scannerView?.startCamera()
+            binding.scannerView?.postDelayed({
+                binding.scannerView?.startCamera()
             }, 300)
         } else {
             requestPermissions(arrayOf(android.Manifest.permission.CAMERA), REQUEST_CODE_PERMISSION)
@@ -73,7 +79,7 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code), InsetAwareS
 
         if (requestCode == REQUEST_CODE_PERMISSION) {
             if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                scannerView.startCamera()
+                binding.scannerView.startCamera()
             } else {
                 findNavController().popBackStack(R.id.loginFragment, false)
             }
@@ -82,7 +88,7 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code), InsetAwareS
 
     override fun onPause() {
         super.onPause()
-        scannerView.stopCamera()
+        binding.scannerView.stopCamera()
 
         requireActivity().window.let {
             it.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
@@ -95,7 +101,7 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code), InsetAwareS
     override fun handleInsets(insets: Rect) {
         val margin2 = requireContext().resources.getDimension(R.dimen.margin_2).toInt()
         ConstraintSet().apply {
-            clone(constraintLayout)
+            clone(binding.constraintLayout)
             connect(
                 R.id.buttonCancel,
                 ConstraintSet.BOTTOM,
@@ -110,6 +116,6 @@ class ReadQrCodeFragment : Fragment(R.layout.fragment_read_qr_code), InsetAwareS
                 ConstraintSet.TOP,
                 insets.bottom
             )
-        }.applyTo(constraintLayout)
+        }.applyTo(binding.constraintLayout)
     }
 }

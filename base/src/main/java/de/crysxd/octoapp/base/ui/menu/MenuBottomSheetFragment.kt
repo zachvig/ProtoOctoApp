@@ -23,7 +23,6 @@ import de.crysxd.octoapp.base.ui.base.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.main.MainMenu
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
-import kotlinx.android.synthetic.main.fragment_gcode_render.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -245,7 +244,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     // We did not change the menu, the holder is still showing the same item and the OS is fancy
                     // Play success animation
                     val after = viewModel.menuBackStack.last()
-                    if (after == before) {
+                    if (after == before && isAdded) {
                         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
                             delay(100)
                             adapter.playSuccessAnimationForItem(item)

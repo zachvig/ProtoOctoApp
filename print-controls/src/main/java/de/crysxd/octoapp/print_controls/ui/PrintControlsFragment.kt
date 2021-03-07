@@ -1,55 +1,57 @@
 package de.crysxd.octoapp.print_controls.ui
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
-import de.crysxd.octoapp.base.ui.widget.OctoWidget
-import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
 import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.print_controls.R
+import de.crysxd.octoapp.print_controls.databinding.PrintControlsFragmentBinding
 import de.crysxd.octoapp.print_controls.di.injectViewModel
 import de.crysxd.octoapp.print_controls.ui.widget.gcode.GcodePreviewWidget
 import de.crysxd.octoapp.print_controls.ui.widget.progress.ProgressWidget
 import de.crysxd.octoapp.print_controls.ui.widget.tune.TuneWidget
-import kotlinx.android.synthetic.main.fragment_print_controls.*
 import timber.log.Timber
 
-class PrintControlsFragment : WidgetHostFragment(R.layout.fragment_print_controls) {
+class PrintControlsFragment : WidgetHostFragment() {
 
     override val viewModel: PrintControlsViewModel by injectViewModel()
-    private val adapter = OctoWidgetAdapter()
     private val isKeepScreenOn get() = Injector.get().octoPreferences().isKeepScreenOnDuringPrint
+    private lateinit var binding: PrintControlsFragmentBinding
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+        PrintControlsFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.widgetList.connectToLifecycle(viewLifecycleOwner)
         viewModel.printState.observe(viewLifecycleOwner) {
             val isPaused = it.state?.flags?.paused == true
-            buttonTogglePausePrint.isEnabled = true
-            buttonTogglePausePrint.setText(
+            binding.buttonTogglePausePrint.isEnabled = true
+            binding.buttonTogglePausePrint.setText(
                 when {
                     isPaused -> R.string.resume
 
                     it.state?.flags?.pausing == true -> {
-                        buttonTogglePausePrint.isEnabled = false
+                        binding.buttonTogglePausePrint.isEnabled = false
                         R.string.pausing
                     }
 
                     it.state?.flags?.cancelling == true -> {
-                        buttonTogglePausePrint.isEnabled = false
+                        binding.buttonTogglePausePrint.isEnabled = false
                         R.string.cancelling
                     }
 
@@ -57,7 +59,7 @@ class PrintControlsFragment : WidgetHostFragment(R.layout.fragment_print_control
                 }
             )
 
-            buttonTogglePausePrint.setOnClickListener {
+            binding.buttonTogglePausePrint.setOnClickListener {
                 doAfterConfirmation(
                     message = if (isPaused) R.string.resume_print_confirmation_message else R.string.pause_print_confirmation_message,
                     button = if (isPaused) R.string.resume_print_confirmation_action else R.string.pause_print_confirmation_action
@@ -73,11 +75,9 @@ class PrintControlsFragment : WidgetHostFragment(R.layout.fragment_print_control
 
         viewModel.webCamSupported.observe(viewLifecycleOwner, Observer(this::installApplicableWidgets))
 
-        buttonMore.setOnClickListener {
+        binding.buttonMore.setOnClickListener {
             MenuBottomSheetFragment().show(childFragmentManager)
         }
-
-        (widgetsList.layoutManager as? StaggeredGridLayoutManager)?.spanCount = resources.getInteger(de.crysxd.octoapp.base.R.integer.widget_list_span_count)
     }
 
     private fun updateKeepScreenOn() {
@@ -94,7 +94,7 @@ class PrintControlsFragment : WidgetHostFragment(R.layout.fragment_print_control
         super.onStart()
         updateKeepScreenOn()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Print
-        widgetListScroller.setupWithToolbar(requireOctoActivity(), bottomAction)
+        binding.widgetListScroller.setupWithToolbar(requireOctoActivity(), binding.bottomAction)
     }
 
     override fun onStop() {
@@ -110,38 +110,26 @@ class PrintControlsFragment : WidgetHostFragment(R.layout.fragment_print_control
             .show()
     }
 
-    private fun installApplicableWidgets(webCamSupported: Boolean) {
-        lifecycleScope.launchWhenCreated {
-            widgetsList.adapter = adapter
-
-            val widgets = mutableListOf<OctoWidget>()
-            widgets.add(AnnouncementWidget(this@PrintControlsFragment))
-            widgets.add(ProgressWidget(this@PrintControlsFragment))
-            widgets.add(ControlTemperatureWidget(this@PrintControlsFragment))
-
-            if (webCamSupported) {
-                widgets.add(WebcamWidget(this@PrintControlsFragment))
+    private fun installApplicableWidgets(webcamSupported: Boolean) {
+        binding.widgetList.showWidgets(
+            parent = this,
+            widgetClasses = mutableListOf(
+                AnnouncementWidget::class,
+                ProgressWidget::class,
+                ControlTemperatureWidget::class,
+                WebcamWidget::class,
+                GcodePreviewWidget::class,
+                TuneWidget::class,
+            ).also {
+                if (!webcamSupported) {
+                    it.remove(WebcamWidget::class)
+                }
             }
-
-            widgets.add(GcodePreviewWidget(this@PrintControlsFragment))
-            widgets.add(TuneWidget(this@PrintControlsFragment))
-            Timber.i("Installing widgets: ${widgets.map { it::class.java.simpleName }}")
-            adapter.setWidgets(requireContext(), widgets.filter { it.isVisible() })
-        }
+        )
     }
 
     override fun reloadWidgets() {
         Timber.i("Reload widgets")
         installApplicableWidgets(viewModel.webCamSupported.value == true)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        adapter.dispatchResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        adapter.dispatchPause()
     }
 }

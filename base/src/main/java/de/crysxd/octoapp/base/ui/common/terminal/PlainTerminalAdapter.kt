@@ -1,15 +1,15 @@
 package de.crysxd.octoapp.base.ui.common.terminal
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
-import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.databinding.ItemPlainSerialCommBinding
 import de.crysxd.octoapp.base.models.SerialCommunication
-import de.crysxd.octoapp.base.ui.common.AutoBindViewHolder
-import kotlinx.android.synthetic.main.item_plain_serial_comm.*
+import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-class PlainTerminalAdaper : TerminalAdapter<PlainTerminalAdaper.PlainSerialCommunicationViewHolder>() {
+class PlainTerminalAdapter : TerminalAdapter<PlainTerminalAdapter.PlainSerialCommunicationViewHolder>() {
 
     private val serialCommunications = mutableListOf<SerialCommunication>()
 
@@ -42,9 +42,10 @@ class PlainTerminalAdaper : TerminalAdapter<PlainTerminalAdaper.PlainSerialCommu
     override fun getItemCount() = serialCommunications.size
 
     override fun onBindViewHolder(holder: PlainSerialCommunicationViewHolder, position: Int) {
-        holder.textView.text = serialCommunications[position].content
+        holder.binding.textView.text = serialCommunications[position].content
     }
 
-    class PlainSerialCommunicationViewHolder(parent: ViewGroup) : AutoBindViewHolder(parent, R.layout.item_plain_serial_comm)
+    class PlainSerialCommunicationViewHolder(parent: ViewGroup) :
+        ViewBindingHolder<ItemPlainSerialCommBinding>(ItemPlainSerialCommBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
 }

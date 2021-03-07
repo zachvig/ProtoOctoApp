@@ -13,10 +13,10 @@ import androidx.lifecycle.lifecycleScope
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.databinding.SendFeedbackDialogBinding
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import kotlinx.android.synthetic.main.fragment_dialog_send_feedback.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.DateFormat
@@ -25,6 +25,7 @@ import java.util.*
 
 class SendFeedbackDialog : DialogFragment() {
 
+    private lateinit var binding: SendFeedbackDialogBinding
     private var screenshot: Bitmap? = null
     private val viewModel: SendFeedbackViewModel by injectViewModel()
 
@@ -37,7 +38,7 @@ class SendFeedbackDialog : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-        inflater.inflate(R.layout.fragment_dialog_send_feedback, container, false)
+        SendFeedbackDialogBinding.inflate(inflater, container, false).also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -46,50 +47,50 @@ class SendFeedbackDialog : DialogFragment() {
         // We "cache" the screenshot here and then set it to the VM, falling back to the VM's value
         viewModel.screenshot = screenshot ?: viewModel.screenshot
         if (viewModel.screenshot == null) {
-            checkboxScreenshot.isChecked = false
-            checkboxScreenshot.isEnabled = false
+            binding.checkboxScreenshot.isChecked = false
+            binding.checkboxScreenshot.isEnabled = false
         }
 
         val isForBugReport = arguments?.getBoolean(ARG_FOR_BUG_REPORT, false) == true
         if (isForBugReport) {
-            checkboxPhoneInformation.isChecked = true
-            checkboxPhoneInformation.isEnabled = false
-            checkboxOctoprintInformation.isChecked = true
-            checkboxOctoprintInformation.isEnabled = false
+            binding.checkboxPhoneInformation.isChecked = true
+            binding.checkboxPhoneInformation.isEnabled = false
+            binding.checkboxOctoprintInformation.isChecked = true
+            binding.checkboxOctoprintInformation.isEnabled = false
         }
 
         try {
             val tz = Firebase.remoteConfig.getString("contact_timezone")
             val time = Calendar.getInstance(TimeZone.getTimeZone(tz)).time
             val formattedTime = DateFormat.getTimeInstance(DateFormat.SHORT).format(time)
-            contactTime.text = getString(R.string.help___contact_detail_information, formattedTime, tz)
+            binding.contactTime.text = getString(R.string.help___contact_detail_information, formattedTime, tz)
         } catch (e: java.lang.Exception) {
             Timber.e(e)
-            contactTime.isVisible = false
+            binding.contactTime.isVisible = false
         }
 
         viewModel.viewState.observe(viewLifecycleOwner) {
             when (it) {
                 SendFeedbackViewModel.ViewState.Idle -> Unit
                 SendFeedbackViewModel.ViewState.Loading -> {
-                    buttonOpenEmail.isEnabled = false
-                    buttonOpenEmail.setText(R.string.loading)
+                    binding.buttonOpenEmail.isEnabled = false
+                    binding.buttonOpenEmail.setText(R.string.loading)
                 }
                 SendFeedbackViewModel.ViewState.Done -> dismissAllowingStateLoss()
             }
         }
 
-        buttonOpenEmail.setOnClickListener {
-            messageInput.error = if (messageInput.editText!!.text.isEmpty()) {
+        binding.buttonOpenEmail.setOnClickListener {
+            binding.messageInput.error = if (binding.messageInput.editText!!.text.isEmpty()) {
                 getString(R.string.error_please_enter_a_message)
             } else {
                 viewModel.sendFeedback(
                     context = it.context,
-                    message = messageInput.editText!!.text.toString(),
-                    sendPhoneInfo = checkboxPhoneInformation.isChecked,
-                    sendOctoPrintInfo = checkboxOctoprintInformation.isChecked,
-                    sendLogs = checkboxLogs.isChecked,
-                    sendScreenshot = checkboxScreenshot.isChecked
+                    message = binding.messageInput.editText!!.text.toString(),
+                    sendPhoneInfo = binding.checkboxPhoneInformation.isChecked,
+                    sendOctoPrintInfo = binding.checkboxOctoprintInformation.isChecked,
+                    sendLogs = binding.checkboxLogs.isChecked,
+                    sendScreenshot = binding.checkboxScreenshot.isChecked
                 )
                 null
             }

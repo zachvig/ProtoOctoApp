@@ -15,7 +15,7 @@ import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ADD_INSTANCE
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ENABLE_QUICK_SWITCH
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SIGN_OUT
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SWITCH_INSTANCE
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 private val isQuickSwitchEnabled get() = BillingManager.isFeatureEnabled("quick_switch")
 private val isAnyActive get() = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl != null

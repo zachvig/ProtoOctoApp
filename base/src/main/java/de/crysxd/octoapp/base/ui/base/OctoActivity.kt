@@ -25,6 +25,7 @@ import de.crysxd.octoapp.base.models.Event
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
+import de.crysxd.octoapp.base.ui.widget.OctoWidgetRecycler
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
@@ -41,6 +42,7 @@ abstract class OctoActivity : LocalizedActivity() {
             private set
     }
 
+    val octoWidgetRecycler = OctoWidgetRecycler()
     private var dialog: AlertDialog? = null
     abstract val octoToolbar: OctoToolbar
     abstract val octo: OctoView

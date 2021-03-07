@@ -9,6 +9,6 @@
         android:id="@+id/terminalFragment"
         android:name="de.crysxd.octoapp.base.ui.common.terminal.TerminalFragment"
         android:label="TerminalFragment"
-        tools:layout="@layout/fragment_terminal" />
+        tools:layout="@layout/terminal_fragment" />
 
 </navigation>
