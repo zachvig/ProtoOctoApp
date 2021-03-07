@@ -382,10 +382,7 @@ class MainActivity : OctoActivity() {
         TransitionManager.beginDelayedTransition(rootLayout, TransitionSet().apply {
             addTransition(Explode())
             addTransition(ChangeBounds())
-            excludeTarget(octoToolbar, true)
-            findCurrentScreen()?.view?.let {
-                excludeChildren(it, true)
-            }
+            excludeChildren(octoToolbar, true)
         })
         binding.disconnectedMessage.isVisible = visible
         findCurrentScreen()?.let { applyInsetsToScreen(it, height.takeIf { visible }) }

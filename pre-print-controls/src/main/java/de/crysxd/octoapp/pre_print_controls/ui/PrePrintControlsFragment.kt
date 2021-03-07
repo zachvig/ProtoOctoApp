@@ -71,16 +71,4 @@ class PrePrintControlsFragment : WidgetHostFragment() {
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
         binding.widgetListScroller.setupWithToolbar(requireOctoActivity(), binding.bottomAction)
     }
-
-    override fun onResume() {
-        super.onResume()
-        // TODO
-        // adapter.dispatchResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        // TODO
-        // adapter.dispatchPause()
-    }
 }
