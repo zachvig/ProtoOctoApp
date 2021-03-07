@@ -5,10 +5,10 @@ import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.exceptions.PrinterNotOperationalException
 import de.crysxd.octoapp.octoprint.models.socket.Message
-import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
+import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject

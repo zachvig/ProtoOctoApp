@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.flexbox.FlexboxLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:alignContent="flex_start"
+    app:alignItems="flex_start"
+    app:dividerDrawable="@drawable/flow_divider"
+    app:flexWrap="wrap"
+    app:showDivider="middle">
+
+    <Button
+        android:id="@+id/buttonExtrude5"
+        style="@style/OctoTheme.Widget.Button.Small.Secondary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="5 mm" />
+
+    <Button
+        android:id="@+id/buttonExtrude50"
+        style="@style/OctoTheme.Widget.Button.Small.Secondary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="5 cm" />
+
+    <Button
+        android:id="@+id/buttonExtrude100"
+        style="@style/OctoTheme.Widget.Button.Small.Secondary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10 cm" />
+
+    <Button
+        android:id="@+id/buttonExtrude120"
+        style="@style/OctoTheme.Widget.Button.Small.Secondary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="12 cm" />
+
+    <Button
+        android:id="@+id/buttonExtrudeOther"
+        style="@style/OctoTheme.Widget.Button.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Other" />
+</com.google.android.flexbox.FlexboxLayout>

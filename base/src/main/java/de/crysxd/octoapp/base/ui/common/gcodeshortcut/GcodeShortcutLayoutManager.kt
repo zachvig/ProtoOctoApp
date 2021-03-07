@@ -5,7 +5,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.HorizontalScrollView
 import androidx.core.view.children
-import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.findFragment
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
@@ -13,7 +14,6 @@ import de.crysxd.octoapp.base.ui.menu.gcodeshortcuts.GcodeShortcutsMenu
 
 class GcodeShortcutLayoutManager(
     private val layout: ViewGroup,
-    private val childFragmentManager: FragmentManager,
     private val scroller: HorizontalScrollView? = null,
     private val onClicked: (GcodeHistoryItem) -> Unit,
     private val onInsert: ((GcodeHistoryItem) -> Unit)? = null
@@ -39,7 +39,7 @@ class GcodeShortcutLayoutManager(
         // Add new views
         gcodes.forEach { gcode ->
             val button = removedViews.firstOrNull { it.tag == gcode.command && it.parent == null }
-                ?: LayoutInflater.from(layout.context).inflate(R.layout.widget_gcode_button, layout, false) as Button
+                ?: LayoutInflater.from(layout.context).inflate(R.layout.send_gcode_button, layout, false) as Button
 
             button.text = gcode.name
             button.tag = gcode.command
@@ -55,7 +55,7 @@ class GcodeShortcutLayoutManager(
                 onClicked(gcode)
             }
             button.setOnLongClickListener {
-                MenuBottomSheetFragment.createForMenu(GcodeShortcutsMenu(gcode, onInsert)).show(childFragmentManager)
+                MenuBottomSheetFragment.createForMenu(GcodeShortcutsMenu(gcode, onInsert)).show(layout.findFragment<Fragment>().childFragmentManager)
                 true
             }
         }

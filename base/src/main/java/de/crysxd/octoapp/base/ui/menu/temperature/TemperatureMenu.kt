@@ -10,7 +10,7 @@ import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_APPLY_TEMPERATURE_PRESET
 import de.crysxd.octoapp.base.usecase.SetBedTargetTemperatureUseCase
 import de.crysxd.octoapp.base.usecase.SetToolTargetTemperatureUseCase
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class TemperatureMenu : Menu {

@@ -1,7 +1,7 @@
 package de.crysxd.octoapp.base.models
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class GcodeHistoryItem(

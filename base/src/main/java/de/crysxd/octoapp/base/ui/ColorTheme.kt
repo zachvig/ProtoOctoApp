@@ -7,7 +7,7 @@ import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 
 

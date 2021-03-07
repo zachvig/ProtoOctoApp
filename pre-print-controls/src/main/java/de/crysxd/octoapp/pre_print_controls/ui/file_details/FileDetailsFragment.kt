@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ImageSpan
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -23,47 +24,51 @@ import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.menu.material.MaterialPluginMenu
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
+import de.crysxd.octoapp.pre_print_controls.databinding.FileDetailsFragmentBinding
 import de.crysxd.octoapp.pre_print_controls.di.Injector
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
-import kotlinx.android.synthetic.main.fragment_file_details.*
 
-class FileDetailsFragment : BaseFragment(R.layout.fragment_file_details), InsetAwareScreen {
+class FileDetailsFragment : BaseFragment(), InsetAwareScreen {
 
     override val viewModel: FileDetailsViewModel by injectViewModel(Injector.get().viewModelFactory())
-    private val file by lazy { navArgs<FileDetailsFragmentArgs>().value.file }
+    private val args by navArgs<FileDetailsFragmentArgs>()
     private val originalOctoTranslationY by lazy { requireOctoActivity().octo.translationY }
+    private lateinit var binding: FileDetailsFragmentBinding
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+        FileDetailsFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.file = file
+        viewModel.file = args.file
         viewModel.loading.observe(viewLifecycleOwner) {
-            buttonStartPrint.isEnabled = !it
-            buttonStartPrint.setText(if (it) R.string.loading else R.string.start_printing)
+            binding.buttonStartPrint.isEnabled = !it
+            binding.buttonStartPrint.setText(if (it) R.string.loading else R.string.start_printing)
         }
         viewModel.viewEvents.observe(viewLifecycleOwner) {
             if (!it.isConsumed) {
                 it.isConsumed = true
                 when (it) {
                     is FileDetailsViewModel.ViewEvent.MaterialSelectionRequired ->
-                        MenuBottomSheetFragment.createForMenu(MaterialPluginMenu(startPrintAfterSelection = file))
+                        MenuBottomSheetFragment.createForMenu(MaterialPluginMenu(startPrintAfterSelection = args.file))
                             .show(childFragmentManager)
 
                 }
             }
         }
 
-        buttonStartPrint.setOnClickListener {
+        binding.buttonStartPrint.setOnClickListener {
             viewModel.startPrint()
         }
 
-        val adapter = Adapter(file)
-        viewPager.adapter = adapter
-        viewPager.offscreenPageLimit = 1
-        viewPager.isUserInputEnabled = false
-        TabLayoutMediator(tabs, viewPager) { tab, position ->
+        val adapter = Adapter(args.file)
+        binding.viewPager.adapter = adapter
+        binding.viewPager.offscreenPageLimit = 1
+        binding.viewPager.isUserInputEnabled = false
+        TabLayoutMediator(binding.tabs, binding.viewPager) { tab, position ->
             tab.text = when (adapter.createFragment(position)) {
-                is InfoTab -> getString(R.string.file_details_tab_info)
+                is InfoTabFragment -> getString(R.string.file_details_tab_info)
                 is GcodePreviewFragment -> {
                     val builder = SpannableStringBuilder(getString(R.string.file_details_tab_preview))
                     builder.append("   ")
@@ -75,7 +80,7 @@ class FileDetailsFragment : BaseFragment(R.layout.fragment_file_details), InsetA
             }
         }.attach()
 
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 updateLayout()
             }
@@ -89,23 +94,23 @@ class FileDetailsFragment : BaseFragment(R.layout.fragment_file_details), InsetA
     }
 
     private fun updateLayout() {
-        viewPager.post {
-            val position = viewPager.currentItem
-            viewPager.updateLayoutParams {
+        binding.viewPager.post {
+            val position = binding.viewPager.currentItem
+            binding.viewPager.updateLayoutParams {
                 height = if (position == 0) {
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 } else {
-                    requireView().height - tabs.height - requireView().paddingBottom - requireView().paddingTop
+                    requireView().height - binding.tabs.height - requireView().paddingBottom - requireView().paddingTop
                 }
             }
 
-            scrollView.isUserInputEnabled = position == 0
-            scrollView.isBottomActionAnimationEnabled = false
-            scrollView.post {
-                scrollView?.smoothScrollTo(0, if (position == 0) 0 else Int.MAX_VALUE)
+            binding.scrollView.isUserInputEnabled = position == 0
+            binding.scrollView.isBottomActionAnimationEnabled = false
+            binding.scrollView.post {
+                binding.scrollView.smoothScrollTo(0, if (position == 0) 0 else Int.MAX_VALUE)
             }
-            bottomAction.animate().translationY(if (position == 0) 0f else bottomAction.height.toFloat()).withEndAction {
-                scrollView?.isBottomActionAnimationEnabled = position == 0
+            binding.bottomAction.animate().translationY(if (position == 0) 0f else binding.bottomAction.height.toFloat()).withEndAction {
+                binding.scrollView.isBottomActionAnimationEnabled = position == 0
             }.start()
 
             val toolbarTranslation = if (position == 0) 0f else -requireOctoActivity().octoToolbar.bottom.toFloat()
@@ -120,7 +125,7 @@ class FileDetailsFragment : BaseFragment(R.layout.fragment_file_details), InsetA
 
     inner class Adapter(file: FileObject.File) : FragmentStateAdapter(this@FileDetailsFragment) {
         private val fragments = listOf(
-            InfoTab(),
+            InfoTabFragment(),
             GcodePreviewFragment.createForFile(file, false)
         )
 
@@ -134,8 +139,8 @@ class FileDetailsFragment : BaseFragment(R.layout.fragment_file_details), InsetA
         super.onResume()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
         requireOctoActivity().octo.isVisible = true
-        scrollView.setupWithToolbar(requireOctoActivity(), bottomAction, tabs)
-        viewPager.currentItem = 0
+        binding.scrollView.setupWithToolbar(requireOctoActivity(), binding.bottomAction, binding.tabs)
+        binding.viewPager.currentItem = 0
 
         // Save translation
         originalOctoTranslationY

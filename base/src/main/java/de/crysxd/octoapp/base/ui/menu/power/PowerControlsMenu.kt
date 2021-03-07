@@ -18,7 +18,7 @@ import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_POWER_DEVICE_ON
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SHOW_POWER_DEVICE_ACTIONS
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.util.*
 
 @Parcelize

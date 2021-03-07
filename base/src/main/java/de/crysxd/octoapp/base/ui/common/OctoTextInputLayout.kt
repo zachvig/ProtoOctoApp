@@ -10,6 +10,7 @@ import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatEditText
@@ -18,12 +19,14 @@ import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.databinding.ViewOctoInputLayoutBinding
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
-import kotlinx.android.parcel.Parcelize
-import kotlinx.android.synthetic.main.view_octo_input_layout.view.*
+import kotlinx.parcelize.Parcelize
 
 
 class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, style: Int = 0) : FrameLayout(context, attrs, style) {
+
+    private val binding = ViewOctoInputLayoutBinding.inflate(LayoutInflater.from(context), this, true)
 
     private val initialLabelColors: ColorStateList
     var hintNormal: CharSequence? = null
@@ -46,9 +49,9 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             field = value
 
             if (error != null) {
-                label.setTextColor(ContextCompat.getColor(context, R.color.color_error))
+                binding.label.setTextColor(ContextCompat.getColor(context, R.color.color_error))
             } else {
-                label.setTextColor(initialLabelColors)
+                binding.label.setTextColor(initialLabelColors)
             }
 
             updateViewState()
@@ -59,18 +62,18 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
     var actionTint: Int?
         set(value) {
             if (value != null) {
-                action.setColorFilter(value)
+                binding.action.setColorFilter(value)
             } else {
-                action.clearColorFilter()
+                binding.action.clearColorFilter()
             }
         }
         get() = null
     var actionIcon: Int?
         set(value) {
             if (value != null && value > 0) {
-                action.setImageResource(value)
+                binding.action.setImageResource(value)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    (action.drawable as? AnimatedVectorDrawable)?.let {
+                    (binding.action.drawable as? AnimatedVectorDrawable)?.let {
                         it.start()
                         it.registerAnimationCallback(object : Animatable2.AnimationCallback() {
                             override fun onAnimationEnd(drawable: Drawable) {
@@ -79,23 +82,21 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
                         })
                     }
                 }
-                action.isVisible = true
+                binding.action.isVisible = true
                 actionSet = true
             } else {
-                action.setImageDrawable(null)
-                action.isVisible = false
+                binding.action.setImageDrawable(null)
+                binding.action.isVisible = false
                 actionSet = false
             }
         }
         get() = null
 
     @Suppress("unused")
-    val editText: AppCompatEditText by lazy { input }
+    val editText: AppCompatEditText by lazy { binding.input }
 
     init {
-        View.inflate(context, R.layout.view_octo_input_layout, this)
-
-        input.addTextChangedListener(object : TextWatcher {
+        binding.input.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) = updateViewState()
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
@@ -110,27 +111,27 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             hintNormal = it.getString(R.styleable.OctoTextInputLayout_label)
             selectAllOnFocus = it.getBoolean(R.styleable.OctoTextInputLayout_selectAllOnFocus, false)
             actionOnlyWithText = it.getBoolean(R.styleable.OctoTextInputLayout_actionOnlyWithText, false)
-            input.setText(it.getString(R.styleable.OctoTextInputLayout_defaultInputValue))
+            binding.input.setText(it.getString(R.styleable.OctoTextInputLayout_defaultInputValue))
             val iconDrawable = it.getResourceId(R.styleable.OctoTextInputLayout_icon, 0)
             if (iconDrawable > 0) {
-                icon.setImageResource(iconDrawable)
+                binding.icon.setImageResource(iconDrawable)
             } else {
-                icon.isVisible = false
+                binding.icon.isVisible = false
             }
             val iconTint = it.getColor(R.styleable.OctoTextInputLayout_iconTint, -1)
             if (iconTint != -1) {
-                icon.setColorFilter(iconTint)
+                binding.icon.setColorFilter(iconTint)
             }
             actionIcon = it.getResourceId(R.styleable.OctoTextInputLayout_actionDrawable, 0)
             actionTint = ContextCompat.getColor(context, R.color.accent)
         }
 
-        initialLabelColors = label.textColors
+        initialLabelColors = binding.label.textColors
 
         updateViewState()
 
         isSaveEnabled = true
-        input.isSaveEnabled = false
+        binding.input.isSaveEnabled = false
 
         editText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && selectAllOnFocus) {
@@ -144,8 +145,8 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     private fun updateViewState() {
-        val labelVisible = input.hasFocus() || !input.text.isNullOrEmpty() || error != null
-        label.text = if (input.hasFocus()) {
+        val labelVisible = binding.input.hasFocus() || !binding.input.text.isNullOrEmpty() || error != null
+        binding.label.text = if (binding.input.hasFocus()) {
             error ?: hintActive ?: hintNormal
         } else {
             error ?: hintNormal
@@ -158,35 +159,35 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         val actionVisible = actionSet && (!editText.text.isNullOrBlank() || !actionOnlyWithText)
 
         // Only animate if changes worth animation are detected
-        if (labelVisible != label.isVisible || hintText != input.hint || actionVisible != action.isVisible) {
+        if (labelVisible != binding.label.isVisible || hintText != binding.input.hint || actionVisible != binding.action.isVisible) {
             // Animation causes glitch in font color on older Android versions
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
             }
-            label.isVisible = labelVisible
-            input.hint = hintText
-            action.isVisible = actionVisible
+            binding.label.isVisible = labelVisible
+            binding.input.hint = hintText
+            binding.action.isVisible = actionVisible
         }
     }
 
     @Suppress("unused")
     fun setOnActionListener(l: (View) -> Unit) {
-        action.setOnClickListener(l)
+        binding.action.setOnClickListener(l)
     }
 
     override fun onSaveInstanceState(): Parcelable = SavedState(
         super.onSaveInstanceState()!!,
-        labelText = label.text?.toString() ?: "",
-        value = input.text?.toString() ?: "",
-        hint = input.hint?.toString() ?: ""
+        labelText = binding.label.text?.toString() ?: "",
+        value = binding.input.text?.toString() ?: "",
+        hint = binding.input.hint?.toString() ?: ""
     )
 
     override fun onRestoreInstanceState(state: Parcelable) {
         val savedState = state as SavedState
         super.onRestoreInstanceState(savedState.superState)
-        label.text = savedState.labelText
-        input.setText(savedState.value)
-        input.hint = savedState.hint
+        binding.label.text = savedState.labelText
+        binding.input.setText(savedState.value)
+        binding.input.hint = savedState.hint
     }
 
     @Parcelize

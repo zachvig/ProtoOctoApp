@@ -4,23 +4,24 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
-import android.view.View
+import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.graphics.get
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.databinding.ViewTemperatureBinding
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
-import kotlinx.android.synthetic.main.view_temperature.view.*
 import timber.log.Timber
 
 class TemperatureView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : FrameLayout(context, attrs) {
 
+    private val binding = ViewTemperatureBinding.inflate(LayoutInflater.from(context), this, true)
     private val temperatureGradient = (ContextCompat.getDrawable(context, R.drawable.temp_grandient) as BitmapDrawable).bitmap
     private val maxTemp: Int
+    val button = binding.button
 
     init {
-        View.inflate(context, R.layout.view_temperature, this)
         setTemperature(null)
         maxTemp = context.theme.obtainStyledAttributes(
             attrs,
@@ -34,18 +35,18 @@ class TemperatureView @JvmOverloads constructor(context: Context, attrs: Attribu
         val actual = temperature?.actual?.toInt()?.toString() ?: context.getString(R.string.no_value_placeholder)
         val target = temperature?.target?.toInt()?.toString()
         val offset = temperature?.offset?.toInt()?.toString()
-        textViewTemperature.text = context.getString(R.string.temperature_x, actual)
-        textViewTarget.text = when {
+        binding.textViewTemperature.text = context.getString(R.string.temperature_x, actual)
+        binding.textViewTarget.text = when {
             target == null -> ""
             target == "0" -> context.getString(R.string.target_off)
             offset != null && offset != "0" -> context.getString(R.string.target_x_offset_y, target, offset)
             else -> context.getString(R.string.target_x, target)
         }
-        root.setBackgroundColor(getTemperatureColor(temperature?.actual))
+        binding.root.setBackgroundColor(getTemperatureColor(temperature?.actual))
     }
 
     fun setComponentName(name: String) {
-        textViewComponentName.text = name
+        binding.textViewComponentName.text = name
     }
 
     private fun getTemperatureColor(temp: Float?): Int = try {

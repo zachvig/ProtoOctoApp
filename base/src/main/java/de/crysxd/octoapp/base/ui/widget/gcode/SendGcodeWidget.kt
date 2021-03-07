@@ -1,51 +1,43 @@
 package de.crysxd.octoapp.base.ui.widget.gcode
 
 import android.content.Context
-import android.transition.TransitionManager
 import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.databinding.SendGcodeWidgetBinding
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.ui.common.gcodeshortcut.GcodeShortcutLayoutManager
-import de.crysxd.octoapp.base.ui.ext.suspendedInflate
-import de.crysxd.octoapp.base.ui.widget.OctoWidget
-import kotlinx.android.synthetic.main.widget_gcode.*
-import kotlinx.android.synthetic.main.widget_gcode.view.*
+import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
+import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 
-class SendGcodeWidget(parent: Fragment) : OctoWidget(parent) {
+class SendGcodeWidget(context: Context) : RecyclableOctoWidget<SendGcodeWidgetBinding, SendGcodeWidgetViewModel>(context) {
 
-    val viewModel: SendGcodeWidgetViewModel by injectViewModel()
-    private lateinit var layoutManager: GcodeShortcutLayoutManager
+    override val binding = SendGcodeWidgetBinding.inflate(LayoutInflater.from(context))
+    private var layoutManager: GcodeShortcutLayoutManager = GcodeShortcutLayoutManager(
+        layout = binding.gcodeList,
+        onClicked = { baseViewModel.sendGcodeCommand(it.command) },
+    )
 
-    override fun getTitle(context: Context) = context.getString(R.string.widget_gcode_send)
-    override fun getAnalyticsName() = "gcode"
-
-    override suspend fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
-        inflater.suspendedInflate(R.layout.widget_gcode, container, false)
-
-    override fun onViewCreated(view: View) {
-        layoutManager = GcodeShortcutLayoutManager(
-            layout = gcodeList,
-            onClicked = { viewModel.sendGcodeCommand(it.command) },
-            childFragmentManager = parent.childFragmentManager
-        )
-        view.buttonOpenTerminal.setOnClickListener {
+    init {
+        binding.buttonOpenTerminal.setOnClickListener {
             recordInteraction()
             it.findNavController().navigate(R.id.action_open_terminal)
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.gcodes.observe(parent.viewLifecycleOwner, ::showGcodes)
+    override fun createNewViewModel(parent: WidgetHostFragment) = parent.injectViewModel<SendGcodeWidgetViewModel>().value
+    override fun getTitle(context: Context) = context.getString(R.string.widget_gcode_send)
+    override fun getAnalyticsName() = "gcode"
+
+    override fun onResume(lifecycleOwner: LifecycleOwner) {
+        super.onResume(lifecycleOwner)
+        baseViewModel.gcodes.observe(lifecycleOwner, ::showGcodes)
     }
 
     private fun showGcodes(gcodes: List<GcodeHistoryItem>) {
-        TransitionManager.beginDelayedTransition(gcodeList)
+        parent.requestTransition()
         layoutManager.showGcodes(gcodes.reversed())
     }
 }
