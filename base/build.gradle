@@ -69,7 +69,6 @@ dependencies {
     api 'com.google.firebase:firebase-config-ktx'
     api 'com.google.firebase:firebase-crashlytics'
     api 'com.google.firebase:firebase-messaging'
-    api 'com.google.firebase:firebase-inappmessaging-display-ktx'
 
     /*
      * Billing
