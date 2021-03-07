@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
@@ -45,23 +44,22 @@ class PrePrintControlsFragment : WidgetHostFragment() {
         //  (widgetList.layoutManager as? StaggeredGridLayoutManager)?.spanCount = resources.getInteger(BaseR.integer.widget_list_span_count)
     }
 
-
     private fun installApplicableWidgets(webcamSupported: Boolean) {
         binding.widgetList.showWidgets(
             parent = this,
-            widgetClasses = listOf(
+            widgetClasses = mutableListOf(
                 AnnouncementWidget::class,
                 ControlTemperatureWidget::class,
                 MoveToolWidget::class,
                 WebcamWidget::class,
                 SendGcodeWidget::class,
                 ExtrudeWidget::class,
-            )
+            ).also {
+                if (!webcamSupported) {
+                    it.remove(WebcamWidget::class)
+                }
+            }
         )
-    }
-
-    override fun requestTransition() {
-        TransitionManager.beginDelayedTransition(binding.root)
     }
 
     override fun reloadWidgets() {

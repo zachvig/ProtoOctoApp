@@ -1,12 +1,13 @@
 package de.crysxd.octoapp.print_controls.ui
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
@@ -14,20 +15,30 @@ import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetAdapter
 import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
+import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
+import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
+import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.print_controls.R
+import de.crysxd.octoapp.print_controls.databinding.FragmentPrintControlsBinding
 import de.crysxd.octoapp.print_controls.di.injectViewModel
+import de.crysxd.octoapp.print_controls.ui.widget.gcode.GcodePreviewWidget
 import kotlinx.android.synthetic.main.fragment_print_controls.*
 import timber.log.Timber
 
-class PrintControlsFragment : WidgetHostFragment(R.layout.fragment_print_controls) {
+class PrintControlsFragment : WidgetHostFragment() {
 
     override val viewModel: PrintControlsViewModel by injectViewModel()
     private val adapter = OctoWidgetAdapter()
     private val isKeepScreenOn get() = Injector.get().octoPreferences().isKeepScreenOnDuringPrint
+    private lateinit var binding: FragmentPrintControlsBinding
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+        FragmentPrintControlsBinding.inflate(inflater, container, false).also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.widgetList.connectToLifecycle(viewLifecycleOwner)
         viewModel.printState.observe(viewLifecycleOwner) {
             val isPaused = it.state?.flags?.paused == true
             buttonTogglePausePrint.isEnabled = true
@@ -68,8 +79,6 @@ class PrintControlsFragment : WidgetHostFragment(R.layout.fragment_print_control
         buttonMore.setOnClickListener {
             MenuBottomSheetFragment().show(childFragmentManager)
         }
-
-        (widgetsList.layoutManager as? StaggeredGridLayoutManager)?.spanCount = resources.getInteger(de.crysxd.octoapp.base.R.integer.widget_list_span_count)
     }
 
     private fun updateKeepScreenOn() {
@@ -102,30 +111,20 @@ class PrintControlsFragment : WidgetHostFragment(R.layout.fragment_print_control
             .show()
     }
 
-    private fun installApplicableWidgets(webCamSupported: Boolean) {
-        /*
-        lifecycleScope.launchWhenCreated {
-            widgetsList.adapter = adapter
-
-            val widgets = mutableListOf<OctoWidget>()
-           // widgets.add(AnnouncementWidget(this@PrintControlsFragment))
-            widgets.add(ProgressWidget(this@PrintControlsFragment))
-            widgets.add(ControlTemperatureWidget(this@PrintControlsFragment))
-
-            if (webCamSupported) {
-                widgets.add(WebcamWidget(this@PrintControlsFragment))
+    private fun installApplicableWidgets(webcamSupported: Boolean) {
+        binding.widgetList.showWidgets(
+            parent = this,
+            widgetClasses = mutableListOf(
+                AnnouncementWidget::class,
+                ControlTemperatureWidget::class,
+                WebcamWidget::class,
+                GcodePreviewWidget::class,
+            ).also {
+                if (!webcamSupported) {
+                    it.remove(WebcamWidget::class)
+                }
             }
-
-            widgets.add(GcodePreviewWidget(this@PrintControlsFragment))
-            widgets.add(TuneWidget(this@PrintControlsFragment))
-            Timber.i("Installing widgets: ${widgets.map { it::class.java.simpleName }}")
-            adapter.setWidgets(requireContext(), widgets.filter { it.isVisible() })
-        }
-         */
-    }
-
-    override fun requestTransition() {
-        TODO("Not yet implemented")
+        )
     }
 
     override fun reloadWidgets() {
