@@ -25,6 +25,7 @@ class WidgetLayout @JvmOverloads constructor(
 
     private val shownWidgets = mutableListOf<RecyclableOctoWidget<*, *>>()
     private val widgetRecycler = Injector.get().octoWidgetRecycler()
+    private lateinit var curentLifecycleOwner: LifecycleOwner
 
     init {
         orientation = VERTICAL
@@ -32,6 +33,7 @@ class WidgetLayout @JvmOverloads constructor(
 
     fun connectToLifecycle(lifecycleOwner: LifecycleOwner) {
         lifecycleOwner.lifecycle.addObserver(this)
+        curentLifecycleOwner = lifecycleOwner
     }
 
     fun showWidgets(parent: WidgetHostFragment, widgetClasses: List<KClass<out RecyclableOctoWidget<*, *>>>) {
@@ -69,6 +71,6 @@ class WidgetLayout @JvmOverloads constructor(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun onResume() {
-        shownWidgets.forEach { it.onResume() }
+        shownWidgets.forEach { it.onResume(curentLifecycleOwner) }
     }
 }

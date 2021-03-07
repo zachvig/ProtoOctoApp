@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.os.bundleOf
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -53,12 +54,12 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WidgetWebcamBinding,
     override fun getTitle(context: Context) = context.getString(R.string.webcam)
     override fun getAnalyticsName() = "webcam"
 
-    override fun onResume() {
-        super.onResume()
+    override fun onResume(lifecycleOwner: LifecycleOwner) {
+        super.onResume(lifecycleOwner)
         binding.webcamView.scaleToFill = baseViewModel.getScaleType(isFullscreen = false, ImageView.ScaleType.FIT_CENTER) != ImageView.ScaleType.FIT_CENTER
-        binding.webcamView.coroutineScope = parent.viewLifecycleOwner.lifecycleScope
+        binding.webcamView.coroutineScope = lifecycleOwner.lifecycleScope
         applyAspectRatio(baseViewModel.getInitialAspectRatio())
-        baseViewModel.uiState.observe(parent, ::onUiStateChanged)
+        baseViewModel.uiState.observe(lifecycleOwner, ::onUiStateChanged)
     }
 
     private fun onUiStateChanged(state: UiState) {

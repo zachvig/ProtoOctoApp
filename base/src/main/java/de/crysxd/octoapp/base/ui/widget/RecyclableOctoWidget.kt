@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -23,6 +24,7 @@ abstract class RecyclableOctoWidget<T : ViewBinding, R : BaseViewModel>(context:
     val view: View = frameBinding.root
     protected lateinit var baseViewModel: R
         private set
+    protected val context: Context get() = binding.root.context
 
     fun attach(parent: WidgetHostFragment) {
         this.parent = parent
@@ -63,7 +65,7 @@ abstract class RecyclableOctoWidget<T : ViewBinding, R : BaseViewModel>(context:
     }
 
     abstract fun createNewViewModel(parent: WidgetHostFragment): R?
-    open fun onResume() = Unit
+    open fun onResume(lifecycleOwner: LifecycleOwner) = Unit
     open fun onPause() = Unit
     open fun isVisible(): Boolean = true
     abstract fun getTitle(context: Context): String?

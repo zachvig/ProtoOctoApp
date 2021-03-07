@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.applyCanvas
+import androidx.lifecycle.LifecycleOwner
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.pre_print_controls.R
@@ -27,9 +28,10 @@ class MoveToolWidget(context: Context) : RecyclableOctoWidget<MoveToolWidgetBind
         binding.buttonJogResolution100
     )
 
-    override fun onResume() {
+    override fun onResume(lifecycleOwner: LifecycleOwner) {
+        super.onResume(lifecycleOwner)
         initControlButtons()
-        initJogResolutionSeekBar(parent.requireContext())
+        initJogResolutionSeekBar(context)
     }
 
     override fun createNewViewModel(parent: WidgetHostFragment) = parent.injectViewModel<MoveToolWidgetViewModel>().value

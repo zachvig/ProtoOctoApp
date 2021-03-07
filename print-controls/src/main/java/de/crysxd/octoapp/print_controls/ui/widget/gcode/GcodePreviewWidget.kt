@@ -12,6 +12,7 @@ import androidx.core.graphics.applyCanvas
 import androidx.core.os.bundleOf
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -53,12 +54,12 @@ class GcodePreviewWidget(context: Context) : RecyclableOctoWidget<WidgetRenderGc
 
     override fun getAnalyticsName() = "gcode_preview"
 
-    override fun onResume() {
-        super.onResume()
+    override fun onResume(lifecycleOwner: LifecycleOwner) {
+        super.onResume(lifecycleOwner)
         // We share the VM with the fullscreen. User might have used the sliders, return to live progress whenever we are started
         baseViewModel.useLiveProgress()
-        baseViewModel.viewState.observe(parent.viewLifecycleOwner, ::updateViewState)
-        baseViewModel.activeFile.observe(parent.viewLifecycleOwner) {
+        baseViewModel.viewState.observe(lifecycleOwner, ::updateViewState)
+        baseViewModel.activeFile.observe(lifecycleOwner) {
             Timber.i("New file: $it")
             file = it
             baseViewModel.downloadGcode(it, false)

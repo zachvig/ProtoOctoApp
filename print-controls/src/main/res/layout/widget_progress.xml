@@ -24,7 +24,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/progressBarBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/progressBarBackground" />
 
     <View
         android:id="@+id/progressBar"
@@ -32,7 +32,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/progressBarBackground"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/progressBarBackground" />
 
     <TextView
         android:id="@+id/textViewProgressPercent"

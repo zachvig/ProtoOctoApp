@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.ui.widget.gcode
 
 import android.content.Context
 import android.view.LayoutInflater
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.WidgetGcodeBinding
@@ -30,9 +31,9 @@ class SendGcodeWidget(context: Context) : RecyclableOctoWidget<WidgetGcodeBindin
     override fun getTitle(context: Context) = context.getString(R.string.widget_gcode_send)
     override fun getAnalyticsName() = "gcode"
 
-    override fun onResume() {
-        super.onResume()
-        baseViewModel.gcodes.observe(parent.viewLifecycleOwner, ::showGcodes)
+    override fun onResume(lifecycleOwner: LifecycleOwner) {
+        super.onResume(lifecycleOwner)
+        baseViewModel.gcodes.observe(lifecycleOwner, ::showGcodes)
     }
 
     private fun showGcodes(gcodes: List<GcodeHistoryItem>) {

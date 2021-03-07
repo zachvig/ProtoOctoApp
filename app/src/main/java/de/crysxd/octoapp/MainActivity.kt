@@ -49,6 +49,7 @@ import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.pre_print_controls.ui.widget.extrude.ExtrudeWidget
 import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidget
 import de.crysxd.octoapp.print_controls.ui.widget.gcode.GcodePreviewWidget
+import de.crysxd.octoapp.print_controls.ui.widget.progress.ProgressWidget
 import de.crysxd.octoapp.widgets.updateAllWidgets
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.delay
@@ -99,6 +100,7 @@ class MainActivity : OctoActivity() {
         recycler.preInflateWidget { SendGcodeWidget(this@MainActivity) }
         recycler.preInflateWidget { WebcamWidget(this@MainActivity) }
         recycler.preInflateWidget { GcodePreviewWidget(this@MainActivity) }
+        recycler.preInflateWidget { ProgressWidget(this@MainActivity) }
 
         onNewIntent(intent)
 
