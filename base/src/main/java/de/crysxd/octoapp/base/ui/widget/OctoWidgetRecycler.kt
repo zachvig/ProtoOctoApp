@@ -2,10 +2,10 @@ package de.crysxd.octoapp.base.ui.widget
 
 import android.content.Context
 import android.view.ViewGroup
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import androidx.lifecycle.lifecycleScope
+import de.crysxd.octoapp.base.ui.base.OctoActivity
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import kotlinx.coroutines.delay
 import timber.log.Timber
 import kotlin.reflect.KClass
 
@@ -13,22 +13,12 @@ class OctoWidgetRecycler {
 
     private val widgetPool = mutableMapOf<KClass<out RecyclableOctoWidget<*, *>>, MutableList<RecyclableOctoWidget<*, *>>>()
 
-    fun preInflateWidget(factory: () -> RecyclableOctoWidget<*, *>) {
-        GlobalScope.launch {
-            val widget = try {
-                withContext(Dispatchers.Default) {
-                    val w = factory()
-                    Timber.i("Async inflated $w")
-                    w
-                }
-            } catch (e: Exception) {
-                // Async inflate might fail for some views, retry on main thread
-                withContext(Dispatchers.Main) {
-                    val w = factory()
-                    Timber.i("Sync inflated $w")
-                    w
-                }
-            }
+    fun preInflateWidget(activity: OctoActivity, factory: () -> RecyclableOctoWidget<*, *>) {
+        activity.lifecycleScope.launchWhenCreated {
+            val delay = (0..500L).random()
+            delay(delay)
+            val widget = factory()
+            Timber.i("Inflated $widget after a delay of $delay")
             registerWidget(widget)
         }
     }
@@ -38,11 +28,12 @@ class OctoWidgetRecycler {
         Timber.i("Registered $widget")
     }
 
-    fun <T : RecyclableOctoWidget<*, *>> rentWidget(context: Context, widgetClass: KClass<T>): T {
+    fun <T : RecyclableOctoWidget<*, *>> rentWidget(host: WidgetHostFragment, widgetClass: KClass<T>): T {
+        @Suppress("UNCHECKED_CAST")
         val widget = (widgetPool[widgetClass]?.firstOrNull {
             it.view.parent == null
         } ?: let {
-            val newWidget = widgetClass.java.getConstructor(Context::class.java).newInstance(context)
+            val newWidget = widgetClass.java.getConstructor(Context::class.java).newInstance(host.requireOctoActivity())
             Timber.i("Ad-hoc inflated $newWidget")
             registerWidget(newWidget)
             newWidget

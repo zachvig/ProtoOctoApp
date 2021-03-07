@@ -10,7 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlin.reflect.KClass
 
 class WidgetLayout @JvmOverloads constructor(
@@ -24,8 +24,8 @@ class WidgetLayout @JvmOverloads constructor(
 ), LifecycleObserver {
 
     private val shownWidgets = mutableListOf<RecyclableOctoWidget<*, *>>()
-    private val widgetRecycler = Injector.get().octoWidgetRecycler()
-    private lateinit var curentLifecycleOwner: LifecycleOwner
+    private var widgetRecycler: OctoWidgetRecycler? = null
+    private lateinit var currentLifecycleOwner: LifecycleOwner
 
     init {
         orientation = VERTICAL
@@ -33,14 +33,17 @@ class WidgetLayout @JvmOverloads constructor(
 
     fun connectToLifecycle(lifecycleOwner: LifecycleOwner) {
         lifecycleOwner.lifecycle.addObserver(this)
-        curentLifecycleOwner = lifecycleOwner
+        currentLifecycleOwner = lifecycleOwner
     }
 
     fun showWidgets(parent: WidgetHostFragment, widgetClasses: List<KClass<out RecyclableOctoWidget<*, *>>>) {
         parent.requestTransition()
 
+        val recycler = parent.requireOctoActivity().octoWidgetRecycler
+        widgetRecycler = recycler
+
         returnAllWidgets()
-        val widgets = widgetClasses.map { widgetRecycler.rentWidget(context, it) }
+        val widgets = widgetClasses.map { recycler.rentWidget(parent, it) }
         shownWidgets.addAll(widgets)
 
         shownWidgets.forEach {
@@ -55,7 +58,7 @@ class WidgetLayout @JvmOverloads constructor(
     }
 
     private fun returnAllWidgets() {
-        shownWidgets.forEach { widgetRecycler.returnWidget(it) }
+        shownWidgets.forEach { widgetRecycler?.returnWidget(it) }
         shownWidgets.clear()
     }
 
@@ -71,6 +74,6 @@ class WidgetLayout @JvmOverloads constructor(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun onResume() {
-        shownWidgets.forEach { it.onResume(curentLifecycleOwner) }
+        shownWidgets.forEach { it.onResume(currentLifecycleOwner) }
     }
 }

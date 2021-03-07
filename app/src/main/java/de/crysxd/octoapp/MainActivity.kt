@@ -96,16 +96,15 @@ class MainActivity : OctoActivity() {
         }
 
         // Inflate widgets
-        val recycler = Injector.get().octoWidgetRecycler()
-        recycler.preInflateWidget { AnnouncementWidget(this@MainActivity) }
-        recycler.preInflateWidget { MoveToolWidget(this@MainActivity) }
-        recycler.preInflateWidget { ExtrudeWidget(this@MainActivity) }
-        recycler.preInflateWidget { ControlTemperatureWidget(this@MainActivity) }
-        recycler.preInflateWidget { SendGcodeWidget(this@MainActivity) }
-        recycler.preInflateWidget { WebcamWidget(this@MainActivity) }
-        recycler.preInflateWidget { GcodePreviewWidget(this@MainActivity) }
-        recycler.preInflateWidget { ProgressWidget(this@MainActivity) }
-        recycler.preInflateWidget { TuneWidget(this@MainActivity) }
+        octoWidgetRecycler.preInflateWidget(this) { AnnouncementWidget(this@MainActivity) }
+        octoWidgetRecycler.preInflateWidget(this) { MoveToolWidget(this@MainActivity) }
+        octoWidgetRecycler.preInflateWidget(this) { ExtrudeWidget(this@MainActivity) }
+        octoWidgetRecycler.preInflateWidget(this) { ControlTemperatureWidget(this@MainActivity) }
+        octoWidgetRecycler.preInflateWidget(this) { SendGcodeWidget(this@MainActivity) }
+        octoWidgetRecycler.preInflateWidget(this) { WebcamWidget(this@MainActivity) }
+        octoWidgetRecycler.preInflateWidget(this) { GcodePreviewWidget(this@MainActivity) }
+        octoWidgetRecycler.preInflateWidget(this) { ProgressWidget(this@MainActivity) }
+        octoWidgetRecycler.preInflateWidget(this) { TuneWidget(this@MainActivity) }
 
         onNewIntent(intent)
 

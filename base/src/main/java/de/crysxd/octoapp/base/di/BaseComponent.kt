@@ -14,7 +14,6 @@ import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.logging.TimberCacheTree
 import de.crysxd.octoapp.base.repository.*
 import de.crysxd.octoapp.base.ui.base.BaseViewModelFactory
-import de.crysxd.octoapp.base.ui.widget.OctoWidgetRecycler
 import de.crysxd.octoapp.base.usecase.*
 import javax.inject.Named
 
@@ -23,7 +22,6 @@ import javax.inject.Named
     modules = [
         AndroidModule::class,
         LoggingModule::class,
-        UiModule::class,
         OctoPrintModule::class,
         DataSourceModule::class,
         ViewModelModule::class,
@@ -40,9 +38,6 @@ interface BaseComponent {
     fun app(): Application
     fun sharedPreferences(): SharedPreferences
     fun octoPreferences(): OctoPreferences
-
-    // UiModule
-    fun octoWidgetRecycler(): OctoWidgetRecycler
 
     // SslModule
     fun sslKeyStoreHandler(): SslKeyStoreHandler
