@@ -6,19 +6,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
-import androidx.transition.TransitionManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import de.crysxd.octoapp.base.ui.ext.suspendedInflate
 import de.crysxd.octoapp.pre_print_controls.R
+import de.crysxd.octoapp.pre_print_controls.databinding.SelectFileFragmentBinding
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
-import kotlinx.android.synthetic.main.fragment_select_file.*
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import timber.log.Timber
 
@@ -28,85 +24,77 @@ const val LOADER_DELAY = 400L
 
 class SelectFileFragment : BaseFragment() {
 
+    private lateinit var binding: SelectFileFragmentBinding
     override val viewModel: SelectFileViewModel by injectViewModel()
     private val navArgs by navArgs<SelectFileFragmentArgs>()
-    private lateinit var initJob: Job
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = FrameLayout(requireContext())
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+        SelectFileFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initJob = lifecycleScope.launchWhenCreated {
-            // Async inflate view
-            val lazyView = LayoutInflater.from(requireContext()).suspendedInflate(R.layout.fragment_select_file, view as ViewGroup, false)
-            TransitionManager.beginDelayedTransition(view)
-            view.addView(lazyView)
 
-            // Setup adapter
-            val adapter = SelectFileAdapter(
-                onFileSelected = {
-                    viewModel.selectFile(it)
-                },
-                onHideThumbnailHint = {
-                    viewModel.hideThumbnailHint()
-                },
-                onShowThumbnailInfo = {
-                    MaterialAlertDialogBuilder(requireContext())
-                        .setMessage(getString(R.string.thumbnail_info_message))
-                        .setPositiveButton(R.string.cura_plugin) { _, _ ->
-                            openLink("https://plugins.octoprint.org/plugins/UltimakerFormatPackage/")
-                        }
-                        .setNegativeButton(R.string.prusa_slicer_plugin) { _, _ ->
-                            openLink("https://plugins.octoprint.org/plugins/prusaslicerthumbnails/")
-                        }
-                        .setNeutralButton(R.string.cancel, null)
-                        .show()
-                },
-                onRetry = {
-                    it.showLoading()
-                    viewModel.reload()
-                }
-            )
-            recyclerViewFileList.adapter = adapter
-            viewModel.picasso.observe(viewLifecycleOwner) {
-                adapter.picasso = it
-            }
-
-            val showLoaderJob = lifecycleScope.launchWhenCreated {
-                delay(LOADER_DELAY)
-                adapter.showLoading()
-            }
-
-            // Load files
-            viewModel.loadFiles(navArgs.folder).observe(viewLifecycleOwner) {
-                Timber.i(it.toString())
-                swipeRefreshLayout.isRefreshing = false
-                showLoaderJob.cancel()
-                if (it.error) {
-                    adapter.showError()
-                } else {
-                    adapter.showFiles(
-                        folderName = navArgs.folder?.name,
-                        files = it.files,
-                        showThumbnailHint = it.showThumbnailHint
-                    )
-                }
-            }
-
-            // Setup swipe to refresh
-            swipeRefreshLayout.setOnRefreshListener {
+        // Setup adapter
+        val adapter = SelectFileAdapter(
+            onFileSelected = {
+                viewModel.selectFile(it)
+            },
+            onHideThumbnailHint = {
+                viewModel.hideThumbnailHint()
+            },
+            onShowThumbnailInfo = {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setMessage(getString(R.string.thumbnail_info_message))
+                    .setPositiveButton(R.string.cura_plugin) { _, _ ->
+                        openLink("https://plugins.octoprint.org/plugins/UltimakerFormatPackage/")
+                    }
+                    .setNegativeButton(R.string.prusa_slicer_plugin) { _, _ ->
+                        openLink("https://plugins.octoprint.org/plugins/prusaslicerthumbnails/")
+                    }
+                    .setNeutralButton(R.string.cancel, null)
+                    .show()
+            },
+            onRetry = {
+                it.showLoading()
                 viewModel.reload()
             }
+        )
+        binding.recyclerViewFileList.adapter = adapter
+        viewModel.picasso.observe(viewLifecycleOwner) {
+            adapter.picasso = it
+        }
+
+        val showLoaderJob = lifecycleScope.launchWhenCreated {
+            delay(LOADER_DELAY)
+            adapter.showLoading()
+        }
+
+        // Load files
+        viewModel.loadFiles(navArgs.folder).observe(viewLifecycleOwner) {
+            Timber.i(it.toString())
+            binding.swipeRefreshLayout.isRefreshing = false
+            showLoaderJob.cancel()
+            if (it.error) {
+                adapter.showError()
+            } else {
+                adapter.showFiles(
+                    folderName = navArgs.folder?.name,
+                    files = it.files,
+                    showThumbnailHint = it.showThumbnailHint
+                )
+            }
+        }
+
+        // Setup swipe to refresh
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.reload()
         }
     }
 
     override fun onStart() {
         super.onStart()
-        lifecycleScope.launchWhenStarted {
-            requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
-            initJob.join()
-            recyclerViewFileList.setupWithToolbar(requireOctoActivity())
-        }
+        requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
+        binding.recyclerViewFileList.setupWithToolbar(requireOctoActivity())
     }
 
     private fun openLink(url: String) {

@@ -204,7 +204,7 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
 
     private fun showStatusDelayed(@StringRes state: Int, @StringRes subState: Int? = null) {
         setDelayedStatusJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-            delay(5000)
+            delay(10000)
             showStatus(state, subState)
         }
     }

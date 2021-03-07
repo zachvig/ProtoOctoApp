@@ -2,6 +2,7 @@ package de.crysxd.octoapp.pre_print_controls.ui.file_details
 
 import android.os.Bundle
 import android.transition.TransitionManager
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -21,20 +22,24 @@ import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.ext.format
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
+import de.crysxd.octoapp.pre_print_controls.databinding.InfoTabFragmentBinding
 import de.crysxd.octoapp.pre_print_controls.di.Injector
 import de.crysxd.octoapp.pre_print_controls.di.injectParentViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.CropAlphaTransformation
-import kotlinx.android.synthetic.main.fragment_info_tab.*
 import java.util.*
 import kotlin.math.roundToInt
 
-class InfoTab : Fragment(R.layout.fragment_info_tab) {
+class InfoTabFragment : Fragment() {
 
     private val labels = mutableListOf<View>()
     private val viewModel: FileDetailsViewModel by injectParentViewModel(Injector.get().viewModelFactory())
     private val margin0 by lazy { requireContext().resources.getDimensionPixelSize(R.dimen.margin_0) }
     private val margin2 by lazy { requireContext().resources.getDimensionPixelSize(R.dimen.margin_2) }
     private val margin3 by lazy { requireContext().resources.getDimensionPixelSize(R.dimen.margin_3) }
+    private lateinit var binding: InfoTabFragmentBinding
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+        InfoTabFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -50,22 +55,22 @@ class InfoTab : Fragment(R.layout.fragment_info_tab) {
                     picasso.load(it)
                         .noFade()
                         .transform(CropAlphaTransformation())
-                        .into(preview, object : Callback {
+                        .into(binding.preview, object : Callback {
                             override fun onError(e: Exception?) = Unit
                             override fun onSuccess() {
-                                preview?.post {
+                                binding.preview.post {
                                     if (start - System.currentTimeMillis() > 30) {
                                         TransitionManager.beginDelayedTransition(view as ViewGroup)
                                     }
-                                    preview.isVisible = true
+                                    binding.preview.isVisible = true
 
                                     // Limit to 16:9 at most
-                                    preview.measure(
-                                        View.MeasureSpec.makeMeasureSpec(generatedContent.width, View.MeasureSpec.EXACTLY),
-                                        View.MeasureSpec.makeMeasureSpec((generatedContent.width * (9 / 16f)).roundToInt(), View.MeasureSpec.AT_MOST),
+                                    binding.preview.measure(
+                                        View.MeasureSpec.makeMeasureSpec(binding.generatedContent.width, View.MeasureSpec.EXACTLY),
+                                        View.MeasureSpec.makeMeasureSpec((binding.generatedContent.width * (9 / 16f)).roundToInt(), View.MeasureSpec.AT_MOST),
                                     )
-                                    preview.updateLayoutParams {
-                                        height = preview.measuredHeight
+                                    binding.preview.updateLayoutParams {
+                                        height = binding.preview.measuredHeight
                                     }
                                 }
                             }
@@ -74,7 +79,7 @@ class InfoTab : Fragment(R.layout.fragment_info_tab) {
             }
 
             // Bind data
-            printName.text = file.name
+            binding.printName.text = file.name
             addTitle(R.string.print_info)
             addDetail(
                 label = R.string.print_time,
@@ -149,7 +154,7 @@ class InfoTab : Fragment(R.layout.fragment_info_tab) {
     }
 
     private fun addTitle(@StringRes title: Int) {
-        generatedContent.addView(
+        binding.generatedContent.addView(
             createTextView(
                 text = getString(title),
                 textAppearance = R.style.OctoTheme_TextAppearance_SectionHeader,
@@ -181,7 +186,7 @@ class InfoTab : Fragment(R.layout.fragment_info_tab) {
                 textColor = R.color.light_text
             )
         )
-        generatedContent.addView(row)
+        binding.generatedContent.addView(row)
     }
 
     private fun createTextView(text: CharSequence, @StyleRes textAppearance: Int, @ColorRes textColor: Int): TextView {

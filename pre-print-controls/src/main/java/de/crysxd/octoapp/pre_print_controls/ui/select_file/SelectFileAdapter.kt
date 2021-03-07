@@ -6,24 +6,21 @@ import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.text.method.LinkMovementMethod
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.squareup.picasso.Picasso
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.ext.format
-import de.crysxd.octoapp.base.ui.common.AutoBindViewHolder
+import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.pre_print_controls.R
-import kotlinx.android.synthetic.main.list_item_error.view.*
-import kotlinx.android.synthetic.main.list_item_file.*
-import kotlinx.android.synthetic.main.list_item_no_files.view.*
-import kotlinx.android.synthetic.main.list_item_thumbnail_hint.view.*
-import kotlinx.android.synthetic.main.list_item_title.view.*
+import de.crysxd.octoapp.pre_print_controls.databinding.*
 import java.util.*
 
 class SelectFileAdapter(
@@ -31,7 +28,7 @@ class SelectFileAdapter(
     private val onHideThumbnailHint: (SelectFileAdapter) -> Unit,
     private val onShowThumbnailInfo: (SelectFileAdapter) -> Unit,
     private val onRetry: (SelectFileAdapter) -> Unit
-) : RecyclerView.Adapter<SelectFileAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var items: List<DataItem> = emptyList()
     var picasso: Picasso? = null
@@ -117,7 +114,7 @@ class SelectFileAdapter(
         else -> throw RuntimeException("Unsupported view type $viewType")
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = when (holder) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = when (holder) {
         is ViewHolder.FileViewHolder -> {
             // Load icons (once)
             val context = holder.itemView.context
@@ -136,23 +133,23 @@ class SelectFileAdapter(
             }
 
             val file = (items[position] as DataItem.File).file
-            holder.textViewTitle.text = file.display
+            holder.binding.textViewTitle.text = file.display
 
             when (file) {
                 is FileObject.Folder -> {
-                    holder.textViewDetail.isVisible = false
-                    holder.imageViewArrow.visibility = View.VISIBLE
-                    holder.imageViewFileIcon.setImageDrawable(folderIcon)
+                    holder.binding.textViewDetail.isVisible = false
+                    holder.binding.imageViewArrow.visibility = View.VISIBLE
+                    holder.binding.imageViewFileIcon.setImageDrawable(folderIcon)
                 }
 
                 is FileObject.File -> {
-                    holder.textViewDetail.text = holder.itemView.context.getString(
+                    holder.binding.textViewDetail.text = holder.itemView.context.getString(
                         R.string.x_y,
                         Date(file.date * 1000).format(),
                         file.size.asStyleFileSize()
                     )
-                    holder.imageViewArrow.visibility = View.GONE
-                    holder.textViewDetail.isVisible = true
+                    holder.binding.imageViewArrow.visibility = View.GONE
+                    holder.binding.textViewDetail.isVisible = true
 
                     val icon = if (file.typePath?.contains(FileObject.FILE_TYPE_MACHINE_CODE) == true) {
                         printableFileIcon
@@ -165,20 +162,20 @@ class SelectFileAdapter(
                         false -> R.drawable.ic_round_highlight_off_circle_24
                         null -> null
                     }
-                    resultIcon?.let(holder.resultIndicator::setImageResource)
-                    holder.resultIndicator.alpha = if (resultIcon != null) 1f else 0f
+                    resultIcon?.let(holder.binding.resultIndicator::setImageResource)
+                    holder.binding.resultIndicator.alpha = if (resultIcon != null) 1f else 0f
 
                     when {
                         picasso == null -> {
-                            holder.imageViewFileIcon.setImageDrawable(icon)
+                            holder.binding.imageViewFileIcon.setImageDrawable(icon)
                             null
                         }
-                        !file.thumbnail.isNullOrBlank() -> picasso?.load(file.thumbnail)?.error(icon)?.into(holder.imageViewFileIcon)
+                        !file.thumbnail.isNullOrBlank() -> picasso?.load(file.thumbnail)?.error(icon)?.into(holder.binding.imageViewFileIcon)
                         else -> {
                             // Use Picasso as well to prevent the recycled view to get corrupted
                             // Picasso fails to load the image (as it is an empty path) so let's set it manually as well
-                            picasso?.cancelRequest(holder.imageViewFileIcon)
-                            holder.imageViewFileIcon.setImageDrawable(icon)
+                            picasso?.cancelRequest(holder.binding.imageViewFileIcon)
+                            holder.binding.imageViewFileIcon.setImageDrawable(icon)
                         }
                     }
                 }
@@ -193,35 +190,36 @@ class SelectFileAdapter(
         }
 
         is ViewHolder.TitleViewHolder -> {
-            holder.itemView.textViewTitle.text = (items[position] as DataItem.Title).title
+            holder.binding.textViewTitle.text = (items[position] as DataItem.Title).title
                 ?: holder.itemView.context.getString(R.string.select_file_to_print)
         }
 
         is ViewHolder.ThumbnailHintViewHolder -> {
-            holder.itemView.tutorial.onHideAction = { onHideThumbnailHint(this) }
-            holder.itemView.tutorial.onLearnMoreAction = { onShowThumbnailInfo(this) }
+            holder.binding.tutorial.onHideAction = { onHideThumbnailHint(this) }
+            holder.binding.tutorial.onLearnMoreAction = { onShowThumbnailInfo(this) }
         }
 
         is ViewHolder.NoFilesViewHolder -> {
             (items[position] as DataItem.NoFiles).folderName?.let {
-                holder.itemView.textViewNoFilesTitle.text = it
-                holder.itemView.textViewNoFilesSubitle.text = holder.itemView.context.getString(R.string.this_folder_contains_no_files)
+                holder.binding.textViewNoFilesTitle.text = it
+                holder.binding.textViewNoFilesSubitle.text = holder.itemView.context.getString(R.string.this_folder_contains_no_files)
             } ?: run {
-                holder.itemView.textViewNoFilesTitle.text = holder.itemView.context.getString(R.string.no_files_on_octoprint_title)
-                holder.itemView.textViewNoFilesSubitle.movementMethod = LinkMovementMethod()
-                holder.itemView.textViewNoFilesSubitle.text = HtmlCompat.fromHtml(
+                holder.binding.textViewNoFilesTitle.text = holder.itemView.context.getString(R.string.no_files_on_octoprint_title)
+                holder.binding.textViewNoFilesSubitle.movementMethod = LinkMovementMethod()
+                holder.binding.textViewNoFilesSubitle.text = HtmlCompat.fromHtml(
                     holder.itemView.context.getString(R.string.no_files_on_octoprint_subtitle),
                     HtmlCompat.FROM_HTML_MODE_COMPACT
                 )
             }
         }
 
-        is ViewHolder.ErrorViewHolder -> holder.itemView.buttonRery.setOnClickListener { onRetry(this) }
+        is ViewHolder.ErrorViewHolder -> holder.binding.buttonRery.setOnClickListener { onRetry(this) }
 
         is ViewHolder.LoadingViewHolder -> Unit
 
         is ViewHolder.MarginViewHolder -> Unit
 
+        else -> Unit
     }
 
     companion object {
@@ -244,13 +242,33 @@ class SelectFileAdapter(
         object Margin : DataItem()
     }
 
-    sealed class ViewHolder(parent: ViewGroup, @LayoutRes layout: Int) : AutoBindViewHolder(parent, layout) {
-        class FileViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_file)
-        class TitleViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_title)
-        class ThumbnailHintViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_thumbnail_hint)
-        class NoFilesViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_no_files)
-        class ErrorViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_error)
-        class LoadingViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_loading)
-        class MarginViewHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.list_item_margin)
+    sealed class ViewHolder<T : ViewBinding>(binding: T) : ViewBindingHolder<T>(binding) {
+        class FileViewHolder(parent: ViewGroup) : ViewHolder<ListItemFileBinding>(
+            ListItemFileBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
+
+        class TitleViewHolder(parent: ViewGroup) : ViewHolder<ListItemTitleBinding>(
+            ListItemTitleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
+
+        class ThumbnailHintViewHolder(parent: ViewGroup) : ViewHolder<ListItemThumbnailHintBinding>(
+            ListItemThumbnailHintBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
+
+        class NoFilesViewHolder(parent: ViewGroup) : ViewHolder<ListItemNoFilesBinding>(
+            ListItemNoFilesBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
+
+        class ErrorViewHolder(parent: ViewGroup) : ViewHolder<ListItemErrorBinding>(
+            ListItemErrorBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
+
+        class LoadingViewHolder(parent: ViewGroup) : ViewHolder<ListItemLoadingBinding>(
+            ListItemLoadingBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
+
+        class MarginViewHolder(parent: ViewGroup) : ViewHolder<ListItemMarginBinding>(
+            ListItemMarginBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
     }
 }

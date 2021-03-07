@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.os.bundleOf
@@ -43,6 +44,7 @@ import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
+import de.crysxd.octoapp.databinding.MainActivityBinding
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.socket.Event
@@ -52,7 +54,6 @@ import de.crysxd.octoapp.print_controls.ui.widget.gcode.GcodePreviewWidget
 import de.crysxd.octoapp.print_controls.ui.widget.progress.ProgressWidget
 import de.crysxd.octoapp.print_controls.ui.widget.tune.TuneWidget
 import de.crysxd.octoapp.widgets.updateAllWidgets
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -66,18 +67,20 @@ const val EXTRA_TARGET_OCTOPRINT_WEB_URL = "octoprint_web_url"
 
 class MainActivity : OctoActivity() {
 
+    private lateinit var binding: MainActivityBinding
     private var lastNavigation = -1
     private val lastInsets = Rect()
     private var lastSuccessfulCapabilitiesUpdate = 0L
 
-    override val octoToolbar: OctoToolbar by lazy { toolbar }
-    override val octo: OctoView by lazy { toolbarOctoView }
-    override val rootLayout by lazy { coordinator }
+    override val octoToolbar: OctoToolbar by lazy { binding.toolbar }
+    override val octo: OctoView by lazy { binding.toolbarOctoView }
+    override val rootLayout by lazy { binding.coordinator }
     override val navController get() = findNavController(R.id.mainNavController)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = MainActivityBinding.inflate(LayoutInflater.from(this))
+        setContentView(binding.root)
 
         // Fix fullscreen layout under system bars for frame layout
         rootLayout.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -166,7 +169,7 @@ class MainActivity : OctoActivity() {
                 lastInsets.bottom = insets.systemWindowInsetBottom
                 lastInsets.right = insets.systemWindowInsetRight
                 applyInsetsToCurrentScreen()
-                setDisconnectedMessageVisible(disconnectedMessage.isVisible)
+                setDisconnectedMessageVisible(binding.disconnectedMessage.isVisible)
                 insets.consumeSystemWindowInsets()
             }
         }
@@ -219,9 +222,9 @@ class MainActivity : OctoActivity() {
     private fun findCurrentScreen() = supportFragmentManager.findFragmentById(R.id.mainNavController)?.childFragmentManager?.fragments?.firstOrNull()
 
     private fun applyInsetsToScreen(screen: Fragment, topOverwrite: Int? = null) {
-        val disconnectHeight = disconnectedMessage.height.takeIf { disconnectedMessage.isVisible }
+        val disconnectHeight = binding.disconnectedMessage.height.takeIf { binding.disconnectedMessage.isVisible }
         Timber.v("Applying insets: disconnectedMessage=$disconnectHeight topOverwrite=$topOverwrite screen=$screen")
-        toolbar.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
+        binding.toolbar.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
         octo.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
 
         if (screen is InsetAwareScreen) {
@@ -363,19 +366,19 @@ class MainActivity : OctoActivity() {
     private fun setDisconnectedMessageVisible(visible: Boolean) {
         // Not visible and we should not be visible? Nothing to do.
         // If we are visible or should be visible, we need to update height as insets might have changed
-        if (!disconnectedMessage.isVisible && !visible) {
+        if (!binding.disconnectedMessage.isVisible && !visible) {
             return
         }
 
         // Let disconnect message fill status bar background and measure height
-        disconnectedMessage.updatePadding(
-            top = disconnectedMessage.paddingBottom + lastInsets.top,
+        binding.disconnectedMessage.updatePadding(
+            top = binding.disconnectedMessage.paddingBottom + lastInsets.top,
         )
-        disconnectedMessage.measure(
+        binding.disconnectedMessage.measure(
             View.MeasureSpec.makeMeasureSpec(rootLayout.width, View.MeasureSpec.EXACTLY),
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
         )
-        val height = disconnectedMessage.measuredHeight
+        val height = binding.disconnectedMessage.measuredHeight
 
         TransitionManager.beginDelayedTransition(rootLayout, TransitionSet().apply {
             addTransition(Explode())
@@ -385,7 +388,7 @@ class MainActivity : OctoActivity() {
                 excludeChildren(it, true)
             }
         })
-        disconnectedMessage.isVisible = visible
+        binding.disconnectedMessage.isVisible = visible
         findCurrentScreen()?.let { applyInsetsToScreen(it, height.takeIf { visible }) }
     }
 
