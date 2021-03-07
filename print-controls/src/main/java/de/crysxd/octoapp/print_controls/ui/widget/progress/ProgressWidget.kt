@@ -22,16 +22,16 @@ import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.print_controls.R
-import de.crysxd.octoapp.print_controls.databinding.WidgetProgressBinding
+import de.crysxd.octoapp.print_controls.databinding.ProgressWidgetBinding
 import de.crysxd.octoapp.print_controls.di.injectViewModel
 import kotlin.math.roundToInt
 
-class ProgressWidget(context: Context) : RecyclableOctoWidget<WidgetProgressBinding, ProgressWidgetViewModel>(context) {
+class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBinding, ProgressWidgetViewModel>(context) {
 
     private val formatDurationUseCase: FormatDurationUseCase = Injector.get().formatDurationUseCase()
     private val formatEtaUseCase = Injector.get().formatEtaUseCase()
     private var lastProgress: Float? = null
-    override val binding = WidgetProgressBinding.inflate(LayoutInflater.from(context))
+    override val binding = ProgressWidgetBinding.inflate(LayoutInflater.from(context))
 
     override fun createNewViewModel(parent: WidgetHostFragment) =
         parent.injectViewModel<ProgressWidgetViewModel>().value

@@ -28,7 +28,7 @@ import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.print_controls.R
-import de.crysxd.octoapp.print_controls.databinding.WidgetRenderGcodeBinding
+import de.crysxd.octoapp.print_controls.databinding.GcodePreviewWidgetBinding
 import de.crysxd.octoapp.print_controls.di.injectActivityViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -40,10 +40,10 @@ const val NOT_LIVE_IF_NO_UPDATE_FOR_MS = 5000L
 private const val KEY_HIDDEN_AT = "gcode_preview_hidden_at"
 private val HIDDEN_FOR_MILLIS = TimeUnit.DAYS.toMillis(30L)
 
-class GcodePreviewWidget(context: Context) : RecyclableOctoWidget<WidgetRenderGcodeBinding, GcodePreviewViewModel>(context) {
+class GcodePreviewWidget(context: Context) : RecyclableOctoWidget<GcodePreviewWidgetBinding, GcodePreviewViewModel>(context) {
     private var hideLiveIndicatorJob: Job? = null
     private lateinit var file: FileObject.File
-    override val binding = WidgetRenderGcodeBinding.inflate(LayoutInflater.from(context))
+    override val binding = GcodePreviewWidgetBinding.inflate(LayoutInflater.from(context))
 
     override fun createNewViewModel(parent: WidgetHostFragment) = parent.injectActivityViewModel<GcodePreviewViewModel>(Injector.get().viewModelFactory()).value
 

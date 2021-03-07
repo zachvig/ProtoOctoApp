@@ -10,7 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.databinding.WidgetWebcamBinding
+import de.crysxd.octoapp.base.databinding.WebcamWidgetBinding
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
@@ -22,8 +22,8 @@ import timber.log.Timber
 const val NOT_LIVE_IF_NO_FRAME_FOR_MS = 3000L
 const val STALLED_IF_NO_FRAME_FOR_MS = 5000L
 
-class WebcamWidget(context: Context) : RecyclableOctoWidget<WidgetWebcamBinding, WebcamViewModel>(context) {
-    override val binding = WidgetWebcamBinding.inflate(LayoutInflater.from(context))
+class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding, WebcamViewModel>(context) {
+    override val binding = WebcamWidgetBinding.inflate(LayoutInflater.from(context))
     private var lastAspectRatio: String? = null
 
     init {

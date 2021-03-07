@@ -5,16 +5,16 @@ import android.view.LayoutInflater
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.databinding.WidgetGcodeBinding
+import de.crysxd.octoapp.base.databinding.SendGcodeWidgetBinding
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.ui.common.gcodeshortcut.GcodeShortcutLayoutManager
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 
-class SendGcodeWidget(context: Context) : RecyclableOctoWidget<WidgetGcodeBinding, SendGcodeWidgetViewModel>(context) {
+class SendGcodeWidget(context: Context) : RecyclableOctoWidget<SendGcodeWidgetBinding, SendGcodeWidgetViewModel>(context) {
 
-    override val binding = WidgetGcodeBinding.inflate(LayoutInflater.from(context))
+    override val binding = SendGcodeWidgetBinding.inflate(LayoutInflater.from(context))
     private var layoutManager: GcodeShortcutLayoutManager = GcodeShortcutLayoutManager(
         layout = binding.gcodeList,
         onClicked = { baseViewModel.sendGcodeCommand(it.command) },

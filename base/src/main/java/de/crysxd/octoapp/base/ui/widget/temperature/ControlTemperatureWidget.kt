@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import androidx.lifecycle.Observer
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.databinding.WidgetTemperatureBinding
+import de.crysxd.octoapp.base.databinding.TemperatureWidgetBinding
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
@@ -14,9 +14,9 @@ import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import kotlinx.android.synthetic.main.view_temperature.view.*
 
-class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<WidgetTemperatureBinding, BaseViewModel>(context) {
+class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<TemperatureWidgetBinding, BaseViewModel>(context) {
 
-    override val binding = WidgetTemperatureBinding.inflate(LayoutInflater.from(context))
+    override val binding = TemperatureWidgetBinding.inflate(LayoutInflater.from(context))
     private lateinit var toolViewModel: ControlToolTemperatureWidgetViewModel
     private lateinit var bedViewModel: ControlBedTemperatureWidgetViewModel
 
