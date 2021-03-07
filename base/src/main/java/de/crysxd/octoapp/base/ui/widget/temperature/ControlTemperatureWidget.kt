@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.ui.widget.temperature
 import android.content.Context
 import android.view.LayoutInflater
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.TemperatureWidgetBinding
 import de.crysxd.octoapp.base.di.injectViewModel
@@ -24,6 +25,8 @@ class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<Temperat
         bedViewModel = parent.injectViewModel<ControlBedTemperatureWidgetViewModel>().value
         bedViewModel.temperature.observe(parent, Observer(this::onBedTemperatureChanged))
         toolViewModel.temperature.observe(parent, Observer(this::onToolTemperatureChanged))
+        toolViewModel.navContoller = parent.findNavController()
+        bedViewModel.navContoller = parent.findNavController()
         binding.bedTemperature.setComponentName(view.context.getString(bedViewModel.getComponentName()))
         binding.toolTemperature.setComponentName(view.context.getString(toolViewModel.getComponentName()))
         return null
