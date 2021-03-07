@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.ui.common.gcode
 
 import android.graphics.PointF
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
@@ -15,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.databinding.GcodePreviewFragmentBinding
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectActivityViewModel
 import de.crysxd.octoapp.base.ext.asStyleFileSize
@@ -25,7 +27,6 @@ import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
-import kotlinx.android.synthetic.main.fragment_gcode_render.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import timber.log.Timber
@@ -34,7 +35,7 @@ import kotlin.math.roundToInt
 
 const val NOT_LIVE_IF_NO_UPDATE_FOR_MS = 5000L
 
-class GcodePreviewFragment : BaseFragment(R.layout.fragment_gcode_render) {
+class GcodePreviewFragment : BaseFragment(R.layout.gcode_preview_fragment) {
 
     companion object {
         private const val ARG_FILE = "file"
@@ -47,6 +48,7 @@ class GcodePreviewFragment : BaseFragment(R.layout.fragment_gcode_render) {
         }
     }
 
+    private lateinit var binding: GcodePreviewFragmentBinding
     private var forceUpdateSlidersOnNext = false
     private var hideLiveJob: Job? = null
     private val file get() = requireArguments().getSerializable(ARG_FILE) as FileObject.File
@@ -63,6 +65,9 @@ class GcodePreviewFragment : BaseFragment(R.layout.fragment_gcode_render) {
         }
     }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+        GcodePreviewFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -75,30 +80,30 @@ class GcodePreviewFragment : BaseFragment(R.layout.fragment_gcode_render) {
             forceUpdateSlidersOnNext = true
         }
 
-        downloadLargeFile.setOnClickListener { viewModel.downloadGcode(file, true) }
-        retryButton.setOnClickListener { viewModel.downloadGcode(file, true) }
-        downloadLargeFile.text = getString(R.string.download_x, file.size.asStyleFileSize())
+        binding.downloadLargeFile.setOnClickListener { viewModel.downloadGcode(file, true) }
+        binding.retryButton.setOnClickListener { viewModel.downloadGcode(file, true) }
+        binding.downloadLargeFile.text = getString(R.string.download_x, file.size.asStyleFileSize())
 
-        layerSeekBar.setOnSeekBarChangeListener(seekBarListener)
-        layerProgressSeekBar.setOnSeekBarChangeListener(seekBarListener)
+        binding.layerSeekBar.setOnSeekBarChangeListener(seekBarListener)
+        binding.layerProgressSeekBar.setOnSeekBarChangeListener(seekBarListener)
 
-        nextLayerButton.setOnClickListener {
-            layerSeekBar.progress = layerSeekBar.progress + 1
-            pushSeekBarValuesToViewModel(layerSeekBar)
+        binding.nextLayerButton.setOnClickListener {
+            binding.layerSeekBar.progress = binding.layerSeekBar.progress + 1
+            pushSeekBarValuesToViewModel(binding.layerSeekBar)
         }
 
-        previousLayerButton.setOnClickListener {
-            layerSeekBar.progress = layerSeekBar.progress - 1
-            pushSeekBarValuesToViewModel(layerSeekBar)
+        binding.previousLayerButton.setOnClickListener {
+            binding.layerSeekBar.progress = binding.layerSeekBar.progress - 1
+            pushSeekBarValuesToViewModel(binding.layerSeekBar)
         }
 
         if (isStandaloneScreen) {
-            renderView.updatePadding(top = requireContext().resources.getDimensionPixelSize(R.dimen.common_view_top_padding))
+            binding.renderView.updatePadding(top = requireContext().resources.getDimensionPixelSize(R.dimen.common_view_top_padding))
         }
 
-        syncButton.isVisible = isStandaloneScreen
-        syncButtonSeparator.isVisible = isStandaloneScreen
-        syncButton.setOnClickListener {
+        binding.syncButton.isVisible = isStandaloneScreen
+        binding.syncButtonSeparator.isVisible = isStandaloneScreen
+        binding.syncButton.setOnClickListener {
             (viewModel.viewState.value as? GcodePreviewViewModel.ViewState.DataReady)?.let { currentState ->
                 if (currentState.isLive) {
                     pushSeekBarValuesToViewModel()
@@ -108,7 +113,7 @@ class GcodePreviewFragment : BaseFragment(R.layout.fragment_gcode_render) {
             }
         }
 
-        buttonEnableFeature.setOnClickListener {
+        binding.buttonEnableFeature.setOnClickListener {
             OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "gcode_preview"))
             findNavController().navigate(R.id.action_show_purchase_flow)
         }
@@ -120,13 +125,13 @@ class GcodePreviewFragment : BaseFragment(R.layout.fragment_gcode_render) {
 
     private fun pushSeekBarValuesToViewModel(seekBar: SeekBar? = null) {
         // Show entire layer if layer is changed
-        if (seekBar == layerSeekBar) {
-            layerProgressSeekBar.progress = LAYER_PROGRESS_STEPS
+        if (seekBar == binding.layerSeekBar) {
+            binding.layerProgressSeekBar.progress = LAYER_PROGRESS_STEPS
         }
 
         viewModel.useManualProgress(
-            layer = layerSeekBar.progress,
-            progress = layerProgressSeekBar.progress / LAYER_PROGRESS_STEPS.toFloat()
+            layer = binding.layerSeekBar.progress,
+            progress = binding.layerProgressSeekBar.progress / LAYER_PROGRESS_STEPS.toFloat()
         )
     }
 
@@ -142,40 +147,40 @@ class GcodePreviewFragment : BaseFragment(R.layout.fragment_gcode_render) {
     private fun updateViewState(state: GcodePreviewViewModel.ViewState) {
         TransitionManager.beginDelayedTransition(view as ViewGroup)
 
-        renderGroup.isVisible = state is GcodePreviewViewModel.ViewState.DataReady
-        largeFileGroup.isVisible = state is GcodePreviewViewModel.ViewState.LargeFileDownloadRequired
-        errorGroup.isVisible = state is GcodePreviewViewModel.ViewState.Error
-        featureDisabledGroup.isVisible = state is GcodePreviewViewModel.ViewState.FeatureDisabled
+        binding.renderGroup.isVisible = state is GcodePreviewViewModel.ViewState.DataReady
+        binding.largeFileGroup.isVisible = state is GcodePreviewViewModel.ViewState.LargeFileDownloadRequired
+        binding.errorGroup.isVisible = state is GcodePreviewViewModel.ViewState.Error
+        binding.featureDisabledGroup.isVisible = state is GcodePreviewViewModel.ViewState.FeatureDisabled
 
         when (state) {
             is GcodePreviewViewModel.ViewState.Loading -> {
-                loadingGroup.isVisible = true
-                progressBar.progress = (state.progress * 100).roundToInt()
-                progressBar.isIndeterminate = state.progress == 0f
+                binding.loadingGroup.isVisible = true
+                binding.progressBar.progress = (state.progress * 100).roundToInt()
+                binding.progressBar.isIndeterminate = state.progress == 0f
                 Timber.v("Progress: ${state.progress}")
             }
             is GcodePreviewViewModel.ViewState.DataReady -> {
-                loadingGroup.isVisible = false
+                binding.loadingGroup.isVisible = false
                 render(state)
                 Timber.v("Ready")
 
             }
             is GcodePreviewViewModel.ViewState.Error -> {
-                loadingGroup.isVisible = false
+                binding.loadingGroup.isVisible = false
                 requireOctoActivity().showDialog(state.exception)
                 Timber.i("Error :(")
             }
 
             is GcodePreviewViewModel.ViewState.LargeFileDownloadRequired -> {
-                loadingGroup.isVisible = false
+                binding.loadingGroup.isVisible = false
                 Timber.i("Large download required")
             }
 
             is GcodePreviewViewModel.ViewState.FeatureDisabled -> {
-                loadingGroup.isVisible = false
-                preview.setImageResource(state.renderStyle.background)
+                binding.loadingGroup.isVisible = false
+                binding.preview.setImageResource(state.renderStyle.background)
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    preview.foreground = ContextCompat.getDrawable(requireContext(), R.drawable.gcode_preview)
+                    binding.preview.foreground = ContextCompat.getDrawable(requireContext(), R.drawable.gcode_preview)
                 }
                 Timber.i("Feature disabled")
             }
@@ -188,15 +193,15 @@ class GcodePreviewFragment : BaseFragment(R.layout.fragment_gcode_render) {
             return
         }
 
-        layerSeekBar.max = state.renderContext.layerCount - 1
-        layerProgressSeekBar.max = LAYER_PROGRESS_STEPS
+        binding.layerSeekBar.max = state.renderContext.layerCount - 1
+        binding.layerProgressSeekBar.max = LAYER_PROGRESS_STEPS
         if (state.isLive || forceUpdateSlidersOnNext) {
             forceUpdateSlidersOnNext = false
-            layerSeekBar.progress = state.renderContext.layerNumber
-            layerProgressSeekBar.progress = (state.renderContext.layerProgress * LAYER_PROGRESS_STEPS).roundToInt()
+            binding.layerSeekBar.progress = state.renderContext.layerNumber
+            binding.layerProgressSeekBar.progress = (state.renderContext.layerProgress * LAYER_PROGRESS_STEPS).roundToInt()
         }
 
-        syncButton.setImageResource(
+        binding.syncButton.setImageResource(
             if (state.isLive) {
                 R.drawable.ic_round_sync_disabled_24
             } else {
@@ -204,29 +209,29 @@ class GcodePreviewFragment : BaseFragment(R.layout.fragment_gcode_render) {
             }
         )
 
-        live.isVisible = state.isLive
+        binding.live.isVisible = state.isLive
         hideLiveJob?.cancel()
         hideLiveJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             delay(NOT_LIVE_IF_NO_UPDATE_FOR_MS)
-            live.isVisible = false
+            binding.live.isVisible = false
         }
 
         val layerHeightMm = DecimalFormat("0.0#").format(state.renderContext.layerZHeight)
-        val layerProgressPercent = layerProgressSeekBar.progress / LAYER_PROGRESS_STEPS.toFloat()
-        layerNumber.text = getString(R.string.x_of_y, state.renderContext.layerNumber + 1, state.renderContext.layerCount)
-        layerHeight.text = getString(R.string.x_mm, layerHeightMm)
-        layerProgress.text = String.format("%.0f %%", layerProgressPercent * 100)
-        unsupportedGcode.isVisible = state.renderContext.paths.any { it.type == Move.Type.Unsupported && it.points.isNotEmpty() }
+        val layerProgressPercent = binding.layerProgressSeekBar.progress / LAYER_PROGRESS_STEPS.toFloat()
+        binding.layerNumber.text = getString(R.string.x_of_y, state.renderContext.layerNumber + 1, state.renderContext.layerCount)
+        binding.layerHeight.text = getString(R.string.x_mm, layerHeightMm)
+        binding.layerProgress.text = String.format("%.0f %%", layerProgressPercent * 100)
+        binding.unsupportedGcode.isVisible = state.renderContext.paths.any { it.type == Move.Type.Unsupported && it.points.isNotEmpty() }
 
         // Only switch to async render if the view recommends it.
         // This way we have smooth scrolling as long as possible but never block the UI thread
-        if (renderView.asyncRenderRecommended && !renderView.useAsyncRender) {
-            slow.animate().alpha(1f).start()
+        if (binding.renderView.asyncRenderRecommended && !binding.renderView.useAsyncRender) {
+            binding.slow.animate().alpha(1f).start()
             Toast.makeText(requireContext(), "Slow", Toast.LENGTH_SHORT).show()
-            renderView.enableAsyncRender(viewLifecycleOwner.lifecycleScope)
+            binding.renderView.enableAsyncRender(viewLifecycleOwner.lifecycleScope)
         }
 
-        renderView.renderParams = GcodeRenderView.RenderParams(
+        binding.renderView.renderParams = GcodeRenderView.RenderParams(
             renderContext = state.renderContext,
             renderStyle = state.renderStyle,
             originInCenter = state.printerProfile.volume.origin == PrinterProfiles.Origin.Center,

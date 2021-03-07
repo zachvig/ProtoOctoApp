@@ -5,7 +5,7 @@ import androidx.core.text.HtmlCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.menu.*
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 
 private val sysCommands get() = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.systemCommands

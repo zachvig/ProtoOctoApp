@@ -12,7 +12,6 @@ import de.crysxd.octoapp.base.ui.menu.temperature.TemperatureMenu
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
-import kotlinx.android.synthetic.main.view_temperature.view.*
 
 class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<TemperatureWidgetBinding, BaseViewModel>(context) {
 

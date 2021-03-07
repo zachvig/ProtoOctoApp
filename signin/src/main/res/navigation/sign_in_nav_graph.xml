@@ -28,7 +28,7 @@
         android:id="@+id/loginFragment"
         android:name="de.crysxd.octoapp.signin.ui.SignInFragment"
         android:label="LoginFragment"
-        tools:layout="@layout/fragment_signin">
+        tools:layout="@layout/sign_in_fragment">
         <action
             android:id="@+id/actionReadQrCode"
             app:destination="@id/readQrCodeFragment"
@@ -42,6 +42,6 @@
         android:id="@+id/readQrCodeFragment"
         android:name="de.crysxd.octoapp.signin.ui.ReadQrCodeFragment"
         android:label="ReadQrCodeFragment"
-        tools:layout="@layout/fragment_read_qr_code" />
+        tools:layout="@layout/read_qr_code_fragment" />
 
 </navigation>

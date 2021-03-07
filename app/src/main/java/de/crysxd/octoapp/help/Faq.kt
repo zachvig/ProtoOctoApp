@@ -3,7 +3,7 @@ package de.crysxd.octoapp.help
 import android.os.Parcelable
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Faq(

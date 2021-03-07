@@ -21,7 +21,9 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:scrimVisibleHeightTrigger="0dp">
 
-            <include layout="@layout/purchase_header" />
+            <include
+                android:id="@+id/header"
+                layout="@layout/purchase_header" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -39,19 +41,21 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <include layout="@layout/fragment_purchase_init_state" />
+            <include
+                android:id="@+id/initState"
+                layout="@layout/purchase_fragment_init_state" />
 
-            <ViewStub
-                android:id="@+id/unsupportedPlatformStub"
+            <include
+                android:id="@+id/unsupported_platform_state"
+                layout="@layout/purchase_fragment_unsupported_state"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout="@layout/fragment_purchase_unsupported_state" />
+                android:layout_height="wrap_content" />
 
-            <ViewStub
-                android:id="@+id/skuStateStub"
+            <include
+                android:id="@+id/skuState"
+                layout="@layout/purchase_fragment_sku_state"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout="@layout/fragment_purchase_sku_state" />
+                android:layout_height="wrap_content" />
 
         </FrameLayout>
 

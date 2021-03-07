@@ -38,7 +38,7 @@ import de.crysxd.octoapp.base.ui.utils.ViewCompactor
 import de.crysxd.octoapp.octoprint.exceptions.BasicAuthRequiredException
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintHttpsException
 import de.crysxd.octoapp.signin.R
-import de.crysxd.octoapp.signin.databinding.FragmentSigninBinding
+import de.crysxd.octoapp.signin.databinding.SignInFragmentBinding
 import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.models.SignInInformation
 import de.crysxd.octoapp.signin.models.SignInViewState
@@ -49,13 +49,13 @@ import java.security.cert.Certificate
 
 class SignInFragment : BaseFragment(), InsetAwareScreen {
 
-    private lateinit var binding: FragmentSigninBinding
+    private lateinit var binding: SignInFragmentBinding
     override val viewModel: SignInViewModel by injectViewModel()
     private val networkViewModel: NetworkStateViewModel by injectViewModel(Injector.get().viewModelFactory())
     private var viewCompactor: ViewCompactor? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
-        FragmentSigninBinding.inflate(layoutInflater, container, false).also {
+        SignInFragmentBinding.inflate(layoutInflater, container, false).also {
             binding = it
         }.root
 
@@ -108,10 +108,10 @@ class SignInFragment : BaseFragment(), InsetAwareScreen {
             findNavController().navigate(R.id.actionReadQrCode)
         }
 
-        val full = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin) }
-        val compact0 = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin) }
-        val compact1 = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin) }
-        val compact2 = ConstraintSet().also { it.load(requireContext(), R.layout.fragment_signin_compact) }
+        val full = ConstraintSet().also { it.load(requireContext(), R.layout.sign_in_fragment) }
+        val compact0 = ConstraintSet().also { it.load(requireContext(), R.layout.sign_in_fragment) }
+        val compact1 = ConstraintSet().also { it.load(requireContext(), R.layout.sign_in_fragment) }
+        val compact2 = ConstraintSet().also { it.load(requireContext(), R.layout.sign_in_fragment_compact) }
         compact0.setMargin(R.id.octoView, ConstraintSet.TOP, requireContext().resources.getDimension(R.dimen.margin_5).toInt())
         compact1.setMargin(R.id.octoView, ConstraintSet.TOP, requireContext().resources.getDimension(R.dimen.margin_4).toInt())
 

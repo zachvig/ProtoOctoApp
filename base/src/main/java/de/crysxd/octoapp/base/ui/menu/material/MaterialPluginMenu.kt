@@ -16,7 +16,7 @@ import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ACTIVATE_MATERIAL
 import de.crysxd.octoapp.base.usecase.ActivateMaterialUseCase
 import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
 import de.crysxd.octoapp.octoprint.models.files.FileObject
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) : Menu {

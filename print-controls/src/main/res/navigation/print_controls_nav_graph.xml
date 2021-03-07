@@ -88,7 +88,7 @@
         android:id="@+id/gcodePreviewFragment"
         android:name="de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewFragment"
         android:label="GcodePreviewFragment"
-        tools:layout="@layout/fragment_gcode_render">
+        tools:layout="@layout/gcode_preview_fragment">
 
         <argument
             android:name="file"

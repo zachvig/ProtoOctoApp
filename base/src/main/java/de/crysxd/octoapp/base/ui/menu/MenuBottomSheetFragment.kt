@@ -23,7 +23,6 @@ import de.crysxd.octoapp.base.ui.base.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.main.MainMenu
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
-import kotlinx.android.synthetic.main.fragment_gcode_render.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 

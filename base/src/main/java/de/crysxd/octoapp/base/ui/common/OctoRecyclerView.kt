@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.util.Property
 import android.view.animation.DecelerateInterpolator
 import androidx.annotation.StyleRes
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.base.OctoActivity
@@ -19,7 +20,7 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
     private var octoActivity: OctoActivity? = null
     private lateinit var initialState: OctoToolbar.State
 
-    private val topShadowDrawable = context.resources.getDrawable(R.drawable.top_scroll_edge_shadow, context.theme)
+    private val topShadowDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.top_scroll_edge_shadow, context.theme)
     private var topShadowAlpha = 0f
         set(value) {
             field = value
@@ -32,7 +33,7 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
 
         override fun get(`object`: OctoRecyclerView) = `object`.topShadowAlpha
     }
-    private val bottomShadowDrawable = context.resources.getDrawable(R.drawable.bottom_scroll_edge_drawable, context.theme)
+    private val bottomShadowDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.bottom_scroll_edge_drawable, context.theme)
     private var bottomShadowAlpha = 0f
         set(value) {
             field = value
@@ -113,12 +114,12 @@ class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet:
     override fun onDrawForeground(canvas: Canvas) {
         super.onDrawForeground(canvas)
 
-        if (topShadowAlpha > 0) {
+        if (topShadowAlpha > 0 && topShadowDrawable != null) {
             topShadowDrawable.alpha = (topShadowAlpha * 255).roundToInt()
             topShadowDrawable.setBounds(0, 0, width, topShadowDrawable.intrinsicHeight)
             topShadowDrawable.draw(canvas)
         }
-        if (bottomShadowAlpha > 0) {
+        if (bottomShadowAlpha > 0 && bottomShadowDrawable != null) {
             bottomShadowDrawable.alpha = (bottomShadowAlpha * 255).roundToInt()
             bottomShadowDrawable.setBounds(0, height - bottomShadowDrawable.intrinsicHeight, width, height)
             bottomShadowDrawable.draw(canvas)

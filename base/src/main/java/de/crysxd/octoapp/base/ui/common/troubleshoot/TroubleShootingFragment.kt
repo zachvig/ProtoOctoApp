@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.ui.common.troubleshoot
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -15,48 +16,52 @@ import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.databinding.TroubleShootingFragmentBinding
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
-import kotlinx.android.synthetic.main.fragment_trouble_shooting.*
 
 class TroubleShootingFragment : Fragment(R.layout.trouble_shooting_fragment) {
 
+    private lateinit var binding: TroubleShootingFragmentBinding
     private val viewModel: TroubleShootViewModel by injectViewModel()
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+        TroubleShootingFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val navArgs by navArgs<TroubleShootingFragmentArgs>()
         val baseUrl = navArgs.baseUrl
         val apiKey = navArgs.apiKey
 
-        buttonMain.setOnLongClickListener {
+        binding.buttonMain.setOnLongClickListener {
             findNavController().navigate(R.id.action_help)
             true
         }
 
         viewModel.runTest(requireContext(), baseUrl, apiKey).observe(viewLifecycleOwner) {
-            suggestionsContainer.removeAllViews()
-            buttonMain.isVisible = false
-            buttonSupport.isVisible = false
-            buttonDetails.isVisible = false
+            binding.suggestionsContainer.removeAllViews()
+            binding.buttonMain.isVisible = false
+            binding.buttonSupport.isVisible = false
+            binding.buttonDetails.isVisible = false
 
             TransitionManager.beginDelayedTransition(view as ViewGroup, InstantAutoTransition(explode = true))
 
             when (it) {
                 is TroubleShootingResult.Running -> {
-                    octoBackground.isVisible = true
-                    octoView.isVisible = true
+                    binding.octoBackground.isVisible = true
+                    binding.octoView.isVisible = true
 
-                    textViewState.text = getString(R.string.running_check_x_of_y, it.step, it.totalSteps)
-                    textViewSubState.text = it.status
+                    binding.textViewState.text = getString(R.string.running_check_x_of_y, it.step, it.totalSteps)
+                    binding.textViewSubState.text = it.status
                 }
 
                 is TroubleShootingResult.Failure -> {
-                    octoBackground.isVisible = false
-                    octoView.isVisible = false
+                    binding.octoBackground.isVisible = false
+                    binding.octoView.isVisible = false
 
-                    textViewState.text = HtmlCompat.fromHtml(it.title, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                    textViewSubState.text = HtmlCompat.fromHtml(it.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    binding.textViewState.text = HtmlCompat.fromHtml(it.title, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    binding.textViewSubState.text = HtmlCompat.fromHtml(it.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
                     it.suggestions.map {
                         val v = TextView(requireContext())
                         v.text = HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -67,31 +72,31 @@ class TroubleShootingFragment : Fragment(R.layout.trouble_shooting_fragment) {
                         v.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_round_sentiment_satisfied_24, 0, 0, 0)
                         v
                     }.forEach {
-                        suggestionsContainer.addView(it)
+                        binding.suggestionsContainer.addView(it)
                     }
-                    buttonMain.text = getString(R.string.check_again)
-                    buttonMain.isVisible = true
-                    buttonMain.setOnClickListener { viewModel.runTest(requireContext(), baseUrl, apiKey) }
-                    buttonDetails.isVisible = it.exception != null
-                    buttonDetails.setOnClickListener { _ ->
+                    binding.buttonMain.text = getString(R.string.check_again)
+                    binding.buttonMain.isVisible = true
+                    binding.buttonMain.setOnClickListener { viewModel.runTest(requireContext(), baseUrl, apiKey) }
+                    binding.buttonDetails.isVisible = it.exception != null
+                    binding.buttonDetails.setOnClickListener { _ ->
                         it.exception?.let { e -> requireOctoActivity().showErrorDetailsDialog(e, false) }
                     }
-                    buttonSupport.isVisible = it.offerSupport
-                    buttonSupport.setOnClickListener {
+                    binding.buttonSupport.isVisible = it.offerSupport
+                    binding.buttonSupport.setOnClickListener {
                         OctoAnalytics.logEvent(OctoAnalytics.Event.TroubleShootFailureSupportTrigger)
                         findNavController().navigate(R.id.action_help)
                     }
                 }
 
                 TroubleShootingResult.Success -> {
-                    octoBackground.isVisible = false
-                    octoView.isVisible = false
+                    binding.octoBackground.isVisible = false
+                    binding.octoView.isVisible = false
 
-                    textViewState.text = getString(R.string.all_checks_passed)
-                    textViewSubState.text = getString(R.string.settings_seem_correct)
-                    buttonMain.text = getString(R.string.go_back)
-                    buttonMain.isVisible = true
-                    buttonMain.setOnClickListener { findNavController().popBackStack() }
+                    binding.textViewState.text = getString(R.string.all_checks_passed)
+                    binding.textViewSubState.text = getString(R.string.settings_seem_correct)
+                    binding.buttonMain.text = getString(R.string.go_back)
+                    binding.buttonMain.isVisible = true
+                    binding.buttonMain.setOnClickListener { findNavController().popBackStack() }
                 }
             }
         }

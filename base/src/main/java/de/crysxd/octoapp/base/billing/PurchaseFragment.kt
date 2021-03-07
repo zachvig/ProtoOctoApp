@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.billing
 import android.graphics.Rect
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
@@ -20,6 +21,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.databinding.PurchaseFragmentBinding
+import de.crysxd.octoapp.base.databinding.PurchaseFragmentSkuStateOptionBinding
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.base.BaseFragment
@@ -28,18 +31,13 @@ import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.utils.LongDuration
-import kotlinx.android.synthetic.main.fragment_purchase.*
-import kotlinx.android.synthetic.main.fragment_purchase_init_state.*
-import kotlinx.android.synthetic.main.fragment_purchase_sku_state.*
-import kotlinx.android.synthetic.main.fragment_purchase_sku_state_option.view.*
-import kotlinx.android.synthetic.main.fragment_purchase_unsupported_state.*
-import kotlinx.android.synthetic.main.purchase_header.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.absoluteValue
 
-class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScreen {
+class PurchaseFragment : BaseFragment(R.layout.purchase_fragment), InsetAwareScreen {
 
+    private lateinit var binding: PurchaseFragmentBinding
     override val viewModel: PurchaseViewModel by injectViewModel(Injector.get().viewModelFactory())
     private var purchaseCompleted = false
     private val backPressedCallback = object : OnBackPressedCallback(false) {
@@ -51,6 +49,9 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
         }
     }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+        PurchaseFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -58,10 +59,10 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
         viewModel.viewState.observe(viewLifecycleOwner, ::moveToState)
 
         var eventSent = false
-        appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
-            val collapseProgress = verticalOffset.absoluteValue / appBar.totalScrollRange.toFloat()
-            val content = listOf<View?>(initState, skuState).firstOrNull { it?.isVisible == true }
-            val padding = statusBarScrim.height + requireContext().resources.getDimension(R.dimen.margin_4)
+        binding.appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
+            val collapseProgress = verticalOffset.absoluteValue / binding.appBar.totalScrollRange.toFloat()
+            val content = listOf<View?>(binding.initState.root, binding.skuState.root).firstOrNull { it?.isVisible == true }
+            val padding = binding.statusBarScrim.height + requireContext().resources.getDimension(R.dimen.margin_4)
             content?.updatePadding(top = (padding * collapseProgress).toInt())
 
             if (!eventSent && verticalOffset != 0) {
@@ -75,43 +76,41 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
 
     private fun moveToState(state: PurchaseViewModel.ViewState) {
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            val fullyExpanded = (appBar.height - appBar.bottom) == 0
+            val fullyExpanded = (binding.appBar.height - binding.appBar.bottom) == 0
             if (!fullyExpanded) {
-                appBar.setExpanded(true)
+                binding.appBar.setExpanded(true)
                 delay(300)
             }
 
             TransitionManager.beginDelayedTransition(view as ViewGroup, InstantAutoTransition(explode = true))
-            initState?.isVisible = false
-            skuState?.isVisible = false
-            unsupportedPlatformState?.isVisible = false
-            buttonSupport.isVisible = state is PurchaseViewModel.ViewState.InitState
+            binding.initState.root.isVisible = false
+            binding.skuState.root.isVisible = false
+            binding.unsupportedPlatformState.root.isVisible = false
+            binding.buttonSupport.isVisible = state is PurchaseViewModel.ViewState.InitState
             backPressedCallback.isEnabled = !listOf(PurchaseViewModel.ViewState.InitState, PurchaseViewModel.ViewState.Unsupported).contains(state)
 
             when (state) {
                 PurchaseViewModel.ViewState.Unsupported -> {
-                    unsupportedPlatformStub?.isVisible = true
-                    unsupportedPlatformState?.isVisible = true
+                    binding.unsupportedPlatformState.root.isVisible = true
                 }
 
                 PurchaseViewModel.ViewState.InitState -> {
                     OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseIntroShown)
-                    skuList?.removeAllViews()
-                    initState?.isVisible = true
+                    binding.skuState.skuList.removeAllViews()
+                    binding.initState.root.isVisible = true
                 }
 
                 is PurchaseViewModel.ViewState.SkuSelectionState -> {
                     OctoAnalytics.logEvent(
                         OctoAnalytics.Event.PurchaseOptionsShown, bundleOf(
-                            "title" to purchaseTitle.text.take(100),
-                            "text" to description.text.take(100),
-                            "more_text" to moreFeatures.text.take(100),
-                            "feature_text" to featureList.text.take(100),
-                            "button_text" to buttonSupport.text
+                            "title" to binding.initState.purchaseTitle.text.take(100),
+                            "text" to binding.initState.description.text.take(100),
+                            "more_text" to binding.initState.moreFeatures.text.take(100),
+                            "feature_text" to binding.initState.featureList.text.take(100),
+                            "button_text" to binding.buttonSupport.text
                         )
                     )
-                    skuStateStub?.isVisible = true
-                    skuState?.isVisible = true
+                    binding.skuState.root.isVisible = true
                     populateSkuState(state)
                 }
             }
@@ -119,25 +118,24 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
     }
 
     private fun populateSkuState(state: PurchaseViewModel.ViewState.SkuSelectionState) {
-        skuState.updatePadding(top = 0)
-        skuList.removeAllViews()
-        skuTitle.text = HtmlCompat.fromHtml(
+        binding.skuState.root.updatePadding(top = 0)
+        binding.skuState.skuList.removeAllViews()
+        binding.skuState.skuTitle.text = HtmlCompat.fromHtml(
             Firebase.remoteConfig.getString("sku_list_title"),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
         state.billingData.availableSku.forEach { details ->
-            val view = View.inflate(requireContext(), R.layout.fragment_purchase_sku_state_option, null)
-            view.price.text = details.price
-            view.buttonSelect.text = state.names.getOrElse(details.sku) { details.title }
-            view.details.text = LongDuration.parse(details.freeTrialPeriod)?.format(requireContext())?.let {
-                getString(R.string.free_trial_x, it)
-            }
-            view.details.isVisible = !view.details.text.isNullOrBlank()
-            view.buttonSelect.setOnClickListener {
+            val view = View.inflate(requireContext(), R.layout.purchase_fragment_sku_state_option, null)
+            val itemBinding = PurchaseFragmentSkuStateOptionBinding.inflate(LayoutInflater.from(requireContext()))
+            itemBinding.price.text = details.price
+            itemBinding.buttonSelect.text = state.names.getOrElse(details.sku) { details.title }
+            itemBinding.details.text = LongDuration.parse(details.freeTrialPeriod)?.format(requireContext())?.let { getString(R.string.free_trial_x, it) }
+            itemBinding.details.isVisible = !itemBinding.details.text.isNullOrBlank()
+            itemBinding.buttonSelect.setOnClickListener {
                 OctoAnalytics.logEvent(
                     OctoAnalytics.Event.PurchaseOptionSelected, bundleOf(
-                        "button_text" to view.buttonSelect.text,
-                        "title" to skuTitle.text,
+                        "button_text" to itemBinding.buttonSelect.text,
+                        "title" to binding.skuState.skuTitle.text,
                         "trial" to details.freeTrialPeriod,
                         "badge" to state.badges[details.sku]?.let { it::class.java.simpleName },
                         "sku" to details.sku
@@ -145,7 +143,7 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
                 )
                 BillingManager.purchase(requireActivity(), details)
             }
-            view.badge.setImageResource(
+            itemBinding.badge.setImageResource(
                 when (state.badges[details.sku]) {
                     PurchaseViewModel.Badge.NoBadge -> 0
                     PurchaseViewModel.Badge.Popular -> R.drawable.ic_badge_popular
@@ -153,7 +151,7 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
                     null -> 0
                 }
             )
-            skuList.addView(view)
+            binding.skuState.skuList.addView(view)
         }
 
         if (state.billingData.availableSku.isEmpty()) {
@@ -167,31 +165,32 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
     }
 
     private fun populateInitState() {
-        initState.updatePadding(top = 0)
+        val initBinding = binding.initState
+        initBinding.root.updatePadding(top = 0)
 
-        purchaseTitle.text = HtmlCompat.fromHtml(
+        initBinding.purchaseTitle.text = HtmlCompat.fromHtml(
             Firebase.remoteConfig.getString("purchase_screen_title"),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
-        description.text = HtmlCompat.fromHtml(
+        initBinding.description.text = HtmlCompat.fromHtml(
             Firebase.remoteConfig.getString("purchase_screen_description"),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
-        featureList.text = HtmlCompat.fromHtml(
+        initBinding.featureList.text = HtmlCompat.fromHtml(
             Firebase.remoteConfig.getString("purchase_screen_features"),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
-        moreFeatures.text = HtmlCompat.fromHtml(
+        initBinding.moreFeatures.text = HtmlCompat.fromHtml(
             Firebase.remoteConfig.getString("purchase_screen_more_features"),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
-        buttonSupport.text = Firebase.remoteConfig.getString("purchase_screen_continue_cta")
+        binding.buttonSupport.text = Firebase.remoteConfig.getString("purchase_screen_continue_cta")
 
-        purchaseTitle.movementMethod = LinkMovementMethod()
-        description.movementMethod = LinkMovementMethod()
-        featureList.movementMethod = LinkMovementMethod()
-        moreFeatures.movementMethod = LinkMovementMethod()
-        buttonSupport.setOnClickListener {
+        initBinding.purchaseTitle.movementMethod = LinkMovementMethod()
+        initBinding.description.movementMethod = LinkMovementMethod()
+        initBinding.featureList.movementMethod = LinkMovementMethod()
+        initBinding.moreFeatures.movementMethod = LinkMovementMethod()
+        binding.buttonSupport.setOnClickListener {
             viewModel.moveToSkuListState()
         }
     }
@@ -220,9 +219,9 @@ class PurchaseFragment : BaseFragment(R.layout.fragment_purchase), InsetAwareScr
     }
 
     override fun handleInsets(insets: Rect) {
-        scrollView.setPadding(insets.left, 0, insets.right, 0)
-        container.updatePadding(bottom = insets.bottom)
-        statusBarScrim.updateLayoutParams { height = insets.top }
-        imageViewStatusBackground.updateLayoutParams { height = insets.top }
+        binding.scrollView.setPadding(insets.left, 0, insets.right, 0)
+        binding.container.updatePadding(bottom = insets.bottom)
+        binding.statusBarScrim.updateLayoutParams { height = insets.top }
+        binding.header.imageViewStatusBackground.updateLayoutParams { height = insets.top }
     }
 }

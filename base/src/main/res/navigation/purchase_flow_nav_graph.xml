@@ -9,5 +9,5 @@
         android:id="@+id/purchaseBottomSheet"
         android:name="de.crysxd.octoapp.base.billing.PurchaseFragment"
         android:label="PurchaseBottomSheet"
-        tools:layout="@layout/fragment_purchase" />
+        tools:layout="@layout/purchase_fragment" />
 </navigation>

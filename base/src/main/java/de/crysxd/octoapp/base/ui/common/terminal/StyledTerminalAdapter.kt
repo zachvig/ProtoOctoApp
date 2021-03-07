@@ -1,16 +1,21 @@
 package de.crysxd.octoapp.base.ui.common.terminal
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.databinding.ItemTerminalStyledCommandEndBinding
+import de.crysxd.octoapp.base.databinding.ItemTerminalStyledCommandStartBinding
+import de.crysxd.octoapp.base.databinding.ItemTerminalStyledStandardBinding
 import de.crysxd.octoapp.base.models.SerialCommunication
-import de.crysxd.octoapp.base.ui.common.AutoBindViewHolder
+import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.regex.Pattern
 
-class StyledTerminalAdapter : TerminalAdapter<StyledTerminalAdapter.ViewHolder>() {
+class StyledTerminalAdapter : TerminalAdapter<RecyclerView.ViewHolder>() {
 
     private val serialCommunications = mutableListOf<Item>()
     private val commandStartRegex = Pattern.compile("^Send:\\s+(.*)$")
@@ -81,7 +86,7 @@ class StyledTerminalAdapter : TerminalAdapter<StyledTerminalAdapter.ViewHolder>(
 
     override fun getItemCount() = serialCommunications.size
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = serialCommunications[position]
         holder.itemView.findViewById<TextView>(R.id.textView)?.text = item.data
 
@@ -100,9 +105,17 @@ class StyledTerminalAdapter : TerminalAdapter<StyledTerminalAdapter.ViewHolder>(
         object CommandEnd : Item("")
     }
 
-    sealed class ViewHolder(parent: ViewGroup, @LayoutRes layout: Int) : AutoBindViewHolder(parent, layout) {
-        class StandardHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.item_terminal_styled_standard)
-        class CommandStartHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.item_terminal_styled_command_start)
-        class CommandEndHolder(parent: ViewGroup) : ViewHolder(parent, R.layout.item_terminal_styled_command_end)
+    sealed class ViewHolder<T : ViewBinding>(binding: T) : ViewBindingHolder<T>(binding) {
+        class StandardHolder(parent: ViewGroup) : ViewHolder<ItemTerminalStyledStandardBinding>(
+            ItemTerminalStyledStandardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
+
+        class CommandStartHolder(parent: ViewGroup) : ViewHolder<ItemTerminalStyledCommandStartBinding>(
+            ItemTerminalStyledCommandStartBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
+
+        class CommandEndHolder(parent: ViewGroup) : ViewHolder<ItemTerminalStyledCommandEndBinding>(
+            ItemTerminalStyledCommandEndBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
     }
 }

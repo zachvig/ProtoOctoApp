@@ -17,17 +17,17 @@ import androidx.lifecycle.lifecycleScope
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.R
-import kotlinx.android.synthetic.main.dialog_purchase_cofirmation.*
-import kotlinx.android.synthetic.main.purchase_header.*
+import de.crysxd.octoapp.base.databinding.PurchaseCofirmationDialogBinding
 import kotlinx.coroutines.delay
 import timber.log.Timber
 
 class PurchaseConfirmationDialog : DialogFragment() {
 
     private val mediaPlayer = MediaPlayer()
+    private lateinit var binding: PurchaseCofirmationDialogBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-        inflater.inflate(R.layout.dialog_purchase_cofirmation, container, false)
+        PurchaseCofirmationDialogBinding.inflate(inflater, container, false).also { binding = it }.root
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +43,7 @@ class PurchaseConfirmationDialog : DialogFragment() {
             mediaPlayer.setOnInfoListener { _, what, _ ->
                 if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
                     Timber.i("Fading overlay out")
-                    backgroundSurfaceOverlay?.animate()?.alpha(0.9f)?.start()
+                    binding.backgroundSurfaceOverlay?.animate()?.alpha(0.9f)?.start()
                 }
 
                 true
@@ -58,18 +58,18 @@ class PurchaseConfirmationDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        button.setOnClickListener {
+        binding.button.setOnClickListener {
             dismiss()
         }
         val email = Firebase.remoteConfig.getString("contact_email")
-        content.text = HtmlCompat.fromHtml(
+        binding.content.text = HtmlCompat.fromHtml(
             getString(R.string.purchase_dialog_text, "<a href=\"mailto:$email\">$email</a>"),
             HtmlCompat.FROM_HTML_MODE_COMPACT
         )
-        content.movementMethod = LinkMovementMethod()
-        imageViewStatusBackground.isVisible = false
-        backgroundSurface.holder.setFormat(PixelFormat.TRANSLUCENT)
-        backgroundSurface.holder.addCallback(object : SurfaceHolder.Callback {
+        binding.content.movementMethod = LinkMovementMethod()
+        binding.header.imageViewStatusBackground.isVisible = false
+        binding.backgroundSurface.holder.setFormat(PixelFormat.TRANSLUCENT)
+        binding.backgroundSurface.holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) = Unit
             override fun surfaceDestroyed(holder: SurfaceHolder?) = Unit
             override fun surfaceCreated(holder: SurfaceHolder) {
@@ -79,7 +79,7 @@ class PurchaseConfirmationDialog : DialogFragment() {
 
         // Fade views in
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-            val views = listOf(textView4, textView3, content, button)
+            val views = listOf(binding.textView4, binding.textView3, binding.content, binding.button)
             views.forEach { it.alpha = 0f }
             delay(1000)
             views.forEach {
