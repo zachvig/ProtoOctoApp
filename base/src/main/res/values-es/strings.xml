@@ -75,7 +75,7 @@
     <string name="layer">Capa</string>
     <string name="layer_progress">Progreso de la capa</string>
     <string name="x_of_y">%1$d de %2$d</string>
-    <string name="error_video_playback">Incapaz de jugar %1$s (%s)</string>
+    <string name="error_video_playback">Incapaz de jugar %1$s (%2$s)</string>
     <string name="set_lebel">Ponga la etiqueta</string>
     <string name="clear_lebel">Etiqueta clara</string>
     <string name="remove_shortcut">Eliminar el atajo</string>

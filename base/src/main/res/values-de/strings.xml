@@ -75,7 +75,7 @@
     <string name="layer">Schicht</string>
     <string name="layer_progress">Schichtfortschritt</string>
     <string name="x_of_y">%1$d von %2$d</string>
-    <string name="error_video_playback">Kann %1$s nicht wiedergeben (%s)</string>
+    <string name="error_video_playback">Kann %1$s nicht wiedergeben (%2$s)</string>
     <string name="set_lebel">Alias setzen</string>
     <string name="clear_lebel">Alias löschen</string>
     <string name="remove_shortcut">Verknüpfung entfernen</string>

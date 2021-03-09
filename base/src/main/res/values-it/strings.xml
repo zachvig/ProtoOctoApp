@@ -74,7 +74,7 @@
     <string name="layer">Strato</string>
     <string name="layer_progress">Progresso del livello</string>
     <string name="x_of_y">%1$d di %2$d</string>
-    <string name="error_video_playback">Incapace di giocare %1$s (%s)</string>
+    <string name="error_video_playback">Incapace di giocare %1$s (%2$s)</string>
     <string name="set_lebel">Etichetta del set</string>
     <string name="clear_lebel">Etichetta chiara</string>
     <string name="remove_shortcut">Rimuovere la scorciatoia</string>
@@ -373,7 +373,7 @@
     <string name="material_menu___subtitle_select_material">Il materiale selezionato sarà attivato per la stampa.</string>
     <string name="material_menu___subtitle_neutral">Puoi modificare questi materiali nell\'interfaccia web.</string>
     <string name="material_menu___empty_state">OctoApp si integra con i plugin FilamentManager e SpoolManager per permetterti di tenere traccia dei tuoi materiali. Una volta impostato, troverai le tue bobine qui.</string>
-    <string name="material_menu___bottom_text"><![CDATA[<small>„A“ significa attivato. I materiali sono forniti da <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> o <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> e possono essere modificati nell'interfaccia web.</small>]]></string>
+    <string name="material_menu___bottom_text"><![CDATA[<small>„A“ significa attivato. I materiali sono forniti da <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> o <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> e possono essere modificati nell\'interfaccia web.</small>]]></string>
     <string name="material_menu___print_without_selection">Stampa senza selezione</string>
     <string name="material_menu___print_with_material">Attivare „%s“</string>
     <string name="material_menu___empty_state_action">Per saperne di più</string>

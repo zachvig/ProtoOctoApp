@@ -75,7 +75,7 @@
     <string name="layer">Laag</string>
     <string name="layer_progress">Lagenvoortgang</string>
     <string name="x_of_y">%1$d van %2$d</string>
-    <string name="error_video_playback">Niet in staat om %1$s (%s) te spelen</string>
+    <string name="error_video_playback">Niet in staat om %1$s te spelen (%2$s)</string>
     <string name="set_lebel">Etiket instellen</string>
     <string name="clear_lebel">Duidelijk label</string>
     <string name="remove_shortcut">Snelkoppeling verwijderen</string>
