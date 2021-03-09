@@ -260,10 +260,10 @@
     <string name="all_checks_passed">All checks passed</string>
     <string name="check_again">Check again</string>
     <string name="running_check_x_of_y">Running Check %1$d of %2$d</string>
-    <string name="step_1_description">Trying to resolve host…</string>
-    <string name="step_2_description">Trying to ping host…</string>
-    <string name="step_3_description">Trying to connect to port…</string>
-    <string name="step_4_description">Trying to connect to OctoPrint…</string>
+    <string name="trouble_shooting___step_1_description">Trying to resolve host…</string>
+    <string name="trouble_shooting___step_2_description">Trying to ping host…</string>
+    <string name="trouble_shooting___step_3_description">Trying to connect to port…</string>
+    <string name="trouble_shooting___step_4_description">Trying to connect to OctoPrint…</string>
     <string name="trouble_shooting">Trouble shooting</string>
     <string name="no_wifi_connection">No WiFi connection</string>
     <string name="widget_temperature">Temperature</string>
@@ -326,7 +326,7 @@
     <string name="main_menu___show_webcam">Show webcam</string>
     <string name="main_menu___menu_settings_title">Settings</string>
     <string name="main_menu___about_text"><![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> was<br/>made <font color="%1$06x"><b>for you</b></font> with love in Europe 🇪🇺<br><a href="privacy">Data privacy</a>]]></string>
-    <string name="main_menu___item_send_feedback">Send Feedback</string>
+    <string name="main_menu___item_help_faq_and_feedback">FAQ, help and feedback</string>
     <string name="main_menu___item_open_octoprint">Open OctoPrint</string>
     <string name="main_menu___item_change_octoprint_instance">Switch OctoPrint</string>
     <string name="main_menu___item_show_printer">Printer</string>
@@ -373,4 +373,58 @@
     <string name="error_general_with_details"><![CDATA[         Something went wrong! Please try again.<br/><br/><small><font color="#%1$06X">%2$s</font></small>     ]]></string>
     <string name="error_certificate_not_trusted_and_weak_hostname_required">Android does not trust the certificate provided by this server. This is usually the case for self signed certificates.  Further, the certificate does not provide a \"subject alternative name\" (SAN) field which is required from Android 9 onwards. OctoApp must use a weak hostname check to circumvent this issue. This will reduce the security of your connection.  Do you want to trust this server and use a weaker hostname verification?</string>
     <string name="help___contact_detail_information" translatable="false">I speak English and German. My current local time is %1$s (%2$s).</string>
+    <string name="material_menu___title_select_material">Select material to use</string>
+    <string name="material_menu___title_neutral">Materials</string>
+    <string name="material_menu___subtitle_select_material">The selected material will be activated for the print.</string>
+    <string name="material_menu___subtitle_neutral">You can edit these materials in the web interface.</string>
+    <string name="material_menu___empty_state">OctoApp integrates with the FilamentManager and the SpoolManager plugins to let you keep track of your materials. Once set up, you\'ll find your spools here.</string>
+    <string name="material_menu___bottom_text"><![CDATA[<small>„A“ means activated. Materials are provided by <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> or <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> and can be edited in the web interface.</small>]]></string>
+    <string name="material_menu___print_without_selection">Print without selection</string>
+    <string name="material_menu___print_with_material">Activate „%s“</string>
+    <string name="material_menu___empty_state_action">Learn more</string>
+    <string name="power_menu___empty_state_action">Learn more</string>
+    <string name="power_menu___checkbox_label">Always use this device in the future</string>
+    <string name="power_menu___empty_state_subtitle">OctoApp can control your printer’s power supply and other devices with supported plugins. Once set up, they will show up here!</string>
+    <string name="power_menu___title_neutral">Power devices</string>
+    <string name="power_menu___title_select_device">Which device is the printer?</string>
+    <string name="power_menu___bottom_text"><![CDATA[<small>Power devices are provided by a <a href="https://app.octoapp.eu/help/supported_plugin">supported plugin</a></small>]]></string>
+    <string name="power_menu___turn_x_off">Turn %s off</string>
+    <string name="power_menu___turn_off">Turn off</string>
+    <string name="power_menu___turn_x_on">Turn %s on</string>
+    <string name="power_menu___turn_on">Turn on</string>
+    <string name="power_menu___cycle_x">Cycle %s</string>
+    <string name="power_menu___cycle">Cycle</string>
+    <string name="power_menu___device_provided_by_x"><![CDATA[<small>This device is provided by %s</small>]]></string>
+    <string name="power_menu___device_is_on">Device is on</string>
+    <string name="power_menu___device_is_off">Device is off</string>
+    <string name="privacy_menu___title" translatable="false">Privacy</string>
+    <string name="privacy_menu___subtitle" translatable="false">OctoApp does not collect any personalized information. I do not have any data about you, such as your email address. Even if you have an active subscription, you are completely anonymous.</string>
+    <string name="privacy_menu___bottom_text" translatable="false"><![CDATA[All data collected is in the app\'s legitimate interest. If you have any questions, please reach out to <a href="mailto">hello@octoapp.eu</a><br><br><a href="https://octoapp-4e438.web.app/privacy">Data privacy statement</a><br><br>OctoApp is an <a href="https://gitlab.com/crysxd/octoapp">open source</a> project.]]></string>
+    <string name="privacy_menu___crash_reporting_title" translatable="false">Anonymous crash reporting</string>
+    <string name="privacy_menu___crash_reporting_description" translatable="false">If enabled, OctoApp sends automated crash reports to Firebase Crashlytics, helping me make the app stable for all users and devices. These reports are anonymous and deleted after 90 days. They contain generic information about your device, such as the model or Android version and the most recent logs collected by the app. Crash reports do not contain any sensitive data as all API keys, host names or Basic Auth credentials are scrubbed (best effort) when any error is created and again before the logs are cached.</string>
+    <string name="privacy_menu___analytics_title" translatable="false">Anonymous usage statistics</string>
+    <string name="privacy_menu___analytics_description" translatable="false">If enabled, OctoApp sends anonymous usage information to Firebase Analytics which will be deleted after 90 days. This information helps me in determining which features of the app are used the most, and where I should spend time on improving to benefit users. This information does not contain any data except which features of the app are used and basic information about your setup, such as which plugins are installed or the OctoPrint version. The data is not linked to any advertisement profile or anything similar. If you reinstall the app or switch your device, I do not have any means to connect your data.</string>
+    <string name="help___content_not_available" translatable="false">This content is currently not available. Try again later!</string>
+    <string name="help___status_x" translatable="false">Status: %s</string>
+    <string name="help___octoprint_community" translatable="false">OctoPrint community</string>
+    <string name="help___octoprint_discord" translatable="false">OctoPrint Discord</string>
+    <string name="help___report_a_bug" translatable="false">I want to report a bug</string>
+    <string name="help___ask_a_question" translatable="false">I have an other question</string>
+    <string name="help___title" translatable="false"><![CDATA[FAQ & Help]]></string>
+    <string name="help___introduction_part_2" translatable="false">If you are new to OctoApp, you can check out this introduction to get started with the app’s concept!</string>
+    <string name="help___introduction_part_1" translatable="false">Hi! I’m Chris, the developer of OctoApp! Thanks for using the app. If you don’t find what you need below, you can always reach out! 🖖</string>
+    <string name="help___introduction_video_caption" translatable="false">1 minute introduction</string>
+    <string name="help___faq_title" translatable="false">FAQ</string>
+    <string name="help___bugs_title" translatable="false">Known bugs in this version</string>
+    <string name="help___contact_title" translatable="false">Still no answers?</string>
+    <string name="trouble_shooting___step_1_failure_title" translatable="false"><![CDATA[Can\'t resolve <b>%s</b>]]></string>
+    <string name="trouble_shooting___step_1_failure_description" translatable="false"><![CDATA[This indicates a configuration issue. The phone can\'t resolve a IP address for <b>%s</b>, this is not influenced by any OctoPrint settings or the API key.]]></string>
+    <string name="trouble_shooting___step_2_failure_title" translatable="false"><![CDATA[Host <b>%s</b> is not reachable]]></string>
+    <string name="trouble_shooting___step_2_failure_description" translatable="false"><![CDATA[This indicates a configuration issue. The phone can\'t reach <b>%s</b>, this is not influenced by any OctoPrint settings or the API key.]]></string>
+    <string name="trouble_shooting___step_3_failure_title" translatable="false"><![CDATA[Can connect to <b>%1$s</b> but not to port <b>%2$d</b>]]></string>
+    <string name="trouble_shooting___step_3_failure_description" translatable="false"><![CDATA[The phone can connect to the host, but the port <b>%d</b> does not accept incoming connections.]]></string>
+    <string name="trouble_shooting___step_4_failure_code_title" translatable="false"><![CDATA[Can connect but received <b>%d</b> instead of <b>200</b>]]></string>
+    <string name="trouble_shooting___step_4_failure_code_description" translatable="false"><![CDATA[The app was able to establish a connection to <b>%s</b>, but the server did not respond as expected.]]></string>
+    <string name="trouble_shooting___step_4_failure_title" translatable="false">Can\'t connect because of an error</string>
+    <string name="trouble_shooting___step_4_failure_description" translatable="false"><![CDATA[A unexpected error occurred while trying to connect to <b>%1$s</b> (%2$s)]]></string>
 </resources>

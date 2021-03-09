@@ -251,10 +251,10 @@
     <string name="all_checks_passed">Alle controles zijn geslaagd</string>
     <string name="check_again">Nogmaals controleren</string>
     <string name="running_check_x_of_y">Check %1$d van %2$d</string>
-    <string name="step_1_description">Proberen de host te vinden…</string>
-    <string name="step_2_description">Proberen te pingen…</string>
-    <string name="step_3_description">Proberen verbinding te maken met de poort…</string>
-    <string name="step_4_description">Proberen verbinding te maken met OctoPrint…</string>
+    <string name="trouble_shooting___step_1_description">Proberen de host te vinden…</string>
+    <string name="trouble_shooting___step_2_description">Proberen te pingen…</string>
+    <string name="trouble_shooting___step_3_description">Proberen verbinding te maken met de poort…</string>
+    <string name="trouble_shooting___step_4_description">Proberen verbinding te maken met OctoPrint…</string>
     <string name="trouble_shooting">Problemen oplossen</string>
     <string name="no_wifi_connection">Geen WiFi verbinding</string>
     <string name="widget_temperature">Temperaturen</string>
@@ -310,7 +310,7 @@
     <string name="main_menu___item_cancel_print">Afdrukken annuleren</string>
     <string name="main_menu___menu_settings_title">Opties</string>
     <string name="main_menu___about_text"><![CDATA[Versie <font color="%1$06x"><b>%2$s</b></font> was <br/>gemaakt <font color="%1$06x"><b>voor u</b></font> met liefde in Europa 🇪🇺<br><a href="privacy">Data privacy</a>]]></string>
-    <string name="main_menu___item_send_feedback">Feedback sturen</string>
+    <string name="main_menu___item_help_faq_and_feedback">FAQ, hulp en feedback</string>
     <string name="main_menu___item_open_octoprint">Open OctoPrint</string>
     <string name="main_menu___item_change_octoprint_instance">Wissel OctoPrint</string>
     <string name="main_menu___item_show_printer">Printer</string>
@@ -365,6 +365,6 @@
     <string name="x_left">Nog %s</string>
     <string name="print_notification___disconnected_title">Verloor de verbinding</string>
     <string name="print_notification___disconnected_message">Laatste %s, open app om opnieuw te verbinden</string>
-    <string name="connect_printer___printer_connected_detail_1">Klaar voor awesomeness...</string>
+    <string name="connect_printer___printer_connected_detail_1">Klaar voor awesomeness…</string>
     <string name="connect_printer___printer_connected_detail_2">Dit duurt langer als gewoonlijk. Ofwel is uw netwerk zwak, ofwel werkt de websocket niet correct. Als u hier vastloopt, gebruik dan de help sectie in het hoofdmenu.</string>
 </resources>

@@ -252,10 +252,10 @@
     <string name="all_checks_passed">Todos los controles pasaron</string>
     <string name="check_again">Compruébalo de nuevo.</string>
     <string name="running_check_x_of_y">Chequeo de funcionamiento %1$d de %2$d</string>
-    <string name="step_1_description">Tratando de resolver el anfitrión…</string>
-    <string name="step_2_description">Tratando de hacer ping al anfitrión…</string>
-    <string name="step_3_description">Intentando conectar con el puerto…</string>
-    <string name="step_4_description">Intentando conectar con OctoPrint…</string>
+    <string name="trouble_shooting___step_1_description">Tratando de resolver el anfitrión…</string>
+    <string name="trouble_shooting___step_2_description">Tratando de hacer ping al anfitrión…</string>
+    <string name="trouble_shooting___step_3_description">Intentando conectar con el puerto…</string>
+    <string name="trouble_shooting___step_4_description">Intentando conectar con OctoPrint…</string>
     <string name="trouble_shooting">Problemas de resolución de problemas</string>
     <string name="no_wifi_connection">No hay conexión WiFi</string>
     <string name="widget_temperature">Temperaturas</string>
@@ -311,7 +311,7 @@
     <string name="main_menu___item_cancel_print">Cancelar Imprimir</string>
     <string name="main_menu___menu_settings_title">Opciones</string>
     <string name="main_menu___about_text"><![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> was<br/>made <font color="%1$06x"><b>para ti</b></font> con amor en Europa 🇪🇺<br><a href="privacy">Data privacy</a>]]></string>
-    <string name="main_menu___item_send_feedback">Envíe sus comentarios</string>
+    <string name="main_menu___item_help_faq_and_feedback">FAQ, ayuda y comentarios</string>
     <string name="main_menu___item_open_octoprint">Abrir OctoPrint</string>
     <string name="main_menu___item_change_octoprint_instance">Cambiar OctoPrint</string>
     <string name="main_menu___item_show_printer">Impresora</string>
@@ -366,6 +366,6 @@
     <string name="x_left">quedan %s</string>
     <string name="print_notification___disconnected_title">Se ha perdido la conexión</string>
     <string name="print_notification___disconnected_message">Último %s, abre la aplicación para volver a conectarte</string>
-    <string name="connect_printer___printer_connected_detail_1">Preparándose para la maravilla...</string>
+    <string name="connect_printer___printer_connected_detail_1">Preparándose para la maravilla…</string>
     <string name="connect_printer___printer_connected_detail_2">Esto tarda más de lo normal. O bien tu red es débil, o el websocket no funciona correctamente. Si estás atascado aquí, utiliza la sección de ayuda en el menú principal.</string>
 </resources>

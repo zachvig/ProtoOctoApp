@@ -91,7 +91,7 @@ class HelpDetailFragment : Fragment(), InsetAwareScreen {
         null
     } catch (e: Exception) {
         Timber.e(e)
-        requireOctoActivity().showDialog("This content is currently not available. Try again later!",
+        requireOctoActivity().showDialog(getString(de.crysxd.octoapp.R.string.help___content_not_available),
             positiveAction = {
                 if (isAdded) {
                     findNavController().popBackStack()
@@ -103,7 +103,7 @@ class HelpDetailFragment : Fragment(), InsetAwareScreen {
 
     private fun bindBug(bug: KnownBug, markwon: Markwon) {
         binding.title.text = bug.title
-        binding.status.text = "Status: ${bug.status}"
+        binding.status.text = getString(de.crysxd.octoapp.R.string.help___status_x, bug.status)
         markwon.setMarkdown(binding.content, bug.content ?: "")
         binding.videoThumbnailContainer.isVisible = false
     }

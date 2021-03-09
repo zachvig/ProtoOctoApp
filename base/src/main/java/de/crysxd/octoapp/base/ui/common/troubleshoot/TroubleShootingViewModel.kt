@@ -36,17 +36,17 @@ class TroubleShootViewModel : ViewModel() {
 
                 val result =
                     runAtLeast {
-                        troubleShootingResult.postValue(TroubleShootingResult.Running(1, totalSteps, context.getString(R.string.step_1_description)))
-                        runDnsTest(baseUrl)
+                        troubleShootingResult.postValue(TroubleShootingResult.Running(1, totalSteps, context.getString(R.string.trouble_shooting___step_1_description)))
+                        runDnsTest(context, baseUrl)
                     } ?: runAtLeast {
-                        troubleShootingResult.postValue(TroubleShootingResult.Running(2, totalSteps, context.getString(R.string.step_2_description)))
-                        runHostReachableTest(baseUrl)
+                        troubleShootingResult.postValue(TroubleShootingResult.Running(2, totalSteps, context.getString(R.string.trouble_shooting___step_2_description)))
+                        runHostReachableTest(context, baseUrl)
                     } ?: runAtLeast {
-                        troubleShootingResult.postValue(TroubleShootingResult.Running(3, totalSteps, context.getString(R.string.step_3_description)))
-                        runPortOpenTest(baseUrl)
+                        troubleShootingResult.postValue(TroubleShootingResult.Running(3, totalSteps, context.getString(R.string.trouble_shooting___step_3_description)))
+                        runPortOpenTest(context, baseUrl)
                     } ?: runAtLeast {
-                        troubleShootingResult.postValue(TroubleShootingResult.Running(4, totalSteps, context.getString(R.string.step_4_description)))
-                        runConnectionTest(baseUrl)
+                        troubleShootingResult.postValue(TroubleShootingResult.Running(4, totalSteps, context.getString(R.string.trouble_shooting___step_4_description)))
+                        runConnectionTest(context, baseUrl)
                     } ?: TroubleShootingResult.Success
 
                 troubleShootingResult.postValue(result)
@@ -64,7 +64,7 @@ class TroubleShootViewModel : ViewModel() {
     }
 
 
-    private fun runDnsTest(baseUrl: Uri) = try {
+    private fun runDnsTest(context: Context, baseUrl: Uri) = try {
         Timber.i("Check 1: Resolving Host")
         Timber.i("Host: ${baseUrl.host}")
         InetAddress.getByName(baseUrl.host)
@@ -74,8 +74,8 @@ class TroubleShootViewModel : ViewModel() {
         Timber.e(e)
         OctoAnalytics.logEvent(OctoAnalytics.Event.TroubleShootDnsFailure)
         TroubleShootingResult.Failure(
-            title = "Can't resolve <b>${baseUrl.host}</b>",
-            description = "This indicates a configuration issue. The phone can't resolve a IP address for <b>${baseUrl.host}</b>, this is not influenced by any OctoPrint settings or the API key.",
+            title = context.getString(R.string.trouble_shooting___step_1_failure_title, baseUrl.host),
+            description = context.getString(R.string.trouble_shooting___step_1_failure_description, baseUrl.host),
             exception = e,
             suggestions = listOf(
                 "Check <b>${baseUrl.host}</b> is correct",
@@ -88,7 +88,7 @@ class TroubleShootViewModel : ViewModel() {
         )
     }
 
-    private fun runHostReachableTest(baseUrl: Uri): TroubleShootingResult.Failure? {
+    private fun runHostReachableTest(context: Context, baseUrl: Uri): TroubleShootingResult.Failure? {
         Timber.i("Check 2: Pinging Host")
 
         val host = baseUrl.host
@@ -105,8 +105,8 @@ class TroubleShootViewModel : ViewModel() {
         return if (!reachable) {
             OctoAnalytics.logEvent(OctoAnalytics.Event.TroubleShootHostFailure)
             TroubleShootingResult.Failure(
-                title = "Host <b>$host</b> is not reachable",
-                description = "This indicates a configuration issue. The phone can't reach <b>${baseUrl.host}</b>, this is not influenced by any OctoPrint settings or the API key.",
+                title = context.getString(R.string.trouble_shooting___step_2_failure_title, baseUrl.host),
+                description = context.getString(R.string.trouble_shooting___step_2_failure_description, baseUrl.host),
                 suggestions = listOf(
                     "Check <b>$host</b> is correct",
                     "Check your <b>WiFi is connected</b> and if OctoPrint is on the local network",
@@ -121,7 +121,7 @@ class TroubleShootViewModel : ViewModel() {
         }
     }
 
-    private fun runPortOpenTest(baseUrl: Uri): TroubleShootingResult.Failure? {
+    private fun runPortOpenTest(context: Context, baseUrl: Uri): TroubleShootingResult.Failure? {
         Timber.i("Check 3: Connecting to Port")
 
         val port = when {
@@ -142,8 +142,8 @@ class TroubleShootViewModel : ViewModel() {
             Timber.e(e)
             OctoAnalytics.logEvent(OctoAnalytics.Event.TroubleShootPortFailure)
             TroubleShootingResult.Failure(
-                title = "Can connect to <b>${baseUrl.host}</b> but not to port <b>$port</b>",
-                description = "The phone can connect to the host, but the port <b>$port</b> does not accept incoming connections.",
+                title = context.getString(R.string.trouble_shooting___step_3_failure_title, baseUrl.host, port),
+                description = context.getString(R.string.trouble_shooting___step_3_failure_description, port),
                 suggestions = listOf(
                     "Make sure <b>$port</b> is the correct port",
                     "If the port is not specified explicitly, 80 will be used for HTTP and 443 for HTTPS",
@@ -154,7 +154,7 @@ class TroubleShootViewModel : ViewModel() {
         }
     }
 
-    private fun runConnectionTest(baseUrl: Uri) = try {
+    private fun runConnectionTest(context: Context, baseUrl: Uri) = try {
         Timber.i("Check 4: HTTP connection")
 
         val connection = URL(baseUrl.toString()).openConnection() as HttpURLConnection
@@ -166,8 +166,8 @@ class TroubleShootViewModel : ViewModel() {
         } else {
             OctoAnalytics.logEvent(OctoAnalytics.Event.TroubleShootHttp1Failure)
             TroubleShootingResult.Failure(
-                title = "Can connect but received <b>$code</b> instead of <b>200</b>",
-                description = "The app was able to establish a connection to <b>$baseUrl</b>, but the server did not respond as expected.",
+                title = context.getString(R.string.trouble_shooting___step_4_failure_code_title, code),
+                description = context.getString(R.string.trouble_shooting___step_4_failure_code_description, baseUrl),
                 suggestions = listOf(
                     "Try to open <a href=\"$baseUrl\">$baseUrl</a> in your phone's browser, OctoPrint should open",
                     "Check you provided the correct web URL, especially the <b>correct path</b> to OctoPrint if you use a reverse proxy",
@@ -180,8 +180,8 @@ class TroubleShootViewModel : ViewModel() {
     } catch (e: Exception) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.TroubleShootHttp2Failure)
         TroubleShootingResult.Failure(
-            title = "Can't connect because of an error",
-            description = "A unexpected error occurred while trying to connect to <b>$baseUrl</b> (${e.message})",
+            title = context.getString(R.string.trouble_shooting___step_4_failure_title),
+            description = context.getString(R.string.trouble_shooting___step_4_failure_description, baseUrl, e.message),
             suggestions = listOf(
                 "Try to open <a href=\"$baseUrl\">$baseUrl</a> in your phone's browser, OctoPrint should open",
                 "Check you provided the correct web URL",

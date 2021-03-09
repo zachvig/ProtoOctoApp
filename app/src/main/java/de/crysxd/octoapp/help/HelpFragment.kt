@@ -12,13 +12,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
+import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ext.suspendedAwait
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import de.crysxd.octoapp.base.ui.menu.*
-import de.crysxd.octoapp.base.ui.menu.main.PrivacyMenu
+import de.crysxd.octoapp.base.ui.menu.MenuAdapter
+import de.crysxd.octoapp.base.ui.menu.MenuItem
+import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
+import de.crysxd.octoapp.base.ui.menu.PreparedMenuItem
 import de.crysxd.octoapp.databinding.HelpFragmentBinding
 import kotlinx.coroutines.delay
 import timber.log.Timber
@@ -37,10 +40,6 @@ class HelpFragment : Fragment() {
         lifecycleScope.launchWhenCreated {
             binding.introductionView.setOnClickListener {
                 Uri.parse(Firebase.remoteConfig.getString("introduction_video_url")).open(requireOctoActivity())
-            }
-
-            binding.dataPrivacy.setOnClickListener {
-                MenuBottomSheetFragment.createForMenu(PrivacyMenu()).show(childFragmentManager)
             }
 
             binding.contactOptions.adapter = MenuAdapter(
@@ -110,20 +109,23 @@ class HelpFragment : Fragment() {
         }
     }
 
-    private fun createContactOptions() = listOf(
-        HelpMenuItem(style = MenuItemStyle.Green, "OctoPrint community") {
-            Uri.parse("https://community.octoprint.org/").open(requireOctoActivity())
-        },
-        HelpMenuItem(style = MenuItemStyle.Green, "OctoPrint Discord") {
-            Uri.parse("https://discord.octoprint.org/").open(requireOctoActivity())
-        },
-        HelpMenuItem(style = MenuItemStyle.Green, "I want to report a bug") {
-            SendFeedbackDialog.create(isForBugReport = true).show(childFragmentManager, "bug-report")
-        },
-        HelpMenuItem(style = MenuItemStyle.Green, "I have an other question") {
-            SendFeedbackDialog().show(childFragmentManager, "question")
-        },
-    )
+    private fun createContactOptions(): List<HelpMenuItem> {
+        val listOf = listOf(
+            HelpMenuItem(style = MenuItemStyle.Green, getString(R.string.help___octoprint_community)) {
+                Uri.parse("https://community.octoprint.org/").open(requireOctoActivity())
+            },
+            HelpMenuItem(style = MenuItemStyle.Green, getString(R.string.help___octoprint_discord)) {
+                Uri.parse("https://discord.octoprint.org/").open(requireOctoActivity())
+            },
+            HelpMenuItem(style = MenuItemStyle.Green, getString(R.string.help___report_a_bug)) {
+                SendFeedbackDialog.create(isForBugReport = true).show(childFragmentManager, "bug-report")
+            },
+            HelpMenuItem(style = MenuItemStyle.Green, getString(R.string.help___ask_a_question)) {
+                SendFeedbackDialog().show(childFragmentManager, "question")
+            },
+        )
+        return listOf
+    }
 
     private fun createFaqItems() = Firebase.remoteConfig.getString("faq").let {
         parseFaqsFromJson(it)

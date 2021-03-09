@@ -59,7 +59,7 @@ class HelpMenuItem : MenuItem {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_help_outline_24
 
-    override suspend fun getTitle(context: Context) = "FAQ, help & feedback"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_help_faq_and_feedback)
     override suspend fun onClicked(host: MenuBottomSheetFragment?) {
         host?.findNavController()?.navigate(R.id.action_help)
         host?.dismissAllowingStateLoss()

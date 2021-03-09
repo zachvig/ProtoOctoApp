@@ -6,10 +6,10 @@
     android:layout_height="match_parent">
 
     <de.crysxd.octoapp.base.ui.common.OctoScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:id="@+id/scrollView"
         android:paddingTop="@dimen/margin_3">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_3"
                 android:gravity="center"
-                android:text="FAQ &amp; Help"
+                android:text="@string/help___title"
                 android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -49,7 +49,7 @@
                 android:backgroundTint="@color/red_translucent"
                 android:padding="@dimen/margin_1_2"
                 android:paddingVertical="@dimen/margin_1"
-                android:text="Hi! I’m Chris, the developer of OctoApp! Thanks for using the app. If you don’t find what you need below, you can always reach out! 🖖"
+                android:text="@string/help___introduction_part_1"
                 android:textColor="@color/dark_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/avatar"
@@ -73,7 +73,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top"
-                    android:text="If you are new to OctoApp, you can check out this introduction to get started with the app’s concept!"
+                    android:text="@string/help___introduction_part_2"
                     android:textColor="@color/dark_text"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -88,13 +88,14 @@
                     android:importantForAccessibility="no"
                     android:src="@drawable/introduction_video_placeholder"
                     app:layout_constraintTop_toBottomOf="@id/textView3"
+                    tools:ignore="UnusedAttribute"
                     tools:layout_editor_absoluteX="10dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/margin_0_1"
-                    android:text="1 minute introduction"
+                    android:text="@string/help___introduction_video_caption"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="@+id/introductionView"
                     app:layout_constraintEnd_toEndOf="@+id/introductionView"
@@ -110,7 +111,7 @@
                 android:layout_marginHorizontal="@dimen/margin_3"
                 android:layout_marginTop="@dimen/margin_3"
                 android:gravity="center"
-                android:text="FAQ"
+                android:text="@string/help___faq_title"
                 android:textAppearance="@style/OctoTheme.TextAppearance.Title"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayoutCompat"
                 tools:layout_editor_absoluteX="16dp" />
@@ -153,7 +154,7 @@
                 android:layout_marginHorizontal="@dimen/margin_3"
                 android:layout_marginTop="@dimen/margin_2"
                 android:gravity="center"
-                android:text="Known bugs in this version"
+                android:text="@string/help___bugs_title"
                 android:textAppearance="@style/OctoTheme.TextAppearance.Title"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@+id/faqOptions"
@@ -179,7 +180,7 @@
                 android:layout_marginHorizontal="@dimen/margin_3"
                 android:layout_marginTop="@dimen/margin_2"
                 android:gravity="center"
-                android:text="Still no answers?"
+                android:text="@string/help___contact_title"
                 android:textAppearance="@style/OctoTheme.TextAppearance.Title"
                 app:layout_constraintTop_toBottomOf="@+id/bugsList"
                 tools:layout_editor_absoluteX="16dp" />
@@ -193,17 +194,6 @@
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:layout_constraintTop_toBottomOf="@+id/textView7"
                 tools:layout_editor_absoluteX="20dp" />
-
-            <TextView
-                android:id="@+id/dataPrivacy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_2"
-                android:text="Data privacy"
-                android:textColor="@color/green"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/contactOptions" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

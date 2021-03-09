@@ -251,10 +251,10 @@
     <string name="all_checks_passed">Alle Checks bestanden</string>
     <string name="check_again">Erneut prüfen</string>
     <string name="running_check_x_of_y">Check %1$d von %2$d läuft</string>
-    <string name="step_1_description">Versuche den Host aufzulösen…</string>
-    <string name="step_2_description">Versuche den Host anzupingen…</string>
-    <string name="step_3_description">Versuche Verbindung mit Port herzustellen…</string>
-    <string name="step_4_description">Versuche Verbindung mit OctoPrint herzustellen…</string>
+    <string name="trouble_shooting___step_1_description">Versuche den Host aufzulösen…</string>
+    <string name="trouble_shooting___step_2_description">Versuche den Host anzupingen…</string>
+    <string name="trouble_shooting___step_3_description">Versuche Verbindung mit Port herzustellen…</string>
+    <string name="trouble_shooting___step_4_description">Versuche Verbindung mit OctoPrint herzustellen…</string>
     <string name="trouble_shooting">Fehlersuche</string>
     <string name="no_wifi_connection">Keine WLAN Verbindung</string>
     <string name="widget_temperature">Temperaturen</string>
@@ -308,7 +308,7 @@
     <string name="main_menu___item_cancel_print">Druck abbrechen</string>
     <string name="main_menu___menu_settings_title">Optionen</string>
     <string name="main_menu___about_text"><![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> wurde <font color="%1$06x"><b>für dich</b><br/></font> mit Liebe in Europa gemacht 🇪🇺<br><a href="privacy">Data privacy</a>]]></string>
-    <string name="main_menu___item_send_feedback">Feedback senden</string>
+    <string name="main_menu___item_help_faq_and_feedback">FAQ, Hilfe und Feedback</string>
     <string name="main_menu___item_open_octoprint">OctoPrint öffnen</string>
     <string name="main_menu___item_change_octoprint_instance">OctoPrint wechseln</string>
     <string name="main_menu___item_show_printer">Drucker</string>
@@ -365,6 +365,6 @@
     <string name="x_left">noch %s</string>
     <string name="print_notification___disconnected_title">Verbindung verloren</string>
     <string name="print_notification___disconnected_message">Letzte %s, App öffnen, um erneut zu verbinden</string>
-    <string name="connect_printer___printer_connected_detail_1">Vorbereiten auf das Unglaubliche...</string>
+    <string name="connect_printer___printer_connected_detail_1">Vorbereiten auf das Unglaubliche…</string>
     <string name="connect_printer___printer_connected_detail_2">Dies dauert länger als üblich. Entweder ist dein Netzwerk schwach, oder das Websocket funktioniert nicht richtig. Wenn du hier nicht weiterkommst, verwenden den Hilfebereich im Hauptmenü.</string>
 </resources>

@@ -56,11 +56,13 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
     }
 
     override fun getEmptyStateIcon() = R.drawable.octo_power_devices
-    override fun getEmptyStateActionText(context: Context) = "Learn more"
+    override fun getEmptyStateActionText(context: Context) = context.getString(R.string.power_menu___empty_state_action)
     override fun getEmptyStateActionUrl(context: Context) = Firebase.remoteConfig.getString("help_url_power_devices")
-    override fun getCheckBoxText(context: Context) = "Always use this device in the future".takeIf { type != DeviceType.Unspecified && action != Action.Unspecified }
+    override fun getCheckBoxText(context: Context) =
+        context.getString(R.string.power_menu___checkbox_label).takeIf { type != DeviceType.Unspecified && action != Action.Unspecified }
+
     override fun getEmptyStateSubtitle(context: Context) =
-        "OctoApp can control your printer’s power supply and other devices with supported plugins. Once set up, they will show up here!"
+        context.getString(R.string.power_menu___empty_state_subtitle)
 
     override suspend fun getMenuItem() = Injector.get().getPowerDevicesUseCase().execute(GetPowerDevicesUseCase.Params(queryState = false))
         .map {
@@ -77,12 +79,12 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         }
 
     override suspend fun getTitle(context: Context) = when (type) {
-        DeviceType.Unspecified -> "Power devices"
-        DeviceType.PrinterPsu -> "Which device is the printer?"
+        DeviceType.Unspecified -> context.getString(R.string.power_menu___title_neutral)
+        DeviceType.PrinterPsu -> context.getString(R.string.power_menu___title_select_device)
     }
 
     override fun getBottomText(context: Context) =
-        "<small>Power devices are provided by a <a href=\"https://google.com\">supported plugin</a></small>".toHtml()
+        context.getString(R.string.power_menu___bottom_text).toHtml()
 
     override fun getBottomMovementMethod(host: MenuBottomSheetFragment) =
         LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.requireOctoActivity()))
@@ -140,7 +142,9 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val style = MenuItemStyle.Printer
         override val icon = R.drawable.ic_round_power_off_24
 
-        override suspend fun getTitle(context: Context) = if (showName) "Turn $name off" else "Turn off"
+        override suspend fun getTitle(context: Context) =
+            if (showName) context.getString(R.string.power_menu___turn_x_off, name) else context.getString(R.string.power_menu___turn_off)
+
         override suspend fun onClicked(host: MenuBottomSheetFragment?) {
             val device = Injector.get().getPowerDevicesUseCase().execute(
                 GetPowerDevicesUseCase.Params(
@@ -173,7 +177,9 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val style = MenuItemStyle.Printer
         override val icon = R.drawable.ic_round_power_24
 
-        override suspend fun getTitle(context: Context) = if (showName) "Turn $name on" else "Turn on"
+        override suspend fun getTitle(context: Context) =
+            if (showName) context.getString(R.string.power_menu___turn_x_on, name) else context.getString(R.string.power_menu___turn_on)
+
         override suspend fun onClicked(host: MenuBottomSheetFragment?) {
             val device = Injector.get().getPowerDevicesUseCase().execute(
                 GetPowerDevicesUseCase.Params(
@@ -206,7 +212,9 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val style = MenuItemStyle.Printer
         override val icon = R.drawable.ic_round_power_cycle_24px
 
-        override suspend fun getTitle(context: Context) = if (showName) "Cycle $name" else "Cycle"
+        override suspend fun getTitle(context: Context) =
+            if (showName) context.getString(R.string.power_menu___cycle_x, name) else context.getString(R.string.power_menu___cycle)
+
         override suspend fun onClicked(host: MenuBottomSheetFragment?) {
             val device = Injector.get().getPowerDevicesUseCase().execute(
                 GetPowerDevicesUseCase.Params(
