@@ -22,7 +22,7 @@ import timber.log.Timber
 class PrintControlsFragment : WidgetHostFragment() {
 
     override val viewModel: PrintControlsViewModel by injectViewModel()
-    override val destinationId = "preprint"
+    override val destinationId = "print"
     private val isKeepScreenOn get() = Injector.get().octoPreferences().isKeepScreenOnDuringPrint
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
