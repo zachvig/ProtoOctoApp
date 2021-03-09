@@ -1,19 +1,13 @@
 package de.crysxd.octoapp.pre_print_controls.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.lifecycle.Observer
-import de.crysxd.octoapp.base.ui.common.OctoToolbar
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
-import de.crysxd.octoapp.pre_print_controls.databinding.PrePrintControlsFragmentBinding
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.widget.extrude.ExtrudeWidget
 import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidget
@@ -21,54 +15,30 @@ import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidget
 class PrePrintControlsFragment : WidgetHostFragment() {
 
     override val viewModel: PrePrintControlsViewModel by injectViewModel()
-    private lateinit var binding: PrePrintControlsFragmentBinding
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
-        PrePrintControlsFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
+    override val destinationId = "preprint"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.buttonStartPrint.setOnClickListener {
-            viewModel.startPrint()
-        }
-
-        binding.buttonMore.setOnClickListener {
-            MenuBottomSheetFragment().show(childFragmentManager)
-        }
-
-        binding.widgetList.connectToLifecycle(viewLifecycleOwner)
-
-        viewModel.webCamSupported.observe(viewLifecycleOwner, Observer(this::installApplicableWidgets))
-        // TODO add columns
-        //  (widgetList.layoutManager as? StaggeredGridLayoutManager)?.spanCount = resources.getInteger(BaseR.integer.widget_list_span_count)
-    }
-
-    private fun installApplicableWidgets(webcamSupported: Boolean) {
-        binding.widgetList.showWidgets(
-            parent = this,
-            widgetClasses = mutableListOf(
-                AnnouncementWidget::class,
-                ControlTemperatureWidget::class,
-                MoveToolWidget::class,
-                WebcamWidget::class,
-                SendGcodeWidget::class,
-                ExtrudeWidget::class,
-            ).also {
-                if (!webcamSupported) {
-                    it.remove(WebcamWidget::class)
-                }
-            }
-        )
+        mainButton.setOnClickListener { viewModel.startPrint() }
+        moreButton.setOnClickListener { MenuBottomSheetFragment().show(childFragmentManager) }
+        viewModel.webCamSupported.observe(viewLifecycleOwner) { reloadWidgets() }
     }
 
     override fun reloadWidgets() {
-        installApplicableWidgets(viewModel.webCamSupported.value == true)
-    }
+        val webcamSupported = viewModel.webCamSupported.value == true
+        val widgets = mutableListOf(
+            AnnouncementWidget::class,
+            ControlTemperatureWidget::class,
+            MoveToolWidget::class,
+            WebcamWidget::class,
+            SendGcodeWidget::class,
+            ExtrudeWidget::class,
+        ).also {
+            if (!webcamSupported) {
+                it.remove(WebcamWidget::class)
+            }
+        }
 
-    override fun onStart() {
-        super.onStart()
-        requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
-        binding.widgetListScroller.setupWithToolbar(requireOctoActivity(), binding.bottomAction)
+        installWidgets(widgets)
     }
 }

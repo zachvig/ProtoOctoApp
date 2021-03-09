@@ -13,7 +13,7 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.base.OctoActivity
 import kotlin.math.roundToInt
 
-class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, @StyleRes defStyle: Int = 0) :
+open class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, @StyleRes defStyle: Int = 0) :
     RecyclerView(context, attributeSet, defStyle) {
 
     private var calculatedScrollY = 0

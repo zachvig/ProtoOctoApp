@@ -25,8 +25,8 @@
 
         <de.crysxd.octoapp.base.ui.widget.WidgetLayout
             android:id="@+id/widgetList"
-            android:layout_height="match_parent"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:nestedScrollingEnabled="false" />
 
     </de.crysxd.octoapp.base.ui.common.OctoScrollView>
@@ -42,7 +42,7 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
-            android:id="@+id/buttonStartPrint"
+            android:id="@+id/mainButton"
             style="@style/OctoTheme.Widget.Button.WithMore"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

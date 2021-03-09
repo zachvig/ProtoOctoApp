@@ -49,7 +49,6 @@ class DataSourceModule {
         context: Context,
     ) = LocalGcodeFileDataSource(context, Gson(), context.getSharedPreferences("gcode_cache_index_2", Context.MODE_PRIVATE))
 
-
     @Provides
     @BaseScope
     fun provideRemoteGcodeFileDataSource(
@@ -57,4 +56,12 @@ class DataSourceModule {
         local: LocalGcodeFileDataSource
     ) = RemoteGcodeFileDataSource(octoPrintProvider, local)
 
+    @Provides
+    @BaseScope
+    fun provideWidgetOrderDataSource(
+        sharedPreferences: SharedPreferences,
+    ) = WidgetOrderDataSource(
+        sharedPreferences = sharedPreferences,
+        gson = createGson()
+    )
 }
