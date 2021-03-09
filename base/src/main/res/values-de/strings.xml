@@ -367,4 +367,28 @@
     <string name="print_notification___disconnected_message">Letzte %s, App öffnen, um erneut zu verbinden</string>
     <string name="connect_printer___printer_connected_detail_1">Vorbereiten auf das Unglaubliche…</string>
     <string name="connect_printer___printer_connected_detail_2">Dies dauert länger als üblich. Entweder ist dein Netzwerk schwach, oder das Websocket funktioniert nicht richtig. Wenn du hier nicht weiterkommst, verwenden den Hilfebereich im Hauptmenü.</string>
+    <string name="material_menu___title_select_material">Werkstoffe auswählen</string>
+    <string name="material_menu___title_neutral">Werkstoffe</string>
+    <string name="material_menu___subtitle_select_material">Der ausgewählte Werkstoff wird für den Druck aktiviert.</string>
+    <string name="material_menu___subtitle_neutral">Du kannst diese Werkstoffe in der Weboberfläche bearbeiten.</string>
+    <string name="material_menu___empty_state">OctoApp ist mit den Plugins FilamentManager und SpoolManager integriert, damit du den Überblick über deine Werkstoffe behälst. Einmal eingerichtet, finden du deine Spulen hier.</string>
+    <string name="material_menu___bottom_text"><![CDATA[<small>„A“ bedeutet aktiviert. Materialien werden von <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> oder <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> bereitgestellt und können in der Weboberfläche bearbeitet werden.</small>]]></string>
+    <string name="material_menu___print_without_selection">Drucken ohne Auswahl</string>
+    <string name="material_menu___print_with_material">„%s“ aktivieren</string>
+    <string name="material_menu___empty_state_action">Mehr erfahren</string>
+    <string name="power_menu___empty_state_action">Mehr erfahren</string>
+    <string name="power_menu___checkbox_label">Gerät in Zukunft immer verwenden</string>
+    <string name="power_menu___empty_state_subtitle">OctoApp kann die Stromversorgung Ihres Druckers und anderer Geräte mit unterstützten Plugins steuern. Sobald sie eingerichtet sind, werden sie hier angezeigt!</string>
+    <string name="power_menu___title_neutral">Stromgeräte</string>
+    <string name="power_menu___title_select_device">Welches Gerät ist der Drucker?</string>
+    <string name="power_menu___bottom_text"><![CDATA[<small>Stromgeräte werden von einem <a href="https://app.octoapp.eu/help/supported_plugin">unterstützten Plugin</a></small> bereitgestellt]]></string>
+    <string name="power_menu___turn_x_off">%s ausschalten</string>
+    <string name="power_menu___turn_off">Ausschalten</string>
+    <string name="power_menu___turn_x_on">%s einschalten</string>
+    <string name="power_menu___turn_on">Einschalten</string>
+    <string name="power_menu___cycle_x">%s neustarten</string>
+    <string name="power_menu___cycle">Neustarten</string>
+    <string name="power_menu___device_provided_by_x"><![CDATA[<small>Dieses Gerät wird von %s bereitgestellt</small> ]]></string>
+    <string name="power_menu___device_is_on">Gerät ist eingeschaltet</string>
+    <string name="power_menu___device_is_off">Gerät ist ausgeschaltet</string>
 </resources>

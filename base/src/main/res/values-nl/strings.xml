@@ -367,4 +367,28 @@
     <string name="print_notification___disconnected_message">Laatste %s, open app om opnieuw te verbinden</string>
     <string name="connect_printer___printer_connected_detail_1">Klaar voor awesomeness…</string>
     <string name="connect_printer___printer_connected_detail_2">Dit duurt langer als gewoonlijk. Ofwel is uw netwerk zwak, ofwel werkt de websocket niet correct. Als u hier vastloopt, gebruik dan de help sectie in het hoofdmenu.</string>
+    <string name="material_menu___title_select_material">Kies materiaal</string>
+    <string name="material_menu___title_neutral">Materialen</string>
+    <string name="material_menu___subtitle_select_material">Het geselecteerde materiaal wordt geactiveerd voor de afdruk.</string>
+    <string name="material_menu___subtitle_neutral">U kunt deze materialen bewerken in de webinterface.</string>
+    <string name="material_menu___empty_state">OctoApp integreert met de FilamentManager en de SpoolManager plugins, zodat u uw materialen kunt bijhouden. Eenmaal ingesteld, vindt u uw spoelen hier.</string>
+    <string name="material_menu___bottom_text"><![CDATA[<small>„A“  betekent geactiveerd. Materialen worden aangeleverd door <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> of <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> en kunnen worden bewerkt in de webinterface.</small>]]></string>
+    <string name="material_menu___print_without_selection">Afdrukken zonder selectie</string>
+    <string name="material_menu___print_with_material">Activeer „%s“</string>
+    <string name="power_menu___empty_state_action">Leer meer</string>
+    <string name="material_menu___empty_state_action">Leer meer</string>
+    <string name="power_menu___checkbox_label">Gebruik dit apparaat altijd in de toekomst</string>
+    <string name="power_menu___empty_state_subtitle">OctoApp kan de stroomtoevoer van uw printer en andere apparaten met ondersteunde plugins besturen. Zodra ze zijn ingesteld, worden ze hier weergegeven!</string>
+    <string name="power_menu___title_neutral">Voedingsapparaten</string>
+    <string name="power_menu___title_select_device">Welk apparaat is de printer?</string>
+    <string name="power_menu___bottom_text"><![CDATA[<small>Voedingsapparaten worden geleverd door een <a href="https://app.octoapp.eu/help/supported_plugin">ondersteunde plugin</a></small>]]>.</string>
+    <string name="power_menu___turn_x_off">Zet %s uit</string>
+    <string name="power_menu___turn_off">Zet uit</string>
+    <string name="power_menu___turn_x_on">Zet %s aan</string>
+    <string name="power_menu___turn_on">Zet aan</string>
+    <string name="power_menu___cycle_x">%s herstarten</string>
+    <string name="power_menu___cycle">Herstarten</string>
+    <string name="power_menu___device_provided_by_x"><![CDATA[<small>Dit apparaat wordt geleverd door %s</small>]]></string>
+    <string name="power_menu___device_is_on">Apparaat is aan</string>
+    <string name="power_menu___device_is_off">Apparaat is uit</string>
 </resources>

@@ -368,4 +368,28 @@
     <string name="print_notification___disconnected_message">Derniers %s, ouvrir l\'application pour se reconnecter</string>
     <string name="connect_printer___printer_connected_detail_1">Se préparer à l\'awesomeness…</string>
     <string name="connect_printer___printer_connected_detail_2">Cela prend plus de temps que d\'habitude. Soit votre réseau est faible, soit le socketsocket ne fonctionne pas correctement. Si vous êtes bloqué ici, utilisez la section d\'aide dans le menu principal.</string>
+    <string name="material_menu___title_select_material">Sélectionner le matériel</string>
+    <string name="material_menu___title_neutral">Matériel</string>
+    <string name="material_menu___subtitle_select_material">Le matériel sélectionné sera activé pour l\'impression.</string>
+    <string name="material_menu___subtitle_neutral">Vous pouvez éditer ces documents dans l\'interface web.</string>
+    <string name="material_menu___empty_state">OctoApp s\'intègre avec les plugins FilamentManager et SpoolManager pour vous permettre de suivre vos matériaux. Une fois configuré, vous trouverez vos bobines ici.</string>
+    <string name="material_menu___bottom_text">< ![CDATA[<petit> „A“ signifie activé. Le matériel est fourni par <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> ou <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> et peut être édité dans l'interface web.</small>]]></string>
+    <string name="material_menu___print_without_selection">Imprimer sans sélection</string>
+    <string name="material_menu___print_with_material">Activez les „%s“</string>
+    <string name="material_menu___empty_state_action">En savoir plus</string>
+    <string name="power_menu___empty_state_action">En savoir plus</string>
+    <string name="power_menu___checkbox_label">Utilisez toujours cet appareil à l\'avenir</string>
+    <string name="power_menu___empty_state_subtitle">OctoApp peut contrôler l\'alimentation électrique de votre imprimante et d\'autres appareils avec les plugins supportés. Une fois configurés, ils apparaîtront ici !</string>
+    <string name="power_menu___title_neutral">Dispositifs de puissance</string>
+    <string name="power_menu___title_select_device">Quel appareil est l\'imprimante ?</string>
+    <string name="power_menu___bottom_text">< ![CDATA[<small>Power devices are provided by a <a href="https://app.octoapp.eu/help/supported_plugin">supported plugin</a></small>]]></string>
+    <string name="power_menu___turn_x_off">Éteignez les %s</string>
+    <string name="power_menu___turn_off">Éteindre</string>
+    <string name="power_menu___turn_x_on">Turn %s on</string>
+    <string name="power_menu___turn_on">Allumer</string>
+    <string name="power_menu___cycle_x">Redémarrage %s</string>
+    <string name="power_menu___cycle">Redémarrer</string>
+    <string name="power_menu___device_provided_by_x">< ![CDATA[<small>Ce dispositif est fourni par %s</small>]]></string>
+    <string name="power_menu___device_is_on">L\'appareil est allumé</string>
+    <string name="power_menu___device_is_off">L\'appareil est éteint</string>
 </resources>
