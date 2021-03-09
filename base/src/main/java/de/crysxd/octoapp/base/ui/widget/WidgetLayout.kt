@@ -3,13 +3,15 @@ package de.crysxd.octoapp.base.ui.widget
 import android.content.Context
 import android.util.AttributeSet
 import android.view.ViewGroup
-import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.core.view.isVisible
+import android.widget.FrameLayout
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlin.reflect.KClass
 
@@ -17,7 +19,7 @@ class WidgetLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleRes: Int = 0
-) : LinearLayoutCompat(
+) : RecyclerView(
     context,
     attrs,
     defStyleRes
@@ -28,7 +30,8 @@ class WidgetLayout @JvmOverloads constructor(
     private lateinit var currentLifecycleOwner: LifecycleOwner
 
     init {
-        orientation = VERTICAL
+        val spanCount = resources.getInteger(R.integer.widget_list_span_count)
+        layoutManager = GridLayoutManager(context, spanCount)
     }
 
     fun connectToLifecycle(lifecycleOwner: LifecycleOwner) {
@@ -43,18 +46,16 @@ class WidgetLayout @JvmOverloads constructor(
         widgetRecycler = recycler
 
         returnAllWidgets()
-        val widgets = widgetClasses.map { recycler.rentWidget(parent, it) }
-        shownWidgets.addAll(widgets)
-
-        shownWidgets.forEach {
+        val widgets = widgetClasses.map { recycler.rentWidget(parent, it) }.filter {
+            it.isVisible()
+        }.onEach {
             it.attach(parent)
-            addView(it.view)
-            it.view.isVisible = it.isVisible()
-            it.view.updateLayoutParams {
-                width = ViewGroup.LayoutParams.MATCH_PARENT
-                height = ViewGroup.LayoutParams.WRAP_CONTENT
-            }
         }
+
+        shownWidgets.addAll(widgets)
+        onResume()
+
+        adapter = Adapter(widgets)
     }
 
     private fun returnAllWidgets() {
@@ -64,6 +65,7 @@ class WidgetLayout @JvmOverloads constructor(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun onDestroy() {
+        onPause()
         returnAllWidgets()
     }
 
@@ -75,5 +77,32 @@ class WidgetLayout @JvmOverloads constructor(
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun onResume() {
         shownWidgets.forEach { it.onResume(currentLifecycleOwner) }
+    }
+
+    private class Adapter(widgets: List<RecyclableOctoWidget<*, *>>) : RecyclerView.Adapter<ViewHolder>() {
+        private val widgets = widgets.toMutableList()
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(parent.context)
+
+        override fun getItemCount() = widgets.size
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val widget = widgets[position]
+            holder.container.removeAllViews()
+            (widget.view.parent as? ViewGroup)?.removeView(widget.view)
+            holder.container.addView(widgets[position].view)
+            widget.view.updateLayoutParams {
+                width = ViewGroup.LayoutParams.MATCH_PARENT
+                height = ViewGroup.LayoutParams.WRAP_CONTENT
+            }
+        }
+    }
+
+    private class ViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(context)) {
+        val container = itemView as FrameLayout
+
+        init {
+            container.layoutParams = GridLayoutManager.LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        }
     }
 }
