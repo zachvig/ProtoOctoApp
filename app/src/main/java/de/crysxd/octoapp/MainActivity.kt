@@ -57,6 +57,7 @@ import de.crysxd.octoapp.widgets.updateAllWidgets
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filter
 import timber.log.Timber
 import de.crysxd.octoapp.octoprint.models.socket.Message as SocketMessage
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
@@ -109,8 +110,13 @@ class MainActivity : OctoActivity() {
         onNewIntent(intent)
 
         lastNavigation = savedInstanceState?.getInt(KEY_LAST_NAVIGATION, lastNavigation) ?: lastNavigation
+        var lastWebUrl: String? = "initial"
         SignInInjector.get().octoprintRepository().instanceInformationFlow()
-            .distinctUntilChangedBy { it?.webUrl }
+            .filter {
+                val pass = lastWebUrl != it?.webUrl
+                lastWebUrl = it?.webUrl
+                pass
+            }
             .asLiveData()
             .observe(this, {
                 Timber.i("Instance information received")

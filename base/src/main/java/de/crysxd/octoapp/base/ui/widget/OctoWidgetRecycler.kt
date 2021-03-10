@@ -18,6 +18,7 @@ class OctoWidgetRecycler {
             val delay = (0..500L).random()
             delay(delay)
             val widget = factory()
+            widget.view.tag = -1
             Timber.i("Inflated $widget after a delay of $delay")
             registerWidget(widget)
         }
@@ -28,23 +29,37 @@ class OctoWidgetRecycler {
         Timber.i("Registered $widget")
     }
 
-    fun <T : RecyclableOctoWidget<*, *>> rentWidget(host: WidgetHostFragment, widgetClass: KClass<T>): T {
+    fun <T : RecyclableOctoWidget<*, *>> rentWidget(rentalTag: Int, host: WidgetHostFragment, widgetClass: KClass<T>): T {
         @Suppress("UNCHECKED_CAST")
-        val widget = (widgetPool[widgetClass]?.firstOrNull {
-            it.view.parent == null
-        } ?: let {
+        val widget = findIdleWidget(widgetClass) ?: let {
             val newWidget = widgetClass.java.getConstructor(Context::class.java).newInstance(host.requireOctoActivity())
             Timber.i("Ad-hoc inflated $newWidget")
             registerWidget(newWidget)
             newWidget
-        }) as T
+        }
 
-        Timber.i("Renting out $widget")
+        widget.view.tag = rentalTag
+        Timber.i("Renting out $widget to $rentalTag")
         return widget
     }
 
-    fun returnWidget(widget: RecyclableOctoWidget<*, *>) {
-        Timber.i("Returning $widget")
-        (widget.view.parent as? ViewGroup)?.removeView(widget.view)
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : RecyclableOctoWidget<*, *>> findIdleWidget(widgetClass: KClass<T>): T? = widgetPool[widgetClass]?.firstOrNull {
+        it.view.tag == -1
+    } as? T?
+
+    fun returnWidget(rentalTag: Int, widget: RecyclableOctoWidget<*, *>) {
+        if (widget.view.tag == rentalTag) {
+            Timber.i("Returning $widget from $rentalTag")
+            widget.view.tag = -1
+            (widget.view.parent as? ViewGroup)?.removeView(widget.view)
+
+            if (findIdleWidget(widget::class) != null) {
+                widgetPool[widget::class]?.remove(widget)
+                Timber.i("Already one widget of type ${widget::class} in pool, destroying $widget")
+            }
+        } else {
+            Timber.w("Couldn't accept view back, rented out from ${widget.view.tag} but returned from $rentalTag")
+        }
     }
 }

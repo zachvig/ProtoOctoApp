@@ -13,6 +13,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.common.OctoRecyclerView
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -30,11 +31,17 @@ class WidgetLayout @JvmOverloads constructor(
     defStyleRes
 ), LifecycleObserver {
 
+    companion object {
+        var instanceCount = 0
+    }
+
+    private val instanceId = instanceCount++
+    private val tag = "WidgetLayout/$instanceId"
     private val shownWidgets = mutableListOf<RecyclableOctoWidget<*, *>>()
     private var widgetRecycler: OctoWidgetRecycler? = null
-    private lateinit var currentLifecycleOwner: LifecycleOwner
+    private var currentLifecycleOwner: LifecycleOwner? = null
     private val widgetAdapter = Adapter()
-    private val widgetLayoutManager: GridLayoutManager
+    private val widgetLayoutManager: LayoutManager
     var onWidgetOrderChanged: (List<KClass<out RecyclableOctoWidget<*, *>>>) -> Unit = {}
 
     init {
@@ -45,7 +52,7 @@ class WidgetLayout @JvmOverloads constructor(
         } else {
             ItemTouchHelper.UP or ItemTouchHelper.DOWN
         }
-        widgetLayoutManager = GridLayoutManager(context, spanCount)
+        widgetLayoutManager = StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
 
         adapter = widgetAdapter
         layoutManager = widgetLayoutManager
@@ -53,48 +60,71 @@ class WidgetLayout @JvmOverloads constructor(
     }
 
     fun connectToLifecycle(lifecycleOwner: LifecycleOwner) {
+        currentLifecycleOwner?.lifecycle?.removeObserver(this)
+        Timber.tag(tag).i("Binding to lifecycle: $lifecycleOwner")
         lifecycleOwner.lifecycle.addObserver(this)
         currentLifecycleOwner = lifecycleOwner
+
     }
 
     fun showWidgets(parent: WidgetHostFragment, widgetClasses: List<KClass<out RecyclableOctoWidget<*, *>>>) {
+        Timber.tag(tag).i("Installing widgets: $widgetClasses")
         parent.requestTransition()
 
         val recycler = parent.requireOctoActivity().octoWidgetRecycler
         widgetRecycler = recycler
 
         returnAllWidgets()
-        val widgets = widgetClasses.map { recycler.rentWidget(parent, it) }.filter {
+        val widgets = widgetClasses.map { recycler.rentWidget(instanceId, parent, it) }.filter {
             it.isVisible()
         }.onEach {
             it.attach(parent)
         }
 
         shownWidgets.addAll(widgets)
-        onResume()
+        resumeWidgets()
 
         widgetAdapter.notifyDataSetChanged()
     }
 
     private fun returnAllWidgets() {
-        shownWidgets.forEach { widgetRecycler?.returnWidget(it) }
+        shownWidgets.forEach { widgetRecycler?.returnWidget(instanceId, it) }
         shownWidgets.clear()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun onDestroy() {
-        onPause()
-        returnAllWidgets()
+        Timber.tag(tag).i("Parent destroyed")
+        disconnectFromLifecycle()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     private fun onPause() {
-        shownWidgets.forEach { it.onPause() }
+        Timber.tag(tag).i("Parent paused")
+        pauseWidgets()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun onResume() {
-        shownWidgets.forEach { it.onResume(currentLifecycleOwner) }
+        Timber.tag(tag).i("Parent resumed")
+        resumeWidgets()
+    }
+
+    private fun pauseWidgets() {
+        shownWidgets.forEach { it.onPause() }
+    }
+
+    private fun resumeWidgets() {
+        currentLifecycleOwner?.let { lc ->
+            shownWidgets.forEach { it.onResume(lc) }
+        }
+    }
+
+    fun disconnectFromLifecycle() {
+        Timber.tag(tag).i("Disconnecting from lifecycle")
+        currentLifecycleOwner?.lifecycle?.removeObserver(this)
+        pauseWidgets()
+        returnAllWidgets()
     }
 
     private inner class Adapter : RecyclerView.Adapter<ViewHolder>() {
