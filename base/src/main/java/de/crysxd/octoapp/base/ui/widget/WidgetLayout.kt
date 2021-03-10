@@ -18,7 +18,6 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.common.OctoRecyclerView
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import timber.log.Timber
-import java.util.*
 import kotlin.reflect.KClass
 
 class WidgetLayout @JvmOverloads constructor(
@@ -167,7 +166,8 @@ class WidgetLayout @JvmOverloads constructor(
             Timber.i("Changed widget order")
             val from = viewHolder.adapterPosition
             val to = target.adapterPosition
-            Collections.swap(shownWidgets, from, to)
+            val widget = shownWidgets.removeAt(from)
+            shownWidgets.add(to, widget)
             widgetAdapter.notifyItemMoved(from, to)
             onWidgetOrderChanged(shownWidgets.map { it::class })
             return true
