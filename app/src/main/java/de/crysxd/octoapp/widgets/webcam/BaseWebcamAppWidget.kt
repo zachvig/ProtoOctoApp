@@ -31,9 +31,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         // There may be multiple widgets active, so update all of them
-        for (appWidgetId in appWidgetIds) {
-            updateAppWidget(appWidgetId)
-        }
+        appWidgetIds.filter { ensureWidgetExists(it) }.forEach { updateAppWidget(it) }
     }
 
     override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, newOptions: Bundle) {
@@ -68,12 +66,16 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
 
             val context = Injector.get().localizedContext()
             val manager = AppWidgetManager.getInstance(context)
-            manager.getAppWidgetIds(ComponentName(context, NoControlsWebcamAppWidget::class.java)).forEach {
-                updateAppWidget(it)
-            }
-            manager.getAppWidgetIds(ComponentName(context, ControlsWebcamAppWidget::class.java)).forEach {
-                updateAppWidget(it)
-            }
+            manager.getAppWidgetIds(ComponentName(context, NoControlsWebcamAppWidget::class.java))
+                .filter { ensureWidgetExists(it) }
+                .forEach {
+                    updateAppWidget(it)
+                }
+            manager.getAppWidgetIds(ComponentName(context, ControlsWebcamAppWidget::class.java))
+                .filter { ensureWidgetExists(it) }
+                .forEach {
+                    updateAppWidget(it)
+                }
         }
 
         private fun showUpdating(context: Context, appWidgetId: Int) {

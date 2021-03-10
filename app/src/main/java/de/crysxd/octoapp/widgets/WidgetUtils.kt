@@ -29,6 +29,8 @@ internal fun updateAppWidget(widgetId: Int) {
     }
 }
 
+internal fun ensureWidgetExists(widgetId: Int) = AppWidgetManager.getInstance(Injector.get().context()).getAppWidgetInfo(widgetId) != null
+
 internal fun updateAllWidgets() {
     BaseWebcamAppWidget.notifyWidgetDataChanged()
     ProgressAppWidget.notifyWidgetDataChanged()
@@ -73,4 +75,6 @@ internal fun getWidgetCount(context: Context) = AppWidgetManager.getInstance(con
     it.packageName == context.packageName
 }.map {
     AppWidgetManager.getInstance(context).getAppWidgetIds(it)
+}.map {
+    it.filter { ensureWidgetExists(it) }
 }.sumBy { it.size }

@@ -102,25 +102,31 @@ class ProgressAppWidget : AppWidgetProvider() {
 
         private fun notifyWidgetDataChanged(data: CreateProgressAppWidgetDataUseCase.Result) {
             val context = Injector.get().localizedContext()
-            getAppWidgetIdsForWebUrl(data.webUrl).forEach {
-                updateAppWidget(context, it, data, data.webUrl)
-            }
+            getAppWidgetIdsForWebUrl(data.webUrl)
+                .filter { ensureWidgetExists(it) }
+                .forEach {
+                    updateAppWidget(context, it, data, data.webUrl)
+                }
         }
 
         private fun notifyWidgetOffline(webUrl: String) {
             Timber.i("Widgets for instance $webUrl are offline")
             val context = Injector.get().localizedContext()
-            getAppWidgetIdsForWebUrl(webUrl).forEach {
-                updateAppWidget(context, it, data = null, webUrl = webUrl)
-            }
+            getAppWidgetIdsForWebUrl(webUrl)
+                .filter { ensureWidgetExists(it) }
+                .forEach {
+                    updateAppWidget(context, it, data = null, webUrl = webUrl)
+                }
         }
 
         private fun notifyWidgetLoading(webUrl: String) {
             Timber.i("Widgets for instance $webUrl are loading")
             val context = Injector.get().localizedContext()
-            getAppWidgetIdsForWebUrl(webUrl).forEach {
-                updateAppWidget(context, it, data = null, webUrl = webUrl, loading = true)
-            }
+            getAppWidgetIdsForWebUrl(webUrl)
+                .filter { ensureWidgetExists(it) }
+                .forEach {
+                    updateAppWidget(context, it, data = null, webUrl = webUrl, loading = true)
+                }
         }
 
         private fun getAppWidgetIdsForWebUrl(webUrl: String): List<Int> {
