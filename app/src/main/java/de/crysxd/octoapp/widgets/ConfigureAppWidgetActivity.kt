@@ -11,6 +11,8 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.annotation.RequiresApi
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_WEB_URL
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
