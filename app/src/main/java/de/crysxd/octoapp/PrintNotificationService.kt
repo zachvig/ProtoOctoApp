@@ -41,7 +41,7 @@ class PrintNotificationService : Service() {
         fun start(context: Context) {
             if (isNotificationEnabled) {
                 val intent = Intent(context, PrintNotificationService::class.java)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && context !is Activity) {
                     context.startForegroundService(intent)
                 } else {
                     context.startService(intent)
