@@ -58,8 +58,8 @@ class GcodePreviewWidget(context: Context) : RecyclableOctoWidget<GcodePreviewWi
         super.onResume(lifecycleOwner)
         // We share the VM with the fullscreen. User might have used the sliders, return to live progress whenever we are started
         baseViewModel.useLiveProgress()
-        baseViewModel.viewState.observe(lifecycleOwner, ::updateViewState)
         baseViewModel.activeFile.observe(lifecycleOwner) {
+            baseViewModel.viewState.observe(lifecycleOwner, ::updateViewState)
             Timber.i("New file: $it")
             file = it
             baseViewModel.downloadGcode(it, false)
