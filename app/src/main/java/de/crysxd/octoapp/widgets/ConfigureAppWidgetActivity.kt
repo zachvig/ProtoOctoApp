@@ -89,6 +89,9 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
         if (canceled && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
             removeWidget(appWidgetId)
         }
+
+        // Can't be in background
+        finish()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
