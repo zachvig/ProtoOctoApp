@@ -11,8 +11,6 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.annotation.RequiresApi
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_WEB_URL
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
@@ -26,7 +24,7 @@ import java.util.*
 
 
 class ConfigureAppWidgetActivity : LocalizedActivity() {
-    private var canceled = false
+    private var canceled = true
     private val appWidgetId
         get() = intent.extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
             ?: AppWidgetManager.INVALID_APPWIDGET_ID
@@ -66,12 +64,12 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
 
     private fun finishWithSuccess(intent: Intent? = null) {
         setResult(RESULT_OK, intent)
+        canceled = false
         finish()
     }
 
     private fun finishWithCancel(intent: Intent? = null) {
         setResult(RESULT_CANCELED, intent)
-        canceled = true
         finish()
     }
 
@@ -148,11 +146,11 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
         val titles = instances.map { it.label }.map { getString(R.string.app_widget___link_widget__option_x, it) }
         val webUrls = instances.map { it.webUrl }
 
-        if (webUrls.size <= 1) {
-            Timber.i("Only ${webUrls.size} options, auto picking sync option")
-            finishWithSuccess(result(ACTIVE_WEB_URL_MARKER))
-            return
-        }
+//        if (webUrls.size <= 1) {
+//            Timber.i("Only ${webUrls.size} options, auto picking sync option")
+//            finishWithSuccess(result(ACTIVE_WEB_URL_MARKER))
+//            return
+//        }
 
         val allTitles = listOf(listOf(getString(R.string.app_widget___link_widget__option_synced)), titles).flatten()
         val allWebUrls = listOf(listOf(ACTIVE_WEB_URL_MARKER), webUrls).flatten()
