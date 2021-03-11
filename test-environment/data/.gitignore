@@ -1,3 +1,11 @@
-.cache/
-/.octoprint/data/appkeys/keys.yaml
-/.octoprint/uploads/*
+/.cache/
+/data/
+/generated/
+/logs/
+/scripts/
+/watched/
+/uploads/
+/translations/
+/virtualSd/
+/plugins/
+/timelapse/
