@@ -1,6 +1,6 @@
 test:
     active: true
-    apikey: null
+    apikey: BDBE6A23C87641CF99DADB746F457239
     groups:
     - admins
     - users
@@ -9,4 +9,6 @@ test:
     roles:
     - user
     - admin
-    settings: {}
+    settings:
+        interface:
+            language: _default
