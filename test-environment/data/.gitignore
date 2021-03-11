@@ -1,0 +1,12 @@
+/.cache/
+/data/
+/generated/
+/logs/
+/scripts/
+/watched/
+/uploads/
+/translations/
+/virtualSd/
+/plugins/
+/timelapse/
+config-backup.yaml
