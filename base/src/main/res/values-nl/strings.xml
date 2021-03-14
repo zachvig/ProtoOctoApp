@@ -391,4 +391,5 @@
     <string name="power_menu___device_provided_by_x"><![CDATA[<small>Dit apparaat wordt geleverd door %s</small>]]></string>
     <string name="power_menu___device_is_on">Apparaat is aan</string>
     <string name="power_menu___device_is_off">Apparaat is uit</string>
+    <string name="main_menu___item_customize_widgets">Bedieningselementen aanpassen</string>
 </resources>

@@ -391,4 +391,5 @@
     <string name="power_menu___device_provided_by_x"><![CDATA[<small>Dieses Gerät wird von %s bereitgestellt</small> ]]></string>
     <string name="power_menu___device_is_on">Gerät ist eingeschaltet</string>
     <string name="power_menu___device_is_off">Gerät ist ausgeschaltet</string>
+    <string name="main_menu___item_customize_widgets">Steuerelemente anpassen</string>
 </resources>
