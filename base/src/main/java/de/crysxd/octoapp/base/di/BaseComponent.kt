@@ -57,7 +57,7 @@ interface BaseComponent {
     fun gcodeFileRepository(): GcodeFileRepository
     fun pinnedMenuItemsRepository(): PinnedMenuItemRepository
     fun gcodeHistoryRepository(): GcodeHistoryRepository
-    fun widgetOrderRepository(): WidgetOrderRepository
+    fun widgetPreferencesRepository(): WidgetPreferencesRepository
 
     // UseCaseModule
     fun setToolTargetTemperatureUseCase(): SetToolTargetTemperatureUseCase

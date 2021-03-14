@@ -10,8 +10,8 @@ import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.menu.temperature.TemperatureMenu
+import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
-import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 
 class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<TemperatureWidgetBinding, BaseViewModel>(context) {
@@ -20,7 +20,7 @@ class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<Temperat
     private lateinit var toolViewModel: ControlToolTemperatureWidgetViewModel
     private lateinit var bedViewModel: ControlBedTemperatureWidgetViewModel
 
-    override fun createNewViewModel(parent: WidgetHostFragment): BaseViewModel? {
+    override fun createNewViewModel(parent: BaseWidgetHostFragment): BaseViewModel? {
         toolViewModel = parent.injectViewModel<ControlToolTemperatureWidgetViewModel>().value
         bedViewModel = parent.injectViewModel<ControlBedTemperatureWidgetViewModel>().value
         bedViewModel.temperature.observe(parent, Observer(this::onBedTemperatureChanged))

@@ -14,6 +14,7 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModelFactory
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
+import de.crysxd.octoapp.base.ui.widget.EditWidgetsViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
 import de.crysxd.octoapp.base.ui.common.terminal.TerminalViewModel
@@ -132,6 +133,13 @@ open class ViewModelModule {
     @ViewModelKey(PurchaseViewModel::class)
     open fun providePurchaseViewModel(
     ): ViewModel = PurchaseViewModel(
+    )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(EditWidgetsViewModel::class)
+    open fun provideEditWidgetsViewModel(
+    ): ViewModel = EditWidgetsViewModel(
     )
 
     @Provides

@@ -15,8 +15,8 @@ import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
 import de.crysxd.octoapp.base.ui.ColorTheme
+import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
-import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidgetViewModel
 import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
@@ -33,7 +33,7 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
     private var lastProgress: Float? = null
     override val binding = ProgressWidgetBinding.inflate(LayoutInflater.from(context))
 
-    override fun createNewViewModel(parent: WidgetHostFragment) =
+    override fun createNewViewModel(parent: BaseWidgetHostFragment) =
         parent.injectViewModel<ProgressWidgetViewModel>().value
 
     override fun getTitle(context: Context) = context.getString(R.string.progress)

@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.ui.widget
 
 import android.content.Context
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -29,7 +30,7 @@ class OctoWidgetRecycler {
         Timber.i("Registered $widget")
     }
 
-    fun <T : RecyclableOctoWidget<*, *>> rentWidget(rentalTag: Int, host: WidgetHostFragment, widgetClass: KClass<T>): T {
+    fun <T : RecyclableOctoWidget<*, *>> rentWidget(rentalTag: Int, host: Fragment, widgetClass: KClass<T>): T {
         @Suppress("UNCHECKED_CAST")
         val widget = findIdleWidget(widgetClass) ?: let {
             val newWidget = widgetClass.java.getConstructor(Context::class.java).newInstance(host.requireOctoActivity())
@@ -50,13 +51,14 @@ class OctoWidgetRecycler {
 
     fun returnWidget(rentalTag: Int, widget: RecyclableOctoWidget<*, *>) {
         if (widget.view.tag == rentalTag) {
-            Timber.i("Returning $widget from $rentalTag")
-            widget.view.tag = -1
-            (widget.view.parent as? ViewGroup)?.removeView(widget.view)
 
             if (findIdleWidget(widget::class) != null) {
                 widgetPool[widget::class]?.remove(widget)
                 Timber.i("Already one widget of type ${widget::class} in pool, destroying $widget")
+            } else {
+                Timber.i("Returning $widget from $rentalTag")
+                widget.view.tag = -1
+                (widget.view.parent as? ViewGroup)?.removeView(widget.view)
             }
         } else {
             Timber.w("Couldn't accept view back, rented out from ${widget.view.tag} but returned from $rentalTag")

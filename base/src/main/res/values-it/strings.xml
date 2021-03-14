@@ -392,4 +392,5 @@
     <string name="power_menu___device_provided_by_x"><![CDATA[<small>Questo dispositivo è fornito da %s</small>]]></string>
     <string name="power_menu___device_is_on">Il dispositivo è acceso</string>
     <string name="power_menu___device_is_off">Il dispositivo è spento</string>
+    <string name="main_menu___item_customize_widgets">Personalizzare i controlli</string>
 </resources>

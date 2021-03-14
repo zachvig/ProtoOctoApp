@@ -20,6 +20,7 @@ const val MENU_ITEM_OPEN_OCTOPRINT = "settings___open_octoprint"
 const val MENU_EXECUTE_SYSTEM_COMMAND = "octoprint___execute_system_command"
 const val MENU_ITEM_NIGHT_THEME = "settings___night_theme"
 const val MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE = "settings___change_octoprint_instnace"
+const val MENU_ITEM_CUSTOMIZE_WIDGETS = "settings___customize_widgets"
 const val MENU_ITEM_PRINT_NOTIFICATION = "settings___print_notification"
 const val MENU_ITEM_SCREEN_ON_DURING_PRINT = "settings___keep_screen_on_during__print"
 const val MENU_ITEM_AUTO_CONNECT_PRINTER = "settings___auto_connect_printer"
@@ -67,6 +68,7 @@ class MenuItemLibrary {
         MENU_ITEM_AUTO_CONNECT_PRINTER to AutoConnectPrinterMenuItem::class,
         MENU_ITEM_MATERIAL_MENU to ShowMaterialPluginMenuItem::class,
         MENU_ITEM_HELP to HelpMenuItem::class,
+        MENU_ITEM_CUSTOMIZE_WIDGETS to CustomizeWidgetsMenuItem::class,
     )
 
     operator fun get(itemId: String): MenuItem? = when {

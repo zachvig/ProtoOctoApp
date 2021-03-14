@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
@@ -11,6 +12,7 @@ import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
 import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchOctoPrintMenu
+import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
@@ -25,6 +27,7 @@ class SettingsMenu : Menu {
         KeepScreenOnDuringPrintMenuItem(),
         AutoConnectPrinterMenuItem(),
         ChangeOctoPrintInstanceMenuItem(),
+        CustomizeWidgetsMenuItem(),
     )
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___menu_settings_title)
@@ -152,10 +155,26 @@ class AutoConnectPrinterMenuItem : ToggleMenuItem() {
     }
 }
 
+class CustomizeWidgetsMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_CUSTOMIZE_WIDGETS
+    override var groupId = ""
+    override val order = 150
+    override val style = MenuItemStyle.Settings
+    override val enforceSingleLine = false
+    override val icon = R.drawable.ic_round_person_pin_24
+
+    override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint || destinationId == R.id.workspacePrint
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_customize_widgets)
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        (host?.parentFragment as? WidgetHostFragment)?.startEdit()
+        host?.dismissAllowingStateLoss()
+    }
+}
+
 class ChangeOctoPrintInstanceMenuItem : SubMenuItem() {
     override val itemId = MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE
     override var groupId = ""
-    override val order = 150
+    override val order = 151
     override val style = MenuItemStyle.Settings
     override val enforceSingleLine = false
     override val icon = R.drawable.ic_round_swap_horiz_24

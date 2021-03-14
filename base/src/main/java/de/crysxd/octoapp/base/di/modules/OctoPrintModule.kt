@@ -10,7 +10,7 @@ import de.crysxd.octoapp.base.SslKeyStoreHandler
 import de.crysxd.octoapp.base.datasource.DataSource
 import de.crysxd.octoapp.base.datasource.LocalGcodeFileDataSource
 import de.crysxd.octoapp.base.datasource.RemoteGcodeFileDataSource
-import de.crysxd.octoapp.base.datasource.WidgetOrderDataSource
+import de.crysxd.octoapp.base.datasource.WidgetPreferencesDataSource
 import de.crysxd.octoapp.base.di.BaseScope
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.logging.TimberHandler
@@ -79,6 +79,6 @@ open class OctoPrintModule {
     @BaseScope
     @Provides
     open fun provideWidgetOrderRepository(
-        dataSource: WidgetOrderDataSource
-    ) = WidgetOrderRepository(dataSource)
+        dataSource: WidgetPreferencesDataSource
+    ) = WidgetPreferencesRepository(dataSource)
 }

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <de.crysxd.octoapp.base.ui.common.BlockTouchFrameLayout
+        android:id="@+id/widgetContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
+    <ImageButton
+        android:importantForAccessibility="no"
+        android:id="@+id/visibilityToggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="@dimen/margin_1"
+        android:layout_marginStart="@dimen/margin_1"
+        android:src="@drawable/ic_round_visibility_24"
+        android:tint="@color/dark_text" />
+
+    <ImageView
+        android:id="@+id/dragHandle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|end"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:importantForAccessibility="no"
+        android:padding="@dimen/margin_1"
+        android:layout_marginEnd="@dimen/margin_1"
+        android:src="@drawable/ic_round_drag_handle_24"
+        app:tint="@color/dark_text" />
+
+</FrameLayout>
