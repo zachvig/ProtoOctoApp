@@ -31,7 +31,7 @@ class OctoWidgetRecycler {
 
     fun <T : RecyclableOctoWidget<*, *>> rentWidget(rentalTag: Int, host: WidgetHostFragment, widgetClass: KClass<T>): T {
         @Suppress("UNCHECKED_CAST")
-        val widget = findIdleWidget(widgetClass) ?: let {
+        val widget = null ?: let {
             val newWidget = widgetClass.java.getConstructor(Context::class.java).newInstance(host.requireOctoActivity())
             Timber.i("Ad-hoc inflated $newWidget")
             registerWidget(newWidget)

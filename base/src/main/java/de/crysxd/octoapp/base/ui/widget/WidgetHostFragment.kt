@@ -10,7 +10,8 @@ import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.WidgetHostFragmentBinding
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.WidgetOrder
+import de.crysxd.octoapp.base.models.WidgetClass
+import de.crysxd.octoapp.base.models.WidgetPreferences
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -23,6 +24,7 @@ abstract class WidgetHostFragment() : BaseFragment(R.layout.widget_host_fragment
     protected val mainButton get() = binding.mainButton
     protected val moreButton get() = binding.buttonMore
     abstract val destinationId: String
+    private var lastWidgetList: List<WidgetClass> = emptyList()
     var isEditMode
         get() = binding.widgetList.isInEditMode
         set(value) {
@@ -40,10 +42,12 @@ abstract class WidgetHostFragment() : BaseFragment(R.layout.widget_host_fragment
         Timber.i("Create view")
         binding = WidgetHostFragmentBinding.bind(view)
         binding.widgetList.connectToLifecycle(viewLifecycleOwner)
-        binding.widgetList.onWidgetOrderChanged = {
-            Injector.get().widgetOrderRepository().setWidgetOrder(destinationId, WidgetOrder(destinationId, it))
+        binding.finishEditMode.setOnClickListener {
+            val prefs = WidgetPreferences(destinationId, binding.widgetList.widgets)
+            Timber.i("Updating widget preferences: $prefs")
+            Injector.get().widgetOrderRepository().setWidgetOrder(destinationId, prefs)
+            isEditMode = false
         }
-        binding.finishEditMode.setOnClickListener { isEditMode = false }
     }
 
     override fun onStart() {
@@ -62,6 +66,8 @@ abstract class WidgetHostFragment() : BaseFragment(R.layout.widget_host_fragment
         binding.finishEditMode.isVisible = true
         requireOctoActivity().octoToolbar.isVisible = false
         requireOctoActivity().octo.isVisible = false
+
+        internalInstallWidgets(lastWidgetList, false)
     }
 
     private fun layoutForNormalView() {
@@ -73,6 +79,8 @@ abstract class WidgetHostFragment() : BaseFragment(R.layout.widget_host_fragment
         binding.finishEditMode.isVisible = false
         requireOctoActivity().octoToolbar.isVisible = true
         requireOctoActivity().octo.isVisible = true
+
+        internalInstallWidgets(lastWidgetList, true)
     }
 
     @CallSuper
@@ -85,10 +93,22 @@ abstract class WidgetHostFragment() : BaseFragment(R.layout.widget_host_fragment
     }
 
     fun installWidgets(list: List<KClass<out RecyclableOctoWidget<*, *>>>) {
+        lastWidgetList = list
+        internalInstallWidgets(list, true)
+    }
+
+    private fun internalInstallWidgets(list: List<KClass<out RecyclableOctoWidget<*, *>>>, skipHidden: Boolean) {
+        val order = Injector.get().widgetOrderRepository().getWidgetOrder(destinationId)
+        val widgets = (order?.sort(list) ?: list).map {
+            it to (order?.isHidden(it) ?: false)
+        }.filter {
+            !skipHidden || !it.second
+        }.toMap()
+
         Timber.i("Installing widgets: $list")
         binding.widgetList.showWidgets(
             parent = this,
-            widgetClasses = Injector.get().widgetOrderRepository().getWidgetOrder(destinationId)?.sort(list) ?: list
+            widgetClasses = widgets
         )
     }
 }

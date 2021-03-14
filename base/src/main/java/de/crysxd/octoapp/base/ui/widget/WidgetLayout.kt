@@ -18,11 +18,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.WidgetListContainerBinding
+import de.crysxd.octoapp.base.models.WidgetClass
 import de.crysxd.octoapp.base.ui.common.OctoRecyclerView
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import timber.log.Timber
-import kotlin.reflect.KClass
 
 class WidgetLayout @JvmOverloads constructor(
     context: Context,
@@ -40,14 +40,14 @@ class WidgetLayout @JvmOverloads constructor(
 
     private val instanceId = instanceCount++
     private val tag = "WidgetLayout/$instanceId"
-    private val shownWidgets = mutableListOf<RecyclableOctoWidget<*, *>>()
+    private val shownWidgets = mutableListOf<Pair<RecyclableOctoWidget<*, *>, Boolean>>()
+    val widgets get() = shownWidgets.map { it.first::class to it.second }
     private var widgetRecycler: OctoWidgetRecycler? = null
     private var currentLifecycleOwner: LifecycleOwner? = null
     private val widgetAdapter = Adapter()
     private val widgetLayoutManager: LayoutManager
     private val itemTouchHelper: ItemTouchHelper
     private val itemTouchHelperCallback: ItemTouchHelperCallback
-    var onWidgetOrderChanged: (List<KClass<out RecyclableOctoWidget<*, *>>>) -> Unit = {}
     var isEditMode = false
         set(value) {
             field = value
@@ -79,7 +79,7 @@ class WidgetLayout @JvmOverloads constructor(
 
     }
 
-    fun showWidgets(parent: WidgetHostFragment, widgetClasses: List<KClass<out RecyclableOctoWidget<*, *>>>) {
+    fun showWidgets(parent: WidgetHostFragment, widgetClasses: Map<WidgetClass, Boolean>) {
         Timber.tag(tag).i("Installing widgets: $widgetClasses")
         parent.requestTransition()
 
@@ -87,10 +87,12 @@ class WidgetLayout @JvmOverloads constructor(
         widgetRecycler = recycler
 
         returnAllWidgets()
-        val widgets = widgetClasses.map { recycler.rentWidget(instanceId, parent, it) }.filter {
-            it.isVisible()
+        val widgets = widgetClasses.map {
+            recycler.rentWidget(instanceId, parent, it.key) to it.value
+        }.filter {
+            it.first.isVisible()
         }.onEach {
-            it.attach(parent)
+            it.first.attach(parent)
         }
 
         shownWidgets.addAll(widgets)
@@ -100,22 +102,25 @@ class WidgetLayout @JvmOverloads constructor(
     }
 
     private fun returnAllWidgets() {
-        shownWidgets.forEach { widgetRecycler?.returnWidget(instanceId, it) }
+        shownWidgets.forEach { widgetRecycler?.returnWidget(instanceId, it.first) }
         shownWidgets.clear()
     }
 
+    @Suppress("Unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun onDestroy() {
         Timber.tag(tag).i("Parent destroyed")
         disconnectFromLifecycle()
     }
 
+    @Suppress("Unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     private fun onPause() {
         Timber.tag(tag).i("Parent paused")
         pauseWidgets()
     }
 
+    @Suppress("Unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun onResume() {
         Timber.tag(tag).i("Parent resumed")
@@ -123,12 +128,12 @@ class WidgetLayout @JvmOverloads constructor(
     }
 
     private fun pauseWidgets() {
-        shownWidgets.forEach { it.onPause() }
+        shownWidgets.forEach { it.first.onPause() }
     }
 
     private fun resumeWidgets() {
         currentLifecycleOwner?.let { lc ->
-            shownWidgets.forEach { it.onResume(lc) }
+            shownWidgets.forEach { it.first.onResume(lc) }
         }
     }
 
@@ -147,10 +152,11 @@ class WidgetLayout @JvmOverloads constructor(
 
         @SuppressLint("ClickableViewAccessibility")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val widget = shownWidgets[position]
+            val widget = shownWidgets[position].first
+            val hidden = shownWidgets[position].second
             holder.binding.widgetContainer.removeAllViews()
             (widget.view.parent as? ViewGroup)?.removeView(widget.view)
-            holder.binding.widgetContainer.addView(shownWidgets[position].view)
+            holder.binding.widgetContainer.addView(widget.view)
             widget.view.updateLayoutParams {
                 width = ViewGroup.LayoutParams.MATCH_PARENT
                 height = ViewGroup.LayoutParams.WRAP_CONTENT
@@ -162,14 +168,21 @@ class WidgetLayout @JvmOverloads constructor(
             holder.binding.widgetContainer.isChildrenTouchEnabled = !isEditMode
             holder.binding.dragHandle.setOnTouchListener { _, e ->
                 if (e.action == MotionEvent.ACTION_DOWN) {
-                    itemTouchHelper.startDrag(holder)
+                    itemTouchHelperCallback.startDrag(holder)
                 }
                 true
             }
+            holder.binding.visibilityToggle.setOnClickListener {
+                shownWidgets[position] = widget to !hidden
+                notifyItemChanged(position)
+            }
+            holder.binding.visibilityToggle.setImageResource(if (hidden) R.drawable.ic_round_visibility_off_24 else R.drawable.ic_round_visibility_24)
             if (isEditMode) {
                 holder.binding.widgetContainer.scaleX = 0.66f
                 holder.binding.widgetContainer.scaleY = 0.66f
+                holder.binding.widgetContainer.alpha = if (hidden) 0.33f else 1f
             } else {
+                holder.binding.widgetContainer.alpha = 1f
                 holder.binding.widgetContainer.scaleX = 1f
                 holder.binding.widgetContainer.scaleY = 1f
             }
@@ -186,17 +199,24 @@ class WidgetLayout @JvmOverloads constructor(
 
         private var draggedViewHolder: RecyclerView.ViewHolder? = null
 
+        override fun isLongPressDragEnabled() = false
+
+        fun startDrag(holder: ViewHolder) {
+            draggedViewHolder = holder
+            updateStates()
+            itemTouchHelper.startDrag(holder)
+        }
+
         fun applyState(view: View, animated: Boolean) {
-            val (alpha, scale) = if (draggedViewHolder != null && draggedViewHolder?.itemView != view) {
-                0.33f to 0.95f
+            val scale = if (draggedViewHolder != null && draggedViewHolder?.itemView != view) {
+                0.95f
             } else {
-                1f to 1f
+                1f
             }
 
             if (animated) {
-                view.animate().alpha(alpha).scaleX(scale).scaleY(scale).start()
+                view.animate().scaleX(scale).scaleY(scale).start()
             } else {
-                view.alpha = alpha
                 view.scaleX = scale
                 view.scaleX = scale
             }
@@ -210,12 +230,6 @@ class WidgetLayout @JvmOverloads constructor(
             }
         }
 
-        override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-            draggedViewHolder = viewHolder
-            updateStates()
-            return super.getMovementFlags(recyclerView, viewHolder)
-        }
-
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
             Timber.i("Changed widget order")
             val from = viewHolder.adapterPosition
@@ -223,7 +237,6 @@ class WidgetLayout @JvmOverloads constructor(
             val widget = shownWidgets.removeAt(from)
             shownWidgets.add(to, widget)
             widgetAdapter.notifyItemMoved(from, to)
-            onWidgetOrderChanged(shownWidgets.map { it::class })
             return true
         }
 

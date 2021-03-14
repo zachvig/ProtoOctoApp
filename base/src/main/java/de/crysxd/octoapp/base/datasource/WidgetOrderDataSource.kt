@@ -3,7 +3,7 @@ package de.crysxd.octoapp.base.datasource
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.google.gson.Gson
-import de.crysxd.octoapp.base.models.WidgetOrder
+import de.crysxd.octoapp.base.models.WidgetPreferences
 import timber.log.Timber
 
 class WidgetOrderDataSource(
@@ -11,15 +11,15 @@ class WidgetOrderDataSource(
     private val gson: Gson
 ) {
 
-    fun store(listId: String, order: WidgetOrder) {
-        Timber.i("Storing order: $order")
+    fun storeOrder(listId: String, preferences: WidgetPreferences) {
+        Timber.i("Storing order: $preferences")
         sharedPreferences.edit {
-            putString("widget_order_$listId", gson.toJson(order))
+            putString("widget_prefs_2_$listId", gson.toJson(preferences))
         }
     }
 
-    fun load(listId: String): WidgetOrder? {
-        val string = sharedPreferences.getString("widget_order_$listId", null)
-        return gson.fromJson(string, WidgetOrder::class.java)
+    fun loadOrder(listId: String): WidgetPreferences? {
+        val string = sharedPreferences.getString("widget_prefs_2_$listId", null)
+        return gson.fromJson(string, WidgetPreferences::class.java)
     }
 }
