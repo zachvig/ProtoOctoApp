@@ -6,6 +6,16 @@
     app:startDestination="@id/workspacePrePrint">
 
     <include app:graph="@navigation/trouble_shoot_nav_graph" />
+    <include app:graph="@navigation/edit_widgets_nav_graph" />
+
+    <action
+        android:id="@+id/action_edit_widgets"
+        app:destination="@id/edit_widgets_nav_graph"
+        app:enterAnim="@anim/enterAnim"
+        app:exitAnim="@anim/exitAnim"
+        app:popEnterAnim="@anim/popEnterAnim"
+        app:popExitAnim="@anim/popExitAnim" />
+
 
     <action
         android:id="@+id/action_trouble_shoot"

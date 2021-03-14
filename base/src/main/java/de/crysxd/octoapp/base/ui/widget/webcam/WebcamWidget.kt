@@ -12,8 +12,8 @@ import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.WebcamWidgetBinding
 import de.crysxd.octoapp.base.di.injectViewModel
+import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
-import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState.Error
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState.Loading
@@ -50,7 +50,7 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
         binding.webcamView.onSwitchWebcamClicked = { baseViewModel.nextWebcam() }
     }
 
-    override fun createNewViewModel(parent: WidgetHostFragment) = parent.injectViewModel<WebcamViewModel>().value
+    override fun createNewViewModel(parent: BaseWidgetHostFragment) = parent.injectViewModel<WebcamViewModel>().value
     override fun getTitle(context: Context) = context.getString(R.string.webcam)
     override fun getAnalyticsName() = "webcam"
 

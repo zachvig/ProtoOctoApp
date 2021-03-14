@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -79,9 +80,8 @@ class WidgetLayout @JvmOverloads constructor(
 
     }
 
-    fun showWidgets(parent: WidgetHostFragment, widgetClasses: Map<WidgetClass, Boolean>) {
+    fun showWidgets(parent: BaseWidgetHostFragment, widgetClasses: Map<WidgetClass, Boolean>) {
         Timber.tag(tag).i("Installing widgets: $widgetClasses")
-        parent.requestTransition()
 
         val recycler = parent.requireOctoActivity().octoWidgetRecycler
         widgetRecycler = recycler

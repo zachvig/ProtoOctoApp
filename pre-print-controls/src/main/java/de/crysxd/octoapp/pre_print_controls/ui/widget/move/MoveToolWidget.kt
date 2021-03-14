@@ -11,8 +11,8 @@ import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.applyCanvas
 import androidx.lifecycle.LifecycleOwner
+import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
-import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.databinding.MoveToolWidgetBinding
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
@@ -34,7 +34,7 @@ class MoveToolWidget(context: Context) : RecyclableOctoWidget<MoveToolWidgetBind
         initJogResolutionSeekBar(context)
     }
 
-    override fun createNewViewModel(parent: WidgetHostFragment) = parent.injectViewModel<MoveToolWidgetViewModel>().value
+    override fun createNewViewModel(parent: BaseWidgetHostFragment) = parent.injectViewModel<MoveToolWidgetViewModel>().value
 
     override fun getTitle(context: Context) = context.getString(R.string.widget_move)
     override fun getAnalyticsName() = "move"

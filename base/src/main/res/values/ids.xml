@@ -10,5 +10,6 @@
     <item name="workspacePrint" type="id" />
     <item name="workspacePrePrint" type="id" />
     <item name="action_trouble_shoot" type="id" />
+    <item name="action_edit_widgets" type="id" />
     <item name="action_help" type="id" />
 </resources>

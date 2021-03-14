@@ -9,8 +9,8 @@ import de.crysxd.octoapp.base.databinding.SendGcodeWidgetBinding
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.ui.common.gcodeshortcut.GcodeShortcutLayoutManager
+import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
-import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 
 class SendGcodeWidget(context: Context) : RecyclableOctoWidget<SendGcodeWidgetBinding, SendGcodeWidgetViewModel>(context) {
 
@@ -27,7 +27,7 @@ class SendGcodeWidget(context: Context) : RecyclableOctoWidget<SendGcodeWidgetBi
         }
     }
 
-    override fun createNewViewModel(parent: WidgetHostFragment) = parent.injectViewModel<SendGcodeWidgetViewModel>().value
+    override fun createNewViewModel(parent: BaseWidgetHostFragment) = parent.injectViewModel<SendGcodeWidgetViewModel>().value
     override fun getTitle(context: Context) = context.getString(R.string.widget_gcode_send)
     override fun getAnalyticsName() = "gcode"
 

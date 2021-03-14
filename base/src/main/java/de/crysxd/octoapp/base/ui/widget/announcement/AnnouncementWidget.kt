@@ -9,8 +9,8 @@ import de.crysxd.octoapp.base.databinding.AnnouncementWidgetBinding
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.TutorialView
+import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
-import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import timber.log.Timber
 
 class AnnouncementWidget(context: Context) : RecyclableOctoWidget<AnnouncementWidgetBinding, BaseViewModel>(context) {
@@ -32,5 +32,5 @@ class AnnouncementWidget(context: Context) : RecyclableOctoWidget<AnnouncementWi
     override fun isVisible() = TutorialView.isTutorialVisible(Injector.get().context().getString(R.string.pref_key_version_announcement))
     override fun getTitle(context: Context): String? = null
     override fun getAnalyticsName() = "announcement"
-    override fun createNewViewModel(parent: WidgetHostFragment): BaseViewModel? = null
+    override fun createNewViewModel(parent: BaseWidgetHostFragment): BaseViewModel? = null
 }

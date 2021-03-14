@@ -17,7 +17,7 @@ import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 
 abstract class RecyclableOctoWidget<T : ViewBinding, R : BaseViewModel>(context: Context) {
 
-    protected lateinit var parent: WidgetHostFragment
+    protected lateinit var parent: BaseWidgetHostFragment
         private set
     protected abstract val binding: T
     private val frameBinding = WidgetFrameBinding.inflate(LayoutInflater.from(context))
@@ -26,7 +26,7 @@ abstract class RecyclableOctoWidget<T : ViewBinding, R : BaseViewModel>(context:
         private set
     protected val context: Context get() = binding.root.context
 
-    fun attach(parent: WidgetHostFragment) {
+    fun attach(parent: BaseWidgetHostFragment) {
         this.parent = parent
 
         if (binding.root.parent == null) {
@@ -64,7 +64,7 @@ abstract class RecyclableOctoWidget<T : ViewBinding, R : BaseViewModel>(context:
         baseViewModel.navContoller = parent.findNavController()
     }
 
-    abstract fun createNewViewModel(parent: WidgetHostFragment): R?
+    abstract fun createNewViewModel(parent: BaseWidgetHostFragment): R?
     open fun onResume(lifecycleOwner: LifecycleOwner) = Unit
     open fun onPause() = Unit
     open fun isVisible(): Boolean = true

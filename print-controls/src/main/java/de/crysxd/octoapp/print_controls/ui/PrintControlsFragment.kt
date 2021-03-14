@@ -7,6 +7,7 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.asLiveData
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
@@ -24,6 +25,7 @@ class PrintControlsFragment : WidgetHostFragment() {
     override val viewModel: PrintControlsViewModel by injectViewModel()
     override val destinationId = "print"
     private val isKeepScreenOn get() = Injector.get().octoPreferences().isKeepScreenOnDuringPrint
+    override val toolbarState = OctoToolbar.State.Print
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

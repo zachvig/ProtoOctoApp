@@ -2,6 +2,7 @@ package de.crysxd.octoapp.pre_print_controls.ui
 
 import android.os.Bundle
 import android.view.View
+import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
@@ -16,6 +17,7 @@ class PrePrintControlsFragment : WidgetHostFragment() {
 
     override val viewModel: PrePrintControlsViewModel by injectViewModel()
     override val destinationId = "preprint"
+    override val toolbarState = OctoToolbar.State.Prepare
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

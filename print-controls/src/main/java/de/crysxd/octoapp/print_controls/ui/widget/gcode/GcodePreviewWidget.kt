@@ -23,8 +23,8 @@ import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
 import de.crysxd.octoapp.base.gcode.render.models.RenderStyle
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewFragmentArgs
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
+import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
-import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.print_controls.R
@@ -45,7 +45,7 @@ class GcodePreviewWidget(context: Context) : RecyclableOctoWidget<GcodePreviewWi
     private lateinit var file: FileObject.File
     override val binding = GcodePreviewWidgetBinding.inflate(LayoutInflater.from(context))
 
-    override fun createNewViewModel(parent: WidgetHostFragment) = parent.injectActivityViewModel<GcodePreviewViewModel>(Injector.get().viewModelFactory()).value
+    override fun createNewViewModel(parent: BaseWidgetHostFragment) = parent.injectActivityViewModel<GcodePreviewViewModel>(Injector.get().viewModelFactory()).value
 
     override fun isVisible() = BillingManager.isFeatureEnabled("gcode_preview") ||
             (System.currentTimeMillis() - Injector.get().sharedPreferences().getLong(KEY_HIDDEN_AT, 0)) > HIDDEN_FOR_MILLIS

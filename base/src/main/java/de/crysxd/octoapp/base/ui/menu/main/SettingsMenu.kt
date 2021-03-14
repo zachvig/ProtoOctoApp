@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
@@ -165,7 +166,7 @@ class CustomizeWidgetsMenuItem : MenuItem {
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint || destinationId == R.id.workspacePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_customize_widgets)
     override suspend fun onClicked(host: MenuBottomSheetFragment?) {
-        (host?.parentFragment as? WidgetHostFragment)?.isEditMode = true
+        (host?.parentFragment as? WidgetHostFragment)?.startEdit()
         host?.dismissAllowingStateLoss()
     }
 }
