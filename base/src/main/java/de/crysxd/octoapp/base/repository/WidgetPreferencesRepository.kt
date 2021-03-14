@@ -1,10 +1,10 @@
 package de.crysxd.octoapp.base.repository
 
-import de.crysxd.octoapp.base.datasource.WidgetOrderDataSource
+import de.crysxd.octoapp.base.datasource.WidgetPreferencesDataSource
 import de.crysxd.octoapp.base.models.WidgetPreferences
 
-class WidgetOrderRepository(
-    private val dataSource: WidgetOrderDataSource
+class WidgetPreferencesRepository(
+    private val dataSource: WidgetPreferencesDataSource
 ) {
 
     fun getWidgetOrder(listId: String) = dataSource.loadOrder(listId)

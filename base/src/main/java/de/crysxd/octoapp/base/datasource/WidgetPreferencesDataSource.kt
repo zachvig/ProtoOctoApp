@@ -6,7 +6,7 @@ import com.google.gson.Gson
 import de.crysxd.octoapp.base.models.WidgetPreferences
 import timber.log.Timber
 
-class WidgetOrderDataSource(
+class WidgetPreferencesDataSource(
     private val sharedPreferences: SharedPreferences,
     private val gson: Gson
 ) {

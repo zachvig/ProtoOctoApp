@@ -60,7 +60,7 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
     }
 
     private fun internalInstallWidgets(list: List<WidgetClass>) {
-        val order = Injector.get().widgetOrderRepository().getWidgetOrder(destinationId) ?: WidgetPreferences(destinationId, emptyList())
+        val order = Injector.get().widgetPreferencesRepository().getWidgetOrder(destinationId) ?: WidgetPreferences(destinationId, emptyList())
         val widgets = order.prepare(list).filter { !it.value }
 
         Timber.i("Installing widgets: $list")

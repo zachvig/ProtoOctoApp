@@ -60,7 +60,7 @@ class DataSourceModule {
     @BaseScope
     fun provideWidgetOrderDataSource(
         sharedPreferences: SharedPreferences,
-    ) = WidgetOrderDataSource(
+    ) = WidgetPreferencesDataSource(
         sharedPreferences = sharedPreferences,
         gson = createGson()
     )

@@ -30,11 +30,11 @@ class EditWidgetsFragment : BaseWidgetHostFragment() {
         binding.widgetList.connectToLifecycle(viewLifecycleOwner)
         binding.confirm.setOnClickListener {
             val prefs = WidgetPreferences(destinationId, binding.widgetList.widgets)
-            Injector.get().widgetOrderRepository().setWidgetOrder(destinationId, prefs)
+            Injector.get().widgetPreferencesRepository().setWidgetOrder(destinationId, prefs)
             findNavController().popBackStack()
         }
 
-        val prefs = Injector.get().widgetOrderRepository().getWidgetOrder(destinationId) ?: WidgetPreferences(destinationId, emptyList())
+        val prefs = Injector.get().widgetPreferencesRepository().getWidgetOrder(destinationId) ?: WidgetPreferences(destinationId, emptyList())
         val sortedWidgets = prefs.prepare(widgets)
         binding.widgetList.showWidgets(this, sortedWidgets)
     }
