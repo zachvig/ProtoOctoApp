@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
+import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.WidgetHostFragmentBinding
@@ -21,6 +23,17 @@ abstract class WidgetHostFragment() : BaseFragment(R.layout.widget_host_fragment
     protected val mainButton get() = binding.mainButton
     protected val moreButton get() = binding.buttonMore
     abstract val destinationId: String
+    var isEditMode
+        get() = binding.widgetList.isInEditMode
+        set(value) {
+            requestTransition()
+            binding.widgetList.isEditMode = value
+            if (value) {
+                layoutForEditView()
+            } else {
+                layoutForNormalView()
+            }
+        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,6 +43,7 @@ abstract class WidgetHostFragment() : BaseFragment(R.layout.widget_host_fragment
         binding.widgetList.onWidgetOrderChanged = {
             Injector.get().widgetOrderRepository().setWidgetOrder(destinationId, WidgetOrder(destinationId, it))
         }
+        binding.finishEditMode.setOnClickListener { isEditMode = false }
     }
 
     override fun onStart() {
@@ -37,6 +51,28 @@ abstract class WidgetHostFragment() : BaseFragment(R.layout.widget_host_fragment
         Timber.i("Starting")
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
         binding.widgetListScroller.setupWithToolbar(requireOctoActivity(), binding.bottomAction)
+    }
+
+    private fun layoutForEditView() {
+        binding.widgetListScroller.removeView(binding.widgetList)
+        binding.root.addView(binding.widgetList)
+        binding.widgetListScroller.updatePadding(bottom = requireContext().resources.getDimension(R.dimen.margin_6).toInt())
+        binding.widgetListScroller.isVisible = false
+        binding.bottomAction.isVisible = false
+        binding.finishEditMode.isVisible = true
+        requireOctoActivity().octoToolbar.isVisible = false
+        requireOctoActivity().octo.isVisible = false
+    }
+
+    private fun layoutForNormalView() {
+        binding.root.removeView(binding.widgetList)
+        binding.widgetListScroller.addView(binding.widgetList)
+        binding.widgetListScroller.updatePadding(bottom = 0)
+        binding.widgetListScroller.isVisible = true
+        binding.bottomAction.isVisible = true
+        binding.finishEditMode.isVisible = false
+        requireOctoActivity().octoToolbar.isVisible = true
+        requireOctoActivity().octo.isVisible = true
     }
 
     @CallSuper
