@@ -11,12 +11,14 @@
         android:layout_gravity="center" />
 
     <ImageButton
+        android:importantForAccessibility="no"
         android:id="@+id/visibilityToggle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start|center"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="@dimen/margin_1"
+        android:layout_marginStart="@dimen/margin_1"
         android:src="@drawable/ic_round_visibility_24"
         android:tint="@color/dark_text" />
 
@@ -28,6 +30,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:importantForAccessibility="no"
         android:padding="@dimen/margin_1"
+        android:layout_marginEnd="@dimen/margin_1"
         android:src="@drawable/ic_round_drag_handle_24"
         app:tint="@color/dark_text" />
 
