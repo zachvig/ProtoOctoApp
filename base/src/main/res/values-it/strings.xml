@@ -329,8 +329,8 @@
     <string name="temperature_menu___item_preheat">Preriscaldare %s</string>
     <string name="temperature_menu___applied_confirmation">Applicato %s</string>
     <string name="temperature_menu___applied_error">%s non trovato, non può essere applicato</string>
-    <string name="announcement___new_version_detail">Questa versione introduce i widget dello schermo domestico e migliora le capacità multi stampante introducendo i temi di OctoPrint nell\'app!</string>
-    <string name="announcement___new_version_title">Benvenuti a OctoApp 1.6!</string>
+    <string name="announcement___new_version_detail">OctoApp permette ora di riordinare e nascondere i controlli principali, supporta i gestori di filamenti ed è più veloce che mai.</string>
+    <string name="announcement___new_version_title">Benvenuti a OctoApp 1.7!</string>
     <string name="main_menu___system_command_executed">\"%s\" eseguito</string>
     <string name="this_file_exceeds_the_limit_for_mobile_downloads">Questo file supera il limite per il download di app</string>
     <string name="notification_channel_filament_change">Cambio di filamento</string>

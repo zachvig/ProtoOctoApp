@@ -329,8 +329,8 @@
     <string name="temperature_menu___subtitle">Du kannst diese Voreinstellungen in den OctoPrint-Einstellungen ändern</string>
     <string name="temperature_menu___item_preheat">%s vorheizen</string>
     <string name="temperature_menu___applied_confirmation">%s angewendet</string>
-    <string name="announcement___new_version_detail">Diese Version führt Widgets für den Startbildschirm ein und verbessert die Multidrucker-Fähigkeiten durch die Einführung der OctoPrint-Themen in die App!</string>
-    <string name="announcement___new_version_title">Willkommen in OctoApp 1.6!</string>
+    <string name="announcement___new_version_detail">OctoApp erlaubt nun das Umordnen und Ausblenden der Steuerelemente, unterstützt Filament-Manager und ist schneller denn je.</string>
+    <string name="announcement___new_version_title">Willkommen in OctoApp 1.7!</string>
     <string name="main_menu___system_command_executed">\"%s\" ausgeführt</string>
     <string name="notification_channel_filament_change">Filamentwechsel</string>
     <string name="print_notification___paused_filamet_change_title">Pausiert, Filament leer</string>

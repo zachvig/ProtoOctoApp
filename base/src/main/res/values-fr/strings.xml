@@ -330,8 +330,8 @@
     <string name="temperature_menu___applied_confirmation">Préchauffage %s appliqué</string>
     <string name="temperature_menu___applied_error">Préchauffage %s non trouvé, impossible de l\'appliquer</string>
     <string name="main_menu___item_temperature_presets">Préréglages de température</string>
-    <string name="announcement___new_version_detail">Cette version introduit des widgets pour l\'écran d\'accueil et améliore les capacités multi imprimantes en introduisant les thèmes d\'OctoPrint dans l\'application !</string>
-    <string name="announcement___new_version_title">Bienvenue dans OctoApp 1.6 !</string>
+    <string name="announcement___new_version_detail">OctoApp permet désormais de réorganiser et de masquer les contrôles principaux, supporte les gestionnaires de filaments et est plus rapide que jamais.</string>
+    <string name="announcement___new_version_title">Bienvenue dans OctoApp 1.7 !</string>
     <string name="main_menu___system_command_executed">\"%s\" exécutée</string>
     <string name="notification_channel_filament_change">Changement de filament</string>
     <string name="print_notification___paused_filamet_change_title">Pause, filament vide</string>

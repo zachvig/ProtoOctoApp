@@ -329,8 +329,8 @@
     <string name="temperature_menu___item_preheat">Verwarm %s</string>
     <string name="temperature_menu___applied_confirmation">%s toegepast</string>
     <string name="temperature_menu___applied_error">%s niet gevonden, kon niet worden toegepast</string>
-    <string name="announcement___new_version_detail">Deze versie introduceert home screen widgets en verbetert multi-printer mogelijkheden door de introductie van OctoPrint\'s thema\'s in de app!</string>
-    <string name="announcement___new_version_title">Welkom in OctoApp 1.6!</string>
+    <string name="announcement___new_version_detail">OctoApp maakt het nu mogelijk om de hoofdbesturing te herschikken en te verbergen, ondersteunt filament managers en is sneller dan ooit.</string>
+    <string name="announcement___new_version_title">Welkom in OctoApp 1.7!</string>
     <string name="main_menu___system_command_executed">\"%s\" uitgevoerd</string>
     <string name="notification_channel_filament_change">Verandering van filament</string>
     <string name="print_notification___paused_filamet_change_title">Pauze, filament leeg</string>
