@@ -58,7 +58,7 @@
     <string name="toggle_favorite">Épingler / désépingler</string>
     <string name="insert">Insérer</string>
     <string name="pause_the_print_to_send_commands">Mettre en pause l\'impression pour envoyer des commandes.</string>
-    <string name="get_support">Obtenir du support</string>
+    <string name="get_support">Obtenir de l\'aide</string>
     <string name="show_details">Afficher les détails</string>
     <string name="x_percent">%.0f %%</string>
     <string name="x_percent_int">%d %%</string>
