@@ -199,7 +199,7 @@
     <string name="resume_print_confirmation_action">Hervat afdrukken</string>
     <string name="cancel_print_confirmation_message">Wil je de afdruk annuleren?</string>
     <string name="cancel_print_confirmation_action">Afdrukken annuleren</string>
-    <string name="emergency_stop_confirmation_message"><![CDATA[Wilt u een noodstop maken met de printer? <br><br><small>Dit activeert een M112 commando met uw printer. Zie dit als een "onmiddellijke annulering" waarbij de printer stopt zonder de wachtrij af te werken.<br><br>Belangrijk: De printer moet opnieuw worden gestart na een noodstop!</small>]]></string>
+    <string name="emergency_stop_confirmation_message"><![CDATA[Wilt u een noodstop maken met de printer? <br><br><small>Dit activeert een M112 commando met uw printer. Zie dit als een \"onmiddellijke annulering\" waarbij de printer stopt zonder de wachtrij af te werken.<br><br>Belangrijk: De printer moet opnieuw worden gestart na een noodstop!</small>]]></string>
     <string name="emergency_stop_confirmation_action">Noodstop</string>
     <string name="resume">Hervat</string>
     <string name="pause">Pauze</string>

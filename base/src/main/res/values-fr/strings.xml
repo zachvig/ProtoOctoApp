@@ -201,7 +201,7 @@
     <string name="resume_print_confirmation_action">Reprendre l\'impression</string>
     <string name="cancel_print_confirmation_message">Voulez-vous annuler l\'impression ?</string>
     <string name="cancel_print_confirmation_action">Annuler l\'impression</string>
-    <string name="emergency_stop_confirmation_message"><![CDATA[Voulez-vous arrêter d\'urgence l\'imprimante?<br><br><small>Cela déclenche une commande M112 avec votre imprimante. Veuillez considérer cela comme une \"annulation immédiate\" où l\'imprimante s\'arrête sans travailler sur la file d'attente.<br><br>Important : l\'imprimante doit être redémarrée après un arrêt d\'urgence !</small>]]>.</string>
+    <string name="emergency_stop_confirmation_message"><![CDATA[Voulez-vous arrêter d\'urgence l\'imprimante?<br><br><small>Cela déclenche une commande M112 avec votre imprimante. Veuillez considérer cela comme une \"annulation immédiate\" où l\'imprimante s\'arrête sans travailler sur la file d\'attente.<br><br>Important : l\'imprimante doit être redémarrée après un arrêt d\'urgence !</small>]]>.</string>
     <string name="emergency_stop_confirmation_action">Arrêt d\'urgence</string>
     <string name="resume">Reprendre</string>
     <string name="pause">Pause</string>
