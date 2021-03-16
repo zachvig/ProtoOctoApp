@@ -13,6 +13,7 @@ import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -55,68 +56,71 @@ class WebcamViewModel(
         Timber.i("Connecting")
         previousSource?.let(uiStateMediator::removeSource)
 
-        val liveData = BillingManager.billingFlow().map {
-            flow {
-                try {
-                    emit(UiState.Loading(false))
+        val liveData = BillingManager.billingFlow()
+            .distinctUntilChangedBy { it.isPremiumActive }
+            .map {
+                flow {
+                    try {
+                        emit(UiState.Loading(false))
 
-                    val (webcamSettings, webcamCount) = getWebcamSettings()
-                    val streamUrl = webcamSettings?.streamUrl
-                    val canSwitchWebcam = webcamCount > 1
-                    Timber.i("Refresh with streamUrl: $streamUrl")
-                    Timber.i("Webcam count: $webcamCount")
-                    emit(UiState.Loading(canSwitchWebcam))
+                        val (webcamSettings, webcamCount) = getWebcamSettings()
+                        val streamUrl = webcamSettings?.streamUrl
+                        val canSwitchWebcam = webcamCount > 1
+                        Timber.i("Refresh with streamUrl: $streamUrl")
+                        Timber.i("Webcam count: $webcamCount")
+                        emit(UiState.Loading(canSwitchWebcam))
 
-                    // Check if webcam is configured
-                    if (webcamSettings?.webcamEnabled == false || streamUrl.isNullOrBlank()) {
-                        return@flow emit(UiState.WebcamNotConfigured)
-                    }
-
-                    // Open stream
-                    if (streamUrl.isHlsStreamUrl) {
-                        if (!BillingManager.isFeatureEnabled("hls_webcam")) {
-                            emit(UiState.HlsStreamDisabled(canSwitchWebcam = canSwitchWebcam))
-                        } else {
-                            emit(UiState.HlsStreamReady(Uri.parse(streamUrl), webcamSettings.streamRatio, canSwitchWebcam = canSwitchWebcam))
+                        // Check if webcam is configured
+                        if (webcamSettings?.webcamEnabled == false || streamUrl.isNullOrBlank()) {
+                            return@flow emit(UiState.WebcamNotConfigured)
                         }
-                    } else {
-                        MjpegConnection(streamUrl, "vm")
-                            .load()
-                            .map {
-                                when (it) {
-                                    is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading(canSwitchWebcam)
-                                    is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
-                                        frame = applyTransformations(it.frame, webcamSettings),
-                                        aspectRation = webcamSettings.streamRatio,
-                                        canSwitchWebcam = canSwitchWebcam,
+
+                        // Open stream
+                        if (streamUrl.isHlsStreamUrl) {
+                            if (!BillingManager.isFeatureEnabled("hls_webcam")) {
+                                emit(UiState.HlsStreamDisabled(canSwitchWebcam = canSwitchWebcam))
+                            } else {
+                                emit(UiState.HlsStreamReady(Uri.parse(streamUrl), webcamSettings.streamRatio, canSwitchWebcam = canSwitchWebcam))
+                            }
+                        } else {
+                            delay(100)
+                            MjpegConnection(streamUrl, "vm")
+                                .load()
+                                .map {
+                                    when (it) {
+                                        is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading(canSwitchWebcam)
+                                        is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
+                                            frame = applyTransformations(it.frame, webcamSettings),
+                                            aspectRation = webcamSettings.streamRatio,
+                                            canSwitchWebcam = canSwitchWebcam,
+                                        )
+                                    }
+                                }
+                                .flowOn(Dispatchers.Default)
+                                .catch {
+                                    Timber.i("ERROR")
+                                    Timber.e(it)
+                                    emit(
+                                        UiState.Error(
+                                            isManualReconnect = true,
+                                            streamUrl = webcamSettings.streamUrl,
+                                            aspectRation = webcamSettings.streamRatio,
+                                            canSwitchWebcam = canSwitchWebcam,
+                                        )
                                     )
                                 }
-                            }
-                            .flowOn(Dispatchers.Default)
-                            .catch {
-                                Timber.i("ERROR")
-                                Timber.e(it)
-                                emit(
-                                    UiState.Error(
-                                        isManualReconnect = true,
-                                        streamUrl = webcamSettings.streamUrl,
-                                        aspectRation = webcamSettings.streamRatio,
-                                        canSwitchWebcam = canSwitchWebcam,
-                                    )
-                                )
-                            }
-                            .collect {
-                                emit(it)
-                            }
+                                .collect {
+                                    emit(it)
+                                }
+                        }
+                    } catch (e: CancellationException) {
+                        Timber.w("Webcam stream cancelled")
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                        emit(UiState.Error(true, canSwitchWebcam = false))
                     }
-                } catch (e: CancellationException) {
-                    Timber.w("Webcam stream cancelled")
-                } catch (e: Exception) {
-                    Timber.e(e)
-                    emit(UiState.Error(true, canSwitchWebcam = false))
-                }
-            }.flowOn(Dispatchers.IO)
-        }.flatMapLatest { it }.asLiveData()
+                }.flowOn(Dispatchers.IO)
+            }.flatMapLatest { it }.asLiveData()
 
         previousSource = liveData
         uiStateMediator.addSource(liveData)

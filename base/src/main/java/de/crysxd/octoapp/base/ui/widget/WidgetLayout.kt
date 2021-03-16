@@ -102,6 +102,7 @@ class WidgetLayout @JvmOverloads constructor(
     }
 
     private fun returnAllWidgets() {
+        shownWidgets.forEach { it.first.onPause() }
         shownWidgets.forEach { widgetRecycler?.returnWidget(instanceId, it.first) }
         shownWidgets.clear()
     }

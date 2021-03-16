@@ -10,6 +10,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.di.Injector
@@ -32,6 +33,7 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
     private val formatEtaUseCase = Injector.get().formatEtaUseCase()
     private var lastProgress: Float? = null
     override val binding = ProgressWidgetBinding.inflate(LayoutInflater.from(context))
+    private val observer = Observer(::updateView)
 
     override fun createNewViewModel(parent: BaseWidgetHostFragment) =
         parent.injectViewModel<ProgressWidgetViewModel>().value
@@ -41,7 +43,12 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
 
     override fun onResume(lifecycleOwner: LifecycleOwner) {
         super.onResume(lifecycleOwner)
-        baseViewModel.printState.observe(lifecycleOwner, ::updateView)
+        baseViewModel.printState.observe(lifecycleOwner, observer)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        baseViewModel.printState.removeObserver(observer)
     }
 
     private fun updateView(message: Message.CurrentMessage) {

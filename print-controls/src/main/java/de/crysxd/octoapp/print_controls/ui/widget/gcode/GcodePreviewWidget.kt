@@ -13,6 +13,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -44,6 +45,8 @@ class GcodePreviewWidget(context: Context) : RecyclableOctoWidget<GcodePreviewWi
     private var hideLiveIndicatorJob: Job? = null
     private lateinit var file: FileObject.File
     override val binding = GcodePreviewWidgetBinding.inflate(LayoutInflater.from(context))
+    private val fileObserver = Observer(::onActiveFileChanged)
+    private val stateObserver = Observer(::updateViewState)
 
     override fun createNewViewModel(parent: BaseWidgetHostFragment) = parent.injectActivityViewModel<GcodePreviewViewModel>(Injector.get().viewModelFactory()).value
 
@@ -58,12 +61,20 @@ class GcodePreviewWidget(context: Context) : RecyclableOctoWidget<GcodePreviewWi
         super.onResume(lifecycleOwner)
         // We share the VM with the fullscreen. User might have used the sliders, return to live progress whenever we are started
         baseViewModel.useLiveProgress()
-        baseViewModel.activeFile.observe(lifecycleOwner) {
-            Timber.i("New file: $it")
-            file = it
-            baseViewModel.viewState.observe(lifecycleOwner, ::updateViewState)
-            baseViewModel.downloadGcode(it, false)
-        }
+        baseViewModel.activeFile.observe(lifecycleOwner, fileObserver)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        baseViewModel.activeFile.removeObserver(fileObserver)
+        baseViewModel.viewState.removeObserver(stateObserver)
+    }
+
+    private fun onActiveFileChanged(f: FileObject.File) {
+        Timber.i("New file: $f")
+        file = f
+        baseViewModel.viewState.observe(parent, stateObserver)
+        baseViewModel.downloadGcode(f, false)
     }
 
     private fun updateViewState(state: GcodePreviewViewModel.ViewState) {

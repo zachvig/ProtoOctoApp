@@ -6,6 +6,7 @@ import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.os.bundleOf
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -25,6 +26,7 @@ const val STALLED_IF_NO_FRAME_FOR_MS = 5000L
 class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding, WebcamViewModel>(context) {
     override val binding = WebcamWidgetBinding.inflate(LayoutInflater.from(context))
     private var lastAspectRatio: String? = null
+    private val observer = Observer(::onUiStateChanged)
 
     init {
         binding.webcamView.onResetConnection = {
@@ -56,10 +58,11 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
 
     override fun onResume(lifecycleOwner: LifecycleOwner) {
         super.onResume(lifecycleOwner)
+        Timber.i("Resume")
         binding.webcamView.scaleToFill = baseViewModel.getScaleType(isFullscreen = false, ImageView.ScaleType.FIT_CENTER) != ImageView.ScaleType.FIT_CENTER
         binding.webcamView.coroutineScope = lifecycleOwner.lifecycleScope
         applyAspectRatio(baseViewModel.getInitialAspectRatio())
-        baseViewModel.uiState.observe(lifecycleOwner, ::onUiStateChanged)
+        baseViewModel.uiState.observe(lifecycleOwner, observer)
     }
 
     private fun onUiStateChanged(state: UiState) {
@@ -90,6 +93,7 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
     override fun onPause() {
         super.onPause()
         binding.webcamView.onPause()
+        baseViewModel.uiState.removeObserver(observer)
     }
 
     private fun openFullscreen() {

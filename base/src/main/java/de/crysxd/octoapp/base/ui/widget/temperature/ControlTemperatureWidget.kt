@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.ui.widget.temperature
 
 import android.content.Context
 import android.view.LayoutInflater
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
@@ -19,17 +20,29 @@ class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<Temperat
     override val binding = TemperatureWidgetBinding.inflate(LayoutInflater.from(context))
     private lateinit var toolViewModel: ControlToolTemperatureWidgetViewModel
     private lateinit var bedViewModel: ControlBedTemperatureWidgetViewModel
+    private val bedObserver = Observer(this::onBedTemperatureChanged)
+    private val toolObserver = Observer(this::onToolTemperatureChanged)
 
     override fun createNewViewModel(parent: BaseWidgetHostFragment): BaseViewModel? {
         toolViewModel = parent.injectViewModel<ControlToolTemperatureWidgetViewModel>().value
         bedViewModel = parent.injectViewModel<ControlBedTemperatureWidgetViewModel>().value
-        bedViewModel.temperature.observe(parent, Observer(this::onBedTemperatureChanged))
-        toolViewModel.temperature.observe(parent, Observer(this::onToolTemperatureChanged))
         toolViewModel.navContoller = parent.findNavController()
         bedViewModel.navContoller = parent.findNavController()
         binding.bedTemperature.setComponentName(view.context.getString(bedViewModel.getComponentName()))
         binding.toolTemperature.setComponentName(view.context.getString(toolViewModel.getComponentName()))
         return null
+    }
+
+    override fun onResume(lifecycleOwner: LifecycleOwner) {
+        super.onResume(lifecycleOwner)
+        bedViewModel.temperature.observe(lifecycleOwner, bedObserver)
+        toolViewModel.temperature.observe(lifecycleOwner, toolObserver)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        bedViewModel.temperature.removeObserver(bedObserver)
+        toolViewModel.temperature.removeObserver(toolObserver)
     }
 
     override fun getTitle(context: Context) = context.getString(R.string.widget_temperature)
