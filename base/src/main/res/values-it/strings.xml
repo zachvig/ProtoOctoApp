@@ -198,7 +198,6 @@
     <string name="resume_print_confirmation_action">Riprendi stampa</string>
     <string name="cancel_print_confirmation_message">Vuoi cancellare la stampa?</string>
     <string name="cancel_print_confirmation_action">Annulla stampa</string>
-    <string name="emergency_stop_confirmation_message">Vuoi fermare la stampante in caso di emergenza?</string>
     <string name="emergency_stop_confirmation_action">Arresto di emergenza</string>
     <string name="resume">Riprendi</string>
     <string name="pause">Pausa</string>
@@ -394,4 +393,5 @@
     <string name="power_menu___device_is_off">Il dispositivo è spento</string>
     <string name="main_menu___item_customize_widgets">Personalizzare i controlli</string>
     <string name="main_menu___item_open_terminal">Terminale aperto</string>
+    <string name="emergency_stop_confirmation_message"><![CDATA[Vuoi fermare d'emergenza la stampante? <br><br><small>Questo attiva un comando M112 con la tua stampante. Per favore vedilo come un "annullamento immediato" dove la stampante si ferma senza lavorare dalla coda.<br><br>Importante: la stampante deve essere riavviata dopo un arresto di emergenza!</small>]]></string>
 </resources>

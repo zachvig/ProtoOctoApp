@@ -73,7 +73,7 @@ class ExecuteSystemCommandMenuItem(val source: String, val action: String) : Con
 
     override suspend fun isVisible(destinationId: Int) = systemCommand != null
     override suspend fun getTitle(context: Context) = systemCommand?.name ?: "Unknown system command"
-    override fun getConfirmMessage(context: Context) = HtmlCompat.fromHtml(systemCommand?.confirm ?: "Execute?", HtmlCompat.FROM_HTML_MODE_COMPACT)
+    override fun getConfirmMessage(context: Context) = systemCommand?.confirm ?: "Execute?"
     override fun getConfirmPositiveAction(context: Context) = systemCommand?.name ?: context.getString(android.R.string.ok)
     override suspend fun onConfirmed(host: MenuBottomSheetFragment) {
         Injector.get().executeSystemCommandUseCase().execute(systemCommand!!)

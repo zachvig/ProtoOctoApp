@@ -206,7 +206,7 @@
     <string name="resume_print_confirmation_action">Resume print</string>
     <string name="cancel_print_confirmation_message">Do you want to cancel the print?</string>
     <string name="cancel_print_confirmation_action">Cancel print</string>
-    <string name="emergency_stop_confirmation_message">Do you want to emergency stop the printer?</string>
+    <string name="emergency_stop_confirmation_message"><![CDATA[Do you want to emergency stop the printer?<br><br><small>This triggers a M112 command with your printer. Please see this as an \"immediate cancel\" where the printer stops without working off the queue.<br><br>Important: The printer must be restarted after an emergency stop!</small>]]></string>
     <string name="emergency_stop_confirmation_action">Emergency stop</string>
     <string name="resume">Resume</string>
     <string name="pause">Pause</string>

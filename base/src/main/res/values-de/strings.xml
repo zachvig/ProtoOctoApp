@@ -199,7 +199,7 @@
     <string name="resume_print_confirmation_action">Fortsetzen</string>
     <string name="cancel_print_confirmation_message">Willst du den Druck abbrechen?</string>
     <string name="cancel_print_confirmation_action">Drucken abbrechen</string>
-    <string name="emergency_stop_confirmation_message">Willst du den Drucker notstoppen?</string>
+    <string name="emergency_stop_confirmation_message"><![CDATA[Möchtest du den Drucker notstoppen?<br><br><small>Dies löst einen M112-Befehl bei deinem Drucker aus. Bitte sehe das als einen "sofortigen Abbruch", bei dem der Drucker anhält, ohne die Warteschlange abzuarbeiten.<br><br>Wichtig: Der Drucker muss nach einem Notstopp neu gestartet werden!</small>]]></string>
     <string name="emergency_stop_confirmation_action">Notstopp</string>
     <string name="resume">Fortsetzen</string>
     <string name="pause">Pause</string>

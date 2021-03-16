@@ -3,12 +3,13 @@ package de.crysxd.octoapp.base.ui.menu
 import android.content.Context
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.ext.toHtml
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.CountDownLatch
 
 abstract class ConfirmedMenuItem : MenuItem {
-    abstract fun getConfirmMessage(context: Context): CharSequence
+    abstract fun getConfirmMessage(context: Context): String
     abstract fun getConfirmPositiveAction(context: Context): CharSequence
     abstract suspend fun onConfirmed(host: MenuBottomSheetFragment)
 
@@ -21,7 +22,7 @@ abstract class ConfirmedMenuItem : MenuItem {
 
         // Show confirmation dialog
         MaterialAlertDialogBuilder(host.requireContext())
-            .setMessage(getConfirmMessage(host.requireContext()))
+            .setMessage(getConfirmMessage(host.requireContext()).toHtml())
             .setNegativeButton(R.string.cancel, null)
             .setPositiveButton(getConfirmPositiveAction(host.requireContext())) { _, _ ->
                 confirmed = true
