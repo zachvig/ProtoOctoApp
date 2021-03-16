@@ -25,6 +25,7 @@ const val MENU_ITEM_PRINT_NOTIFICATION = "settings___print_notification"
 const val MENU_ITEM_SCREEN_ON_DURING_PRINT = "settings___keep_screen_on_during__print"
 const val MENU_ITEM_AUTO_CONNECT_PRINTER = "settings___auto_connect_printer"
 const val MENU_ITEM_CANCEL_PRINT = "printer___cancel_print"
+const val MENU_ITEM_OPEN_TERMINAL = "printer___open_terminal"
 const val MENU_ITEM_CANCEL_PRINT_KEEP_TEMPS = "printer___cancel_print_keep_temps"
 const val MENU_ITEM_SHOW_WEBCAM = "printer___show_webcam"
 const val MENU_ITEM_EMERGENCY_STOP = "printer___cemergency_stop"
@@ -69,6 +70,7 @@ class MenuItemLibrary {
         MENU_ITEM_MATERIAL_MENU to ShowMaterialPluginMenuItem::class,
         MENU_ITEM_HELP to HelpMenuItem::class,
         MENU_ITEM_CUSTOMIZE_WIDGETS to CustomizeWidgetsMenuItem::class,
+        MENU_ITEM_OPEN_TERMINAL to OpenTerminalMenuItem::class,
     )
 
     operator fun get(itemId: String): MenuItem? = when {

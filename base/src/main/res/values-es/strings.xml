@@ -393,4 +393,5 @@
     <string name="power_menu___device_is_on">El dispositivo está encendido</string>
     <string name="power_menu___device_is_off">El dispositivo está apagado</string>
     <string name="main_menu___item_customize_widgets">Personalizar los controles</string>
+    <string name="main_menu___item_open_terminal">Terminal abierto</string>
 </resources>

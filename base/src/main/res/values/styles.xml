@@ -123,7 +123,7 @@
     <style name="OctoTheme.Widget.Button.Small">
         <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Button</item>
         <item name="android:elevation">0dp</item>
-        <item name="iconTint">@color/button_secondary_text_color</item>
+        <item name="iconTint">@color/button_primary_text_color</item>
         <item name="android:stateListAnimator">@null</item>
         <item name="android:minWidth">0dp</item>
         <item name="android:minHeight">0dp</item>

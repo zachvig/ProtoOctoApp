@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.ui.menu.main
 
 import android.content.Context
+import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.menu.*
@@ -23,6 +24,7 @@ class PrinterMenu : Menu {
         TurnPsuOffMenuItem(),
         OpenPowerControlsMenuItem(),
         ShowMaterialPluginMenuItem(),
+        OpenTerminalMenuItem(),
     )
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___menu_printer_title)
@@ -93,6 +95,21 @@ class TurnPsuOffMenuItem : MenuItem {
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_turn_psu_off)
     override suspend fun onClicked(host: MenuBottomSheetFragment?) {
         host?.pushMenu(PowerControlsMenu(PowerControlsMenu.DeviceType.PrinterPsu, PowerControlsMenu.Action.TurnOff))
+    }
+}
+
+class OpenTerminalMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_OPEN_TERMINAL
+    override var groupId = ""
+    override val order = 332
+    override val style = MenuItemStyle.Printer
+    override val icon = R.drawable.ic_round_code_24
+
+    override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint || destinationId == R.id.workspacePrePrint
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_terminal)
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        host?.findNavController()?.navigate(R.id.action_open_terminal)
+        host?.dismissAllowingStateLoss()
     }
 }
 
