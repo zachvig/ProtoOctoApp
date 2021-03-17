@@ -42,12 +42,12 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
         requireOctoActivity().octoToolbar.state = toolbarState
         requireOctoActivity().octo.isVisible = true
         binding.widgetListScroller.setupWithToolbar(requireOctoActivity(), binding.bottomAction)
-        reloadWidgets()
     }
 
     @CallSuper
     override fun reloadWidgets() {
         Timber.i("Reload widgets")
+        requestTransition()
     }
 
     override fun requestTransition() {

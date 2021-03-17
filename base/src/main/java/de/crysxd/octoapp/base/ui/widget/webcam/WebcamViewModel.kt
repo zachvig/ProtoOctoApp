@@ -25,12 +25,20 @@ class WebcamViewModel(
     private val applyWebcamTransformationsUseCase: ApplyWebcamTransformationsUseCase,
 ) : BaseViewModel() {
 
+    companion object {
+        private var instanceCounter = 0
+    }
+
+    private val tag = "WebcamViewModel/${instanceCounter++}"
     private var previousSource: LiveData<UiState>? = null
     private val uiStateMediator = MediatorLiveData<UiState>()
+    private var connectedWebcamSettingsHash: Int = 0
     val uiState = uiStateMediator.map { it }
     private val octoPrintLiveData = octoPrintRepository.instanceInformationFlow()
-        .map { getWebcamSettings() }
-        .distinctUntilChangedBy { it }
+        .filter {
+            // Only pass if changes since last connection call
+            getWebcamSettings().hashCode() != connectedWebcamSettingsHash
+        }
         .asLiveData()
 
     init {
@@ -53,7 +61,7 @@ class WebcamViewModel(
     }
 
     fun connect() {
-        Timber.i("Connecting")
+        Timber.tag(tag).i("Connecting")
         previousSource?.let(uiStateMediator::removeSource)
 
         val liveData = BillingManager.billingFlow()
@@ -63,11 +71,13 @@ class WebcamViewModel(
                     try {
                         emit(UiState.Loading(false))
 
-                        val (webcamSettings, webcamCount) = getWebcamSettings()
+                        val combinedSettings = getWebcamSettings()
+                        connectedWebcamSettingsHash = combinedSettings.hashCode()
+                        val (webcamSettings, webcamCount) = combinedSettings
                         val streamUrl = webcamSettings?.streamUrl
                         val canSwitchWebcam = webcamCount > 1
-                        Timber.i("Refresh with streamUrl: $streamUrl")
-                        Timber.i("Webcam count: $webcamCount")
+                        Timber.tag(tag).i("Refresh with streamUrl: $streamUrl")
+                        Timber.tag(tag).i("Webcam count: $webcamCount")
                         emit(UiState.Loading(canSwitchWebcam))
 
                         // Check if webcam is configured
@@ -84,7 +94,7 @@ class WebcamViewModel(
                             }
                         } else {
                             delay(100)
-                            MjpegConnection(streamUrl, "vm")
+                            MjpegConnection(streamUrl, tag)
                                 .load()
                                 .map {
                                     when (it) {
@@ -98,7 +108,7 @@ class WebcamViewModel(
                                 }
                                 .flowOn(Dispatchers.Default)
                                 .catch {
-                                    Timber.i("ERROR")
+                                    Timber.tag(tag).i("ERROR")
                                     Timber.e(it)
                                     emit(
                                         UiState.Error(
@@ -114,7 +124,7 @@ class WebcamViewModel(
                                 }
                         }
                     } catch (e: CancellationException) {
-                        Timber.w("Webcam stream cancelled")
+                        Timber.tag(tag).w("Webcam stream cancelled")
                     } catch (e: Exception) {
                         Timber.e(e)
                         emit(UiState.Error(true, canSwitchWebcam = false))
@@ -142,7 +152,7 @@ class WebcamViewModel(
     private fun switchWebcam(index: Int?) = viewModelScope.launch(coroutineExceptionHandler) {
         octoPrintRepository.updateAppSettingsForActive {
             val activeIndex = index ?: it.activeWebcamIndex + 1
-            Timber.i("Switching to webcam $index")
+            Timber.tag(tag).i("Switching to webcam $index")
             it.copy(activeWebcamIndex = activeIndex)
         }
     }

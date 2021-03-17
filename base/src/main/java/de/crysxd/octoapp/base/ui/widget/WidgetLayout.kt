@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -73,32 +72,40 @@ class WidgetLayout @JvmOverloads constructor(
     }
 
     fun connectToLifecycle(lifecycleOwner: LifecycleOwner) {
+        require(currentLifecycleOwner == null) { "Already connected to a lifecycle, can't be reused" }
         currentLifecycleOwner?.lifecycle?.removeObserver(this)
         Timber.tag(tag).i("Binding to lifecycle: $lifecycleOwner")
         lifecycleOwner.lifecycle.addObserver(this)
         currentLifecycleOwner = lifecycleOwner
-
+        pauseWidgets()
+        resumeWidgets()
     }
 
     fun showWidgets(parent: BaseWidgetHostFragment, widgetClasses: Map<WidgetClass, Boolean>) {
-        Timber.tag(tag).i("Installing widgets: $widgetClasses")
+        requireNotNull(currentLifecycleOwner) { "Must call connectToLifecycle() first" }
 
-        val recycler = parent.requireOctoActivity().octoWidgetRecycler
-        widgetRecycler = recycler
+        val changes = shownWidgets.map { it.first::class } != widgetClasses.map { it.key }
+        if (!changes) {
+            Timber.i("No changes in widgets, re-binding but skipping installation")
+            widgetAdapter.widgets = shownWidgets
+        } else {
+            Timber.tag(tag).i("Installing widgets: $widgetClasses")
+            val recycler = parent.requireOctoActivity().octoWidgetRecycler
+            widgetRecycler = recycler
+            returnAllWidgets()
 
-        returnAllWidgets()
-        val widgets = widgetClasses.map {
-            recycler.rentWidget(instanceId, parent, it.key) to it.value
-        }.filter {
-            it.first.isVisible()
-        }.onEach {
-            it.first.attach(parent)
+            val widgets = widgetClasses.map {
+                recycler.rentWidget(instanceId, parent, it.key) to it.value
+            }.onEach {
+                it.first.attach(parent)
+            }
+
+            shownWidgets.addAll(widgets)
+            resumeWidgets()
+            widgetAdapter.notifyDataSetChanged()
         }
 
-        shownWidgets.addAll(widgets)
-        resumeWidgets()
-
-        widgetAdapter.notifyDataSetChanged()
+        widgetAdapter.widgets = shownWidgets
     }
 
     private fun returnAllWidgets() {
@@ -115,14 +122,14 @@ class WidgetLayout @JvmOverloads constructor(
     }
 
     @Suppress("Unused")
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun onPause() {
         Timber.tag(tag).i("Parent paused")
         pauseWidgets()
     }
 
     @Suppress("Unused")
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
     private fun onResume() {
         Timber.tag(tag).i("Parent resumed")
         resumeWidgets()
@@ -138,7 +145,7 @@ class WidgetLayout @JvmOverloads constructor(
         }
     }
 
-    fun disconnectFromLifecycle() {
+    private fun disconnectFromLifecycle() {
         Timber.tag(tag).i("Disconnecting from lifecycle")
         currentLifecycleOwner?.lifecycle?.removeObserver(this)
         pauseWidgets()
@@ -147,14 +154,21 @@ class WidgetLayout @JvmOverloads constructor(
 
     private inner class Adapter : RecyclerView.Adapter<ViewHolder>() {
 
+
+        var widgets = listOf<Pair<RecyclableOctoWidget<*, *>, Boolean>>()
+            set(value) {
+                field = value.filter { it.first.isVisible() }
+                notifyDataSetChanged()
+            }
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(parent)
 
-        override fun getItemCount() = shownWidgets.size
+        override fun getItemCount() = widgets.size
 
         @SuppressLint("ClickableViewAccessibility")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val widget = shownWidgets[position].first
-            val hidden = shownWidgets[position].second
+            val widget = widgets[position].first
+            val hidden = widgets[position].second
             holder.binding.widgetContainer.removeAllViews()
             (widget.view.parent as? ViewGroup)?.removeView(widget.view)
             holder.binding.widgetContainer.addView(widget.view)
