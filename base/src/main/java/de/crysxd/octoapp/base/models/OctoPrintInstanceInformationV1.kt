@@ -35,7 +35,7 @@ data class OctoPrintInstanceInformationV2(
 
     val label
         get() = settings?.appearance?.name?.takeIf { it.isNotBlank() } ?: webUrl.let {
-            val protocolEnd = it.indexOf("://") + 1
+            val protocolEnd = it.indexOf("://") + 3
             val userInfoEnd = it.indexOf("@") + 1
             it.substring(max(protocolEnd, userInfoEnd))
         }
