@@ -9,10 +9,11 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.WebcamWidgetBinding
-import de.crysxd.octoapp.base.di.injectViewModel
+import de.crysxd.octoapp.base.di.injectActivityViewModel
 import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState
@@ -52,7 +53,7 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
         binding.webcamView.onSwitchWebcamClicked = { baseViewModel.nextWebcam() }
     }
 
-    override fun createNewViewModel(parent: BaseWidgetHostFragment) = parent.injectViewModel<WebcamViewModel>().value
+    override fun createNewViewModel(parent: BaseWidgetHostFragment) = parent.injectActivityViewModel<WebcamViewModel>().value
     override fun getTitle(context: Context) = context.getString(R.string.webcam)
     override fun getAnalyticsName() = "webcam"
 
@@ -97,7 +98,7 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
     }
 
     private fun openFullscreen() {
-        FullscreenWebcamActivity.start(parent.requireActivity())
+        parent.findNavController().navigate(R.id.action_show_fullscreen_webcam)
         recordInteraction()
     }
 

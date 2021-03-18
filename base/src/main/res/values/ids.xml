@@ -12,4 +12,5 @@
     <item name="action_trouble_shoot" type="id" />
     <item name="action_edit_widgets" type="id" />
     <item name="action_help" type="id" />
+    <item name="action_show_fullscreen_webcam" type="id" />
 </resources>

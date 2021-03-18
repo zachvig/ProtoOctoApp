@@ -8,7 +8,6 @@ import de.crysxd.octoapp.base.ui.menu.*
 import de.crysxd.octoapp.base.ui.menu.material.MaterialPluginMenu
 import de.crysxd.octoapp.base.ui.menu.power.PowerControlsMenu
 import de.crysxd.octoapp.base.ui.menu.temperature.TemperatureMenu
-import de.crysxd.octoapp.base.ui.widget.webcam.FullscreenWebcamActivity
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import kotlinx.parcelize.Parcelize
@@ -67,7 +66,8 @@ class ShowWebcamMenuItem : MenuItem {
     override suspend fun isVisible(destinationId: Int) = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.isWebcamSupported == true
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___show_webcam)
     override suspend fun onClicked(host: MenuBottomSheetFragment?) {
-        host?.activity?.let { FullscreenWebcamActivity.start(it) }
+        host?.findNavController()?.navigate(R.id.action_show_fullscreen_webcam)
+        host?.dismissAllowingStateLoss()
     }
 }
 

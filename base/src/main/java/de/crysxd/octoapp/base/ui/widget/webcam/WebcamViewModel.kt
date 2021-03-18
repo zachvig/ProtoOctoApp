@@ -34,6 +34,7 @@ class WebcamViewModel(
     private val uiStateMediator = MediatorLiveData<UiState>()
     private var connectedWebcamSettingsHash: Int = 0
     val uiState = uiStateMediator.map { it }
+    val connectionCache: Pair<Int, MjpegConnection>? = null
     private val octoPrintLiveData = octoPrintRepository.instanceInformationFlow()
         .filter {
             // Only pass if changes since last connection call

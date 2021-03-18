@@ -52,6 +52,13 @@
             app:exitAnim="@anim/exitAnim"
             app:popEnterAnim="@anim/popEnterAnim"
             app:popExitAnim="@anim/popExitAnim" />
+        <action
+            android:id="@id/action_show_fullscreen_webcam"
+            app:destination="@id/webcamFragment"
+            app:enterAnim="@anim/enterAnim"
+            app:exitAnim="@anim/exitAnim"
+            app:popEnterAnim="@anim/popEnterAnim"
+            app:popExitAnim="@anim/popExitAnim" />
     </fragment>
 
 
@@ -108,5 +115,11 @@
             android:name="file"
             app:argType="de.crysxd.octoapp.octoprint.models.files.FileObject$File" />
     </fragment>
+
+    <fragment
+        android:id="@+id/webcamFragment"
+        android:name="de.crysxd.octoapp.base.ui.widget.webcam.WebcamFragment"
+        android:label="WebcamFragment"
+        tools:layout="@layout/webcam_fragment" />
 
 </navigation>

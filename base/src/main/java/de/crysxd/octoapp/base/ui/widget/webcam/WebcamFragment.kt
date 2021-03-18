@@ -1,24 +1,34 @@
 package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.content.pm.ActivityInfo
+import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.WebcamFragmentBinding
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.di.injectViewModel
+import de.crysxd.octoapp.base.di.injectActivityViewModel
+import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
+import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import kotlinx.coroutines.flow.collectLatest
 
-class WebcamFragment : Fragment(R.layout.webcam_fragment) {
 
-    private val viewModel: WebcamViewModel by injectViewModel()
+class WebcamFragment : Fragment(), InsetAwareScreen {
+
+    private val viewModel: WebcamViewModel by injectActivityViewModel()
     private lateinit var binding: WebcamFragmentBinding
+    private var systemUiFlagsBackup = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         WebcamFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
@@ -43,7 +53,7 @@ class WebcamFragment : Fragment(R.layout.webcam_fragment) {
         binding.webcamView.onSwitchWebcamClicked = { viewModel.nextWebcam() }
         binding.webcamView.scaleToFill = viewModel.getScaleType(isFullscreen = true, ImageView.ScaleType.FIT_CENTER) != ImageView.ScaleType.FIT_CENTER
         binding.webcamView.onFullscreenClicked = {
-            requireActivity().finish()
+            findNavController().popBackStack()
         }
 
         // Handle orientation stuff
@@ -66,8 +76,8 @@ class WebcamFragment : Fragment(R.layout.webcam_fragment) {
                 is WebcamViewModel.UiState.Loading -> WebcamView.WebcamState.Loading
                 WebcamViewModel.UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
                 is WebcamViewModel.UiState.HlsStreamDisabled -> {
-                    // We can't launch the purchase flow in fullscreen. Finish activity.
-                    requireActivity().finish()
+                    // We can't launch the purchase flow in fullscreen. Close screen.
+                    findNavController().popBackStack()
                     WebcamView.WebcamState.HlsStreamDisabled
                 }
                 is WebcamViewModel.UiState.FrameReady -> WebcamView.WebcamState.MjpegFrameReady(it.frame)
@@ -79,8 +89,6 @@ class WebcamFragment : Fragment(R.layout.webcam_fragment) {
                 }
             }
         }
-
-        viewModel.connect()
 
         lifecycleScope.launchWhenCreated {
             Injector.get().octoPrintProvider().passiveCurrentMessageFlow("webcam").collectLatest { message ->
@@ -109,13 +117,35 @@ class WebcamFragment : Fragment(R.layout.webcam_fragment) {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.connect()
+    override fun onStart() {
+        super.onStart()
+        requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
+        requireOctoActivity().octo.isVisible = false
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            var flags = requireActivity().window.decorView.systemUiVisibility
+            systemUiFlagsBackup = flags
+            flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+            requireActivity().window.decorView.systemUiVisibility = flags
+        }
     }
 
     override fun onPause() {
         super.onPause()
         binding.webcamView.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        requireActivity().window.decorView.systemUiVisibility = systemUiFlagsBackup
+    }
+
+    override fun handleInsets(insets: Rect) {
+        binding.root.updatePadding(
+            top = insets.top,
+            bottom = insets.bottom,
+            left = insets.left,
+            right = insets.right
+        )
     }
 }

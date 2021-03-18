@@ -19,6 +19,23 @@
         android:id="@id/workspaceConnect"
         android:name="de.crysxd.octoapp.connect_printer.ui.ConnectPrinterFragment"
         android:label="ConnectPrinterFragment"
-        tools:layout="@layout/connect_printer_fragment" />
+        tools:layout="@layout/connect_printer_fragment">
+
+        <action
+            android:id="@id/action_show_fullscreen_webcam"
+            app:destination="@id/webcamFragment"
+            app:enterAnim="@anim/enterAnim"
+            app:exitAnim="@anim/exitAnim"
+            app:popEnterAnim="@anim/popEnterAnim"
+            app:popExitAnim="@anim/popExitAnim" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/webcamFragment"
+        android:name="de.crysxd.octoapp.base.ui.widget.webcam.WebcamFragment"
+        android:label="WebcamFragment"
+        tools:layout="@layout/webcam_fragment" />
+
 
 </navigation>
