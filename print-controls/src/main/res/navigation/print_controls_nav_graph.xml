@@ -7,6 +7,7 @@
 
     <include app:graph="@navigation/trouble_shoot_nav_graph" />
     <include app:graph="@navigation/edit_widgets_nav_graph" />
+    <include app:graph="@navigation/fullscreen_webcam_nav_graph" />
 
     <action
         android:id="@+id/action_edit_widgets"
@@ -64,7 +65,7 @@
 
         <action
             android:id="@id/action_show_fullscreen_webcam"
-            app:destination="@id/webcamFragment"
+            app:destination="@id/fullscreen_webcam_nav_graph"
             app:enterAnim="@anim/enterAnim"
             app:exitAnim="@anim/exitAnim"
             app:popEnterAnim="@anim/popEnterAnim"
@@ -116,11 +117,5 @@
             app:argType="boolean" />
 
     </fragment>
-
-    <fragment
-        android:id="@+id/webcamFragment"
-        android:name="de.crysxd.octoapp.base.ui.widget.webcam.WebcamFragment"
-        android:label="WebcamFragment"
-        tools:layout="@layout/webcam_fragment" />
 
 </navigation>
