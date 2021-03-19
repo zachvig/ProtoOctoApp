@@ -42,6 +42,7 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
         requireOctoActivity().octoToolbar.state = toolbarState
         requireOctoActivity().octo.isVisible = true
         binding.widgetListScroller.setupWithToolbar(requireOctoActivity(), binding.bottomAction)
+        reloadWidgets()
     }
 
     @CallSuper

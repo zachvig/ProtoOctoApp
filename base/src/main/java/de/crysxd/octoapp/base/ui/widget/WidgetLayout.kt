@@ -40,8 +40,8 @@ class WidgetLayout @JvmOverloads constructor(
 
     private val instanceId = instanceCount++
     private val tag = "WidgetLayout/$instanceId"
-    private val shownWidgets = mutableListOf<Pair<RecyclableOctoWidget<*, *>, Boolean>>()
-    val widgets get() = shownWidgets.map { it.first::class to it.second }
+    private val lastWidgets = mutableListOf<Pair<RecyclableOctoWidget<*, *>, Boolean>>()
+    val widgets get() = widgetAdapter.widgets.map { it.first::class to it.second }
     private var widgetRecycler: OctoWidgetRecycler? = null
     private var currentLifecycleOwner: LifecycleOwner? = null
     private val widgetAdapter = Adapter()
@@ -84,10 +84,9 @@ class WidgetLayout @JvmOverloads constructor(
     fun showWidgets(parent: BaseWidgetHostFragment, widgetClasses: Map<WidgetClass, Boolean>) {
         requireNotNull(currentLifecycleOwner) { "Must call connectToLifecycle() first" }
 
-        val changes = shownWidgets.map { it.first::class } != widgetClasses.map { it.key }
+        val changes = lastWidgets.map { it.first::class } != widgetClasses.map { it.key }
         if (!changes) {
             Timber.i("No changes in widgets, re-binding but skipping installation")
-            widgetAdapter.widgets = shownWidgets
         } else {
             Timber.tag(tag).i("Installing widgets: $widgetClasses")
             val recycler = parent.requireOctoActivity().octoWidgetRecycler
@@ -100,18 +99,19 @@ class WidgetLayout @JvmOverloads constructor(
                 it.first.attach(parent)
             }
 
-            shownWidgets.addAll(widgets)
+            lastWidgets.clear()
+            lastWidgets.addAll(widgets)
             resumeWidgets()
             widgetAdapter.notifyDataSetChanged()
         }
 
-        widgetAdapter.widgets = shownWidgets
+        widgetAdapter.widgets = lastWidgets
     }
 
     private fun returnAllWidgets() {
-        shownWidgets.forEach { it.first.onPause() }
-        shownWidgets.forEach { widgetRecycler?.returnWidget(instanceId, it.first) }
-        shownWidgets.clear()
+        lastWidgets.forEach { it.first.onPause() }
+        lastWidgets.forEach { widgetRecycler?.returnWidget(instanceId, it.first) }
+        lastWidgets.clear()
     }
 
     @Suppress("Unused")
@@ -136,12 +136,12 @@ class WidgetLayout @JvmOverloads constructor(
     }
 
     private fun pauseWidgets() {
-        shownWidgets.forEach { it.first.onPause() }
+        lastWidgets.forEach { it.first.onPause() }
     }
 
     private fun resumeWidgets() {
         currentLifecycleOwner?.let { lc ->
-            shownWidgets.forEach { it.first.onResume(lc) }
+            lastWidgets.forEach { it.first.onResume(lc) }
         }
     }
 
@@ -188,8 +188,9 @@ class WidgetLayout @JvmOverloads constructor(
                 true
             }
             holder.binding.visibilityToggle.setOnClickListener {
-                widgets[position] = widget to !hidden
-                notifyItemChanged(position)
+                val p = holder.adapterPosition
+                widgets[p] = widget to !hidden
+                notifyItemChanged(p)
             }
             holder.binding.visibilityToggle.setImageResource(if (hidden) R.drawable.ic_round_visibility_off_24 else R.drawable.ic_round_visibility_24)
             if (isEditMode) {
@@ -249,8 +250,8 @@ class WidgetLayout @JvmOverloads constructor(
             Timber.i("Changed widget order")
             val from = viewHolder.adapterPosition
             val to = target.adapterPosition
-            val widget = shownWidgets.removeAt(from)
-            shownWidgets.add(to, widget)
+            val widget = widgetAdapter.widgets.removeAt(from)
+            widgetAdapter.widgets.add(to, widget)
             widgetAdapter.notifyItemMoved(from, to)
             return true
         }
