@@ -87,11 +87,27 @@ class ChangeLanguageMenuItem : MenuItem {
     }
 }
 
+class CustomizeWidgetsMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_CUSTOMIZE_WIDGETS
+    override var groupId = ""
+    override val order = 103
+    override val style = MenuItemStyle.Settings
+    override val enforceSingleLine = false
+    override val icon = R.drawable.ic_round_person_pin_24
+
+    override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint || destinationId == R.id.workspacePrint
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_customize_widgets)
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        (host?.parentFragment as? WidgetHostFragment)?.startEdit()
+        host?.dismissAllowingStateLoss()
+    }
+}
+
 class NightThemeMenuItem : ToggleMenuItem() {
     override val isEnabled get() = Injector.get().octoPreferences().isManualDarkModeEnabled
     override val itemId = MENU_ITEM_NIGHT_THEME
     override var groupId = ""
-    override val order = 103
+    override val order = 104
     override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_dark_mode_24
@@ -107,7 +123,7 @@ class PrintNotificationMenuItem : ToggleMenuItem() {
     override val isEnabled get() = Injector.get().octoPreferences().isPrintNotificationEnabled
     override val itemId = MENU_ITEM_PRINT_NOTIFICATION
     override var groupId = ""
-    override val order = 104
+    override val order = 105
     override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_notifications_active_24
@@ -131,7 +147,7 @@ class KeepScreenOnDuringPrintMenuItem : ToggleMenuItem() {
     override val isEnabled get() = Injector.get().octoPreferences().isKeepScreenOnDuringPrint
     override val itemId = MENU_ITEM_SCREEN_ON_DURING_PRINT
     override var groupId = ""
-    override val order = 105
+    override val order = 106
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_brightness_high_24
 
@@ -145,29 +161,13 @@ class AutoConnectPrinterMenuItem : ToggleMenuItem() {
     override val isEnabled get() = Injector.get().octoPreferences().isAutoConnectPrinter
     override val itemId = MENU_ITEM_AUTO_CONNECT_PRINTER
     override var groupId = ""
-    override val order = 106
+    override val order = 107
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_hdr_auto_24px
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_auto_connect_printer)
     override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
         Injector.get().octoPreferences().isAutoConnectPrinter = enabled
-    }
-}
-
-class CustomizeWidgetsMenuItem : MenuItem {
-    override val itemId = MENU_ITEM_CUSTOMIZE_WIDGETS
-    override var groupId = ""
-    override val order = 107
-    override val style = MenuItemStyle.Settings
-    override val enforceSingleLine = false
-    override val icon = R.drawable.ic_round_person_pin_24
-
-    override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint || destinationId == R.id.workspacePrint
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_customize_widgets)
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
-        (host?.parentFragment as? WidgetHostFragment)?.startEdit()
-        host?.dismissAllowingStateLoss()
     }
 }
 
