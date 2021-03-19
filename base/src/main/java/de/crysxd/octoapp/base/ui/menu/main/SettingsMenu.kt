@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
@@ -28,6 +27,7 @@ class SettingsMenu : Menu {
         AutoConnectPrinterMenuItem(),
         ChangeOctoPrintInstanceMenuItem(),
         CustomizeWidgetsMenuItem(),
+        ShowOctoAppLabMenuItem(),
     )
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___menu_settings_title)
@@ -158,7 +158,7 @@ class AutoConnectPrinterMenuItem : ToggleMenuItem() {
 class CustomizeWidgetsMenuItem : MenuItem {
     override val itemId = MENU_ITEM_CUSTOMIZE_WIDGETS
     override var groupId = ""
-    override val order = 150
+    override val order = 107
     override val style = MenuItemStyle.Settings
     override val enforceSingleLine = false
     override val icon = R.drawable.ic_round_person_pin_24
@@ -170,6 +170,19 @@ class CustomizeWidgetsMenuItem : MenuItem {
         host?.dismissAllowingStateLoss()
     }
 }
+
+class ShowOctoAppLabMenuItem : SubMenuItem() {
+    override val itemId = MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE
+    override var groupId = ""
+    override val order = 108
+    override val style = MenuItemStyle.Settings
+    override val enforceSingleLine = false
+    override val icon = R.drawable.ic_round_science_24px
+    override val subMenu: Menu get() = OctoAppLabMenu()
+
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___show_octoapp_lab)
+}
+
 
 class ChangeOctoPrintInstanceMenuItem : SubMenuItem() {
     override val itemId = MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE

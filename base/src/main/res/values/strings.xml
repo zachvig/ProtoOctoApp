@@ -330,6 +330,7 @@
     <string name="main_menu___item_help_faq_and_feedback">FAQ, help and feedback</string>
     <string name="main_menu___item_open_octoprint">Open OctoPrint</string>
     <string name="main_menu___item_change_octoprint_instance">Switch OctoPrint</string>
+    <string name="main_menu___show_octoapp_lab">OctoApp Lab</string>
     <string name="main_menu___item_customize_widgets">Customize controls</string>
     <string name="main_menu___item_show_printer">Printer</string>
     <string name="main_menu___item_use_dark_mode">Use dark mode</string>
@@ -429,4 +430,8 @@
     <string name="trouble_shooting___step_4_failure_code_description" translatable="false"><![CDATA[The app was able to establish a connection to <b>%s</b>, but the server did not respond as expected.]]></string>
     <string name="trouble_shooting___step_4_failure_title" translatable="false">Can\'t connect because of an error</string>
     <string name="trouble_shooting___step_4_failure_description" translatable="false"><![CDATA[A unexpected error occurred while trying to connect to <b>%1$s</b> (%2$s)]]></string>
+    <string name="lab_menu___title" translatable="false">OctoApp Lab</string>
+    <string name="lab_menu___subtitle" translatable="false">Here you can find experimental settings and things I do not officially support but which you can use at your own will. Features might be removed without prior notice.</string>
+    <string name="lab_menu___allow_to_rotate_title" translatable="false">Allow OctoApp to rotate</string>
+    <string name="lab_menu___allow_to_rotate_description" translatable="false">OctoApp can rotate into landscape mode. The UI is not optimized and rotating might cause issues on some screens. Will take affect after restart.</string>
 </resources>

@@ -393,4 +393,5 @@
     <string name="power_menu___device_is_off">Gerät ist ausgeschaltet</string>
     <string name="main_menu___item_customize_widgets">Steuerelemente anpassen</string>
     <string name="main_menu___item_open_terminal">Terminal öffnen</string>
+    <string name="main_menu___show_octoapp_lab">OctoApp Lab</string>
 </resources>

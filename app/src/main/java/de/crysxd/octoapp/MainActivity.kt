@@ -183,7 +183,7 @@ class MainActivity : OctoActivity() {
             }
         }
 
-        if (!isTablet()) {
+        if (!isTablet() && !Injector.get().octoPreferences().allowAppRotation) {
             // Stop screen rotation on phones
             @SuppressLint("SourceLockedOrientationActivity")
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT

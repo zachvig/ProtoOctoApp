@@ -394,4 +394,5 @@
     <string name="main_menu___item_customize_widgets">Personalizzare i controlli</string>
     <string name="main_menu___item_open_terminal">Terminale aperto</string>
     <string name="emergency_stop_confirmation_message"><![CDATA[Vuoi fermare d\'emergenza la stampante? <br><br><small>Questo attiva un comando M112 con la tua stampante. Per favore vedilo come un \"annullamento immediato\" dove la stampante si ferma senza lavorare dalla coda.<br><br>Importante: la stampante deve essere riavviata dopo un arresto di emergenza!</small>]]></string>
+    <string name="main_menu___show_octoapp_lab">OctoApp Lab</string>
 </resources>

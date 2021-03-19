@@ -393,4 +393,5 @@
     <string name="power_menu___device_is_off">Apparaat is uit</string>
     <string name="main_menu___item_customize_widgets">Bedieningselementen aanpassen</string>
     <string name="main_menu___item_open_terminal">Open Terminal</string>
+    <string name="main_menu___show_octoapp_lab">OctoApp Lab</string>
 </resources>

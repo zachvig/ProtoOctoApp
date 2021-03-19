@@ -19,6 +19,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_MANUAL_DARK_MODE = "manual_dark_mode_enabled"
         private const val KEY_KEEP_SCREEN_ON = "keep_screen_on"
         private const val KEY_APP_LANGUAGE = "app_language"
+        private const val KEY_ALLOW_APP_ROTATION = "allow_app_rotation"
         private const val KEY_HIDE_THUMBNAIL_HINT_UNTIL = "hide_thumbnail_hin_until"
         private const val KEY_ACTIVE_INSTANCE_WEB_URL = "active_instance_web_url"
         private const val KEY_AUTO_CONNECT_PRINTER = "auto_connect_printer"
@@ -89,6 +90,12 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         get() = sharedPreferences.getString(KEY_APP_LANGUAGE, null)
         set(value) {
             edit { putString(KEY_APP_LANGUAGE, value) }
+        }
+
+    var allowAppRotation
+        get() = sharedPreferences.getBoolean(KEY_ALLOW_APP_ROTATION, false)
+        set(value) {
+            edit { putBoolean(KEY_ALLOW_APP_ROTATION, value) }
         }
 
     var hideThumbnailHintUntil
