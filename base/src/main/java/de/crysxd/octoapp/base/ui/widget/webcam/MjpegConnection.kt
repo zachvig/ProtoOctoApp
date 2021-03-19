@@ -5,10 +5,8 @@ import android.graphics.BitmapFactory
 import de.crysxd.octoapp.octoprint.exceptions.ProxyException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import okhttp3.Credentials
 import timber.log.Timber
 import java.io.BufferedInputStream
@@ -33,74 +31,98 @@ class MjpegConnection(private val streamUrl: String, private val name: String) {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Suppress("BlockingMethodInNonBlockingContext")
-    fun load() = flow {
-        try {
-            while (true) {
-                emit(MjpegSnapshot.Loading)
-
-                // Connect
-                val connection = connect()
-                val boundaryPattern = createHeaderBoundaryPattern(connection)
-                val input = BufferedInputStream(connection.inputStream)
-                Timber.i("[$instanceId/$name] Connected to $streamUrl")
-
-                // Read frames
-                val buffer = ByteArray(4096)
-                var image = ByteArray(0)
-                var lostFrameCount = 0
+    fun load(): Flow<MjpegSnapshot> {
+        var hasBeenConnected = false
+        return flow {
+            try {
                 while (true) {
-                    // Read data
-                    val bufferLength = input.read(buffer)
-                    if (bufferLength < 0) {
-                        throw SocketException("[$instanceId/$name] Socket closed")
-                    }
+                    emit(MjpegSnapshot.Loading)
 
-                    // Append to image
-                    val tmpCheckBoundry = addByte(image, buffer, 0, bufferLength)
-                    val checkHeaderStr = String(tmpCheckBoundry, Charset.forName("ASCII"))
+                    // Connect
+                    val connection = connect()
+                    val boundaryPattern = createHeaderBoundaryPattern(connection)
+                    val input = BufferedInputStream(connection.inputStream)
+                    Timber.i("[$instanceId/$name] Connected to $streamUrl")
 
-                    // Check if frame is completed
-                    val matcher = boundaryPattern.matcher(checkHeaderStr)
-                    if (matcher.find()) {
-                        // Finalize image buffer
-                        val boundary = matcher.group(0)!!
-                        var boundaryIndex = checkHeaderStr.indexOf(boundary)
-                        boundaryIndex -= image.size
-                        image = if (boundaryIndex > 0) {
-                            addByte(image, buffer, 0, boundaryIndex)
-                        } else {
-                            delByte(image, -boundaryIndex)
+                    // Read frames
+                    val buffer = ByteArray(4096)
+                    var image = ByteArray(0)
+                    var lostFrameCount = 0
+                    while (true) {
+                        // Read data
+                        val bufferLength = input.read(buffer)
+                        if (bufferLength < 0) {
+                            throw SocketException("[$instanceId/$name] Socket closed")
                         }
 
-                        // Read bitmap
-                        val outputImg = BitmapFactory.decodeByteArray(image, 0, image.size)
-                        if (outputImg != null) {
-                            lostFrameCount = 0
-                            emit(MjpegSnapshot.Frame(outputImg))
-                        } else {
-                            lostFrameCount++
-                            Timber.e("[$instanceId/$name] Lost frame due to decoding error (lostFrames=$lostFrameCount)")
+                        // Append to image
+                        val tmpCheckBoundry = addByte(image, buffer, 0, bufferLength)
+                        val checkHeaderStr = String(tmpCheckBoundry, Charset.forName("ASCII"))
 
-                            if (lostFrameCount > TOLERATED_FRAME_LOSS_STREAK) {
-                                throw IOException("[$instanceId/$name] Too many lost frames ($lostFrameCount)")
+                        // Check if frame is completed
+                        val matcher = boundaryPattern.matcher(checkHeaderStr)
+                        if (matcher.find()) {
+                            // Finalize image buffer
+                            val boundary = matcher.group(0)!!
+                            var boundaryIndex = checkHeaderStr.indexOf(boundary)
+                            boundaryIndex -= image.size
+                            image = if (boundaryIndex > 0) {
+                                addByte(image, buffer, 0, boundaryIndex)
+                            } else {
+                                delByte(image, -boundaryIndex)
                             }
-                        }
 
-                        val headerIndex: Int = boundaryIndex + boundary.length
-                        image = addByte(ByteArray(0), buffer, headerIndex, bufferLength - headerIndex)
-                    } else {
-                        image = addByte(image, buffer, 0, bufferLength)
+                            // Read bitmap
+                            val outputImg = BitmapFactory.decodeByteArray(image, 0, image.size)
+                            if (outputImg != null) {
+                                lostFrameCount = 0
+                                emit(MjpegSnapshot.Frame(outputImg))
+                                hasBeenConnected = true
+                            } else {
+                                lostFrameCount++
+                                Timber.e("[$instanceId/$name] Lost frame due to decoding error (lostFrames=$lostFrameCount)")
+
+                                if (lostFrameCount > TOLERATED_FRAME_LOSS_STREAK) {
+                                    throw IOException("[$instanceId/$name] Too many lost frames ($lostFrameCount)")
+                                }
+                            }
+
+                            val headerIndex: Int = boundaryIndex + boundary.length
+                            image = addByte(ByteArray(0), buffer, headerIndex, bufferLength - headerIndex)
+                        } else {
+                            image = addByte(image, buffer, 0, bufferLength)
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                throw ProxyException.create(e, streamUrl)
             }
-        } catch (e: Exception) {
-            throw ProxyException.create(e, streamUrl)
-        }
-    }.onCompletion {
-        Timber.i("[$instanceId/$name] Stopped stream")
-    }.onStart {
-        Timber.i("[$instanceId/$name] Starting stream")
-    }.flowOn(Dispatchers.IO)
+        }.onCompletion {
+            Timber.i("[$instanceId/$name] Stopped stream")
+        }.onStart {
+            Timber.i("[$instanceId/$name] Starting stream")
+        }.retryWhen { cause, attempt ->
+            // If we had been connected in the past, wait 1s and try to reconnect once
+            when {
+                attempt >= 2 -> {
+                    Timber.i("Reconnection attempt failed, escalating error")
+                    false
+                }
+                hasBeenConnected -> {
+                    val backoff = 2000 * (attempt + 1)
+                    Timber.i("Connection broke down, scheduling reconnect (attempt=$attempt, backoff=${backoff}ms)")
+                    emit(MjpegSnapshot.Loading)
+                    delay(backoff)
+                    Timber.i("Reconnecting...")
+                    true
+                }
+                else -> {
+                    Timber.i("Connection broke down but never was connected, skipping reconnect")
+                    false
+                }
+            }
+        }.flowOn(Dispatchers.IO)
+    }
 
     private fun connect(): HttpURLConnection {
         val url = URL(streamUrl)
