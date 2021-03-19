@@ -155,9 +155,9 @@ class WidgetLayout @JvmOverloads constructor(
     private inner class Adapter : RecyclerView.Adapter<ViewHolder>() {
 
 
-        var widgets = listOf<Pair<RecyclableOctoWidget<*, *>, Boolean>>()
+        var widgets = mutableListOf<Pair<RecyclableOctoWidget<*, *>, Boolean>>()
             set(value) {
-                field = value.filter { it.first.isVisible() }
+                field = value.filter { it.first.isVisible() }.toMutableList()
                 notifyDataSetChanged()
             }
 
@@ -188,7 +188,7 @@ class WidgetLayout @JvmOverloads constructor(
                 true
             }
             holder.binding.visibilityToggle.setOnClickListener {
-                shownWidgets[position] = widget to !hidden
+                widgets[position] = widget to !hidden
                 notifyItemChanged(position)
             }
             holder.binding.visibilityToggle.setImageResource(if (hidden) R.drawable.ic_round_visibility_off_24 else R.drawable.ic_round_visibility_24)
