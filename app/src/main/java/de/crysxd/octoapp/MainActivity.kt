@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
@@ -64,12 +65,14 @@ import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjecto
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
 
 const val KEY_LAST_NAVIGATION = "lastNavigation"
+const val KEY_LAST_WEB_URL = "lastWebUrl"
 const val EXTRA_TARGET_OCTOPRINT_WEB_URL = "octoprint_web_url"
 
 class MainActivity : OctoActivity() {
 
     private lateinit var binding: MainActivityBinding
     private var lastNavigation = -1
+    private var lastWebUrl: String? = "initial"
     private val lastInsets = Rect()
     private var lastSuccessfulCapabilitiesUpdate = 0L
 
@@ -108,9 +111,10 @@ class MainActivity : OctoActivity() {
         octoWidgetRecycler.preInflateWidget(this) { TuneWidget(this@MainActivity) }
 
         onNewIntent(intent)
-
+        lastWebUrl = savedInstanceState?.getString(KEY_LAST_WEB_URL) ?: lastWebUrl
         lastNavigation = savedInstanceState?.getInt(KEY_LAST_NAVIGATION, lastNavigation) ?: lastNavigation
-        var lastWebUrl: String? = "initial"
+        Timber.i("onCreate $lastWebUrl")
+
         SignInInjector.get().octoprintRepository().instanceInformationFlow()
             .filter {
                 val pass = lastWebUrl != it?.webUrl
@@ -119,7 +123,7 @@ class MainActivity : OctoActivity() {
             }
             .asLiveData()
             .observe(this, {
-                Timber.i("Instance information received")
+                Timber.i("Instance information received $this")
                 updateAllWidgets()
                 if (it != null && it.apiKey.isNotBlank()) {
                     updateCapabilities("instance_change", updateM115 = true, escalateError = false)
@@ -220,6 +224,7 @@ class MainActivity : OctoActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(KEY_LAST_NAVIGATION, lastNavigation)
+        outState.putString(KEY_LAST_WEB_URL, lastWebUrl)
     }
 
     private fun applyInsetsToCurrentScreen() = findCurrentScreen()?.let { applyInsetsToScreen(it) }

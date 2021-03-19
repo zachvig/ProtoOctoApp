@@ -29,6 +29,8 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
     private val viewModel: WebcamViewModel by injectActivityViewModel()
     private lateinit var binding: WebcamFragmentBinding
     private var systemUiFlagsBackup = 0
+    private var requestedOrientationBackup = 0
+    private var preferredOrientation = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         WebcamFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
@@ -57,17 +59,20 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
         }
 
         // Handle orientation stuff
+        requestedOrientationBackup = requireActivity().requestedOrientation
+        preferredOrientation = requestedOrientationBackup
         binding.webcamView.onNativeAspectRatioChanged = { width, height ->
             val frameAspectRatio = width / height.toFloat()
             val screenAspectRatio = resources.displayMetrics.run { widthPixels / heightPixels.toFloat() }
 
-            requireActivity().requestedOrientation = if ((frameAspectRatio < 1 && screenAspectRatio > 1) || (frameAspectRatio > 1 && screenAspectRatio < 1)) {
+            preferredOrientation = if ((frameAspectRatio < 1 && screenAspectRatio > 1) || (frameAspectRatio > 1 && screenAspectRatio < 1)) {
                 // Oh no! if we rotate the screen, the image would fit better!
                 ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
             } else {
                 // Aspect ratio of screen and frame match, do not change
                 requireActivity().requestedOrientation
             }
+            requireActivity().requestedOrientation = preferredOrientation
         }
 
         viewModel.uiState.observe(viewLifecycleOwner) {
@@ -121,6 +126,7 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
         requireOctoActivity().octo.isVisible = false
+        requireOctoActivity().requestedOrientation = preferredOrientation
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             var flags = requireActivity().window.decorView.systemUiVisibility
@@ -137,6 +143,7 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
 
     override fun onStop() {
         super.onStop()
+        requireActivity().requestedOrientation = requestedOrientationBackup
         requireActivity().window.decorView.systemUiVisibility = systemUiFlagsBackup
     }
 
