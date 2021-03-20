@@ -19,6 +19,7 @@ import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.octoprint.plugins.materialmanager.MaterialManagerPluginsCollection
 import de.crysxd.octoapp.octoprint.plugins.power.PowerPluginsCollection
+import de.crysxd.octoapp.octoprint.websocket.ContinuousOnlineCheck
 import de.crysxd.octoapp.octoprint.websocket.EventWebSocket
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -29,6 +30,7 @@ import java.net.URI
 import java.security.KeyStore
 import java.security.SecureRandom
 import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 import java.util.logging.Logger
 import javax.net.ssl.*
 
@@ -50,7 +52,18 @@ class OctoPrint(
     private val fullAlternativeWebUrl = rawAlternativeWebUrl?.sanitizeUrl()
     val webUrl = rawWebUrl.removeUserInfo().sanitizeUrl()
     private val alternativeWebUrl = rawAlternativeWebUrl?.removeUserInfo()?.sanitizeUrl()
-    private val alternativeWebUrlInterceptor = AlternativeWebUrlInterceptor(createLogger(), webUrl, alternativeWebUrl)
+    private val alternativeWebUrlInterceptor = AlternativeWebUrlInterceptor(createHttpLogger(), webUrl, alternativeWebUrl)
+    private val continuousOnlineCheck = ContinuousOnlineCheck(
+        url = webUrl,
+        logger = createHttpLogger(),
+        onOnline = {
+            if (!alternativeWebUrlInterceptor.isPrimaryUsed) {
+                getLogger().log(Level.INFO, "Switching back to primary web url")
+                alternativeWebUrlInterceptor.isPrimaryUsed = true
+                webSocket.reconnect()
+            }
+        }
+    )
 
     private val webSocket = EventWebSocket(
         httpClient = createOkHttpClient(),
@@ -59,9 +72,23 @@ class OctoPrint(
         gson = createGsonWithTypeAdapters(),
         logger = getLogger(),
         loginApi = createLoginApi(),
+        onStart = ::startOnlineCheck,
+        onStop = ::stopOnlineCheck,
         pingPongTimeoutMs = webSocketPingPongTimeout,
         connectionTimeoutMs = webSocketConnectionTimeout
     )
+
+    fun performOnlineCheck() {
+        continuousOnlineCheck.checkNow()
+    }
+
+    private fun startOnlineCheck() {
+        continuousOnlineCheck.start()
+    }
+
+    private fun stopOnlineCheck() {
+        continuousOnlineCheck.stop()
+    }
 
     fun getEventWebSocket() = webSocket
 
@@ -102,6 +129,13 @@ class OctoPrint(
 
     fun getLogger(): Logger = Logger.getLogger("OctoPrint")
 
+    private fun createHttpLogger(): Logger {
+        val logger = Logger.getLogger("OctoPrint/HTTP")
+        logger.parent = getLogger()
+        logger.useParentHandlers = true
+        return logger
+    }
+
     private fun createRetrofit(path: String = "api/") = Retrofit.Builder()
         .baseUrl(URI.create(webUrl).resolve(path).toURL())
         .addConverterFactory(GsonConverterFactory.create(createGsonWithTypeAdapters()))
@@ -118,15 +152,8 @@ class OctoPrint(
     private fun createBaseGson(): Gson = GsonBuilder()
         .create()
 
-    private fun createLogger(): Logger {
-        val logger = Logger.getLogger("OctoPrint/HTTP")
-        logger.parent = getLogger()
-        logger.useParentHandlers = true
-        return logger
-    }
-
     fun createOkHttpClient() = OkHttpClient.Builder().apply {
-        val logger = createLogger()
+        val logger = createHttpLogger()
 
         hostnameVerifier?.let(::hostnameVerifier)
         keyStore?.let { ks ->

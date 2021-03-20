@@ -17,6 +17,7 @@ data class OctoPrintInstanceInformationV1(
 
 data class OctoPrintInstanceInformationV2(
     val webUrl: String,
+    val alternativeWebUrl: String? = null,
     val apiKey: String,
     val apiKeyWasInvalid: Boolean = false,
     val m115Response: String? = null,

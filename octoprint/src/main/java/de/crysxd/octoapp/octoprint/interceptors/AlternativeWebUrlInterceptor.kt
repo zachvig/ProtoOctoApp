@@ -15,7 +15,7 @@ class AlternativeWebUrlInterceptor(
     private val alternativeWebUrl: String?
 ) : Interceptor {
 
-    private var isPrimaryUsed = true
+    var isPrimaryUsed = true
 
     override fun intercept(chain: Interceptor.Chain): Response {
         return doIntercept(chain, 0)

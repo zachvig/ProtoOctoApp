@@ -23,6 +23,13 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) {
         withContext(Dispatchers.IO) {
+            // Perform online check. This will trigger switching to the primary web url
+            // if we currently use a cloud/backup connection
+            if (octoPrintRepository.getActiveInstanceSnapshot()?.alternativeWebUrl != null) {
+                timber.i("Checking for primary web url being online")
+                octoPrintProvider.octoPrint().performOnlineCheck()
+            }
+
             octoPrintRepository.updateActive { current ->
                 // Gather all info in parallel
                 val settings = async { octoPrintProvider.octoPrint().createSettingsApi().getSettings() }

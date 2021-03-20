@@ -31,8 +31,9 @@ class ActivityBannerView @JvmOverloads constructor(context: Context, attrs: Attr
 
     val binding = ActivityBannerViewBinding.inflate(LayoutInflater.from(context), this)
     var onStartShrink: () -> Unit = { }
-    val shrinkJob: Job? = null
+    var shrinkJob: Job? = null
     private var runOnHide: () -> Unit = {}
+    private var lastConfigHash = 0
 
     init {
         orientation = HORIZONTAL
@@ -40,7 +41,17 @@ class ActivityBannerView @JvmOverloads constructor(context: Context, attrs: Attr
     }
 
     fun show(activity: MainActivity, @StringRes message: Int, @DrawableRes icon: Int?, @ColorRes backgroundColor: Int, showSpinner: Boolean) {
+        val configHash = message + (icon ?: 0) + backgroundColor + showSpinner.hashCode()
+        if (lastConfigHash == configHash) {
+            return
+        }
+        lastConfigHash = configHash
         shrinkJob?.cancel()
+        runOnHide()
+        Timber.i("Showing: ${activity.getString(message)}")
+        if (message == R.string.main___banner_connection_lost_reconnecting) {
+            Timber.i("Sad")
+        }
 
         binding.icon.isVisible = true
         binding.text.isVisible = true
@@ -56,7 +67,7 @@ class ActivityBannerView @JvmOverloads constructor(context: Context, attrs: Attr
         binding.progressBar.isVisible = showSpinner
 
         if (!showSpinner) {
-            activity.lifecycleScope.launchWhenCreated {
+            shrinkJob = activity.lifecycleScope.launchWhenCreated {
                 delay(5000)
                 onStartShrink()
                 binding.icon.isVisible = false
@@ -77,6 +88,7 @@ class ActivityBannerView @JvmOverloads constructor(context: Context, attrs: Attr
 
     fun hide() {
         shrinkJob?.cancel()
-        runOnHide
+        runOnHide()
+        lastConfigHash = 0
     }
 }
