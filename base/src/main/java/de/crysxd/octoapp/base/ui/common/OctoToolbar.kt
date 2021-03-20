@@ -22,12 +22,6 @@ class OctoToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
         alpha = 0f
     }
 
-    var isCloudIndicatorVisible: Boolean
-        set(value) {
-            binding.cloudIndicator.isVisible = value
-        }
-        get() = binding.cloudIndicator.isVisible
-
     var state: State = State.Hidden
         set(value) {
             if (field == value) {
@@ -59,7 +53,6 @@ class OctoToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
         }
 
         animate().alpha(1f).start()
-        binding.cloudIndicator.setColorFilter(darkColor)
         binding.chips.textViewStep1Label.isVisible = false
         binding.chips.textViewStep1Label.background?.setTint(lightColor)
         binding.chips.textViewStep2Label.isVisible = false

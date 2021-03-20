@@ -313,7 +313,6 @@ class MainActivity : OctoActivity() {
         }
 
         is Event.Connected -> {
-            octoToolbar.isCloudIndicatorVisible = false
             Timber.w("Connection restored")
             when (e.connectionType) {
                 ConnectionType.Primary -> setBannerVisible(false)

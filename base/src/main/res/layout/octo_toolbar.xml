@@ -5,15 +5,6 @@
     android:layout_height="wrap_content"
     tools:parentTag="android.widget.FrameLayout">
 
-    <ImageView
-        android:id="@+id/cloudIndicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start|center"
-        android:layout_marginStart="@dimen/margin_3"
-        android:importantForAccessibility="no"
-        android:src="@drawable/ic_round_cloud_queue_24" />
-
     <include
         android:id="@+id/chips"
         layout="@layout/octo_toolbar_chips"
