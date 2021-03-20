@@ -212,7 +212,7 @@
 
     <style name="OctoTheme.Widget.TabLayout" parent="">
         <item name="android:background">@drawable/bg_tab_layout</item>
-        <item name="tabRippleColor">@color/black_translucent_3</item>
+        <item name="tabRippleColor">@color/white_translucent</item>
         <item name="tabIndicator">@drawable/bg_tab</item>
         <item name="tabIndicatorColor">@color/accent</item>
         <item name="tabSelectedTextColor">@color/white</item>

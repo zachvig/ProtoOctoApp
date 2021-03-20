@@ -96,6 +96,8 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
     val editText: AppCompatEditText by lazy { binding.input }
 
     init {
+        setBackgroundResource(R.drawable.bg_input)
+
         binding.input.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) = updateViewState()
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit

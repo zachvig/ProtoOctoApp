@@ -37,7 +37,7 @@ import javax.net.ssl.*
 
 class OctoPrint(
     rawWebUrl: UrlString,
-    rawAlternativeWebUrl: UrlString? = "http://10.0.2.2:5001",
+    rawAlternativeWebUrl: UrlString?,
     private val apiKey: String,
     private val interceptors: List<Interceptor> = emptyList(),
     private val keyStore: KeyStore? = null,
