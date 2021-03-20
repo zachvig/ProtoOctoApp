@@ -69,13 +69,7 @@ class FileDetailsFragment : BaseFragment(), InsetAwareScreen {
         TabLayoutMediator(binding.tabs, binding.viewPager) { tab, position ->
             tab.text = when (adapter.createFragment(position)) {
                 is InfoTabFragment -> getString(R.string.file_details_tab_info)
-                is GcodePreviewFragment -> {
-                    val builder = SpannableStringBuilder(getString(R.string.file_details_tab_preview))
-                    builder.append("   ")
-                    val span = ImageSpan(requireContext(), R.drawable.ic_new)
-                    builder.setSpan(span, builder.length - 1, builder.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
-                    builder
-                }
+                is GcodePreviewFragment -> getString(R.string.file_details_tab_preview)
                 else -> ""
             }
         }.attach()

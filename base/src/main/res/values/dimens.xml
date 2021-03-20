@@ -6,6 +6,7 @@
     <dimen name="octo_text_input_edit_text_idle_y_translation">-5dp</dimen>
     <dimen name="octo_text_input_edit_text_active_y_translation">0dp</dimen>
     <dimen name="gcode_render_view_print_head_size">3dp</dimen>
+    <dimen name="tab_layout_height">50dp</dimen>
 
     <dimen name="common_view_top_padding">@dimen/margin_6</dimen>
     <dimen name="common_corner_radius">@dimen/margin_2</dimen>
