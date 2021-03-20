@@ -3,6 +3,7 @@ package de.crysxd.octoapp.octoprint.websocket
 import com.google.gson.Gson
 import de.crysxd.octoapp.octoprint.api.LoginApi
 import de.crysxd.octoapp.octoprint.exceptions.*
+import de.crysxd.octoapp.octoprint.models.ConnectionType
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.*
@@ -28,6 +29,7 @@ const val RECONNECT_DELAY_MS = 1000L
 class EventWebSocket(
     private val httpClient: OkHttpClient,
     private val webUrl: String,
+    private val getCurrentConnectionType: () -> ConnectionType,
     private val loginApi: LoginApi,
     private val gson: Gson,
     private val logger: Logger,
@@ -121,7 +123,7 @@ class EventWebSocket(
 
             // Handle open event
             logger.log(Level.INFO, "Web socket open")
-            dispatchEvent(Event.Connected)
+            dispatchEvent(Event.Connected(getCurrentConnectionType()))
 
             // In order to receive any messages on OctoPrint instances with authentication set up,
             // we need to perform a login and sen the "auth" message

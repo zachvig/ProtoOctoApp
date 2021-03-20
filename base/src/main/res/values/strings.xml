@@ -295,7 +295,9 @@
     <string name="print_notification___filament_change_required">Filament change required</string>
     <string name="print_notification___close">Close</string>
     <string name="capabilities_validation_error">Couldn\'t verify your servers capabilities. Some features of the app might not work as expected.</string>
-    <string name="connection_lost_reconnecting">Connection lost, reconnecting…</string>
+    <string name="main___banner_connection_lost_reconnecting">Connection lost, reconnecting…</string>
+    <string name="main___banner_connected_via_alternative">Connected via remote connection</string>
+    <string name="main___banner_connected_via_octoeverywhere">Connected via OctoEverywhere!</string>
     <string name="error_please_enter_a_message">Please enter a message</string>
     <string name="hls_stream_disabled_title">HLS webcam stream</string>
     <string name="hls_stream_disbaled_description">HLS streams are disabled, enable them now to see your webcam image.</string>

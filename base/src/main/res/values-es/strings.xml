@@ -282,7 +282,7 @@
     <string name="print_notification___print_done_title">Impresión completada</string>
     <string name="print_notification___close">Cerrar</string>
     <string name="capabilities_validation_error">No pude verificar la capacidad de sus servidores. Algunas características de la aplicación podrían no funcionar como se esperaba.</string>
-    <string name="connection_lost_reconnecting">Conexión perdida, reconectando…</string>
+    <string name="main___banner_connection_lost_reconnecting">Conexión perdida, reconectando…</string>
     <string name="error_please_enter_a_message">Por favor, introduzca un mensaje</string>
     <string name="hls_stream_disabled_title">HLS webcam</string>
     <string name="hls_stream_disbaled_description">Las cámaras web HLS están deshabilitadas, habilítalas ahora para ver la imagen de tu cámara web.</string>

@@ -31,8 +31,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:rotation="270"
-        android:translationY="-20dp"
-        android:translationX="60dp" />
+        android:translationX="60dp"
+        android:translationY="-20dp" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/mainNavController"
@@ -44,30 +44,14 @@
         app:layout_anchorGravity="center"
         app:navGraph="@navigation/main_nav_graph" />
 
-    <LinearLayout
-        android:id="@+id/disconnectedMessage"
+    <de.crysxd.octoapp.ActivityBannerView
+        android:id="@+id/bannerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/color_error"
+        android:background="@color/blue"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="@dimen/margin_1"
         android:visibility="gone"
-        tools:visibility="visible">
-
-        <ProgressBar
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginEnd="8dp"
-            android:indeterminateTint="@color/white_translucent" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/connection_lost_reconnecting"
-            android:textAppearance="@style/OctoTheme.TextAppearance"
-            android:textColor="@color/white_translucent" />
-
-    </LinearLayout>
+        tools:visibility="gone" />
 
 </FrameLayout>

@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import de.crysxd.octoapp.octoprint.api.*
 import de.crysxd.octoapp.octoprint.exceptions.GenerateExceptionInterceptor
+import de.crysxd.octoapp.octoprint.interceptors.AlternativeWebUrlInterceptor
 import de.crysxd.octoapp.octoprint.interceptors.ApiKeyInterceptor
 import de.crysxd.octoapp.octoprint.interceptors.BasicAuthInterceptor
 import de.crysxd.octoapp.octoprint.interceptors.CatchAllInterceptor
@@ -25,7 +26,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.URI
-import java.net.URL
 import java.security.KeyStore
 import java.security.SecureRandom
 import java.util.concurrent.TimeUnit
@@ -34,7 +34,8 @@ import javax.net.ssl.*
 
 
 class OctoPrint(
-    rawWebUrl: String,
+    rawWebUrl: UrlString,
+    rawAlternativeWebUrl: UrlString? = "http://10.0.2.2:5001",
     private val apiKey: String,
     private val interceptors: List<Interceptor> = emptyList(),
     private val keyStore: KeyStore? = null,
@@ -46,18 +47,15 @@ class OctoPrint(
 ) {
 
     private val fullWebUrl = rawWebUrl.sanitizeUrl()
-    val webUrl = URL(rawWebUrl).let { url ->
-        url.userInfo?.let {
-            url.toString().replaceFirst("$it@", "")
-        } ?: url.toString()
-        url.toString()
-    }.sanitizeUrl()
-
-    private fun String.sanitizeUrl() = "${this.removeSuffix("/")}/"
+    private val fullAlternativeWebUrl = rawAlternativeWebUrl?.sanitizeUrl()
+    val webUrl = rawWebUrl.removeUserInfo().sanitizeUrl()
+    private val alternativeWebUrl = rawAlternativeWebUrl?.removeUserInfo()?.sanitizeUrl()
+    private val alternativeWebUrlInterceptor = AlternativeWebUrlInterceptor(createLogger(), webUrl, alternativeWebUrl)
 
     private val webSocket = EventWebSocket(
         httpClient = createOkHttpClient(),
         webUrl = webUrl,
+        getCurrentConnectionType = { alternativeWebUrlInterceptor.getActiveConnectionType() },
         gson = createGsonWithTypeAdapters(),
         logger = getLogger(),
         loginApi = createLoginApi(),
@@ -120,10 +118,15 @@ class OctoPrint(
     private fun createBaseGson(): Gson = GsonBuilder()
         .create()
 
-    fun createOkHttpClient() = OkHttpClient.Builder().apply {
+    private fun createLogger(): Logger {
         val logger = Logger.getLogger("OctoPrint/HTTP")
         logger.parent = getLogger()
         logger.useParentHandlers = true
+        return logger
+    }
+
+    fun createOkHttpClient() = OkHttpClient.Builder().apply {
+        val logger = createLogger()
 
         hostnameVerifier?.let(::hostnameVerifier)
         keyStore?.let { ks ->
@@ -142,9 +145,10 @@ class OctoPrint(
         }
 
         addInterceptor(CatchAllInterceptor(webUrl, apiKey))
-        addInterceptor(BasicAuthInterceptor(fullWebUrl))
         addInterceptor(ApiKeyInterceptor(apiKey))
         addInterceptor(GenerateExceptionInterceptor())
+        addInterceptor(alternativeWebUrlInterceptor)
+        addInterceptor(BasicAuthInterceptor(logger, fullWebUrl, fullAlternativeWebUrl))
         connectTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)
         readTimeout(readWriteTimeout, TimeUnit.MILLISECONDS)
         writeTimeout(readWriteTimeout, TimeUnit.MILLISECONDS)
