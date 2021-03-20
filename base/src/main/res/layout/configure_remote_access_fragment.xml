@@ -80,6 +80,18 @@
                     android:layout_height="0dp"
                     android:layout_weight="1" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:id="@+id/octoEverywhereConnected"
+                    android:layout_margin="@dimen/margin_2"
+                    android:text="@string/configure_remote_acces___octoeverywhere___connected"
+                    android:textColor="@color/green"
+                    android:visibility="gone"
+                    app:drawableStartCompat="@drawable/ic_round_check_circle_24"
+                    app:drawableTint="@color/green" />
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/connectOctoEverywhere"
                     android:layout_width="match_parent"
@@ -113,7 +125,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin_2"
-                    android:backgroundTint="@color/white_translucent"
                     app:example="https://mydomain.com:5000"
                     app:label="@string/web_url"
                     app:labelActive="@string/web_url_active_hint" />

@@ -47,6 +47,7 @@ import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
+import de.crysxd.octoapp.base.usecase.OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH
 import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
 import de.crysxd.octoapp.databinding.MainActivityBinding
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
@@ -216,7 +217,19 @@ class MainActivity : OctoActivity() {
                 if (it.host == "app.octoapp.eu") {
                     // Give a second for everything to settle
                     delay(1000)
-                    it.open(this@MainActivity)
+                    if (it.path == "/$OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH") {
+                        // Uh yeah, new OctoEverywhere connection
+                        lifecycleScope.launchWhenCreated {
+                            try {
+                                Injector.get().handleOctoEverywhereAppPortalSuccessUseCase().execute(it)
+                            } catch (e: Exception) {
+                                showDialog(e)
+                            }
+                        }
+                    } else {
+                        // Generic link
+                        it.open(this@MainActivity)
+                    }
                 }
             }
         }

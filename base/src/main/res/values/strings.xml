@@ -442,9 +442,11 @@
     <string name="configure_remote_acces___octoeverywhere___title">OctoEverywhere!</string>
     <string name="configure_remote_acces___octoeverywhere___description">OctoEverywhere is a plugin for OctoPrint which makes remote access for OctoApp very easy. Simply install the plugin, create an account and log in below.\n\nUsing a 3rd party app like OctoApp currently requires a paid subscription with OctoEveryWhere to cover the server costs.\n\nAs soon as your OctoPrint can’t be reached directly, OctoApp will switch to the remote connection provided bz OctoEverywhere. Back home? OctoApp will be able to reach yout OctoPrint again and switch back to the faster direct connction.</string>
     <string name="configure_remote_acces___octoeverywhere___button">Connect OctoEverywhere!</string>
+    <string name="configure_remote_acces___octoeverywhere___error_install_plugin">Please install the latest version of the OctoEverywhere plugin before continuing.</string>
     <string name="configure_remote_acces___manual___description">You are an IT expert and want to set up remote access on your own? Enter the public web URL below. Whenever the primary web URL you signed in with is not reachable, OctoApp will fallback to this URL until your are back home.</string>
     <string name="configure_remote_acces___manual___title">Manual setup</string>
     <string name="configure_remote_acces___manual___button">Save remote URL</string>
     <string name="configure_remote_acces___remote_access_configured">Remote access configured</string>
     <string name="configure_remote_acces___ignore_issue">Ignore and continue</string>
+    <string name="configure_remote_acces___octoeverywhere___connected">OctoEverywhere is connected!</string>
 </resources>

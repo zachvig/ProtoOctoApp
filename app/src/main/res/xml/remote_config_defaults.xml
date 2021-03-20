@@ -146,4 +146,8 @@
         <key>contact_timezone</key>
         <value>CET</value>
     </entry>
+    <entry>
+        <key>octoeverywhere_app_portal_url</key>
+        <value>https://octoeverywhere.com/appportal/v1?appId=octoapp&amp;authType=enhanced&amp;returnUrl=http%3A%2F%2Fapp.octoapp.eu%2F{{{callbackPath}}}&amp;printerId={{{printerid}}}</value>
+    </entry>
 </defaultsMap>

@@ -68,6 +68,15 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             }
         }
         get() = null
+    var backgroundTint: Int?
+        set(value) {
+            if (value != null) {
+                binding.root.backgroundTintList = ColorStateList.valueOf(value)
+            } else {
+                binding.root.backgroundTintList = null
+            }
+        }
+        get() = null
     var actionIcon: Int?
         set(value) {
             if (value != null && value > 0) {
@@ -96,8 +105,6 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
     val editText: AppCompatEditText by lazy { binding.input }
 
     init {
-        setBackgroundResource(R.drawable.bg_input)
-
         binding.input.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) = updateViewState()
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit

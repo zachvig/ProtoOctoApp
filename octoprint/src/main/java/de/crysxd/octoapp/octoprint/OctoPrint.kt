@@ -18,6 +18,7 @@ import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.octoprint.plugins.materialmanager.MaterialManagerPluginsCollection
+import de.crysxd.octoapp.octoprint.plugins.octoeverywhere.OctoEverywhereApi
 import de.crysxd.octoapp.octoprint.plugins.power.PowerPluginsCollection
 import de.crysxd.octoapp.octoprint.websocket.ContinuousOnlineCheck
 import de.crysxd.octoapp.octoprint.websocket.EventWebSocket
@@ -126,6 +127,8 @@ class OctoPrint(
 
     fun createSystemApi(): SystemApi.Wrapper =
         SystemApi.Wrapper((createRetrofit().create(SystemApi::class.java)))
+
+    fun createOctoEverywhereApi() = createRetrofit().create(OctoEverywhereApi::class.java)
 
     fun getLogger(): Logger = Logger.getLogger("OctoPrint")
 

@@ -163,8 +163,10 @@ open class ViewModelModule {
     open fun provideConfigureRemoteAccessViewModel(
         octoPrintRepository: OctoPrintRepository,
         setAlternativeWebUrlUseCase: SetAlternativeWebUrlUseCase,
+        getConnectOctoEverywhereUrlUseCase: GetConnectOctoEverywhereUrlUseCase,
     ): ViewModel = ConfigureRemoteAccessViewModel(
         octoPrintRepository = octoPrintRepository,
         setAlternativeWebUrlUseCase = setAlternativeWebUrlUseCase,
+        getConnectOctoEverywhereUrlUseCase = getConnectOctoEverywhereUrlUseCase,
     )
 }
