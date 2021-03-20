@@ -161,8 +161,10 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(ConfigureRemoteAccessViewModel::class)
     open fun provideConfigureRemoteAccessViewModel(
-        octoPrintRepository: OctoPrintRepository
+        octoPrintRepository: OctoPrintRepository,
+        setAlternativeWebUrlUseCase: SetAlternativeWebUrlUseCase,
     ): ViewModel = ConfigureRemoteAccessViewModel(
-        octoPrintRepository
+        octoPrintRepository = octoPrintRepository,
+        setAlternativeWebUrlUseCase = setAlternativeWebUrlUseCase,
     )
 }

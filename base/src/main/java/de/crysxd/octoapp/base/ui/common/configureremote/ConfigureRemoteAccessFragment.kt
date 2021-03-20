@@ -8,11 +8,12 @@ import android.view.ViewGroup
 import androidx.core.view.*
 import androidx.transition.TransitionManager
 import com.google.android.material.tabs.TabLayout
+import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.ConfigureRemoteAccessFragmentBinding
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.base.BaseFragment
-import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
+import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 
@@ -51,6 +52,44 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
 
             binding.tabsContent.updateLayoutParams {
                 height = tabContentHeight
+            }
+        }
+
+        binding.saveUrl.setOnClickListener {
+            viewModel.setRemoteUrl(binding.webUrlInput.editText.text.toString(), false)
+        }
+
+        viewModel.viewState.observe(viewLifecycleOwner) {
+            binding.saveUrl.isEnabled = it !is ConfigureRemoteAccessViewModel.ViewState.Loading
+            binding.saveUrl.setText(if (binding.saveUrl.isEnabled) R.string.configure_remote_acces___manual___button else R.string.loading)
+            (it as? ConfigureRemoteAccessViewModel.ViewState.Updated)?.let {
+                binding.webUrlInput.editText.setText(it.remoteWebUrl)
+            }
+        }
+
+        viewModel.viewEvents.observe(viewLifecycleOwner) {
+            if (it.consumed) {
+                return@observe
+            }
+            it.consumed = true
+
+            when (it) {
+                is ConfigureRemoteAccessViewModel.ViewEvent.ShowError -> requireOctoActivity().showDialog(
+                    message = it.message,
+                    neutralButton = getString(R.string.configure_remote_acces___ignore_issue).takeIf { _ -> it.ignoreAction != null }
+                        ?: getString(R.string.show_details),
+                    neutralAction = { _ -> it.ignoreAction?.invoke() ?: requireOctoActivity().showDialog(it.exception) },
+                )
+
+                ConfigureRemoteAccessViewModel.ViewEvent.Success -> {
+                    binding.webUrlInput.editText.clearFocus()
+                    requireOctoActivity().showSnackbar(
+                        OctoActivity.Message.SnackbarMessage(
+                            text = { it.getString(R.string.configure_remote_acces___remote_access_configured) },
+                            type = OctoActivity.Message.SnackbarMessage.Type.Positive
+                        )
+                    )
+                }
             }
         }
     }

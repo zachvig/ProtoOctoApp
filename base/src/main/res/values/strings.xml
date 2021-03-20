@@ -445,4 +445,6 @@
     <string name="configure_remote_acces___manual___description">You are an IT expert and want to set up remote access on your own? Enter the public web URL below. Whenever the primary web URL you signed in with is not reachable, OctoApp will fallback to this URL until your are back home.</string>
     <string name="configure_remote_acces___manual___title">Manual setup</string>
     <string name="configure_remote_acces___manual___button">Save remote URL</string>
+    <string name="configure_remote_acces___remote_access_configured">Remote access configured</string>
+    <string name="configure_remote_acces___ignore_issue">Ignore and continue</string>
 </resources>

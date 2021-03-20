@@ -31,6 +31,7 @@ class PluginSettingsDeserializer : JsonDeserializer<Settings.PluginSettingsGroup
         "tasmota" -> context.deserialize<Settings.TasmotaSettings>(element, Settings.TasmotaSettings::class.java)
         "tuyasmartplug" -> context.deserialize<Settings.TasmotaSettings>(element, Settings.TuyaSettings::class.java)
         "multicam" -> context.deserialize<Settings.TasmotaSettings>(element, Settings.MultiCamSettings::class.java)
+        "discovery" -> context.deserialize<Settings.Discovery>(element, Settings.Discovery::class.java)
         else -> Unknown
     }
 
