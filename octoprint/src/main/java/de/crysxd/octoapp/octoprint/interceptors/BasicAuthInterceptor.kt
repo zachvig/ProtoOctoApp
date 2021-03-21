@@ -18,9 +18,9 @@ class BasicAuthInterceptor(private val logger: Logger, vararg baseUrls: UrlStrin
 
         // Do we have credentials for this URL? If so, add them
         val upgradedRequest = credentials.firstOrNull {
-            url.toString().startsWith(it.first)
+            url.toString().startsWith(it.first, ignoreCase = true)
         }?.second?.let {
-            logger.log(Level.FINE, "REMOVE ME: Adding authorization for $url: $it")
+            logger.log(Level.FINEST, "Adding authorization for $url")
             request.newBuilder()
                 .header("Authorization", it)
                 .build()

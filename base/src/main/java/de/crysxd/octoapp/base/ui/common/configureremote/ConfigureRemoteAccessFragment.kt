@@ -10,8 +10,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.*
 import androidx.transition.TransitionManager
 import com.google.android.material.tabs.TabLayout
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.ConfigureRemoteAccessFragmentBinding
+import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.base.BaseFragment
@@ -19,6 +21,7 @@ import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import timber.log.Timber
 
 class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
 
@@ -29,6 +32,7 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         ConfigureRemoteAccessFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigScreenOpened)
         super.onViewCreated(view, savedInstanceState)
         binding.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -54,12 +58,15 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         binding.webUrlInput.backgroundTint = ContextCompat.getColor(requireContext(), R.color.white_translucent)
 
         viewModel.viewState.observe(viewLifecycleOwner) {
+            TransitionManager.beginDelayedTransition(binding.root)
             binding.saveUrl.isEnabled = it !is ConfigureRemoteAccessViewModel.ViewState.Loading
             binding.saveUrl.setText(if (binding.saveUrl.isEnabled) R.string.configure_remote_acces___manual___button else R.string.loading)
             (it as? ConfigureRemoteAccessViewModel.ViewState.Updated)?.let { _ ->
                 binding.webUrlInput.editText.setText(it.remoteWebUrl)
                 binding.octoEverywhereConnected.isVisible = it.remoteWebUrl == it.octoEverywhereConnection?.fullUrl
             }
+
+            measureTabContents()
         }
 
         viewModel.viewEvents.observe(viewLifecycleOwner) {
@@ -76,7 +83,7 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
                     neutralAction = { _ -> it.ignoreAction?.invoke() ?: requireOctoActivity().showDialog(it.exception) },
                 )
 
-                ConfigureRemoteAccessViewModel.ViewEvent.Success -> {
+                is ConfigureRemoteAccessViewModel.ViewEvent.Success -> {
                     binding.webUrlInput.editText.clearFocus()
                     requireOctoActivity().showSnackbar(
                         OctoActivity.Message.SnackbarMessage(
@@ -92,24 +99,25 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         }
     }
 
+    private fun measureTabContents() {
+        val tabContentHeight = binding.tabsContent.children.map {
+            it.measure(
+                View.MeasureSpec.makeMeasureSpec(binding.tabsContent.width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            )
+            it.measuredHeight
+        }.maxOrNull() ?: 0
+
+        binding.tabsContent.updateLayoutParams {
+            height = tabContentHeight
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octo.isVisible = false
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
-
-        binding.tabsContent.doOnLayout {
-            val tabContentHeight = binding.tabsContent.children.map {
-                it.measure(
-                    View.MeasureSpec.makeMeasureSpec(binding.tabsContent.width, View.MeasureSpec.EXACTLY),
-                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                )
-                it.measuredHeight
-            }.maxOrNull() ?: 0
-
-            binding.tabsContent.updateLayoutParams {
-                height = tabContentHeight
-            }
-        }
+        measureTabContents()
     }
 
     override fun handleInsets(insets: Rect) {

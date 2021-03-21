@@ -12,7 +12,6 @@ internal fun UrlString.removeUserInfo() = URL(this).let { url ->
     url.userInfo?.let {
         url.toString().replaceFirst("$it@", "")
     } ?: url.toString()
-    url.toString()
 }
 
 internal fun UrlString.extractAndRemoveUserInfo(): Pair<String, String?> {

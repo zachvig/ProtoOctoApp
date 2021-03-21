@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.ui.common.configureremote
 
 import androidx.lifecycle.*
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.models.OctoEverywhereConnection
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
@@ -28,8 +29,8 @@ class ConfigureRemoteAccessViewModel(
         mutableViewState.addSource(
             octoPrintRepository.instanceInformationFlow().map {
                 // We did not have a octoeverywhere connection before but now we have one -> Freshly connected. Show success.
-                if (lastOctoEverywhereConnection == null && it?.octoEverywhereConnection != null && !first) {
-                    mutableViewEvents.postValue(ViewEvent.Success)
+                if (it?.octoEverywhereConnection != lastOctoEverywhereConnection && !first) {
+                    mutableViewEvents.postValue(ViewEvent.Success())
                 }
                 first = false
                 lastOctoEverywhereConnection = it?.octoEverywhereConnection
@@ -62,7 +63,7 @@ class ConfigureRemoteAccessViewModel(
         viewModelScope.launch(coroutineExceptionHandler) {
             mutableViewState.postValue(ViewState.Loading)
             val event = when (val result = setAlternativeWebUrlUseCase.execute(SetAlternativeWebUrlUseCase.Params(url, bypassChecks))) {
-                SetAlternativeWebUrlUseCase.Result.Success -> ViewEvent.Success
+                SetAlternativeWebUrlUseCase.Result.Success -> ViewEvent.Success()
                 is SetAlternativeWebUrlUseCase.Result.Failure -> ViewEvent.ShowError(
                     message = result.errorMessage,
                     exception = result.exception,
@@ -87,7 +88,7 @@ class ConfigureRemoteAccessViewModel(
             val ignoreAction: (() -> Unit)?
         ) : ViewEvent()
 
-        object Success : ViewEvent()
+        class Success : ViewEvent()
 
         data class OpenUrl(val url: String) : ViewEvent()
     }

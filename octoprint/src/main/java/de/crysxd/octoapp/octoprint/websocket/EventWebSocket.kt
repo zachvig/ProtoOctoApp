@@ -168,7 +168,7 @@ class EventWebSocket(
                     dispatchEvent(Event.MessageReceived(message))
                 }
             } catch (e: Exception) {
-                logger.log(Level.SEVERE, "Error while parsing webs socket message", e)
+                logger.log(Level.WARNING, "Error while parsing webs socket message", e)
             }
         }
 

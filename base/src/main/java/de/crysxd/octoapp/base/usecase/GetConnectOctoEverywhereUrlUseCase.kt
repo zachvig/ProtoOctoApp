@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.usecase
 import android.net.Uri
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
@@ -19,10 +20,12 @@ class GetConnectOctoEverywhereUrlUseCase @Inject constructor(
 
     override suspend fun doExecute(param: Unit, timber: Timber.Tree) = try {
         val printerId = octoPrintProvider.octoPrint().createOctoEverywhereApi().getInfo().printerId
+        OctoAnalytics.logEvent(OctoAnalytics.Event.OctoEverywhereConnectStarted)
         Result.Success(Firebase.remoteConfig.getString("octoeverywhere_app_portal_url")
             .replace("{{{printerid}}}", printerId)
             .replace("{{{callbackPath}}}", OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH))
     } catch (e: Exception) {
+        OctoAnalytics.logEvent(OctoAnalytics.Event.OctoEverywherePluginMissing)
         Result.Error(Injector.get().localizedContext().getString(R.string.configure_remote_acces___octoeverywhere___error_install_plugin), e)
     }
 

@@ -148,6 +148,6 @@
     </entry>
     <entry>
         <key>octoeverywhere_app_portal_url</key>
-        <value>https://octoeverywhere.com/appportal/v1?appId=octoapp&amp;authType=enhanced&amp;returnUrl=http%3A%2F%2Fapp.octoapp.eu%2F{{{callbackPath}}}&amp;printerId={{{printerid}}}</value>
+        <value>https://octoeverywhere.com/appportal/v1?appId=octoapp&amp;authType=enhanced&amp;returnUrl=http%3A%2F%2Fapp.octoapp.eu%2F{{{callbackPath}}}&amp;printerId={{{printerid}}}&amp;appLogoUrl=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Foctoapp-4e438.appspot.com%2Fo%2Fresources%252Fapp%252Foctoapp_logo.png%3Falt%3Dmedia%26token%3Dd23f0c94-b442-403b-8912-5d7e894751c2</value>
     </entry>
 </defaultsMap>

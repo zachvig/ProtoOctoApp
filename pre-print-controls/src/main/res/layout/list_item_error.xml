@@ -30,6 +30,7 @@
         app:layout_constraintBottom_toTopOf="@+id/buttonRery"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="@dimen/margin_4"
         app:layout_constraintTop_toBottomOf="@+id/textViewErrorTitle" />
 
     <Button
@@ -37,8 +38,7 @@
         style="@style/OctoTheme.Widget.Button.Small.Secondary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_4"
-        android:text="Retry"
+        android:text="@string/try_again"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
