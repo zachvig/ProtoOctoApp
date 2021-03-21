@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.ui.menu.main
 
 import android.content.Context
 import androidx.core.text.HtmlCompat
+import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.menu.*
@@ -15,7 +16,8 @@ class OctoPrintMenu : Menu {
     override suspend fun getMenuItem() =
         listOfNotNull(
             listOf(
-                OpenOctoPrintMenuItem()
+                OpenOctoPrintMenuItem(),
+                ConfigureRemoteAccessMenuItem()
             ),
             sysCommands?.map {
                 ExecuteSystemCommandMenuItem(source = it.source, action = it.action)
@@ -46,6 +48,21 @@ class OpenOctoPrintMenuItem : MenuItem {
     override suspend fun onClicked(host: MenuBottomSheetFragment?) {
         Injector.get().openOctoPrintWebUseCase().execute(Injector.get().context())
 
+    }
+}
+
+class ConfigureRemoteAccessMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_CONFIGURE_REMOTE_ACCESS
+    override var groupId = ""
+    override val order = 201
+    override val enforceSingleLine = false
+    override val style = MenuItemStyle.OctoPrint
+    override val icon = R.drawable.ic_round_cloud_24
+
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___configure_remote_access)
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        host?.findNavController()?.navigate(R.id.action_configure_remote_access)
+        host?.dismissAllowingStateLoss()
     }
 }
 

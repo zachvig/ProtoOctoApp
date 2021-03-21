@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    tools:background="@color/blue"
+    tools:gravity="center"
+    tools:parentTag="androidx.appcompat.widget.LinearLayoutCompat">
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginVertical="@dimen/margin_1"
+        android:layout_marginEnd="@dimen/margin_1"
+        android:indeterminateTint="@color/white_translucent" />
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin_1"
+        android:layout_marginEnd="@dimen/margin_1"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin_1"
+
+        android:textAppearance="@style/OctoTheme.TextAppearance"
+        android:textColor="@color/white_translucent"
+        tools:text="Connect with remote connection" />
+
+</merge>

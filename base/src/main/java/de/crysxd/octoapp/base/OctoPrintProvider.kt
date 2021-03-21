@@ -118,6 +118,7 @@ class OctoPrintProvider(
     fun createAdHocOctoPrint(it: OctoPrintInstanceInformationV2) =
         OctoPrint(
             rawWebUrl = it.webUrl,
+            rawAlternativeWebUrl = it.alternativeWebUrl,
             apiKey = it.apiKey,
             interceptors = listOf(invalidApiKeyInterceptor),
             keyStore = sslKeyStoreHandler.loadKeyStore(),

@@ -19,6 +19,7 @@ import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.models.OctoEverywhereConnection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
@@ -140,7 +141,23 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor(
         if (param.sendOctoPrintInfo) {
             zipStream.putNextEntry(ZipEntry("octoprint_info.json"))
             zipStream.writer().apply {
-                val json = Gson().toJsonTree(Injector.get().octorPrintRepository().instanceInformationFlow().firstOrNull()?.copy(apiKey = "***")) as? JsonObject
+                val info = Injector.get().octorPrintRepository().instanceInformationFlow().firstOrNull()
+                val json = Gson().toJsonTree(
+                    info?.copy(
+                        apiKey = "***",
+                        webUrl = "***",
+                        alternativeWebUrl = "***".takeIf { info.alternativeWebUrl != null },
+                        octoEverywhereConnection = OctoEverywhereConnection(
+                            connectionId = "***",
+                            apiToken = "***",
+                            bearerToken = "***",
+                            basicAuthPassword = "***",
+                            basicAuthUser = "***",
+                            fullUrl = "***",
+                            url = "***",
+                        ).takeIf { info.octoEverywhereConnection != null }
+                    )
+                ) as? JsonObject
                     ?: JsonObject()
                 json.addProperty("octoprint_version", octoPrintVersion)
                 json.add("installed_plugins", Gson().toJsonTree(pluginList))

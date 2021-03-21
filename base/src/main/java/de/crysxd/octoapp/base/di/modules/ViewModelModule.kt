@@ -14,6 +14,7 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModelFactory
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
+import de.crysxd.octoapp.base.ui.common.configureremote.ConfigureRemoteAccessViewModel
 import de.crysxd.octoapp.base.ui.widget.EditWidgetsViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
@@ -155,4 +156,17 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(MenuBottomSheetViewModel::class)
     open fun provideMenuBottomSheetViewModel(): ViewModel = MenuBottomSheetViewModel()
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(ConfigureRemoteAccessViewModel::class)
+    open fun provideConfigureRemoteAccessViewModel(
+        octoPrintRepository: OctoPrintRepository,
+        setAlternativeWebUrlUseCase: SetAlternativeWebUrlUseCase,
+        getConnectOctoEverywhereUrlUseCase: GetConnectOctoEverywhereUrlUseCase,
+    ): ViewModel = ConfigureRemoteAccessViewModel(
+        octoPrintRepository = octoPrintRepository,
+        setAlternativeWebUrlUseCase = setAlternativeWebUrlUseCase,
+        getConnectOctoEverywhereUrlUseCase = getConnectOctoEverywhereUrlUseCase,
+    )
 }

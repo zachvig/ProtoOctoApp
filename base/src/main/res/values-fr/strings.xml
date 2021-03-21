@@ -284,7 +284,7 @@
     <string name="print_notification___print_done_title">Impression terminée</string>
     <string name="print_notification___close">Fermer</string>
     <string name="capabilities_validation_error">Impossible de vérifier les capacités de vos serveurs. Certaines fonctionnalités de l\'application peuvent ne pas fonctionner comme prévu.</string>
-    <string name="connection_lost_reconnecting">Connexion perdue, reconnexion…</string>
+    <string name="main___banner_connection_lost_reconnecting">Connexion perdue, reconnexion…</string>
     <string name="error_please_enter_a_message">Veuillez entrer un message</string>
     <string name="hls_stream_disabled_title">Webcam</string>
     <string name="hls_stream_disbaled_description">Les webcams sont désactivées, activez-les pour voir l\'image de votre webcam.</string>

@@ -1,25 +1,31 @@
 package de.crysxd.octoapp.octoprint.interceptors
 
-import de.crysxd.octoapp.octoprint.exceptions.IllegalBasicAuthConfigurationException
-import okhttp3.Credentials
+import de.crysxd.octoapp.octoprint.UrlString
+import de.crysxd.octoapp.octoprint.extractAndRemoveUserInfo
 import okhttp3.Interceptor
-import java.net.URL
+import okhttp3.Response
+import java.util.logging.Level
+import java.util.logging.Logger
 
-class BasicAuthInterceptor(baseUrl: String) : Interceptor {
-    private val credentials = URL(baseUrl).userInfo?.let {
-        try {
-            val components = it.split(":")
-            Credentials.basic(components[0], components[1])
-        } catch (e: Exception) {
-            throw IllegalBasicAuthConfigurationException(baseUrl)
-        }
-    }
+class BasicAuthInterceptor(private val logger: Logger, vararg baseUrls: UrlString?) : Interceptor {
+    private val credentials = baseUrls
+        .filterNotNull()
+        .map { it.extractAndRemoveUserInfo() }
 
-    override fun intercept(chain: Interceptor.Chain) = chain.proceed(
-        credentials?.let {
-            chain.request().newBuilder()
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
+        val url = request.url
+
+        // Do we have credentials for this URL? If so, add them
+        val upgradedRequest = credentials.firstOrNull {
+            url.toString().startsWith(it.first, ignoreCase = true)
+        }?.second?.let {
+            logger.log(Level.FINEST, "Adding authorization for $url")
+            request.newBuilder()
                 .header("Authorization", it)
                 .build()
-        } ?: chain.request()
-    )
+        } ?: request
+
+        return chain.proceed(upgradedRequest)
+    }
 }

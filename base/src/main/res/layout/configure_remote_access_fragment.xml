@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/margin_4">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/configure_remote_access___title"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Title" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_3"
+            android:layout_marginVertical="@dimen/margin_3"
+            android:adjustViewBounds="true"
+            android:importantForAccessibility="no"
+            android:src="@drawable/octo_remote" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_2"
+            android:gravity="center"
+            android:text="@string/configure_remote_acces___description" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
+            style="@style/OctoTheme.Widget.TabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tab_layout_height"
+            android:layout_marginHorizontal="@dimen/margin_2"
+            android:layout_marginTop="@dimen/margin_3">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/configure_remote_acces___octoeverywhere___title" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/configure_remote_acces___manual___title" />
+
+        </com.google.android.material.tabs.TabLayout>
+
+        <FrameLayout
+            android:id="@+id/tabsContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_1"
+            android:background="@color/input_background"
+            android:flipInterval="1000">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_2"
+                    android:layout_marginVertical="@dimen/margin_2"
+                    android:gravity="center"
+                    android:text="@string/configure_remote_acces___octoeverywhere___description_1"
+                    android:textColor="@color/dark_text" />
+
+                <TextView
+                    android:id="@+id/octoEverywhereConnected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawablePadding="@dimen/margin_1"
+                    android:gravity="center"
+                    android:text="@string/configure_remote_acces___octoeverywhere___connected"
+                    android:textColor="@color/green"
+                    android:visibility="gone"
+                    app:drawableStartCompat="@drawable/ic_baseline_cloud_done_24"
+                    app:drawableTint="@color/green"
+                    tools:visibility="visible" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/connectOctoEverywhere"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_2"
+                    android:backgroundTint="@color/octoeverywhere"
+                    android:text="@string/configure_remote_acces___octoeverywhere___button"
+                    app:icon="@drawable/ic_octoeverywhere_24px"
+                    app:iconTint="@null" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_2"
+                    android:layout_marginVertical="@dimen/margin_2"
+                    android:gravity="center"
+                    android:text="@string/configure_remote_acces___octoeverywhere___description_2"
+                    android:textColor="@color/dark_text" />
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_2"
+                    android:layout_marginVertical="@dimen/margin_2"
+                    android:gravity="center"
+                    android:text="@string/configure_remote_acces___manual___description"
+                    android:textColor="@color/dark_text" />
+
+                <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
+                    android:id="@+id/webUrlInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_2"
+                    app:example="https://mydomain.com:5000"
+                    app:label="@string/web_url"
+                    app:labelActive="@string/web_url_active_hint" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/saveUrl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_2"
+                    android:text="@string/configure_remote_acces___manual___button" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </FrameLayout>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</ScrollView>
