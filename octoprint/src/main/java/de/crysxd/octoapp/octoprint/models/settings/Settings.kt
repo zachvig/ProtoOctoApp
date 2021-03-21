@@ -61,8 +61,11 @@ data class Settings(
         @SerializedName("arrSmartplugs") val devices: List<TasmotaPowerDevice>
     ) : PluginSettings
 
-
     data class MultiCamSettings(
         @SerializedName("multicam_profiles") val profiles: List<WebcamSettings>
+    ) : PluginSettings
+
+    data class Discovery(
+        @SerializedName("upnpUuid") val uuid: String?
     ) : PluginSettings
 }

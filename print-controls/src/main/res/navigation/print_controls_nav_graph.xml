@@ -8,6 +8,15 @@
     <include app:graph="@navigation/trouble_shoot_nav_graph" />
     <include app:graph="@navigation/edit_widgets_nav_graph" />
     <include app:graph="@navigation/fullscreen_webcam_nav_graph" />
+    <include app:graph="@navigation/configure_remote_access_nav_graph" />
+
+    <action
+        android:id="@+id/action_configure_remote_access"
+        app:destination="@id/configure_remote_access_nav_graph"
+        app:enterAnim="@anim/enterAnim"
+        app:exitAnim="@anim/exitAnim"
+        app:popEnterAnim="@anim/popEnterAnim"
+        app:popExitAnim="@anim/popExitAnim" />
 
     <action
         android:id="@+id/action_edit_widgets"

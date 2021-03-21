@@ -3,6 +3,7 @@ package de.crysxd.octoapp.octoprint.websocket
 import com.google.gson.Gson
 import de.crysxd.octoapp.octoprint.api.LoginApi
 import de.crysxd.octoapp.octoprint.exceptions.*
+import de.crysxd.octoapp.octoprint.models.ConnectionType
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.*
@@ -28,9 +29,12 @@ const val RECONNECT_DELAY_MS = 1000L
 class EventWebSocket(
     private val httpClient: OkHttpClient,
     private val webUrl: String,
+    private val getCurrentConnectionType: () -> ConnectionType,
     private val loginApi: LoginApi,
     private val gson: Gson,
     private val logger: Logger,
+    private val onStart: () -> Unit,
+    private val onStop: () -> Unit,
     private val pingPongTimeoutMs: Long,
     private val connectionTimeoutMs: Long,
 ) {
@@ -60,21 +64,25 @@ class EventWebSocket(
                 .newWebSocket(request, WebSocketListener())
 
             logger.log(Level.INFO, "Opening web socket")
+            onStart()
         }
     }
 
-    fun stop() {
-        if (subscriberCount.get() == 0) {
-            webSocket?.close(1000, "User exited app")
-            webSocket?.cancel()
-            reconnectJob?.cancel()
-            reportDisconnectedJob?.cancel()
-            dispatchEvent(Event.Disconnected())
-            logger.log(Level.INFO, "Closing web socket")
-            handleClosure()
-        } else {
-            logger.log(Level.INFO, "${subscriberCount.get()} subscribers still active, leaving socket open")
-        }
+    fun stop() = if (subscriberCount.get() == 0) {
+        doStop()
+        dispatchEvent(Event.Disconnected())
+    } else {
+        logger.log(Level.INFO, "${subscriberCount.get()} subscribers still active, leaving socket open")
+    }
+
+    private fun doStop() {
+        webSocket?.close(1000, "User exited app")
+        webSocket?.cancel()
+        reconnectJob?.cancel()
+        reportDisconnectedJob?.cancel()
+        logger.log(Level.INFO, "Closing web socket")
+        handleClosure()
+        onStop()
     }
 
     fun passiveEventFlow(): Flow<Event> = channel.asFlow()
@@ -100,7 +108,6 @@ class EventWebSocket(
     private fun handleClosure() {
         isConnected.set(false)
         logger.log(Level.INFO, "Web socket closed")
-        dispatchEvent(Event.Disconnected())
     }
 
     internal fun postMessage(message: Message) {
@@ -113,6 +120,11 @@ class EventWebSocket(
         }
     }
 
+    internal fun reconnect() {
+        doStop()
+        start()
+    }
+
     inner class WebSocketListener : okhttp3.WebSocketListener() {
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
@@ -121,7 +133,7 @@ class EventWebSocket(
 
             // Handle open event
             logger.log(Level.INFO, "Web socket open")
-            dispatchEvent(Event.Connected)
+            dispatchEvent(Event.Connected(getCurrentConnectionType()))
 
             // In order to receive any messages on OctoPrint instances with authentication set up,
             // we need to perform a login and sen the "auth" message
@@ -156,7 +168,7 @@ class EventWebSocket(
                     dispatchEvent(Event.MessageReceived(message))
                 }
             } catch (e: Exception) {
-                logger.log(Level.SEVERE, "Error while parsing webs socket message", e)
+                logger.log(Level.WARNING, "Error while parsing webs socket message", e)
             }
         }
 
@@ -169,6 +181,7 @@ class EventWebSocket(
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
             when {
+                !isConnected.get() -> Unit
                 t is WebSocketZombieException -> {
                     logger.log(Level.WARNING, "Web socket was forcefully closed")
                 }
@@ -183,11 +196,11 @@ class EventWebSocket(
             isOpen = false
         }
 
-        private fun reconnect(t: Throwable? = null, reportImmediately: Boolean = false) {
+        private fun reconnect(t: Throwable? = null, reportImmediately: Boolean = false, reconnectDelay: Long = RECONNECT_DELAY_MS) {
             isConnected.set(false)
 
             reconnectJob = GlobalScope.launch {
-                delay(RECONNECT_DELAY_MS)
+                delay(reconnectDelay)
                 start()
             }
 

@@ -62,6 +62,8 @@
     <color name="snackbar_positive">@color/primary</color>
     <color name="snackbar_negative">@color/red</color>
 
+    <color name="octoeverywhere">#2a2c30</color>
+
     <color name="white">#fff</color>
     <color name="black">#000</color>
     <color name="red">#EE3F3F</color>

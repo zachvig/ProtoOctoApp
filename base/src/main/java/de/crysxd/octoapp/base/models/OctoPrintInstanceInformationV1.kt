@@ -17,12 +17,14 @@ data class OctoPrintInstanceInformationV1(
 
 data class OctoPrintInstanceInformationV2(
     val webUrl: String,
+    val alternativeWebUrl: String? = null,
     val apiKey: String,
     val apiKeyWasInvalid: Boolean = false,
     val m115Response: String? = null,
     val settings: Settings? = null,
     val systemCommands: List<SystemCommand>? = null,
     val appSettings: AppSettings? = null,
+    val octoEverywhereConnection: OctoEverywhereConnection? = null,
 ) {
     constructor(legacy: OctoPrintInstanceInformationV1) : this(
         webUrl = "http://${legacy.hostName}:${legacy.port}",

@@ -7,11 +7,14 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.core.os.bundleOf
+import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
@@ -44,10 +47,12 @@ import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
+import de.crysxd.octoapp.base.usecase.OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH
 import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
 import de.crysxd.octoapp.databinding.MainActivityBinding
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
+import de.crysxd.octoapp.octoprint.models.ConnectionType
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.pre_print_controls.ui.widget.extrude.ExtrudeWidget
 import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidget
@@ -172,13 +177,12 @@ class MainActivity : OctoActivity() {
 
             // Listen for inset changes and store them
             window.decorView.setOnApplyWindowInsetsListener { _, insets ->
-                Timber.d("Insets updated $insets")
                 lastInsets.top = insets.systemWindowInsetTop
                 lastInsets.left = insets.systemWindowInsetLeft
                 lastInsets.bottom = insets.systemWindowInsetBottom
                 lastInsets.right = insets.systemWindowInsetRight
                 applyInsetsToCurrentScreen()
-                setDisconnectedMessageVisible(binding.disconnectedMessage.isVisible)
+                setBannerVisible(binding.bannerView.isVisible)
                 insets.consumeSystemWindowInsets()
             }
         }
@@ -213,7 +217,19 @@ class MainActivity : OctoActivity() {
                 if (it.host == "app.octoapp.eu") {
                     // Give a second for everything to settle
                     delay(1000)
-                    it.open(this@MainActivity)
+                    if (it.path == "/$OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH") {
+                        // Uh yeah, new OctoEverywhere connection
+                        lifecycleScope.launchWhenCreated {
+                            try {
+                                Injector.get().handleOctoEverywhereAppPortalSuccessUseCase().execute(it)
+                            } catch (e: Exception) {
+                                showDialog(e)
+                            }
+                        }
+                    } else {
+                        // Generic link
+                        it.open(this@MainActivity)
+                    }
                 }
             }
         }
@@ -232,23 +248,23 @@ class MainActivity : OctoActivity() {
     private fun findCurrentScreen() = supportFragmentManager.findFragmentById(R.id.mainNavController)?.childFragmentManager?.fragments?.firstOrNull()
 
     private fun applyInsetsToScreen(screen: Fragment, topOverwrite: Int? = null) {
-        val disconnectHeight = binding.disconnectedMessage.height.takeIf { binding.disconnectedMessage.isVisible }
-        Timber.v("Applying insets: disconnectedMessage=$disconnectHeight topOverwrite=$topOverwrite screen=$screen")
-        binding.toolbar.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
-        octo.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = topOverwrite ?: disconnectHeight ?: lastInsets.top }
+        val bannerHeight = binding.bannerView.height.takeIf { binding.bannerView.isVisible }
+        Timber.v("Applying insets: bannerView=$bannerHeight topOverwrite=$topOverwrite screen=$screen")
+        binding.toolbar.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = topOverwrite ?: bannerHeight ?: lastInsets.top }
+        octo.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = topOverwrite ?: bannerHeight ?: lastInsets.top }
 
         if (screen is InsetAwareScreen) {
             screen.handleInsets(
                 Rect(
                     lastInsets.left,
-                    topOverwrite ?: disconnectHeight ?: lastInsets.top,
+                    topOverwrite ?: bannerHeight ?: lastInsets.top,
                     lastInsets.right,
                     lastInsets.bottom,
                 )
             )
         } else {
             screen.view?.updatePadding(
-                top = topOverwrite ?: disconnectHeight ?: lastInsets.top,
+                top = topOverwrite ?: bannerHeight ?: lastInsets.top,
                 bottom = lastInsets.bottom,
                 left = lastInsets.left,
                 right = lastInsets.right
@@ -300,19 +316,37 @@ class MainActivity : OctoActivity() {
         // as this might lead to the user being stuck
         is Event.Disconnected -> {
             Timber.w("Connection lost")
-            when (e.exception) {
-                is WebSocketMaybeBrokenException -> e.exception?.let(this::showDialog)
-                is WebSocketUpgradeFailedException -> e.exception?.let(this::showDialog)
-                else -> setDisconnectedMessageVisible(!listOf(R.id.action_connect_printer, R.id.action_sign_in_required).contains(lastNavigation))
+            when {
+                e.exception is WebSocketMaybeBrokenException -> e.exception?.let(this::showDialog)
+                e.exception is WebSocketUpgradeFailedException -> e.exception?.let(this::showDialog)
+                !listOf(R.id.action_connect_printer, R.id.action_sign_in_required).contains(lastNavigation) ->
+                    showBanner(R.string.main___banner_connection_lost_reconnecting, 0, R.color.color_error, true)
+                else -> Unit
             }
         }
 
-        Event.Connected -> {
+        is Event.Connected -> {
             Timber.w("Connection restored")
-            setDisconnectedMessageVisible(false)
+            when (e.connectionType) {
+                ConnectionType.Primary -> setBannerVisible(false)
+                ConnectionType.Alternative -> showBanner(
+                    R.string.main___banner_connected_via_alternative,
+                    R.drawable.ic_round_cloud_queue_24,
+                    R.color.blue,
+                    false
+                )
+                ConnectionType.OctoEverywhere -> showBanner(
+                    R.string.main___banner_connected_via_octoeverywhere,
+                    R.drawable.ic_octoeverywhere_24px,
+                    R.color.octoeverywhere,
+                    false
+                )
+            }
         }
 
         is Event.MessageReceived -> onMessageReceived(e.message)
+
+        else -> Unit
     }
 
     private fun onMessageReceived(e: SocketMessage) = when (e) {
@@ -373,29 +407,45 @@ class MainActivity : OctoActivity() {
         else -> Unit
     }
 
-    private fun setDisconnectedMessageVisible(visible: Boolean) {
+    private fun showBanner(@StringRes text: Int, @DrawableRes icon: Int?, @ColorRes background: Int, showSpinner: Boolean) {
+        binding.bannerView.show(this, text, icon, background, showSpinner)
+        setBannerVisible(true)
+    }
+
+    private fun setBannerVisible(visible: Boolean) {
         // Not visible and we should not be visible? Nothing to do.
         // If we are visible or should be visible, we need to update height as insets might have changed
-        if (!binding.disconnectedMessage.isVisible && !visible) {
+        if (!binding.bannerView.isVisible && !visible) {
             return
         }
 
         // Let disconnect message fill status bar background and measure height
-        binding.disconnectedMessage.updatePadding(
-            top = binding.disconnectedMessage.paddingBottom + lastInsets.top,
-        )
-        binding.disconnectedMessage.measure(
+        binding.bannerView.updatePadding(top = lastInsets.top)
+        binding.bannerView.measure(
             View.MeasureSpec.makeMeasureSpec(rootLayout.width, View.MeasureSpec.EXACTLY),
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
         )
-        val height = binding.disconnectedMessage.measuredHeight
+        val height = binding.bannerView.measuredHeight
 
-        TransitionManager.beginDelayedTransition(rootLayout, TransitionSet().apply {
+        fun runTransition() = TransitionManager.beginDelayedTransition(rootLayout, TransitionSet().apply {
             addTransition(Explode())
             addTransition(ChangeBounds())
             excludeChildren(octoToolbar, true)
         })
-        binding.disconnectedMessage.isVisible = visible
+
+        runTransition()
+        binding.bannerView.onStartShrink = {
+            runTransition()
+            binding.bannerView.doOnNextLayout {
+                setBannerVisible(true)
+            }
+        }
+
+        if (!visible) {
+            binding.bannerView.hide()
+        }
+
+        binding.bannerView.isVisible = visible
         findCurrentScreen()?.let { applyInsetsToScreen(it, height.takeIf { visible }) }
     }
 

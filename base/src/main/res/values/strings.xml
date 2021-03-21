@@ -295,7 +295,9 @@
     <string name="print_notification___filament_change_required">Filament change required</string>
     <string name="print_notification___close">Close</string>
     <string name="capabilities_validation_error">Couldn\'t verify your servers capabilities. Some features of the app might not work as expected.</string>
-    <string name="connection_lost_reconnecting">Connection lost, reconnecting…</string>
+    <string name="main___banner_connection_lost_reconnecting">Connection lost, reconnecting…</string>
+    <string name="main___banner_connected_via_alternative">Connected via remote connection</string>
+    <string name="main___banner_connected_via_octoeverywhere">Connected via OctoEverywhere!</string>
     <string name="error_please_enter_a_message">Please enter a message</string>
     <string name="hls_stream_disabled_title">HLS webcam stream</string>
     <string name="hls_stream_disbaled_description">HLS streams are disabled, enable them now to see your webcam image.</string>
@@ -329,6 +331,7 @@
     <string name="main_menu___about_text"><![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> was<br/>made <font color="%1$06x"><b>for you</b></font> with love in Europe 🇪🇺<br><a href="privacy">Data privacy</a>]]></string>
     <string name="main_menu___item_help_faq_and_feedback">FAQ, help and feedback</string>
     <string name="main_menu___item_open_octoprint">Open OctoPrint</string>
+    <string name="main_menu___configure_remote_access">Configure remote access</string>
     <string name="main_menu___item_change_octoprint_instance">Switch OctoPrint</string>
     <string name="main_menu___show_octoapp_lab">OctoApp Lab</string>
     <string name="main_menu___item_customize_widgets">Customize controls</string>
@@ -434,4 +437,17 @@
     <string name="lab_menu___subtitle" translatable="false">Here you can find experimental settings and things I do not officially support but which you can use at your own will. Features might be removed without prior notice.</string>
     <string name="lab_menu___allow_to_rotate_title" translatable="false">Allow OctoApp to rotate</string>
     <string name="lab_menu___allow_to_rotate_description" translatable="false">OctoApp can rotate into landscape mode. The UI is not optimized and rotating might cause issues on some screens. Will take affect after restart.</string>
+    <string name="configure_remote_access___title">Configure Remote Access</string>
+    <string name="configure_remote_acces___description">Not at home? On it’s own, OctoApp can’t reach your OctoPrint as it is only available in your home network. You need to make OctoPrint available over the internet so that OctoApp can access it from wherever you are.</string>
+    <string name="configure_remote_acces___octoeverywhere___title">OctoEverywhere!</string>
+    <string name="configure_remote_acces___octoeverywhere___description_1">OctoEverywhere is a plugin for OctoPrint which makes remote access for OctoApp very easy. Simply install the plugin, create an account and log in below.</string>
+    <string name="configure_remote_acces___octoeverywhere___description_2">Using a 3rd party app like OctoApp currently requires a paid subscription with OctoEverywhere to cover the server costs.\n\nAs soon as your OctoPrint can’t be reached directly, OctoApp will switch to the remote connection provided bz OctoEverywhere. Back home? OctoApp will be able to reach your OctoPrint again and switch back to the faster direct connection.</string>
+    <string name="configure_remote_acces___octoeverywhere___button">Connect OctoEverywhere!</string>
+    <string name="configure_remote_acces___octoeverywhere___error_install_plugin">Please install the latest version of the OctoEverywhere plugin before continuing.</string>
+    <string name="configure_remote_acces___manual___description">You are an IT expert and want to set up remote access on your own? Enter the public web URL below. Whenever the primary web URL you signed in with is not reachable, OctoApp will fallback to this URL until your are back home.</string>
+    <string name="configure_remote_acces___manual___title">Manual setup</string>
+    <string name="configure_remote_acces___manual___button">Save remote URL</string>
+    <string name="configure_remote_acces___remote_access_configured">Remote access configured</string>
+    <string name="configure_remote_acces___ignore_issue">Ignore and continue</string>
+    <string name="configure_remote_acces___octoeverywhere___connected">OctoEverywhere is connected!</string>
 </resources>

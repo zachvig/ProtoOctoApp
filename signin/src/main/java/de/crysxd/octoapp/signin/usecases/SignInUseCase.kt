@@ -30,7 +30,7 @@ class SignInUseCase @Inject constructor(
         }
 
         // Create OctoPrint
-        val octoprintInstanceInformation = OctoPrintInstanceInformationV2(param.webUrl, param.apiKey)
+        val octoprintInstanceInformation = OctoPrintInstanceInformationV2(webUrl = param.webUrl, apiKey = param.apiKey)
         val octoprint = octoPrintProvider.createAdHocOctoPrint(octoprintInstanceInformation)
 
         // Test connection, will throw in case of faulty configuration
