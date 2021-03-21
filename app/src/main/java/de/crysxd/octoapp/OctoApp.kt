@@ -102,7 +102,7 @@ class OctoApp : Application() {
         // Setup analytics
         // Do not enable if we are in a TestLab environment
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(BaseInjector.get().octoPreferences().isCrashReportingEnabled && !BuildConfig.DEBUG)
-        val analyticsSuppressed = Settings.System.getString(contentResolver, "firebase.test.lab") != "true" && !BuildConfig.DEBUG
+        val analyticsSuppressed = Settings.System.getString(contentResolver, "firebase.test.lab") == "true" || BuildConfig.DEBUG
         val analyticsEnabled = BaseInjector.get().octoPreferences().isAnalyticsEnabled
         Firebase.analytics.setAnalyticsCollectionEnabled(analyticsEnabled && !analyticsSuppressed)
         if (BuildConfig.DEBUG) {
