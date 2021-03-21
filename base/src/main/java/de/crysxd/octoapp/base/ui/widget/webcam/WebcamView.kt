@@ -169,14 +169,17 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     }
 
     private fun applyAspectRatio(width: Int, height: Int) {
-        nativeAspectRation = Point(width, height)
+        val newAspectRatio = Point(width, height)
+        if (newAspectRatio != nativeAspectRation) {
+            nativeAspectRation = newAspectRatio
 
-        binding.hlsSurface.updateLayoutParams<ConstraintLayout.LayoutParams> {
-            dimensionRatio = if (scaleToFill) null else "H,$width:$height"
+            binding.hlsSurface.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                dimensionRatio = if (scaleToFill) null else "H,$width:$height"
+            }
+            hlsPlayer.videoScalingMode = Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+
+            onNativeAspectRatioChanged(width, height)
         }
-        hlsPlayer.videoScalingMode = Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
-
-        onNativeAspectRatioChanged(width, height)
     }
 
     private fun displayHlsStream(state: WebcamState.HlsStreamReady) {
