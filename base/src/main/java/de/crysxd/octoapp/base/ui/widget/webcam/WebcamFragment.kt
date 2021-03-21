@@ -11,6 +11,8 @@ import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
@@ -22,21 +24,27 @@ import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 
 class WebcamFragment : Fragment(), InsetAwareScreen {
 
     private val viewModel: WebcamViewModel by injectActivityViewModel()
+    private val orientationViewModel by lazy { ViewModelProvider(this)[OrientationViewModel::class.java] }
     private lateinit var binding: WebcamFragmentBinding
     private var systemUiFlagsBackup = 0
-    private var requestedOrientationBackup = 0
-    private var preferredOrientation = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         WebcamFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        orientationViewModel.init(requireOctoActivity().requestedOrientation)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Timber.i("create")
 
         binding.webcamView.coroutineScope = viewLifecycleOwner.lifecycleScope
         binding.webcamView.onResetConnection = viewModel::connect
@@ -59,20 +67,18 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
         }
 
         // Handle orientation stuff
-        requestedOrientationBackup = requireActivity().requestedOrientation
-        preferredOrientation = requestedOrientationBackup
         binding.webcamView.onNativeAspectRatioChanged = { width, height ->
             val frameAspectRatio = width / height.toFloat()
             val screenAspectRatio = resources.displayMetrics.run { widthPixels / heightPixels.toFloat() }
 
-            preferredOrientation = if ((frameAspectRatio < 1 && screenAspectRatio > 1) || (frameAspectRatio > 1 && screenAspectRatio < 1)) {
+            orientationViewModel.preferredOrientation = if ((frameAspectRatio < 1 && screenAspectRatio > 1) || (frameAspectRatio > 1 && screenAspectRatio < 1)) {
                 // Oh no! if we rotate the screen, the image would fit better!
                 ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
             } else {
                 // Aspect ratio of screen and frame match, do not change
                 requireActivity().requestedOrientation
             }
-            requireActivity().requestedOrientation = preferredOrientation
+            requireActivity().requestedOrientation = orientationViewModel.preferredOrientation
         }
 
         viewModel.uiState.observe(viewLifecycleOwner) {
@@ -126,7 +132,7 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
         super.onStart()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
         requireOctoActivity().octo.isVisible = false
-        requireOctoActivity().requestedOrientation = preferredOrientation
+        requireActivity().requestedOrientation = orientationViewModel.preferredOrientation
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             var flags = requireActivity().window.decorView.systemUiVisibility
@@ -143,7 +149,7 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
 
     override fun onStop() {
         super.onStop()
-        requireActivity().requestedOrientation = requestedOrientationBackup
+        requireActivity().requestedOrientation = orientationViewModel.requestedOrientationBackup
         requireActivity().window.decorView.systemUiVisibility = systemUiFlagsBackup
     }
 
@@ -154,5 +160,19 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
             left = insets.left,
             right = insets.right
         )
+    }
+
+    class OrientationViewModel : ViewModel() {
+        private val default = -1000
+        var preferredOrientation = default
+        var requestedOrientationBackup = 0
+            private set
+
+        fun init(orientation: Int) {
+            if (preferredOrientation == default) {
+                preferredOrientation = orientation
+                requestedOrientationBackup = orientation
+            }
+        }
     }
 }
