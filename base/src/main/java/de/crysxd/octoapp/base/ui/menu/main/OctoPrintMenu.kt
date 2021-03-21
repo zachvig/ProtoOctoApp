@@ -4,7 +4,10 @@ import android.content.Context
 import androidx.core.text.HtmlCompat
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
 import kotlinx.parcelize.Parcelize
 
@@ -61,7 +64,9 @@ class ConfigureRemoteAccessMenuItem : MenuItem {
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___configure_remote_access)
     override suspend fun onClicked(host: MenuBottomSheetFragment?) {
-        host?.findNavController()?.navigate(R.id.action_configure_remote_access)
+        host?.requireOctoActivity()?.let {
+            UriLibrary.getConfigureRemoteAccessUri().open(it)
+        }
         host?.dismissAllowingStateLoss()
     }
 }

@@ -8,6 +8,8 @@ import timber.log.Timber
 
 
 fun Uri.open(octoActivity: OctoActivity, allowCustomTabs: Boolean = true) {
+    Timber.i("LINK: $this")
+    Timber.i("LINK: ${this.host}")
     try {
         when {
             this.host == "app.octoapp.eu" -> {

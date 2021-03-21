@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Rect
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,6 +33,7 @@ import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingEvent
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.PurchaseConfirmationDialog
@@ -80,6 +82,7 @@ class MainActivity : OctoActivity() {
     private var lastWebUrl: String? = "initial"
     private val lastInsets = Rect()
     private var lastSuccessfulCapabilitiesUpdate = 0L
+    private var pendingUri: Uri? = null
 
     override val octoToolbar: OctoToolbar by lazy { binding.toolbar }
     override val octo: OctoView by lazy { binding.toolbarOctoView }
@@ -135,6 +138,7 @@ class MainActivity : OctoActivity() {
                     navigate(R.id.action_connect_printer)
                     events.observe(this, eventObserver)
                     currentMessages.observe(this, currentMessageObserver)
+                    pendingUri?.let(::handleDeepLink)
                 } else {
                     navigate(R.id.action_sign_in_required)
                     PrintNotificationService.stop(this)
@@ -214,24 +218,36 @@ class MainActivity : OctoActivity() {
 
         lifecycleScope.launchWhenCreated {
             intent?.data?.let {
+                Timber.i("Handling URI: $it")
                 if (it.host == "app.octoapp.eu") {
-                    // Give a second for everything to settle
-                    delay(1000)
-                    if (it.path == "/$OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH") {
-                        // Uh yeah, new OctoEverywhere connection
-                        lifecycleScope.launchWhenCreated {
-                            try {
-                                Injector.get().handleOctoEverywhereAppPortalSuccessUseCase().execute(it)
-                            } catch (e: Exception) {
-                                showDialog(e)
-                            }
-                        }
+                    if (UriLibrary.isActiveInstanceRequired(it) && Injector.get().octorPrintRepository().getActiveInstanceSnapshot() == null) {
+                        Timber.i("Uri requires active instance, delaying")
+                        pendingUri = it
                     } else {
-                        // Generic link
-                        it.open(this@MainActivity)
+                        // Give a second for everything to settle
+                        delay(1000)
+                        handleDeepLink(it)
                     }
                 }
             }
+        }
+    }
+
+    private fun handleDeepLink(uri: Uri) {
+        if (uri.path == "/$OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH") {
+            // Uh yeah, new OctoEverywhere connection
+            lifecycleScope.launchWhenCreated {
+                try {
+                    Timber.i("Handling OctoEverywhere connection")
+                    Injector.get().handleOctoEverywhereAppPortalSuccessUseCase().execute(uri)
+                } catch (e: Exception) {
+                    showDialog(e)
+                }
+            }
+        } else {
+            // Generic link
+            Timber.i("Handling generic URI: $uri")
+            uri.open(this@MainActivity)
         }
     }
 

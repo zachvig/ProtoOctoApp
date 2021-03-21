@@ -19,8 +19,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.ext.composeErrorMessage
 import de.crysxd.octoapp.base.ext.composeMessageStack
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.models.Event
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
@@ -138,7 +140,7 @@ abstract class OctoActivity : LocalizedActivity() {
         message = e.composeMessageStack(),
         neutralAction = {
             OctoAnalytics.logEvent(OctoAnalytics.Event.SupportFromErrorDetails)
-            navController.navigate(R.id.action_help)
+            UriLibrary.getHelpUri().open(this)
         },
         neutralButton = if (offerSupport) {
             getString(R.string.get_support)
