@@ -19,6 +19,7 @@
             android:textAppearance="@style/OctoTheme.TextAppearance.Title" />
 
         <ImageView
+            android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_3"

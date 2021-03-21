@@ -6,6 +6,7 @@
 
     <color name="window_background">@color/white</color>
     <color name="input_background">@color/light_blue</color>
+    <color name="input_background_alternative">@color/white_translucent</color>
     <color name="light_text">@color/light_grey</color>
     <color name="normal_text">@color/black_translucent</color>
     <color name="dark_text">@color/black</color>

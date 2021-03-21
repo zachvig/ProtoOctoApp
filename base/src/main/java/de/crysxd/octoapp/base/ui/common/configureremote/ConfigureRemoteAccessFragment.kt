@@ -1,7 +1,9 @@
 package de.crysxd.octoapp.base.ui.common.configureremote
 
 import android.graphics.Rect
+import android.graphics.drawable.Animatable2
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -47,6 +49,12 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
             override fun onTabReselected(tab: TabLayout.Tab) = Unit
         })
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            binding.header.postDelayed({
+                (binding.header.drawable as? Animatable2)?.start()
+            }, 1000)
+        }
+
         binding.saveUrl.setOnClickListener {
             viewModel.setRemoteUrl(binding.webUrlInput.editText.text.toString(), false)
         }
@@ -55,7 +63,7 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
             viewModel.getOctoEverywhereAppPortalUrl()
         }
 
-        binding.webUrlInput.backgroundTint = ContextCompat.getColor(requireContext(), R.color.white_translucent)
+        binding.webUrlInput.backgroundTint = ContextCompat.getColor(requireContext(), R.color.input_background_alternative)
 
         viewModel.viewState.observe(viewLifecycleOwner) {
             TransitionManager.beginDelayedTransition(binding.root)
@@ -117,7 +125,9 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         super.onStart()
         requireOctoActivity().octo.isVisible = false
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
-        measureTabContents()
+        requireView().doOnLayout {
+            measureTabContents()
+        }
     }
 
     override fun handleInsets(insets: Rect) {
