@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base
 import android.net.Uri
 import androidx.annotation.StringRes
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.urlEncode
 
 object UriLibrary {
     private fun getUri(@StringRes string: Int, vararg placeholder: String) =
@@ -22,6 +23,9 @@ object UriLibrary {
 
     fun getWebcamUri(): Uri =
         getUri(R.string.uri___webcam)
+
+    fun getTroubleShootUri(baseUrl: Uri, apiKey: String? = null): Uri =
+        getUri(R.string.uri___troubleshoot, "{baseUrl}", baseUrl.toString().urlEncode(), "{apiKey}", apiKey ?: "")
 
     fun getFaqUri(faqId: String) =
         getUri(R.string.uri___faq, "{faqId}", faqId)

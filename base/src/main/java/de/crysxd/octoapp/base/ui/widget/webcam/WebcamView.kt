@@ -14,6 +14,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.findFragment
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.findNavController
 import androidx.transition.*
@@ -23,8 +25,11 @@ import com.google.android.exoplayer2.source.LoadEventInfo
 import com.google.android.exoplayer2.source.MediaLoadData
 import com.google.android.exoplayer2.video.VideoListener
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.databinding.WebcamViewBinding
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootingFragmentArgs
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import timber.log.Timber
@@ -157,10 +162,8 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 binding.buttonReconnect.text = context.getString(R.string.reconnect)
                 binding.buttonTroubleShoot.isVisible = supportsToubleShooting
                 binding.buttonTroubleShoot.setOnClickListener {
-                    findNavController().navigate(
-                        R.id.action_trouble_shoot,
-                        TroubleShootingFragmentArgs(Uri.parse(newState.streamUrl), null).toBundle()
-                    )
+                    UriLibrary.getTroubleShootUri(Uri.parse(newState.streamUrl))
+                        .open(findFragment<Fragment>().requireOctoActivity())
                 }
             }
             is WebcamState.HlsStreamReady -> displayHlsStream(newState)

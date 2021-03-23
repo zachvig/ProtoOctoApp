@@ -8,6 +8,7 @@
     <include app:graph="@navigation/configure_remote_access_nav_graph" />
     <include app:graph="@navigation/help_nav_graph" />
     <include app:graph="@navigation/fullscreen_webcam_nav_graph" />
+    <include app:graph="@navigation/trouble_shoot_nav_graph" />
 
     <action
         android:id="@+id/action_sign_in_required"

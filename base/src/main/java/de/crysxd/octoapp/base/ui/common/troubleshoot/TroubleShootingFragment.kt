@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.ui.common.troubleshoot
 
+import android.net.Uri
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.Gravity
@@ -20,6 +21,7 @@ import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.databinding.TroubleShootingFragmentBinding
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.ext.urlDecode
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 
@@ -33,7 +35,7 @@ class TroubleShootingFragment : Fragment(R.layout.trouble_shooting_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val navArgs by navArgs<TroubleShootingFragmentArgs>()
-        val baseUrl = navArgs.baseUrl
+        val baseUrl = Uri.parse(navArgs.baseUrl.urlDecode())
         val apiKey = navArgs.apiKey
 
         binding.buttonMain.setOnLongClickListener {
