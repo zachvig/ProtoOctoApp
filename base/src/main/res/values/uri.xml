@@ -5,4 +5,5 @@
     <string name="uri___faq" translatable="false">app.octoapp.eu/help/{faqId}</string>
     <string name="uri___webcam" translatable="false">app.octoapp.eu/webcam</string>
     <string name="uri___troubleshoot" translatable="false">app.octoapp.eu/troubleshoot?baseUrl={baseUrl}&amp;apiKey={apiKey}</string>
+    <string name="uri___purchase" translatable="false">app.octoapp.eu/become-supporter</string>
 </resources>

@@ -17,13 +17,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.asStyleFileSize
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
 import de.crysxd.octoapp.base.gcode.render.models.RenderStyle
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewFragmentArgs
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.octoprint.models.files.FileObject
@@ -187,7 +190,7 @@ class GcodePreviewWidget(context: Context) : RecyclableOctoWidget<GcodePreviewWi
 
         binding.buttonEnable.setOnClickListener {
             OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "gcode_live"))
-            it.findNavController().navigate(R.id.action_show_purchase_flow)
+            UriLibrary.getPurchaseUrl().open(parent.requireOctoActivity())
         }
     }
 

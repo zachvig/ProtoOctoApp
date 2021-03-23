@@ -30,6 +30,9 @@ object UriLibrary {
     fun getFaqUri(faqId: String) =
         getUri(R.string.uri___faq, "{faqId}", faqId)
 
+    fun getPurchaseUrl(): Uri =
+        getUri(R.string.uri___purchase)
+
     fun isActiveInstanceRequired(uri: Uri) = when (uri.path) {
         getConfigureRemoteAccessUri().path -> true
         else -> false

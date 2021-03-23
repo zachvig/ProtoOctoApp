@@ -9,6 +9,12 @@
     <include app:graph="@navigation/help_nav_graph" />
     <include app:graph="@navigation/fullscreen_webcam_nav_graph" />
     <include app:graph="@navigation/trouble_shoot_nav_graph" />
+    <include app:graph="@navigation/purchase_flow_nav_graph" />
+    <include app:graph="@navigation/sign_in_nav_graph" />
+
+    <include app:graph="@navigation/connect_printer_nav_graph" />
+    <include app:graph="@navigation/pre_print_controls_nav_graph" />
+    <include app:graph="@navigation/print_controls_nav_graph" />
 
     <action
         android:id="@+id/action_sign_in_required"
@@ -59,14 +65,6 @@
         app:popExitAnim="@anim/popExitAnim"
         app:popUpTo="@id/main_nav_graph"
         app:popUpToInclusive="true" />
-
-    <include app:graph="@navigation/sign_in_nav_graph" />
-
-    <include app:graph="@navigation/connect_printer_nav_graph" />
-
-    <include app:graph="@navigation/pre_print_controls_nav_graph" />
-
-    <include app:graph="@navigation/print_controls_nav_graph" />
 
     <fragment
         android:id="@+id/splashFragment"

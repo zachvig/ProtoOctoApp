@@ -8,12 +8,13 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.databinding.WebcamWidgetBinding
 import de.crysxd.octoapp.base.di.injectActivityViewModel
+import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState
@@ -33,7 +34,7 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
         binding.webcamView.onResetConnection = {
             if (binding.webcamView.state == WebcamView.WebcamState.HlsStreamDisabled) {
                 OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "hls_webcam_widget"))
-                view.findNavController().navigate(R.id.action_show_purchase_flow)
+                UriLibrary.getPurchaseUrl().open(parent.requireOctoActivity())
             } else {
                 baseViewModel.connect()
             }
@@ -98,7 +99,7 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
     }
 
     private fun openFullscreen() {
-        parent.findNavController().navigate(R.id.action_show_fullscreen_webcam)
+        UriLibrary.getPurchaseUrl().open(parent.requireOctoActivity())
         recordInteraction()
     }
 

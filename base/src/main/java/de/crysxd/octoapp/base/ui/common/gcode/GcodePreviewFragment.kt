@@ -12,14 +12,15 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.databinding.GcodePreviewFragmentBinding
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectActivityViewModel
 import de.crysxd.octoapp.base.ext.asStyleFileSize
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
 import de.crysxd.octoapp.base.ui.base.BaseFragment
@@ -115,7 +116,7 @@ class GcodePreviewFragment : BaseFragment(R.layout.gcode_preview_fragment) {
 
         binding.buttonEnableFeature.setOnClickListener {
             OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "gcode_preview"))
-            findNavController().navigate(R.id.action_show_purchase_flow)
+            UriLibrary.getPurchaseUrl().open(requireOctoActivity())
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
