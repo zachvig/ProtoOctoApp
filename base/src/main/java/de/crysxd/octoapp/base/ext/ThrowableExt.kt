@@ -15,10 +15,12 @@ fun Throwable.composeErrorMessage(context: Context, @StringRes baseStringRes: In
         ?: context.getString(
             baseStringRes,
             ContextCompat.getColor(context, R.color.light_text),
-            localizedMessage?.htmlify()
-                ?: cause?.localizedMessage?.htmlify()
-                ?: (this as? ProxyException)?.original?.let { it::class.java.simpleName }
-                ?: this::class.java.simpleName
+            (this as? ProxyException)?.original?.let {
+                it.localizedMessage ?: it::class.java.simpleName
+            } ?: (this as? OctoPrintException)?.let {
+                it.userFacingMessage ?: it.technicalMessage
+            } ?: cause?.localizedMessage?.htmlify()
+            ?: this::class.java.simpleName
         ), HtmlCompat.FROM_HTML_MODE_LEGACY
 )
 
