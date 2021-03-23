@@ -20,6 +20,9 @@ object UriLibrary {
     fun getHelpUri(): Uri =
         getUri(R.string.uri___help)
 
+    fun getWebcamUri(): Uri =
+        getUri(R.string.uri___webcam)
+
     fun getFaqUri(faqId: String) =
         getUri(R.string.uri___faq, "{faqId}", faqId)
 

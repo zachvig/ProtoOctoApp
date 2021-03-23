@@ -3,5 +3,5 @@
     <string name="uri___configure_remote_access" translatable="false">app.octoapp.eu/configure-remote</string>
     <string name="uri___help" translatable="false">app.octoapp.eu/help</string>
     <string name="uri___faq" translatable="false">app.octoapp.eu/help/{faqId}</string>
-    <string name="uri___edit_widgets" translatable="false">app.octoapp.eu/edit-widgets</string>
+    <string name="uri___webcam" translatable="false">app.octoapp.eu/webcam</string>
 </resources>
