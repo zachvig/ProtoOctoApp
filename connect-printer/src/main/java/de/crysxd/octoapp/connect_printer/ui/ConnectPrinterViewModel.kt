@@ -68,8 +68,12 @@ class ConnectPrinterViewModel(
         uiStateMediator.value = UiState.Initializing
 
         viewModelScope.launch {
-            isPsuSupported = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(false)).isNotEmpty()
-            computeUiState()
+            try {
+                isPsuSupported = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(false)).isNotEmpty()
+                computeUiState()
+            } catch (e: Exception) {
+                Timber.w(e, "Unable to check power devices")
+            }
         }
     }
 
