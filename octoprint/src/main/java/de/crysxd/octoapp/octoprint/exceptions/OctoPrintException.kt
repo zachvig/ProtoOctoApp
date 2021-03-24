@@ -13,8 +13,6 @@ open class OctoPrintException(
     val apiKey: String? = null
 ) : IOException(mask(technicalMessage, webUrl, apiKey), originalCause?.let { ProxyException.create(it, webUrl, apiKey) }) {
 
-    override fun getLocalizedMessage() = userFacingMessage ?: originalCause?.localizedMessage ?: technicalMessage
-
     companion object {
         private fun mask(input: String?, webUrl: String?, apiKey: String? = null): String {
             var output = input ?: ""
