@@ -17,8 +17,8 @@ android {
         applicationId "de.crysxd.octoapp"
         minSdkVersion 21
         targetSdkVersion project.rootProject.ext.target_sdk
-        versionCode 1725
-        versionName "1.7.3"
+        versionCode 1726
+        versionName "1.7.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -68,7 +68,7 @@ play {
     resolutionStrategy.set(ResolutionStrategy.IGNORE)
     releaseStatus.set(ReleaseStatus.IN_PROGRESS)
     updatePriority.set(2)
-    userFraction.set(0.1d)
+    userFraction.set(0.66d)
 }
 
 
