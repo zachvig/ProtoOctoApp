@@ -4,11 +4,14 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
+import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.SubjectAlternativeNameCompatVerifier
+import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereConnectionNotFoundException
+import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereSubscriptionMissingException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.GlobalScope
@@ -115,6 +118,18 @@ class OctoPrintProvider(
         }
     }
 
+    private fun handleNetworkException(e: Exception) = GlobalScope.launch {
+        when (e) {
+            // The OE connection is broken, remove. User will be informed by regular error dialog
+            is OctoEverywhereConnectionNotFoundException, is OctoEverywhereSubscriptionMissingException -> {
+                Timber.w("Caught OctoEverywhere exception, removing connection")
+                Injector.get().handleOctoEverywhereExceptionUseCase().execute(e)
+            }
+
+            else -> Unit
+        }
+    }
+
     fun createAdHocOctoPrint(it: OctoPrintInstanceInformationV2) =
         OctoPrint(
             rawWebUrl = it.webUrl,
@@ -123,6 +138,7 @@ class OctoPrintProvider(
             interceptors = listOf(invalidApiKeyInterceptor),
             keyStore = sslKeyStoreHandler.loadKeyStore(),
             hostnameVerifier = SubjectAlternativeNameCompatVerifier().takeIf { _ -> sslKeyStoreHandler.isWeakVerificationForHost(it.webUrl) },
+            networkExceptionListener = ::handleNetworkException,
             connectTimeoutMs = Firebase.remoteConfig.getLong("connection_timeout_ms"),
             readWriteTimeout = Firebase.remoteConfig.getLong("read_write_timeout_ms"),
             webSocketConnectionTimeout = Firebase.remoteConfig.getLong("web_socket_connect_timeout_ms"),

@@ -91,6 +91,7 @@ interface BaseComponent {
     fun activateMaterialUseCase(): ActivateMaterialUseCase
     fun cyclePsuUseCase(): CyclePsuUseCase
     fun handleOctoEverywhereAppPortalSuccessUseCase(): HandleOctoEverywhereAppPortalSuccessUseCase
+    fun handleOctoEverywhereExceptionUseCase(): HandleOctoEverywhereExceptionUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

@@ -67,6 +67,10 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
             viewModel.getOctoEverywhereAppPortalUrl()
         }
 
+        binding.disconnectOctoEverywhere.setOnClickListener {
+            viewModel.setRemoteUrl("", false)
+        }
+
         binding.webUrlInput.backgroundTint = ContextCompat.getColor(requireContext(), R.color.input_background_alternative)
 
         viewModel.viewState.observe(viewLifecycleOwner) {
@@ -74,8 +78,10 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
             binding.saveUrl.isEnabled = it !is ConfigureRemoteAccessViewModel.ViewState.Loading
             binding.saveUrl.setText(if (binding.saveUrl.isEnabled) R.string.configure_remote_acces___manual___button else R.string.loading)
             (it as? ConfigureRemoteAccessViewModel.ViewState.Updated)?.let { _ ->
-                binding.webUrlInput.editText.setText(it.remoteWebUrl)
+                binding.webUrlInput.editText.setText(it.remoteWebUrl.takeIf { _ -> it.remoteWebUrl != it.octoEverywhereConnection?.fullUrl })
                 binding.octoEverywhereConnected.isVisible = it.remoteWebUrl == it.octoEverywhereConnection?.fullUrl
+                binding.disconnectOctoEverywhere.isVisible = binding.octoEverywhereConnected.isVisible
+                binding.connectOctoEverywhere.isVisible = !binding.disconnectOctoEverywhere.isVisible
             }
 
             measureTabContents()

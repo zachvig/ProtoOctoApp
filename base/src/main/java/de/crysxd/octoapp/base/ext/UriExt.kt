@@ -34,7 +34,6 @@ fun Uri.open(octoActivity: OctoActivity, allowCustomTabs: Boolean = true) {
                     Timber.i("Opening custom tab link: $this")
                     val builder = CustomTabsIntent.Builder()
                     val customTabsIntent = builder.build()
-                    customTabsIntent.intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
                     customTabsIntent.launchUrl(octoActivity, this)
                 } catch (e: java.lang.Exception) {
                     open(octoActivity, false)

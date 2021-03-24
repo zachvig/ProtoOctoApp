@@ -3,7 +3,7 @@ package de.crysxd.octoapp.octoprint
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import de.crysxd.octoapp.octoprint.api.*
-import de.crysxd.octoapp.octoprint.exceptions.GenerateExceptionInterceptor
+import de.crysxd.octoapp.octoprint.interceptors.GenerateExceptionInterceptor
 import de.crysxd.octoapp.octoprint.interceptors.AlternativeWebUrlInterceptor
 import de.crysxd.octoapp.octoprint.interceptors.ApiKeyInterceptor
 import de.crysxd.octoapp.octoprint.interceptors.BasicAuthInterceptor
@@ -43,6 +43,7 @@ class OctoPrint(
     private val interceptors: List<Interceptor> = emptyList(),
     private val keyStore: KeyStore? = null,
     private val hostnameVerifier: HostnameVerifier? = null,
+    private val networkExceptionListener: (Exception) -> Unit = { },
     val readWriteTimeout: Long = 5000,
     val connectTimeoutMs: Long = 10000,
     val webSocketConnectionTimeout: Long = 5000,
@@ -176,7 +177,7 @@ class OctoPrint(
 
         addInterceptor(CatchAllInterceptor(webUrl, apiKey))
         addInterceptor(ApiKeyInterceptor(apiKey))
-        addInterceptor(GenerateExceptionInterceptor())
+        addInterceptor(GenerateExceptionInterceptor(networkExceptionListener))
         addInterceptor(alternativeWebUrlInterceptor)
         addInterceptor(BasicAuthInterceptor(logger, fullWebUrl, fullAlternativeWebUrl))
         connectTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)

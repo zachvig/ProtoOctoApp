@@ -30,38 +30,41 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                 octoPrintProvider.octoPrint().performOnlineCheck()
             }
 
+            // Gather all info in parallel
+            val settings = async { octoPrintProvider.octoPrint().createSettingsApi().getSettings() }
+            val commands = async {
+                try {
+                    octoPrintProvider.octoPrint().createSystemApi().getSystemCommands()
+                } catch (e: Exception) {
+                    // Might fail for lacking permissions
+                    Timber.e(e)
+                    null
+                }
+            }
+
+            val m115 = async {
+                try {
+                    if (param.updateM115) {
+                        executeM115()
+                    } else {
+                        null
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    null
+                }
+            }
+
+            val m115Result = m115.await()
+            val settingsResult = settings.await()
+            val commandsResult = commands.await()?.all
+
             octoPrintRepository.updateActive { current ->
-                // Gather all info in parallel
-                val settings = async { octoPrintProvider.octoPrint().createSettingsApi().getSettings() }
-                val commands = async {
-                    try {
-                        octoPrintProvider.octoPrint().createSystemApi().getSystemCommands()
-                    } catch (e: Exception) {
-                        // Might fail for lacking permissions
-                        Timber.e(e)
-                        null
-                    }
-                }
-
-                val m115 = async {
-                    try {
-                        if (param.updateM115) {
-                            executeM115()
-                        } else {
-                            null
-                        }
-                    } catch (e: Exception) {
-                        Timber.e(e)
-                        null
-                    }
-                }
-
                 val updated = current.copy(
-                    m115Response = m115.await() ?: current.m115Response,
-                    settings = settings.await(),
-                    systemCommands = commands.await()?.all
+                    m115Response = m115Result ?: current.m115Response,
+                    settings = settingsResult,
+                    systemCommands = commandsResult ?: current.systemCommands,
                 )
-
                 val standardPlugins = Firebase.remoteConfig.getString("default_plugins").split(",").map { it.trim() }
                 settings.await().plugins.keys.filter { !standardPlugins.contains(it) }.forEach {
                     OctoAnalytics.logEvent(OctoAnalytics.Event.PluginDetected(it))

@@ -49,7 +49,7 @@ class SetAlternativeWebUrlUseCase @Inject constructor(
         }
 
         octoPrintRepository.updateActive {
-            it.copy(alternativeWebUrl = param.webUrl.takeIf { s -> s.isNotBlank() })
+            it.copy(alternativeWebUrl = param.webUrl.takeIf { s -> s.isNotBlank() }, octoEverywhereConnection = null)
         }
 
         OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigManuallySet)

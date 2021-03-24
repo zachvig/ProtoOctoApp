@@ -40,7 +40,7 @@ import timber.log.Timber
 abstract class OctoActivity : LocalizedActivity() {
 
     internal companion object {
-        lateinit var instance: OctoActivity
+        var instance: OctoActivity? = null
             private set
     }
 
@@ -64,6 +64,11 @@ abstract class OctoActivity : LocalizedActivity() {
                 .filterNotNull()
                 .collect(::doShowSnackbar)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        instance = null
     }
 
     fun observeErrorEvents(events: LiveData<Event<Throwable>>) = events.observe(this) {

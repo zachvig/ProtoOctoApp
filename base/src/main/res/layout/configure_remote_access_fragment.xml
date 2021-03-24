@@ -93,12 +93,21 @@
                     tools:visibility="visible" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/disconnectOctoEverywhere"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/OctoTheme.Widget.Button.Secondary"
+                    android:layout_margin="@dimen/margin_2"
+                    android:visibility="gone"
+                    android:text="@string/configure_remote_acces___octoeverywhere___disconnect_button" />
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/connectOctoEverywhere"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_2"
                     android:backgroundTint="@color/octoeverywhere"
-                    android:text="@string/configure_remote_acces___octoeverywhere___button"
+                    android:text="@string/configure_remote_acces___octoeverywhere___connect_button"
                     app:icon="@drawable/ic_octoeverywhere_24px"
                     app:iconTint="@null" />
 
