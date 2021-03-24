@@ -18,9 +18,11 @@ import de.crysxd.octoapp.base.databinding.ConfigureRemoteAccessFragmentBinding
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.base.OctoActivity
+import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import timber.log.Timber
@@ -55,6 +57,8 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
             }, 1000)
         }
 
+        binding.description.text = getString(R.string.configure_remote_acces___description).toHtml()
+        binding.description.movementMethod = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(requireOctoActivity()))
         binding.saveUrl.setOnClickListener {
             viewModel.setRemoteUrl(binding.webUrlInput.editText.text.toString(), false)
         }

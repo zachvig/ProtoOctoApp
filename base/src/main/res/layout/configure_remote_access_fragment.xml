@@ -29,11 +29,12 @@
             android:src="@drawable/octo_remote" />
 
         <TextView
+            android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_2"
             android:gravity="center"
-            android:text="@string/configure_remote_acces___description" />
+            tools:text="@string/configure_remote_acces___description" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
