@@ -31,7 +31,6 @@ fun Uri.open(octoActivity: OctoActivity, allowCustomTabs: Boolean = true) {
 
             else -> {
                 Timber.i("Opening external link: $this")
-
                 val intent = Intent(Intent.ACTION_VIEW, this).also { it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
                 octoActivity.startActivity(intent)
             }

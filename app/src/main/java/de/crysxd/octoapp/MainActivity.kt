@@ -21,10 +21,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.map
+import androidx.lifecycle.*
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.transition.ChangeBounds
@@ -71,19 +68,13 @@ import de.crysxd.octoapp.octoprint.models.socket.Message as SocketMessage
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
 
-const val KEY_LAST_NAVIGATION = "lastNavigation"
-const val KEY_LAST_WEB_URL = "lastWebUrl"
 const val EXTRA_TARGET_OCTOPRINT_WEB_URL = "octoprint_web_url"
 
 class MainActivity : OctoActivity() {
 
     private lateinit var binding: MainActivityBinding
-    private var lastNavigation = -1
-    private var lastWebUrl: String? = "initial"
+    private val viewModel by lazy { ViewModelProvider(this)[MainActivityViewModel::class.java] }
     private val lastInsets = Rect()
-    private var lastSuccessfulCapabilitiesUpdate = 0L
-    private var pendingUri: Uri? = null
-
     override val octoToolbar: OctoToolbar by lazy { binding.toolbar }
     override val octo: OctoView by lazy { binding.toolbarOctoView }
     override val rootLayout by lazy { binding.coordinator }
@@ -91,6 +82,11 @@ class MainActivity : OctoActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // We need to call this before nav component grabs any link. onNewIntent
+        // handles any links and removes them from the intent
+        onNewIntent(intent)
+
         binding = MainActivityBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
@@ -118,35 +114,36 @@ class MainActivity : OctoActivity() {
         octoWidgetRecycler.preInflateWidget(this) { ProgressWidget(this@MainActivity) }
         octoWidgetRecycler.preInflateWidget(this) { TuneWidget(this@MainActivity) }
 
-        onNewIntent(intent)
-        lastWebUrl = savedInstanceState?.getString(KEY_LAST_WEB_URL) ?: lastWebUrl
-        lastNavigation = savedInstanceState?.getInt(KEY_LAST_NAVIGATION, lastNavigation) ?: lastNavigation
-        Timber.i("onCreate $lastWebUrl")
+        Timber.i("onCreate ${viewModel.lastWebUrl}")
 
         SignInInjector.get().octoprintRepository().instanceInformationFlow()
             .filter {
-                val pass = lastWebUrl != it?.webUrl
-                lastWebUrl = it?.webUrl
+                val pass = viewModel.lastWebUrl != it?.webUrl
+                viewModel.lastWebUrl = it?.webUrl
                 pass
             }
             .asLiveData()
-            .observe(this, {
-                Timber.i("Instance information received $this")
+            .observe(this) {
                 updateAllWidgets()
                 if (it != null && it.apiKey.isNotBlank()) {
+                    Timber.i("Instance information received $this")
                     updateCapabilities("instance_change", updateM115 = true, escalateError = false)
                     navigate(R.id.action_connect_printer)
                     events.observe(this, eventObserver)
                     currentMessages.observe(this, currentMessageObserver)
-                    pendingUri?.let(::handleDeepLink)
+                    viewModel.pendingUri?.let {
+                        viewModel.pendingUri = null
+                        handleDeepLink(it)
+                    }
                 } else {
+                    Timber.i("No instance active $this")
                     navigate(R.id.action_sign_in_required)
                     PrintNotificationService.stop(this)
                     (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).cancel(PrintNotificationService.NOTIFICATION_ID)
                     events.removeObserver(eventObserver)
                     currentMessages.removeObserver(currentMessageObserver)
                 }
-            })
+            }
 
         SignInInjector.get().octoprintRepository().instanceInformationFlow()
             .distinctUntilChangedBy { it?.settings?.appearance?.color }
@@ -166,6 +163,11 @@ class MainActivity : OctoActivity() {
                     R.id.workspacePrePrint -> OctoAnalytics.logEvent(OctoAnalytics.Event.PrePrintWorkspaceShown)
                     R.id.workspacePrint -> OctoAnalytics.logEvent(OctoAnalytics.Event.PrintWorkspaceShown)
                     R.id.terminalFragment -> OctoAnalytics.logEvent(OctoAnalytics.Event.TerminalWorkspaceShown)
+                }
+
+                viewModel.pendingNavigation?.let {
+                    viewModel.pendingNavigation = null
+                    navigate(it)
                 }
             }
 
@@ -206,7 +208,6 @@ class MainActivity : OctoActivity() {
     }
 
     override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
         if (BillingManager.isFeatureEnabled("quick_switch")) {
             intent?.getStringExtra(EXTRA_TARGET_OCTOPRINT_WEB_URL)?.let { webUrl ->
                 val repo = Injector.get().octorPrintRepository()
@@ -216,48 +217,43 @@ class MainActivity : OctoActivity() {
             }
         }
 
-        lifecycleScope.launchWhenCreated {
-            intent?.data?.let {
-                Timber.i("Handling URI: $it")
-                if (it.host == "app.octoapp.eu") {
-                    if (UriLibrary.isActiveInstanceRequired(it) && Injector.get().octorPrintRepository().getActiveInstanceSnapshot() == null) {
-                        Timber.i("Uri requires active instance, delaying")
-                        pendingUri = it
-                    } else {
-                        // Give a second for everything to settle
-                        delay(1000)
-                        handleDeepLink(it)
-                    }
-                }
+        intent?.data?.let {
+            Timber.i("Handling URI: $it")
+            if (it.host == "app.octoapp.eu") {
+                // Give a second for everything to settle
+                handleDeepLink(it)
             }
         }
+
+        // Clean data so the nav component doesn't grab the link. We need to do this manually honoring the app state
+        intent?.data = null
+        super.onNewIntent(intent)
     }
 
     private fun handleDeepLink(uri: Uri) {
-        if (uri.path == "/$OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH") {
-            // Uh yeah, new OctoEverywhere connection
-            lifecycleScope.launchWhenCreated {
-                try {
-                    Timber.i("Handling OctoEverywhere connection")
-                    Injector.get().handleOctoEverywhereAppPortalSuccessUseCase().execute(uri)
-                } catch (e: Exception) {
-                    showDialog(e)
-                }
-            }
+        if (UriLibrary.isActiveInstanceRequired(uri) && Injector.get().octorPrintRepository().getActiveInstanceSnapshot() == null) {
+            Timber.i("Uri requires active instance, delaying")
+            viewModel.pendingUri = uri
         } else {
-            // Generic link
-            Timber.i("Handling generic URI: $uri")
-            uri.open(this@MainActivity)
+            if (uri.path == "/$OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH") {
+                // Uh yeah, new OctoEverywhere connection
+                lifecycleScope.launchWhenCreated {
+                    try {
+                        Timber.i("Handling OctoEverywhere connection")
+                        Injector.get().handleOctoEverywhereAppPortalSuccessUseCase().execute(uri)
+                    } catch (e: Exception) {
+                        showDialog(e)
+                    }
+                }
+            } else {
+                // Generic link
+                Timber.i("Handling generic URI: $uri")
+                uri.open(this@MainActivity)
+            }
         }
     }
 
     private fun isTablet() = ((this.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE)
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt(KEY_LAST_NAVIGATION, lastNavigation)
-        outState.putString(KEY_LAST_WEB_URL, lastWebUrl)
-    }
 
     private fun applyInsetsToCurrentScreen() = findCurrentScreen()?.let { applyInsetsToScreen(it) }
 
@@ -321,9 +317,27 @@ class MainActivity : OctoActivity() {
     }
 
     private fun navigate(id: Int) {
-        if (id != lastNavigation) {
-            lastNavigation = id
-            navController.navigate(id)
+        if (id != viewModel.lastNavigation) {
+            // Screens which must be/can be closed automatically when the state changes
+            // Other screens will stay open and we navigate to the new state-based destination after the
+            // current screen is closed
+            val currentDestinationAllowsAutoNavigate = listOf(
+                R.id.splashFragment,
+                R.id.workspaceConnect,
+                R.id.workspacePrePrint,
+                R.id.terminalFragment,
+                R.id.fileDetailsFragment,
+                R.id.loginFragment,
+                R.id.fileListFragment,
+            ).contains(navController.currentDestination?.id)
+
+            if (currentDestinationAllowsAutoNavigate) {
+                viewModel.lastNavigation = id
+                navController.navigate(id)
+            } else {
+                Timber.v("Current destination does not allow auto navigate, storing navigation action as pending")
+                viewModel.pendingNavigation = id
+            }
         }
     }
 
@@ -335,7 +349,7 @@ class MainActivity : OctoActivity() {
             when {
                 e.exception is WebSocketMaybeBrokenException -> e.exception?.let(this::showDialog)
                 e.exception is WebSocketUpgradeFailedException -> e.exception?.let(this::showDialog)
-                !listOf(R.id.action_connect_printer, R.id.action_sign_in_required).contains(lastNavigation) ->
+                !listOf(R.id.action_connect_printer, R.id.action_sign_in_required).contains(viewModel.lastNavigation) ->
                     showBanner(R.string.main___banner_connection_lost_reconnecting, 0, R.color.color_error, true)
                 else -> Unit
             }
@@ -370,7 +384,7 @@ class MainActivity : OctoActivity() {
         is SocketMessage.EventMessage -> onEventMessageReceived(e)
         is SocketMessage.ConnectedMessage -> {
             // We are connected, let's update the available capabilities of the connect Octoprint
-            if ((System.currentTimeMillis() - lastSuccessfulCapabilitiesUpdate) > 10000) {
+            if ((System.currentTimeMillis() - viewModel.lastSuccessfulCapabilitiesUpdate) > 10000) {
                 updateCapabilities("connected_event")
             } else Unit
         }
@@ -410,7 +424,7 @@ class MainActivity : OctoActivity() {
                 }
 
                 // Fallback
-                else -> lastNavigation
+                else -> viewModel.lastNavigation
             }
         )
     }
@@ -469,11 +483,11 @@ class MainActivity : OctoActivity() {
         Timber.i("Updating capabities (trigger=$trigger)")
         lifecycleScope.launchWhenCreated {
             try {
-                lastSuccessfulCapabilitiesUpdate = System.currentTimeMillis()
+                viewModel.lastSuccessfulCapabilitiesUpdate = System.currentTimeMillis()
                 Injector.get().updateInstanceCapabilitiesUseCase().execute(UpdateInstanceCapabilitiesUseCase.Params(updateM115 = updateM115))
                 updateAllWidgets()
             } catch (e: Exception) {
-                lastSuccessfulCapabilitiesUpdate = 0
+                viewModel.lastSuccessfulCapabilitiesUpdate = 0
                 if (escalateError) {
                     Timber.e(e)
                     showDialog(getString(R.string.capabilities_validation_error))

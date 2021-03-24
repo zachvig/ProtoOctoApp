@@ -32,7 +32,7 @@
         tools:layout="@layout/pre_print_controls_fragment">
         <action
             android:id="@+id/action_start_print"
-            app:destination="@id/selectFileFragment"
+            app:destination="@id/fileListFragment"
             app:enterAnim="@anim/enterAnim"
             app:exitAnim="@anim/exitAnim"
             app:popEnterAnim="@anim/popEnterAnim"
@@ -49,14 +49,14 @@
 
 
     <fragment
-        android:id="@+id/selectFileFragment"
+        android:id="@+id/fileListFragment"
         android:name="de.crysxd.octoapp.pre_print_controls.ui.select_file.SelectFileFragment"
         android:label="SelectFileFragment"
         tools:layout="@layout/select_file_fragment">
 
         <action
             android:id="@+id/action_open_folder"
-            app:destination="@id/selectFileFragment"
+            app:destination="@id/fileListFragment"
             app:enterAnim="@anim/enterAnim"
             app:exitAnim="@anim/exitAnim"
             app:popEnterAnim="@anim/popEnterAnim"
