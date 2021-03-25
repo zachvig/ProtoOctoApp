@@ -8,14 +8,12 @@ import de.crysxd.octoapp.octoprint.interceptors.AlternativeWebUrlInterceptor
 import de.crysxd.octoapp.octoprint.interceptors.ApiKeyInterceptor
 import de.crysxd.octoapp.octoprint.interceptors.BasicAuthInterceptor
 import de.crysxd.octoapp.octoprint.interceptors.CatchAllInterceptor
-import de.crysxd.octoapp.octoprint.json.ConnectionStateDeserializer
-import de.crysxd.octoapp.octoprint.json.FileObjectDeserializer
-import de.crysxd.octoapp.octoprint.json.MessageDeserializer
-import de.crysxd.octoapp.octoprint.json.PluginSettingsDeserializer
+import de.crysxd.octoapp.octoprint.json.*
 import de.crysxd.octoapp.octoprint.logging.LoggingInterceptorLogger
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.settings.Settings
+import de.crysxd.octoapp.octoprint.models.socket.HistoricTemperatureData
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.octoprint.plugins.materialmanager.MaterialManagerPluginsCollection
 import de.crysxd.octoapp.octoprint.plugins.octoeverywhere.OctoEverywhereApi
@@ -154,6 +152,7 @@ class OctoPrint(
         .create()
 
     private fun createBaseGson(): Gson = GsonBuilder()
+        .registerTypeAdapter(HistoricTemperatureData::class.java, HistoricTemperatureDeserializer())
         .create()
 
     fun createOkHttpClient() = OkHttpClient.Builder().apply {

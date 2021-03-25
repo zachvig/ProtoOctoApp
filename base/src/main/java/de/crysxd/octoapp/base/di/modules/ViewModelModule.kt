@@ -12,6 +12,7 @@ import de.crysxd.octoapp.base.feedback.SendFeedbackViewModel
 import de.crysxd.octoapp.base.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
+import de.crysxd.octoapp.base.repository.TemperatureDataRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModelFactory
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.configureremote.ConfigureRemoteAccessViewModel
@@ -22,8 +23,7 @@ import de.crysxd.octoapp.base.ui.common.terminal.TerminalViewModel
 import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootViewModel
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetViewModel
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
-import de.crysxd.octoapp.base.ui.widget.temperature.ControlBedTemperatureWidgetViewModel
-import de.crysxd.octoapp.base.ui.widget.temperature.ControlToolTemperatureWidgetViewModel
+import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel
 import de.crysxd.octoapp.base.usecase.*
 import javax.inject.Provider
@@ -43,19 +43,10 @@ open class ViewModelModule {
 
     @Provides
     @IntoMap
-    @ViewModelKey(ControlToolTemperatureWidgetViewModel::class)
+    @ViewModelKey(ControlTemperatureWidgetViewModel::class)
     open fun provideControlToolTemperatureViewModel(
-        octoPrintProvider: OctoPrintProvider,
-        useCase: SetToolTargetTemperatureUseCase
-    ): ViewModel = ControlToolTemperatureWidgetViewModel(octoPrintProvider, useCase)
-
-    @Provides
-    @IntoMap
-    @ViewModelKey(ControlBedTemperatureWidgetViewModel::class)
-    open fun provideControlBedTemperatureViewModel(
-        octoPrintProvider: OctoPrintProvider,
-        useCase: SetBedTargetTemperatureUseCase
-    ): ViewModel = ControlBedTemperatureWidgetViewModel(octoPrintProvider, useCase)
+        temperatureDataRepository: TemperatureDataRepository,
+    ): ViewModel = ControlTemperatureWidgetViewModel(temperatureDataRepository)
 
     @Provides
     @IntoMap

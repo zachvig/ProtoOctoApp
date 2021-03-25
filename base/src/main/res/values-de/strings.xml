@@ -12,8 +12,8 @@
     <string name="set_temperature">Temperatur einstellen</string>
     <string name="cancel">Abbrechen</string>
     <string name="target_temperature">Zieltemperatur °C</string>
-    <string name="hotend">Hotend</string>
-    <string name="bed">Bett</string>
+    <string name="general___hotend">Hotend</string>
+    <string name="general___bed">Bett</string>
     <string name="x_mm">%s mm</string>
     <string name="done">Erledigt</string>
     <string name="error_please_enter_a_value">Bitte gib einen Wert ein</string>

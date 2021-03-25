@@ -81,4 +81,10 @@ open class OctoPrintModule {
     open fun provideWidgetOrderRepository(
         dataSource: WidgetPreferencesDataSource
     ) = WidgetPreferencesRepository(dataSource)
+
+    @BaseScope
+    @Provides
+    open fun provideTemperatureDataRepository(
+        octoPrintProvider: OctoPrintProvider
+    ) = TemperatureDataRepository(octoPrintProvider)
 }

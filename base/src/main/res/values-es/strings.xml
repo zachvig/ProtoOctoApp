@@ -12,8 +12,8 @@
     <string name="set_temperature">La temperatura establecida</string>
     <string name="cancel">Cancelar</string>
     <string name="target_temperature">Temperatura objetivo °C</string>
-    <string name="hotend">Hotend</string>
-    <string name="bed">Cama</string>
+    <string name="general___hotend">Hotend</string>
+    <string name="general___bed">Cama</string>
     <string name="x_mm">%s mm</string>
     <string name="done">Hecho</string>
     <string name="error_please_enter_a_value">Por favor, introduzca un valor</string>
