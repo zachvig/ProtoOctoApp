@@ -11,12 +11,14 @@ import de.crysxd.octoapp.base.repository.TemperatureDataRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
-import de.crysxd.octoapp.base.usecase.GetCurrentPrinterProfileUseCase
 import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -30,24 +32,18 @@ class ControlTemperatureWidgetViewModel(
     private val printerProfile = octoPrintRepository.instanceInformationFlow().map {
         it?.activeProfile ?: PrinterProfiles.Profile()
     }
-    val temperature = temperatureDataRepository.flow(true)
-        .combine(printerProfile) { temps, profile ->
-            temps.map {
-                it.copy(
-                    components = it.components.filter {
-                        val isChamber = it.key == "chamber" && profile.heatedChamber
-                        val isBed = it.key == "bed" && profile.heatedBed
-                        val isOther = it.key != "bed" && it.key != "chamber"
-
-                        isOther || isChamber || isBed
-                    }
-                )
-            }
-        }.retry {
-            Timber.e(it)
-            delay(1000)
-            true
-        }.asLiveData()
+    val temperature = temperatureDataRepository.flow().combine(printerProfile) { temps, profile ->
+        temps.filter {
+            val isChamber = it.component == "chamber" && profile.heatedChamber
+            val isBed = it.component == "bed" && profile.heatedBed
+            val isOther = it.component != "bed" && it.component != "chamber"
+            isOther || isChamber || isBed
+        }
+    }.retry {
+        Timber.e(it)
+        delay(1000)
+        true
+    }.asLiveData()
 
     private suspend fun setTemperature(temp: Int, component: String) {
         setTargetTemperaturesUseCase.execute(
@@ -59,7 +55,7 @@ class ControlTemperatureWidgetViewModel(
 
     fun changeTemperature(context: Context, component: String) = viewModelScope.launch(coroutineExceptionHandler) {
         val result = NavigationResultMediator.registerResultCallback<String?>()
-        val current = temperature.value?.lastOrNull()?.components?.get(component)?.target?.toInt()?.toString()
+        val current = temperature.value?.firstOrNull { it.component == component }?.current?.actual?.toInt()?.toString()
 
         navContoller.navigate(
             R.id.action_enter_value,

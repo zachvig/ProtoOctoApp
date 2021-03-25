@@ -10,11 +10,11 @@ import androidx.lifecycle.Observer
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.TemperatureWidgetBinding
 import de.crysxd.octoapp.base.di.injectViewModel
+import de.crysxd.octoapp.base.repository.TemperatureDataRepository
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.menu.temperature.TemperatureMenu
 import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
-import de.crysxd.octoapp.octoprint.models.socket.HistoricTemperatureData
 import timber.log.Timber
 import kotlin.math.absoluteValue
 
@@ -42,21 +42,19 @@ class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<Temperat
         MenuBottomSheetFragment.createForMenu(TemperatureMenu()).show(parent.childFragmentManager)
     }
 
-    private fun onTemperatureChanged(data: List<HistoricTemperatureData>) {
+    private fun onTemperatureChanged(data: List<TemperatureDataRepository.TemperatureSnapshot>) {
         Timber.i("Temps:$data")
-        if (data.isNotEmpty() && binding.root.childCount != data.last().components.size) {
-            buildView(data.last().components.size)
+        if (data.isNotEmpty() && binding.root.childCount != data.size) {
+            buildView(data.size)
         }
 
-        data.lastOrNull()?.components?.let {
-            it.keys.toList().forEachIndexed { index, key ->
-                val view = binding.root.getChildAt(index) as TemperatureView
-                view.setComponentName(baseViewModel.getComponentName(parent.requireContext(), key))
-                view.maxTemp = baseViewModel.getMaxTemp(key)
-                view.setTemperature(it[key])
-                view.button.setOnClickListener {
-                    baseViewModel.changeTemperature(parent.requireContext(), key)
-                }
+        data.forEachIndexed { index, it ->
+            val view = binding.root.getChildAt(index) as TemperatureView
+            view.setComponentName(baseViewModel.getComponentName(parent.requireContext(), it.component))
+            view.maxTemp = baseViewModel.getMaxTemp(it.component)
+            view.setTemperature(it.current)
+            view.button.setOnClickListener { _ ->
+                baseViewModel.changeTemperature(parent.requireContext(), it.component)
             }
         }
     }

@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.repository
 
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import de.crysxd.octoapp.octoprint.models.socket.HistoricTemperatureData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -19,7 +20,7 @@ class TemperatureDataRepository(
     }
 
     private val data = mutableListOf<HistoricTemperatureData>()
-    private val channel = BroadcastChannel<List<HistoricTemperatureData>>(CHANNEL_BUFFER_SIZE)
+    private val channel = BroadcastChannel<List<TemperatureSnapshot>>(CHANNEL_BUFFER_SIZE)
 
     init {
         GlobalScope.launch(Dispatchers.Default) {
@@ -32,10 +33,28 @@ class TemperatureDataRepository(
                     }
 
                     data.addAll(it.temps)
-                    channel.offer(it.temps)
-
                     if (data.size > MAX_COMMUNICATION_ENTRIES) {
                         data.removeAll(data.take(data.size - MAX_ENTRIES))
+                    }
+                    if (data.isNotEmpty()) {
+                        val snapshot = listOf("tool0", "tool1", "tool2", "tool3", "bed", "chamber").mapNotNull { component ->
+                            val lastData = data.last().components[component] ?: return@mapNotNull null
+
+                            val history = data.map {
+                                TemperatureHistoryPoint(
+                                    time = it.time,
+                                    temperature = it.components[component]?.target ?: 0f
+                                )
+                            }
+
+                            TemperatureSnapshot(
+                                history = history,
+                                component = component,
+                                current = lastData,
+                            )
+                        }
+
+                        channel.offer(snapshot)
                     }
                 }
                 .retry { Timber.e(it); delay(100); true }
@@ -46,11 +65,16 @@ class TemperatureDataRepository(
         }
     }
 
-    fun flow(includeOld: Boolean = false) = flow {
-        if (includeOld) {
-            // Copy data to prevent concurrent modification
-            emit(data.toList())
-        }
-        emitAll(channel.asFlow())
-    }
+    fun flow() = channel.asFlow()
+
+    data class TemperatureSnapshot(
+        val component: String,
+        val current: PrinterState.ComponentTemperature,
+        val history: List<TemperatureHistoryPoint>
+    )
+
+    data class TemperatureHistoryPoint(
+        val temperature: Float,
+        val time: Long,
+    )
 }
