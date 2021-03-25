@@ -36,6 +36,9 @@ class PrintNotificationSupportBroadcastReceiver(context: Context) : BroadcastRec
                     // Delay for 5s to get the network settled and then connect
                     delay(5000)
                     PrintNotificationService.start(context)
+
+                    // If WiFi got reconnected, the local URL could also be reachable again. Perform online check.
+                    Injector.get().octoPrintProvider().octoPrint().performOnlineCheck()
                 } else {
                     Timber.v("Not starting service (wasDisconnected=$wasDisconnected, hasWifi=$hasWifi)")
                 }
