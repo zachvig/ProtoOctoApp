@@ -325,6 +325,7 @@ class MainActivity : OctoActivity() {
                 R.id.splashFragment,
                 R.id.workspaceConnect,
                 R.id.workspacePrePrint,
+                R.id.workspacePrint,
                 R.id.terminalFragment,
                 R.id.fileDetailsFragment,
                 R.id.loginFragment,
