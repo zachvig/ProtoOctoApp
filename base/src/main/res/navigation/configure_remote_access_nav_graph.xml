@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/configure_remote_access_nav_graph"
+    app:startDestination="@id/configureRemoteAccessFragment">
+
+    <deepLink
+        android:id="@+id/deepLink"
+        app:uri="@string/uri___configure_remote_access" />
+
+    <fragment
+        android:id="@+id/configureRemoteAccessFragment"
+        android:name="de.crysxd.octoapp.base.ui.common.configureremote.ConfigureRemoteAccessFragment"
+        android:label="ConfigureRemoteAccessFragment"
+        tools:layout="@layout/configure_remote_access_fragment" />
+
+</navigation>

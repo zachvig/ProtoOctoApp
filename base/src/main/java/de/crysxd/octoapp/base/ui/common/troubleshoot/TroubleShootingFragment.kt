@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.ui.common.troubleshoot
 
+import android.net.Uri
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.Gravity
@@ -16,8 +17,11 @@ import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.databinding.TroubleShootingFragmentBinding
 import de.crysxd.octoapp.base.di.injectViewModel
+import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.ext.urlDecode
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 
@@ -31,11 +35,11 @@ class TroubleShootingFragment : Fragment(R.layout.trouble_shooting_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val navArgs by navArgs<TroubleShootingFragmentArgs>()
-        val baseUrl = navArgs.baseUrl
+        val baseUrl = Uri.parse(navArgs.baseUrl.urlDecode())
         val apiKey = navArgs.apiKey
 
         binding.buttonMain.setOnLongClickListener {
-            findNavController().navigate(R.id.action_help)
+            UriLibrary.getHelpUri().open(requireOctoActivity())
             true
         }
 
@@ -84,7 +88,7 @@ class TroubleShootingFragment : Fragment(R.layout.trouble_shooting_fragment) {
                     binding.buttonSupport.isVisible = it.offerSupport
                     binding.buttonSupport.setOnClickListener {
                         OctoAnalytics.logEvent(OctoAnalytics.Event.TroubleShootFailureSupportTrigger)
-                        findNavController().navigate(R.id.action_help)
+                        UriLibrary.getHelpUri().open(requireOctoActivity())
                     }
                 }
 

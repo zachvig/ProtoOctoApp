@@ -5,6 +5,7 @@ import androidx.core.text.HtmlCompat
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -31,7 +32,7 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
         context.getString(R.string.material_menu___empty_state)
 
     override fun getEmptyStateActionText(context: Context) = context.getString(R.string.material_menu___empty_state_action)
-    override fun getEmptyStateActionUrl(context: Context) = Firebase.remoteConfig.getString("help_url_materials")
+    override fun getEmptyStateActionUrl(context: Context) = UriLibrary.getFaqUri("supported_plugin").toString()
     override fun getEmptyStateIcon() = R.drawable.octo_materials
 
     override fun getBottomText(context: Context) = HtmlCompat.fromHtml(

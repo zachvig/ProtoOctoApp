@@ -5,6 +5,7 @@ import android.os.Parcelable
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.ext.urlDecode
@@ -57,7 +58,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
 
     override fun getEmptyStateIcon() = R.drawable.octo_power_devices
     override fun getEmptyStateActionText(context: Context) = context.getString(R.string.power_menu___empty_state_action)
-    override fun getEmptyStateActionUrl(context: Context) = Firebase.remoteConfig.getString("help_url_power_devices")
+    override fun getEmptyStateActionUrl(context: Context) = UriLibrary.getFaqUri("supported_plugin").toString()
     override fun getCheckBoxText(context: Context) =
         context.getString(R.string.power_menu___checkbox_label).takeIf { type != DeviceType.Unspecified && action != Action.Unspecified }
 

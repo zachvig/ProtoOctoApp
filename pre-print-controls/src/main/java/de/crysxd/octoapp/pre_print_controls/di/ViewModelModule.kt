@@ -56,7 +56,7 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(ExtrudeWidgetViewModel::class)
     open fun provideExtrudeWidgetViewModel(
-        setToolTargetTemperatureUseCase: SetToolTargetTemperatureUseCase,
+        setToolTargetTemperatureUseCase: SetTargetTemperaturesUseCase,
         extrudeFilamentUseCase: ExtrudeFilamentUseCase
     ): ViewModel = ExtrudeWidgetViewModel(
         extrudeFilamentUseCase,

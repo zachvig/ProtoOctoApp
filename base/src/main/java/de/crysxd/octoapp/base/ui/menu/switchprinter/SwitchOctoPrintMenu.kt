@@ -2,11 +2,13 @@ package de.crysxd.octoapp.base.ui.menu.switchprinter
 
 import android.content.Context
 import androidx.core.os.bundleOf
-import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.Menu
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.menu.MenuItem
@@ -118,6 +120,8 @@ class EnableQuickSwitchMenuItem : MenuItem {
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___enable_quick_switch)
     override suspend fun onClicked(host: MenuBottomSheetFragment?) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "switch_menu"))
-        host?.findNavController()?.navigate(R.id.action_show_purchase_flow)
+        host?.requireOctoActivity()?.let {
+            UriLibrary.getPurchaseUrl().open(it)
+        }
     }
 }

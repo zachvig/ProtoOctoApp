@@ -5,11 +5,13 @@ import android.content.Intent
 import android.net.Uri
 import androidx.annotation.IdRes
 import androidx.core.os.bundleOf
-import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
 import kotlinx.parcelize.Parcelize
 
@@ -48,7 +50,9 @@ class SupportOctoAppMenuItem : MenuItem {
     override suspend fun isVisible(@IdRes destinationId: Int) = BillingManager.shouldAdvertisePremium()
     override suspend fun onClicked(host: MenuBottomSheetFragment?) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "main_menu"))
-        host?.findNavController()?.navigate(R.id.action_show_purchase_flow)
+        host?.requireOctoActivity()?.let {
+            UriLibrary.getPurchaseUrl().open(it)
+        }
     }
 }
 

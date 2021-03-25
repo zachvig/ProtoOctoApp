@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/help_nav_graph"
+    app:startDestination="@id/helpOverviewFragment">
+
+    <deepLink
+        android:id="@+id/deepLink2"
+        app:uri="@string/uri___help" />
+
+    <fragment
+        android:id="@+id/helpOverviewFragment"
+        android:name="de.crysxd.octoapp.help.HelpFragment"
+        android:label="HelpOverviewFragment">
+
+        <action
+            android:id="@+id/action_show_faq"
+            app:destination="@id/helpDetail"
+            app:enterAnim="@anim/enterAnim"
+            app:exitAnim="@anim/exitAnim"
+            app:popEnterAnim="@anim/popEnterAnim"
+            app:popExitAnim="@anim/popExitAnim" />
+
+        <deepLink
+            android:id="@+id/deepLink"
+            app:uri="@string/uri___help" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/helpDetail"
+        android:name="de.crysxd.octoapp.help.HelpDetailFragment"
+        android:label="FaqFragment">
+
+        <argument
+            android:name="faqId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="bug"
+            android:defaultValue="@null"
+            app:argType="de.crysxd.octoapp.help.KnownBug"
+            app:nullable="true" />
+
+        <deepLink
+            android:id="@+id/deepLink"
+            app:uri="@string/uri___faq" />
+
+    </fragment>
+
+</navigation>

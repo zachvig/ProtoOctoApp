@@ -68,7 +68,7 @@ class ExtrudeFilamentUseCase @Inject constructor(
 
         // Extrude, temperature ok or unknown
         octoPrintProvider.octoPrint().createPrinterApi().executeToolCommand(
-            ToolCommand.ExtrudeFilamentToolCommand(param.extrudeLengthMm)
+            ToolCommand.ExtrudeFilament(param.extrudeLengthMm)
         )
     }
 

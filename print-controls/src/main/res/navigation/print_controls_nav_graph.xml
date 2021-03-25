@@ -5,9 +5,9 @@
     android:id="@+id/print_controls_nav_graph"
     app:startDestination="@id/workspacePrint">
 
-    <include app:graph="@navigation/trouble_shoot_nav_graph" />
     <include app:graph="@navigation/edit_widgets_nav_graph" />
-    <include app:graph="@navigation/fullscreen_webcam_nav_graph" />
+    <include app:graph="@navigation/enter_value_nav_graph" />
+    <include app:graph="@navigation/terminal_nav_graph" />
 
     <action
         android:id="@+id/action_edit_widgets"
@@ -18,16 +18,8 @@
         app:popExitAnim="@anim/popExitAnim" />
 
     <action
-        android:id="@+id/action_trouble_shoot"
-        app:destination="@id/trouble_shoot_nav_graph"
-        app:enterAnim="@anim/enterAnim"
-        app:exitAnim="@anim/exitAnim"
-        app:popEnterAnim="@anim/popEnterAnim"
-        app:popExitAnim="@anim/popExitAnim" />
-
-    <action
-        android:id="@+id/action_show_purchase_flow"
-        app:destination="@id/purchase_flow_nav_graph"
+        android:id="@id/action_enter_value"
+        app:destination="@id/enter_value_nav_graph"
         app:enterAnim="@anim/enterAnim"
         app:exitAnim="@anim/exitAnim"
         app:popEnterAnim="@anim/popEnterAnim"
@@ -63,27 +55,7 @@
             app:popEnterAnim="@anim/popEnterAnim"
             app:popExitAnim="@anim/popExitAnim" />
 
-        <action
-            android:id="@id/action_show_fullscreen_webcam"
-            app:destination="@id/fullscreen_webcam_nav_graph"
-            app:enterAnim="@anim/enterAnim"
-            app:exitAnim="@anim/exitAnim"
-            app:popEnterAnim="@anim/popEnterAnim"
-            app:popExitAnim="@anim/popExitAnim" />
-
     </fragment>
-
-    <include app:graph="@navigation/enter_value_nav_graph" />
-    <include app:graph="@navigation/purchase_flow_nav_graph" />
-    <include app:graph="@navigation/terminal_nav_graph" />
-
-    <action
-        android:id="@id/action_enter_value"
-        app:destination="@id/enter_value_nav_graph"
-        app:enterAnim="@anim/enterAnim"
-        app:exitAnim="@anim/exitAnim"
-        app:popEnterAnim="@anim/popEnterAnim"
-        app:popExitAnim="@anim/popExitAnim" />
 
     <fragment
         android:id="@+id/tuneFragment"
@@ -102,6 +74,7 @@
             app:argType="integer" />
 
     </fragment>
+
     <fragment
         android:id="@+id/gcodePreviewFragment"
         android:name="de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewFragment"

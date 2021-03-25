@@ -60,8 +60,7 @@ interface BaseComponent {
     fun widgetPreferencesRepository(): WidgetPreferencesRepository
 
     // UseCaseModule
-    fun setToolTargetTemperatureUseCase(): SetToolTargetTemperatureUseCase
-    fun setBedTargetTemperatureUseCase(): SetBedTargetTemperatureUseCase
+    fun setTargetTemperatureUseCase(): SetTargetTemperaturesUseCase
     fun homePrintHeadUseCase(): HomePrintHeadUseCase
     fun jogPrintHeadUseCase(): JogPrintHeadUseCase
     fun turnOnPsuUseCase(): TurnOnPsuUseCase
@@ -90,6 +89,8 @@ interface BaseComponent {
     fun getMaterialsUseCase(): GetMaterialsUseCase
     fun activateMaterialUseCase(): ActivateMaterialUseCase
     fun cyclePsuUseCase(): CyclePsuUseCase
+    fun handleOctoEverywhereAppPortalSuccessUseCase(): HandleOctoEverywhereAppPortalSuccessUseCase
+    fun handleOctoEverywhereExceptionUseCase(): HandleOctoEverywhereExceptionUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

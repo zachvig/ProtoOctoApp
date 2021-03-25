@@ -17,8 +17,8 @@ android {
         applicationId "de.crysxd.octoapp"
         minSdkVersion 21
         targetSdkVersion project.rootProject.ext.target_sdk
-        versionCode 1726
-        versionName "1.7.4"
+        versionCode 1803
+        versionName "1.8-beta04"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -63,12 +63,12 @@ android {
 
 play {
     serviceAccountCredentials.set(file("service-account.json"))
-    track.set("production")
+    track.set("internal")
     defaultToAppBundles.set(true)
     resolutionStrategy.set(ResolutionStrategy.IGNORE)
-    releaseStatus.set(ReleaseStatus.IN_PROGRESS)
+    releaseStatus.set(ReleaseStatus.COMPLETED)
     updatePriority.set(2)
-    userFraction.set(0.66d)
+    userFraction.set(1d)
 }
 
 

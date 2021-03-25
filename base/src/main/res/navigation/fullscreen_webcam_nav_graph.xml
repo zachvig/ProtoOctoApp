@@ -5,9 +5,14 @@
     android:id="@+id/fullscreen_webcam_nav_graph"
     app:startDestination="@id/webcamFragment">
 
+    <deepLink
+        android:id="@+id/deepLink2"
+        app:uri="@string/uri___webcam" />
+
     <fragment
         android:id="@+id/webcamFragment"
         android:name="de.crysxd.octoapp.base.ui.widget.webcam.WebcamFragment"
         android:label="WebcamFragment"
-        tools:layout="@layout/webcam_fragment" />
+        tools:layout="@layout/webcam_fragment">
+    </fragment>
 </navigation>

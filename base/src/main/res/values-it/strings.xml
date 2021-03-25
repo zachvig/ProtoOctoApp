@@ -12,8 +12,8 @@
     <string name="set_temperature">Impostare la temperatura</string>
     <string name="cancel">Annulla</string>
     <string name="target_temperature">Temperatura obiettivo °C</string>
-    <string name="hotend">Hotend</string>
-    <string name="bed">Letto</string>
+    <string name="general___hotend">Hotend</string>
+    <string name="general___bed">Letto</string>
     <string name="x_mm">%s mm</string>
     <string name="done">Fatto</string>
     <string name="error_please_enter_a_value">Inserisci un valore</string>
@@ -280,7 +280,7 @@
     <string name="print_notification___print_done_title">Stampa completata</string>
     <string name="print_notification___close">Chiudi</string>
     <string name="capabilities_validation_error">Non ho potuto verificare le capacità dei tuoi server. Alcune funzionalità dell\'app potrebbero non funzionare come previsto.</string>
-    <string name="connection_lost_reconnecting">Connessione persa, ricollegamento…</string>
+    <string name="main___banner_connection_lost_reconnecting">Connessione persa, ricollegamento…</string>
     <string name="error_please_enter_a_message">Inserire un messaggio</string>
     <string name="hls_stream_disabled_title">Webcam HLS</string>
     <string name="hls_stream_disbaled_description">Le webcam HLS sono disabilitate, abilitatele ora per vedere l\'immagine della vostra webcam.</string>

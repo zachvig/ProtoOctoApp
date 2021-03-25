@@ -21,14 +21,10 @@
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
+                android:layout_marginHorizontal="@dimen/margin_2"
+                style="@style/OctoTheme.Widget.TabLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?android:attr/windowBackground"
-                android:elevation="0.1dp"
-                app:tabIndicatorColor="@color/accent"
-                app:tabSelectedTextColor="@color/dark_text"
-                app:tabTextAppearance="@style/OctoTheme.TextAppearance"
-                app:tabTextColor="@color/normal_text">
+                android:layout_height="wrap_content">
 
                 <!-- This tabs are only for the layout preview, will be created by the ViewPager! -->
 

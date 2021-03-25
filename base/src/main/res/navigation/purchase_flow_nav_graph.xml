@@ -10,4 +10,8 @@
         android:name="de.crysxd.octoapp.base.billing.PurchaseFragment"
         android:label="PurchaseBottomSheet"
         tools:layout="@layout/purchase_fragment" />
+
+    <deepLink
+        android:id="@+id/deepLink4"
+        app:uri="@string/uri___purchase" />
 </navigation>

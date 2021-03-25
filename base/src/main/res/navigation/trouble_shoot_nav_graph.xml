@@ -9,14 +9,21 @@
         android:id="@+id/troubleShootingFragment"
         android:name="de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootingFragment"
         android:label="TroubleShootingFragment"
-        tools:layout="@layout/fragment_trouble_shooting">
+        tools:layout="@layout/trouble_shooting_fragment">
         <argument
             android:name="baseUrl"
-            app:argType="android.net.Uri" />
+            app:argType="string" />
+
         <argument
             android:name="apiKey"
             app:argType="string"
+            android:defaultValue="@null"
             app:nullable="true" />
+
     </fragment>
+
+    <deepLink
+        android:id="@+id/deepLink3"
+        app:uri="@string/uri___troubleshoot" />
 
 </navigation>

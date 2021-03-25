@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="menuGiveFeedback" type="id" />
-    <item name="menuChangeLanguage" type="id" />
-    <item name="menuOpenOctoprint" type="id" />
-    <item name="menuSignOut" type="id" />
-    <item name="menuSupportOctoApp" type="id" />
-    <item name="action_show_purchase_flow" type="id" />
     <item name="workspaceConnect" type="id" />
     <item name="workspacePrint" type="id" />
     <item name="workspacePrePrint" type="id" />
-    <item name="action_trouble_shoot" type="id" />
     <item name="action_edit_widgets" type="id" />
-    <item name="action_help" type="id" />
-    <item name="action_show_fullscreen_webcam" type="id" />
 </resources>

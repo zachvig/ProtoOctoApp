@@ -28,6 +28,8 @@ object OctoAnalytics {
         object PremiumSubUser : UserProperty("premium_sub_user")
         object BillingStatus : UserProperty("billing_status")
         object UserId : UserProperty("user_id")
+        object OctoEverywhereUser : UserProperty("octoeverywhere_user")
+        object RemoteAccess : UserProperty("remote_access_configured")
     }
 
     sealed class Event(val name: String) {
@@ -88,5 +90,13 @@ object OctoAnalytics {
         object PurchaseFlowCancelled : Event("purchase_billing_flow_cancelled")
         object PurchaseFlowFailed : Event("purchase_billing_flow_failed")
         object DisabledFeatureHidden : Event("disabled_feature_hidden")
+
+        object RemoteConfigScreenOpened : Event("remote_config_screen_opened")
+        object RemoteConfigManuallySet : Event("remote_config_manually_set")
+        object RemoteConfigManuallySetFailed : Event("remote_config_manually_set_failed")
+        object OctoEverywhereConnectStarted: Event("octoeverywhere_connect_started")
+        object OctoEverywhereConnected: Event("octoeverywhere_connected")
+        object OctoEverywhereConnectFailed: Event("octoeverywhere_connect_failed")
+        object OctoEverywherePluginMissing: Event("octoeverywhere_plugin_missing")
     }
 }

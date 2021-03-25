@@ -6,7 +6,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
@@ -64,7 +66,9 @@ class HelpMenuItem : MenuItem {
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_help_faq_and_feedback)
     override suspend fun onClicked(host: MenuBottomSheetFragment?) {
-        host?.findNavController()?.navigate(R.id.action_help)
+        host?.requireOctoActivity()?.let {
+            UriLibrary.getHelpUri().open(it)
+        }
         host?.dismissAllowingStateLoss()
     }
 }

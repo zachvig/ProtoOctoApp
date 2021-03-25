@@ -11,9 +11,6 @@
         <attr name="actionDrawable" format="reference" />
         <attr name="actionOnlyWithText" format="boolean" />
     </declare-styleable>
-    <declare-styleable name="TemperatureView">
-        <attr name="maxTemp" format="integer" />
-    </declare-styleable>
     <declare-styleable name="OctoView">
         <attr name="octoActivity" format="enum">
             <enum name="idle" value="0" />

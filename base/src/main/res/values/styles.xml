@@ -210,4 +210,17 @@
         <item name="cornerSize">0dp</item>
     </style>
 
+    <style name="OctoTheme.Widget.TabLayout" parent="">
+        <item name="android:background">@drawable/bg_tab_layout</item>
+        <item name="tabRippleColor">@color/white_translucent</item>
+        <item name="tabIndicator">@drawable/bg_tab</item>
+        <item name="tabIndicatorColor">@color/accent</item>
+        <item name="tabSelectedTextColor">@color/white</item>
+        <item name="tabTextColor">@color/normal_text</item>
+        <item name="tabTextAppearance">@style/OctoTheme.TextAppearance.Button.Menu</item>
+        <item name="tabIndicatorFullWidth">true</item>
+        <item name="tabIndicatorHeight">@dimen/tab_layout_height</item>
+        <item name="tabIndicatorGravity">center</item>
+    </style>
+
 </resources>

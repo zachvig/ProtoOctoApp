@@ -3,7 +3,10 @@ package de.crysxd.octoapp.base.ui.menu.main
 import android.content.Context
 import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
 import de.crysxd.octoapp.base.ui.menu.material.MaterialPluginMenu
 import de.crysxd.octoapp.base.ui.menu.power.PowerControlsMenu
@@ -66,7 +69,9 @@ class ShowWebcamMenuItem : MenuItem {
     override suspend fun isVisible(destinationId: Int) = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.isWebcamSupported == true
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___show_webcam)
     override suspend fun onClicked(host: MenuBottomSheetFragment?) {
-        host?.findNavController()?.navigate(R.id.action_show_fullscreen_webcam)
+        host?.requireOctoActivity()?.let {
+            UriLibrary.getWebcamUri().open(it)
+        }
         host?.dismissAllowingStateLoss()
     }
 }

@@ -4,6 +4,5 @@ import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 
 data class HistoricTemperatureData(
     val time: Long,
-    val bed: PrinterState.ComponentTemperature,
-    val tool0: PrinterState.ComponentTemperature
+    val components: Map<String, PrinterState.ComponentTemperature>
 )

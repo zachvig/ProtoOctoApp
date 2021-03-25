@@ -21,8 +21,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.composeErrorMessage
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
@@ -177,13 +179,7 @@ class SignInFragment : BaseFragment(), InsetAwareScreen {
                         OctoAnalytics.logEvent(OctoAnalytics.Event.TroubleShootFromSignIn)
                         binding.inputWebUrl.editText.clearFocusAndHideSoftKeyboard()
                         binding.inputApiKey.editText.clearFocusAndHideSoftKeyboard()
-                        findNavController().navigate(
-                            R.id.action_trouble_shoot,
-                            TroubleShootingFragmentArgs(
-                                baseUrl = res.baseUrl,
-                                apiKey = res.apiKey
-                            ).toBundle()
-                        )
+                        UriLibrary.getTroubleShootUri(res.baseUrl, res.apiKey).open(requireOctoActivity())
                     }
                     .show()
             }
