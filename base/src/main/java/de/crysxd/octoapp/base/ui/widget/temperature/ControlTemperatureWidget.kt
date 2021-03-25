@@ -52,6 +52,7 @@ class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<Temperat
             it.keys.toList().forEachIndexed { index, key ->
                 val view = binding.root.getChildAt(index) as TemperatureView
                 view.setComponentName(baseViewModel.getComponentName(parent.requireContext(), key))
+                view.maxTemp = baseViewModel.getMaxTemp(key)
                 view.setTemperature(it[key])
                 view.button.setOnClickListener {
                     baseViewModel.changeTemperature(parent.requireContext(), key)
@@ -71,8 +72,7 @@ class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<Temperat
             }
         } else {
             repeat(change) {
-                val view = TemperatureView(parent.requireContext())
-                binding.root.addView(view)
+                binding.root.addView(TemperatureView(parent.requireContext()))
             }
         }
 
@@ -82,8 +82,8 @@ class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<Temperat
         val fixedViewsInLastRow = if (viewsInLastRow == 0) 2 else viewsInLastRow
         val lastRowViews = binding.root.children.toList().takeLast(fixedViewsInLastRow)
         binding.root.children.forEach {
-            val index = binding.root.indexOfChild(view)
-            view.updateLayoutParams<GridLayout.LayoutParams> {
+            val index = binding.root.indexOfChild(it)
+            it.updateLayoutParams<GridLayout.LayoutParams> {
                 columnSpec = GridLayout.spec(index % columns, 1f)
                 if (index % columns == 0) {
                     marginEnd = margin

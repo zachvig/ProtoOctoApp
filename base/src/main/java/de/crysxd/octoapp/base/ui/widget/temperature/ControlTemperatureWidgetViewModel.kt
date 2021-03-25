@@ -90,4 +90,14 @@ class ControlTemperatureWidgetViewModel(
         "chamber" -> context.getString(R.string.general___chamber)
         else -> component
     }
+
+    fun getMaxTemp(component: String) = when (component) {
+        "tool0" -> 250
+        "tool1" -> 250
+        "tool3" -> 250
+        "tool4" -> 250
+        "bed" -> 100
+        "chamber" -> 100
+        else -> 100
+    }
 }

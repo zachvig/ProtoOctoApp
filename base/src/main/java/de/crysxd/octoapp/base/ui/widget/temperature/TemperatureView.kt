@@ -18,17 +18,11 @@ class TemperatureView @JvmOverloads constructor(context: Context, attrs: Attribu
 
     private val binding = ViewTemperatureBinding.inflate(LayoutInflater.from(context), this, true)
     private val temperatureGradient = (ContextCompat.getDrawable(context, R.drawable.temp_grandient) as BitmapDrawable).bitmap
-    private val maxTemp: Int
+    var maxTemp = 250
     val button = binding.button
 
     init {
         setTemperature(null)
-        maxTemp = context.theme.obtainStyledAttributes(
-            attrs,
-            R.styleable.TemperatureView, 0, 0
-        ).use {
-            it.getInt(R.styleable.TemperatureView_maxTemp, 250)
-        }
     }
 
     fun setTemperature(temperature: PrinterState.ComponentTemperature?) {
