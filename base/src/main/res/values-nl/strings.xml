@@ -12,8 +12,8 @@
     <string name="set_temperature">Stel de temperatuur in</string>
     <string name="cancel">Annuleer</string>
     <string name="target_temperature">Gewenste temperatuur °C</string>
-    <string name="hotend">Hotend</string>
-    <string name="bed">Bed</string>
+    <string name="general___hotend">Hotend</string>
+    <string name="general___bed">Bed</string>
     <string name="x_mm">%s mm</string>
     <string name="done">Klaar</string>
     <string name="error_please_enter_a_value">Voer een waarde in</string>

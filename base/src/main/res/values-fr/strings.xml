@@ -12,8 +12,8 @@
     <string name="set_temperature">Réglage de la température</string>
     <string name="cancel">Annuler</string>
     <string name="target_temperature">Température cible (en °C)</string>
-    <string name="hotend">Buse</string>
-    <string name="bed">Plateau</string>
+    <string name="general___hotend">Buse</string>
+    <string name="general___bed">Plateau</string>
     <string name="x_mm">%s mm</string>
     <string name="done">Terminé</string>
     <string name="error_please_enter_a_value">Veuillez entrer une valeur</string>

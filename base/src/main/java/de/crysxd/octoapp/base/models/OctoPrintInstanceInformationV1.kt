@@ -1,5 +1,7 @@
 package de.crysxd.octoapp.base.models
 
+import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
+import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.system.SystemCommand
 import kotlin.math.max
@@ -22,6 +24,7 @@ data class OctoPrintInstanceInformationV2(
     val apiKeyWasInvalid: Boolean = false,
     val m115Response: String? = null,
     val settings: Settings? = null,
+    val activeProfile: PrinterProfiles.Profile? = null,
     val systemCommands: List<SystemCommand>? = null,
     val appSettings: AppSettings? = null,
     val octoEverywhereConnection: OctoEverywhereConnection? = null,

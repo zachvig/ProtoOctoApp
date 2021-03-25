@@ -13,13 +13,6 @@ class GetCurrentPrinterProfileUseCase @Inject constructor(
         val response = octoPrintProvider.octoPrint().createPrinterProfileApi().getPrinterProfiles()
         return response.profiles.values.firstOrNull { it.current }
             ?: response.profiles.values.firstOrNull { it.default }
-            ?: PrinterProfiles.Profile(
-                volume = PrinterProfiles.Volume(200f, 200f, 200f, PrinterProfiles.Origin.LowerLeft),
-                current = false,
-                default = false,
-                extruder = PrinterProfiles.Extruder(0.4f),
-                model = "fallback",
-                name = "Fallback",
-            )
+            ?: PrinterProfiles.Profile()
     }
 }

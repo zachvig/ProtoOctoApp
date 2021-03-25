@@ -11,8 +11,12 @@
     <string name="set_temperature">Set temperature</string>
     <string name="cancel">Cancel</string>
     <string name="target_temperature">Target temperature °C</string>
-    <string name="hotend">Hotend</string>
-    <string name="bed">Bed</string>
+    <string name="general___hotend">Hotend</string>
+    <string name="general___hotend_2">Hotend 2</string>
+    <string name="general___hotend_3">Hotend 3</string>
+    <string name="general___hotend_4">Hotend 4</string>
+    <string name="general___chamber">Chamber</string>
+    <string name="general___bed">Bed</string>
     <string name="x_mm">%s mm</string>
     <string name="done">Done</string>
     <string name="error_please_enter_a_value">Please enter a value</string>

@@ -9,7 +9,7 @@ import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.ExtrudeFilamentUseCase
-import de.crysxd.octoapp.base.usecase.SetToolTargetTemperatureUseCase
+import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
 import de.crysxd.octoapp.pre_print_controls.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -20,7 +20,7 @@ import timber.log.Timber
 
 class ExtrudeWidgetViewModel(
     private val extrudeFilamentUseCase: ExtrudeFilamentUseCase,
-    private val setToolTargetTemperatureUseCase: SetToolTargetTemperatureUseCase
+    private val setTargetTemperatureUseCase: SetTargetTemperaturesUseCase
 ) : BaseViewModel() {
 
     fun extrude5mm() = extrude(5)
@@ -63,7 +63,14 @@ class ExtrudeWidgetViewModel(
                     neutralAction = {
                         GlobalScope.launch(coroutineExceptionHandler) {
                             Timber.i("Heating to ${e.minTemp} before extrusion")
-                            setToolTargetTemperatureUseCase.execute(SetToolTargetTemperatureUseCase.Param(e.minTemp + 5))
+                            setTargetTemperatureUseCase.execute(
+                                SetTargetTemperaturesUseCase.Params(
+                                    SetTargetTemperaturesUseCase.Temperature(
+                                        component = "tool0",
+                                        temperature = e.minTemp + 5
+                                    )
+                                )
+                            )
                             postMessage(OctoActivity.Message.SnackbarMessage { it.getString(R.string.heating_hotend, e.minTemp) })
                         }
                     }

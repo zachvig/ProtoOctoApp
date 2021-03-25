@@ -125,7 +125,6 @@ class PurchaseFragment : BaseFragment(R.layout.purchase_fragment), InsetAwareScr
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
         state.billingData.availableSku.forEach { details ->
-            val view = View.inflate(requireContext(), R.layout.purchase_fragment_sku_state_option, null)
             val itemBinding = PurchaseFragmentSkuStateOptionBinding.inflate(LayoutInflater.from(requireContext()))
             itemBinding.price.text = details.price
             itemBinding.buttonSelect.text = state.names.getOrElse(details.sku) { details.title }
@@ -151,7 +150,7 @@ class PurchaseFragment : BaseFragment(R.layout.purchase_fragment), InsetAwareScr
                     null -> 0
                 }
             )
-            binding.skuState.skuList.addView(view)
+            binding.skuState.skuList.addView(itemBinding.root)
         }
 
         if (state.billingData.availableSku.isEmpty()) {
