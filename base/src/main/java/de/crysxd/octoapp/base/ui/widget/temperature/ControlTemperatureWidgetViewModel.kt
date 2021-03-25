@@ -6,23 +6,55 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.TemperatureDataRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
+import de.crysxd.octoapp.base.usecase.GetCurrentPrinterProfileUseCase
+import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
+import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class ControlTemperatureWidgetViewModel(
-    temperatureDataRepository: TemperatureDataRepository
+    temperatureDataRepository: TemperatureDataRepository,
+    octoPrintRepository: OctoPrintRepository,
+    private val setTargetTemperaturesUseCase: SetTargetTemperaturesUseCase,
 ) : BaseViewModel() {
 
-    val temperature = temperatureDataRepository.flow(true).asLiveData()
+    private val printerProfile = octoPrintRepository.instanceInformationFlow().map {
+        it?.activeProfile ?: PrinterProfiles.Profile()
+    }
+    val temperature = temperatureDataRepository.flow(true)
+        .combine(printerProfile) { temps, profile ->
+            temps.map {
+                it.copy(
+                    components = it.components.filter {
+                        val isChamber = it.key == "chamber" && profile.heatedChamber
+                        val isBed = it.key == "bed" && profile.heatedBed
+                        val isOther = it.key != "bed" && it.key != "chamber"
+
+                        isOther || isChamber || isBed
+                    }
+                )
+            }
+        }.retry {
+            Timber.e(it)
+            delay(1000)
+            true
+        }.asLiveData()
 
     private suspend fun setTemperature(temp: Int, component: String) {
-        TODO()
+        setTargetTemperaturesUseCase.execute(
+            SetTargetTemperaturesUseCase.Params(
+                SetTargetTemperaturesUseCase.Temperature(temperature = temp, component = component)
+            )
+        )
     }
 
     fun changeTemperature(context: Context, component: String) = viewModelScope.launch(coroutineExceptionHandler) {

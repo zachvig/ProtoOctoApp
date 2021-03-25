@@ -46,7 +46,13 @@ open class ViewModelModule {
     @ViewModelKey(ControlTemperatureWidgetViewModel::class)
     open fun provideControlToolTemperatureViewModel(
         temperatureDataRepository: TemperatureDataRepository,
-    ): ViewModel = ControlTemperatureWidgetViewModel(temperatureDataRepository)
+        octoPrintRepository: OctoPrintRepository,
+        setTargetTemperaturesUseCase: SetTargetTemperaturesUseCase,
+    ): ViewModel = ControlTemperatureWidgetViewModel(
+        temperatureDataRepository = temperatureDataRepository,
+        setTargetTemperaturesUseCase = setTargetTemperaturesUseCase,
+        octoPrintRepository = octoPrintRepository,
+    )
 
     @Provides
     @IntoMap

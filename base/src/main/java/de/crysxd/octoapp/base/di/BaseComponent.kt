@@ -60,8 +60,7 @@ interface BaseComponent {
     fun widgetPreferencesRepository(): WidgetPreferencesRepository
 
     // UseCaseModule
-    fun setToolTargetTemperatureUseCase(): SetToolTargetTemperatureUseCase
-    fun setBedTargetTemperatureUseCase(): SetBedTargetTemperatureUseCase
+    fun setTargetTemperatureUseCase(): SetTargetTemperaturesUseCase
     fun homePrintHeadUseCase(): HomePrintHeadUseCase
     fun jogPrintHeadUseCase(): JogPrintHeadUseCase
     fun turnOnPsuUseCase(): TurnOnPsuUseCase

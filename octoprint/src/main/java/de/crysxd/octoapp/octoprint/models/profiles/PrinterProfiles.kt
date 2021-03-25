@@ -7,12 +7,14 @@ data class PrinterProfiles(
 ) {
 
     data class Profile(
-        val current: Boolean,
-        val default: Boolean,
-        val model: String,
-        val name: String,
-        val volume: Volume,
-        val extruder: Extruder
+        val current: Boolean = false,
+        val default: Boolean = false,
+        val model: String = "fallback",
+        val name: String = "Fallback",
+        val volume: Volume = Volume(200f, 200f, 200f, PrinterProfiles.Origin.LowerLeft),
+        val extruder: Extruder = Extruder(0.4f),
+        val heatedChamber: Boolean = false,
+        val heatedBed: Boolean = true,
     )
 
     data class Volume(

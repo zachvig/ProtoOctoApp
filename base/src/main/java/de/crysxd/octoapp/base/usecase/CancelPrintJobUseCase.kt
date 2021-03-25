@@ -10,8 +10,7 @@ import javax.inject.Inject
 
 class CancelPrintJobUseCase @Inject constructor(
     private val octoPrintProvider: OctoPrintProvider,
-    private val setToolTemperatureUseCase: SetToolTargetTemperatureUseCase,
-    private val setBedTemperatureUseCase: SetBedTargetTemperatureUseCase
+    private val setTargetTemperaturesUseCase: SetTargetTemperaturesUseCase,
 ) : UseCase<CancelPrintJobUseCase.Params, Unit>() {
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) {
@@ -37,16 +36,12 @@ class CancelPrintJobUseCase @Inject constructor(
             }.first()
 
             // Restore temps
-            timber.i("Restoring temperatures")
-            temps?.tool0?.target?.toInt()?.let {
-                timber.i("Restoring hotend to $it°C")
-                setToolTemperatureUseCase.execute(SetToolTargetTemperatureUseCase.Param(toolTemperature = it))
-            } ?: timber.w("Unable to restore hotend")
-
-            temps?.bed?.target?.toInt()?.let {
-                timber.i("Restoring bed to $it°C")
-                setBedTemperatureUseCase.execute(SetBedTargetTemperatureUseCase.Param(bedTemperature = it))
-            } ?: timber.w("Unable to restore bed")
+            val targets = SetTargetTemperaturesUseCase.Params(
+                listOf("tool0", "tool0", "tool0", "tool0", "bed", "chamber").map {
+                    SetTargetTemperaturesUseCase.Temperature(component = it, temperature = temps?.components?.get(it)?.target?.toInt())
+                }
+            )
+            setTargetTemperaturesUseCase.execute(targets)
         }
     }
 

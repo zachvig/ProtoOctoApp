@@ -43,8 +43,8 @@ class GcodePreviewViewModel(
         generateRenderStyleUseCase.execute(it)
     }
 
-    private val printerProfileFlow = flow {
-        emit(getCurrentPrinterProfileUseCase.execute(Unit))
+    private val printerProfileFlow = octoPrintRepository.instanceInformationFlow().map {
+        it?.activeProfile ?: PrinterProfiles.Profile()
     }
 
     private val featureEnabledFlow: Flow<Boolean> = BillingManager.billingFlow().map {

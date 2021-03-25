@@ -115,7 +115,7 @@ class OctoPrint(
         )
 
     fun createPrinterApi(): PrinterApi.Wrapper =
-        PrinterApi.Wrapper(createRetrofit().create(PrinterApi::class.java), webSocket)
+        PrinterApi.Wrapper(createRetrofit().create(PrinterApi::class.java))
 
     fun createPowerPluginsCollection() = PowerPluginsCollection(createRetrofit())
 

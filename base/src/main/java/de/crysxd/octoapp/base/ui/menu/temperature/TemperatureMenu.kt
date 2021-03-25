@@ -8,8 +8,7 @@ import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.menu.MenuItem
 import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_APPLY_TEMPERATURE_PRESET
-import de.crysxd.octoapp.base.usecase.SetBedTargetTemperatureUseCase
-import de.crysxd.octoapp.base.usecase.SetToolTargetTemperatureUseCase
+import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -39,8 +38,18 @@ class ApplyTemperaturePresetMenuItem(val presetName: String) : MenuItem {
         Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.settings?.temperature?.profiles?.firstOrNull {
             it.name == presetName
         }?.let {
-            Injector.get().setToolTargetTemperatureUseCase().execute(SetToolTargetTemperatureUseCase.Param(it.extruder ?: 0))
-            Injector.get().setBedTargetTemperatureUseCase().execute(SetBedTargetTemperatureUseCase.Param(it.bed ?: 0))
+            Injector.get().setTargetTemperatureUseCase().execute(
+                SetTargetTemperaturesUseCase.Params(
+                    listOf(
+                        SetTargetTemperaturesUseCase.Temperature(component = "tool0", temperature = it.extruder),
+                        SetTargetTemperaturesUseCase.Temperature(component = "tool1", temperature = it.extruder),
+                        SetTargetTemperaturesUseCase.Temperature(component = "tool2", temperature = it.extruder),
+                        SetTargetTemperaturesUseCase.Temperature(component = "tool3", temperature = it.extruder),
+                        SetTargetTemperaturesUseCase.Temperature(component = "bed", temperature = it.bed),
+                        SetTargetTemperaturesUseCase.Temperature(component = "chamber", temperature = it.chamber),
+                    )
+                )
+            )
         }
     }
 }

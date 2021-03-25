@@ -73,26 +73,25 @@ class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<Temperat
             repeat(change) {
                 val view = TemperatureView(parent.requireContext())
                 binding.root.addView(view)
-                val index = binding.root.indexOfChild(view)
-                val margin = parent.requireContext().resources.getDimension(R.dimen.margin_0_1).toInt()
-                view.updateLayoutParams<GridLayout.LayoutParams> {
-                    columnSpec = GridLayout.spec(index % columns, 1f)
-                    if (index % columns == 0) {
-                        marginEnd = margin
-                    } else {
-                        marginStart = margin
-                    }
-                    bottomMargin = margin * 2
-                }
             }
         }
 
-        // Remove bottom margin of views in the last row
+        // Add bottom margin
+        val margin = parent.requireContext().resources.getDimension(R.dimen.margin_0_1).toInt()
         val viewsInLastRow = binding.root.childCount % 2
         val fixedViewsInLastRow = if (viewsInLastRow == 0) 2 else viewsInLastRow
-        binding.root.children.toList().takeLast(fixedViewsInLastRow).forEach {
-            it.updateLayoutParams<GridLayout.LayoutParams> {
-                bottomMargin = 0
+        val lastRowViews = binding.root.children.toList().takeLast(fixedViewsInLastRow)
+        binding.root.children.forEach {
+            val index = binding.root.indexOfChild(view)
+            view.updateLayoutParams<GridLayout.LayoutParams> {
+                columnSpec = GridLayout.spec(index % columns, 1f)
+                if (index % columns == 0) {
+                    marginEnd = margin
+                } else {
+                    marginStart = margin
+                }
+
+                bottomMargin = if (lastRowViews.contains(it)) 0 else margin * 2
             }
         }
     }

@@ -19,6 +19,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
     private val octoPrintProvider: OctoPrintProvider,
     private val octoPrintRepository: OctoPrintRepository,
     private val executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase,
+    private val getCurrentPrinterProfileUseCase: GetCurrentPrinterProfileUseCase,
 ) : UseCase<UpdateInstanceCapabilitiesUseCase.Params, Unit>() {
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) {
@@ -41,7 +42,14 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                     null
                 }
             }
-
+            val profile = async {
+                try {
+                    getCurrentPrinterProfileUseCase.execute(Unit)
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    null
+                }
+            }
             val m115 = async {
                 try {
                     if (param.updateM115) {
@@ -58,11 +66,14 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             val m115Result = m115.await()
             val settingsResult = settings.await()
             val commandsResult = commands.await()?.all
+            val profileResult = profile.await()
 
+            // Only start update after all network requests are done to prevent race conditions
             octoPrintRepository.updateActive { current ->
                 val updated = current.copy(
                     m115Response = m115Result ?: current.m115Response,
                     settings = settingsResult,
+                    activeProfile = profileResult ?: current.activeProfile,
                     systemCommands = commandsResult ?: current.systemCommands,
                 )
                 val standardPlugins = Firebase.remoteConfig.getString("default_plugins").split(",").map { it.trim() }
