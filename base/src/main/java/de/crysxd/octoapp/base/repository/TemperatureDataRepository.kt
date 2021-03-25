@@ -16,7 +16,7 @@ class TemperatureDataRepository(
 
     companion object {
         const val CHANNEL_BUFFER_SIZE = 100
-        const val MAX_ENTRIES = 500
+        const val MAX_ENTRIES = 350
     }
 
     private val data = mutableListOf<HistoricTemperatureData>()

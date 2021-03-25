@@ -10,10 +10,7 @@ import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.get
-import androidx.core.view.updatePadding
 import com.jjoe64.graphview.GridLabelRenderer
-import com.jjoe64.graphview.LabelFormatter
-import com.jjoe64.graphview.Viewport
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
 import de.crysxd.octoapp.base.R

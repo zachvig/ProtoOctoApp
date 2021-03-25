@@ -23,7 +23,7 @@ import timber.log.Timber
 
 class ControlTemperatureWidgetViewModel(
     temperatureDataRepository: TemperatureDataRepository,
-    octoPrintRepository: OctoPrintRepository,
+    private val octoPrintRepository: OctoPrintRepository,
     private val setTargetTemperaturesUseCase: SetTargetTemperaturesUseCase,
 ) : BaseViewModel() {
 
@@ -42,6 +42,13 @@ class ControlTemperatureWidgetViewModel(
         delay(1000)
         true
     }.asLiveData()
+
+    fun getInitialComponentCount() = octoPrintRepository.getActiveInstanceSnapshot()?.activeProfile?.let {
+        var counter = 1
+        if (it.heatedBed) counter++
+        if (it.heatedChamber) counter++
+        counter
+    } ?: 2
 
     private suspend fun setTemperature(temp: Int, component: String) {
         setTargetTemperaturesUseCase.execute(

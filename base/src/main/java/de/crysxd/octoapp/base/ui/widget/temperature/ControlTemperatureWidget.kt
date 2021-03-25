@@ -28,6 +28,7 @@ class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<Temperat
     override fun onResume(lifecycleOwner: LifecycleOwner) {
         super.onResume(lifecycleOwner)
         baseViewModel.temperature.observe(lifecycleOwner, observer)
+        buildView(baseViewModel.getInitialComponentCount())
     }
 
     override fun onPause() {
