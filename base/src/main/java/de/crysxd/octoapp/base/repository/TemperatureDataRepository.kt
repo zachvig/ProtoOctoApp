@@ -16,7 +16,7 @@ class TemperatureDataRepository(
 
     companion object {
         const val CHANNEL_BUFFER_SIZE = 100
-        const val MAX_ENTRIES = 1000
+        const val MAX_ENTRIES = 500
     }
 
     private val data = mutableListOf<HistoricTemperatureData>()
@@ -33,8 +33,10 @@ class TemperatureDataRepository(
                     }
 
                     data.addAll(it.temps)
-                    if (data.size > MAX_COMMUNICATION_ENTRIES) {
-                        data.removeAll(data.take(data.size - MAX_ENTRIES))
+                    if (data.size > MAX_ENTRIES) {
+                        repeat(data.size - MAX_ENTRIES) {
+                            data.removeAt(0)
+                        }
                     }
                     if (data.isNotEmpty()) {
                         val snapshot = listOf("tool0", "tool1", "tool2", "tool3", "bed", "chamber").mapNotNull { component ->
@@ -43,12 +45,12 @@ class TemperatureDataRepository(
                             val history = data.map {
                                 TemperatureHistoryPoint(
                                     time = it.time,
-                                    temperature = it.components[component]?.target ?: 0f
+                                    temperature = it.components[component]?.actual ?: 0f
                                 )
                             }
 
                             TemperatureSnapshot(
-                                history = history,
+                                history = history.sortedBy { it.time },
                                 component = component,
                                 current = lastData,
                             )

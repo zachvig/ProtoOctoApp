@@ -131,4 +131,9 @@ dependencies {
      * Pictures
      */
     api 'com.squareup.picasso:picasso:2.71828'
+
+    /*
+     * Charts
+     */
+    implementation 'com.jjoe64:graphview:4.2.2'
 }

@@ -43,7 +43,6 @@ class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<Temperat
     }
 
     private fun onTemperatureChanged(data: List<TemperatureDataRepository.TemperatureSnapshot>) {
-        Timber.i("Temps:$data")
         if (data.isNotEmpty() && binding.root.childCount != data.size) {
             buildView(data.size)
         }
@@ -52,7 +51,7 @@ class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<Temperat
             val view = binding.root.getChildAt(index) as TemperatureView
             view.setComponentName(baseViewModel.getComponentName(parent.requireContext(), it.component))
             view.maxTemp = baseViewModel.getMaxTemp(it.component)
-            view.setTemperature(it.current)
+            view.setTemperature(it)
             view.button.setOnClickListener { _ ->
                 baseViewModel.changeTemperature(parent.requireContext(), it.component)
             }
