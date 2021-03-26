@@ -49,6 +49,9 @@ import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.base.usecase.OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH
 import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
 import de.crysxd.octoapp.databinding.MainActivityBinding
+import de.crysxd.octoapp.notification.NOTIFICATION_ID
+import de.crysxd.octoapp.notification.PrintNotificationManager
+import de.crysxd.octoapp.notification.PrintNotificationService
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.ConnectionType
@@ -59,7 +62,6 @@ import de.crysxd.octoapp.print_controls.ui.widget.gcode.GcodePreviewWidget
 import de.crysxd.octoapp.print_controls.ui.widget.progress.ProgressWidget
 import de.crysxd.octoapp.print_controls.ui.widget.tune.TuneWidget
 import de.crysxd.octoapp.widgets.updateAllWidgets
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
@@ -138,8 +140,8 @@ class MainActivity : OctoActivity() {
                 } else {
                     Timber.i("No instance active $this")
                     navigate(R.id.action_sign_in_required)
-                    PrintNotificationService.stop(this)
-                    (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).cancel(PrintNotificationService.NOTIFICATION_ID)
+                    PrintNotificationManager.stop(this)
+                    (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).cancel(NOTIFICATION_ID)
                     events.removeObserver(eventObserver)
                     currentMessages.removeObserver(currentMessageObserver)
                 }
@@ -399,14 +401,14 @@ class MainActivity : OctoActivity() {
             when {
                 // We encountered an error, try reconnecting
                 flags == null || flags.isError() -> {
-                    PrintNotificationService.stop(this)
+                    PrintNotificationManager.stop(this)
                     R.id.action_connect_printer
                 }
 
                 // We are printing
                 flags.isPrinting() -> {
                     try {
-                        PrintNotificationService.start(this)
+                        PrintNotificationManager.start(this)
                     } catch (e: IllegalStateException) {
                         // User might have closed app just in time so we can't start the service
                     }
@@ -415,12 +417,12 @@ class MainActivity : OctoActivity() {
 
                 // We are connected
                 flags.isOperational() -> {
-                    PrintNotificationService.stop(this)
+                    PrintNotificationManager.stop(this)
                     R.id.action_printer_connected
                 }
 
                 !flags.isOperational() && !flags.isPrinting() -> {
-                    PrintNotificationService.stop(this)
+                    PrintNotificationManager.stop(this)
                     R.id.action_connect_printer
                 }
 
@@ -498,6 +500,6 @@ class MainActivity : OctoActivity() {
     }
 
     override fun startPrintNotificationService() {
-        PrintNotificationService.start(this)
+        PrintNotificationManager.start(this)
     }
 }

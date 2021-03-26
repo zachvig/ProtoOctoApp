@@ -1,19 +1,14 @@
-package de.crysxd.octoapp
+package de.crysxd.octoapp.notification
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationManager
+import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.media.AudioAttributes
-import android.net.Uri
-import android.os.Build
 import android.os.IBinder
 import android.os.SystemClock
-import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
+import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
@@ -30,59 +25,18 @@ const val ACTION_STOP = "stop"
 const val DISCONNECT_IF_NO_MESSAGE_FOR_MS = 60_000L
 const val RETRY_DELAY = 1_000L
 const val RETRY_COUNT = 3L
+const val MAX_PROGRESS = 100
 const val FILAMENT_CHANGE_NOTIFICATION_ID = 3100
+const val NOTIFICATION_ID = 2999
 
 class PrintNotificationService : Service() {
-
-    companion object {
-        const val NOTIFICATION_ID = 2999
-        private val isNotificationEnabled get() = Injector.get().octoPreferences().isPrintNotificationEnabled
-        private var startTime = 0L
-
-        fun start(context: Context) {
-            if (isNotificationEnabled) {
-                // Already running?
-                if (startTime > 0) return
-
-                startTime = System.currentTimeMillis()
-                val intent = Intent(context, PrintNotificationService::class.java)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && context !is Activity) {
-                    Timber.i("Starting notification service as foreground")
-                    context.startForegroundService(intent)
-                } else {
-                    Timber.i("Starting notification service")
-                    context.startService(intent)
-                }
-            } else {
-                Timber.i("Skipping notification service start, disabled")
-
-            }
-        }
-
-        fun stop(context: Context) = GlobalScope.launch {
-            if (startTime > 0) {
-                // We have issues with starting the service and then stopping it right after. After we started it as a foreground service,
-                // we need to give it time to start and call startForeground(). Without this call being done, the app will crash, even if the service is already stopped
-                val delay = 500 - (System.currentTimeMillis() - startTime).coerceAtMost(500)
-                Timber.i("Stopping notification service after delay of ${delay}ms")
-                delay(delay)
-                val intent = Intent(context, PrintNotificationService::class.java)
-                context.stopService(intent)
-                startTime = 0
-            }
-        }
-    }
 
     private val coroutineJob = Job()
     private var markDisconnectedJob: Job? = null
     private val eventFlow = Injector.get().octoPrintProvider().eventFlow("notification-service")
-    private val openAppRequestCode = 3249
-    private val maxProgress = 100
-    private val normalNotificationChannelId = "print_progress"
-    private val filamentNotificationChannelId = "filament_change"
+    private val notificationFactory = PrintNotificationFactory(this)
     private val notificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
     private val formatEtaUseCase = Injector.get().formatEtaUseCase()
-    private var lastEta: String = ""
     private var didSeePrintBeingActive = false
     private var didSeeFilamentChangeAt = 0L
     private var pausedBecauseOfFilamentChange = false
@@ -97,14 +51,13 @@ class PrintNotificationService : Service() {
         Injector.get().octoPreferences().wasPrintNotificationDisconnected = false
 
         // Register notification channel
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannels()
-        }
+        notificationFactory.createNotificationChannels()
+
 
         // Start notification
-        startForeground(NOTIFICATION_ID, createInitialNotification())
+        startForeground(NOTIFICATION_ID, notificationFactory.createInitialNotification())
 
-        if (isNotificationEnabled) {
+        if (PrintNotificationManager.isNotificationEnabled) {
             Timber.i("Creating notification service")
 
             // Check preconditions
@@ -132,7 +85,7 @@ class PrintNotificationService : Service() {
             // Observe changes in preferences
             GlobalScope.launch(coroutineJob) {
                 Injector.get().octoPreferences().updatedFlow.collectLatest {
-                    if (!isNotificationEnabled) {
+                    if (!PrintNotificationManager.isNotificationEnabled) {
                         Timber.i("Service disabled, stopping self")
                         stopSelf()
                     }
@@ -145,7 +98,7 @@ class PrintNotificationService : Service() {
     }
 
     private suspend fun checkPreconditions(): Boolean = try {
-        if (!isNotificationEnabled) {
+        if (!PrintNotificationManager.isNotificationEnabled) {
             false
         } else {
             val flags = Injector.get().octoPrintProvider().octoPrint().createPrinterApi().getPrinterState().state?.flags
@@ -193,13 +146,13 @@ class PrintNotificationService : Service() {
                             Timber.i("No connection since $minSinceLastMessage min and after $reconnectionAttempts attempts, stopping self with disconnect message")
                             Injector.get().octoPreferences().wasPrintNotificationDisconnected = true
                             stopSelf()
-                            createDisconnectedNotification()
+                            notificationFactory.createDisconnectedNotification()
                         }
 
                         else -> {
                             Timber.i("No connection since $minSinceLastMessage min, attempting to reconnect")
                             reconnectionAttempts++
-                            creareReconnectingNotification()
+                            notificationFactory.creareReconnectingNotification()
                         }
                     }
                 }
@@ -207,7 +160,7 @@ class PrintNotificationService : Service() {
                 is Event.Connected -> {
                     Timber.i("Connected")
                     reconnectionAttempts = 0
-                    createInitialNotification()
+                    notificationFactory.createInitialNotification()
                 }
 
                 is Event.MessageReceived -> {
@@ -231,7 +184,7 @@ class PrintNotificationService : Service() {
     private fun updateFilamentChangeNotification(message: Message.CurrentMessage) {
         if (message.logs.any { it.contains("M600") }) {
             didSeeFilamentChangeAt = SystemClock.uptimeMillis()
-            notificationManager.notify(FILAMENT_CHANGE_NOTIFICATION_ID, createFilamentChangeNotification())
+            notificationManager.notify(FILAMENT_CHANGE_NOTIFICATION_ID, notificationFactory.createFilamentChangeNotification())
         }
     }
 
@@ -246,13 +199,13 @@ class PrintNotificationService : Service() {
             // We need to count the updates with not printing before exiting the service
             // We immediately quit if null, print is completed or closedOrError
             notPrintingCounter++
-            val printDone = message.progress?.completion?.toInt() == maxProgress
+            val printDone = message.progress?.completion?.toInt() == MAX_PROGRESS
             if (flags == null || notPrintingCounter > 3 || flags.closedOrError || printDone) {
                 if (printDone && didSeePrintBeingActive) {
                     didSeePrintBeingActive = false
                     Timber.i("Print done, showing notification")
                     val name = message.job?.file?.display
-                    notificationManager.notify((3000..3500).random(), createCompletedNotification(name))
+                    notificationManager.notify((3000..3500).random(), notificationFactory.createCompletedNotification(name))
                 }
 
                 Timber.i("Not printing, stopping self")
@@ -269,7 +222,7 @@ class PrintNotificationService : Service() {
             val leftSecs = it.printTimeLeft.toLong()
             val progress = it.completion.toInt()
             val smartEta = formatEtaUseCase.execute(FormatEtaUseCase.Params(leftSecs, allowRelative = true))
-            lastEta = formatEtaUseCase.execute(FormatEtaUseCase.Params(leftSecs, allowRelative = false))
+            notificationFactory.lastEta = formatEtaUseCase.execute(FormatEtaUseCase.Params(leftSecs, allowRelative = false))
 
             val detail = getString(R.string.print_notification___printing_message, progress, smartEta)
             val title = getString(
@@ -297,122 +250,17 @@ class PrintNotificationService : Service() {
                 }
             )
 
-            return createProgressNotification(progress, title, detail)
+            return notificationFactory.createProgressNotification(progress, title, detail)
         }
 
         return null
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannels() {
-        notificationManager.createNotificationChannel(
-            NotificationChannel(
-                normalNotificationChannelId,
-                getString(R.string.notification_channel___print_progress),
-                NotificationManager.IMPORTANCE_HIGH
-            )
-        )
-
-        val soundUri = Uri.parse("android.resource://${applicationContext.packageName}/${R.raw.notification_filament_change}")
-        val audioAttributes = AudioAttributes.Builder()
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-            .build()
-
-        notificationManager.createNotificationChannel(
-            NotificationChannel(
-                filamentNotificationChannelId,
-                getString(R.string.notification_channel_filament_change),
-                NotificationManager.IMPORTANCE_HIGH
-            ).also {
-                it.setSound(soundUri, audioAttributes)
-            }
-        )
     }
 
     private fun markDisconnectedAfterDelay() {
         markDisconnectedJob?.cancel()
         markDisconnectedJob = GlobalScope.launch(coroutineJob) {
             delay(DISCONNECT_IF_NO_MESSAGE_FOR_MS)
-            notificationManager.notify(NOTIFICATION_ID, creareReconnectingNotification())
+            notificationManager.notify(NOTIFICATION_ID, notificationFactory.creareReconnectingNotification())
         }
     }
-
-    private fun createProgressNotification(progress: Int, title: String, status: String) = createNotificationBuilder()
-        .setContentTitle(title)
-        .setContentText(status)
-        .setProgress(maxProgress, progress, false)
-        .setOngoing(true)
-        .addCloseAction()
-        .setNotificationSilent()
-        .build()
-
-    private fun createCompletedNotification(name: String?) = createNotificationBuilder()
-        .setContentTitle(getString(R.string.print_notification___print_done_title))
-        .apply {
-            name?.let {
-                setContentText(it)
-            }
-        }
-        .setDefaults(Notification.DEFAULT_SOUND)
-        .setDefaults(Notification.DEFAULT_VIBRATE)
-        .build()
-
-    private fun createFilamentChangeNotification() = createNotificationBuilder(filamentNotificationChannelId)
-        .setContentTitle(getString(R.string.print_notification___filament_change_required))
-        .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
-        .setDefaults(Notification.DEFAULT_VIBRATE)
-        .build()
-
-    private fun creareReconnectingNotification() = createNotificationBuilder()
-        .setContentTitle(getString(R.string.print_notification___reconnecting_title))
-        .setContentText(lastEta)
-        .setProgress(maxProgress, 0, true)
-        .addCloseAction()
-        .setOngoing(false)
-        .setNotificationSilent()
-        .build()
-
-    private fun createDisconnectedNotification() = createNotificationBuilder()
-        .setContentTitle(getString(R.string.print_notification___disconnected_title))
-        .setContentText(getString(R.string.print_notification___disconnected_message, lastEta))
-        .setOngoing(false)
-        .setNotificationSilent()
-        .setAutoCancel(true)
-        .build()
-
-    private fun createInitialNotification() = createNotificationBuilder()
-        .setContentTitle(getString(R.string.print_notification___reconnecting_title))
-        .setProgress(maxProgress, 0, true)
-        .setOngoing(true)
-        .addCloseAction()
-        .setNotificationSilent()
-        .build()
-
-    private fun NotificationCompat.Builder.addCloseAction() = addAction(
-        NotificationCompat.Action.Builder(
-            null,
-            getString(R.string.print_notification___close),
-            PendingIntent.getService(
-                this@PrintNotificationService,
-                0,
-                Intent(this@PrintNotificationService, PrintNotificationService::class.java).setAction(ACTION_STOP),
-                0
-            )
-        ).build()
-    )
-
-    private fun createNotificationBuilder(notificationChannelId: String = normalNotificationChannelId) = NotificationCompat.Builder(this, notificationChannelId)
-        .setColorized(true)
-        .setColor(Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.colorTheme?.light ?: Color.WHITE)
-        .setSmallIcon(R.drawable.ic_notification_default)
-        .setContentIntent(createStartAppPendingIntent())
-
-    private fun createStartAppPendingIntent() = PendingIntent.getActivity(
-        this,
-        openAppRequestCode,
-        Intent(this, MainActivity::class.java),
-        PendingIntent.FLAG_UPDATE_CURRENT
-    )
-
 }
