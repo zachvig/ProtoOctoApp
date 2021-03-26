@@ -93,8 +93,15 @@ class OctoPrintRepository(
     }
 
     fun clearActive() {
+        Timber.i("Clearing active")
         octoPreferences.activeInstanceWebUrl = null
         postActiveInstance()
+    }
+
+    fun remove(webUrl: String) {
+        Timber.i("Removing $webUrl")
+        val all = getAll().filter { it.webUrl != webUrl }
+        dataSource.store(all)
     }
 
     suspend fun reportActiveApiKeyInvalid() = updateActive {
