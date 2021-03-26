@@ -26,6 +26,7 @@ import java.lang.ref.WeakReference
 
 class MenuAdapter(
     private val onClick: (MenuItem) -> Unit,
+    private val onSecondaryClick: (MenuItem) -> Unit,
     private val onPinItem: (MenuItem) -> Unit,
 ) : RecyclerView.Adapter<MenuItemHolder>() {
     var recyclerView: RecyclerView? = null
@@ -106,6 +107,14 @@ class MenuAdapter(
         holder.binding.toggle.isVisible = item is ToggleMenuItem
         holder.binding.toggle.isChecked = (item as? ToggleMenuItem)?.isEnabled == true
 
+        // Secondary button
+        val icon = item.secondaryButtonIcon
+        holder.binding.secondaryButton.isVisible = icon != null
+        holder.binding.secondaryButton.setImageResource(icon ?: 0)
+        holder.binding.secondaryButton.setOnClickListener {
+            onSecondaryClick(item)
+        }
+
         // Pin
         holder.binding.pin.isVisible = pinnedItemIds.contains(item.itemId)
 
@@ -128,6 +137,8 @@ class MenuAdapter(
         val background = ColorStateList.valueOf(ContextCompat.getColor(context, item.style.backgroundColor))
         val foreground = ColorStateList.valueOf(ContextCompat.getColor(context, item.style.highlightColor))
         val transparent = ColorStateList.valueOf(Color.TRANSPARENT)
+        holder.binding.secondaryButton.backgroundTintList = background
+        holder.binding.secondaryButton.setColorFilter(foreground.defaultColor)
         holder.binding.button.backgroundTintList = if (item.showAsHalfWidth) transparent else background
         TextViewCompat.setCompoundDrawableTintList(holder.binding.button, foreground)
         TextViewCompat.setCompoundDrawableTintList(holder.binding.text, foreground)

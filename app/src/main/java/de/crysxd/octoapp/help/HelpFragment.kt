@@ -44,7 +44,8 @@ class HelpFragment : Fragment() {
 
             binding.contactOptions.adapter = MenuAdapter(
                 onClick = ::handleItemClick,
-                onPinItem = {}
+                onPinItem = {},
+                onSecondaryClick = {}
             ).also {
                 it.menuItems = createContactOptions().prepare()
             }
@@ -86,7 +87,8 @@ class HelpFragment : Fragment() {
             binding.faqError.isVisible = faq.isEmpty()
             binding.faqOptions.adapter = MenuAdapter(
                 onClick = ::handleItemClick,
-                onPinItem = {}
+                onPinItem = {},
+                onSecondaryClick = {}
             ).also {
                 it.menuItems = faq
             }
@@ -96,7 +98,8 @@ class HelpFragment : Fragment() {
             binding.bugsList.isVisible = bugs.isNotEmpty()
             binding.bugsList.adapter = MenuAdapter(
                 onClick = ::handleItemClick,
-                onPinItem = {}
+                onPinItem = {},
+                onSecondaryClick = {}
             ).also {
                 it.menuItems = bugs
             }

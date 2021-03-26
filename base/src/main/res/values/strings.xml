@@ -342,6 +342,7 @@
     <string name="main_menu___title_quick_switch_disabled">Quick switch disabled</string>
     <string name="main_menu___title_quick_switch">Switch OctoPrint</string>
     <string name="main_menu___subtitle_quick_switch_disabled">Quick switch allows you to seamlessly switch between multiple OctoPrint instances. Without this feature, you need to enter your web URL and API key again.</string>
+    <string name="main_menu___hint_name_and_colorscheme"><![CDATA[<small>Having a couple OctoPrint? Set <b>name and color scheme</b> in OctoPrint\'s appearance settings!</small>]]></string>
     <string name="temperature_menu___subtitle">You can change this presets in OctoPrint settings</string>
     <string name="temperature_menu___title">Temperature Presets</string>
     <string name="temperature_menu___item_preheat">Preheat %s</string>
@@ -434,4 +435,6 @@
     <string name="lab_menu___subtitle" translatable="false">Here you can find experimental settings and things I do not officially support but which you can use at your own will. Features might be removed without prior notice.</string>
     <string name="lab_menu___allow_to_rotate_title" translatable="false">Allow OctoApp to rotate</string>
     <string name="lab_menu___allow_to_rotate_description" translatable="false">OctoApp can rotate into landscape mode. The UI is not optimized and rotating might cause issues on some screens. Will take affect after restart.</string>
+    <string name="main_menu___delete_octoprint_dialog_message">Permanently remove %s from OctoApp?</string>
+    <string name="main_menu___delete_octoprint_dialog_button">Remove</string>
 </resources>
