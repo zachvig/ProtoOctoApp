@@ -395,4 +395,7 @@
     <string name="main_menu___item_customize_widgets">Personnaliser les contrôles</string>
     <string name="main_menu___item_open_terminal">Ouvrir le terminal</string>
     <string name="main_menu___show_octoapp_lab">OctoApp Lab</string>
+    <string name="main_menu___hint_name_and_colorscheme"><![CDATA[<small>Vous avez un couple OctoPrint? Définissez le <b>nom et la palette de couleurs</b> dans les paramètres d\'apparence d\'OctoPrint\!</small>]]>.</string>
+    <string name="main_menu___delete_octoprint_dialog_message">Supprimer définitivement %s de OctoApp ?</string>
+    <string name="main_menu___delete_octoprint_dialog_button">Retirer</string>
 </resources>
