@@ -5,6 +5,7 @@ import androidx.core.content.edit
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import java.util.*
@@ -20,12 +21,14 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_KEEP_SCREEN_ON = "keep_screen_on"
         private const val KEY_APP_LANGUAGE = "app_language"
         private const val KEY_ALLOW_APP_ROTATION = "allow_app_rotation"
+        private const val KEY_ALLOW_NOTIFICATION_BATTERY_SAVER = "allow_notification_battery_saver"
         private const val KEY_HIDE_THUMBNAIL_HINT_UNTIL = "hide_thumbnail_hin_until"
         private const val KEY_ACTIVE_INSTANCE_WEB_URL = "active_instance_web_url"
         private const val KEY_AUTO_CONNECT_PRINTER = "auto_connect_printer"
         private const val KEY_CRASH_REPORTING = "crash_reporting_enabled"
         private const val KEY_ANALYTICS = "analytics_enabled"
         private const val KEY_PRINT_NOTIFICATION_WAS_DISCONNECTED = "print_notification_was_disconnected"
+        private const val KEY_PRINT_NOTIFICATION_WAS_PAUSED = "print_notification_was_paused"
     }
 
     private val updatedChannel = ConflatedBroadcastChannel(Unit)
@@ -40,6 +43,12 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         get() = sharedPreferences.getBoolean(KEY_PRINT_NOTIFICATION_WAS_DISCONNECTED, false)
         set(value) {
             edit { putBoolean(KEY_PRINT_NOTIFICATION_WAS_DISCONNECTED, value) }
+        }
+
+    var wasPrintNotificationPaused: Boolean
+        get() = sharedPreferences.getBoolean(KEY_PRINT_NOTIFICATION_WAS_PAUSED, false)
+        set(value) {
+            edit { putBoolean(KEY_PRINT_NOTIFICATION_WAS_PAUSED, value) }
         }
 
     var isAnalyticsEnabled: Boolean
@@ -94,6 +103,12 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
 
     var allowAppRotation
         get() = sharedPreferences.getBoolean(KEY_ALLOW_APP_ROTATION, false)
+        set(value) {
+            edit { putBoolean(KEY_ALLOW_APP_ROTATION, value) }
+        }
+
+    var allowNotificationBatterySaver
+        get() = sharedPreferences.getBoolean(KEY_ALLOW_APP_ROTATION, Firebase.remoteConfig.getBoolean("notification_battery_saver"))
         set(value) {
             edit { putBoolean(KEY_ALLOW_APP_ROTATION, value) }
         }

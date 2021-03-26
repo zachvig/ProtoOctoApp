@@ -34,7 +34,7 @@ class PrintNotificationService : Service() {
     private val coroutineJob = Job()
     private var markDisconnectedJob: Job? = null
     private val eventFlow = Injector.get().octoPrintProvider().eventFlow("notification-service")
-    private val notificationFactory = PrintNotificationFactory(this)
+    private val notificationFactory by lazy { PrintNotificationFactory(this) }
     private val notificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
     private val formatEtaUseCase = Injector.get().formatEtaUseCase()
     private var didSeePrintBeingActive = false
@@ -49,10 +49,10 @@ class PrintNotificationService : Service() {
     override fun onCreate() {
         super.onCreate()
         Injector.get().octoPreferences().wasPrintNotificationDisconnected = false
+        Injector.get().octoPreferences().wasPrintNotificationPaused = false
 
         // Register notification channel
         notificationFactory.createNotificationChannels()
-
 
         // Start notification
         startForeground(NOTIFICATION_ID, notificationFactory.createInitialNotification())
@@ -111,11 +111,14 @@ class PrintNotificationService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Timber.i("Destroying notification service (was disconnected=${Injector.get().octoPreferences().wasPrintNotificationDisconnected})")
-        if (!Injector.get().octoPreferences().wasPrintNotificationDisconnected) {
-            Timber.i("Cancelling notification")
-            // Only destroy notification if we were not disconnected. Otherwise we currently show the disconnected notification.
-            notificationManager.cancel(NOTIFICATION_ID)
+        val paused = Injector.get().octoPreferences().wasPrintNotificationPaused
+        val disconnected = Injector.get().octoPreferences().wasPrintNotificationDisconnected
+        Timber.i("Destroying notification service (was disconnected=$disconnected paused=$paused)")
+        when {
+            disconnected -> notificationManager.notify(NOTIFICATION_ID, notificationFactory.createDisconnectedNotification())
+            paused -> notificationManager.notify(NOTIFICATION_ID, notificationFactory.creareReconnectingNotification())
+            else -> notificationManager.cancel(NOTIFICATION_ID)
+
         }
         coroutineJob.cancel()
         ProgressAppWidget.notifyWidgetDataChanged()
@@ -142,7 +145,7 @@ class PrintNotificationService : Service() {
                             null
                         }
 
-                        minSinceLastMessage >= 2 && reconnectionAttempts >= 2 -> {
+                        minSinceLastMessage >= 2 && reconnectionAttempts >= 3 -> {
                             Timber.i("No connection since $minSinceLastMessage min and after $reconnectionAttempts attempts, stopping self with disconnect message")
                             Injector.get().octoPreferences().wasPrintNotificationDisconnected = true
                             stopSelf()

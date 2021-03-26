@@ -67,7 +67,6 @@ class TemperatureView @JvmOverloads constructor(context: Context, attrs: Attribu
         temperature?.history?.mapIndexed { index, it ->
             DataPoint(index.toDouble(), it.temperature.toDouble())
         }?.let {
-            Timber.i("Size: ${it.size}")
             val series = LineGraphSeries(it.toTypedArray())
             series.backgroundColor = Color.WHITE
             series.color = Color.TRANSPARENT

@@ -440,6 +440,8 @@
     <string name="trouble_shooting___step_4_failure_description" translatable="false"><![CDATA[A unexpected error occurred while trying to connect to <b>%1$s</b> (%2$s)]]></string>
     <string name="lab_menu___title" translatable="false">OctoApp Lab</string>
     <string name="lab_menu___subtitle" translatable="false">Here you can find experimental settings and things I do not officially support but which you can use at your own will. Features might be removed without prior notice.</string>
+    <string name="lab_menu___allow_battery_saver_title" translatable="false">Notification battery saver</string>
+    <string name="lab_menu___allow_battery_saver_description" translatable="false">With version 1.8, I introduced a battery saving mechanic for the print notification as it was consuming a lot of power on some devices. You can disable it to return to the old behaviour. This might resolve issues with missing filament change notifications.</string>
     <string name="lab_menu___allow_to_rotate_title" translatable="false">Allow OctoApp to rotate</string>
     <string name="lab_menu___allow_to_rotate_description" translatable="false">OctoApp can rotate into landscape mode. The UI is not optimized and rotating might cause issues on some screens. Will take affect after restart.</string>
     <string name="configure_remote_access___title">Configure Remote Access</string>

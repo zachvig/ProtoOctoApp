@@ -5,6 +5,17 @@ api:
 plugins:
     announcements:
         _config_version: 1
+        channels:
+            _blog:
+                read_until: 1615917600
+            _important:
+                read_until: 1521111600
+            _octopi:
+                read_until: 1611568800
+            _plugins:
+                read_until: 1616302800
+            _releases:
+                read_until: 1611052200
     discovery:
         upnpUuid: 34c50c9f-490e-4c86-9db4-da0449cb0432
     errortracking:
@@ -18,6 +29,7 @@ plugins:
         unique_id: 85726f85-f03a-4d02-8754-019ae065cf71
     virtual_printer:
         _config_version: 1
+        enabled: true
 printerProfiles:
     default: _default
 server:

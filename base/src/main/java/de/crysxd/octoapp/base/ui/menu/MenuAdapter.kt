@@ -90,8 +90,8 @@ class MenuAdapter(
             onClick(item)
         }
 
-        if (item.canBePinned) {
-            holder.binding.button.setOnLongClickListener {
+        holder.binding.button.setOnLongClickListener {
+            if (item.canBePinned) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     (context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator)
                         .vibrate(VibrationEffect.createOneShot(30, 255))
@@ -99,8 +99,8 @@ class MenuAdapter(
 
 
                 onPinItem(item)
-                true
             }
+            true
         }
 
         // Toggle

@@ -12,17 +12,35 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 class OctoAppLabMenu : Menu {
     override suspend fun getMenuItem() = listOf(
-        RotationMenuItem()
+        RotationMenuItem(),
+        NotificationBatterySaver()
     )
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.lab_menu___title)
     override suspend fun getSubtitle(context: Context) = context.getString(R.string.lab_menu___subtitle)
 
+    class NotificationBatterySaver : ToggleMenuItem() {
+        override val isEnabled get() = Injector.get().octoPreferences().allowNotificationBatterySaver
+        override val itemId = ""
+        override var groupId = ""
+        override val canBePinned = false
+        override val order = 1
+        override val style = MenuItemStyle.Settings
+        override val icon = R.drawable.ic_round_battery_charging_full_24
+
+        override suspend fun getTitle(context: Context) = context.getString(R.string.lab_menu___allow_battery_saver_title)
+        override suspend fun getDescription(context: Context) = context.getString(R.string.lab_menu___allow_battery_saver_description)
+        override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+            Injector.get().octoPreferences().allowNotificationBatterySaver = enabled
+        }
+    }
+
     class RotationMenuItem : ToggleMenuItem() {
         override val isEnabled get() = Injector.get().octoPreferences().allowAppRotation
         override val itemId = ""
         override var groupId = ""
-        override val order = 1
+        override val canBePinned = false
+        override val order = 2
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_screen_rotation_24
 

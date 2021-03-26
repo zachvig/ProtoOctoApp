@@ -51,7 +51,6 @@ import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
 import de.crysxd.octoapp.databinding.MainActivityBinding
 import de.crysxd.octoapp.notification.NOTIFICATION_ID
 import de.crysxd.octoapp.notification.PrintNotificationManager
-import de.crysxd.octoapp.notification.PrintNotificationService
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.ConnectionType

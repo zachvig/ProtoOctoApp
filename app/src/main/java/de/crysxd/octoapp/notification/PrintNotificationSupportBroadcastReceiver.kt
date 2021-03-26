@@ -9,12 +9,18 @@ import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import de.crysxd.octoapp.base.di.Injector
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 
 class PrintNotificationSupportBroadcastReceiver(context: Context) : BroadcastReceiver() {
+
+    companion object {
+        private var pauseJob: Job? = null
+    }
 
     init {
         val intentFilter = IntentFilter()
@@ -39,11 +45,31 @@ class PrintNotificationSupportBroadcastReceiver(context: Context) : BroadcastRec
     }
 
     private suspend fun handleScreenOff(context: Context) {
-
+        if (Injector.get().octoPreferences().allowNotificationBatterySaver) {
+            if (PrintNotificationManager.isNotificationShowing) {
+                pauseJob = GlobalScope.launch {
+                    val delaySecs = 60L
+                    Timber.i("Screen off, pausing notification in ${delaySecs}s")
+                    delay(TimeUnit.SECONDS.toMillis(delaySecs))
+                    PrintNotificationManager.pause(context)
+                }
+            }
+        } else {
+            Timber.d("Battery saver disabled, no action on screen off")
+        }
     }
 
-    private suspend fun handleScreenOn(context: Context) {
-
+    private fun handleScreenOn(context: Context) {
+        if (Injector.get().octoPreferences().allowNotificationBatterySaver) {
+            pauseJob?.let {
+                pauseJob = null
+                Timber.i("Cancelling notification pause")
+                it.cancel()
+            }
+            PrintNotificationManager.resume(context)
+        }else {
+            Timber.d("Battery saver disabled, no action on screen on")
+        }
     }
 
     private suspend fun handleConnectionChange(context: Context) {
