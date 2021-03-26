@@ -394,4 +394,7 @@
     <string name="main_menu___item_customize_widgets">Bedieningselementen aanpassen</string>
     <string name="main_menu___item_open_terminal">Open Terminal</string>
     <string name="main_menu___show_octoapp_lab">OctoApp Lab</string>
+    <string name="main_menu___hint_name_and_colorscheme"><![CDATA[<small>Heb je een paar OctoPrint? Stel <b>naam en kleurenschema</b> in in OctoPrint\'s verschijningsinstellingen!</small>]]></string>
+    <string name="main_menu___delete_octoprint_dialog_message">%s definitief verwijderen van OctoApp?</string>
+    <string name="main_menu___delete_octoprint_dialog_button">Verwijder</string>
 </resources>

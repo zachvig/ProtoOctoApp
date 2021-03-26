@@ -394,4 +394,7 @@
     <string name="main_menu___item_customize_widgets">Steuerelemente anpassen</string>
     <string name="main_menu___item_open_terminal">Terminal öffnen</string>
     <string name="main_menu___show_octoapp_lab">OctoApp Lab</string>
+    <string name="main_menu___hint_name_and_colorscheme"><![CDATA[<small>Mehr als ein OctoPrint? Stelle <b>Name und Farbthema</b> in den Appearance-Einstellungen von OctoPrint ein!</small>]]></string>
+    <string name="main_menu___delete_octoprint_dialog_message">%s dauerhaft aus OctoApp entfernen?</string>
+    <string name="main_menu___delete_octoprint_dialog_button">Entfernen</string>
 </resources>

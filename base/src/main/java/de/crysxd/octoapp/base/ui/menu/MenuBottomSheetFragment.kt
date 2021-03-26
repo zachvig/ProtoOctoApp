@@ -30,7 +30,11 @@ import timber.log.Timber
 open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
     override val viewModel by injectViewModel<MenuBottomSheetViewModel>()
     private lateinit var viewBinding: MenuBottomSheetFragmentBinding
-    private val adapter = MenuAdapter(::executeClick, ::executeLongClick)
+    private val adapter = MenuAdapter(
+        onClick = ::executeClick,
+        onPinItem = ::executeLongClick,
+        onSecondaryClick = ::executeSecondaryClick
+    )
     private val showLoadingRunnable = Runnable {
         viewBinding.loadingOverlay.isVisible = true
         viewBinding.loadingOverlay.animate().alpha(if (isLoading) 1f else 0f).withEndAction { viewBinding.loadingOverlay.isVisible = isLoading }.start()
@@ -225,13 +229,30 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         }
     }
 
+    fun reloadMenu() {
+        beginDelayedTransition(true)
+        showMenu(viewModel.menuBackStack.last())
+    }
+
     private fun executeLongClick(item: MenuItem) {
         val repo = Injector.get().pinnedMenuItemsRepository()
         repo.toggleMenuItemPinned(item.itemId)
-
         // We need to reload the main menu if a favorite was changed in case it was removed
-        beginDelayedTransition(true)
-        showMenu(viewModel.menuBackStack.last())
+        reloadMenu()
+    }
+
+    private fun executeSecondaryClick(item: MenuItem) {
+        if (isLoading) return
+
+        viewModel.execute {
+            try {
+                isLoading = true
+                lastClickedMenuItem = item
+                item.onSecondaryClicked(this@MenuBottomSheetFragment)
+            } finally {
+                isLoading = false
+            }
+        }
     }
 
     private fun executeClick(item: MenuItem) {

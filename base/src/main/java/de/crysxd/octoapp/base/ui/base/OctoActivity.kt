@@ -159,7 +159,9 @@ abstract class OctoActivity : LocalizedActivity() {
         positiveButton: CharSequence = getString(android.R.string.ok),
         positiveAction: (Context) -> Unit = {},
         neutralButton: CharSequence? = null,
-        neutralAction: (Context) -> Unit = {}
+        neutralAction: (Context) -> Unit = {},
+        negativeButton: CharSequence? = null,
+        negativeAction: (Context) -> Unit = {},
     ) = handler.post {
         // Check activity state before showing dialog
         if (lifecycle.currentState >= Lifecycle.State.CREATED) {
@@ -173,6 +175,9 @@ abstract class OctoActivity : LocalizedActivity() {
                 builder.setPositiveButton(positiveButton) { _, _ -> positiveAction(this) }
                 neutralButton?.let {
                     builder.setNeutralButton(it) { _, _ -> neutralAction(this) }
+                }
+                negativeButton?.let {
+                    builder.setNegativeButton(it) { _, _ -> negativeAction(this) }
                 }
                 builder.show().also {
                     // Allow links to be clicked

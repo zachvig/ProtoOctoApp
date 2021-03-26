@@ -395,4 +395,7 @@
     <string name="main_menu___item_customize_widgets">Personalizar los controles</string>
     <string name="main_menu___item_open_terminal">Terminal abierto</string>
     <string name="main_menu___show_octoapp_lab">OctoApp Lab</string>
+    <string name="main_menu___hint_name_and_colorscheme"><![CDATA[<small>¿Tiene una pareja OctoPrint? Establezca el <b>nombre y la combinación de colores</b> en la configuración de la apariencia de OctoPrint!</small>]]></string>
+    <string name="main_menu___delete_octoprint_dialog_message">¿Eliminar permanentemente %s de OctoApp?</string>
+    <string name="main_menu___delete_octoprint_dialog_button">Eliminar</string>
 </resources>

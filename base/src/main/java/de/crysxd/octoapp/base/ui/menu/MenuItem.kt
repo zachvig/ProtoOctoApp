@@ -16,6 +16,8 @@ interface MenuItem {
     val showAsHalfWidth: Boolean get() = false
     val canBePinned: Boolean get() = true
     val enforceSingleLine: Boolean get() = true
+    val secondaryButtonIcon: Int? get() = null
+
 
     @get:DrawableRes
     val icon: Int
@@ -24,4 +26,5 @@ interface MenuItem {
     suspend fun getDescription(context: Context): CharSequence? = null
     suspend fun isVisible(@IdRes destinationId: Int) = true
     suspend fun onClicked(host: MenuBottomSheetFragment?)
+    suspend fun onSecondaryClicked(host: MenuBottomSheetFragment?) = Unit
 }

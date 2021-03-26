@@ -15,6 +15,6 @@ interface Menu : Parcelable {
     fun getEmptyStateActionUrl(context: Context): String? = null
     fun getEmptyStateSubtitle(context: Context): CharSequence? = null
     fun getCheckBoxText(context: Context): CharSequence? = null
-    fun getBottomText(context: Context): CharSequence = ""
+    fun getBottomText(context: Context): CharSequence? = null
     fun getBottomMovementMethod(host: MenuBottomSheetFragment): MovementMethod? = null
 }

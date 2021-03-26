@@ -14,9 +14,13 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button"
             style="@style/OctoTheme.Widget.Button.Menu"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/margin_0"
+            app:layout_goneMarginEnd="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/secondaryButton"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -26,9 +30,9 @@
             android:layout_marginVertical="@dimen/margin_0_1"
             android:layout_marginStart="@dimen/margin_1_2"
             android:importantForAccessibility="no"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/button"
+            app:layout_constraintStart_toStartOf="@+id/button"
+            app:layout_constraintTop_toTopOf="@+id/button"
             tools:src="@drawable/ic_round_settings_24" />
 
         <ImageView
@@ -60,10 +64,10 @@
             app:autoSizeMaxTextSize="18sp"
             app:autoSizeMinTextSize="14dp"
             app:autoSizeTextType="uniform"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/button"
             app:layout_constraintEnd_toStartOf="@+id/toggle"
             app:layout_constraintStart_toEndOf="@id/icon"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/button"
             app:layout_goneMarginEnd="@dimen/margin_0_1"
             app:layout_goneMarginStart="@dimen/margin_2" />
 
@@ -77,10 +81,11 @@
             android:theme="@style/OctoTheme.Overlay.Settings"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/button"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/button"
             app:layout_constraintTop_toTopOf="@+id/button"
             app:layout_constraintVertical_bias="0.3"
-            tools:checked="true" />
+            tools:checked="true"
+            tools:visibility="visible" />
 
         <ImageView
             android:id="@+id/successFeedback"
@@ -94,6 +99,18 @@
             app:layout_constraintBottom_toBottomOf="@id/button"
             app:layout_constraintStart_toStartOf="@id/button"
             app:layout_constraintTop_toTopOf="@id/button" />
+
+        <ImageButton
+            android:id="@+id/secondaryButton"
+            android:background="@drawable/bg_button"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_round_delete_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/light_text" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -349,6 +349,7 @@
     <string name="main_menu___title_quick_switch_disabled">Quick switch disabled</string>
     <string name="main_menu___title_quick_switch">Switch OctoPrint</string>
     <string name="main_menu___subtitle_quick_switch_disabled">Quick switch allows you to seamlessly switch between multiple OctoPrint instances. Without this feature, you need to enter your web URL and API key again.</string>
+    <string name="main_menu___hint_name_and_colorscheme"><![CDATA[<small>Having a couple OctoPrint? Set <b>name and color scheme</b> in OctoPrint\'s appearance settings!</small>]]></string>
     <string name="temperature_menu___subtitle">You can change this presets in OctoPrint settings</string>
     <string name="temperature_menu___title">Temperature Presets</string>
     <string name="temperature_menu___item_preheat">Preheat %s</string>
@@ -455,4 +456,6 @@
     <string name="configure_remote_acces___remote_access_configured">Remote access configured</string>
     <string name="configure_remote_acces___ignore_issue">Ignore and continue</string>
     <string name="configure_remote_acces___octoeverywhere___connected">OctoEverywhere is connected!</string>
+    <string name="main_menu___delete_octoprint_dialog_message">Permanently remove %s from OctoApp?</string>
+    <string name="main_menu___delete_octoprint_dialog_button">Remove</string>
 </resources>
