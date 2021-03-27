@@ -18,7 +18,7 @@ android {
         minSdkVersion 21
         targetSdkVersion project.rootProject.ext.target_sdk
         versionCode 1805
-        versionName "1.8-beta06"
+        versionName "1.8-beta07"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
