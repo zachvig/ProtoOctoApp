@@ -24,6 +24,7 @@
         <attr name="hidePrefInverted" format="boolean" />
         <attr name="hideButton" format="string" />
         <attr name="learnMoreButton" format="string" />
+        <attr name="learnMoreIcon" format="reference" />
         <attr name="noBottomMargin" format="boolean" />
         <attr name="alwaysShow" format="boolean" />
     </declare-styleable>
