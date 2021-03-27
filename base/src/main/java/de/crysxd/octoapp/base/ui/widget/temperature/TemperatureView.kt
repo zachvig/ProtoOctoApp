@@ -68,7 +68,7 @@ class TemperatureView @JvmOverloads constructor(context: Context, attrs: Attribu
             DataPoint(index.toDouble(), it.temperature.toDouble())
         }?.let {
             val series = LineGraphSeries(it.toTypedArray())
-            series.backgroundColor = Color.WHITE
+            series.backgroundColor = ContextCompat.getColor(context, R.color.inverse_text)
             series.color = Color.TRANSPARENT
             series.isDrawBackground = true
             binding.chart.removeAllSeries()
