@@ -398,9 +398,9 @@
     <string name="main_menu___hint_name_and_colorscheme"><![CDATA[<small>Vous avez un couple OctoPrint? Définissez le <b>nom et la palette de couleurs</b> dans les paramètres d\'apparence d\'OctoPrint\!</small>]]>.</string>
     <string name="main_menu___delete_octoprint_dialog_message">Supprimer définitivement %s de OctoApp ?</string>
     <string name="main_menu___delete_octoprint_dialog_button">Retirer</string>
-    <string name="general___hotend_2">Hotend 2</string>
-    <string name="general___hotend_3">Hotend 3</string>
-    <string name="general___hotend_4">Hotend 4</string>
+    <string name="general___hotend_2">Buse 2</string>
+    <string name="general___hotend_3">Buse 3</string>
+    <string name="general___hotend_4">Buse 4</string>
     <string name="general___chamber">Chamber</string>
     <string name="connect_printer___action_change_octoprint">Changer d\\\'OctoPrint</string>
     <string name="main___banner_connected_via_alternative">Connecté via l\'internet</string>
@@ -421,6 +421,6 @@
     <string name="configure_remote_acces___octoeverywhere___error_install_plugin">Veuillez installer la dernière version du plugin OctoEverywhere avant de continuer.</string>
     <string name="configure_remote_acces___octoeverywhere___disconnect_button">Déconnectez OctoEverywhere!</string>
     <string name="configure_remote_acces___octoeverywhere___connect_button">Connectez OctoEverywhere !</string>
-    <string name="configure_remote_acces___octoeverywhere___description_2">L\'utilisation d\'une application tierce comme OctoApp nécessite actuellement un abonnement payant avec OctoEverywhere pour couvrir les coûts du serveur.\\n\\nDès que votre OctoPrint ne peut plus être joint directement, OctoApp bascule sur la connexion à distance fournie par OctoEverywhere. Vous êtes chez vous ? L\'OctoApp sera en mesure de joindre votre OctoPrint à nouveau et de revenir à la connexion directe plus rapide.</string>
+    <string name="configure_remote_acces___octoeverywhere___description_2">L\'utilisation d\'une application tierce comme OctoApp nécessite actuellement un abonnement payant avec OctoEverywhere pour couvrir les coûts du serveur.\n\nDès que votre OctoPrint ne peut plus être joint directement, OctoApp bascule sur la connexion à distance fournie par OctoEverywhere. Vous êtes chez vous ? L\'OctoApp sera en mesure de joindre votre OctoPrint à nouveau et de revenir à la connexion directe plus rapide.</string>
     <string name="configure_remote_acces___octoeverywhere___description_1">OctoEverywhere est un plugin pour OctoPrint qui rend l\'accès à distance pour OctoApp très facile. Il suffit d\'installer le plugin, de créer un compte et de se connecter ci-dessous.</string>
 </resources>
