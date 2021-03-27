@@ -291,6 +291,7 @@ class MainActivity : OctoActivity() {
         // OctoPrint might not be available, this is more like a fire and forget
         // Don't bother user with error messages
         updateCapabilities("ui_start", updateM115 = false, escalateError = false)
+        updateConnectionBanner(alreadyShrunken = true)
     }
 
     override fun onStop() {
@@ -348,37 +349,45 @@ class MainActivity : OctoActivity() {
         // as this might lead to the user being stuck
         is Event.Disconnected -> {
             Timber.w("Connection lost")
+            viewModel.connectionType = null
             when {
                 e.exception is WebSocketMaybeBrokenException -> e.exception?.let(this::showDialog)
                 e.exception is WebSocketUpgradeFailedException -> e.exception?.let(this::showDialog)
                 !listOf(R.id.action_connect_printer, R.id.action_sign_in_required).contains(viewModel.lastNavigation) ->
-                    showBanner(R.string.main___banner_connection_lost_reconnecting, 0, R.color.color_error, true)
+                    showBanner(R.string.main___banner_connection_lost_reconnecting, 0, R.color.color_error, showSpinner = true, alreadyShrunken = false)
                 else -> Unit
             }
         }
 
         is Event.Connected -> {
             Timber.w("Connection restored")
-            when (e.connectionType) {
-                ConnectionType.Primary -> setBannerVisible(false)
-                ConnectionType.Alternative -> showBanner(
-                    R.string.main___banner_connected_via_alternative,
-                    R.drawable.ic_round_cloud_queue_24,
-                    R.color.blue,
-                    false
-                )
-                ConnectionType.OctoEverywhere -> showBanner(
-                    R.string.main___banner_connected_via_octoeverywhere,
-                    R.drawable.ic_octoeverywhere_24px,
-                    R.color.octoeverywhere,
-                    false
-                )
-            }
+            viewModel.connectionType = e.connectionType
+            updateConnectionBanner(false)
         }
 
         is Event.MessageReceived -> onMessageReceived(e.message)
 
         else -> Unit
+    }
+
+    private fun updateConnectionBanner(alreadyShrunken: Boolean) {
+        when (viewModel.connectionType) {
+            ConnectionType.Primary -> setBannerVisible(false)
+            ConnectionType.Alternative -> showBanner(
+                R.string.main___banner_connected_via_alternative,
+                R.drawable.ic_round_cloud_queue_24,
+                R.color.blue,
+                showSpinner = false,
+                alreadyShrunken = alreadyShrunken
+            )
+            ConnectionType.OctoEverywhere -> showBanner(
+                R.string.main___banner_connected_via_octoeverywhere,
+                R.drawable.ic_octoeverywhere_24px,
+                R.color.octoeverywhere,
+                showSpinner = false,
+                alreadyShrunken = alreadyShrunken
+            )
+        }
     }
 
     private fun onMessageReceived(e: SocketMessage) = when (e) {
@@ -439,8 +448,8 @@ class MainActivity : OctoActivity() {
         else -> Unit
     }
 
-    private fun showBanner(@StringRes text: Int, @DrawableRes icon: Int?, @ColorRes background: Int, showSpinner: Boolean) {
-        binding.bannerView.show(this, text, icon, background, showSpinner)
+    private fun showBanner(@StringRes text: Int, @DrawableRes icon: Int?, @ColorRes background: Int, showSpinner: Boolean, alreadyShrunken: Boolean) {
+        binding.bannerView.show(this, text, icon, background, showSpinner, alreadyShrunken)
         setBannerVisible(true)
     }
 

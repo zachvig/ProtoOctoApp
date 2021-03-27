@@ -40,7 +40,14 @@ class ActivityBannerView @JvmOverloads constructor(context: Context, attrs: Attr
         gravity = Gravity.CENTER
     }
 
-    fun show(activity: MainActivity, @StringRes message: Int, @DrawableRes icon: Int?, @ColorRes backgroundColor: Int, showSpinner: Boolean) {
+    fun show(
+        activity: MainActivity,
+        @StringRes message: Int,
+        @DrawableRes icon: Int?,
+        @ColorRes backgroundColor: Int,
+        showSpinner: Boolean,
+        alreadyShrunken: Boolean
+    ) {
         val configHash = message + (icon ?: 0) + backgroundColor + showSpinner.hashCode()
         if (lastConfigHash == configHash) {
             return
@@ -69,10 +76,12 @@ class ActivityBannerView @JvmOverloads constructor(context: Context, attrs: Attr
         if (!showSpinner) {
             shrinkJob = activity.lifecycleScope.launchWhenCreated {
                 delay(5000)
-                onStartShrink()
-                binding.icon.isVisible = false
-                binding.text.isVisible = false
+                shrink()
             }
+        }
+
+        if (alreadyShrunken) {
+            shrink()
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -84,6 +93,13 @@ class ActivityBannerView @JvmOverloads constructor(context: Context, attrs: Attr
                 activity.window.decorView.systemUiVisibility = systemUiFlagsBackup
             }
         }
+    }
+
+    private fun shrink() {
+        onStartShrink()
+        binding.icon.isVisible = false
+        binding.text.isVisible = false
+        shrinkJob?.cancel()
     }
 
     fun hide() {
