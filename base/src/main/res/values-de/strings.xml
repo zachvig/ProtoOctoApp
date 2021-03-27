@@ -394,4 +394,32 @@
     <string name="main_menu___hint_name_and_colorscheme"><![CDATA[<small>Mehr als ein OctoPrint? Stelle <b>Name und Farbthema</b> in den Appearance-Einstellungen von OctoPrint ein!</small>]]></string>
     <string name="main_menu___delete_octoprint_dialog_message">%s dauerhaft aus OctoApp entfernen?</string>
     <string name="main_menu___delete_octoprint_dialog_button">Entfernen</string>
+    <string name="announcement___new_version_title">Wilkommen bei OctoApp 1.8!</string>
+    <string name="announcement___new_version_learn_more">Video ansehen</string>
+    <string name="general___hotend_2">Hotend 2</string>
+    <string name="general___hotend_3">Hotend 3</string>
+    <string name="general___hotend_4">Hotend 4</string>
+    <string name="general___chamber">Chamber</string>
+    <string name="connect_printer___action_change_octoprint">OctoPrint wechseln</string>
+    <string name="announcement___new_version_detail">Diese Version bietet viele kleine Verbesserungen und *Trommelwirbel* die erste offizielle Integration mit OctoEverywhere für den Zugriff auf Ihren Drucker von unterwegs!</string>
+    <string name="main___banner_connected_via_alternative">Verbunden über Internet</string>
+    <string name="main___banner_connected_via_octoeverywhere">Verbunden über OctoEverywhere!</string>
+    <string name="main_menu___configure_remote_access">Fernzugriff konfigurieren</string>
+    <string name="announcement___octoeverywhere_learn_more">Jetzt verbinden</string>
+    <string name="announcement___octoeverywhere_title">Octo(App)Everywhere!</string>
+    <string name="announcement___octoeverywhere_detail">Du kannst jetzt dein OctoEverywhere-Abonnement verbinden, um OctoApp zu nutzen, wenn du nicht zu Hause bist.</string>
+    <string name="configure_remote_access___title">Fernzugriff konfigurieren</string>
+    <string name="configure_remote_acces___description"><![CDATA[Nicht zu Hause? Alleine kann OctoApp dein OctoPrint nicht erreichen, da es nur in Ihrem Heimnetzwerk verfügbar ist. Du musst OctoPrint über das Internet verfügbar machen, damit OctoApp von überall darauf zugreifen kann. Erfahre mehr <a href="https://app.octoapp.eu/help/use_remotely">hier</a>.]]></string>
+    <string name="configure_remote_acces___octoeverywhere___title">OctoEverywhere!</string>
+    <string name="configure_remote_acces___octoeverywhere___description_1">OctoEverywhere ist ein Plugin für OctoPrint, das den Fernzugriff für OctoApp sehr einfach macht. Installiere einfach das Plugin, erstelle ein Konto und melde dich unten an.</string>
+    <string name="configure_remote_acces___octoeverywhere___description_2">Die Verwendung einer Drittanbieter-App wie OctoApp erfordert derzeit ein kostenpflichtiges Abonnement mit OctoEverywhere, um die Serverkosten zu decken.\\n\\nSobald dein OctoPrint nicht mehr direkt erreichbar ist, schaltet OctoApp auf die von OctoEverywhere bereitgestellte Remote-Verbindung um. Wieder zu Hause? OctoApp kann dein OctoPrint wieder erreichen und nutzt wieder auf die schnellere Direktverbindung.</string>
+    <string name="configure_remote_acces___octoeverywhere___connect_button">OctoEverywhere verbinden</string>
+    <string name="configure_remote_acces___octoeverywhere___disconnect_button">OctoEverywhere trennen</string>
+    <string name="configure_remote_acces___octoeverywhere___error_install_plugin">Bitte installiere die neueste Version des OctoEverywhere-Plugins, bevor du fortfährst.</string>
+    <string name="configure_remote_acces___manual___description">Du bist ein IT-Experte und möchtest den Fernzugriff selbst einrichten? Gib die öffentliche Web-URL unten ein. Wann immer die primäre Web-URL, mit der du dich angemeldet hast, nicht erreichbar ist, wird OctoApp auf diese URL zurückgreifen, bis du wieder zu Hause bist.</string>
+    <string name="configure_remote_acces___manual___title">Manuell</string>
+    <string name="configure_remote_acces___manual___button">Remote-URL speichern</string>
+    <string name="configure_remote_acces___remote_access_configured">Fernzugriff konfiguriert</string>
+    <string name="configure_remote_acces___ignore_issue">Ignorieren und fortfahren</string>
+    <string name="configure_remote_acces___octoeverywhere___connected">OctoEverywhere ist verbunden!</string>
 </resources>

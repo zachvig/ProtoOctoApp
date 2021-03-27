@@ -361,8 +361,8 @@
     <string name="announcement___new_version_title">Welcome to OctoApp 1.8!</string>
     <string name="announcement___new_version_learn_more">Watch the video</string>
     <string name="announcement___octoeverywhere_learn_more">Connect now</string>
-    <string name="announcement___octoeverywhere_title">Use OctoApp wherever you are!</string>
-    <string name="announcement___octoeverywhere_detail">You can now connect your OctoEverywhere supporter subscription to use OctoApp when you are not at home.</string>
+    <string name="announcement___octoeverywhere_title">Octo(App)Everywhere!</string>
+    <string name="announcement___octoeverywhere_detail">You can now connect your OctoEverywhere subscription to use OctoApp when you are not at home.</string>
     <string name="main_menu___system_command_executed">\"%s\" executed</string>
     <string name="connect_printer___waiting_for_user_title">Connect when you are ready</string>
     <string name="connect_printer___waiting_for_user_subtitle">You can enable auto-connect in the settings</string>

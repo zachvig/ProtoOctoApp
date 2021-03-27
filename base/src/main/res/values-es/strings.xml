@@ -330,8 +330,8 @@
     <string name="temperature_menu___applied_confirmation">Aplicado %s</string>
     <string name="temperature_menu___applied_error">%s no encontrado, no se ha podido aplicar</string>
     <string name="main_menu___item_temperature_presets">Preselecciones de temperatura</string>
-    <string name="announcement___new_version_title">¡Bienvenido a OctoApp 1.7!</string>
-    <string name="announcement___new_version_detail">OctoApp permite ahora reordenar y ocultar los controles principales, soporta gestores de filamentos y es más rápido que nunca.</string>
+    <string name="announcement___new_version_title">¡Bienvenido a OctoApp 1.8!</string>
+    <string name="announcement___new_version_detail">Esta versión ofrece muchas pequeñas mejoras y *tambores* la primera integración oficial con OctoEverywhere para acceder a su impresora sobre la marcha.</string>
     <string name="main_menu___system_command_executed">\"%s\" ejecutado</string>
     <string name="notification_channel_filament_change">Cambio de filamento</string>
     <string name="print_notification___paused_filamet_change_title">Pausado, filamento vacío</string>
@@ -398,4 +398,29 @@
     <string name="main_menu___hint_name_and_colorscheme"><![CDATA[<small>¿Tiene una pareja OctoPrint? Establezca el <b>nombre y la combinación de colores</b> en la configuración de la apariencia de OctoPrint!</small>]]></string>
     <string name="main_menu___delete_octoprint_dialog_message">¿Eliminar permanentemente %s de OctoApp?</string>
     <string name="main_menu___delete_octoprint_dialog_button">Eliminar</string>
+    <string name="general___hotend_2">Hotend 2</string>
+    <string name="general___hotend_3">Hotend 3</string>
+    <string name="general___hotend_4">Hotend 4</string>
+    <string name="general___chamber">Chamber</string>
+    <string name="connect_printer___action_change_octoprint">Cambiar OctoPrint</string>
+    <string name="main___banner_connected_via_alternative">Conectado a través de Internet</string>
+    <string name="main___banner_connected_via_octoeverywhere">¡Conectado a través de OctoEverywhere!</string>
+    <string name="main_menu___configure_remote_access">Configurar el acceso remoto</string>
+    <string name="announcement___octoeverywhere_learn_more">Conéctate ahora</string>
+    <string name="announcement___octoeverywhere_title">Octo(App)Everywhere!</string>
+    <string name="announcement___octoeverywhere_detail">Ahora puede conectar su suscripción OctoEverywhere para utilizar OctoApp cuando no esté en casa.</string>
+    <string name="configure_remote_access___title">Configurar el acceso remoto</string>
+    <string name="configure_remote_acces___description"><![CDATA[¿No está en casa? Por sí solo, OctoApp no puede llegar a su OctoPrint ya que sólo está disponible en su red doméstica. Tiene que hacer que OctoPrint esté disponible en Internet para que OctoApp pueda acceder a él desde cualquier lugar. Más información <a href="https://app.octoapp.eu/help/use_remotely">aquí</a>.]]></string>
+    <string name="configure_remote_acces___octoeverywhere___title">OctoEverywhere!</string>
+    <string name="configure_remote_acces___octoeverywhere___description_1">OctoEverywhere es un plugin para OctoPrint que facilita el acceso remoto a OctoApp. Simplemente instale el plugin, cree una cuenta e inicie sesión a continuación.</string>
+    <string name="configure_remote_acces___octoeverywhere___description_2">El uso de una aplicación de terceros como OctoApp requiere actualmente una suscripción de pago con OctoEverywhere para cubrir los costes del servidor.\\n\\nTan pronto como su OctoPrint no pueda ser alcanzado directamente, OctoApp cambiará a la conexión remota proporcionada por OctoEverywhere. ¿De vuelta a casa? OctoApp podrá alcanzar su OctoPrint de nuevo y cambiar de nuevo a la conexión directa más rápida.</string>
+    <string name="configure_remote_acces___octoeverywhere___connect_button">Conecte OctoEverywhere!</string>
+    <string name="configure_remote_acces___octoeverywhere___disconnect_button">Desconecta OctoEverywhere!</string>
+    <string name="configure_remote_acces___octoeverywhere___error_install_plugin">Por favor, instale la última versión del plugin OctoEverywhere antes de continuar.</string>
+    <string name="configure_remote_acces___manual___description">¿Eres un experto en informática y quieres configurar el acceso remoto por tu cuenta? Introduzca la URL web pública que aparece a continuación. Siempre que la URL web principal con la que ha iniciado la sesión no sea accesible, OctoApp recurrirá a esta URL hasta que vuelva a casa.</string>
+    <string name="configure_remote_acces___manual___title">Manual</string>
+    <string name="configure_remote_acces___manual___button">Guardar la URL remota</string>
+    <string name="configure_remote_acces___remote_access_configured">Acceso remoto configurado</string>
+    <string name="configure_remote_acces___ignore_issue">Ignorar y continuar</string>
+    <string name="configure_remote_acces___octoeverywhere___connected">¡OctoEverywhere está conectado!</string>
 </resources>

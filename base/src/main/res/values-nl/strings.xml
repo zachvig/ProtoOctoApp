@@ -329,8 +329,8 @@
     <string name="temperature_menu___item_preheat">Verwarm %s</string>
     <string name="temperature_menu___applied_confirmation">%s toegepast</string>
     <string name="temperature_menu___applied_error">%s niet gevonden, kon niet worden toegepast</string>
-    <string name="announcement___new_version_detail">OctoApp maakt het nu mogelijk om de hoofdbesturing te herschikken en te verbergen, ondersteunt filament managers en is sneller dan ooit.</string>
-    <string name="announcement___new_version_title">Welkom in OctoApp 1.7!</string>
+    <string name="announcement___new_version_detail">Deze versie biedt vele kleine verbeteringen en *tromgeroffel* de eerste officiële integratie met OctoEverywhere om toegang te krijgen tot uw printer op de weg!</string>
+    <string name="announcement___new_version_title">Welkom in OctoApp 1.8!</string>
     <string name="main_menu___system_command_executed">\"%s\" uitgevoerd</string>
     <string name="notification_channel_filament_change">Verandering van filament</string>
     <string name="print_notification___paused_filamet_change_title">Pauze, filament leeg</string>
@@ -397,4 +397,29 @@
     <string name="main_menu___hint_name_and_colorscheme"><![CDATA[<small>Heb je een paar OctoPrint? Stel <b>naam en kleurenschema</b> in in OctoPrint\'s verschijningsinstellingen!</small>]]></string>
     <string name="main_menu___delete_octoprint_dialog_message">%s definitief verwijderen van OctoApp?</string>
     <string name="main_menu___delete_octoprint_dialog_button">Verwijder</string>
+    <string name="general___hotend_2">Hotend 2</string>
+    <string name="general___hotend_3">Hotend 3</string>
+    <string name="general___hotend_4">Hotend 4</string>
+    <string name="general___chamber">Chamber</string>
+    <string name="connect_printer___action_change_octoprint">Wissel OctoPrint</string>
+    <string name="main___banner_connected_via_alternative">Verbonden via internet</string>
+    <string name="main___banner_connected_via_octoeverywhere">Verbonden via OctoEverywhere!</string>
+    <string name="main_menu___configure_remote_access">Toegang op afstand configureren</string>
+    <string name="announcement___octoeverywhere_learn_more">Nu verbinden</string>
+    <string name="announcement___octoeverywhere_title">Octo(App)Everywhere!</string>
+    <string name="announcement___octoeverywhere_detail">U kunt nu uw OctoEverywhere abonnement aansluiten om OctoApp te gebruiken wanneer u niet thuis bent.</string>
+    <string name="configure_remote_access___title">Toegang op afstand configureren</string>
+    <string name="configure_remote_acces___description"><![CDATA[Niet thuis? Op zichzelf kan OctoApp uw OctoPrint niet bereiken, omdat deze alleen beschikbaar is in uw thuisnetwerk. U moet OctoPrint beschikbaar maken via het internet, zodat OctoApp er toegang toe heeft, waar u ook bent. Meer informatie <a href="https://app.octoapp.eu/help/use_remotely">hier</a>.]]></string>
+    <string name="configure_remote_acces___octoeverywhere___title">OctoEverywhere!</string>
+    <string name="configure_remote_acces___octoeverywhere___description_1">OctoEverywhere is een plugin voor OctoPrint die toegang op afstand voor OctoApp zeer eenvoudig maakt. Installeer gewoon de plugin, maak een account aan en log hieronder in.</string>
+    <string name="configure_remote_acces___octoeverywhere___description_2">Het gebruik van een 3rd party app zoals OctoApp vereist momenteel een betaald abonnement bij OctoEverywhere om de server kosten te dekken.\\n\\nZodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over naar de externe verbinding die OctoEverywhere biedt. Bent u thuis? OctoApp kan uw OctoPrint weer bereiken en schakelt weer terug naar de snellere directe verbinding.</string>
+    <string name="configure_remote_acces___octoeverywhere___connect_button">Verbind OctoEverywhere!</string>
+    <string name="configure_remote_acces___octoeverywhere___disconnect_button">Ontkoppel OctoEverywhere!</string>
+    <string name="configure_remote_acces___octoeverywhere___error_install_plugin">Installeer de laatste versie van de OctoEverywhere plugin voordat je verder gaat.</string>
+    <string name="configure_remote_acces___manual___description">Bent u een IT-expert en wilt u zelf toegang op afstand instellen? Voer de publieke web URL hieronder in. Wanneer de primaire web URL waarmee u zich heeft aangemeld niet bereikbaar is, zal OctoApp terugvallen op deze URL totdat u weer thuis bent.</string>
+    <string name="configure_remote_acces___manual___title">Handmatig</string>
+    <string name="configure_remote_acces___manual___button">URL op afstand opslaan</string>
+    <string name="configure_remote_acces___remote_access_configured">Toegang op afstand geconfigureerd</string>
+    <string name="configure_remote_acces___ignore_issue">Negeer en ga verder</string>
+    <string name="configure_remote_acces___octoeverywhere___connected">OctoEverywhere is aangesloten!</string>
 </resources>
