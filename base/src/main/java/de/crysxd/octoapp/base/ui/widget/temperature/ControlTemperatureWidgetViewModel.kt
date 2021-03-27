@@ -34,8 +34,9 @@ class ControlTemperatureWidgetViewModel(
         temps.filter {
             val isChamber = it.component == "chamber" && profile.heatedChamber
             val isBed = it.component == "bed" && profile.heatedBed
-            val isOther = it.component != "bed" && it.component != "chamber"
-            isOther || isChamber || isBed
+            val isTool = it.component.startsWith("tool") && (!profile.extruder.sharedNozzle || it.component == "tool0")
+            val isOther = it.component != "chamber" && it.component != "bed" && !it.component.startsWith("tool")
+            isOther || isTool || isChamber || isBed
         }
     }.retry {
         Timber.e(it)
@@ -44,7 +45,7 @@ class ControlTemperatureWidgetViewModel(
     }.asLiveData()
 
     fun getInitialComponentCount() = octoPrintRepository.getActiveInstanceSnapshot()?.activeProfile?.let {
-        var counter = 1
+        var counter = if (it.extruder.sharedNozzle) 1 else it.extruder.count
         if (it.heatedBed) counter++
         if (it.heatedChamber) counter++
         counter

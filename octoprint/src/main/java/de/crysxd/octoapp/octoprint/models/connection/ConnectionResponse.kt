@@ -44,26 +44,5 @@ data class ConnectionResponse(
         val id: String,
         val model: String?,
         val name: String?,
-        val volume: Volume?,
-        val extruder: Extruder?
     )
-
-    data class Volume(
-        val depth: Float,
-        val width: Float,
-        val height: Float,
-        val origin: Origin,
-    )
-
-    data class Extruder(
-        val nozzleDiameter: Float
-    )
-
-    enum class Origin {
-        @SerializedName("lowerleft")
-        LowerLeft,
-
-        @SerializedName("center")
-        Center
-    }
 }

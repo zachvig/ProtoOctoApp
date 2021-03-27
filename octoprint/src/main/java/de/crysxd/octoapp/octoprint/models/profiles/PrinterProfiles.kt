@@ -25,7 +25,9 @@ data class PrinterProfiles(
     )
 
     data class Extruder(
-        val nozzleDiameter: Float
+        val nozzleDiameter: Float,
+        val count: Int,
+        val sharedNozzle: Boolean,
     )
 
     enum class Origin {
