@@ -30,12 +30,14 @@ class GenerateExceptionInterceptor(private val networkExceptionListener: (Except
                     409 -> throw PrinterNotOperationalException(request.url)
                     401 -> throw generate401Exception(response)
                     403 -> throw InvalidApiKeyException(request.url)
+                    413 -> throw generate413Exception(response)
                     in 501..599 -> throw OctoPrintBootingException()
 
                     // OctoEverywhere
                     601 -> throw OctoEverywhereCantReachPrinterException()
                     603, 604, 606 -> throw OctoEverywhereConnectionNotFoundException()
                     605 -> throw OctoEverywhereSubscriptionMissingException()
+                    607 -> throw generate413Exception(response)
 
                     else -> throw generateGenericException(response)
                 }
@@ -53,6 +55,13 @@ class GenerateExceptionInterceptor(private val networkExceptionListener: (Except
             throw e
         }
     }
+
+    private fun generate413Exception(response: Response) = OctoPrintException(
+        userFacingMessage = "The server does not allow downloading this file because it is too large.",
+        technicalMessage = "Received response code 413, indicating content is too large",
+        webUrl = response.request.url.toString(),
+        apiKey = null,
+    )
 
     private fun generate401Exception(response: Response): IOException {
         val authHeader = response.headers["WWW-Authenticate"]

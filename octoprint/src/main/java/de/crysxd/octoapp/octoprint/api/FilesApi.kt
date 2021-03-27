@@ -34,7 +34,6 @@ interface FilesApi {
         private val okHttpClient: OkHttpClient,
         private val wrapped: FilesApi
     ) {
-
         fun downloadFile(file: FileObject.File): InputStream? {
             val request = Request.Builder()
                 .get()
