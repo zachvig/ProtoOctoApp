@@ -15,8 +15,10 @@
         android:paddingTop="@dimen/common_view_top_padding">
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="@dimen/margin_1"
             android:orientation="vertical">
 
             <com.google.android.material.tabs.TabLayout

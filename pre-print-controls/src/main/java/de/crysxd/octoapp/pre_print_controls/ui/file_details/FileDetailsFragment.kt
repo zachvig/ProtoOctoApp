@@ -94,7 +94,7 @@ class FileDetailsFragment : BaseFragment(), InsetAwareScreen {
                 height = if (position == 0) {
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 } else {
-                    requireView().height - binding.tabs.height - requireView().paddingBottom - requireView().paddingTop
+                    requireView().height - binding.tabs.height - requireView().paddingBottom - requireView().paddingTop - binding.container.paddingTop
                 }
             }
 
