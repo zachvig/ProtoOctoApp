@@ -111,7 +111,7 @@ class LocalGcodeFileDataSource(
         removeFromCache(getCacheKey(file))
     }
 
-    private fun removeFromCache(cacheKey: CacheKey) {
+    fun removeFromCache(cacheKey: CacheKey) {
         getDataFile(cacheKey).delete()
         getIndexFile(cacheKey).delete()
         sharedPreferences.edit { remove(cacheKey) }
