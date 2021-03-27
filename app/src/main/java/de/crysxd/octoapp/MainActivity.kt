@@ -15,10 +15,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.os.bundleOf
-import androidx.core.view.doOnNextLayout
-import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
-import androidx.core.view.updatePadding
+import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.*
@@ -460,6 +457,12 @@ class MainActivity : OctoActivity() {
             return
         }
 
+        // Not layed out yet? Do later
+        if (rootLayout.width == 0) {
+            rootLayout.doOnNextLayout { setBannerVisible(visible) }
+            return
+        }
+
         // Let disconnect message fill status bar background and measure height
         binding.bannerView.updatePadding(top = lastInsets.top)
         binding.bannerView.measure(
@@ -474,6 +477,7 @@ class MainActivity : OctoActivity() {
             excludeChildren(octoToolbar, true)
         })
 
+        // Shrinking after delay
         runTransition()
         binding.bannerView.onStartShrink = {
             runTransition()
