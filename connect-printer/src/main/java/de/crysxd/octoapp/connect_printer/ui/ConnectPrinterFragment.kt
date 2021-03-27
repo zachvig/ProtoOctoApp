@@ -13,7 +13,9 @@ import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.main.ChangeOctoPrintInstanceMenuItem
 import de.crysxd.octoapp.base.ui.menu.power.PowerControlsMenu
+import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.connect_printer.databinding.ConnectPrinterFragmentBinding
 import de.crysxd.octoapp.connect_printer.di.injectViewModel
@@ -69,6 +71,7 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
             binding.buttonMore2.setOnClickListener { showMenu() }
             binding.buttonMore3.setOnClickListener { showMenu() }
             binding.buttonMore4.setOnClickListener { showMenu() }
+            binding.buttonMore5.setOnClickListener { showMenu() }
             binding.buttonBeginConnect.setOnClickListener {
                 requireOctoActivity().showDialog(
                     message = getString(R.string.connect_printer___begin_connection_confirmation_message),
@@ -92,15 +95,20 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
     private fun handleUiStateUpdate(state: ConnectPrinterViewModel.UiState) {
         binding.psuTurnOnControls.isVisible = false
         binding.psuTurnOffControls.isVisible = false
+        binding.octoprintNotAvailableControls.isVisible = false
         binding.octoprintConnectedInfo.isVisible = !listOf(
             ConnectPrinterViewModel.UiState.Initializing,
             ConnectPrinterViewModel.UiState.OctoPrintNotAvailable,
             ConnectPrinterViewModel.UiState.OctoPrintStarting
         ).contains(state)
         binding.noWifiWarning.alpha = if (binding.octoprintConnectedInfo.isVisible) 0f else 1f
+        binding.buttonChangeOctoPrint.setOnClickListener {
+            MenuBottomSheetFragment.createForMenu(SwitchOctoPrintMenu()).show(childFragmentManager)
+        }
 
         when (state) {
             ConnectPrinterViewModel.UiState.OctoPrintNotAvailable -> {
+                binding.octoprintNotAvailableControls.isVisible = true
                 showStatus(
                     R.string.connect_printer___octoprint_not_available_title,
                     R.string.connect_printer___octoprint_not_available_detail
@@ -197,8 +205,10 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
             )
         }.let { }
 
-        binding.psuUnvailableControls.isVisible =
-            !binding.psuTurnOnControls.isVisible && !binding.psuTurnOffControls.isVisible && !binding.beginConnectControls.isVisible
+        binding.psuUnvailableControls.isVisible = !binding.psuTurnOnControls.isVisible &&
+                !binding.psuTurnOffControls.isVisible &&
+                !binding.beginConnectControls.isVisible &&
+                !binding.octoprintNotAvailableControls.isVisible
 
     }
 

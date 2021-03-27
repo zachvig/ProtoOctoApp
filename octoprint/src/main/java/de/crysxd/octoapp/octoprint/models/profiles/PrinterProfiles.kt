@@ -12,7 +12,7 @@ data class PrinterProfiles(
         val model: String = "fallback",
         val name: String = "Fallback",
         val volume: Volume = Volume(200f, 200f, 200f, PrinterProfiles.Origin.LowerLeft),
-        val extruder: Extruder = Extruder(0.4f),
+        val extruder: Extruder = Extruder(0.4f, 1 , false),
         val heatedChamber: Boolean = false,
         val heatedBed: Boolean = true,
     )

@@ -139,6 +139,7 @@
     <string name="connect_printer___printer_connected_detail_2">This takes longer than usual. Either your network is weak, or the websocket does not work correctly. If you are stuck here, use the help section in the main menu.</string>
     <string name="connect_printer___auto_selection_failed">Unable to auto-detect port, selecting first</string>
     <string name="connect_printer___action_turn_psu_off">Turn off PSU</string>
+    <string name="connect_printer___action_change_octoprint">Switch OctoPrint</string>
     <string name="extrude_retract">Extrude / Retract</string>
     <string name="distance_in_mm_negative_for_retract">Distance in mm (negative for retract)</string>
     <string name="start_printing">Start Printing</string>
