@@ -99,7 +99,7 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
     }
 
     private fun openFullscreen() {
-        UriLibrary.getPurchaseUrl().open(parent.requireOctoActivity())
+        UriLibrary.getWebcamUri().open(parent.requireOctoActivity())
         recordInteraction()
     }
 
