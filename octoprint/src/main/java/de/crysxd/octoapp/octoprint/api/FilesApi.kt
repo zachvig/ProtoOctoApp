@@ -13,6 +13,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import java.io.InputStream
 import java.net.URI
+import java.util.concurrent.TimeUnit
 
 interface FilesApi {
 
@@ -34,13 +35,20 @@ interface FilesApi {
         private val wrapped: FilesApi
     ) {
 
-        suspend fun downloadFile(file: FileObject.File): InputStream? {
+        fun downloadFile(file: FileObject.File): InputStream? {
             val request = Request.Builder()
                 .get()
                 .url(URI.create(webUrl).resolve("downloads/files/${file.origin}/${file.path}").toURL())
                 .build()
 
-            return okHttpClient.newCall(request).execute().body?.byteStream()
+            // Use a extended read timeout. This is a fix for OctoEverywhere where it can take a minute before
+            // any data is received
+            return okHttpClient.newBuilder()
+                .readTimeout(5, TimeUnit.MINUTES)
+                .callTimeout(10, TimeUnit.MINUTES)
+                .build()
+                .newCall(request)
+                .execute().body?.byteStream()
         }
 
         suspend fun getAllFiles(origin: FileOrigin): FileList = wrapped.getAllFiles(origin)
