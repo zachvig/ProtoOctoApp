@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.ui.base
 
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -64,6 +65,12 @@ abstract class OctoActivity : LocalizedActivity() {
                 .filterNotNull()
                 .collect(::doShowSnackbar)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Remove splash background
+        window.decorView.background = ColorDrawable(ContextCompat.getColor(this, R.color.window_background))
     }
 
     override fun onDestroy() {

@@ -5,7 +5,7 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
         <item name="colorSecondary">@color/accent</item>
-        <item name="android:windowBackground">@color/window_background</item>
+        <item name="android:windowBackground">@drawable/bg_slpash</item>
         <item name="android:textColorPrimary">@color/normal_text</item>
         <item name="android:textColorSecondary">@color/light_text</item>
         <item name="android:textColorTertiary">@color/light_text</item>

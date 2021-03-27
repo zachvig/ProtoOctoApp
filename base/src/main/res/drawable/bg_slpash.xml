@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@color/window_background" />
+    <item
+        android:drawable="@drawable/octo_swim"
+        android:gravity="center"
+        android:width="128dp"
+        android:height="128dp"
+        tools:ignore="UnusedAttribute" />
+
+</layer-list>
