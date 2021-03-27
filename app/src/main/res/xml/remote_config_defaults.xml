@@ -154,4 +154,8 @@
         <key>notification_battery_saver</key>
         <value>true</value>
     </entry>
+    <entry>
+        <key>advertise_octoeverywhere</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>

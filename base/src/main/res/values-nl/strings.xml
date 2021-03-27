@@ -361,7 +361,7 @@
     <string name="app_widget___no_data">Geen gegevens</string>
     <string name="main_menu___item_auto_connect_printer">Printer automatisch aansluiten</string>
     <string name="error_certificate_not_trusted_and_weak_hostname_required">Android vertrouwt het door deze server geleverde certificaat niet. Dit is meestal het geval voor zelfondertekende certificaten.  Verder bevat het certificaat geen\"subject alternative name\" (SAN) veld, wat vereist is vanaf Android 9. OctoApp moet een zwakke hostnaamcontrole gebruiken om dit probleem te omzeilen. Dit zal de veiligheid van uw verbinding verminderen.  Wilt u deze server vertrouwen en een zwakkere hostnaam verificatie gebruiken?</string>
-    <string name="announcement___learn_more">Intro video</string>
+    <string name="announcement___new_version_learn_more">Intro video</string>
     <string name="x_left">Nog %s</string>
     <string name="print_notification___disconnected_title">Verloor de verbinding</string>
     <string name="print_notification___disconnected_message">Laatste %s, open app om opnieuw te verbinden</string>

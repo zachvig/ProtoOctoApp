@@ -68,4 +68,8 @@ data class Settings(
     data class Discovery(
         @SerializedName("upnpUuid") val uuid: String?
     ) : PluginSettings
+
+    data class OctoEverywhere(
+        @SerializedName("PrinterKey") val printerKey: String?
+    ) : PluginSettings
 }

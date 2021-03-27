@@ -42,6 +42,7 @@ class TutorialView @JvmOverloads constructor(context: Context, attributeSet: Att
 
             val alwaysShown = it.getBoolean(R.styleable.TutorialView_alwaysShow, false)
             val visible = sharedPrefKey?.let { key -> isTutorialVisible(key, isSharedPrefInverted) } ?: false
+            val animations = it.getBoolean(R.styleable.TutorialView_animations, true)
             isVisible = visible || isInEditMode || alwaysShown
 
             // Only inflate view if visible
@@ -52,6 +53,7 @@ class TutorialView @JvmOverloads constructor(context: Context, attributeSet: Att
                     binding.root.updateLayoutParams<LayoutParams> { bottomMargin = 0 }
                 }
 
+                binding.hero.setImageDrawable(it.getDrawable(R.styleable.TutorialView_hero))
                 binding.title.text = it.getString(R.styleable.TutorialView_title)
                 binding.detail.text = it.getString(R.styleable.TutorialView_detail)
                 binding.detail.isVisible = binding.detail.text.isNotBlank()
@@ -62,17 +64,19 @@ class TutorialView @JvmOverloads constructor(context: Context, attributeSet: Att
                     onLearnMoreAction()
                 }
                 binding.buttonHideHint.setOnClickListener {
-                    // If always shown is set somebody else takes care of hiding the view
-                    if (!alwaysShown) {
-                        TransitionManager.beginDelayedTransition(rootView as ViewGroup)
-                        isVisible = false
-                    }
-
                     sharedPrefKey?.let {
                         prefs?.edit { putBoolean(sharedPrefKey, !isSharedPrefInverted) }
                     }
 
                     onHideAction()
+
+                    // If always shown is set somebody else takes care of hiding the view
+                    if (!alwaysShown) {
+                        if (animations) {
+                            TransitionManager.beginDelayedTransition(rootView as ViewGroup)
+                        }
+                        isVisible = false
+                    }
                 }
             }
         }

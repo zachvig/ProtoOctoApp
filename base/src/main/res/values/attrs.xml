@@ -23,6 +23,8 @@
         <attr name="hidePrefName" format="string" />
         <attr name="hidePrefInverted" format="boolean" />
         <attr name="hideButton" format="string" />
+        <attr name="animations" format="boolean" />
+        <attr name="hero" format="reference" />
         <attr name="learnMoreButton" format="string" />
         <attr name="learnMoreIcon" format="reference" />
         <attr name="noBottomMargin" format="boolean" />

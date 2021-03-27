@@ -362,7 +362,7 @@
     <string name="app_widget___no_data">Pas de données</string>
     <string name="main_menu___item_auto_connect_printer">Imprimante à connexion auto.</string>
     <string name="error_certificate_not_trusted_and_weak_hostname_required">Android ne fait pas confiance au certificat fourni par ce serveur. C\'est généralement le cas pour les certificats autosignés.  En outre, le certificat ne fournit pas de champ de \"subject alternative name\" (SAN), qui est requis à partir d\'Android 9. OctoApp doit utiliser un contrôle de nom d\'hôte faible pour contourner ce problème. Cela réduira la sécurité de votre connexion.  Voulez-vous faire confiance à ce serveur et utiliser une vérification de nom d\'hôte plus faible ?</string>
-    <string name="announcement___learn_more">Vidéo d\'introduction</string>
+    <string name="announcement___new_version_learn_more">Vidéo d\'introduction</string>
     <string name="x_left">%s restantes</string>
     <string name="print_notification___disconnected_title">Perte de la connexion</string>
     <string name="print_notification___disconnected_message">Derniers %s, ouvrir l\'application pour se reconnecter</string>
