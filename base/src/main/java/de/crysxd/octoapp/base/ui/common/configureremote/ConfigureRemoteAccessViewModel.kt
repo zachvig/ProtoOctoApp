@@ -1,15 +1,14 @@
 package de.crysxd.octoapp.base.ui.common.configureremote
 
 import androidx.lifecycle.*
-import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.models.OctoEverywhereConnection
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.GetConnectOctoEverywhereUrlUseCase
 import de.crysxd.octoapp.base.usecase.SetAlternativeWebUrlUseCase
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 class ConfigureRemoteAccessViewModel(
     octoPrintRepository: OctoPrintRepository,
@@ -17,8 +16,10 @@ class ConfigureRemoteAccessViewModel(
     private val getConnectOctoEverywhereUrlUseCase: GetConnectOctoEverywhereUrlUseCase,
 ) : BaseViewModel() {
 
-    private val mutableViewState = MediatorLiveData<ViewState>()
+    private val mutableViewState = MutableLiveData<ViewState>()
     val viewState = mutableViewState.map { it }
+
+    val viewData: LiveData<ViewData>
 
     private val mutableViewEvents = MutableLiveData<ViewEvent>()
     val viewEvents = mutableViewEvents.map { it }
@@ -26,23 +27,19 @@ class ConfigureRemoteAccessViewModel(
     init {
         var lastOctoEverywhereConnection: OctoEverywhereConnection? = null
         var first = true
-        mutableViewState.addSource(
-            octoPrintRepository.instanceInformationFlow().map {
-                // We did not have a octoeverywhere connection before but now we have one -> Freshly connected. Show success.
-                if (it?.octoEverywhereConnection != lastOctoEverywhereConnection && !first) {
-                    mutableViewEvents.postValue(ViewEvent.Success())
-                }
-                first = false
-                lastOctoEverywhereConnection = it?.octoEverywhereConnection
+        viewData = octoPrintRepository.instanceInformationFlow().map {
+            // We did not have a octoeverywhere connection before but now we have one -> Freshly connected. Show success.
+            if (it?.octoEverywhereConnection != lastOctoEverywhereConnection && !first) {
+                mutableViewEvents.postValue(ViewEvent.Success())
+            }
+            first = false
+            lastOctoEverywhereConnection = it?.octoEverywhereConnection
 
-                ViewState.Updated(
-                    remoteWebUrl = it?.alternativeWebUrl ?: "",
-                    octoEverywhereConnection = it?.octoEverywhereConnection
-                )
-            }.asLiveData()
-        ) {
-            mutableViewState.postValue(it)
-        }
+            ViewData(
+                remoteWebUrl = it?.alternativeWebUrl ?: "",
+                octoEverywhereConnection = it?.octoEverywhereConnection
+            )
+        }.asLiveData()
     }
 
     fun getOctoEverywhereAppPortalUrl() = viewModelScope.launch(coroutineExceptionHandler) {
@@ -95,7 +92,9 @@ class ConfigureRemoteAccessViewModel(
 
     sealed class ViewState {
         object Idle : ViewState()
-        data class Updated(val remoteWebUrl: String, val octoEverywhereConnection: OctoEverywhereConnection?) : ViewState()
         object Loading : ViewState()
     }
+
+    data class ViewData(val remoteWebUrl: String, val octoEverywhereConnection: OctoEverywhereConnection?)
+
 }

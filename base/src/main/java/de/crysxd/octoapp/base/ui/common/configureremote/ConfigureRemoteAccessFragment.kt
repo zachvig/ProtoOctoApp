@@ -15,7 +15,6 @@ import com.google.android.material.tabs.TabLayout
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.ConfigureRemoteAccessFragmentBinding
-import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ext.toHtml
@@ -25,7 +24,6 @@ import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import timber.log.Timber
 
 class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
 
@@ -74,16 +72,16 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         binding.webUrlInput.backgroundTint = ContextCompat.getColor(requireContext(), R.color.input_background_alternative)
 
         viewModel.viewState.observe(viewLifecycleOwner) {
-            TransitionManager.beginDelayedTransition(binding.root)
             binding.saveUrl.isEnabled = it !is ConfigureRemoteAccessViewModel.ViewState.Loading
             binding.saveUrl.setText(if (binding.saveUrl.isEnabled) R.string.configure_remote_acces___manual___button else R.string.loading)
-            (it as? ConfigureRemoteAccessViewModel.ViewState.Updated)?.let { _ ->
-                binding.webUrlInput.editText.setText(it.remoteWebUrl.takeIf { _ -> it.remoteWebUrl != it.octoEverywhereConnection?.fullUrl })
-                binding.octoEverywhereConnected.isVisible = it.remoteWebUrl == it.octoEverywhereConnection?.fullUrl
-                binding.disconnectOctoEverywhere.isVisible = binding.octoEverywhereConnected.isVisible
-                binding.connectOctoEverywhere.isVisible = !binding.disconnectOctoEverywhere.isVisible
-            }
+        }
 
+        viewModel.viewData.observe(viewLifecycleOwner) {
+            val oeConnected = it.remoteWebUrl == it.octoEverywhereConnection?.fullUrl
+            binding.webUrlInput.editText.setText(it.remoteWebUrl.takeIf { !oeConnected })
+            binding.octoEverywhereConnected.isVisible = oeConnected
+            binding.disconnectOctoEverywhere.isVisible = oeConnected
+            binding.connectOctoEverywhere.isVisible = !oeConnected
             measureTabContents()
         }
 
