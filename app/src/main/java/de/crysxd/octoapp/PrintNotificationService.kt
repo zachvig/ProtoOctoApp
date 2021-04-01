@@ -159,7 +159,13 @@ class PrintNotificationService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         Timber.i("Destroying notification service (was disconnected=${Injector.get().octoPreferences().wasPrintNotificationDisconnected})")
-        stopForeground(!Injector.get().octoPreferences().wasPrintNotificationDisconnected)
+        val removeNotification = !Injector.get().octoPreferences().wasPrintNotificationDisconnected
+        if(removeNotification) {
+            notificationManager.cancel(NOTIFICATION_ID)
+        } else {
+            // Passing true here does not always remove the notification, so we use cancel above in this case
+            stopForeground(false)
+        }
         coroutineJob.cancel()
         startTime = 0
         ProgressAppWidget.notifyWidgetDataChanged()
