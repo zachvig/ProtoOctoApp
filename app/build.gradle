@@ -66,9 +66,9 @@ play {
     track.set("production")
     defaultToAppBundles.set(true)
     resolutionStrategy.set(ResolutionStrategy.IGNORE)
-    releaseStatus.set(ReleaseStatus.IN_PROGRESS)
+    releaseStatus.set(ReleaseStatus.COMPLETED)
     updatePriority.set(2)
-    userFraction.set(0.66d)
+    userFraction.set(1d)
 }
 
 
