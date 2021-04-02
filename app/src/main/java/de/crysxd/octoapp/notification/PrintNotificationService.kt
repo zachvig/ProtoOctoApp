@@ -64,7 +64,7 @@ class PrintNotificationService : Service() {
             GlobalScope.launch(coroutineJob) {
                 if (!checkPreconditions()) {
                     Timber.i("Preconditions not met, stopping self")
-                    stopSelf()
+                    stop()
                 } else {
                     Timber.i("Preconditions, allowing connection")
                 }
@@ -87,13 +87,13 @@ class PrintNotificationService : Service() {
                 Injector.get().octoPreferences().updatedFlow.collectLatest {
                     if (!PrintNotificationManager.isNotificationEnabled) {
                         Timber.i("Service disabled, stopping self")
-                        stopSelf()
+                        stop()
                     }
                 }
             }
         } else {
             Timber.i("Notification service disabled, skipping creation")
-            stopSelf()
+            stop()
         }
     }
 
@@ -114,22 +114,27 @@ class PrintNotificationService : Service() {
         val paused = Injector.get().octoPreferences().wasPrintNotificationPaused
         val disconnected = Injector.get().octoPreferences().wasPrintNotificationDisconnected
         Timber.i("Destroying notification service (was disconnected=$disconnected paused=$paused)")
+        stopForeground(false)
         when {
             disconnected -> notificationManager.notify(NOTIFICATION_ID, notificationFactory.createDisconnectedNotification())
             paused -> notificationManager.notify(NOTIFICATION_ID, notificationFactory.creareReconnectingNotification())
             else -> notificationManager.cancel(NOTIFICATION_ID)
-
         }
         coroutineJob.cancel()
+        PrintNotificationManager.startTime = 0
         ProgressAppWidget.notifyWidgetDataChanged()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) {
-            stopSelf()
+            stop()
         }
 
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun stop() {
+        stop(this)
     }
 
     private suspend fun onEventReceived(event: Event) {
@@ -141,14 +146,14 @@ class PrintNotificationService : Service() {
                     when {
                         lastMessageReceivedAt == null && reconnectionAttempts >= 2 -> {
                             Timber.w(event.exception, "Unable to connect, stopping self")
-                            stopSelf()
+                            stop()
                             null
                         }
 
                         minSinceLastMessage >= 2 && reconnectionAttempts >= 3 -> {
                             Timber.i("No connection since $minSinceLastMessage min and after $reconnectionAttempts attempts, stopping self with disconnect message")
                             Injector.get().octoPreferences().wasPrintNotificationDisconnected = true
-                            stopSelf()
+                            stop()
                             notificationFactory.createDisconnectedNotification()
                         }
 
@@ -180,7 +185,7 @@ class PrintNotificationService : Service() {
             }
         } catch (e: Exception) {
             Timber.e(e)
-            stopSelf()
+            stop()
         }
     }
 
@@ -212,7 +217,7 @@ class PrintNotificationService : Service() {
                 }
 
                 Timber.i("Not printing, stopping self")
-                stopSelf()
+                stop()
                 return null
             }
         } else {

@@ -18,7 +18,10 @@ import androidx.core.os.bundleOf
 import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.map
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.transition.ChangeBounds
@@ -92,14 +95,15 @@ class MainActivity : OctoActivity() {
         rootLayout.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
 
-        val eventObserver = Observer(this::onEventReceived)
-        val currentMessageObserver = Observer(this::onCurrentMessageReceived)
-        val events = ConnectPrinterInjector.get().octoprintProvider().eventFlow("MainActivity@events").asLiveData().map {
-            it
-        }
-        val currentMessages = ConnectPrinterInjector.get().octoprintProvider().passiveCurrentMessageFlow("MainActivity@currentMessage").asLiveData().map {
-            it
-        }
+        // Observe events, will update when instance changes
+        ConnectPrinterInjector.get().octoprintProvider().eventFlow("MainActivity@events")
+            .asLiveData()
+            .map { it }
+            .observe(this, ::onEventReceived)
+        ConnectPrinterInjector.get().octoprintProvider().passiveCurrentMessageFlow("MainActivity@currentMessage")
+            .asLiveData()
+            .map { it }
+            .observe(this, ::onCurrentMessageReceived)
 
         // Inflate widgets
         octoWidgetRecycler.preInflateWidget(this) { AnnouncementWidget(this@MainActivity) }
@@ -127,8 +131,6 @@ class MainActivity : OctoActivity() {
                     Timber.i("Instance information received $this")
                     updateCapabilities("instance_change", updateM115 = true, escalateError = false)
                     navigate(R.id.action_connect_printer)
-                    events.observe(this, eventObserver)
-                    currentMessages.observe(this, currentMessageObserver)
                     viewModel.pendingUri?.let {
                         viewModel.pendingUri = null
                         handleDeepLink(it)
@@ -138,8 +140,6 @@ class MainActivity : OctoActivity() {
                     navigate(R.id.action_sign_in_required)
                     PrintNotificationManager.stop(this)
                     (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).cancel(NOTIFICATION_ID)
-                    events.removeObserver(eventObserver)
-                    currentMessages.removeObserver(currentMessageObserver)
                 }
             }
 
@@ -195,13 +195,6 @@ class MainActivity : OctoActivity() {
             // Stop screen rotation on phones
             @SuppressLint("SourceLockedOrientationActivity")
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
-
-        // Observe settings
-        Injector.get().octoPreferences().updatedFlow.asLiveData().observe(this) {
-            lifecycleScope.launchWhenCreated {
-                Injector.get().applyLegacyDarkModeUseCase().execute(this@MainActivity)
-            }
         }
     }
 

@@ -10,6 +10,8 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -51,6 +53,12 @@ class OctoApp : Application() {
         ConnectPrintInjector.init(BaseInjector.get())
         PrePrintControlsInjector.init(BaseInjector.get())
         PrintControlsInjector.init(BaseInjector.get())
+
+        // Dark mode, must be done sync
+        BaseInjector.get().applyLegacyDarkModeUseCase().executeBlocking(Unit)
+
+        // Setup SerialCommunicationLogsRepository (jsut create the instance)
+        BaseInjector.get().serialCommunicationLogsRepository()
 
         // Add cache for logging and report to firebase
         Timber.plant(BaseInjector.get().timberCacheTree())
@@ -118,7 +126,7 @@ class OctoApp : Application() {
                 Firebase.analytics.setUserProperty("debug", "true")
             }
         }
-        
+
         // Pre-load fonts in background. This will allow us later to asyn inflate views as loading fonts will need a Handler
         // After being loaded once, they are in cache
         val handler = Handler(Looper.getMainLooper())
