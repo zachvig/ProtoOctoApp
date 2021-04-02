@@ -9,6 +9,8 @@ import android.os.Build
 import android.os.Handler
 import android.provider.Settings
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -18,6 +20,9 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.widgets.AppWidgetSupportBroadcastReceiver
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
 import de.crysxd.octoapp.connect_printer.di.Injector as ConnectPrintInjector
@@ -47,6 +52,9 @@ class OctoApp : Application() {
         ConnectPrintInjector.init(BaseInjector.get())
         PrePrintControlsInjector.init(BaseInjector.get())
         PrintControlsInjector.init(BaseInjector.get())
+
+        // Dark mode, must be done sync
+        BaseInjector.get().applyLegacyDarkModeUseCase().executeBlocking(Unit)
 
         // Setup SerialCommunicationLogsRepository (jsut create the instance)
         BaseInjector.get().serialCommunicationLogsRepository()

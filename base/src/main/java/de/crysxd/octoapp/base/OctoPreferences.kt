@@ -5,8 +5,10 @@ import androidx.core.content.edit
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import de.crysxd.octoapp.base.di.Injector
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 @Suppress("EXPERIMENTAL_API_USAGE")
@@ -84,6 +86,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         get() = sharedPreferences.getBoolean(KEY_MANUAL_DARK_MODE, false)
         set(value) {
             edit { putBoolean(KEY_MANUAL_DARK_MODE, value) }
+            Injector.get().applyLegacyDarkModeUseCase().executeBlocking(Unit)
         }
 
     var appLanguage

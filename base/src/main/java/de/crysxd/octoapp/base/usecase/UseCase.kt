@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.usecase
 import de.crysxd.octoapp.base.logging.EmptyTree
 import de.crysxd.octoapp.base.logging.TaggedTree
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicInteger
@@ -17,6 +18,14 @@ abstract class UseCase<Param, Res> {
     protected var suppressLogging = false
 
     suspend fun execute(param: Param): Res = withContext(Dispatchers.Default) {
+        internalExecute(param)
+    }
+
+    fun executeBlocking(param: Param): Res = runBlocking {
+        internalExecute(param)
+    }
+
+    private suspend fun internalExecute(param: Param) : Res {
         val executionId = executionCounter.incrementAndGet()
         val start = System.currentTimeMillis()
         val name = this@UseCase::class.java.simpleName
@@ -27,7 +36,7 @@ abstract class UseCase<Param, Res> {
             timber.i("😶️ Executing with param=$param")
             val res = doExecute(param, timber)
             timber.i("🥳 Finished time=${System.currentTimeMillis() - start}ms res=$res")
-            return@withContext res
+            return res
         } catch (e: Exception) {
             timber.e("🤬 Failed time=${System.currentTimeMillis() - start}ms exception=${e::class.java.simpleName}")
             timber.e(e)
