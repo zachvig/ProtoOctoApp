@@ -134,7 +134,7 @@ class PrintNotificationService : Service() {
     }
 
     private fun stop() {
-        stop(this)
+        PrintNotificationManager.stop(this)
     }
 
     private suspend fun onEventReceived(event: Event) {
