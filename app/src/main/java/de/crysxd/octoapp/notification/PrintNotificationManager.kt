@@ -15,7 +15,7 @@ import timber.log.Timber
 object PrintNotificationManager {
     val isNotificationEnabled get() = Injector.get().octoPreferences().isPrintNotificationEnabled
     val isNotificationShowing get() = startTime > 0
-    private var startTime = 0L
+    internal var startTime = 0L
 
     fun start(context: Context) {
         if (isNotificationEnabled) {
