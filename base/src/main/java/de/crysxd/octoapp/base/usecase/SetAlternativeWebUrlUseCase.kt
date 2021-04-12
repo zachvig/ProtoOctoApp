@@ -35,9 +35,9 @@ class SetAlternativeWebUrlUseCase @Inject constructor(
             }
 
             try {
-                val remoteUuid = settings.plugins.values.mapNotNull { it as? Settings.Discovery }.firstOrNull()
+                val remoteUuid = settings.plugins.values.mapNotNull { it as? Settings.Discovery }.firstOrNull()?.uuid
                 val localUuid = octoPrintProvider.octoPrint().createSettingsApi().getSettings()
-                    .plugins.values.mapNotNull { it as? Settings.Discovery }.firstOrNull()
+                    .plugins.values.mapNotNull { it as? Settings.Discovery }.firstOrNull()?.uuid
 
                 if (localUuid != remoteUuid) {
                     throw IllegalStateException("Upnp UUIDs for primary and alternate URLs differ: $localUuid <--> $remoteUuid")
