@@ -4,12 +4,14 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.ImageView
 import androidx.lifecycle.*
+import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.ext.isHlsStreamUrl
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ApplyWebcamTransformationsUseCase
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
+import de.crysxd.octoapp.octoprint.models.ConnectionType
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +23,7 @@ import timber.log.Timber
 @Suppress("EXPERIMENTAL_API_USAGE")
 class WebcamViewModel(
     private val octoPrintRepository: OctoPrintRepository,
+    private val octoPrintProvider: OctoPrintProvider,
     private val getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
     private val applyWebcamTransformationsUseCase: ApplyWebcamTransformationsUseCase,
 ) : BaseViewModel() {

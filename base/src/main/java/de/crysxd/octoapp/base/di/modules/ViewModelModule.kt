@@ -16,12 +16,12 @@ import de.crysxd.octoapp.base.repository.TemperatureDataRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModelFactory
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.configureremote.ConfigureRemoteAccessViewModel
-import de.crysxd.octoapp.base.ui.widget.EditWidgetsViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
 import de.crysxd.octoapp.base.ui.common.terminal.TerminalViewModel
 import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootViewModel
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetViewModel
+import de.crysxd.octoapp.base.ui.widget.EditWidgetsViewModel
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel
@@ -82,12 +82,14 @@ open class ViewModelModule {
     @ViewModelKey(WebcamViewModel::class)
     open fun provideWebcamWidgetViewModel(
         octoPrintRepository: OctoPrintRepository,
+        octoPrintProvider: OctoPrintProvider,
         getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
         applyWebcamTransformationsUseCase: ApplyWebcamTransformationsUseCase,
     ): ViewModel = WebcamViewModel(
-        octoPrintRepository,
-        getWebcamSettingsUseCase,
-        applyWebcamTransformationsUseCase,
+        octoPrintRepository = octoPrintRepository,
+        octoPrintProvider = octoPrintProvider,
+        getWebcamSettingsUseCase = getWebcamSettingsUseCase,
+        applyWebcamTransformationsUseCase = applyWebcamTransformationsUseCase,
     )
 
     @Provides

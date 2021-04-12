@@ -2,7 +2,9 @@ package de.crysxd.octoapp.base.usecase
 
 import android.graphics.*
 import androidx.core.graphics.applyCanvas
+import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.widget.webcam.MjpegConnection
 import de.crysxd.octoapp.base.utils.measureTime
 import kotlinx.coroutines.Dispatchers
@@ -19,13 +21,19 @@ import javax.inject.Inject
 class GetWebcamSnapshotUseCase @Inject constructor(
     private val getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
     private val applyWebcamTransformationsUseCase: ApplyWebcamTransformationsUseCase,
+    private val octoPrintRepository: OctoPrintRepository,
+    private val octoPrintProvider: OctoPrintProvider,
 ) : UseCase<GetWebcamSnapshotUseCase.Params, Flow<Bitmap>>() {
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) = withContext(Dispatchers.IO) {
         withTimeout(10000) {
+            // Get webcam settings.
+            val instanceInfo = param.instanceInfo ?: octoPrintRepository.getActiveInstanceSnapshot() ?: throw IllegalStateException("No instance info")
             val activeIndex = param.instanceInfo?.appSettings?.activeWebcamIndex ?: 0
-            val allWebcamSettings = getWebcamSettingsUseCase.execute(param.instanceInfo)
+            val allWebcamSettings = getWebcamSettingsUseCase.execute(instanceInfo)
             val webcamSettings = allWebcamSettings?.getOrElse(activeIndex) { allWebcamSettings.firstOrNull() }
+
+            // Load single frame
             val mjpegConnection = MjpegConnection(webcamSettings?.streamUrl ?: throw IllegalStateException("No stream URL"), "widget")
             mjpegConnection.load().mapNotNull { it as? MjpegConnection.MjpegSnapshot.Frame }.sample(param.sampleRateMs).map {
                 timber.i("Transforming image")

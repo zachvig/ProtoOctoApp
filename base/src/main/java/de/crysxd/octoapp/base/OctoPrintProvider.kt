@@ -36,6 +36,7 @@ class OctoPrintProvider(
     private val octoPrintMutex = Mutex()
     private var octoPrintCache: Pair<OctoPrintInstanceInformationV2, OctoPrint>? = null
     private val currentMessageChannel = ConflatedBroadcastChannel<Message.CurrentMessage?>()
+    private val connectEventChannel = ConflatedBroadcastChannel<Event.Connected?>()
 
     init {
         // Passively collect data for the analytics profile
@@ -55,6 +56,14 @@ class OctoPrintProvider(
                             job = message.job ?: last?.job,
                         )
                         currentMessageChannel.offer(new)
+                    }
+
+                    ((event as? Event.Connected))?.let {
+                        connectEventChannel.offer(it)
+                    }
+
+                    ((event as? Event.Disconnected))?.let {
+                        connectEventChannel.offer(null)
                     }
                 }
                 .retry { delay(1000); true }
@@ -84,9 +93,17 @@ class OctoPrintProvider(
         octoPrintCache?.second ?: throw IllegalStateException("OctoPrint not available")
     }
 
+    fun passiveConnectionEventFlow(tag: String) = connectEventChannel.asFlow().filterNotNull()
+        .onStart { Timber.i("Started connection event flow for $tag") }
+        .onCompletion { Timber.i("Completed connection event flow for $tag") }
+
     fun passiveEventFlow() = octoPrintFlow()
         .flatMapLatest { it?.getEventWebSocket()?.passiveEventFlow() ?: emptyFlow() }
-        .catch { e -> Timber.e(e) }
+        .retry { e ->
+            Timber.e(e)
+            delay(1000)
+            true
+        }
 
     fun passiveCurrentMessageFlow(tag: String) = currentMessageChannel.asFlow().filterNotNull()
         .onStart { Timber.i("Started current message flow for $tag") }

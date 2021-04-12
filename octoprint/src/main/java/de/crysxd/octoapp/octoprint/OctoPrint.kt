@@ -48,8 +48,8 @@ class OctoPrint(
     val webSocketPingPongTimeout: Long = 5000,
 ) {
 
-    private val fullWebUrl = rawWebUrl.sanitizeUrl()
-    private val fullAlternativeWebUrl = rawAlternativeWebUrl?.sanitizeUrl()
+    val fullWebUrl = rawWebUrl.sanitizeUrl()
+    val fullAlternativeWebUrl = rawAlternativeWebUrl?.sanitizeUrl()
     val webUrl = rawWebUrl.removeUserInfo().sanitizeUrl()
     private val alternativeWebUrl = rawAlternativeWebUrl?.removeUserInfo()?.sanitizeUrl()
     private val alternativeWebUrlInterceptor = AlternativeWebUrlInterceptor(createHttpLogger(), webUrl, alternativeWebUrl)
@@ -64,6 +64,7 @@ class OctoPrint(
             }
         }
     )
+    val isAlternativeUrlBeingUsed get() = !alternativeWebUrlInterceptor.isPrimaryUsed
 
     private val webSocket = EventWebSocket(
         httpClient = createOkHttpClient(),

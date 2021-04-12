@@ -32,8 +32,7 @@ class SignInViewModel(
         viewModelScope.launch(coroutineExceptionHandler) {
             // Register sensitive data to exclude it from logs
             sensitiveDataMask.registerApiKey(info.apiKey)
-            sensitiveDataMask.registerWebUrl(info.webUrl)
-
+            sensitiveDataMask.registerWebUrl(info.webUrl, "octoprint")
             val upgradedInfo = info.copy(
                 webUrl = addHttpIfNotPresent(info.webUrl)
             )

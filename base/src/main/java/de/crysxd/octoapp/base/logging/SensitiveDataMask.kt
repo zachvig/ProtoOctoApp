@@ -9,29 +9,16 @@ class SensitiveDataMask {
     private val lock = ReentrantLock()
     private var sensitiveData = mutableListOf<SensitiveData>()
 
-    fun registerWebUrl(webUrl: String) {
+    fun registerWebUrl(webUrl: String?, maskPrefix: String) {
+        webUrl ?: return
         try {
             val uri = Uri.parse(webUrl)
-            registerSensitiveData(uri.host ?: webUrl, "octoprint_host")
+            registerSensitiveData(uri.host ?: webUrl, "${maskPrefix}_host")
             uri.userInfo?.let {
-                registerSensitiveData(it, "octoprint_user_info")
+                registerSensitiveData(it, "${maskPrefix}_user_info")
             }
         } catch (e: Exception) {
-            registerSensitiveData(webUrl, "octoprint_host")
-        }
-    }
-
-    fun registerWebcamUrl(webUrl: String) {
-        try {
-            val uri = Uri.parse(webUrl)
-            uri.host?.let {
-                registerSensitiveData(uri.host ?: webUrl, "webcam_host")
-            }
-            uri.userInfo?.let {
-                registerSensitiveData(it, "webcam_user_info")
-            }
-        } catch (e: Exception) {
-            registerSensitiveData(webUrl, "octoprint_host")
+            registerSensitiveData(webUrl, "${maskPrefix}_host")
         }
     }
 
