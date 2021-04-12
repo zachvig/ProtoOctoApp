@@ -135,6 +135,7 @@
             android:layout_marginTop="@dimen/margin_0"
             android:layout_marginRight="@dimen/margin_2"
             android:gravity="center"
+            android:maxLines="3"
             android:textAppearance="@style/OctoTheme.TextAppearance.Label"
             android:textColor="@color/text_colored_background"
             tools:text="http://mywebcam.com/stream" />

@@ -50,7 +50,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
 
     companion object {
         private const val LIVE_FOR_MS = 30_000L
-        private const val FETCH_TIMEOUT_MS = 10_000L
+        private const val FETCH_TIMEOUT_MS = 15_000L
         private const val BITMAP_WIDTH = 1080
         private var lastUpdateJobs = mutableMapOf<Int, WeakReference<Job>>()
 
@@ -153,6 +153,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
 
                 } catch (e: CancellationException) {
                     Timber.i("Update cancelled")
+                    showFailed(context, appWidgetId, webUrl)
                 } catch (e: Exception) {
                     Timber.e(e)
                     showFailed(context, appWidgetId, webUrl)
