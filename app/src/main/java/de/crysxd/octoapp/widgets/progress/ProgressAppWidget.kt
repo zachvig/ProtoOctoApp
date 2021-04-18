@@ -239,7 +239,7 @@ class ProgressAppWidget : AppWidgetProvider() {
         }
 
         private fun applyScaling(appWidgetId: Int, views: RemoteViews) {
-            Timber.d("Scaling app widget for ${getWidgetWidth(appWidgetId)}")
+            Timber.v("Scaling app widget for ${getWidgetWidth(appWidgetId)}")
             if (!isLargeSize(appWidgetId)) {
                 views.setViewVisibility(R.id.buttonResume, false)
                 views.setViewVisibility(R.id.buttonPause, false)

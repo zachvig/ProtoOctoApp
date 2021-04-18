@@ -32,9 +32,10 @@ class GetWebcamSnapshotUseCase @Inject constructor(
             val activeIndex = param.instanceInfo?.appSettings?.activeWebcamIndex ?: 0
             val allWebcamSettings = getWebcamSettingsUseCase.execute(instanceInfo)
             val webcamSettings = allWebcamSettings?.getOrElse(activeIndex) { allWebcamSettings.firstOrNull() }
+            val authHeader = webcamSettings?.authHeader
 
             // Load single frame
-            val mjpegConnection = MjpegConnection(webcamSettings?.streamUrl ?: throw IllegalStateException("No stream URL"), "widget")
+            val mjpegConnection = MjpegConnection(webcamSettings?.streamUrl ?: throw IllegalStateException("No stream URL"), authHeader,"widget")
             mjpegConnection.load().mapNotNull { it as? MjpegConnection.MjpegSnapshot.Frame }.sample(param.sampleRateMs).map {
                 timber.i("Transforming image")
                 measureTime("transform_frame_for_widget") {
