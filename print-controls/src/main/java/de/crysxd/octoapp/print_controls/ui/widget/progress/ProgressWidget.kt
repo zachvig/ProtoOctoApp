@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.asPrintTimeLeftImageResource
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
 import de.crysxd.octoapp.base.ui.ColorTheme
 import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
@@ -25,6 +26,7 @@ import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.databinding.ProgressWidgetBinding
 import de.crysxd.octoapp.print_controls.di.injectViewModel
+import timber.log.Timber
 import kotlin.math.roundToInt
 
 class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBinding, ProgressWidgetViewModel>(context) {
@@ -113,14 +115,15 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
             binding.textViewTimeSpent.text = message.progress?.printTime?.toLong()?.let { formatDuration(it) }
             binding.textViewTimeLeft.text = message.progress?.printTimeLeft?.toLong()?.let { formatDuration(it) }
             binding.textVieEta.text = message.progress?.printTimeLeft?.toLong()?.let { formatEta(it) }
-            binding.estimationIndicator.background?.setTint(ContextCompat.getColor(context, message.progress?.printTimeLeftOrigin.asPrintTimeLeftOriginColor()))
+            binding.estimationIndicator.setImageResource(message.progress?.printTimeLeftOrigin.asPrintTimeLeftImageResource())
+            binding.estimationIndicator.setColorFilter(ContextCompat.getColor(context, message.progress?.printTimeLeftOrigin.asPrintTimeLeftOriginColor()))
             binding.textViewProgressPercent.isVisible = true
             binding.textViewPrintName.isVisible = true
             binding.textViewTimeSpent.isVisible = true
             binding.textViewTimeLeft.isVisible = true
             binding.textVieEta.isVisible = true
             binding.estimationIndicator.isVisible = true
-
+            Timber.tag("PROGRESS").i(message.progress.toString())
             lastProgress = progress
         }
     }

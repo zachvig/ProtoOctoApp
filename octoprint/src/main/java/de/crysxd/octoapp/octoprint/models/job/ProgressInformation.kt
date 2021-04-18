@@ -13,6 +13,7 @@ data class ProgressInformation(
         const val ORIGIN_ANALYSIS = "analysis"
         const val ORIGIN_ESTIMATE = "estimate"
         const val ORIGIN_AVERAGE = "average"
+        const val ORIGIN_GENIUS = "genius"
         const val ORIGIN_MIXED_ANALYSIS = "mixed-analysis"
         const val ORIGIN_MIXED_AVERAGE = "mixed-average"
     }

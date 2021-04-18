@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:width="@dimen/eta_estimation_ball_diameter"
+        android:height="@dimen/eta_estimation_ball_diameter"
+        android:drawable="@drawable/bg_circle" />
+
+</layer-list>

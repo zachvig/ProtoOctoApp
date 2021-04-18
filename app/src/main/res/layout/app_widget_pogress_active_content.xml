@@ -40,7 +40,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center|start"
+        android:gravity="center_vertical|start"
         android:orientation="horizontal"
         tools:ignore="UseCompoundDrawables">
 
@@ -58,11 +58,12 @@
             android:layout_marginStart="@dimen/margin_0"
             android:importantForAccessibility="no"
             android:scaleX="0.66"
-            android:layout_width="@dimen/eta_estimation_ball_diameter"
-            android:layout_height="@dimen/eta_estimation_ball_diameter"
+            android:layout_marginBottom="1dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:scaleY="0.66"
-            android:src="@drawable/eta_indicator"
+            android:src="@drawable/ic_round_star_18"
             android:translationY="1dp" />
 
     </LinearLayout>

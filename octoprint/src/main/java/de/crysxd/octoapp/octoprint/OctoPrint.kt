@@ -12,6 +12,7 @@ import de.crysxd.octoapp.octoprint.json.*
 import de.crysxd.octoapp.octoprint.logging.LoggingInterceptorLogger
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import de.crysxd.octoapp.octoprint.models.files.FileObject
+import de.crysxd.octoapp.octoprint.models.job.ProgressInformation
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.socket.HistoricTemperatureData
 import de.crysxd.octoapp.octoprint.models.socket.Message
@@ -154,6 +155,7 @@ class OctoPrint(
 
     private fun createBaseGson(): Gson = GsonBuilder()
         .registerTypeAdapter(HistoricTemperatureData::class.java, HistoricTemperatureDeserializer())
+        .registerTypeAdapter(ProgressInformation::class.java, ProgressInformationDeserializer(Gson()))
         .create()
 
     fun createOkHttpClient() = OkHttpClient.Builder().apply {

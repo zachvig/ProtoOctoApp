@@ -4,11 +4,14 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.asPrintTimeLeftImageResource
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
+import de.crysxd.octoapp.base.ext.toBitmapWithColor
 import de.crysxd.octoapp.base.ui.ColorTheme
 import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.base.usecase.CreateProgressAppWidgetDataUseCase
@@ -181,10 +184,11 @@ class ProgressAppWidget : AppWidgetProvider() {
         private fun updateAppWidgetForData(manager: AppWidgetManager, context: Context, appWidgetId: Int, data: CreateProgressAppWidgetDataUseCase.Result) {
             AppWidgetPreferences.setLastUpdateTime(appWidgetId)
             val progress = data.printProgress?.let { context.getString(R.string.x_percent, it * 100).replace(" ", "") }
+            val etaIndicator = ContextCompat.getDrawable(context, data.printTimeLeftOrigin.asPrintTimeLeftImageResource())
+                ?.toBitmapWithColor(context, data.printTimeLeftOrigin.asPrintTimeLeftOriginColor())
             val eta = runBlocking {
                 data.printTimeLeft?.let { Injector.get().formatEtaUseCase().execute(FormatEtaUseCase.Params(it.toLong(), true)) }
             }
-            val etaIndicatorColor = data.printTimeLeftOrigin.asPrintTimeLeftOriginColor()
             val views = if (data.isPrinting || data.isCancelling || data.isPaused || data.isPausing) {
                 RemoteViews(context.packageName, R.layout.app_widget_pogress_active)
             } else {
@@ -218,7 +222,7 @@ class ProgressAppWidget : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.buttonCancel, ExecuteWidgetActionActivity.createCancelTaskPendingIntent(context))
             views.setOnClickPendingIntent(R.id.buttonPause, ExecuteWidgetActionActivity.createPauseTaskPendingIntent(context))
             views.setOnClickPendingIntent(R.id.buttonResume, ExecuteWidgetActionActivity.createResumeTaskPendingIntent(context))
-            views.setInt(R.id.etaIndicator, "setColorFilter", ContextCompat.getColor(context, etaIndicatorColor))
+            views.setImageViewBitmap(R.id.etaIndicator, etaIndicator)
             applyColorTheme(views, data.webUrl)
             applyDebugOptions(views, appWidgetId)
             applyScaling(appWidgetId, views)
