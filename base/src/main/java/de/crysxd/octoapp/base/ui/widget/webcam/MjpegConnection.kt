@@ -17,11 +17,10 @@ import java.net.URL
 import java.nio.charset.Charset
 import java.util.regex.Pattern
 
-const val RECONNECT_TIMEOUT_MS = 1000L
 const val TOLERATED_FRAME_LOSS_STREAK = 4
 const val DEFAULT_HEADER_BOUNDARY = "[_a-zA-Z0-9]*boundary"
 
-class MjpegConnection(private val streamUrl: String, private val name: String) {
+class MjpegConnection(private val streamUrl: String, private val authHeader: String?, private val name: String) {
 
     private val instanceId = instanceCounter++
 
@@ -131,14 +130,8 @@ class MjpegConnection(private val streamUrl: String, private val name: String) {
         connection.readTimeout = 5000
 
         // Basic Auth
-        url.userInfo?.let {
-            try {
-                val components = it.split(":")
-                val credentials = Credentials.basic(components[0], components[1])
-                connection.setRequestProperty("Authorization", credentials)
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
+        authHeader?.let {
+            connection.setRequestProperty("Authorization", authHeader)
         }
 
         connection.doInput = true

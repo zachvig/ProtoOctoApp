@@ -5,11 +5,15 @@ import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ext.resolve
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.octoprint.UrlString
+import de.crysxd.octoapp.octoprint.extractAndRemoveUserInfo
 import de.crysxd.octoapp.octoprint.models.ConnectionType
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import kotlinx.coroutines.flow.firstOrNull
+import okhttp3.Credentials
 import timber.log.Timber
+import java.net.URL
 import javax.inject.Inject
 
 class GetWebcamSettingsUseCase @Inject constructor(
@@ -54,12 +58,18 @@ class GetWebcamSettingsUseCase @Inject constructor(
         val alternativeUrl = octoPrint.fullAlternativeWebUrl
 
         return webcamSettings.map {
+            fun String?.isFullUrl() = this?.startsWith("http") == true
+
             // We remove the primary URL in case the user configured the webcam as absolute URL to his local machine
-            val cleanedUrl = it.streamUrl?.removePrefix(primaryUrl)
+            val fixedUrl = it.streamUrl?.removePrefix(primaryUrl)
+            val pair = fixedUrl?.extractAndRemoveUserInfo()
+            val cleanedUrl = pair?.first
+            val authHeader = pair?.second
 
             it.copy(
+                authHeader = authHeader,
                 multiCamUrl = null,
-                standardStreamUrl = if (cleanedUrl?.startsWith("http") == false) {
+                standardStreamUrl = if (!cleanedUrl.isFullUrl()) {
                     // The URL is not absolute, add a host
                     val url = Uri.parse(alternativeUrl?.takeIf { useAlternative } ?: primaryUrl)
                         .buildUpon()

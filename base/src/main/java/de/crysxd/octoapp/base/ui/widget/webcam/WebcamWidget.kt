@@ -79,7 +79,7 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
             }
             is UiState.HlsStreamReady -> {
                 applyAspectRatio(state.aspectRation)
-                WebcamView.WebcamState.HlsStreamReady(state.uri)
+                WebcamView.WebcamState.HlsStreamReady(state.uri, state.authHeader)
             }
             is Error -> {
                 state.aspectRation?.let(::applyAspectRatio)

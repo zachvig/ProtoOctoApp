@@ -11,7 +11,6 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ApplyWebcamTransformationsUseCase
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
-import de.crysxd.octoapp.octoprint.models.ConnectionType
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -79,6 +78,7 @@ class WebcamViewModel(
                         connectedWebcamSettingsHash = combinedSettings.hashCode()
                         val (webcamSettings, webcamCount) = combinedSettings
                         val streamUrl = webcamSettings?.streamUrl
+                        val authHeader = webcamSettings?.authHeader
                         val canSwitchWebcam = webcamCount > 1
                         Timber.tag(tag).i("Refresh with streamUrl: $streamUrl")
                         Timber.tag(tag).i("Webcam count: $webcamCount")
@@ -94,11 +94,18 @@ class WebcamViewModel(
                             if (!BillingManager.isFeatureEnabled("hls_webcam")) {
                                 emit(UiState.HlsStreamDisabled(canSwitchWebcam = canSwitchWebcam))
                             } else {
-                                emit(UiState.HlsStreamReady(Uri.parse(streamUrl), webcamSettings.streamRatio, canSwitchWebcam = canSwitchWebcam))
+                                emit(
+                                    UiState.HlsStreamReady(
+                                        uri = Uri.parse(streamUrl),
+                                        aspectRation = webcamSettings.streamRatio,
+                                        canSwitchWebcam = canSwitchWebcam,
+                                        authHeader = authHeader
+                                    )
+                                )
                             }
                         } else {
                             delay(100)
-                            MjpegConnection(streamUrl, tag)
+                            MjpegConnection(streamUrl = streamUrl, authHeader = authHeader, name = tag)
                                 .load()
                                 .map {
                                     when (it) {
@@ -177,7 +184,7 @@ class WebcamViewModel(
         object WebcamNotConfigured : UiState(false)
         data class HlsStreamDisabled(override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
         data class FrameReady(val frame: Bitmap, val aspectRation: String, override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
-        data class HlsStreamReady(val uri: Uri, val aspectRation: String, override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
+        data class HlsStreamReady(val uri: Uri, val authHeader: String?, val aspectRation: String, override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
         data class Error(val isManualReconnect: Boolean, val streamUrl: String? = null, val aspectRation: String? = null, override val canSwitchWebcam: Boolean) :
             UiState(canSwitchWebcam)
     }

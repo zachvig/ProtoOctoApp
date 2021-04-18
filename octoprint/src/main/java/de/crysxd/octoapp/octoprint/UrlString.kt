@@ -14,7 +14,7 @@ internal fun UrlString.removeUserInfo() = URL(this).let { url ->
     } ?: url.toString()
 }
 
-internal fun UrlString.extractAndRemoveUserInfo(): Pair<String, String?> {
+fun UrlString.extractAndRemoveUserInfo(): Pair<String, String?> {
     val header = URL(this).userInfo?.let {
         try {
             val components = it.split(":")

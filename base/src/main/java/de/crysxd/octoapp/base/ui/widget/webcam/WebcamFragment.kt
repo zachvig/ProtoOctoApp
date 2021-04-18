@@ -92,7 +92,7 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
                     WebcamView.WebcamState.HlsStreamDisabled
                 }
                 is WebcamViewModel.UiState.FrameReady -> WebcamView.WebcamState.MjpegFrameReady(it.frame)
-                is WebcamViewModel.UiState.HlsStreamReady -> WebcamView.WebcamState.HlsStreamReady(it.uri)
+                is WebcamViewModel.UiState.HlsStreamReady -> WebcamView.WebcamState.HlsStreamReady(it.uri, it.authHeader)
                 is WebcamViewModel.UiState.Error -> if (it.isManualReconnect) {
                     WebcamView.WebcamState.Error(it.streamUrl)
                 } else {

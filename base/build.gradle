@@ -58,8 +58,8 @@ dependencies {
     /*
      * HLS webcam streams
      */
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.12.2'
-    implementation 'com.google.android.exoplayer:exoplayer-hls:2.12.2'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.13.3'
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.13.3'
 
     /*
      * Firebase

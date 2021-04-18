@@ -17,18 +17,18 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
 import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.navigation.findNavController
 import androidx.transition.*
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.analytics.AnalyticsListener
+import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.LoadEventInfo
 import com.google.android.exoplayer2.source.MediaLoadData
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.video.VideoListener
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.databinding.WebcamViewBinding
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootingFragmentArgs
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -179,7 +179,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             binding.hlsSurface.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 dimensionRatio = if (scaleToFill) null else "H,$width:$height"
             }
-            hlsPlayer.videoScalingMode = Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+            hlsPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
 
             onNativeAspectRatioChanged(width, height)
         }
@@ -191,7 +191,13 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         binding.mjpegSurface.isVisible = false
         usedLiveIndicator?.isVisible = false
         hlsPlayer.setVideoSurfaceHolder(binding.hlsSurface.holder)
-        hlsPlayer.setMediaItem(MediaItem.fromUri(state.uri))
+        val mediaItem = MediaItem.fromUri(state.uri)
+        state.authHeader?.let {
+            val dataSourceFactory = DefaultHttpDataSource.Factory()
+            dataSourceFactory.setDefaultRequestProperties(mapOf("Authorization" to it))
+            val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
+            hlsPlayer.setMediaSource(mediaSourceFactory.createMediaSource(mediaItem))
+        } ?: hlsPlayer.setMediaItem(mediaItem)
         hlsPlayer.prepare()
         hlsPlayer.play()
 
@@ -381,7 +387,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         object NotConfigured : WebcamState()
         object HlsStreamDisabled : WebcamState()
         data class Error(val streamUrl: String?) : WebcamState()
-        data class HlsStreamReady(val uri: Uri) : WebcamState()
+        data class HlsStreamReady(val uri: Uri, val authHeader: String?) : WebcamState()
         data class MjpegFrameReady(val frame: Bitmap) : WebcamState()
     }
 
