@@ -7,6 +7,7 @@ import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.UrlString
 import de.crysxd.octoapp.octoprint.extractAndRemoveUserInfo
+import de.crysxd.octoapp.octoprint.isFullUrl
 import de.crysxd.octoapp.octoprint.models.ConnectionType
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
@@ -57,31 +58,27 @@ class GetWebcamSettingsUseCase @Inject constructor(
         val primaryUrl = octoPrint.fullWebUrl
         val alternativeUrl = octoPrint.fullAlternativeWebUrl
 
-        return webcamSettings.map {
-            fun String?.isFullUrl() = this?.startsWith("http") == true
-
+        return webcamSettings.map { ws ->
             // We remove the primary URL in case the user configured the webcam as absolute URL to his local machine
-            val fixedUrl = it.streamUrl?.removePrefix(primaryUrl)
-            val pair = fixedUrl?.extractAndRemoveUserInfo()
-            val cleanedUrl = pair?.first
-            val authHeader = pair?.second
+            val fixedUrl = ws.streamUrl?.removePrefix(primaryUrl)
+            val pair = if (!fixedUrl.isFullUrl()) {
+                // The URL is not absolute, add a host
+                Uri.parse(alternativeUrl?.takeIf { useAlternative } ?: primaryUrl)
+                    .buildUpon()
+                    .resolve(fixedUrl)
+                    .build()
+                    .toString().also {
+                        timber.i("Upgrading streamUrl from $fixedUrl -> $it")
+                    }
+            } else {
+                // The URL is a absolute URL not pointing to the OctoPrint machine, leave as is
+                ws.streamUrl
+            }?.extractAndRemoveUserInfo()
 
-            it.copy(
-                authHeader = authHeader,
+            ws.copy(
+                authHeader = pair?.second,
                 multiCamUrl = null,
-                standardStreamUrl = if (!cleanedUrl.isFullUrl()) {
-                    // The URL is not absolute, add a host
-                    val url = Uri.parse(alternativeUrl?.takeIf { useAlternative } ?: primaryUrl)
-                        .buildUpon()
-                        .resolve(cleanedUrl)
-                        .build()
-                        .toString()
-                    timber.i("Upgrading streamUrl from ${it.streamUrl} -> $url")
-                    url
-                } else {
-                    // The URL is a absolute URL not pointing to the OctoPrint machine, leave as is
-                    it.streamUrl
-                }
+                standardStreamUrl = pair?.first
             )
         }
     }
