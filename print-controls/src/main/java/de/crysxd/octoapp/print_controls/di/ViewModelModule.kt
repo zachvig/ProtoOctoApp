@@ -30,17 +30,11 @@ open class ViewModelModule {
     open fun provideSignInViewModel(
         octoPrintRepository: OctoPrintRepository,
         octoPrintProvider: OctoPrintProvider,
-        cancelPrintJobUseCase: CancelPrintJobUseCase,
         togglePausePrintJobUseCase: TogglePausePrintJobUseCase,
-        emergencyStopUseCase: EmergencyStopUseCase,
-        changeFilamentUseCase: ChangeFilamentUseCase
     ): ViewModel = PrintControlsViewModel(
         octoPrintRepository,
         octoPrintProvider,
-        cancelPrintJobUseCase,
         togglePausePrintJobUseCase,
-        emergencyStopUseCase,
-        changeFilamentUseCase
     )
 
     @Provides

@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
@@ -18,6 +19,7 @@ import de.crysxd.octoapp.widgets.webcam.NoControlsWebcamAppWidget
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.lang.Exception
 
 
 class ExecuteWidgetActionActivity : LocalizedActivity() {
@@ -121,10 +123,15 @@ class ExecuteWidgetActionActivity : LocalizedActivity() {
                 Timber.i("Task $task confirmed")
                 // Activity will be finished in a millisecond, so we use Global to trigger the action
                 GlobalScope.launch {
-                    when (task) {
-                        TASK_CANCEL -> Injector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(false))
-                        TASK_PAUSE, TASK_RESUME -> Injector.get().togglePausePrintJobUseCase().execute(Unit)
-                        else -> Unit
+                    try {
+                        when (task) {
+                            TASK_CANCEL -> Injector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(false))
+                            TASK_PAUSE, TASK_RESUME -> Injector.get().togglePausePrintJobUseCase().execute(Unit)
+                            else -> Unit
+                        }
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                        Toast.makeText(Injector.get().context(), "Failed to execute task", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

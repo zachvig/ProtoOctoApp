@@ -16,10 +16,7 @@ import kotlinx.coroutines.launch
 class PrintControlsViewModel(
     octoPrintRepository: OctoPrintRepository,
     octoPrintProvider: OctoPrintProvider,
-    private val cancelPrintJobUseCase: CancelPrintJobUseCase,
     private val togglePausePrintJobUseCase: TogglePausePrintJobUseCase,
-    private val emergencyStopUseCase: EmergencyStopUseCase,
-    private val changeFilamentUseCase: ChangeFilamentUseCase
 ) : BaseViewModel() {
 
     val printState = octoPrintProvider.eventFlow("printcontrols")
