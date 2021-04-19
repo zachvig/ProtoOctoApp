@@ -2,20 +2,24 @@ package de.crysxd.octoapp.octoprint
 
 import de.crysxd.octoapp.octoprint.exceptions.IllegalBasicAuthConfigurationException
 import okhttp3.Credentials
+import java.net.URI
 import java.net.URL
 
 typealias UrlString = String
 
-internal fun UrlString.sanitizeUrl() = "${this.removeSuffix("/")}/"
+fun UrlString.sanitizeUrl() = "${this.removeSuffix("/")}/"
 
-internal fun UrlString.removeUserInfo() = URL(this).let { url ->
+fun UrlString?.isFullUrl() = this?.startsWith("http") == true
+
+
+internal fun UrlString.removeUserInfo() = URI(this).let { url ->
     url.userInfo?.let {
         url.toString().replaceFirst("$it@", "")
     } ?: url.toString()
 }
 
 fun UrlString.extractAndRemoveUserInfo(): Pair<String, String?> {
-    val header = URL(this).userInfo?.let {
+    val header = URI(this).userInfo?.let {
         try {
             val components = it.split(":")
             Credentials.basic(components[0], components[1])
