@@ -22,7 +22,7 @@ fun UrlString.extractAndRemoveUserInfo(): Pair<String, String?> {
     val header = URI(this.trim()).userInfo?.let {
         try {
             val components = it.split(":")
-            Credentials.basic(components[0], components[1])
+            Credentials.basic(components[0], components.getOrNull(1) ?: "")
         } catch (e: Exception) {
             throw IllegalBasicAuthConfigurationException(this)
         }

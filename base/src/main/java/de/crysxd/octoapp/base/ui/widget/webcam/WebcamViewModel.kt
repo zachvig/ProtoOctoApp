@@ -41,11 +41,11 @@ class WebcamViewModel(
         .filter {
             try {
                 // Only pass if changes since last connection call
-                getWebcamSettings().hashCode() != connectedWebcamSettingsHash
+                getWebcamSettings().hashCode()
             } catch (e: Exception) {
                 Timber.e(e)
-                false
-            }
+                0
+            } != connectedWebcamSettingsHash
         }
         .asLiveData()
 
