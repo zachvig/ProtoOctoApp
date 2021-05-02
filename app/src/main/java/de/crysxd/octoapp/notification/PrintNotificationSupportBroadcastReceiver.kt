@@ -51,6 +51,7 @@ class PrintNotificationSupportBroadcastReceiver(context: Context) : BroadcastRec
                     val delaySecs = 60L
                     Timber.i("Screen off, pausing notification in ${delaySecs}s")
                     delay(TimeUnit.SECONDS.toMillis(delaySecs))
+                    Timber.i("Pausing notification")
                     PrintNotificationManager.pause(context)
                 }
             }
