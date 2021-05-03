@@ -29,12 +29,14 @@ class WebcamViewModel(
 
     companion object {
         private var instanceCounter = 0
+        const val INITIAL_WEBCAM_HASH = -1
+        const val FALLBACK_WEBCAM_HASH = 0
     }
 
     private val tag = "WebcamViewModel/${instanceCounter++}"
     private var previousSource: LiveData<UiState>? = null
     private val uiStateMediator = MediatorLiveData<UiState>()
-    private var connectedWebcamSettingsHash: Int = 0
+    private var connectedWebcamSettingsHash: Int = INITIAL_WEBCAM_HASH
     val uiState = uiStateMediator.map { it }
     val connectionCache: Pair<Int, MjpegConnection>? = null
     private val octoPrintLiveData = octoPrintRepository.instanceInformationFlow()
@@ -44,7 +46,7 @@ class WebcamViewModel(
                 getWebcamSettings().hashCode()
             } catch (e: Exception) {
                 Timber.e(e)
-                0
+                FALLBACK_WEBCAM_HASH
             } != connectedWebcamSettingsHash
         }
         .asLiveData()
