@@ -26,7 +26,6 @@ import java.util.*
 class SendFeedbackDialog : DialogFragment() {
 
     private lateinit var binding: SendFeedbackDialogBinding
-    private var screenshot: Bitmap? = null
     private val viewModel: SendFeedbackViewModel by injectViewModel()
 
     companion object {
@@ -42,14 +41,6 @@ class SendFeedbackDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // We take the screenshot before we can access the VM
-        // We "cache" the screenshot here and then set it to the VM, falling back to the VM's value
-        viewModel.screenshot = screenshot ?: viewModel.screenshot
-        if (viewModel.screenshot == null) {
-            binding.checkboxScreenshot.isChecked = false
-            binding.checkboxScreenshot.isEnabled = false
-        }
 
         val isForBugReport = arguments?.getBoolean(ARG_FOR_BUG_REPORT, false) == true
         if (isForBugReport) {
@@ -90,7 +81,6 @@ class SendFeedbackDialog : DialogFragment() {
                     sendPhoneInfo = binding.checkboxPhoneInformation.isChecked,
                     sendOctoPrintInfo = binding.checkboxOctoprintInformation.isChecked,
                     sendLogs = binding.checkboxLogs.isChecked,
-                    sendScreenshot = binding.checkboxScreenshot.isChecked
                 )
                 null
             }
@@ -99,18 +89,6 @@ class SendFeedbackDialog : DialogFragment() {
         // Fix sizing of dialog
         lifecycleScope.launchWhenResumed {
             dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        }
-    }
-
-    override fun show(manager: FragmentManager, tag: String?) {
-        // Take screenshot before dialog is shown
-        lifecycleScope.launch {
-            try {
-                screenshot = Injector.get().takeScreenshotUseCase().execute(requireOctoActivity())
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
-            super.show(manager, tag)
         }
     }
 }

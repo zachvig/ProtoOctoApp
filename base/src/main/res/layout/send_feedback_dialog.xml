@@ -60,26 +60,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/checkboxOctoprintInformation" />
 
-        <CheckBox
-            android:id="@+id/checkboxScreenshot"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/screenshot_of_current_screen"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/checkboxLogs" />
-
 
         <TextView
             android:id="@+id/contactTime"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_2"
             android:layout_marginTop="@dimen/margin_3"
             android:gravity="center"
             android:textAppearance="@style/OctoTheme.TextAppearance.Label"
-            app:layout_constraintTop_toBottomOf="@id/checkboxScreenshot" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/checkboxLogs" />
 
         <Button
             android:id="@+id/buttonOpenEmail"
