@@ -41,13 +41,15 @@ class WebcamViewModel(
     val connectionCache: Pair<Int, MjpegConnection>? = null
     private val octoPrintLiveData = octoPrintRepository.instanceInformationFlow()
         .filter {
-            try {
+           val result =  try {
                 // Only pass if changes since last connection call
                 getWebcamSettings().hashCode()
             } catch (e: Exception) {
-                Timber.e(e)
+                Timber.tag(tag).e(e)
                 FALLBACK_WEBCAM_HASH
             } != connectedWebcamSettingsHash
+            Timber.tag(tag).i("Configuration change is relevant: $result")
+            result
         }
         .asLiveData()
 

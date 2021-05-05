@@ -58,10 +58,12 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
             val progressPercent = message.progress?.completion ?: 0f
             val progressPercentLayoutThreshold = 80f
             val progress = progressPercent.toInt() / 100f
-            val progressText = if (message.state?.flags?.cancelling == true) {
-                context.getString(R.string.cancelling)
-            } else {
-                context.getString(R.string.x_percent, progress * 100f)
+            val printTimeLeft = message.progress?.printTimeLeft?.takeIf { it != 0 }?.toLong()
+            val printTimeSpent = message.progress?.printTime?.takeIf { it != 0 }?.toLong()
+            val progressText = when {
+                message.state?.flags?.cancelling == true -> context.getString(R.string.cancelling)
+                progressPercent == 0f && printTimeLeft == null && printTimeSpent == null -> context.getString(R.string.loading)
+                else -> context.getString(R.string.x_percent, progress * 100f)
             }
 
             if (lastProgress != progress) {
@@ -112,9 +114,10 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
             binding.progressBarFill.backgroundTintList = ColorStateList.valueOf(ColorTheme.activeColorTheme.dark)
             binding.textViewProgressPercent.text = progressText
             binding.textViewPrintName.text = message.job?.file?.display
-            binding.textViewTimeSpent.text = message.progress?.printTime?.toLong()?.let { formatDuration(it) }
-            binding.textViewTimeLeft.text = message.progress?.printTimeLeft?.toLong()?.let { formatDuration(it) }
-            binding.textVieEta.text = message.progress?.printTimeLeft?.toLong()?.let { formatEta(it) }
+            binding.textViewTimeSpent.text = (printTimeSpent ?: 0L).takeIf { printTimeLeft != null }?.let { formatDuration(it) }
+            binding.textViewTimeLeft.text = printTimeLeft?.let { formatDuration(it) }
+            binding.textVieEta.text = printTimeLeft?.let { formatEta(it) }
+            binding.estimationIndicator.isVisible = printTimeLeft != null
             binding.estimationIndicator.setImageResource(message.progress?.printTimeLeftOrigin.asPrintTimeLeftImageResource())
             binding.estimationIndicator.setColorFilter(ContextCompat.getColor(context, message.progress?.printTimeLeftOrigin.asPrintTimeLeftOriginColor()))
             binding.textViewProgressPercent.isVisible = true
@@ -122,8 +125,6 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
             binding.textViewTimeSpent.isVisible = true
             binding.textViewTimeLeft.isVisible = true
             binding.textVieEta.isVisible = true
-            binding.estimationIndicator.isVisible = true
-            Timber.tag("PROGRESS").i(message.progress.toString())
             lastProgress = progress
         }
     }
