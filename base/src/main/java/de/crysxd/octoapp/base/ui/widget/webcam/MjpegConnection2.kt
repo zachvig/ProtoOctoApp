@@ -125,7 +125,7 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
         // If the information is not presented, throw an exception and use default value instead.
         val contentType: String = connection.getHeaderField("Content-Type") ?: throw java.lang.Exception("Unable to get content type")
         val types = contentType.split(";".toRegex()).toTypedArray()
-        if (types.size == 0) {
+        if (types.isEmpty()) {
             throw java.lang.Exception("Content type was empty")
         }
         var extractedBoundary: String? = null
@@ -142,7 +142,7 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
         } else {
             "--$extractedBoundary"
         }
-    } catch (e: java.lang.Exception) {
+    } catch (e: Exception) {
         Timber.w("Unable to extract header boundary")
         null
     }
