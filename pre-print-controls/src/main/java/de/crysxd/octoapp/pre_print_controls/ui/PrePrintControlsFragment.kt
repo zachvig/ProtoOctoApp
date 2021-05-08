@@ -2,7 +2,10 @@ package de.crysxd.octoapp.pre_print_controls.ui
 
 import android.os.Bundle
 import android.view.View
+import de.crysxd.octoapp.base.UriLibrary
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
@@ -21,7 +24,7 @@ class PrePrintControlsFragment : WidgetHostFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mainButton.setOnClickListener { viewModel.startPrint() }
+        mainButton.setOnClickListener { UriLibrary.getFileManagerUri().open(requireOctoActivity()) }
         moreButton.setOnClickListener { MenuBottomSheetFragment().show(childFragmentManager) }
         viewModel.webCamSupported.observe(viewLifecycleOwner) { reloadWidgets() }
     }

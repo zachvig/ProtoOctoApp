@@ -18,6 +18,7 @@ const val MENU_ITEM_ANALYTICS = "privacy___analytics"
 const val MENU_ITEM_CHANGE_LANGUAGE = "settings___change_language"
 const val MENU_ITEM_OPEN_OCTOPRINT = "settings___open_octoprint"
 const val MENU_ITEM_CONFIGURE_REMOTE_ACCESS = "settings___configure_remote_access"
+const val MENU_ITEM_SHOW_FILES = "octoprint___show_files"
 const val MENU_EXECUTE_SYSTEM_COMMAND = "octoprint___execute_system_command"
 const val MENU_ITEM_NIGHT_THEME = "settings___night_theme"
 const val MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE = "settings___change_octoprint_instnace"
@@ -77,6 +78,7 @@ class MenuItemLibrary {
         MENU_ITEM_SHOW_OCTOAPP_LAB to ShowOctoAppLabMenuItem::class,
         MENU_ITEM_ROTATE_APP to OctoAppLabMenu.RotationMenuItem::class,
         MENU_ITEM_CONFIGURE_REMOTE_ACCESS to ConfigureRemoteAccessMenuItem::class,
+        MENU_ITEM_SHOW_FILES to ShowFilesMenuItem::class,
     )
 
     operator fun get(itemId: String): MenuItem? = when {

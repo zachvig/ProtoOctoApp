@@ -1,65 +1,18 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-parcelize'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.github.triplet.play'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+apply from: '../shared.gradle'
 
-import com.github.triplet.gradle.androidpublisher.ResolutionStrategy
-import com.github.triplet.gradle.androidpublisher.ReleaseStatus
+import com.github.triplet.gradle.androidpublisher.*
 
 android {
-    compileSdkVersion 29
-
-    defaultConfig {
+    defaultConfig{
         applicationId "de.crysxd.octoapp"
-        minSdkVersion 21
-        targetSdkVersion project.rootProject.ext.target_sdk
-        versionCode 1900
-        versionName "1.9-beta01"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    signingConfigs {
-        release {
-            Properties properties = new Properties()
-            properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
-            storeFile file("key.keystore")
-            storePassword properties.getProperty('signing.storePassword')
-            keyAlias properties.getProperty('signing.storeAlias')
-            keyPassword properties.getProperty('signing.keyPassword')
-        }
-    }
-
-    buildTypes {
-        debug {
-            manifestPlaceholders = [firebaseRemoteServicesEnabled:"false"]
-        }
-        release {
-            minifyEnabled false
-            signingConfig signingConfigs.release
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            manifestPlaceholders = [firebaseRemoteServicesEnabled:"true"]
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    buildFeatures {
-        viewBinding true
+        versionCode 1901
+        versionName "1.9-beta02"
     }
 }
-
 
 play {
     serviceAccountCredentials.set(file("service-account.json"))
@@ -78,24 +31,10 @@ dependencies {
     implementation project(':connect-printer')
     implementation project(':print-controls')
     implementation project(':pre-print-controls')
+    implementation project(':file-manager')
 
     /*
      * Google Play
      */
     implementation 'com.google.android.play:core-ktx:1.8.1'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-
-    /*
-     * Test
-     */
-    testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-
-    /*
-     * Dagger
-     */
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
-
 }
-

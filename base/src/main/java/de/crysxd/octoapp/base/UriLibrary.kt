@@ -21,6 +21,9 @@ object UriLibrary {
     fun getHelpUri(): Uri =
         getUri(R.string.uri___help)
 
+    fun getFileManagerUri(): Uri =
+        getUri(R.string.uri___file_manager)
+
     fun getWebcamUri(): Uri =
         getUri(R.string.uri___webcam)
 

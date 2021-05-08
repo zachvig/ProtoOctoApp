@@ -22,7 +22,7 @@ class OctoAppLabMenu : Menu {
     class NotificationBatterySaver : ToggleMenuItem() {
         override val isEnabled get() = Injector.get().octoPreferences().allowNotificationBatterySaver
         override val itemId = ""
-        override var groupId = ""
+        override var groupId = "notification_battery_saver"
         override val canBePinned = false
         override val order = 1
         override val style = MenuItemStyle.Settings
@@ -37,7 +37,7 @@ class OctoAppLabMenu : Menu {
 
     class RotationMenuItem : ToggleMenuItem() {
         override val isEnabled get() = Injector.get().octoPreferences().allowAppRotation
-        override val itemId = ""
+        override val itemId = "rotate_app"
         override var groupId = ""
         override val canBePinned = false
         override val order = 2

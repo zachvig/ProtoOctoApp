@@ -14,6 +14,7 @@
     <include app:graph="@navigation/connect_printer_nav_graph" />
     <include app:graph="@navigation/pre_print_controls_nav_graph" />
     <include app:graph="@navigation/print_controls_nav_graph" />
+    <include app:graph="@navigation/file_manager_nav_graph" />
 
     <action
         android:id="@+id/action_sign_in_required"

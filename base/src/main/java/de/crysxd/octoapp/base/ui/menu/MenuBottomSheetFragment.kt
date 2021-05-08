@@ -127,8 +127,10 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     isLoading = false
                     viewBinding.bottom.movementMethod = null
                     beginDelayedTransition {
-                        // Need to be applied after transition to prevent glitches
-                        viewBinding.bottom.movementMethod = settingsMenu.getBottomMovementMethod(this@MenuBottomSheetFragment)
+                        // Need to be applied after transition to prevent glitches, but also check we are still added to ensure state
+                        if (isAdded) {
+                            viewBinding.bottom.movementMethod = settingsMenu.getBottomMovementMethod(this@MenuBottomSheetFragment)
+                        }
                     }
 
                     // Show menu

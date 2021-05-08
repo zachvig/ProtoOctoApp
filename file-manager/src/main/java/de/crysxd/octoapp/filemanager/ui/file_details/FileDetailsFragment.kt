@@ -1,10 +1,7 @@
-package de.crysxd.octoapp.pre_print_controls.ui.file_details
+package de.crysxd.octoapp.filemanager.ui.file_details
 
 import android.graphics.Rect
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ImageSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,11 +19,11 @@ import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewFragment
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.menu.material.MaterialPluginMenu
+import de.crysxd.octoapp.filemanager.R
+import de.crysxd.octoapp.filemanager.databinding.FileDetailsFragmentBinding
+import de.crysxd.octoapp.filemanager.di.Injector
+import de.crysxd.octoapp.filemanager.di.injectViewModel
 import de.crysxd.octoapp.octoprint.models.files.FileObject
-import de.crysxd.octoapp.pre_print_controls.R
-import de.crysxd.octoapp.pre_print_controls.databinding.FileDetailsFragmentBinding
-import de.crysxd.octoapp.pre_print_controls.di.Injector
-import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 
 class FileDetailsFragment : BaseFragment(), InsetAwareScreen {
 
@@ -60,6 +57,10 @@ class FileDetailsFragment : BaseFragment(), InsetAwareScreen {
 
         binding.buttonStartPrint.setOnClickListener {
             viewModel.startPrint()
+        }
+
+        viewModel.canStartPrint.observe(viewLifecycleOwner) {
+            binding.buttonStartPrint.isEnabled = it
         }
 
         val adapter = Adapter(args.file)

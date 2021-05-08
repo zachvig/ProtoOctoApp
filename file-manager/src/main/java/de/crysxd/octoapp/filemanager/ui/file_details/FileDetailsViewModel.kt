@@ -1,16 +1,21 @@
-package de.crysxd.octoapp.pre_print_controls.ui.file_details
+package de.crysxd.octoapp.filemanager.ui.file_details
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
 import de.crysxd.octoapp.octoprint.models.files.FileObject
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class FileDetailsViewModel(
     private val startPrintJobUseCase: StartPrintJobUseCase,
+    private val octoPrintProvider: OctoPrintProvider,
 ) : BaseViewModel() {
 
     lateinit var file: FileObject.File
@@ -19,6 +24,10 @@ class FileDetailsViewModel(
     private val mutableLoading = MutableLiveData(false)
     val loading = mutableLoading.map { it }
     val viewEvents = mutableViewEvents.map { it }
+    val canStartPrint = octoPrintProvider.passiveCurrentMessageFlow("file-details").map {
+       val flags = it.state?.flags ?: return@map true
+        !flags.cancelling && !flags.paused && !flags.printing && !flags.pausing
+    }.asLiveData()
 
     fun startPrint() = viewModelScope.launch(coroutineExceptionHandler) {
         mutableLoading.postValue(true)
@@ -28,7 +37,8 @@ class FileDetailsViewModel(
             if (result == StartPrintJobUseCase.Result.MaterialSelectionRequired) {
                 mutableViewEvents.postValue(ViewEvent.MaterialSelectionRequired())
             }
-        } finally {
+        } catch (e: Exception) {
+            // Disable loading state on error, but keep on success as we will be navigated away
             mutableLoading.postValue(false)
         }
     }

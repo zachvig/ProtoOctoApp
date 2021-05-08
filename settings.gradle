@@ -6,3 +6,4 @@ include ':signin'
 include ':base'
 include ':app'
 rootProject.name = "OctoApp"
+include ':file-manager'

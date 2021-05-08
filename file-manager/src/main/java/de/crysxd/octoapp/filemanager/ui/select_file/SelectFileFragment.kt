@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.pre_print_controls.ui.select_file
+package de.crysxd.octoapp.filemanager.ui.select_file
 
 import android.content.Intent
 import android.net.Uri
@@ -12,9 +12,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import de.crysxd.octoapp.pre_print_controls.R
-import de.crysxd.octoapp.pre_print_controls.databinding.SelectFileFragmentBinding
-import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
+import de.crysxd.octoapp.filemanager.R
+import de.crysxd.octoapp.filemanager.databinding.SelectFileFragmentBinding
+import de.crysxd.octoapp.filemanager.di.injectViewModel
 import kotlinx.coroutines.delay
 import timber.log.Timber
 

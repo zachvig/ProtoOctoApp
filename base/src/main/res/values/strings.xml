@@ -337,6 +337,7 @@
     <string name="main_menu___item_help_faq_and_feedback">FAQ, help and feedback</string>
     <string name="main_menu___item_open_octoprint">Open OctoPrint</string>
     <string name="main_menu___configure_remote_access">Configure remote access</string>
+    <string name="main_menu___show_files">Show files</string>
     <string name="main_menu___item_change_octoprint_instance">Switch OctoPrint</string>
     <string name="main_menu___show_octoapp_lab">OctoApp Lab</string>
     <string name="main_menu___item_customize_widgets">Customize controls</string>

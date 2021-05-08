@@ -43,7 +43,7 @@ class PurchaseConfirmationDialog : DialogFragment() {
             mediaPlayer.setOnInfoListener { _, what, _ ->
                 if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
                     Timber.i("Fading overlay out")
-                    binding.backgroundSurfaceOverlay?.animate()?.alpha(0.9f)?.start()
+                    binding.backgroundSurfaceOverlay.animate()?.alpha(0.9f)?.start()
                 }
 
                 true
@@ -70,8 +70,8 @@ class PurchaseConfirmationDialog : DialogFragment() {
         binding.header.imageViewStatusBackground.isVisible = false
         binding.backgroundSurface.holder.setFormat(PixelFormat.TRANSLUCENT)
         binding.backgroundSurface.holder.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) = Unit
-            override fun surfaceDestroyed(holder: SurfaceHolder?) = Unit
+            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) = Unit
+            override fun surfaceDestroyed(holder: SurfaceHolder) = Unit
             override fun surfaceCreated(holder: SurfaceHolder) {
                 mediaPlayer.setSurface(holder.surface)
             }

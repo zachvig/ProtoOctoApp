@@ -2,6 +2,8 @@ package de.crysxd.octoapp.pre_print_controls.ui
 
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import de.crysxd.octoapp.base.UriLibrary
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ChangeFilamentUseCase
@@ -22,10 +24,6 @@ class PrePrintControlsViewModel(
         .map { it?.isWebcamSupported == true }
         .distinctUntilChanged()
         .asLiveData()
-
-    fun startPrint() {
-        navContoller.navigate(R.id.action_start_print)
-    }
 
     fun changeFilament() = viewModelScope.launch(coroutineExceptionHandler) {
         changeFilamentUseCase.execute()

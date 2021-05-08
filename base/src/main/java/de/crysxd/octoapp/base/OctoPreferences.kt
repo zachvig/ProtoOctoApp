@@ -111,9 +111,9 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         }
 
     var allowNotificationBatterySaver
-        get() = sharedPreferences.getBoolean(KEY_ALLOW_APP_ROTATION, Firebase.remoteConfig.getBoolean("notification_battery_saver"))
+        get() = sharedPreferences.getBoolean(KEY_ALLOW_NOTIFICATION_BATTERY_SAVER, Firebase.remoteConfig.getBoolean("notification_battery_saver"))
         set(value) {
-            edit { putBoolean(KEY_ALLOW_APP_ROTATION, value) }
+            edit { putBoolean(KEY_ALLOW_NOTIFICATION_BATTERY_SAVER, value) }
         }
 
     var hideThumbnailHintUntil
