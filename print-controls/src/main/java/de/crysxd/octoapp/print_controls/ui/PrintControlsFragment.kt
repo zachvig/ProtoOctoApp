@@ -13,6 +13,7 @@ import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
+import de.crysxd.octoapp.base.ui.widget.extrude.ExtrudeWidget
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.injectViewModel
 import de.crysxd.octoapp.print_controls.ui.widget.gcode.GcodePreviewWidget
@@ -78,6 +79,7 @@ class PrintControlsFragment : WidgetHostFragment() {
             WebcamWidget::class,
             GcodePreviewWidget::class,
             TuneWidget::class,
+            ExtrudeWidget::class,
         ).also {
             if (!webcamSupported) {
                 it.remove(WebcamWidget::class)

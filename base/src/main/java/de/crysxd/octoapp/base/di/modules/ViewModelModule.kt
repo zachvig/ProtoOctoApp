@@ -22,6 +22,7 @@ import de.crysxd.octoapp.base.ui.common.terminal.TerminalViewModel
 import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootViewModel
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetViewModel
 import de.crysxd.octoapp.base.ui.widget.EditWidgetsViewModel
+import de.crysxd.octoapp.base.ui.widget.extrude.ExtrudeWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel
@@ -167,5 +168,18 @@ open class ViewModelModule {
         octoPrintRepository = octoPrintRepository,
         setAlternativeWebUrlUseCase = setAlternativeWebUrlUseCase,
         getConnectOctoEverywhereUrlUseCase = getConnectOctoEverywhereUrlUseCase,
+    )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(ExtrudeWidgetViewModel::class)
+    open fun provideExtrudeWidgetViewModel(
+        setToolTargetTemperatureUseCase: SetTargetTemperaturesUseCase,
+        extrudeFilamentUseCase: ExtrudeFilamentUseCase,
+        octoPrintProvider: OctoPrintProvider,
+    ): ViewModel = ExtrudeWidgetViewModel(
+        extrudeFilamentUseCase,
+        setToolTargetTemperatureUseCase,
+        octoPrintProvider
     )
 }
