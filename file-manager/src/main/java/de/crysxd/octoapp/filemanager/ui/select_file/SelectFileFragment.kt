@@ -78,7 +78,7 @@ class SelectFileFragment : BaseFragment() {
                 adapter.showError()
             } else {
                 adapter.showFiles(
-                    folderName = navArgs.folder.name,
+                    folderName = navArgs.folder?.name,
                     files = it.files,
                     showThumbnailHint = it.showThumbnailHint
                 )

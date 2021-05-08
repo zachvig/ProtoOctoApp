@@ -78,6 +78,7 @@ class MenuItemLibrary {
         MENU_ITEM_SHOW_OCTOAPP_LAB to ShowOctoAppLabMenuItem::class,
         MENU_ITEM_ROTATE_APP to OctoAppLabMenu.RotationMenuItem::class,
         MENU_ITEM_CONFIGURE_REMOTE_ACCESS to ConfigureRemoteAccessMenuItem::class,
+        MENU_ITEM_SHOW_FILES to ShowFilesMenuItem::class,
     )
 
     operator fun get(itemId: String): MenuItem? = when {

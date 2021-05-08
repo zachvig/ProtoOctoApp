@@ -59,6 +59,10 @@ class FileDetailsFragment : BaseFragment(), InsetAwareScreen {
             viewModel.startPrint()
         }
 
+        viewModel.canStartPrint.observe(viewLifecycleOwner) {
+            binding.buttonStartPrint.isEnabled = it
+        }
+
         val adapter = Adapter(args.file)
         binding.viewPager.adapter = adapter
         binding.viewPager.offscreenPageLimit = 1

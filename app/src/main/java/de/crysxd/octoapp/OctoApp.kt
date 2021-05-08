@@ -30,6 +30,7 @@ import de.crysxd.octoapp.connect_printer.di.Injector as ConnectPrintInjector
 import de.crysxd.octoapp.pre_print_controls.di.Injector as PrePrintControlsInjector
 import de.crysxd.octoapp.print_controls.di.Injector as PrintControlsInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
+import de.crysxd.octoapp.filemanager.di.Injector as FileManagerInjector
 
 
 class OctoApp : Application() {
@@ -53,6 +54,7 @@ class OctoApp : Application() {
         ConnectPrintInjector.init(BaseInjector.get())
         PrePrintControlsInjector.init(BaseInjector.get())
         PrintControlsInjector.init(BaseInjector.get())
+        FileManagerInjector.init(BaseInjector.get())
 
         // Dark mode, must be done sync
         BaseInjector.get().applyLegacyDarkModeUseCase().executeBlocking(Unit)

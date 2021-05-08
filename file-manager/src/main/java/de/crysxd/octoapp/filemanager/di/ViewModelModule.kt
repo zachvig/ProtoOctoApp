@@ -8,6 +8,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPreferences
+import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelFactory
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
@@ -41,7 +42,9 @@ open class ViewModelModule {
     @ViewModelKey(FileDetailsViewModel::class)
     open fun provideFileDetailsViewModel(
         startPrintJobUseCase: StartPrintJobUseCase,
+        octoPrintProvider: OctoPrintProvider,
     ): ViewModel = FileDetailsViewModel(
-        startPrintJobUseCase,
+        startPrintJobUseCase = startPrintJobUseCase,
+        octoPrintProvider = octoPrintProvider
     )
 }
