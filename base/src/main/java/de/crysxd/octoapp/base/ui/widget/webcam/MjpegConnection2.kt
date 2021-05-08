@@ -8,12 +8,13 @@ import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
+import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
 
 class MjpegConnection2(private val streamUrl: String, private val authHeader: String?, private val name: String) {
 
-    private val tag = "MjpegConnection2/${instanceCounter++}"
+    private val tag = "MjpegConnection2/$name/${instanceCounter++}"
     private val bufferSize = 16_384
     private val tempCache = ByteArray(bufferSize)
     private val cache = ByteCache()
@@ -54,24 +55,24 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
         }.onStart {
             Timber.tag(tag).i("Started stream")
         }.retryWhen { cause, attempt ->
-            Timber.e(cause)
+            Timber.tag(tag).e(cause)
 
             // If we had been connected in the past, wait 1s and try to reconnect once
             when {
                 attempt >= 2 -> {
-                    Timber.i("Reconnection attempt failed, escalating error")
+                    Timber.tag(tag).i("Reconnection attempt failed, escalating error")
                     false
                 }
                 hasBeenConnected -> {
                     val backoff = 2000 * (attempt + 1)
-                    Timber.i("Connection broke down, scheduling reconnect (attempt=$attempt, backoff=${backoff}ms)")
+                    Timber.tag(tag).i("Connection broke down, scheduling reconnect (attempt=$attempt, backoff=${backoff}ms)")
                     emit(MjpegConnection.MjpegSnapshot.Loading)
                     delay(backoff)
-                    Timber.i("Reconnecting...")
+                    Timber.tag(tag).i("Reconnecting...")
                     true
                 }
                 else -> {
-                    Timber.i("Connection broke down but never was connected, skipping reconnect")
+                    Timber.tag(tag).i("Connection broke down but never was connected, skipping reconnect")
                     false
                 }
             }
@@ -81,15 +82,16 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
             imageTimes += time
             lastImageTime = System.currentTimeMillis()
             if (imageCounter > 100) {
-                Timber.i("FPS: %.1f", 1000 / (imageTimes / imageCounter.toFloat()))
+                Timber.tag(tag).i("FPS: %.1f", 1000 / (imageTimes / imageCounter.toFloat()))
                 imageCounter = 0
             }
         }.flowOn(Dispatchers.Default)
     }
 
-    private fun readNextImage(cache: ByteCache, boundary: String, input: InputStream): Bitmap {
+    private fun readNextImage(cache: ByteCache, boundary: String, input: InputStream, dropCount: Int = 0): Bitmap {
         var boundaryStart: Int?
         var boundaryEnd: Int?
+        require(dropCount < 5) { "Too many dropped frames" }
         do {
             //Timber.i("Available: ${input.available().toLong().asStyleFileSize()}")
             val read = input.read(tempCache)
@@ -99,8 +101,7 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
             boundaryStart = bounds.first
             boundaryEnd = bounds.second
         } while (boundaryStart == null || boundaryEnd == null)
-        Timber.i("Extracting image")
-        return cache.readImage(boundaryStart, boundaryEnd) ?: readNextImage(cache, boundary, input)
+        return cache.readImage(boundaryStart, boundaryEnd) ?: readNextImage(cache, boundary, input, dropCount + 1)
     }
 
     private fun connect(): HttpURLConnection {
@@ -162,7 +163,12 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
 
         fun readImage(length: Int, boundaryLength: Int): Bitmap? {
             val bitmap = if (length > 10) {
-                BitmapFactory.decodeByteArray(array, 0, length)
+                try {
+                    BitmapFactory.decodeByteArray(array, 0, length)
+                } catch (e: Exception) {
+                    Timber.w("Failed to decode frame: $e")
+                    null
+                }
             } else {
                 null
             }
@@ -170,14 +176,10 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
             return bitmap
         }
 
-        fun dropUntil(length: Int): ByteArray {
-            if (length < 0) return ByteArray(0)
-
-            val extract = array.sliceArray(0 until length)
-            Timber.i("length=$length index=$index")
-            System.arraycopy(array, length, array, 0, index - length)
-            index -= length
-            return extract
+        fun dropUntil(until: Int) {
+            val length = (index - until).coerceAtLeast(0)
+            System.arraycopy(array, until, array, 0, length)
+            index = length
         }
 
         fun indexOf(boundaryStart: String): Pair<Int?, Int?> {
