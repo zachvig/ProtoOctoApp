@@ -395,6 +395,20 @@ class MainActivity : OctoActivity() {
     private fun onCurrentMessageReceived(e: SocketMessage.CurrentMessage) {
         Timber.tag("navigation").v(e.state?.flags.toString())
         val flags = e.state?.flags
+        val lastFlags = viewModel.lastFlags
+        viewModel.lastFlags = flags
+        if (flags == lastFlags) {
+            viewModel.sameFlagsCounter++
+        } else {
+            viewModel.sameFlagsCounter = 0
+        }
+
+        // Sometimes when changing e.g. from paused to printing OctoPrint sends one wrong set of flags, so we
+        // only continue if last and current are the same
+        if (viewModel.sameFlagsCounter < 3 || lastFlags == null) {
+            return Timber.tag("navigation").i("Skipping flag navigation, recently changed and waiting for confirmation")
+        }
+
         navigate(
             when {
                 // We encountered an error, try reconnecting
