@@ -161,6 +161,12 @@ class WidgetLayout @JvmOverloads constructor(
                 notifyDataSetChanged()
             }
 
+        init {
+            setHasStableIds(true)
+        }
+
+        override fun getItemId(position: Int) = widgets[position].first.getAnalyticsName().hashCode().toLong()
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(parent)
 
         override fun getItemCount() = widgets.size
