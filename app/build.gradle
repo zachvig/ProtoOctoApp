@@ -31,6 +31,7 @@ dependencies {
     implementation project(':connect-printer')
     implementation project(':print-controls')
     implementation project(':pre-print-controls')
+    implementation project(':file-manager')
 
     /*
      * Google Play

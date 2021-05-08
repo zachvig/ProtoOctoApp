@@ -20,7 +20,8 @@ class OctoPrintMenu : Menu {
         listOfNotNull(
             listOf(
                 OpenOctoPrintMenuItem(),
-                ConfigureRemoteAccessMenuItem()
+                ConfigureRemoteAccessMenuItem(),
+                ShowFilesMenuItem(),
             ),
             sysCommands?.map {
                 ExecuteSystemCommandMenuItem(source = it.source, action = it.action)
@@ -70,6 +71,24 @@ class ConfigureRemoteAccessMenuItem : MenuItem {
         host?.dismissAllowingStateLoss()
     }
 }
+
+class ShowFilesMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_SHOW_FILES
+    override var groupId = ""
+    override val order = 202
+    override val enforceSingleLine = false
+    override val style = MenuItemStyle.OctoPrint
+    override val icon = R.drawable.ic_round_folder_24
+
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___show_files)
+    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        host?.requireOctoActivity()?.let {
+            UriLibrary.getFileManagerUri().open(it)
+        }
+        host?.dismissAllowingStateLoss()
+    }
+}
+
 
 class ExecuteSystemCommandMenuItem(val source: String, val action: String) : ConfirmedMenuItem() {
     companion object {

@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.pre_print_controls.ui.select_file
+package de.crysxd.octoapp.filemanager.ui.select_file
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,8 +10,8 @@ import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase.Params
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
-import de.crysxd.octoapp.pre_print_controls.R
-import de.crysxd.octoapp.pre_print_controls.ui.file_details.FileDetailsFragmentArgs
+import de.crysxd.octoapp.filemanager.R
+import de.crysxd.octoapp.filemanager.ui.file_details.FileDetailsFragmentArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

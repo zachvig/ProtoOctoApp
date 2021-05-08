@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.pre_print_controls.ui
+package de.crysxd.octoapp.filemanager.ui
 
 import android.graphics.Bitmap
 import com.squareup.picasso.Transformation

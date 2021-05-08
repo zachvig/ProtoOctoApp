@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.pre_print_controls.ui.select_file
+package de.crysxd.octoapp.filemanager.ui.select_file
 
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -19,8 +19,8 @@ import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.ext.format
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.octoprint.models.files.FileObject
-import de.crysxd.octoapp.pre_print_controls.R
-import de.crysxd.octoapp.pre_print_controls.databinding.*
+import de.crysxd.octoapp.filemanager.R
+import de.crysxd.octoapp.filemanager.databinding.*
 import java.util.*
 
 class SelectFileAdapter(
@@ -121,13 +121,13 @@ class SelectFileAdapter(
             val iconTintColor = ContextCompat.getColor(context, iconTintColorRes)
             if (folderIcon == null || printableFileIcon == null || otherFileIcon == null) {
                 val colorFilter = PorterDuffColorFilter(iconTintColor, PorterDuff.Mode.SRC_IN)
-                folderIcon = ContextCompat.getDrawable(context, R.drawable.ic_outline_folder_24).also {
+                folderIcon = ContextCompat.getDrawable(context, R.drawable.ic_round_folder_24).also {
                     it?.colorFilter = colorFilter
                 }
-                printableFileIcon = ContextCompat.getDrawable(context, R.drawable.ic_outline_print_24).also {
+                printableFileIcon = ContextCompat.getDrawable(context, R.drawable.ic_round_print_24).also {
                     it?.colorFilter = colorFilter
                 }
-                otherFileIcon = ContextCompat.getDrawable(context, R.drawable.ic_outline_insert_drive_file_24).also {
+                otherFileIcon = ContextCompat.getDrawable(context, R.drawable.ic_round_insert_drive_file_24).also {
                     it?.colorFilter = colorFilter
                 }
             }

@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.pre_print_controls.ui.file_details
+package de.crysxd.octoapp.filemanager.ui.file_details
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map

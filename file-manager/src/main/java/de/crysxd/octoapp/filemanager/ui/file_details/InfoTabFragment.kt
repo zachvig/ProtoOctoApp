@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.pre_print_controls.ui.file_details
+package de.crysxd.octoapp.filemanager.ui.file_details
 
 import android.os.Bundle
 import android.transition.TransitionManager
@@ -21,11 +21,11 @@ import com.squareup.picasso.Callback
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.ext.format
 import de.crysxd.octoapp.octoprint.models.files.FileObject
-import de.crysxd.octoapp.pre_print_controls.R
-import de.crysxd.octoapp.pre_print_controls.databinding.InfoTabFragmentBinding
-import de.crysxd.octoapp.pre_print_controls.di.Injector
-import de.crysxd.octoapp.pre_print_controls.di.injectParentViewModel
-import de.crysxd.octoapp.pre_print_controls.ui.CropAlphaTransformation
+import de.crysxd.octoapp.filemanager.R
+import de.crysxd.octoapp.filemanager.databinding.InfoTabFragmentBinding
+import de.crysxd.octoapp.filemanager.di.Injector
+import de.crysxd.octoapp.filemanager.di.injectParentViewModel
+import de.crysxd.octoapp.filemanager.ui.CropAlphaTransformation
 import java.util.*
 import kotlin.math.roundToInt
 
