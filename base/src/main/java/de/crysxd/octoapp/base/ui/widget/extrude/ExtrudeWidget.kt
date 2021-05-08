@@ -1,20 +1,31 @@
-package de.crysxd.octoapp.pre_print_controls.ui.widget.extrude
+package de.crysxd.octoapp.base.ui.widget.extrude
 
 import android.content.Context
 import android.view.LayoutInflater
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.asLiveData
+import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.databinding.ExtrudeWidgetBinding
+import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
-import de.crysxd.octoapp.pre_print_controls.R
-import de.crysxd.octoapp.pre_print_controls.databinding.ExtrudeWidgetBinding
-import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 class ExtrudeWidget(context: Context) : RecyclableOctoWidget<ExtrudeWidgetBinding, ExtrudeWidgetViewModel>(context) {
 
     override val binding = ExtrudeWidgetBinding.inflate(LayoutInflater.from(context))
 
+    override fun isVisible() = baseViewModel.isCurrentlyVisible
     override fun getTitle(context: Context) = context.getString(R.string.widget_extrude)
     override fun getAnalyticsName() = "extrude"
     override fun createNewViewModel(parent: BaseWidgetHostFragment) = parent.injectViewModel<ExtrudeWidgetViewModel>().value
+    override fun onResume(lifecycleOwner: LifecycleOwner) {
+        super.onResume(lifecycleOwner)
+        baseViewModel.isVisible.observe(lifecycleOwner) {
+            parent.reloadWidgets()
+        }
+    }
+
 
     init {
         binding.buttonExtrude5.setOnClickListener { recordInteraction(); baseViewModel.extrude5mm() }

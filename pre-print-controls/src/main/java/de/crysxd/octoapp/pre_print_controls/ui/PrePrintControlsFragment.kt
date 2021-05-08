@@ -13,7 +13,7 @@ import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
-import de.crysxd.octoapp.pre_print_controls.ui.widget.extrude.ExtrudeWidget
+import de.crysxd.octoapp.base.ui.widget.extrude.ExtrudeWidget
 import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidget
 
 class PrePrintControlsFragment : WidgetHostFragment() {

@@ -1,27 +1,42 @@
-package de.crysxd.octoapp.pre_print_controls.ui.widget.extrude
+package de.crysxd.octoapp.base.ui.widget.extrude
 
 import android.content.Context
 import android.text.InputType
 import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.ExtrudeFilamentUseCase
 import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
-import de.crysxd.octoapp.pre_print_controls.R
+import de.crysxd.octoapp.base.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class ExtrudeWidgetViewModel(
     private val extrudeFilamentUseCase: ExtrudeFilamentUseCase,
-    private val setTargetTemperatureUseCase: SetTargetTemperaturesUseCase
+    private val setTargetTemperatureUseCase: SetTargetTemperaturesUseCase,
+    octoPrintProvider: OctoPrintProvider
 ) : BaseViewModel() {
+
+    var isCurrentlyVisible = true
+        private set
+    val isVisible = octoPrintProvider.passiveCurrentMessageFlow("extrude-widget").map {
+        // Widget is visible if we are not printing (printing, pausing, paused, cancelling) or we are paused
+        isCurrentlyVisible = it.state?.flags?.let { flags ->
+            !flags.isPrinting() || flags.paused
+        } ?: true
+        isCurrentlyVisible
+    }.distinctUntilChanged().asLiveData()
 
     fun extrude5mm() = extrude(5)
 

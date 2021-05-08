@@ -25,8 +25,7 @@ class FileDetailsViewModel(
     val loading = mutableLoading.map { it }
     val viewEvents = mutableViewEvents.map { it }
     val canStartPrint = octoPrintProvider.passiveCurrentMessageFlow("file-details").map {
-       val flags = it.state?.flags ?: return@map true
-        !flags.cancelling && !flags.paused && !flags.printing && !flags.pausing
+        it.state?.flags?.isPrinting() == false
     }.asLiveData()
 
     fun startPrint() = viewModelScope.launch(coroutineExceptionHandler) {
