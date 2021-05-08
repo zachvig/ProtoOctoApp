@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit
 
 private const val MIN_ZOOM = 1f
 private const val MAX_ZOOM = 10f
-private const val ZOOM_SPEED = 0.2f
+private const val ZOOM_SPEED = 0.1f
 
 class WebcamView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, defStyle: Int = 0) : FrameLayout(context, attributeSet, defStyle) {
 
