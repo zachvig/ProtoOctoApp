@@ -123,10 +123,10 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
     private fun extractBoundary(connection: HttpURLConnection): String? = try {
         // Try to extract a boundary from HTTP header first.
         // If the information is not presented, throw an exception and use default value instead.
-        val contentType: String = connection.getHeaderField("Content-Type") ?: throw java.lang.Exception("Unable to get content type")
+        val contentType: String = connection.getHeaderField("Content-Type") ?: throw Exception("Unable to get content type")
         val types = contentType.split(";".toRegex()).toTypedArray()
         if (types.isEmpty()) {
-            throw java.lang.Exception("Content type was empty")
+            throw Exception("Content type was empty")
         }
         var extractedBoundary: String? = null
         for (ct in types) {
@@ -136,7 +136,7 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
             }
         }
         if (extractedBoundary == null) {
-            throw java.lang.Exception("Unable to find mjpeg boundary")
+            throw Exception("Unable to find mjpeg boundary")
         } else if (extractedBoundary.first() == '"' && extractedBoundary.last() == '"') {
             "--" + extractedBoundary.removePrefix("\"").removeSuffix("\"")
         } else {
@@ -198,7 +198,7 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
             return bitmaps[lastBitmapUsed]
         }
 
-        fun dropUntil(until: Int) {
+        private fun dropUntil(until: Int) {
             val length = (index - until).coerceAtLeast(0)
             System.arraycopy(array, until, array, 0, length)
             index = length
