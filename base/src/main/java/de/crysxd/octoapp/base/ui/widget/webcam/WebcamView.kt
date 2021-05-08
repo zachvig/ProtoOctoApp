@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.ui.widget.webcam
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.graphics.Point
 import android.net.Uri
 import android.util.AttributeSet
@@ -58,11 +59,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         set(value) {
             field = value
             onScaleToFillChanged()
-            binding.mjpegSurface.scaleType = if (scaleToFill) {
-                ImageView.ScaleType.CENTER_CROP
-            } else {
-                ImageView.ScaleType.FIT_CENTER
-            }
+            binding.mjpegSurface.scaleType = ImageView.ScaleType.MATRIX
             nativeAspectRation?.let { applyAspectRatio(it.x, it.y) }
         }
 
@@ -302,6 +299,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             beginDelayedTransition()
         }
 
+        binding.mjpegSurface.imageMatrix = state.matrix
         binding.mjpegSurface.setImageBitmap(state.frame)
         applyAspectRatio(state.frame.width, state.frame.height)
 
@@ -388,7 +386,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         object HlsStreamDisabled : WebcamState()
         data class Error(val streamUrl: String?) : WebcamState()
         data class HlsStreamReady(val uri: Uri, val authHeader: String?) : WebcamState()
-        data class MjpegFrameReady(val frame: Bitmap) : WebcamState()
+        data class MjpegFrameReady(val frame: Bitmap, val matrix: Matrix) : WebcamState()
     }
 
     inner class ScaleGestureListener : ScaleGestureDetector.OnScaleGestureListener {

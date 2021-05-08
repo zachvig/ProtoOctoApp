@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.net.Uri
 import android.widget.ImageView
 import androidx.lifecycle.*
@@ -41,7 +42,7 @@ class WebcamViewModel(
     val connectionCache: Pair<Int, MjpegConnection>? = null
     private val octoPrintLiveData = octoPrintRepository.instanceInformationFlow()
         .filter {
-           val result =  try {
+            val result = try {
                 // Only pass if changes since last connection call
                 getWebcamSettings().hashCode()
             } catch (e: Exception) {
@@ -114,15 +115,21 @@ class WebcamViewModel(
                             }
                         } else {
                             delay(100)
-                            MjpegConnection(streamUrl = streamUrl, authHeader = authHeader, name = tag)
+                            var matrix: Matrix? = null
+                            MjpegConnection2(streamUrl = streamUrl, authHeader = authHeader, name = tag)
                                 .load()
                                 .map {
                                     when (it) {
                                         is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading(canSwitchWebcam)
                                         is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
-                                            frame = applyTransformations(it.frame, webcamSettings),
+                                            frame = it.frame,
                                             aspectRation = webcamSettings.streamRatio,
                                             canSwitchWebcam = canSwitchWebcam,
+                                            matrix = it.frame.let {
+                                                val m = matrix ?: createTransformationMatrix(it, webcamSettings)
+                                                matrix = m
+                                                m
+                                            }
                                         )
                                     }
                                 }
@@ -185,14 +192,32 @@ class WebcamViewModel(
 
     fun getInitialAspectRatio() = octoPrintRepository.getActiveInstanceSnapshot()?.settings?.webcam?.streamRatio ?: "16:9"
 
-    private suspend fun applyTransformations(frame: Bitmap, webcamSettings: WebcamSettings) =
-        applyWebcamTransformationsUseCase.execute(ApplyWebcamTransformationsUseCase.Params(frame, webcamSettings))
+    private suspend fun createTransformationMatrix(frame: Bitmap, webcamSettings: WebcamSettings): Matrix {
+        val matrix = Matrix()
+        if (webcamSettings.rotate90) {
+            matrix.postRotate(-90f)
+        }
+
+        matrix.postScale(
+            if (webcamSettings.flipH) -1f else 1f,
+            if (webcamSettings.flipV) -1f else 1f,
+            frame.width / 2f,
+            frame.height / 2f
+        )
+        return matrix
+    }
 
     sealed class UiState(open val canSwitchWebcam: Boolean) {
         data class Loading(override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
         object WebcamNotConfigured : UiState(false)
         data class HlsStreamDisabled(override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
-        data class FrameReady(val frame: Bitmap, val aspectRation: String, override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
+        data class FrameReady(
+            val frame: Bitmap,
+            val aspectRation: String,
+            override val canSwitchWebcam: Boolean,
+            val matrix: Matrix,
+        ) : UiState(canSwitchWebcam)
+
         data class HlsStreamReady(val uri: Uri, val authHeader: String?, val aspectRation: String, override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
         data class Error(val isManualReconnect: Boolean, val streamUrl: String? = null, val aspectRation: String? = null, override val canSwitchWebcam: Boolean) :
             UiState(canSwitchWebcam)
