@@ -85,7 +85,7 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
                 Timber.tag(tag).i("FPS: %.1f", 1000 / (imageTimes / imageCounter.toFloat()))
                 imageCounter = 0
             }
-        }.flowOn(Dispatchers.Default)
+        }.flowOn(Dispatchers.IO)
     }
 
     private fun readNextImage(cache: ByteCache, boundary: String, input: InputStream, dropCount: Int = 0): Bitmap {
@@ -148,11 +148,15 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
     }
 
     private class ByteCache(val size: Int = 1024 * 1024 * 2) {
-        val array = ByteArray(size)
-        var index: Int = 0
+        private val array = ByteArray(size)
+        private var index: Int = 0
+        private var bitmaps = emptyList<Bitmap>()
+        private var lastBitmapUsed = 0
+        private val bitmapPoolSize = 3
 
         fun reset() {
             index = 0
+            bitmaps = emptyList()
         }
 
         fun push(bytes: ByteArray, length: Int) {
@@ -164,7 +168,10 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
         fun readImage(length: Int, boundaryLength: Int): Bitmap? {
             val bitmap = if (length > 10) {
                 try {
-                    BitmapFactory.decodeByteArray(array, 0, length)
+                    val bitmap = getNextBitmap(length)
+                    val ops = BitmapFactory.Options()
+                    ops.inBitmap = bitmap
+                    BitmapFactory.decodeByteArray(array, 0, length, ops)
                 } catch (e: Exception) {
                     Timber.w("Failed to decode frame: $e")
                     null
@@ -174,6 +181,21 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
             }
             dropUntil(boundaryLength)
             return bitmap
+        }
+
+        private fun getNextBitmap(length: Int): Bitmap {
+            if (bitmaps.isEmpty()) {
+                Timber.i("Creating bitmap pool")
+                val ops = BitmapFactory.Options()
+                ops.inJustDecodeBounds = true
+                BitmapFactory.decodeByteArray(array, 0, length, ops)
+                bitmaps = (0 until bitmapPoolSize).map {
+                    Bitmap.createBitmap(ops.outWidth, ops.outHeight, Bitmap.Config.ARGB_8888)
+                }
+            }
+
+            lastBitmapUsed = (lastBitmapUsed + 1) % bitmaps.size
+            return bitmaps[lastBitmapUsed]
         }
 
         fun dropUntil(until: Int) {

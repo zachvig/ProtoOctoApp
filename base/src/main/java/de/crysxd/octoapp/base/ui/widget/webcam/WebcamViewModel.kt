@@ -133,7 +133,6 @@ class WebcamViewModel(
                                         )
                                     }
                                 }
-                                .flowOn(Dispatchers.Default)
                                 .catch {
                                     Timber.tag(tag).i("ERROR")
                                     Timber.e(it)
