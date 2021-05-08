@@ -12,8 +12,6 @@ class SendFeedbackViewModel(
     private val sendFeedbackUseCase: OpenEmailClientForFeedbackUseCase
 ) : BaseViewModel() {
 
-    var screenshot: Bitmap? = null
-
     val viewState = MutableLiveData<ViewState>(ViewState.Idle)
 
     fun sendFeedback(
@@ -22,15 +20,8 @@ class SendFeedbackViewModel(
         sendPhoneInfo: Boolean,
         sendOctoPrintInfo: Boolean,
         sendLogs: Boolean,
-        sendScreenshot: Boolean
     ) = viewModelScope.launch(coroutineExceptionHandler) {
         viewState.postValue(ViewState.Loading)
-        val screenshot = if (sendScreenshot) {
-            screenshot
-        } else {
-            null
-        }
-
         sendFeedbackUseCase.execute(
             OpenEmailClientForFeedbackUseCase.Params(
                 message = message,
@@ -38,7 +29,7 @@ class SendFeedbackViewModel(
                 sendPhoneInfo = sendPhoneInfo,
                 sendOctoPrintInfo = sendOctoPrintInfo,
                 sendLogs = sendLogs,
-                screenshot = screenshot
+                screenshot = null
             )
         )
     }.invokeOnCompletion {
