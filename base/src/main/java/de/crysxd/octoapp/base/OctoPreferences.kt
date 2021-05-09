@@ -9,15 +9,12 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.di.Injector
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.runBlocking
 import java.util.*
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class OctoPreferences(private val sharedPreferences: SharedPreferences) {
 
     companion object {
-        const val DEFAULT_MOVE_FEED_RATE = 4000
-
         private const val KEY_PRINT_NOTIFICATION_ENABLED = "print_notification_enabled"
         private const val KEY_MANUAL_DARK_MODE = "manual_dark_mode_enabled"
         private const val KEY_KEEP_SCREEN_ON = "keep_screen_on"
@@ -31,6 +28,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_ANALYTICS = "analytics_enabled"
         private const val KEY_PRINT_NOTIFICATION_WAS_DISCONNECTED = "print_notification_was_disconnected"
         private const val KEY_PRINT_NOTIFICATION_WAS_PAUSED = "print_notification_was_paused"
+        private const val KEY_EXPERIMENTAL_WEBCAM = "experimental_webcam"
     }
 
     private val updatedChannel = ConflatedBroadcastChannel(Unit)
@@ -120,5 +118,11 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         get() = Date(sharedPreferences.getLong(KEY_HIDE_THUMBNAIL_HINT_UNTIL, 0))
         set(value) {
             edit { putLong(KEY_HIDE_THUMBNAIL_HINT_UNTIL, value.time) }
+        }
+
+    var experimentalWebcam
+        get() = sharedPreferences.getBoolean(KEY_EXPERIMENTAL_WEBCAM, Firebase.remoteConfig.getBoolean("experimental_webcam"))
+        set(value) {
+            edit { putBoolean(KEY_EXPERIMENTAL_WEBCAM, value) }
         }
 }

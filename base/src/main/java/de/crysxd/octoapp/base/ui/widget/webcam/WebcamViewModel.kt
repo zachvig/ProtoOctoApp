@@ -1,16 +1,14 @@
 package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.graphics.Bitmap
-import android.graphics.Matrix
 import android.net.Uri
 import android.widget.ImageView
 import androidx.lifecycle.*
-import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.ext.isHlsStreamUrl
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
-import de.crysxd.octoapp.base.usecase.ApplyWebcamTransformationsUseCase
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import kotlinx.coroutines.CancellationException
@@ -23,9 +21,8 @@ import timber.log.Timber
 @Suppress("EXPERIMENTAL_API_USAGE")
 class WebcamViewModel(
     private val octoPrintRepository: OctoPrintRepository,
-    private val octoPrintProvider: OctoPrintProvider,
+    private val octoPreferences: OctoPreferences,
     private val getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
-    private val applyWebcamTransformationsUseCase: ApplyWebcamTransformationsUseCase,
 ) : BaseViewModel() {
 
     companion object {
@@ -115,37 +112,36 @@ class WebcamViewModel(
                             }
                         } else {
                             delay(100)
-                            var matrix: Matrix? = null
-                            MjpegConnection2(streamUrl = streamUrl, authHeader = authHeader, name = tag)
-                                .load()
-                                .map {
-                                    when (it) {
-                                        is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading(canSwitchWebcam)
-                                        is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
-                                            frame = it.frame,
-                                            aspectRation = webcamSettings.streamRatio,
-                                            canSwitchWebcam = canSwitchWebcam,
-                                            flipV = webcamSettings.flipV,
-                                            flipH = webcamSettings.flipH,
-                                            rotate90 = webcamSettings.rotate90,
-                                        )
-                                    }
-                                }
-                                .catch {
-                                    Timber.tag(tag).i("ERROR")
-                                    Timber.e(it)
-                                    emit(
-                                        UiState.Error(
-                                            isManualReconnect = true,
-                                            streamUrl = webcamSettings.streamUrl,
-                                            aspectRation = webcamSettings.streamRatio,
-                                            canSwitchWebcam = canSwitchWebcam,
-                                        )
+                            if (octoPreferences.experimentalWebcam) {
+                                MjpegConnection2(streamUrl = streamUrl, authHeader = authHeader, name = tag).load()
+                            } else {
+                                MjpegConnection(streamUrl = streamUrl, authHeader = authHeader, name = tag).load()
+                            }.map {
+                                when (it) {
+                                    is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading(canSwitchWebcam)
+                                    is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
+                                        frame = it.frame,
+                                        aspectRation = webcamSettings.streamRatio,
+                                        canSwitchWebcam = canSwitchWebcam,
+                                        flipV = webcamSettings.flipV,
+                                        flipH = webcamSettings.flipH,
+                                        rotate90 = webcamSettings.rotate90,
                                     )
                                 }
-                                .collect {
-                                    emit(it)
-                                }
+                            }.catch {
+                                Timber.tag(tag).i("ERROR")
+                                Timber.e(it)
+                                emit(
+                                    UiState.Error(
+                                        isManualReconnect = true,
+                                        streamUrl = webcamSettings.streamUrl,
+                                        aspectRation = webcamSettings.streamRatio,
+                                        canSwitchWebcam = canSwitchWebcam,
+                                    )
+                                )
+                            }.collect {
+                                emit(it)
+                            }
                         }
                     } catch (e: CancellationException) {
                         Timber.tag(tag).w("Webcam stream cancelled")
