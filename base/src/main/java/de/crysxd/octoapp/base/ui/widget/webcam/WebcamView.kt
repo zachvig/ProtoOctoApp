@@ -10,7 +10,6 @@ import android.util.AttributeSet
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.core.view.isVisible
@@ -41,12 +40,13 @@ import kotlin.math.min
 
 private const val MIN_ZOOM = 1f
 private const val MAX_ZOOM = 10f
-private const val ZOOM_SPEED = 0.2f
 
 class WebcamView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, defStyle: Int = 0) : FrameLayout(context, attributeSet, defStyle) {
 
     private val gestureDetector = GestureDetector(context, GestureListener())
     private val scaleGestureDetector = ScaleGestureDetector(context, ScaleGestureListener())
+    private var lastFocusX = 0f
+    private var lastFocusY = 0f
 
     private val hlsPlayer by lazy { SimpleExoPlayer.Builder(context).build() }
     private var playerInitialized = false
@@ -334,23 +334,23 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         })
     })
 
-    private fun zoom(newZoom: Float, focusX: Float, focusY: Float) {
-        fun View.zoomInternal(newZoom: Float, focusX: Float, focusY: Float) {
-            val targetOnVideoX = (translationX + focusX) / scaleX
-            val targetOnVideoY = (translationX + focusY) / scaleY
-            val targetOnVideoXAfter = (translationX + focusX) / newZoom
-            val targetOnVideoYAfter = (translationX + focusY) / newZoom
-            val additionalScrollX = targetOnVideoX - targetOnVideoXAfter
-            val additionalScrollY = targetOnVideoY - targetOnVideoYAfter
-
+    private fun zoom(zoomChange: Float, focusX: Float, focusY: Float) {
+        fun View.zoomInternal(zoomChange: Float, focusX: Float, focusY: Float) {
+            val newZoom = (scaleX * zoomChange).coerceIn(MIN_ZOOM, MAX_ZOOM)
             scaleX = newZoom
             scaleY = newZoom
-            translationX += additionalScrollX
-            translationY += additionalScrollY
+            val focusShiftX = focusX - lastFocusX
+            val focusShiftY = focusY - lastFocusY
+            val centerOffsetX = ((width / 2) - translationX) - focusX
+            val centerOffsetY = ((height / 2) - translationY) - focusY
+            translationX += focusShiftX + centerOffsetX
+            translationY += focusShiftY + centerOffsetY
         }
 
-        binding.hlsSurface.zoomInternal(newZoom, focusX, focusY)
-        binding.mjpegSurface.zoomInternal(newZoom, focusX, focusY)
+        binding.hlsSurface.zoomInternal(zoomChange, focusX, focusY)
+        binding.mjpegSurface.zoomInternal(zoomChange, focusX, focusY)
+        lastFocusX = focusX
+        lastFocusY = focusY
 
         limitScrollRange()
     }
@@ -442,15 +442,16 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         private var hintShown = false
         override fun onScale(detector: ScaleGestureDetector): Boolean {
             // Check if we increase or decrease zoom
-            val scaleDirection = if (detector.previousSpan > detector.currentSpan) -1f else 1f
-            val zoomChange = detector.scaleFactor * ZOOM_SPEED * scaleDirection
-            val newZoom = (binding.hlsSurface.scaleX + zoomChange).coerceIn(MIN_ZOOM, MAX_ZOOM)
-            zoom(focusX = detector.focusX, focusY = detector.focusY, newZoom = newZoom)
+            zoom(focusX = detector.focusX, focusY = detector.focusY, zoomChange = detector.scaleFactor)
 
             return true
         }
 
-        override fun onScaleBegin(detector: ScaleGestureDetector) = true
+        override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
+            lastFocusX = detector.focusX
+            lastFocusY = detector.focusY
+            return true
+        }
 
         override fun onScaleEnd(detector: ScaleGestureDetector) {
             hintShown = false
@@ -476,7 +477,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         override fun onDoubleTap(e: MotionEvent): Boolean {
             beginDelayedTransition()
             if (binding.mjpegSurface.scaleX > 1) {
-                zoom(newZoom = 1f, focusX = 0f, focusY = 0f)
+                zoom(zoomChange = 1f, focusX = 0f, focusY = 0f)
             } else {
                 scaleToFill = !scaleToFill
             }
