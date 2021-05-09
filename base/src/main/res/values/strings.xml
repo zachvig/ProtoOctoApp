@@ -277,7 +277,6 @@
     <string name="x_hours_y_mins">%1$02d:%2$02d h</string>
     <string name="x_mins">%2$d mins</string>
     <string name="widget_gcode_send">Send Gcode</string>
-    <string name="cant_zoom_in_fit_mode">Can\'t zoom in fit mode. Double tap to reset</string>
     <string name="file_details_tab_info">Info</string>
     <string name="file_details_tab_preview">Preview</string>
     <string name="widget_move">Move</string>

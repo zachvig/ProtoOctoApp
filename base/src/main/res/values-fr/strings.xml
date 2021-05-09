@@ -266,7 +266,6 @@
     <string name="x_hours_y_mins">%1$02d:%2$02d h</string>
     <string name="x_mins">%2$d mins</string>
     <string name="widget_gcode_send">Envoyer le Gcode</string>
-    <string name="cant_zoom_in_fit_mode">Impossible de zoomer en mode d\'ajustements. Double clic pour réinitialiser</string>
     <string name="file_details_tab_info">Infos</string>
     <string name="file_details_tab_preview">Aperçu</string>
     <string name="widget_move">Déplacement</string>

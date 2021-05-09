@@ -125,11 +125,9 @@ class WebcamViewModel(
                                             frame = it.frame,
                                             aspectRation = webcamSettings.streamRatio,
                                             canSwitchWebcam = canSwitchWebcam,
-                                            matrix = it.frame.let {
-                                                val m = matrix ?: createTransformationMatrix(it, webcamSettings)
-                                                matrix = m
-                                                m
-                                            }
+                                            flipV = webcamSettings.flipV,
+                                            flipH = webcamSettings.flipH,
+                                            rotate90 = webcamSettings.rotate90,
                                         )
                                     }
                                 }
@@ -191,21 +189,6 @@ class WebcamViewModel(
 
     fun getInitialAspectRatio() = octoPrintRepository.getActiveInstanceSnapshot()?.settings?.webcam?.streamRatio ?: "16:9"
 
-    private suspend fun createTransformationMatrix(frame: Bitmap, webcamSettings: WebcamSettings): Matrix {
-        val matrix = Matrix()
-        if (webcamSettings.rotate90) {
-            matrix.postRotate(-90f)
-        }
-
-        matrix.postScale(
-            if (webcamSettings.flipH) -1f else 1f,
-            if (webcamSettings.flipV) -1f else 1f,
-            frame.width / 2f,
-            frame.height / 2f
-        )
-        return matrix
-    }
-
     sealed class UiState(open val canSwitchWebcam: Boolean) {
         data class Loading(override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
         object WebcamNotConfigured : UiState(false)
@@ -214,7 +197,9 @@ class WebcamViewModel(
             val frame: Bitmap,
             val aspectRation: String,
             override val canSwitchWebcam: Boolean,
-            val matrix: Matrix,
+            val flipH: Boolean,
+            val flipV: Boolean,
+            val rotate90: Boolean,
         ) : UiState(canSwitchWebcam)
 
         data class HlsStreamReady(val uri: Uri, val authHeader: String?, val aspectRation: String, override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
