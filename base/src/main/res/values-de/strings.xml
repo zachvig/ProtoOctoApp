@@ -263,7 +263,6 @@
     <string name="x_hours_y_mins">%1$02d:%2$02d h</string>
     <string name="x_mins">%2$d Minuten</string>
     <string name="widget_gcode_send">Sende Gcode</string>
-    <string name="cant_zoom_in_fit_mode">Kann im Füllen-Modus nicht zoomen. Doppeltippen zum Zurücksetzen</string>
     <string name="file_details_tab_info">Info</string>
     <string name="file_details_tab_preview">Vorschau</string>
     <string name="widget_move">Bewegen</string>

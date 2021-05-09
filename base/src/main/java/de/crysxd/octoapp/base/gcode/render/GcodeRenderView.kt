@@ -31,7 +31,6 @@ import kotlin.system.measureTimeMillis
 
 private const val MIN_ZOOM = 1f
 private const val MAX_ZOOM = 10f
-private const val ZOOM_SPEED = 0.2f
 private const val DOUBLE_TAP_ZOOM = 5f
 private const val ASYNC_RENDER_RECOMMENDED_THRESHOLD_MS = 20
 
@@ -316,9 +315,7 @@ class GcodeRenderView @JvmOverloads constructor(
     inner class ScaleGestureListener : ScaleGestureDetector.OnScaleGestureListener {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
             // Check if we increase or decrease zoom
-            val scaleDirection = if (detector.previousSpan > detector.currentSpan) -1f else 1f
-            val zoomChange = detector.scaleFactor * ZOOM_SPEED * scaleDirection
-            val newZoom = (zoom + zoomChange).coerceIn(MIN_ZOOM, MAX_ZOOM)
+            val newZoom = (zoom * detector.scaleFactor).coerceIn(MIN_ZOOM, MAX_ZOOM)
             zoom(detector.focusX, detector.focusY, newZoom)
             invalidate()
             return true
