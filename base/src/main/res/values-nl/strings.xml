@@ -263,7 +263,6 @@
     <string name="x_hours_y_mins">%1$02d:%2$02d h</string>
     <string name="x_mins">%2$d min.</string>
     <string name="widget_gcode_send">Stuur Gcode</string>
-    <string name="cant_zoom_in_fit_mode">Kan niet in de fitmodus inzoomen. Dubbelklik om te resetten.</string>
     <string name="file_details_tab_info">Info</string>
     <string name="file_details_tab_preview">Voorbeeld</string>
     <string name="widget_move">Verplaats</string>

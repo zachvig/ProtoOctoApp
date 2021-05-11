@@ -91,7 +91,12 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
                     findNavController().popBackStack()
                     WebcamView.WebcamState.HlsStreamDisabled
                 }
-                is WebcamViewModel.UiState.FrameReady -> WebcamView.WebcamState.MjpegFrameReady(it.frame)
+                is WebcamViewModel.UiState.FrameReady -> WebcamView.WebcamState.MjpegFrameReady(
+                    frame = it.frame,
+                    flipH = it.flipH,
+                    flipV = it.flipV,
+                    rotate90 = it.rotate90
+                )
                 is WebcamViewModel.UiState.HlsStreamReady -> WebcamView.WebcamState.HlsStreamReady(it.uri, it.authHeader)
                 is WebcamViewModel.UiState.Error -> if (it.isManualReconnect) {
                     WebcamView.WebcamState.Error(it.streamUrl)

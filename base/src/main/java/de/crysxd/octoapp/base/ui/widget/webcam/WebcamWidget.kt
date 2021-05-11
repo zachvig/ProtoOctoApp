@@ -75,7 +75,12 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
             is UiState.HlsStreamDisabled -> WebcamView.WebcamState.HlsStreamDisabled
             is UiState.FrameReady -> {
                 applyAspectRatio(state.aspectRation)
-                WebcamView.WebcamState.MjpegFrameReady(state.frame)
+                WebcamView.WebcamState.MjpegFrameReady(
+                    frame = state.frame,
+                    flipH = state.flipH,
+                    flipV = state.flipV,
+                    rotate90 = state.rotate90
+                )
             }
             is UiState.HlsStreamReady -> {
                 applyAspectRatio(state.aspectRation)

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.billing.PurchaseViewModel
 import de.crysxd.octoapp.base.di.ViewModelKey
@@ -83,14 +84,12 @@ open class ViewModelModule {
     @ViewModelKey(WebcamViewModel::class)
     open fun provideWebcamWidgetViewModel(
         octoPrintRepository: OctoPrintRepository,
-        octoPrintProvider: OctoPrintProvider,
+        octoPreferences: OctoPreferences,
         getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
-        applyWebcamTransformationsUseCase: ApplyWebcamTransformationsUseCase,
     ): ViewModel = WebcamViewModel(
         octoPrintRepository = octoPrintRepository,
-        octoPrintProvider = octoPrintProvider,
+        octoPreferences = octoPreferences,
         getWebcamSettingsUseCase = getWebcamSettingsUseCase,
-        applyWebcamTransformationsUseCase = applyWebcamTransformationsUseCase,
     )
 
     @Provides
