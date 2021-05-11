@@ -4,6 +4,10 @@
     <item
         android:width="@dimen/eta_estimation_ball_diameter"
         android:height="@dimen/eta_estimation_ball_diameter"
+        android:bottom="4dp"
+        android:left="4dp"
+        android:right="4dp"
+        android:top="4dp"
         android:drawable="@drawable/bg_circle" />
 
 </layer-list>

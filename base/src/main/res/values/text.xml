@@ -27,6 +27,12 @@
         <item name="android:fontFamily">@font/ubuntu_light</item>
     </style>
 
+    <style name="OctoTheme.TextAppearance.Data">
+        <item name="android:textSize">20sp</item>
+        <item name="fontFamily">@font/ubuntu_light</item>
+        <item name="android:fontFamily">@font/ubuntu_light</item>
+    </style>
+
     <style name="OctoTheme.TextAppearance.Title">
         <item name="android:fontFamily">@font/ubuntu_regular</item>
         <item name="fontFamily">@font/ubuntu_regular</item>

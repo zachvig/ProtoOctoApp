@@ -187,8 +187,8 @@
     <string name="emergency_stop">Arresto di emergenza</string>
     <string name="cancel_print">Annulla la stampa</string>
     <string name="estimation">Stima</string>
-    <string name="time_left">Tempo rimasto</string>
-    <string name="time_spent">Tempo trascorso</string>
+    <string name="time_left">Rimanente</string>
+    <string name="time_spent">Usato</string>
     <string name="progress">Progresso</string>
     <string name="change_filament_confirmation_message">Vuoi cambiare il filamento?</string>
     <string name="change_filament_confirmation_action">Cambia filamento</string>
@@ -258,7 +258,7 @@
     <string name="no_wifi_connection">Nessuna connessione WiFi</string>
     <string name="widget_temperature">Temperature</string>
     <string name="widget_extrude">Estrudere</string>
-    <string name="less_than_a_minute">meno di un minuto</string>
+    <string name="less_than_a_minute">&lt; 1 min</string>
     <string name="x_hours_y_mins">%1$02d:%2$02d h</string>
     <string name="x_mins">%2$d min</string>
     <string name="widget_gcode_send">Invia Gcode</string>

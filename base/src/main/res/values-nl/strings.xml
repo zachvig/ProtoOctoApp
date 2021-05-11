@@ -188,8 +188,8 @@
     <string name="emergency_stop">Noodstop</string>
     <string name="cancel_print">Afdrukken annuleren</string>
     <string name="estimation">Schatting</string>
-    <string name="time_left">Resterende tijd</string>
-    <string name="time_spent">Tijd besteed</string>
+    <string name="time_left">Overblijvend</string>
+    <string name="time_spent">Gebruikt</string>
     <string name="progress">Voortgang</string>
     <string name="change_filament_confirmation_message">Wil je de filament veranderen?</string>
     <string name="change_filament_confirmation_action">Verander de filament</string>
@@ -259,7 +259,7 @@
     <string name="no_wifi_connection">Geen WiFi verbinding</string>
     <string name="widget_temperature">Temperaturen</string>
     <string name="widget_extrude">Extrudeer</string>
-    <string name="less_than_a_minute">minder dan een minuut</string>
+    <string name="less_than_a_minute">&lt; 1 min</string>
     <string name="x_hours_y_mins">%1$02d:%2$02d h</string>
     <string name="x_mins">%2$d min.</string>
     <string name="widget_gcode_send">Stuur Gcode</string>

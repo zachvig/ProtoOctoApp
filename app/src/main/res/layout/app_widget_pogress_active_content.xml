@@ -55,15 +55,15 @@
 
         <ImageView
             android:id="@+id/etaIndicator"
-            android:layout_marginStart="@dimen/margin_0"
             android:importantForAccessibility="no"
             android:scaleX="0.66"
+            android:src="@drawable/eta_ball"
             android:layout_marginBottom="1dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:scaleY="0.66"
-            android:src="@drawable/ic_round_star_18"
+            android:translationX="-2dp"
             android:translationY="1dp" />
 
     </LinearLayout>

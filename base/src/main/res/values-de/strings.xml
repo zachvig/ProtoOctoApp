@@ -188,8 +188,8 @@
     <string name="emergency_stop">Not-Aus</string>
     <string name="cancel_print">Druck abbrechen</string>
     <string name="estimation">Schätzung</string>
-    <string name="time_left">Verbleibende Zeit</string>
-    <string name="time_spent">Verbrachte Zeit</string>
+    <string name="time_left">Verbleibend</string>
+    <string name="time_spent">Gebraucht</string>
     <string name="progress">Fortschritt</string>
     <string name="change_filament_confirmation_message">Willst du das Filament wechseln?</string>
     <string name="change_filament_confirmation_action">Filament wechseln</string>
@@ -259,7 +259,7 @@
     <string name="no_wifi_connection">Keine WLAN Verbindung</string>
     <string name="widget_temperature">Temperaturen</string>
     <string name="widget_extrude">Extrudieren</string>
-    <string name="less_than_a_minute">weniger als eine Minute</string>
+    <string name="less_than_a_minute">&lt; 1 min</string>
     <string name="x_hours_y_mins">%1$02d:%2$02d h</string>
     <string name="x_mins">%2$d Minuten</string>
     <string name="widget_gcode_send">Sende Gcode</string>
