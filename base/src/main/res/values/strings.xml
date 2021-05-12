@@ -275,7 +275,7 @@
     <string name="widget_extrude">Extrude</string>
     <string name="less_than_a_minute">&lt; 1 min</string>
     <string name="x_hours_y_mins">%1$02d:%2$02d h</string>
-    <string name="x_mins">%2$d mins</string>
+    <string name="x_mins">%2$d min</string>
     <string name="widget_gcode_send">Send Gcode</string>
     <string name="file_details_tab_info">Info</string>
     <string name="file_details_tab_preview">Preview</string>
