@@ -30,7 +30,11 @@ class GetPowerDevicesUseCase @Inject constructor(
             // Use withContext to split the stream in parallel
             devices.forEach {
                 try {
-                    result[it] = if (it.isOn()) PowerState.On else PowerState.Off
+                    result[it] = when (it.isOn()) {
+                        true -> PowerState.On
+                        false -> PowerState.Off
+                        null -> PowerState.Unknown
+                    }
                 } catch (e: Exception) {
                     Timber.e(e)
                     result[it] = PowerState.Unknown

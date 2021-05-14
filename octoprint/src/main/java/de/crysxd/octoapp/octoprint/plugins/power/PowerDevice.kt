@@ -5,10 +5,11 @@ abstract class PowerDevice {
     abstract val pluginId: String
     abstract val displayName: String
     abstract val pluginDisplayName: String
+    open val canControlPsu: Boolean = true
 
     abstract suspend fun turnOn()
     abstract suspend fun turnOff()
-    abstract suspend fun isOn(): Boolean
+    abstract suspend fun isOn(): Boolean?
 
     val uniqueId
         get() = "$pluginId:$id"

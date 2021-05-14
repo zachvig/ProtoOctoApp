@@ -2,8 +2,6 @@ package de.crysxd.octoapp.base.ui.menu.power
 
 import android.content.Context
 import android.os.Parcelable
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
@@ -38,7 +36,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         }
 
         // Is there only one device?
-        val onlyDevice = allDevices.firstOrNull()?.takeIf { allDevices.size == 1 }?.first
+        val onlyDevice = allDevices.firstOrNull { it.first.canControlPsu }?.takeIf { allDevices.size == 1 }?.first
         val deviceToUse = defaultDevice ?: onlyDevice
 
         return if (action != Action.Unspecified && deviceToUse != null) {

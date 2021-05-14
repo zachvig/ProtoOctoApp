@@ -61,6 +61,8 @@ data class Settings(
         @SerializedName("arrSmartplugs") val devices: List<TasmotaPowerDevice>
     ) : PluginSettings
 
+    class WS281xSettings : PluginSettings
+
     data class MultiCamSettings(
         @SerializedName("multicam_profiles") val profiles: List<WebcamSettings>
     ) : PluginSettings

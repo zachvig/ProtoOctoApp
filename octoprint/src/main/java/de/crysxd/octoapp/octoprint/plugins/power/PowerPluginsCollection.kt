@@ -9,6 +9,8 @@ import de.crysxd.octoapp.octoprint.plugins.power.tasmota.TasmotaPowerPlugin
 import de.crysxd.octoapp.octoprint.plugins.power.tplinkplug.TpLinkSmartPlugApi
 import de.crysxd.octoapp.octoprint.plugins.power.tplinkplug.TpLinkSmartPlugPowerPlugin
 import de.crysxd.octoapp.octoprint.plugins.power.tradfri.*
+import de.crysxd.octoapp.octoprint.plugins.power.ws281x.WS281xApi
+import de.crysxd.octoapp.octoprint.plugins.power.ws281x.WS281xPowerPlugin
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withTimeout
 import retrofit2.Retrofit
@@ -21,6 +23,7 @@ class PowerPluginsCollection(retrofit: Retrofit) {
         TpLinkSmartPlugPowerPlugin(retrofit.create(TpLinkSmartPlugApi::class.java)),
         TasmotaPowerPlugin(retrofit.create(TasmotaApi::class.java)),
         TuyaPowerPlugin(retrofit.create(TuyaApi::class.java)),
+        WS281xPowerPlugin(retrofit.create(WS281xApi::class.java))
     )
 
     fun getDevices(settings: Settings) = plugins.map {
