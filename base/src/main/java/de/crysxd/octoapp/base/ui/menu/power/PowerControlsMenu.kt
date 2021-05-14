@@ -25,18 +25,24 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
 
     override suspend fun shouldShowMenu(host: MenuBottomSheetFragment): Boolean {
         // Let's try to solve the task at hand without the user selecting somehting
-        val allDevices = Injector.get().getPowerDevicesUseCase().execute(GetPowerDevicesUseCase.Params(queryState = false))
+        val allDevices = Injector.get().getPowerDevicesUseCase().execute(
+            GetPowerDevicesUseCase.Params(
+                queryState = false,
+                requiredCapabilities = type.requiredCapabilities
+            )
+        )
 
         // Is there a default device the user told us to always use?
         val defaultDevice = when (type) {
             DeviceType.PrinterPsu -> Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.appSettings?.defaultPowerDevices?.get(type.prefKey)
+            DeviceType.Light -> Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.appSettings?.defaultPowerDevices?.get(type.prefKey)
             DeviceType.Unspecified -> null
         }?.let { id ->
             allDevices.firstOrNull { it.first.id == id }?.first
         }
 
         // Is there only one device?
-        val onlyDevice = allDevices.firstOrNull { it.first.canControlPsu }?.takeIf { allDevices.size == 1 }?.first
+        val onlyDevice = allDevices.firstOrNull()?.takeIf { allDevices.size == 1 }?.first
         val deviceToUse = defaultDevice ?: onlyDevice
 
         return if (action != Action.Unspecified && deviceToUse != null) {
@@ -79,6 +85,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
 
     override suspend fun getTitle(context: Context) = when (type) {
         DeviceType.Unspecified -> context.getString(R.string.power_menu___title_neutral)
+        DeviceType.Light -> context.getString(R.string.power_menu___title_lights)
         DeviceType.PrinterPsu -> context.getString(R.string.power_menu___title_select_device)
     }
 
@@ -232,12 +239,22 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
 
     sealed class DeviceType : Parcelable {
         val prefKey get() = this::class.java.simpleName.toLowerCase(Locale.ENGLISH)
+        abstract val requiredCapabilities: List<PowerDevice.Capability>
 
         @Parcelize
-        object PrinterPsu : DeviceType()
+        object PrinterPsu : DeviceType() {
+            override val requiredCapabilities get() = listOf(PowerDevice.Capability.ControlPrinterPower)
+        }
 
         @Parcelize
-        object Unspecified : DeviceType()
+        object Light : DeviceType() {
+            override val requiredCapabilities get() = listOf(PowerDevice.Capability.Illuminate)
+        }
+
+        @Parcelize
+        object Unspecified : DeviceType() {
+            override val requiredCapabilities get() = emptyList<PowerDevice.Capability>()
+        }
     }
 
     sealed class Action : Parcelable {

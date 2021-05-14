@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
-import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
@@ -30,6 +29,7 @@ class SettingsMenu : Menu {
         ChangeOctoPrintInstanceMenuItem(),
         CustomizeWidgetsMenuItem(),
         ShowOctoAppLabMenuItem(),
+        AutomaticLightsSettingsMenuItem(),
     )
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___menu_settings_title)
@@ -175,10 +175,22 @@ class AutoConnectPrinterMenuItem : ToggleMenuItem() {
     }
 }
 
+class AutomaticLightsSettingsMenuItem : SubMenuItem() {
+    override val itemId = MENU_ITEM_AUTOMATIC_LIGHTS
+    override var groupId = ""
+    override val order = 108
+    override val style = MenuItemStyle.Settings
+    override val enforceSingleLine = false
+    override val icon = R.drawable.ic_round_wb_incandescent_24
+    override val subMenu: Menu get() = AutomaticLightsSettingsMenu()
+
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_automatic_lights)
+}
+
 class ShowOctoAppLabMenuItem : SubMenuItem() {
     override val itemId = MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE
     override var groupId = ""
-    override val order = 108
+    override val order = 109
     override val style = MenuItemStyle.Settings
     override val enforceSingleLine = false
     override val icon = R.drawable.ic_round_science_24px

@@ -10,12 +10,10 @@ import de.crysxd.octoapp.base.ext.isHlsStreamUrl
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
+import de.crysxd.octoapp.base.usecase.HandleAutomaticIlluminationEventUseCase
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
@@ -23,6 +21,7 @@ class WebcamViewModel(
     private val octoPrintRepository: OctoPrintRepository,
     private val octoPreferences: OctoPreferences,
     private val getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
+    private val handleAutomaticIlluminationEventUseCase: HandleAutomaticIlluminationEventUseCase
 ) : BaseViewModel() {
 
     companion object {
@@ -139,6 +138,12 @@ class WebcamViewModel(
                                         canSwitchWebcam = canSwitchWebcam,
                                     )
                                 )
+                            }.onStart {
+                                handleAutomaticIlluminationEventUseCase.execute(HandleAutomaticIlluminationEventUseCase.Event.WebcamVisible)
+                            }.onCompletion {
+                                // Execute blocking as a normal execute switches threads causing the task never to be done as the current scope
+                                // is about to be terminated
+                                handleAutomaticIlluminationEventUseCase.executeBlocking(HandleAutomaticIlluminationEventUseCase.Event.WebcamGone)
                             }.collect {
                                 emit(it)
                             }

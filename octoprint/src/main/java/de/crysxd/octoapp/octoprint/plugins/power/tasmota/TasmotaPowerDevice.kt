@@ -9,6 +9,8 @@ data class TasmotaPowerDevice(
     @Transient val plugin: TasmotaPowerPlugin?,
     @SerializedName("label") override val displayName: String,
 ) : PowerDevice() {
+    override val capabilities
+        get() = listOf(Capability.ControlPrinterPower, Capability.Illuminate)
 
     override val id
         get() = "$ip/$idx"

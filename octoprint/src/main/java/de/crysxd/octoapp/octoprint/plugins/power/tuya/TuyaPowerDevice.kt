@@ -8,6 +8,8 @@ data class TuyaPowerDevice(
     @Transient val plugin: TuyaPowerPlugin?,
     @SerializedName("label") override val displayName: String,
 ) : PowerDevice() {
+    override val capabilities
+        get() = listOf(Capability.ControlPrinterPower, Capability.Illuminate)
 
     @Transient
     override val pluginDisplayName = "Tuya"

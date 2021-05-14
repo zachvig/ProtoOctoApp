@@ -5,7 +5,7 @@ abstract class PowerDevice {
     abstract val pluginId: String
     abstract val displayName: String
     abstract val pluginDisplayName: String
-    open val canControlPsu: Boolean = true
+    abstract val capabilities: List<Capability>
 
     abstract suspend fun turnOn()
     abstract suspend fun turnOff()
@@ -14,4 +14,8 @@ abstract class PowerDevice {
     val uniqueId
         get() = "$pluginId:$id"
 
+    sealed class Capability {
+        object ControlPrinterPower : Capability()
+        object Illuminate : Capability()
+    }
 }

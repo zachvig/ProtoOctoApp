@@ -19,7 +19,6 @@ import de.crysxd.octoapp.widgets.webcam.NoControlsWebcamAppWidget
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.lang.Exception
 
 
 class ExecuteWidgetActionActivity : LocalizedActivity() {
@@ -89,7 +88,7 @@ class ExecuteWidgetActionActivity : LocalizedActivity() {
 
             when {
                 progressWidgetIds.contains(id) -> ProgressAppWidget.notifyWidgetDataChanged()
-                webcamWidgetIds.contains(id) -> BaseWebcamAppWidget.updateAppWidget(id, live)
+                webcamWidgetIds.contains(id) -> BaseWebcamAppWidget.updateAppWidget(id, live, true)
             }
         } ?: updateAllWidgets()
 

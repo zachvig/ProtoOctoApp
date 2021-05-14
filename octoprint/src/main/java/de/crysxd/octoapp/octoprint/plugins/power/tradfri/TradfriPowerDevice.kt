@@ -8,6 +8,8 @@ data class TradfriPowerDevice(
     @Transient val plugin: TradfriPowerPlugin?,
     @SerializedName("name") override val displayName: String,
 ) : PowerDevice() {
+    override val capabilities
+        get() = listOf(Capability.ControlPrinterPower, Capability.Illuminate)
 
     @Transient
     override val pluginDisplayName = "Trådfri"
