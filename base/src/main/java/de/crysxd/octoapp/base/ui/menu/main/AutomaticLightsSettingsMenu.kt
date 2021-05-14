@@ -31,16 +31,14 @@ class AutomaticLightsSettingsMenu : Menu {
         ).flatten()
     }
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_automatic_lights)
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___title_automatic_lights)
 
-    override suspend fun getSubtitle(context: Context) =
-        "Select which lights are turned on when you open OctoApp and turned off when you close it. You can use this to illuminate the print surface automatically so your webcam can see what's going on at night."
+    override suspend fun getSubtitle(context: Context) = context.getString(R.string.main_menu___subtitle_automatic_lights)
 
     override fun getEmptyStateIcon() = R.drawable.octo_power_devices
     override fun getEmptyStateActionText(context: Context) = context.getString(R.string.power_menu___empty_state_action)
     override fun getEmptyStateActionUrl(context: Context) = UriLibrary.getFaqUri("supported_plugin").toString()
-    override fun getEmptyStateSubtitle(context: Context) =
-        "After you setup lights with your OctoPrint, you can configure here which lights to automatically turn on and off when you open or close OctoApp. You can use this to automatically illuminate the print surface, so your webcam can see what's going on at night."
+    override fun getEmptyStateSubtitle(context: Context) = context.getString(R.string.main_menu___empty_state_subtitle_automatic_lights)
 
     class AutoLightsForWidgetMenuItem : ToggleMenuItem() {
         private val prefs get() = Injector.get().octoPreferences()
@@ -50,10 +48,9 @@ class AutomaticLightsSettingsMenu : Menu {
         override val order = 200
         override val canBePinned = false
         override val style = MenuItemStyle.Settings
-        override val icon = R.drawable.ic_round_highlight_24
-        override suspend fun getTitle(context: Context) = "Lights for widget"
-        override suspend fun getDescription(context: Context) =
-            "Will turn the lights on whenever the widgets on your home screen refreshes automatically. This will cause your printer's lights to turn on randomly but will ensure the preview image in the widget is always well lit."
+        override val icon = R.drawable.ic_round_widgets_24
+        override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_lights_for_widget)
+        override suspend fun getDescription(context: Context) = context.getString(R.string.main_menu___item_lights_for_widget_description)
 
         override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
             prefs.automaticLightsForWidgetRefresh = enabled
@@ -68,7 +65,7 @@ class AutomaticLightsSettingsMenu : Menu {
         override val order = 100
         override val canBePinned = false
         override val style = MenuItemStyle.Settings
-        override val icon = R.drawable.ic_round_highlight_24
+        override val icon = R.drawable.ic_round_wb_incandescent_24
         override suspend fun getTitle(context: Context) = device.displayName
 
         override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {

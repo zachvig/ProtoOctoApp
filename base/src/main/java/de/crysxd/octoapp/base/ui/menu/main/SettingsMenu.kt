@@ -181,7 +181,7 @@ class AutomaticLightsSettingsMenuItem : SubMenuItem() {
     override val order = 108
     override val style = MenuItemStyle.Settings
     override val enforceSingleLine = false
-    override val icon = R.drawable.ic_round_highlight_24
+    override val icon = R.drawable.ic_round_wb_incandescent_24
     override val subMenu: Menu get() = AutomaticLightsSettingsMenu()
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_automatic_lights)
