@@ -141,10 +141,9 @@ class WebcamViewModel(
                             }.onStart {
                                 handleAutomaticIlluminationEventUseCase.execute(HandleAutomaticIlluminationEventUseCase.Event.WebcamVisible)
                             }.onCompletion {
-                                // Switch to global scope as the webcam stream scrop is dead and will not allow sending any network requests
-                                GlobalScope.launch {
-                                    handleAutomaticIlluminationEventUseCase.execute(HandleAutomaticIlluminationEventUseCase.Event.WebcamGone)
-                                }
+                                // Execute blocking as a normal execute switches threads causing the task never to be done as the current scope
+                                // is about to be terminated
+                                handleAutomaticIlluminationEventUseCase.executeBlocking(HandleAutomaticIlluminationEventUseCase.Event.WebcamGone)
                             }.collect {
                                 emit(it)
                             }

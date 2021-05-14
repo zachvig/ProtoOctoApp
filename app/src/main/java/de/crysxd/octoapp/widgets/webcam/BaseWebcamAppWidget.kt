@@ -100,7 +100,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             AppWidgetManager.getInstance(context).partiallyUpdateAppWidget(appWidgetId, views)
         }
 
-        internal fun updateAppWidget(appWidgetId: Int, playLive: Boolean = false) {
+        internal fun updateAppWidget(appWidgetId: Int, playLive: Boolean = false, isManualRefresh: Boolean = false) {
             lastUpdateJobs[appWidgetId]?.get()?.cancel()
             lastUpdateJobs[appWidgetId] = WeakReference(GlobalScope.launch {
                 Timber.i("Updating webcam widget $appWidgetId")
@@ -125,7 +125,8 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                         if (playLive) withTimeoutOrNull(LIVE_FOR_MS) {
                             doLiveStream(context, octoPrintInfo, webUrl, appWidgetManager, appWidgetId)
                         } else withTimeout(FETCH_TIMEOUT_MS) {
-                            createBitmapFlow(octoPrintInfo, appWidgetId, context).first()
+                            val illuminate = isManualRefresh || Injector.get().octoPreferences().automaticLightsForWidgetRefresh
+                            createBitmapFlow(octoPrintInfo, appWidgetId, context, illuminate).first()
                         }
                     }
 
@@ -173,7 +174,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             val sampleRateMs = 1000L
             // Thread A: Load webcam images
             launch {
-                createBitmapFlow(octoPrintInfo, sampleRateMs = sampleRateMs, appWidgetId = appWidgetId, context = context).collect {
+                createBitmapFlow(octoPrintInfo, sampleRateMs = sampleRateMs, appWidgetId = appWidgetId, context = context, illuminateIfPossible = true).collect {
                     Timber.v("Received frame")
                     lock.withLock { frame = it }
                 }
@@ -203,13 +204,20 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             return@withContext frame
         }
 
-        private suspend fun createBitmapFlow(octoPrintInfo: OctoPrintInstanceInformationV2?, appWidgetId: Int, context: Context, sampleRateMs: Long = 1) =
+        private suspend fun createBitmapFlow(
+            octoPrintInfo: OctoPrintInstanceInformationV2?,
+            appWidgetId: Int,
+            context: Context,
+            illuminateIfPossible: Boolean,
+            sampleRateMs: Long = 1
+        ) =
             Injector.get().getWebcamSnapshotUseCase().execute(
                 GetWebcamSnapshotUseCase.Params(
                     instanceInfo = octoPrintInfo,
                     maxWidthPx = BITMAP_WIDTH,
                     sampleRateMs = sampleRateMs,
-                    cornerRadiusPx = calculateCornerRadius(context, appWidgetId)
+                    cornerRadiusPx = calculateCornerRadius(context, appWidgetId),
+                    illuminateIfPossible = illuminateIfPossible
                 )
             )
 
