@@ -29,8 +29,9 @@ class PluginSettingsDeserializer : JsonDeserializer<Settings.PluginSettingsGroup
         "ikea_tradfri" -> context.deserialize<Settings.TradfriSettings>(element, Settings.TradfriSettings::class.java)
         "tplinksmartplug" -> context.deserialize<Settings.TpLinkSmartPlugSettings>(element, Settings.TpLinkSmartPlugSettings::class.java)
         "tasmota" -> context.deserialize<Settings.TasmotaSettings>(element, Settings.TasmotaSettings::class.java)
-        "tuyasmartplug" -> context.deserialize<Settings.TasmotaSettings>(element, Settings.TuyaSettings::class.java)
-        "multicam" -> context.deserialize<Settings.TasmotaSettings>(element, Settings.MultiCamSettings::class.java)
+        "tuyasmartplug" -> context.deserialize<Settings.TuyaSettings>(element, Settings.TuyaSettings::class.java)
+        "multicam" -> context.deserialize<Settings.MultiCamSettings>(element, Settings.MultiCamSettings::class.java)
+        "ws281x_led_status" -> context.deserialize<Settings.WS281xSettings>(element, Settings.WS281xSettings::class.java)
         "discovery" -> context.deserialize<Settings.Discovery>(element, Settings.Discovery::class.java)
         "octoeverywhere" -> context.deserialize<Settings.OctoEverywhere>(element, Settings.OctoEverywhere::class.java)
         else -> Unknown
