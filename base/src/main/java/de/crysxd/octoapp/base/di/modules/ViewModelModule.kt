@@ -86,10 +86,12 @@ open class ViewModelModule {
         octoPrintRepository: OctoPrintRepository,
         octoPreferences: OctoPreferences,
         getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
+        handleAutomaticIlluminationEventUseCase: HandleAutomaticIlluminationEventUseCase,
     ): ViewModel = WebcamViewModel(
         octoPrintRepository = octoPrintRepository,
         octoPreferences = octoPreferences,
         getWebcamSettingsUseCase = getWebcamSettingsUseCase,
+        handleAutomaticIlluminationEventUseCase = handleAutomaticIlluminationEventUseCase
     )
 
     @Provides

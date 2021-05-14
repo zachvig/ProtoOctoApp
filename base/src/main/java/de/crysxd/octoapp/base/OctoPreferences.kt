@@ -29,6 +29,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_PRINT_NOTIFICATION_WAS_DISCONNECTED = "print_notification_was_disconnected"
         private const val KEY_PRINT_NOTIFICATION_WAS_PAUSED = "print_notification_was_paused"
         private const val KEY_EXPERIMENTAL_WEBCAM = "experimental_webcam"
+        private const val KEY_AUTO_LIGHTS = "auto_lights"
     }
 
     private val updatedChannel = ConflatedBroadcastChannel(Unit)
@@ -124,5 +125,11 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         get() = sharedPreferences.getBoolean(KEY_EXPERIMENTAL_WEBCAM, Firebase.remoteConfig.getBoolean("experimental_webcam"))
         set(value) {
             edit { putBoolean(KEY_EXPERIMENTAL_WEBCAM, value) }
+        }
+
+    var automaticLights
+        get() = sharedPreferences.getStringSet(KEY_AUTO_LIGHTS, emptySet()) ?: emptySet()
+        set(value) {
+            edit { putStringSet(KEY_AUTO_LIGHTS, value) }
         }
 }

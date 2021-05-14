@@ -22,6 +22,7 @@ class GetPowerDevicesUseCase @Inject constructor(
         // Emit without power state
         val result = devices.map { Pair<PowerDevice, PowerState>(it, PowerState.Unknown) }
             .filter { param.onlyGetDeviceWithUniqueId == null || param.onlyGetDeviceWithUniqueId == it.first.uniqueId }
+            .filter { it.first.capabilities.containsAll(param.requiredCapabilities) }
             .toMap()
             .toMutableMap()
 
@@ -47,7 +48,8 @@ class GetPowerDevicesUseCase @Inject constructor(
 
     data class Params(
         val queryState: Boolean,
-        val onlyGetDeviceWithUniqueId: String? = null
+        val onlyGetDeviceWithUniqueId: String? = null,
+        val requiredCapabilities: List<PowerDevice.Capability> = emptyList()
     )
 
     sealed class PowerState : Parcelable {

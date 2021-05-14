@@ -6,8 +6,8 @@ sealed class WS281xDevice : PowerDevice() {
     abstract override val id: String
     abstract val plugin: WS281xPowerPlugin?
 
-    @Transient
-    override val canControlPsu = false
+    override val capabilities
+        get() = listOf(Capability.Illuminate)
 
     @Transient
     override val pluginDisplayName = "WS281x LED Status"

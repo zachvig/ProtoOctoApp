@@ -69,7 +69,12 @@ class ConnectPrinterViewModel(
 
         viewModelScope.launch {
             try {
-                isPsuSupported = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(false)).filter { it.first.canControlPsu }.isNotEmpty()
+                isPsuSupported = getPowerDevicesUseCase.execute(
+                    GetPowerDevicesUseCase.Params(
+                        queryState = false,
+                        requiredCapabilities = PowerControlsMenu.DeviceType.PrinterPsu.requiredCapabilities
+                    )
+                ).isNotEmpty()
                 computeUiState()
             } catch (e: Exception) {
                 Timber.w(e, "Unable to check power devices")
