@@ -71,7 +71,7 @@
 
             <TextView
                 android:id="@+id/dummyLive"
-                style="@style/OctoTheme.AppWidget.Chip.Live"
+                style="@style/OctoTheme.Chip.Live"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

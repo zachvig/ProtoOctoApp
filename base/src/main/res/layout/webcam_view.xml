@@ -33,15 +33,23 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
+        <TextView
             android:id="@+id/liveIndicator"
+            style="@style/OctoTheme.Chip.Live"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_1"
             android:contentDescription="@string/cd_live"
-            android:src="@drawable/ic_live"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/resolutionIndicator"
+            style="@style/OctoTheme.Chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="480p" />
 
         <ImageButton
             android:id="@+id/imageButtonFullscreen"
@@ -145,10 +153,13 @@
             style="@style/OctoTheme.Widget.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_2"
             android:text="@string/trouble_shooting"
             android:textAppearance="@style/OctoTheme.TextAppearance"
             android:textColor="@color/text_colored_background" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_2" />
 
         <Button
             android:id="@+id/buttonReconnect"

@@ -39,7 +39,7 @@
 
             <TextView
                 android:id="@+id/updatedAt"
-                style="@style/OctoTheme.AppWidget.Chip"
+                style="@style/OctoTheme.Chip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
@@ -48,7 +48,7 @@
 
             <TextView
                 android:id="@+id/live"
-                style="@style/OctoTheme.AppWidget.Chip.Live"
+                style="@style/OctoTheme.Chip.Live"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone" />

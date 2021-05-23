@@ -223,4 +223,22 @@
         <item name="tabIndicatorGravity">center</item>
     </style>
 
+    <style name="OctoTheme.Chip" parent="">
+        <item name="android:background">@drawable/widget_chip_background</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_margin">@dimen/margin_1</item>
+        <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Label</item>
+        <item name="android:text">@string/app_widget___updating</item>
+        <item name="android:gravity">end</item>
+    </style>
+
+    <style name="OctoTheme.Chip.Live">
+        <item name="android:background">@drawable/widget_chip_live_background</item>
+        <item name="android:paddingStart">@dimen/margin_2</item>
+        <item name="android:paddingTop">@dimen/margin_0</item>
+        <item name="android:paddingBottom">@dimen/margin_0</item>
+        <item name="android:text">@string/app_widget___live</item>
+        <item name="android:paddingEnd">@dimen/margin_1</item>
+    </style>
+
 </resources>

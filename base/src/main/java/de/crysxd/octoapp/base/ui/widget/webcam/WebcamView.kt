@@ -191,6 +191,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         binding.playingState.isVisible = true
         binding.hlsSurface.isVisible = true
         binding.mjpegSurface.isVisible = false
+        binding.resolutionIndicator.isVisible = false
         usedLiveIndicator?.isVisible = false
         hlsPlayer.setVideoSurfaceHolder(binding.hlsSurface.holder)
         val mediaItem = MediaItem.fromUri(state.uri)
@@ -306,6 +307,10 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
         binding.mjpegSurface.imageMatrix = createMjpegMatrix(scaleToFill, state)
         binding.mjpegSurface.setImageBitmap(state.frame)
+        binding.resolutionIndicator.isVisible = true
+        val size = min(state.frame.width, state.frame.height)
+        @SuppressLint("SetTextI18n")
+        binding.resolutionIndicator.text = "${size}p"
         applyAspectRatio(state.frame.width, state.frame.height)
 
         invalidateMjpegFrame()
