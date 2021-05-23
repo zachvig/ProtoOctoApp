@@ -477,4 +477,9 @@
     <string name="configure_remote_acces___octoeverywhere___connected">OctoEverywhere is connected!</string>
     <string name="main_menu___delete_octoprint_dialog_message">Permanently remove %s from OctoApp?</string>
     <string name="main_menu___delete_octoprint_dialog_button">Remove</string>
+    <string name="webcam_settings___title">Webcam Settings</string>
+    <string name="webcam_settings___subtitle">All settings from the OctoPrint web interface are applied in OctoApp.</string>
+    <string name="webcam_settings___show_resolution">Show resolution</string>
+    <string name="webcam_settings___enable_full_resolution">Enable full resolution</string>
+    <string name="webcam_settings___enable_full_resolution_explainer">Resolution is currently limited to %dp for 16:9 streams, other aspect ratios might have other limits. Enable the full resolution above to use your webcam\'s native resolution.</string>
 </resources>

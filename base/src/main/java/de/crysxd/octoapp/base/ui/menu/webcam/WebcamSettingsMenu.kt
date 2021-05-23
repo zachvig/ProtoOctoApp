@@ -21,8 +21,8 @@ class WebcamSettingsMenu : Menu {
         EnableFullResolutionMenuItem()
     )
 
-    override suspend fun getTitle(context: Context) = "Webcam Controls"
-    override suspend fun getSubtitle(context: Context) = "All settings from the OctoPrint web interface are applied in OctoApp."
+    override suspend fun getTitle(context: Context) = context.getString(R.string.webcam_settings___title)
+    override suspend fun getSubtitle(context: Context) = context.getString(R.string.webcam_settings___subtitle)
 
     class ShowResolutionMenuItem : ToggleMenuItem() {
         override val isEnabled get() = Injector.get().octoPreferences().isShowWebcamResolution
@@ -33,7 +33,7 @@ class WebcamSettingsMenu : Menu {
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_image_aspect_ratio_24
 
-        override suspend fun getTitle(context: Context) = "Show resolution"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.webcam_settings___show_resolution)
 
         override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
             Injector.get().octoPreferences().isShowWebcamResolution = enabled
@@ -49,9 +49,8 @@ class WebcamSettingsMenu : Menu {
         override val icon = R.drawable.ic_round_photo_size_select_large_24
         override suspend fun isVisible(destinationId: Int) = !BillingManager.isFeatureEnabled(BillingManager.FEATURE_FULL_WEBCAM_RESOLUTION)
 
-        override suspend fun getTitle(context: Context) = "Enable full resolution"
-        override suspend fun getDescription(context: Context) =
-            "Resolution is currently limited to ${maxResolution}p for 16:9 streams, other aspect ratios might have other limits. Enable the full resolution above to use your webcam's native resolution."
+        override suspend fun getTitle(context: Context) = context.getString(R.string.webcam_settings___enable_full_resolution)
+        override suspend fun getDescription(context: Context) = context.getString(R.string.webcam_settings___enable_full_resolution_explainer, maxResolution)
 
         override suspend fun onClicked(host: MenuBottomSheetFragment?) {
             host?.requireOctoActivity()?.let {
