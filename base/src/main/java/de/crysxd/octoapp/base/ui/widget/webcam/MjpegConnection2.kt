@@ -2,13 +2,15 @@ package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_FULL_WEBCAM_RESOLUTION
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
-import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -153,9 +155,11 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
         private var bitmaps = emptyList<Bitmap>()
         private var lastBitmapUsed = 0
         private val bitmapPoolSize = 3
+        private var sampleSize = 1
 
         fun reset() {
             index = 0
+            sampleSize = 1
             bitmaps = emptyList()
         }
 
@@ -171,6 +175,7 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
                     val bitmap = getNextBitmap(length)
                     val ops = BitmapFactory.Options()
                     ops.inBitmap = bitmap
+                    ops.inSampleSize = sampleSize
                     BitmapFactory.decodeByteArray(array, 0, length, ops)
                 } catch (e: Exception) {
                     Timber.w("Failed to decode frame: $e")
@@ -185,12 +190,34 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
 
         private fun getNextBitmap(length: Int): Bitmap {
             if (bitmaps.isEmpty()) {
+                // Decode image bounds
                 Timber.i("Creating bitmap pool")
                 val ops = BitmapFactory.Options()
                 ops.inJustDecodeBounds = true
                 BitmapFactory.decodeByteArray(array, 0, length, ops)
+
+                // Calc used size
+                val maxSize = if (BillingManager.isFeatureEnabled(FEATURE_FULL_WEBCAM_RESOLUTION)) {
+                    Int.MAX_VALUE
+                } else {
+                    FirebaseRemoteConfig.getInstance().getLong("free_webcam_max_resolution").toInt()
+                }
+                sampleSize = 1
+                var width = ops.outWidth
+                var height = ops.outHeight
+                while (width > maxSize || height > maxSize) {
+                    sampleSize *= 2
+                    width = ops.outWidth / sampleSize
+                    height = ops.outHeight / sampleSize
+                }
+
+                if (width != ops.outWidth || height != ops.outHeight) {
+                    Timber.i("Native resolution of ${ops.outWidth}x${ops.outHeight}px exceeds maximum edge length of $maxSize")
+                    Timber.i("Using sampleSize=$sampleSize, resulting in ${width}x${height}px")
+                }
+
                 bitmaps = (0 until bitmapPoolSize).map {
-                    Bitmap.createBitmap(ops.outWidth, ops.outHeight, Bitmap.Config.ARGB_8888)
+                    Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
                 }
             }
 

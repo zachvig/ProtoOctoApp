@@ -22,6 +22,7 @@ object BillingManager {
     const val FEATURE_GCODE_PREVIEW = "gcode_preview"
     const val FEATURE_HLS_WEBCAM = "hls_webcam"
     const val FEATURE_INFINITE_WIDGETS = "infinite_app_widgets"
+    const val FEATURE_FULL_WEBCAM_RESOLUTION = "full_webcam_resolution"
 
     private val billingEventChannel = ConflatedBroadcastChannel<BillingEvent>()
     private val billingChannel = ConflatedBroadcastChannel(BillingData())

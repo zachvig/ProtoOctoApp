@@ -80,7 +80,11 @@
     </entry>
     <entry>
         <key>premium_features</key>
-        <value>gcode_preview,hls_webcam,quick_switch,infinite_app_widgets</value>
+        <value>gcode_preview,hls_webcam,quick_switch,infinite_app_widgets,auto_lights,full_webcam_resolution</value>
+    </entry>
+    <entry>
+        <key>free_webcam_max_resolution</key>
+        <value>480</value>
     </entry>
     <entry>
         <key>web_socket_ping_pong_timeout_ms</key>
