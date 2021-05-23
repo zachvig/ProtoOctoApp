@@ -28,6 +28,7 @@ import com.google.android.exoplayer2.video.VideoListener
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.databinding.WebcamViewBinding
+import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.coroutines.Job
@@ -259,13 +260,14 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         }
     }
 
-    private fun invalidateMjpegFrame() {
+    private fun invalidateMjpegFrame(frame: Bitmap) {
         binding.playingState.isGatedVisible = true
         binding.hlsSurface.isGatedVisible = false
         binding.mjpegSurface.isGatedVisible = true
         usedLiveIndicator?.isGatedVisible = true
         binding.loadingState.isGatedVisible = false
         binding.streamStalledIndicator.isGatedVisible = false
+        binding.mjpegSurface.setImageBitmap(frame)
 
         // Hide live indicator if no new frame arrives within 3s
         // Show stalled indicator if no new frame arrives within 10s
@@ -305,15 +307,17 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             beginDelayedTransition()
         }
 
-        binding.mjpegSurface.imageMatrix = createMjpegMatrix(scaleToFill, state)
-        binding.mjpegSurface.setImageBitmap(state.frame)
-        binding.resolutionIndicator.isVisible = true
-        val size = min(state.frame.width, state.frame.height)
-        @SuppressLint("SetTextI18n")
-        binding.resolutionIndicator.text = "${size}p"
-        applyAspectRatio(state.frame.width, state.frame.height)
+        // Currently not showing Mjpeg frame? setup
+        if (this.state !is WebcamState.MjpegFrameReady) {
+            binding.mjpegSurface.imageMatrix = createMjpegMatrix(scaleToFill, state)
+            val size = min(state.frame.width, state.frame.height)
+            @SuppressLint("SetTextI18n")
+            binding.resolutionIndicator.text = "${size}p"
+            applyAspectRatio(state.frame.width, state.frame.height)
+        }
 
-        invalidateMjpegFrame()
+        binding.resolutionIndicator.isVisible = Injector.get().octoPreferences().isShowWebcamResolution
+        invalidateMjpegFrame(state.frame)
     }
 
     private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(this, TransitionSet().also {

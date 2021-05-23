@@ -6,6 +6,7 @@ import de.crysxd.octoapp.base.ui.menu.power.PowerControlsMenu
 import de.crysxd.octoapp.base.ui.menu.switchprinter.AddInstanceMenuItem
 import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchInstanceMenuItem
 import de.crysxd.octoapp.base.ui.menu.temperature.ApplyTemperaturePresetMenuItem
+import de.crysxd.octoapp.base.ui.menu.webcam.WebcamSettingsMenu
 
 const val MENU_ITEM_SUPPORT_OCTOAPP = "main___support_octoapp"
 const val MENU_ITEM_SETTINGS_MENU = "main___settings_menu"
@@ -48,6 +49,8 @@ const val MENU_ITEM_POWER_DEVICE_OFF = "power___device_off"
 const val MENU_ITEM_POWER_DEVICE_ON = "power___device_on"
 const val MENU_ITEM_POWER_DEVICE_CYCLE = "power___cycle"
 const val MENU_ITEM_ROTATE_APP = "lab___rotate"
+const val MENU_ITEM_SHOW_WEBCAM_RESOLUTION = "webcam___show_resolution"
+const val MENU_ITEM_ENABLE_FULL_WEBCAM_RESOLUTION = "webcam___enable_full_resolution"
 
 
 class MenuItemLibrary {
@@ -81,6 +84,8 @@ class MenuItemLibrary {
         MENU_ITEM_CONFIGURE_REMOTE_ACCESS to ConfigureRemoteAccessMenuItem::class,
         MENU_ITEM_SHOW_FILES to ShowFilesMenuItem::class,
         MENU_ITEM_AUTOMATIC_LIGHTS to AutomaticLightsSettingsMenuItem::class,
+        MENU_ITEM_SHOW_WEBCAM_RESOLUTION to WebcamSettingsMenu.ShowResolutionMenuItem::class,
+        MENU_ITEM_ENABLE_FULL_WEBCAM_RESOLUTION to WebcamSettingsMenu.EnableFullResolutionMenuItem::class,
     )
 
     operator fun get(itemId: String): MenuItem? = when {

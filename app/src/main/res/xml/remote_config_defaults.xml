@@ -84,7 +84,7 @@
     </entry>
     <entry>
         <key>free_webcam_max_resolution</key>
-        <value>480</value>
+        <value>640</value>
     </entry>
     <entry>
         <key>web_socket_ping_pong_timeout_ms</key>
@@ -96,7 +96,7 @@
     </entry>
     <entry>
         <key>tested_octoprint_version</key>
-        <value>1.5.2</value>
+        <value>1.6.1</value>
     </entry>
     <entry>
         <key>default_plugins</key>

@@ -31,6 +31,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_EXPERIMENTAL_WEBCAM = "experimental_webcam"
         private const val KEY_AUTO_LIGHTS = "auto_lights"
         private const val KEY_AUTO_LIGHTS_FOR_WIDGET_REFRESH = "auto_lights_for_widget_refresh"
+        private const val KEY_SHOW_WEBCAM_RESOLUTION = "show_webcam_resolution"
     }
 
     private val updatedChannel = ConflatedBroadcastChannel(Unit)
@@ -138,5 +139,11 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         get() = sharedPreferences.getBoolean(KEY_AUTO_LIGHTS_FOR_WIDGET_REFRESH, false)
         set(value) {
             edit { putBoolean(KEY_AUTO_LIGHTS_FOR_WIDGET_REFRESH, value) }
+        }
+
+    var isShowWebcamResolution
+        get() = sharedPreferences.getBoolean(KEY_SHOW_WEBCAM_RESOLUTION, true)
+        set(value) {
+            edit { putBoolean(KEY_SHOW_WEBCAM_RESOLUTION, value) }
         }
 }

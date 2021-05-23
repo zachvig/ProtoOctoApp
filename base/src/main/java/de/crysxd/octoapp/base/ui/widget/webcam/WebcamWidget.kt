@@ -15,6 +15,8 @@ import de.crysxd.octoapp.base.databinding.WebcamWidgetBinding
 import de.crysxd.octoapp.base.di.injectActivityViewModel
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.webcam.WebcamSettingsMenu
 import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel.UiState
@@ -52,6 +54,12 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
             )
         }
         binding.webcamView.onSwitchWebcamClicked = { baseViewModel.nextWebcam() }
+    }
+
+    override fun getActionIcon() = R.drawable.ic_round_settings_24
+
+    override fun onAction() {
+        MenuBottomSheetFragment.createForMenu(WebcamSettingsMenu()).show(parent.childFragmentManager)
     }
 
     override fun createNewViewModel(parent: BaseWidgetHostFragment) = parent.injectActivityViewModel<WebcamViewModel>().value

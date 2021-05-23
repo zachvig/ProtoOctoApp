@@ -206,7 +206,7 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
                 var width = ops.outWidth
                 var height = ops.outHeight
                 while (width > maxSize || height > maxSize) {
-                    sampleSize *= 2
+                    sampleSize += 1
                     width = ops.outWidth / sampleSize
                     height = ops.outHeight / sampleSize
                 }
