@@ -309,15 +309,11 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             beginDelayedTransition()
         }
 
-        // Currently not showing Mjpeg frame? setup
-        if (this.state !is WebcamState.MjpegFrameReady) {
-            binding.mjpegSurface.imageMatrix = createMjpegMatrix(scaleToFill, state)
-            val size = min(state.frame.width, state.frame.height)
-            @SuppressLint("SetTextI18n")
-            binding.resolutionIndicator.text = "${size}p"
-            applyAspectRatio(state.frame.width, state.frame.height)
-        }
-
+        binding.mjpegSurface.imageMatrix = createMjpegMatrix(scaleToFill, state)
+        val size = min(state.frame.width, state.frame.height)
+        @SuppressLint("SetTextI18n")
+        binding.resolutionIndicator.text = "${size}p"
+        applyAspectRatio(state.frame.width, state.frame.height)
         binding.resolutionIndicator.isVisible = Injector.get().octoPreferences().isShowWebcamResolution
         invalidateMjpegFrame(state.frame)
     }
