@@ -75,6 +75,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         }
 
     var onSwitchWebcamClicked: () -> Unit = {}
+    var onResolutionClicked: () -> Unit = {}
     var onResetConnection: () -> Unit = {}
     var onFullscreenClicked: () -> Unit = {}
     var onScaleToFillChanged: () -> Unit = {}
@@ -106,6 +107,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         binding.buttonReconnect.setOnClickListener { onResetConnection() }
         binding.imageButtonFullscreen.setOnClickListener { onFullscreenClicked() }
         binding.imageButtonSwitchCamera.setOnClickListener { onSwitchWebcamClicked() }
+        binding.resolutionIndicator.setOnClickListener { onResolutionClicked() }
     }
 
     @SuppressLint("ClickableViewAccessibility")

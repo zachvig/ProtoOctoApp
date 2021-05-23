@@ -22,6 +22,8 @@ import de.crysxd.octoapp.base.di.injectActivityViewModel
 import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.webcam.WebcamSettingsMenu
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
@@ -50,6 +52,9 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
         binding.webcamView.onResetConnection = viewModel::connect
         binding.webcamView.fullscreenIconResource = R.drawable.ic_round_fullscreen_exit_24
         binding.webcamView.usedLiveIndicator = binding.externalLiveIndicator
+        binding.webcamView.onResolutionClicked = {
+            MenuBottomSheetFragment.createForMenu(WebcamSettingsMenu()).show(childFragmentManager)
+        }
         binding.webcamView.onScaleToFillChanged = {
             viewModel.storeScaleType(
                 if (binding.webcamView.scaleToFill) {
