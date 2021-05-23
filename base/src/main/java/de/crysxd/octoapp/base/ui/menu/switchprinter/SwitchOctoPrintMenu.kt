@@ -6,10 +6,10 @@ import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_QUICK_SWITCH
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ext.toHtml
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.Menu
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
@@ -21,7 +21,7 @@ import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SIGN_OUT
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SWITCH_INSTANCE
 import kotlinx.parcelize.Parcelize
 
-private val isQuickSwitchEnabled get() = BillingManager.isFeatureEnabled("quick_switch")
+private val isQuickSwitchEnabled get() = BillingManager.isFeatureEnabled(FEATURE_QUICK_SWITCH)
 private val isAnyActive get() = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl != null
 
 @Parcelize
@@ -138,7 +138,7 @@ class EnableQuickSwitchMenuItem : MenuItem {
     override suspend fun onClicked(host: MenuBottomSheetFragment?) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "switch_menu"))
         host?.requireOctoActivity()?.let {
-            UriLibrary.getPurchaseUrl().open(it)
+            UriLibrary.getPurchaseUri().open(it)
         }
     }
 }

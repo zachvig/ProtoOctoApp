@@ -4,6 +4,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_GCODE_PREVIEW
 import de.crysxd.octoapp.base.datasource.GcodeFileDataSource
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderContextFactory
 import de.crysxd.octoapp.base.gcode.render.models.GcodeRenderContext
@@ -103,7 +104,7 @@ class GcodePreviewViewModel(
         .asLiveData(viewModelScope.coroutineContext)
 
 
-    private fun isFeatureEnabled() = BillingManager.isFeatureEnabled("gcode_preview")
+    private fun isFeatureEnabled() = BillingManager.isFeatureEnabled(FEATURE_GCODE_PREVIEW)
 
     fun downloadGcode(file: FileObject.File, allowLargeFileDownloads: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
         Timber.i("Download file: ${file.path}")

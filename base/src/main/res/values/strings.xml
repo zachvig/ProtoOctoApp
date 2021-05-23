@@ -340,8 +340,10 @@
     <string name="main_menu___item_change_octoprint_instance">Switch OctoPrint</string>
     <string name="main_menu___item_automatic_lights">Automatic lights</string>
     <string name="main_menu___title_automatic_lights">Automatic lights</string>
+    <string name="main_menu___button_enable_automatic_lights">Enable automatic lights</string>
     <string name="main_menu___subtitle_automatic_lights">Select which lights are turned on when your webcam is connected and turned off when it\'s disconnected. You can use this to automatically illuminate the print surface so your webcam can see what\'s going on at night.</string>
     <string name="main_menu___empty_state_subtitle_automatic_lights">After you setup lights with your OctoPrint, you can configure here which lights to automatically turn on and off when you open or close OctoApp. You can use this to automatically illuminate the print surface, so your webcam can see what\'s going on at night.</string>
+    <string name="main_menu___empty_state_subtitle_automatic_lights_disabled">Enable this feature to automatically turn on lights from the power menu whenever you look at the webcam.</string>
     <string name="main_menu___item_lights_for_widget">Lights for widget</string>
     <string name="main_menu___item_lights_for_widget_description">Will turn the lights on whenever the widgets on your home screen refreshes in the background. This will cause your printer\'s lights to turn on randomly but will ensure the preview image in the widget is always well lit.</string>
     <string name="main_menu___show_octoapp_lab">OctoApp Lab</string>

@@ -19,6 +19,7 @@ import androidx.navigation.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_GCODE_PREVIEW
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.ext.open
@@ -53,7 +54,7 @@ class GcodePreviewWidget(context: Context) : RecyclableOctoWidget<GcodePreviewWi
 
     override fun createNewViewModel(parent: BaseWidgetHostFragment) = parent.injectActivityViewModel<GcodePreviewViewModel>(Injector.get().viewModelFactory()).value
 
-    override fun isVisible() = BillingManager.isFeatureEnabled("gcode_preview") ||
+    override fun isVisible() = BillingManager.isFeatureEnabled(FEATURE_GCODE_PREVIEW) ||
             (System.currentTimeMillis() - Injector.get().sharedPreferences().getLong(KEY_HIDDEN_AT, 0)) > HIDDEN_FOR_MILLIS
 
     override fun getTitle(context: Context) = context.getString(R.string.widget_gcode_preview)
@@ -190,7 +191,7 @@ class GcodePreviewWidget(context: Context) : RecyclableOctoWidget<GcodePreviewWi
 
         binding.buttonEnable.setOnClickListener {
             OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "gcode_live"))
-            UriLibrary.getPurchaseUrl().open(parent.requireOctoActivity())
+            UriLibrary.getPurchaseUri().open(parent.requireOctoActivity())
         }
     }
 

@@ -6,6 +6,7 @@ import android.widget.ImageView
 import androidx.lifecycle.*
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_HLS_WEBCAM
 import de.crysxd.octoapp.base.ext.isHlsStreamUrl
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
@@ -97,7 +98,7 @@ class WebcamViewModel(
 
                         // Open stream
                         if (streamUrl.isHlsStreamUrl) {
-                            if (!BillingManager.isFeatureEnabled("hls_webcam")) {
+                            if (!BillingManager.isFeatureEnabled(FEATURE_HLS_WEBCAM)) {
                                 emit(UiState.HlsStreamDisabled(canSwitchWebcam = canSwitchWebcam))
                             } else {
                                 emit(

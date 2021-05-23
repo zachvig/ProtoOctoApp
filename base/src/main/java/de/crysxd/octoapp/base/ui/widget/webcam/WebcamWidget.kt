@@ -34,7 +34,7 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
         binding.webcamView.onResetConnection = {
             if (binding.webcamView.state == WebcamView.WebcamState.HlsStreamDisabled) {
                 OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "hls_webcam_widget"))
-                UriLibrary.getPurchaseUrl().open(parent.requireOctoActivity())
+                UriLibrary.getPurchaseUri().open(parent.requireOctoActivity())
             } else {
                 baseViewModel.connect()
             }

@@ -10,6 +10,7 @@ import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_WEB_URL
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_QUICK_SWITCH
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.format
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
@@ -46,7 +47,7 @@ internal fun createLaunchAppIntent(context: Context, webUrl: String?) = PendingI
     context,
     "launch_main_with_url_$webUrl".hashCode(),
     Intent(context, MainActivity::class.java).also {
-        if (BillingManager.isFeatureEnabled("quick_switch")) {
+        if (BillingManager.isFeatureEnabled(FEATURE_QUICK_SWITCH)) {
             it.putExtra(EXTRA_TARGET_OCTOPRINT_WEB_URL, webUrl)
         }
     },

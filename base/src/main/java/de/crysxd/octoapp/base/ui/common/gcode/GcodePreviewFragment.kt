@@ -116,7 +116,7 @@ class GcodePreviewFragment : BaseFragment(R.layout.gcode_preview_fragment) {
 
         binding.buttonEnableFeature.setOnClickListener {
             OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "gcode_preview"))
-            UriLibrary.getPurchaseUrl().open(requireOctoActivity())
+            UriLibrary.getPurchaseUri().open(requireOctoActivity())
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {

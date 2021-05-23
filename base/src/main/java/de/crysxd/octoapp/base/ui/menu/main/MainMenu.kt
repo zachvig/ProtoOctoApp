@@ -51,7 +51,7 @@ class SupportOctoAppMenuItem : MenuItem {
     override suspend fun onClicked(host: MenuBottomSheetFragment?) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "main_menu"))
         host?.requireOctoActivity()?.let {
-            UriLibrary.getPurchaseUrl().open(it)
+            UriLibrary.getPurchaseUri().open(it)
         }
     }
 }

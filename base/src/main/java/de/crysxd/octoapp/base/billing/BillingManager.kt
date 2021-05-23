@@ -17,6 +17,12 @@ import timber.log.Timber
 @Suppress("EXPERIMENTAL_API_USAGE")
 object BillingManager {
 
+    const val FEATURE_AUTOMATIC_LIGHTS = "auto_lights"
+    const val FEATURE_QUICK_SWITCH = "quick_switch"
+    const val FEATURE_GCODE_PREVIEW = "gcode_preview"
+    const val FEATURE_HLS_WEBCAM = "hls_webcam"
+    const val FEATURE_INFINITE_WIDGETS = "infinite_app_widgets"
+
     private val billingEventChannel = ConflatedBroadcastChannel<BillingEvent>()
     private val billingChannel = ConflatedBroadcastChannel(BillingData())
     private val purchasesUpdateListener = PurchasesUpdatedListener { billingResult, purchases ->
@@ -249,11 +255,11 @@ object BillingManager {
         }
     }
 
-    fun isFeatureEnabled(feature: String) = !Firebase.remoteConfig.getString("premium_features")
-        .split(",")
-        .map {
-            it.trim()
-        }.contains(feature) || billingChannel.valueOrNull?.isPremiumActive == true
+    fun isFeatureEnabled(feature: String): Boolean {
+        val isPremiumFeature = Firebase.remoteConfig.getString("premium_features").split(",").map { it.trim() }.contains(feature)
+        val hasPremium = billingChannel.valueOrNull?.isPremiumActive == true
+        return !isPremiumFeature || hasPremium
+    }
 
     fun shouldAdvertisePremium() = billingChannel.valueOrNull?.let {
         it.isBillingAvailable && !it.isPremiumActive && it.availableSku.isNotEmpty()

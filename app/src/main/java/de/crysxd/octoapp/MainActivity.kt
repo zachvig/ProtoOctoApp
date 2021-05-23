@@ -33,6 +33,7 @@ import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingEvent
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_QUICK_SWITCH
 import de.crysxd.octoapp.base.billing.PurchaseConfirmationDialog
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
@@ -43,6 +44,7 @@ import de.crysxd.octoapp.base.ui.colorTheme
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
 import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
+import de.crysxd.octoapp.base.ui.widget.extrude.ExtrudeWidget
 import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
@@ -55,7 +57,6 @@ import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.ConnectionType
 import de.crysxd.octoapp.octoprint.models.socket.Event
-import de.crysxd.octoapp.base.ui.widget.extrude.ExtrudeWidget
 import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidget
 import de.crysxd.octoapp.print_controls.ui.widget.gcode.GcodePreviewWidget
 import de.crysxd.octoapp.print_controls.ui.widget.progress.ProgressWidget
@@ -199,7 +200,7 @@ class MainActivity : OctoActivity() {
     }
 
     override fun onNewIntent(intent: Intent?) {
-        if (BillingManager.isFeatureEnabled("quick_switch")) {
+        if (BillingManager.isFeatureEnabled(FEATURE_QUICK_SWITCH)) {
             intent?.getStringExtra(EXTRA_TARGET_OCTOPRINT_WEB_URL)?.let { webUrl ->
                 val repo = Injector.get().octorPrintRepository()
                 repo.getAll().firstOrNull { it.webUrl == webUrl }?.let {

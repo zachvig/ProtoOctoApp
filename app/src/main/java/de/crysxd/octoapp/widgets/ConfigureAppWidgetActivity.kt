@@ -17,6 +17,7 @@ import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_WEB_URL
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_INFINITE_WIDGETS
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.base.LocalizedActivity
 import de.crysxd.octoapp.base.ui.colorTheme
@@ -40,7 +41,7 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
         val activeWidgetCount = getWidgetCount(this)
         Timber.i("Widgets active: $activeWidgetCount")
         val maxWidgetCount = Firebase.remoteConfig.getLong("number_of_free_app_widgets")
-        if (activeWidgetCount > maxWidgetCount && !BillingManager.isFeatureEnabled("infinite_app_widgets")) {
+        if (activeWidgetCount > maxWidgetCount && !BillingManager.isFeatureEnabled(FEATURE_INFINITE_WIDGETS)) {
             MaterialAlertDialogBuilder(this)
                 .setMessage(getString(R.string.app_widget___free_widgets_exceeded_message, maxWidgetCount))
                 .setPositiveButton(R.string.app_widget___free_widgets_exceeded_action, null)

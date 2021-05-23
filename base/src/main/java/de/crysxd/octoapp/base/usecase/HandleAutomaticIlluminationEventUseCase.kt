@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.usecase
 
 import de.crysxd.octoapp.base.OctoPreferences
+import de.crysxd.octoapp.base.billing.BillingManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -17,6 +18,10 @@ class HandleAutomaticIlluminationEventUseCase @Inject constructor(
     }
 
     override suspend fun doExecute(param: Event, timber: Timber.Tree): Boolean {
+        if (!BillingManager.isFeatureEnabled(BillingManager.FEATURE_AUTOMATIC_LIGHTS)) {
+            timber.i("Automatic lights disabled, skipping any action")
+        }
+
         val autoIds = octoPreferences.automaticLights
         val lights = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(queryState = false))
             .filter { autoIds.contains(it.first.id) }

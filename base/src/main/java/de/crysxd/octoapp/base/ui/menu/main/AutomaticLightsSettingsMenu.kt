@@ -3,6 +3,8 @@ package de.crysxd.octoapp.base.ui.menu.main
 import android.content.Context
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UriLibrary
+import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_AUTOMATIC_LIGHTS
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.menu.Menu
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
@@ -15,7 +17,11 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 class AutomaticLightsSettingsMenu : Menu {
 
+    private val isFeatureEnabled get() = BillingManager.isFeatureEnabled(FEATURE_AUTOMATIC_LIGHTS)
+
     override suspend fun getMenuItem(): List<ToggleMenuItem> {
+        if (!isFeatureEnabled) return emptyList()
+
         val lights = Injector.get().getPowerDevicesUseCase().execute(
             GetPowerDevicesUseCase.Params(
                 queryState = false,
@@ -36,9 +42,17 @@ class AutomaticLightsSettingsMenu : Menu {
     override suspend fun getSubtitle(context: Context) = context.getString(R.string.main_menu___subtitle_automatic_lights)
 
     override fun getEmptyStateIcon() = R.drawable.octo_power_devices
-    override fun getEmptyStateActionText(context: Context) = context.getString(R.string.power_menu___empty_state_action)
-    override fun getEmptyStateActionUrl(context: Context) = UriLibrary.getFaqUri("supported_plugin").toString()
-    override fun getEmptyStateSubtitle(context: Context) = context.getString(R.string.main_menu___empty_state_subtitle_automatic_lights)
+
+    override fun getEmptyStateActionText(context: Context) = context.getString(
+        if (isFeatureEnabled) R.string.power_menu___empty_state_action else R.string.main_menu___button_enable_automatic_lights
+    )
+
+    override fun getEmptyStateActionUrl(context: Context) =
+        (if (isFeatureEnabled) UriLibrary.getFaqUri("supported_plugin") else UriLibrary.getPurchaseUri()).toString()
+
+    override fun getEmptyStateSubtitle(context: Context) = context.getString(
+        if (isFeatureEnabled) R.string.main_menu___empty_state_subtitle_automatic_lights else R.string.main_menu___empty_state_subtitle_automatic_lights_disabled
+    )
 
     class AutoLightsForWidgetMenuItem : ToggleMenuItem() {
         private val prefs get() = Injector.get().octoPreferences()
