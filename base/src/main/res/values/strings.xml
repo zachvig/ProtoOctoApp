@@ -457,8 +457,8 @@
     <string name="lab_menu___allow_battery_saver_description" translatable="false">With version 1.8, I introduced a battery saving mechanic for the print notification as it was consuming a lot of power on some devices. You can disable it to return to the old behaviour. This might resolve issues with missing filament change notifications.</string>
     <string name="lab_menu___allow_to_rotate_title" translatable="false">Allow OctoApp to rotate</string>
     <string name="lab_menu___allow_to_rotate_description" translatable="false">OctoApp can rotate into landscape mode. The UI is not optimized and rotating might cause issues on some screens. Will take affect after restart.</string>
-    <string name="lab_menu___experimental_webcam_title" translatable="false">Experimental webcam</string>
-    <string name="lab_menu___experimental_webcam_description" translatable="false">Experimental webcam implementation using less resources and lower latency. Will take affect after restart.</string>
+    <string name="lab_menu___experimental_webcam_title" translatable="false">New webcam stack</string>
+    <string name="lab_menu___experimental_webcam_description" translatable="false">Completely new webcam implementation introduced with version 1.9.0. The new webcam stack is using less resources and has a lower latency. Will take affect after restart.</string>
     <string name="configure_remote_access___title">Configure Remote Access</string>
     <string name="configure_remote_acces___description"><![CDATA[Not at home? On it’s own, OctoApp can’t reach your OctoPrint as it is only available in your home network. You need to make OctoPrint available over the internet so that OctoApp can access it from wherever you are. Learn more <a href="https://app.octoapp.eu/help/use_remotely">here</a>.]]></string>
     <string name="configure_remote_acces___octoeverywhere___title">OctoEverywhere!</string>

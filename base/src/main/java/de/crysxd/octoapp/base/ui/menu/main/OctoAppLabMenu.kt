@@ -57,7 +57,7 @@ class OctoAppLabMenu : Menu {
         override val itemId = "experimental_webcam"
         override var groupId = ""
         override val canBePinned = false
-        override val order = 2
+        override val order = 162
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_videocam_24
 

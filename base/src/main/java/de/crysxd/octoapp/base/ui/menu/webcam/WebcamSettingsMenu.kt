@@ -11,6 +11,7 @@ import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ENABLE_FULL_WEBCAM_RESOLUTION
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SHOW_WEBCAM_RESOLUTION
+import de.crysxd.octoapp.base.ui.menu.main.OctoAppLabMenu
 import kotlinx.parcelize.Parcelize
 import kotlin.math.roundToInt
 
@@ -18,7 +19,8 @@ import kotlin.math.roundToInt
 class WebcamSettingsMenu : Menu {
     override suspend fun getMenuItem() = listOf(
         ShowResolutionMenuItem(),
-        EnableFullResolutionMenuItem()
+        EnableFullResolutionMenuItem(),
+        OctoAppLabMenu.ExperimentalWebcam()
     )
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.webcam_settings___title)

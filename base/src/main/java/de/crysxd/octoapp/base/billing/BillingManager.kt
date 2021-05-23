@@ -259,7 +259,7 @@ object BillingManager {
     fun isFeatureEnabled(feature: String): Boolean {
         val isPremiumFeature = Firebase.remoteConfig.getString("premium_features").split(",").map { it.trim() }.contains(feature)
         val hasPremium = billingChannel.valueOrNull?.isPremiumActive == true
-        return !isPremiumFeature || hasPremium
+        return false// !isPremiumFeature || hasPremium
     }
 
     fun shouldAdvertisePremium() = billingChannel.valueOrNull?.let {
