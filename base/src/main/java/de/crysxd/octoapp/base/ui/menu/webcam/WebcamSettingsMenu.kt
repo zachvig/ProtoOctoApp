@@ -29,7 +29,7 @@ class WebcamSettingsMenu : Menu {
 
         override val itemId = MENU_ITEM_SHOW_WEBCAM_RESOLUTION
         override var groupId = ""
-        override val order = 350
+        override val order = 160
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_image_aspect_ratio_24
 
@@ -44,7 +44,7 @@ class WebcamSettingsMenu : Menu {
         private val maxResolution = (FirebaseRemoteConfig.getInstance().getLong("free_webcam_max_resolution") * (1080 / 1920f)).roundToInt()
         override val itemId = MENU_ITEM_ENABLE_FULL_WEBCAM_RESOLUTION
         override var groupId = ""
-        override val order = 351
+        override val order = 161
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_photo_size_select_large_24
         override suspend fun isVisible(destinationId: Int) = !BillingManager.isFeatureEnabled(BillingManager.FEATURE_FULL_WEBCAM_RESOLUTION)
