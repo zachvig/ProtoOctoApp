@@ -63,10 +63,10 @@ deploy_gitlab:
 
 deploy_firebase:
   stage: deploy
-  needs: ["build"]
+  needs: [ "deploy_google_play" ]
   image: node
   script:
     - npm install -g firebase-tools
-    - firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk --token "$FIREBASE_CLI_TOKEN" --app "$FIREBASE_APP_ID" --release-notes-file "outputs/release_notes.txt" --groups "$FIREBASE_TESTER_GROUPS" 
+    - firebase appdistribution:distribute app/build/outputs/bundle/release/app-release.aab --token "$FIREBASE_CLI_TOKEN" --app "$FIREBASE_APP_ID" --release-notes-file "outputs/release_notes.txt" --groups "$FIREBASE_TESTER_GROUPS"
   only:
     - tags
