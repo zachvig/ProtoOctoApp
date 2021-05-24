@@ -63,7 +63,7 @@ deploy_gitlab:
 
 deploy_firebase:
   stage: deploy
-  needs: [ "deploy_google_play" ]
+  needs: ["deploy_google_play"]
   image: node
   script:
     - npm install -g firebase-tools
