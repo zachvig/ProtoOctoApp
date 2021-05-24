@@ -8,10 +8,10 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class HandleAutomaticIlluminationEventUseCase @Inject constructor(
+class HandleAutomaticLightEventUseCase @Inject constructor(
     private val getPowerDevicesUseCase: GetPowerDevicesUseCase,
     private val octoPreferences: OctoPreferences
-) : UseCase<HandleAutomaticIlluminationEventUseCase.Event, Boolean>() {
+) : UseCase<HandleAutomaticLightEventUseCase.Event, Boolean>() {
 
     companion object {
         private var lastJob: Job? = null

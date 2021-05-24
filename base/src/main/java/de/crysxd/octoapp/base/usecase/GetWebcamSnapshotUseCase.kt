@@ -19,7 +19,7 @@ class GetWebcamSnapshotUseCase @Inject constructor(
     private val getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
     private val applyWebcamTransformationsUseCase: ApplyWebcamTransformationsUseCase,
     private val octoPrintRepository: OctoPrintRepository,
-    private val handleAutomaticIlluminationEventUseCase: HandleAutomaticIlluminationEventUseCase,
+    private val handleAutomaticLightEventUseCase: HandleAutomaticLightEventUseCase,
 ) : UseCase<GetWebcamSnapshotUseCase.Params, Flow<Bitmap>>() {
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) = withContext(Dispatchers.IO) {
@@ -54,7 +54,7 @@ class GetWebcamSnapshotUseCase @Inject constructor(
                 }
             }.onStart {
                 if (param.illuminateIfPossible) {
-                    illuminated = handleAutomaticIlluminationEventUseCase.executeBlocking(HandleAutomaticIlluminationEventUseCase.Event.WebcamVisible)
+                    illuminated = handleAutomaticLightEventUseCase.executeBlocking(HandleAutomaticLightEventUseCase.Event.WebcamVisible)
                     // Slight delay so a single snapshot is nicely lit
                     delay(500)
                 }
@@ -62,7 +62,7 @@ class GetWebcamSnapshotUseCase @Inject constructor(
                 if (illuminated) {
                     // Execute blocking as a normal execute switches threads causing the task never to be done as the current scope
                     // is about to be terminated
-                    handleAutomaticIlluminationEventUseCase.executeBlocking(HandleAutomaticIlluminationEventUseCase.Event.WebcamGone)
+                    handleAutomaticLightEventUseCase.executeBlocking(HandleAutomaticLightEventUseCase.Event.WebcamGone)
                 }
             }
         }
