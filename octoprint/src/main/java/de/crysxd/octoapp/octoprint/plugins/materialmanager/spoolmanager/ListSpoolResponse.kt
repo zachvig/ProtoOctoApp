@@ -8,6 +8,8 @@ data class ListSpoolResponse(
         val color: String,
         val colorName: String,
         val databaseId: String,
+        val vendor: String?,
+        val material: String?,
         val displayName: String,
         val isActive: Boolean,
     )

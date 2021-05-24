@@ -4,6 +4,8 @@ data class Material(
     val id: String,
     val pluginId: String,
     val displayName: String,
+    val vendor: String,
+    val material: String,
     val color: String?,
     val pluginDisplayName: String,
     val isActivated: Boolean

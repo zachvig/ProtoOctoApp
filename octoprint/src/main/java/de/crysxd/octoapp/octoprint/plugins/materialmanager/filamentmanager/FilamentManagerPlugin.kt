@@ -18,6 +18,8 @@ class FilamentManagerPlugin(private val filamentManagerApi: FilamentManagerApi) 
                 id = spool.id,
                 displayName = spool.name,
                 color = null,
+                vendor = spool.profile.vendor ?: "Unknown",
+                material = spool.profile.material ?: "Unknown",
                 pluginDisplayName = "FilamentManager",
                 pluginId = pluginId,
                 isActivated = selection.selections.any { it.spool.id == spool.id }

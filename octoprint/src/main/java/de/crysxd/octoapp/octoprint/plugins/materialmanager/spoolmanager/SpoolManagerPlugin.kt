@@ -13,6 +13,8 @@ class SpoolManagerPlugin(private val spoolManagerApi: SpoolManagerApi) : Materia
                 id = it.databaseId,
                 displayName = it.displayName,
                 color = it.color,
+                vendor = it.vendor ?: "Unknown",
+                material = it.material ?: "Unknown",
                 pluginDisplayName = "SpoolManager",
                 pluginId = pluginId,
                 isActivated = response.selectedSpool?.databaseId == it.databaseId
