@@ -127,7 +127,6 @@ class MainActivity : OctoActivity() {
             }
             .asLiveData()
             .observe(this) {
-                updateAllWidgets()
                 if (it != null && it.apiKey.isNotBlank()) {
                     Timber.i("Instance information received $this")
                     updateCapabilities("instance_change", updateM115 = true, escalateError = false)
@@ -354,6 +353,7 @@ class MainActivity : OctoActivity() {
             Timber.w("Connection restored")
             viewModel.connectionType = e.connectionType
             updateConnectionBanner(false)
+            updateAllWidgets()
         }
 
         is Event.MessageReceived -> onMessageReceived(e.message)

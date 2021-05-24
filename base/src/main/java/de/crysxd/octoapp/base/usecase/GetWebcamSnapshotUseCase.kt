@@ -54,7 +54,7 @@ class GetWebcamSnapshotUseCase @Inject constructor(
                 }
             }.onStart {
                 if (param.illuminateIfPossible) {
-                    illuminated = handleAutomaticLightEventUseCase.executeBlocking(HandleAutomaticLightEventUseCase.Event.WebcamVisible)
+                    illuminated = handleAutomaticLightEventUseCase.executeBlocking(HandleAutomaticLightEventUseCase.Event.WebcamVisible("webcam-snapshot-uc"))
                     // Slight delay so a single snapshot is nicely lit
                     delay(500)
                 }
@@ -62,7 +62,7 @@ class GetWebcamSnapshotUseCase @Inject constructor(
                 if (illuminated) {
                     // Execute blocking as a normal execute switches threads causing the task never to be done as the current scope
                     // is about to be terminated
-                    handleAutomaticLightEventUseCase.executeBlocking(HandleAutomaticLightEventUseCase.Event.WebcamGone)
+                    handleAutomaticLightEventUseCase.executeBlocking(HandleAutomaticLightEventUseCase.Event.WebcamGone("webcam-snapshot-uc", delayAction = true))
                 }
             }
         }

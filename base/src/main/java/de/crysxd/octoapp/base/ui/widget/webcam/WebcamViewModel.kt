@@ -140,11 +140,11 @@ class WebcamViewModel(
                                     )
                                 )
                             }.onStart {
-                                handleAutomaticLightEventUseCase.execute(HandleAutomaticLightEventUseCase.Event.WebcamVisible)
+                                handleAutomaticLightEventUseCase.execute(HandleAutomaticLightEventUseCase.Event.WebcamVisible("webcam-vm"))
                             }.onCompletion {
                                 // Execute blocking as a normal execute switches threads causing the task never to be done as the current scope
                                 // is about to be terminated
-                                handleAutomaticLightEventUseCase.executeBlocking(HandleAutomaticLightEventUseCase.Event.WebcamGone)
+                                handleAutomaticLightEventUseCase.executeBlocking(HandleAutomaticLightEventUseCase.Event.WebcamGone("webcam-vm"))
                             }.collect {
                                 emit(it)
                             }

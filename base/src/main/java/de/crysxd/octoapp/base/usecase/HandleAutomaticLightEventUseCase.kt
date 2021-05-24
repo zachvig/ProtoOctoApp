@@ -2,9 +2,9 @@ package de.crysxd.octoapp.base.usecase
 
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.billing.BillingManager
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -15,11 +15,15 @@ class HandleAutomaticLightEventUseCase @Inject constructor(
 
     companion object {
         private var lastJob: Job? = null
+        private var isLastJobCancelled = false
+        private var keepOnCounter = 0
+        private val lock = Semaphore(1)
     }
 
-    override suspend fun doExecute(param: Event, timber: Timber.Tree): Boolean {
+    override suspend fun doExecute(param: Event, timber: Timber.Tree): Boolean = lock.withPermit {
         if (!BillingManager.isFeatureEnabled(BillingManager.FEATURE_AUTOMATIC_LIGHTS)) {
             timber.i("Automatic lights disabled, skipping any action")
+            return false
         }
 
         val autoIds = octoPreferences.automaticLights
@@ -27,20 +31,52 @@ class HandleAutomaticLightEventUseCase @Inject constructor(
             .filter { autoIds.contains(it.first.id) }
             .map { it.first }
 
-        if (lights.isEmpty()) return false
-
-        when (param) {
-            Event.WebcamVisible -> timber.i("Turning ${lights.size} on to illuminate webcam")
-            Event.WebcamGone -> timber.i("Turning ${lights.size} off")
+        if (lights.isEmpty()) {
+            timber.i("No automatic lights set up, skipping any action")
+            return false
         }
 
-        // Sync the job to prevent race conditions
-        lastJob?.cancel()
-        lastJob = GlobalScope.launch {
-            lights.forEach {
-                when (param) {
-                    Event.WebcamVisible -> it.turnOn()
-                    Event.WebcamGone -> it.turnOff()
+        // Determine new state
+        val prevCounter = keepOnCounter
+        when (param) {
+            is Event.WebcamVisible -> keepOnCounter++
+            is Event.WebcamGone -> keepOnCounter--
+        }.coerceAtLeast(0)
+
+        val newState = when {
+            prevCounter == 0 && keepOnCounter > 0 -> true
+            prevCounter > 0 && keepOnCounter == 0 -> false
+            else -> {
+                timber.d("No action taken, still $keepOnCounter references")
+                null
+            }
+        }
+
+        // Push new state
+        if (newState != null) {
+            lastJob?.cancelAndJoin()
+            lastJob = GlobalScope.launch {
+                if (param.delayAction) {
+                    delay(5000)
+                }
+
+                if (lastJob?.isCancelled == true) {
+                    timber.i("Action cancelled: $newState")
+                    return@launch
+                }
+
+                lights.forEach {
+                    when (newState) {
+                        true -> {
+                            timber.i("☀️ Turning ${lights.size} lights on to illuminate webcam")
+                            it.turnOn()
+                        }
+                        false -> {
+                            timber.i("🌙 Turning ${lights.size} lights off")
+                            it.turnOff()
+                        }
+                        null -> Unit
+                    }
                 }
             }
         }
@@ -54,7 +90,10 @@ class HandleAutomaticLightEventUseCase @Inject constructor(
     }
 
     sealed class Event {
-        object WebcamVisible : Event()
-        object WebcamGone : Event()
+        abstract val source: String
+        abstract val delayAction: Boolean
+
+        data class WebcamVisible(override val source: String, override val delayAction: Boolean = false) : Event()
+        data class WebcamGone(override val source: String, override val delayAction: Boolean = false) : Event()
     }
 }
