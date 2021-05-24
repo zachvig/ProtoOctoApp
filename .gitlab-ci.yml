@@ -26,7 +26,7 @@ after_script:
   - eval "$DEBUGGING_STATEMENT_AFTER"
 
 build:
-  stage: deploy
+  stage: build
   only:
     - tags
     - /^release\/.*$/
