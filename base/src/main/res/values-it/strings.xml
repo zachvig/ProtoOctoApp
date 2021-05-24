@@ -422,4 +422,19 @@
     <string name="configure_remote_acces___remote_access_configured">Accesso remoto configurato</string>
     <string name="configure_remote_acces___ignore_issue">Ignorare e continuare</string>
     <string name="configure_remote_acces___octoeverywhere___connected">OctoEverywhere è connesso!</string>
+    <string name="main_menu___show_files">Mostra i file</string>
+    <string name="main_menu___item_automatic_lights">Luci automatiche</string>
+    <string name="main_menu___title_automatic_lights">Luci automatiche</string>
+    <string name="main_menu___button_enable_automatic_lights">Abilita</string>
+    <string name="main_menu___subtitle_automatic_lights">Seleziona le luci che si accendono quando la tua webcam è attiva. Questo è utile per illuminare automaticamente la tua stampa quando guardi la tua webcam di notte.</string>
+    <string name="main_menu___empty_state_subtitle_automatic_lights">Dopo aver impostato le luci con un plugin OctoPrint supportato, è possibile configurare qui quali luci vengono utilizzate per illuminare automaticamente la superficie di stampa quando si guarda la webcam, in modo da poter sempre vedere cosa sta succedendo di notte.</string>
+    <string name="main_menu___empty_state_subtitle_automatic_lights_disabled">Attivare questa funzione per accendere automaticamente le luci con un plugin OctoPrint supportato ogni volta che si guarda la webcam. Questo è utile per illuminare automaticamente la tua stampa quando guardi la webcam di notte.</string>
+    <string name="main_menu___item_lights_for_widget">Luci per widget</string>
+    <string name="main_menu___item_lights_for_widget_description">Accenderà le luci ogni volta che i widget della tua schermata iniziale si aggiornano in background. Questo farà sì che le luci della tua stampante si accendano \"a caso\", ma assicurerà che l\'immagine di anteprima nel widget sia sempre ben illuminata.</string>
+    <string name="power_menu___title_lights">Luci</string>
+    <string name="webcam_settings___title">Impostazioni della webcam</string>
+    <string name="webcam_settings___subtitle">Tutte le impostazioni dell\'interfaccia web OctoPrint vengono applicate in OctoApp.</string>
+    <string name="webcam_settings___show_resolution">Mostra la risoluzione</string>
+    <string name="webcam_settings___enable_full_resolution">Abilita la piena risoluzione</string>
+    <string name="webcam_settings___enable_full_resolution_explainer">La risoluzione è attualmente limitata a %dp per i flussi 16:9, altri rapporti di aspetto potrebbero avere altri limiti. Abilita la risoluzione completa qui sopra per utilizzare la risoluzione nativa della tua webcam!</string>
 </resources>

@@ -421,4 +421,19 @@
     <string name="configure_remote_acces___remote_access_configured">Toegang op afstand geconfigureerd</string>
     <string name="configure_remote_acces___ignore_issue">Negeer en ga verder</string>
     <string name="configure_remote_acces___octoeverywhere___connected">OctoEverywhere is aangesloten!</string>
+    <string name="main_menu___show_files">Bestanden tonen</string>
+    <string name="main_menu___item_automatic_lights">Automatisch licht</string>
+    <string name="main_menu___title_automatic_lights">Automatisch licht</string>
+    <string name="main_menu___button_enable_automatic_lights">Activeer</string>
+    <string name="main_menu___subtitle_automatic_lights">Selecteer verlichting die wordt ingeschakeld wanneer uw webcam actief is. Dit is handig om uw afdruk automatisch te verlichten wanneer u \'s nachts naar uw webcam kijkt.</string>
+    <string name="main_menu___empty_state_subtitle_automatic_lights">Nadat u lichten hebt ingesteld met een ondersteunde OctoPrint plugin, kunt u hier configureren welke lichten worden gebruikt om de afdruk automatisch te verlichten wanneer uw webcam actief is. Dit is handig om uw afdruk automatisch te verlichten wanneer u \'s nachts naar uw webcam kijkt.</string>
+    <string name="main_menu___empty_state_subtitle_automatic_lights_disabled">Schakel deze functie in om automatisch verlichting aan te zetten met een ondersteunde OctoPrint-plugin wanneer u naar de webcam kijkt. Dit is handig om uw afdruk automatisch te verlichten wanneer u \'s nachts naar uw webcam kijkt.</string>
+    <string name="main_menu___item_lights_for_widget">Lichten voor widget</string>
+    <string name="main_menu___item_lights_for_widget_description">Schakelt de verlichting aan wanneer de widgets op je startscherm op de achtergrond ververst worden. Dit zorgt ervoor dat de verlichting van je printer \"willekeurig\" aangaat, maar dat de voorbeeldafbeelding in de widget altijd goed verlicht is.</string>
+    <string name="power_menu___title_lights">Lichten</string>
+    <string name="webcam_settings___title">Webcam Instellingen</string>
+    <string name="webcam_settings___subtitle">Alle instellingen van de OctoPrint webinterface worden toegepast in OctoApp.</string>
+    <string name="webcam_settings___show_resolution">Toon resolutie</string>
+    <string name="webcam_settings___enable_full_resolution">Volledige resolutie inschakelen</string>
+    <string name="webcam_settings___enable_full_resolution_explainer">De resolutie is momenteel beperkt tot %dp voor 16:9 streams, andere beeldverhoudingen kunnen andere limieten hebben. Activeer de volledige resolutie hierboven om de native resolutie van je webcam te gebruiken!</string>
 </resources>

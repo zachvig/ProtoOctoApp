@@ -422,4 +422,19 @@
     <string name="configure_remote_acces___octoeverywhere___connect_button">Connectez OctoEverywhere !</string>
     <string name="configure_remote_acces___octoeverywhere___description_2">L\'utilisation d\'une application tierce comme OctoApp nécessite actuellement un abonnement payant avec OctoEverywhere pour couvrir les coûts du serveur.\n\nDès que votre OctoPrint ne peut plus être joint directement, OctoApp bascule sur la connexion à distance fournie par OctoEverywhere. Vous êtes chez vous ? L\'OctoApp sera en mesure de joindre votre OctoPrint à nouveau et de revenir à la connexion directe plus rapide.</string>
     <string name="configure_remote_acces___octoeverywhere___description_1">OctoEverywhere est un plugin pour OctoPrint qui rend l\'accès à distance pour OctoApp très facile. Il suffit d\'installer le plugin, de créer un compte et de se connecter ci-dessous.</string>
+    <string name="main_menu___show_files">Afficher les fichiers</string>
+    <string name="main_menu___item_automatic_lights">Lumières automatiques</string>
+    <string name="main_menu___button_enable_automatic_lights">Activer</string>
+    <string name="main_menu___title_automatic_lights">Lumières automatiques</string>
+    <string name="main_menu___subtitle_automatic_lights">Sélectionnez les lumières qui s\'allument lorsque votre webcam est active. Ceci est pratique pour éclairer automatiquement votre impression lorsque vous regardez votre webcam la nuit.</string>
+    <string name="main_menu___empty_state_subtitle_automatic_lights">Après avoir configuré les lumières avec un plugin OctoPrint supporté, vous pouvez configurer ici quelles lumières sont utilisées pour éclairer automatiquement l\'impression lorsque votre webcam est active. Ceci est pratique pour éclairer automatiquement votre impression lorsque vous regardez votre webcam la nuit.</string>
+    <string name="main_menu___empty_state_subtitle_automatic_lights_disabled">Activez cette fonction pour allumer automatiquement les lumières avec un plugin OctoPrint supporté lorsque vous regardez la webcam. Ceci est pratique pour éclairer automatiquement votre impression lorsque vous regardez votre webcam la nuit.</string>
+    <string name="main_menu___item_lights_for_widget">Lumières pour widget</string>
+    <string name="main_menu___item_lights_for_widget_description">Allume les lumières à chaque fois que les widgets de votre écran d\'accueil se rafraîchissent en arrière-plan. Les lumières de votre imprimante s\'allumeront donc de manière \"aléatoire\", mais l\'image d\'aperçu du widget sera toujours bien éclairée.</string>
+    <string name="power_menu___title_lights">Lumières</string>
+    <string name="webcam_settings___title">Paramètres de la webcam</string>
+    <string name="webcam_settings___subtitle">Tous les paramètres de l\'interface web OctoPrint sont appliqués dans OctoApp.</string>
+    <string name="webcam_settings___show_resolution">Afficher la résolution</string>
+    <string name="webcam_settings___enable_full_resolution">Activer la pleine résolution</string>
+    <string name="webcam_settings___enable_full_resolution_explainer">La résolution est actuellement limitée à %dp pour les flux 16:9. D\'autres rapports d\'aspect peuvent avoir d\'autres limites. Activez la résolution complète ci-dessus pour utiliser la résolution native de votre webcam !</string>
 </resources>
