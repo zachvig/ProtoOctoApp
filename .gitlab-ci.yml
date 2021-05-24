@@ -31,9 +31,9 @@ build:
     - tags
     - /^release\/.*$/
   script:
-    - git tag -l --format='%(contents)' "$CI_COMMIT_TAG" > outputs/release_notes.txt
     - ./gradlew assembleRelease
     - mkdir outputs
+    - git tag -l --format='%(contents)' "$CI_COMMIT_TAG" > outputs/release_notes.txt
   artifacts:
     when: always
     paths:
