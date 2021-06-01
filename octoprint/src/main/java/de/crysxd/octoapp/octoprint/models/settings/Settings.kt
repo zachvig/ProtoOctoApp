@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.octoprint.models.settings
 
 import com.google.gson.annotations.SerializedName
+import de.crysxd.octoapp.octoprint.plugins.power.gpiocontrol.GpioControlPowerDevice
 import de.crysxd.octoapp.octoprint.plugins.power.tasmota.TasmotaPowerDevice
 import de.crysxd.octoapp.octoprint.plugins.power.tplinkplug.TpLinkSmartPlugPowerDevice
 import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TradfriPowerDevice
@@ -59,6 +60,10 @@ data class Settings(
 
     data class TasmotaSettings(
         @SerializedName("arrSmartplugs") val devices: List<TasmotaPowerDevice>
+    ) : PluginSettings
+
+    data class GpioControlSettings(
+        @SerializedName("gpio_configurations") val devices: List<GpioControlPowerDevice>
     ) : PluginSettings
 
     class WS281xSettings : PluginSettings

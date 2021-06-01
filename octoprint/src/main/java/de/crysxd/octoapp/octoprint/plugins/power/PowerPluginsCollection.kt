@@ -2,6 +2,8 @@ package de.crysxd.octoapp.octoprint.plugins.power
 
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintApiException
 import de.crysxd.octoapp.octoprint.models.settings.Settings
+import de.crysxd.octoapp.octoprint.plugins.power.gpiocontrol.GpioControlPowerPlugin
+import de.crysxd.octoapp.octoprint.plugins.power.gpiocontrol.GpioCoontrolApi
 import de.crysxd.octoapp.octoprint.plugins.power.psucontrol.PsuControlApi
 import de.crysxd.octoapp.octoprint.plugins.power.psucontrol.PsuControlPowerPlugin
 import de.crysxd.octoapp.octoprint.plugins.power.tasmota.TasmotaApi
@@ -23,7 +25,8 @@ class PowerPluginsCollection(retrofit: Retrofit) {
         TpLinkSmartPlugPowerPlugin(retrofit.create(TpLinkSmartPlugApi::class.java)),
         TasmotaPowerPlugin(retrofit.create(TasmotaApi::class.java)),
         TuyaPowerPlugin(retrofit.create(TuyaApi::class.java)),
-        WS281xPowerPlugin(retrofit.create(WS281xApi::class.java))
+        WS281xPowerPlugin(retrofit.create(WS281xApi::class.java)),
+        GpioControlPowerPlugin(retrofit.create(GpioCoontrolApi::class.java))
     )
 
     fun getDevices(settings: Settings) = plugins.map {
