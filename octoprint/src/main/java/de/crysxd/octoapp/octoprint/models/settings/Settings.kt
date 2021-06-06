@@ -68,6 +68,8 @@ data class Settings(
 
     class WS281xSettings : PluginSettings
 
+    class MyStromSettings : PluginSettings
+
     data class MultiCamSettings(
         @SerializedName("multicam_profiles") val profiles: List<WebcamSettings>
     ) : PluginSettings
