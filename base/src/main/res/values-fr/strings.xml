@@ -63,7 +63,7 @@
     <string name="x_percent">%.0f %%</string>
     <string name="x_percent_int">%d %%</string>
     <string name="time_left_x">Temps restant : %s</string>
-    <string name="eta_x">Heure de fin estimée : %s</string>
+    <string name="eta_x">ETA : %s</string>
     <string name="message">Message</string>
     <string name="never">Jamais</string>
     <string name="loading">Chargement…</string>
@@ -205,7 +205,7 @@
     <string name="emergency_stop_confirmation_action">Arrêt d\'urgence</string>
     <string name="resume">Reprendre</string>
     <string name="pause">Pause</string>
-    <string name="eta">Heure de fin estimée</string>
+    <string name="eta">ETA</string>
     <string name="print_name">Nom de l\'impression</string>
     <string name="tune">Réglages</string>
     <string name="cd_feed_rate">Vitesse de l\'extrudeur</string>

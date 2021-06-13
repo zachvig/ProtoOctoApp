@@ -63,7 +63,7 @@
     <string name="x_percent">%.0f %%</string>
     <string name="x_percent_int">%d %%</string>
     <string name="time_left_x">Tempo rimanente: %s</string>
-    <string name="eta_x">Tempo di arrivo previsto: %s</string>
+    <string name="eta_x">ETA: %s</string>
     <string name="message">Message</string>
     <string name="never">Mai</string>
     <string name="loading">Caricamento…</string>
