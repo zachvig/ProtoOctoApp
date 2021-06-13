@@ -2,7 +2,7 @@
 <resources>
     <string name="public_file_dir_name" translatable="false">public_files</string>
     <string name="updates_notification_channel" translatable="false">updates</string>
-    <string name="pref_key_version_announcement" translatable="false">announcement_1.8</string>
+    <string name="pref_key_version_announcement" translatable="false">announcement_1.9</string>
     <string name="pref_key_octoeverywhere_announcement" translatable="false">announcement_octoeverywhere_setup</string>
     <string name="version_announcement_learn_more_link" translatable="false">https://youtu.be/rz3aZSboMnA</string>
 </resources>

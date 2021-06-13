@@ -329,8 +329,8 @@
     <string name="temperature_menu___applied_confirmation">Aplicado %s</string>
     <string name="temperature_menu___applied_error">%s no encontrado, no se ha podido aplicar</string>
     <string name="main_menu___item_temperature_presets">Preselecciones de temperatura</string>
-    <string name="announcement___new_version_title">¡Bienvenido a OctoApp 1.8!</string>
-    <string name="announcement___new_version_detail">Esta versión ofrece muchas pequeñas mejoras y *tambores* la primera integración oficial con OctoEverywhere para acceder a su impresora sobre la marcha.</string>
+    <string name="announcement___new_version_title">¡Bienvenido a OctoApp 1.9!</string>
+    <string name="announcement___new_version_detail">Ahora puede utilizar el plugin de control GPIO y dejar que OctoPrint encienda las luces automáticamente cuando mire a su webcam. Además, la nueva conexión de la cámara web es más rápida que nunca.</string>
     <string name="main_menu___system_command_executed">\"%s\" ejecutado</string>
     <string name="notification_channel_filament_change">Cambio de filamento</string>
     <string name="print_notification___paused_filamet_change_title">Pausado, filamento vacío</string>
