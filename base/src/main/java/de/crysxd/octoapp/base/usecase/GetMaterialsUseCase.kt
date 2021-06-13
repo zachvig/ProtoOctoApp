@@ -25,6 +25,7 @@ class GetMaterialsUseCase @Inject constructor(
             if (duplicateNames.contains(m.displayName)) return@forEach
 
             val sameNames = materials.filter { it.displayName == m.displayName }
+            if (sameNames.size == 1) return@forEach
 
             // Alter names to append material
             val materialNames = sameNames.map { it.displayName + it.material }
