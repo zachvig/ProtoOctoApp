@@ -436,4 +436,5 @@
     <string name="webcam_settings___show_resolution">Toon resolutie</string>
     <string name="webcam_settings___enable_full_resolution">Volledige resolutie inschakelen</string>
     <string name="webcam_settings___enable_full_resolution_explainer">De resolutie is momenteel beperkt tot %dp voor 16:9 streams, andere beeldverhoudingen kunnen andere limieten hebben. Activeer de volledige resolutie hierboven om de native resolutie van je webcam te gebruiken!</string>
+    <string name="main_menu___item_add_octoprint_instance">Tweede OctoPrint toevoegen</string>
 </resources>

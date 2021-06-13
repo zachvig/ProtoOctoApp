@@ -209,5 +209,12 @@ class ChangeOctoPrintInstanceMenuItem : SubMenuItem() {
     override val icon = R.drawable.ic_round_swap_horiz_24
     override val subMenu: Menu get() = SwitchOctoPrintMenu()
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_change_octoprint_instance)
+    override suspend fun getTitle(context: Context) =
+        context.getString(
+            if (Injector.get().octorPrintRepository().getAll().size <= 1) {
+                R.string.main_menu___item_change_octoprint_instance
+            } else {
+                R.string.main_menu___item_add_octoprint_instance
+            }
+        )
 }

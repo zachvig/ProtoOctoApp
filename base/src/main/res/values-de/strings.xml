@@ -393,7 +393,7 @@
     <string name="main_menu___hint_name_and_colorscheme"><![CDATA[<small>Mehr als ein OctoPrint? Stelle <b>Name und Farbthema</b> in den Appearance-Einstellungen von OctoPrint ein!</small>]]></string>
     <string name="main_menu___delete_octoprint_dialog_message">%s dauerhaft aus OctoApp entfernen?</string>
     <string name="main_menu___delete_octoprint_dialog_button">Entfernen</string>
-    <string name="announcement___new_version_title">Wilkommen bei OctoApp 1.9!</string>
+    <string name="announcement___new_version_title">Wilkommen bei OctoApp 1.9! 🍾</string>
     <string name="announcement___new_version_learn_more">Video ansehen</string>
     <string name="general___hotend_2">Hotend 2</string>
     <string name="general___hotend_3">Hotend 3</string>
@@ -436,4 +436,5 @@
     <string name="webcam_settings___show_resolution">Auflösung anzeigen</string>
     <string name="webcam_settings___enable_full_resolution">Volle Auflösung aktivieren</string>
     <string name="webcam_settings___enable_full_resolution_explainer">Die Auflösung ist derzeit auf %dp für 16:9 Streams begrenzt, andere Seitenverhältnisse können andere Grenzen haben. Aktiviere die volle Auflösung oben, um die native Auflösung deiner Webcam zu nutzen!</string>
+    <string name="main_menu___item_add_octoprint_instance">OctoPrint hinzufügen</string>
 </resources>
