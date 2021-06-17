@@ -56,7 +56,7 @@ class ShowMaterialPluginMenuItem : SubMenuItem() {
         get() = MaterialPluginMenu()
 
     override suspend fun isVisible(destinationId: Int) = destinationId != R.id.workspaceConnect
-    override suspend fun getTitle(context: Context) = "Materials"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_materials)
 }
 
 class ShowWebcamMenuItem : MenuItem {

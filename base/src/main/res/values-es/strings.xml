@@ -438,4 +438,5 @@
     <string name="webcam_settings___enable_full_resolution">Activar la resolución completa</string>
     <string name="webcam_settings___enable_full_resolution_explainer">La resolución está actualmente limitada a %dp para flujos de 16:9, otras relaciones de aspecto podrían tener otros límites. Activa la resolución completa para utilizar la resolución nativa de tu cámara web.</string>
     <string name="main_menu___item_add_octoprint_instance">Añadir OctoPrint</string>
+    <string name="main_menu___item_materials">Materiales</string>
 </resources>
