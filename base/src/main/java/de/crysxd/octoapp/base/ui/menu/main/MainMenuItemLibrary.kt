@@ -50,6 +50,7 @@ const val MENU_ITEM_POWER_DEVICE_ON = "power___device_on"
 const val MENU_ITEM_POWER_DEVICE_CYCLE = "power___cycle"
 const val MENU_ITEM_ROTATE_APP = "lab___rotate"
 const val MENU_ITEM_SHOW_WEBCAM_RESOLUTION = "webcam___show_resolution"
+const val MENU_ITEM_WEBCAM_ASPECT_RATIO_SOURCE = "webcam___aspect_ratio_source"
 const val MENU_ITEM_ENABLE_FULL_WEBCAM_RESOLUTION = "webcam___enable_full_resolution"
 
 
@@ -86,6 +87,7 @@ class MenuItemLibrary {
         MENU_ITEM_AUTOMATIC_LIGHTS to AutomaticLightsSettingsMenuItem::class,
         MENU_ITEM_SHOW_WEBCAM_RESOLUTION to WebcamSettingsMenu.ShowResolutionMenuItem::class,
         MENU_ITEM_ENABLE_FULL_WEBCAM_RESOLUTION to WebcamSettingsMenu.EnableFullResolutionMenuItem::class,
+        MENU_ITEM_WEBCAM_ASPECT_RATIO_SOURCE to WebcamSettingsMenu.AspectRatioMenuItem::class,
     )
 
     operator fun get(itemId: String): MenuItem? = when {

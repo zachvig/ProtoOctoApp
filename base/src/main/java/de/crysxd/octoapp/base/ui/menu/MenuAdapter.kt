@@ -47,6 +47,16 @@ class MenuAdapter(
         }
     }
 
+    suspend fun updateMenuItem(item: MenuItem, startAnimation: (ViewGroup) -> Unit, update: suspend (PreparedMenuItem) -> PreparedMenuItem) {
+        val index = menuItems.indexOfFirst { item.itemId == it.menuItem.itemId }
+        recyclerView?.findViewHolderForAdapterPosition(index)?.let {
+            (it as? MenuItemHolder)?.root?.let(startAnimation)
+        }
+        menuItems = menuItems.toMutableList().also {
+            it[index] = update(it[index])
+        }
+    }
+
     fun playSuccessAnimationForItem(item: MenuItem) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val index = menuItems.indexOfFirst { item.itemId == it.menuItem.itemId }
@@ -84,6 +94,8 @@ class MenuAdapter(
 
         holder.currentItem = WeakReference(item)
         holder.binding.text.text = preparedItem.title
+        holder.binding.right.text = preparedItem.right
+        holder.binding.right.isVisible = holder.binding.right.text.isNotBlank()
         holder.binding.description.text = preparedItem.description
         holder.binding.description.isVisible = holder.binding.description.text.isNotBlank()
         holder.binding.button.setOnClickListener {
@@ -151,6 +163,7 @@ class MenuAdapter(
 class MenuItemHolder(parent: ViewGroup) :
     ViewBindingHolder<MenuItemBinding>(MenuItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)) {
     var currentItem: WeakReference<MenuItem>? = null
+    val root = itemView as ViewGroup
 
     init {
         // In this list we don't recycle so we can use TransitionManager easily
@@ -161,6 +174,7 @@ class MenuItemHolder(parent: ViewGroup) :
 data class PreparedMenuItem(
     val menuItem: MenuItem,
     val title: CharSequence,
+    val right: CharSequence?,
     val description: CharSequence?,
     val isVisible: Boolean
 )

@@ -438,4 +438,7 @@
     <string name="webcam_settings___enable_full_resolution_explainer">De resolutie is momenteel beperkt tot %dp voor 16:9 streams, andere beeldverhoudingen kunnen andere limieten hebben. Activeer de volledige resolutie hierboven om de native resolutie van je webcam te gebruiken!</string>
     <string name="main_menu___item_add_octoprint_instance">Tweede OctoPrint toevoegen</string>
     <string name="main_menu___item_materials">Materialen</string>
+    <string name="webcam_settings___aspect_ratio_source_octoprint">van OctoPrint</string>
+    <string name="webcam_settings___aspect_ratio_source_image">van beeld</string>
+    <string name="webcam_settings___aspect_ratio_source">Beeldverhouding</string>
 </resources>

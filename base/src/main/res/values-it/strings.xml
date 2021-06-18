@@ -439,4 +439,7 @@
     <string name="webcam_settings___enable_full_resolution_explainer">La risoluzione è attualmente limitata a %dp per i flussi 16:9, altri rapporti di aspetto potrebbero avere altri limiti. Abilita la risoluzione completa qui sopra per utilizzare la risoluzione nativa della tua webcam!</string>
     <string name="main_menu___item_add_octoprint_instance">Aggiungi OctoPrint</string>
     <string name="main_menu___item_materials">Materiali</string>
+    <string name="webcam_settings___aspect_ratio_source_octoprint">da OctoPrint</string>
+    <string name="webcam_settings___aspect_ratio_source_image">dall\'immagine</string>
+    <string name="webcam_settings___aspect_ratio_source">Rapporto d\'aspetto</string>
 </resources>
