@@ -406,7 +406,8 @@ class MainActivity : OctoActivity() {
 
         // Sometimes when changing e.g. from paused to printing OctoPrint sends one wrong set of flags, so we
         // only continue if last and current are the same
-        if (viewModel.sameFlagsCounter < 3 || lastFlags == null) {
+        // If we have closed or error, it's always instant
+        if ((viewModel.sameFlagsCounter < 3 || lastFlags == null) && flags?.closedOrError != true) {
             return Timber.tag("navigation").i("Skipping flag navigation, recently changed and waiting for confirmation")
         }
 

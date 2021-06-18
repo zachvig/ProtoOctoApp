@@ -26,15 +26,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/renderView" />
 
-    <ImageView
+    <TextView
         android:id="@+id/live"
+        style="@style/OctoTheme.Chip.Live"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_2"
-        android:importantForAccessibility="no"
-        android:src="@drawable/ic_live"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@+id/renderControls"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView

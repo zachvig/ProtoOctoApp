@@ -135,7 +135,8 @@
         android:id="@+id/enabledState"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <View
             android:id="@+id/view4"
@@ -220,13 +221,12 @@
             app:layout_constraintEnd_toEndOf="@+id/view4"
             app:tint="?attr/colorAccent" />
 
-        <ImageView
+        <TextView
             android:id="@+id/liveIndicator"
+            style="@style/OctoTheme.Chip.Live"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_1"
-            android:importantForAccessibility="no"
-            android:src="@drawable/ic_live"
+            android:contentDescription="@string/cd_live"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
