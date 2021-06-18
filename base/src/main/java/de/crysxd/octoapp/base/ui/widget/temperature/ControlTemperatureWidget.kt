@@ -45,6 +45,7 @@ class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<Temperat
 
     private fun onTemperatureChanged(data: List<TemperatureDataRepository.TemperatureSnapshot>) {
         if (data.isNotEmpty() && binding.root.childCount != data.size) {
+            Timber.i("UI has ${binding.root.childCount} controls, but ${data.size} are needed. Rebuilding UI. ($data)")
             buildView(data.size)
         }
 
@@ -60,6 +61,7 @@ class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<Temperat
     }
 
     private fun buildView(count: Int) {
+        Timber.i("Building UI for $count controls")
         parent.requestTransition()
         val change = count - binding.root.childCount
         val columns = binding.root.columnCount

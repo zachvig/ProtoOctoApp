@@ -6,7 +6,6 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.ext.rateLimit
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.TemperatureDataRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
@@ -16,7 +15,10 @@ import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -48,6 +50,7 @@ class ControlTemperatureWidgetViewModel(
         var counter = if (it.extruder.sharedNozzle) 1 else it.extruder.count
         if (it.heatedBed) counter++
         if (it.heatedChamber) counter++
+        Timber.i("Using $counter temperature controls for initial setup ($it)")
         counter
     } ?: 2
 
