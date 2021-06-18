@@ -20,14 +20,12 @@ import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
 import de.crysxd.octoapp.base.ui.ColorTheme
 import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
-import de.crysxd.octoapp.base.ui.widget.progress.ProgressWidgetViewModel
 import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.databinding.ProgressWidgetBinding
 import de.crysxd.octoapp.print_controls.di.injectViewModel
-import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
 class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBinding, ProgressWidgetViewModel>(context) {
@@ -37,7 +35,6 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
     private var lastProgress: Float? = null
     override val binding = ProgressWidgetBinding.inflate(LayoutInflater.from(context))
     private val observer = Observer(::updateView)
-    private var first = true
     private val progressPercentLayoutThreshold = 80f
 
     override fun createNewViewModel(parent: BaseWidgetHostFragment): ProgressWidgetViewModel {
@@ -51,7 +48,6 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
         binding.textViewPrintName.isInvisible = true
         binding.textViewPrintNameLabel.isInvisible = true
         binding.textViewProgressPercent.isInvisible = true
-        first = true
         return parent.injectViewModel<ProgressWidgetViewModel>().value
     }
 
@@ -84,13 +80,7 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
                 else -> context.getString(R.string.x_percent, progress * 100f)
             }
 
-            if (first) {
-                // Show intro animation :)
-                delay(500)
-                first = false
-            }
-
-            if (lastProgress != progress || first) {
+            if (lastProgress != progress) {
                 TransitionManager.beginDelayedTransition(binding.root)
             }
 

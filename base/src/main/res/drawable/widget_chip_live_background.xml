@@ -10,13 +10,13 @@
 
     <item
         android:gravity="start|center_vertical"
-        android:left="8dp"
-        android:start="8dp">
+        android:left="6dp"
+        android:start="6dp">
         <shape android:shape="oval">
-            <solid android:color="@color/white" />
+            <solid android:color="@color/text_colored_background" />
             <size
-                android:width="8dp"
-                android:height="8dp" />
+                android:width="9dp"
+                android:height="9dp" />
         </shape>
     </item>
 
