@@ -153,6 +153,7 @@ class HelpFragment : Fragment() {
     private suspend fun List<MenuItem>.prepare() = map {
         PreparedMenuItem(
             title = it.getTitle(requireContext()),
+            right = it.getRightDetail(requireContext()),
             description = it.getDescription(requireContext()),
             menuItem = it,
             isVisible = it.isVisible(findNavController().currentDestination?.id ?: 0)

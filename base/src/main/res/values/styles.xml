@@ -234,11 +234,11 @@
 
     <style name="OctoTheme.Chip.Live">
         <item name="android:background">@drawable/widget_chip_live_background</item>
-        <item name="android:paddingStart">@dimen/margin_1_2</item>
+        <item name="android:paddingStart">18dp</item>
         <item name="android:paddingTop">@dimen/margin_0</item>
         <item name="android:paddingBottom">@dimen/margin_0</item>
         <item name="android:text">@string/app_widget___live</item>
-        <item name="android:paddingEnd">@dimen/margin_1</item>
+        <item name="android:paddingEnd">8dp</item>
     </style>
 
 </resources>

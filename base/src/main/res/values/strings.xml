@@ -484,4 +484,7 @@
     <string name="webcam_settings___show_resolution">Show resolution</string>
     <string name="webcam_settings___enable_full_resolution">Enable full resolution</string>
     <string name="webcam_settings___enable_full_resolution_explainer">Resolution is currently limited to %dp for 16:9 streams, other aspect ratios might have other limits. Enable the full resolution above to use your webcam\'s native resolution!</string>
+    <string name="webcam_settings___aspect_ratio_source_octoprint">from OctoPrint</string>
+    <string name="webcam_settings___aspect_ratio_source_image">from image</string>
+    <string name="webcam_settings___aspect_ratio_source">Aspect ratio</string>
 </resources>

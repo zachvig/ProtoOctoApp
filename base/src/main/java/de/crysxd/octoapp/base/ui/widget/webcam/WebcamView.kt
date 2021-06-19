@@ -387,9 +387,9 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         val scaleY = height / frameHeight.toFloat()
         val scaleX = width / frameWidth.toFloat()
         val scale = if (fit) {
-            min(scaleX, scaleY)
-        } else {
             max(scaleX, scaleY)
+        } else {
+            min(scaleX, scaleY)
         }
         matrix.postScale(scale, scale)
 

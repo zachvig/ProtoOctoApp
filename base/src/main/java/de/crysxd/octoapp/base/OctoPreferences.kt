@@ -32,6 +32,11 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_AUTO_LIGHTS = "auto_lights"
         private const val KEY_AUTO_LIGHTS_FOR_WIDGET_REFRESH = "auto_lights_for_widget_refresh"
         private const val KEY_SHOW_WEBCAM_RESOLUTION = "show_webcam_resolution"
+        private const val KEY_WEBCAM_ASPECT_RATIO_SOURCE = "webcam_aspect_ratio_source"
+
+
+        const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT = "octprint"
+        const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_IMAGE = "native_image"
     }
 
     private val updatedChannel = ConflatedBroadcastChannel(Unit)
@@ -145,5 +150,11 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         get() = sharedPreferences.getBoolean(KEY_SHOW_WEBCAM_RESOLUTION, true)
         set(value) {
             edit { putBoolean(KEY_SHOW_WEBCAM_RESOLUTION, value) }
+        }
+
+    var webcamAspectRatioSource
+        get() = sharedPreferences.getString(KEY_WEBCAM_ASPECT_RATIO_SOURCE, VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT) ?: VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT
+        set(value) {
+            edit { putString(KEY_WEBCAM_ASPECT_RATIO_SOURCE, value) }
         }
 }

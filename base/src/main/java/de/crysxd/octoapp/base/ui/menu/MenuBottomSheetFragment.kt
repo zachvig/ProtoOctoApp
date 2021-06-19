@@ -113,6 +113,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                             PreparedMenuItem(
                                 menuItem = it,
                                 title = it.getTitle(context),
+                                right = it.getRightDetail(context),
                                 description = it.getDescription(context),
                                 isVisible = it.isVisible(currentDestination)
                             )
@@ -205,13 +206,13 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         true
     }
 
-    private fun beginDelayedTransition(smallChange: Boolean = false, endAction: () -> Unit = {}) {
-        view?.rootView?.let {
+    private fun beginDelayedTransition(smallChange: Boolean = false, root: ViewGroup? = view?.rootView as? ViewGroup, endAction: () -> Unit = {}) {
+        root?.let {
             // We need a offset if the view does not span the entire screen as the epicenter is in screen coordinates (?)
             val epicenterX = getScreenWidth() / 2
             val epicenterY = it.width / 2
             TransitionManager.beginDelayedTransition(
-                it as ViewGroup,
+                root,
                 InstantAutoTransition(
                     explode = !smallChange,
                     explodeEpicenter = Rect(epicenterX, epicenterY, epicenterX, epicenterY),
@@ -264,25 +265,39 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             try {
                 isLoading = true
                 lastClickedMenuItem = item
-                if (item is ToggleMenuItem) {
-                    item.handleToggleFlipped(this@MenuBottomSheetFragment, !item.isEnabled)
-                    adapter.setToggle(item, item.isEnabled)
-                } else {
-                    val before = viewModel.menuBackStack.last()
+                when (item) {
+                    is ToggleMenuItem -> {
+                        item.handleToggleFlipped(this@MenuBottomSheetFragment, !item.isEnabled)
+                        adapter.setToggle(item, item.isEnabled)
+                    }
 
-                    item.onClicked(this@MenuBottomSheetFragment)
-
-                    // We did not change the menu, the holder is still showing the same item and the OS is fancy
-                    // Play success animation
-                    val after = viewModel.menuBackStack.last()
-                    if (after == before && isAdded) {
+                    is RevolvingOptionsMenuItem -> {
+                        item.onClicked(this@MenuBottomSheetFragment)
                         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-                            delay(100)
-                            adapter.playSuccessAnimationForItem(item)
+                            adapter.updateMenuItem(
+                                item = item,
+                                startAnimation = { beginDelayedTransition(smallChange = true, root = it) },
+                                update = { it.copy(right = item.getRightDetail(requireContext())) }
+                            )
+                        }
+                    }
+
+                    else -> {
+                        val before = viewModel.menuBackStack.last()
+
+                        item.onClicked(this@MenuBottomSheetFragment)
+
+                        // We did not change the menu, the holder is still showing the same item and the OS is fancy
+                        // Play success animation
+                        val after = viewModel.menuBackStack.last()
+                        if (after == before && isAdded) {
+                            viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+                                delay(100)
+                                adapter.playSuccessAnimationForItem(item)
+                            }
                         }
                     }
                 }
-
             } finally {
                 isLoading = false
             }
