@@ -52,8 +52,10 @@ class DiscoverOptionView @JvmOverloads constructor(
 
     fun isShowing(option: DiscoverOctoPrintUseCase.DiscoveredOctoPrint) = option.webUrl == optionId
 
-    fun show(option: OctoPrintInstanceInformationV2) {
+    fun show(option: OctoPrintInstanceInformationV2, enabled: Boolean) {
         optionId = option.webUrl
+        alpha = if (enabled) 1f else 0.2f
+        binding.shevron.isVisible = enabled
         binding.title.text = option.label
         binding.subtitle.text = option.webUrl.extractAndRemoveUserInfo().first.takeIf { option.label != option.webUrl }
         binding.subtitle.isVisible = binding.subtitle.text.isNotBlank()
@@ -82,5 +84,13 @@ class DiscoverOptionView @JvmOverloads constructor(
 
     fun showDelete() {
         binding.buttonDelete.isVisible = true
+    }
+
+    fun showQuickSwitchOption() {
+        binding.title.text = "Quick switch not enabled"
+        binding.subtitle.text = "Enable to reconnect"
+        binding.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.menu_style_support_background))
+        binding.buttonDelete.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_support_foreground))
+        binding.shevron.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_support_foreground))
     }
 }

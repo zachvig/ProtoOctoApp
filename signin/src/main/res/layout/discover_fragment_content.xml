@@ -63,7 +63,7 @@
         android:layout_height="wrap_content"
         android:contentDescription="Show delete options"
         android:src="@drawable/ic_round_delete_24"
-        android:tint="@color/green"
+        android:tint="@color/normal_text"
         app:layout_constraintBottom_toBottomOf="@+id/previousOptionsTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/previousOptionsTitle" />
@@ -76,7 +76,14 @@
         android:orientation="vertical"
         app:divider="@drawable/margin_0_1_divider"
         app:layout_constraintTop_toBottomOf="@id/previousOptionsTitle"
-        app:showDividers="middle" />
+        app:showDividers="middle">
+
+        <de.crysxd.octoapp.signin.discover.DiscoverOptionView
+            android:id="@+id/quickSwitchOption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <TextView
         android:id="@+id/otherOptionsTitle"

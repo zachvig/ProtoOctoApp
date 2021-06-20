@@ -14,9 +14,12 @@ import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
+import de.crysxd.octoapp.base.UriLibrary
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
+import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
@@ -49,12 +52,18 @@ class DiscoverFragment : BaseFragment() {
         binding.content.helpOption.showHelp()
         binding.content.helpOption.setOnClickListener { }
         binding.content.manualConnectOption.showManualConnect()
+        binding.content.quickSwitchOption.showQuickSwitchOption()
+        binding.content.quickSwitchOption.setOnClickListener {
+            continueWithEnableQuickSwitch()
+        }
         binding.content.manualConnectOption.setOnClickListener { continueWithManualConnect() }
         binding.content.buttonDelete.setOnClickListener {
             beginDelayedTransition()
             binding.content.buttonDelete.isVisible = false
             binding.content.previousOptions.forEach {
-                (it as? DiscoverOptionView)?.showDelete()
+                if (it != binding.content.quickSwitchOption) {
+                    (it as? DiscoverOptionView)?.showDelete()
+                }
             }
         }
 
@@ -66,7 +75,7 @@ class DiscoverFragment : BaseFragment() {
             }
 
             createDiscoveredOptions(it.discoveredOctoPrint)
-            createPreviouslyConnectedOptions(it.connectedOctoPrint)
+            createPreviouslyConnectedOptions(it.connectedOctoPrint, it.supportsQuickSwitch)
         }
 
 
@@ -78,6 +87,8 @@ class DiscoverFragment : BaseFragment() {
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octo.isVisible = false
+        requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
+        binding.scrollView.setupWithToolbar(requireOctoActivity())
     }
 
     private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(binding.root, InstantAutoTransition())
@@ -102,7 +113,7 @@ class DiscoverFragment : BaseFragment() {
         beginDelayedTransition()
 
         // Delete all that are not longer shown
-        binding.content.previousOptions.forEach {
+        binding.content.discoveredOptions.children.toList().forEach {
             if (it !is DiscoverOptionView) binding.content.discoveredOptions.removeView(it)
             else if (!options.any { o -> it.isShowing(o) }) binding.content.discoveredOptions.removeView(it)
         }
@@ -126,12 +137,13 @@ class DiscoverFragment : BaseFragment() {
         binding.content.discoveredHelp.isVisible = binding.content.discoveredOptionsTitle.isVisible
     }
 
-    private fun createPreviouslyConnectedOptions(options: List<OctoPrintInstanceInformationV2>) {
+    private fun createPreviouslyConnectedOptions(options: List<OctoPrintInstanceInformationV2>, quickSwitchEnabled: Boolean) {
         beginDelayedTransition()
 
         // Delete all that are not longer shown
-        binding.content.previousOptions.forEach {
-            if (it !is DiscoverOptionView) binding.content.previousOptions.removeView(it)
+        binding.content.previousOptions.children.toList().forEach {
+            if (it == binding.content.quickSwitchOption) return@forEach
+            else if (it !is DiscoverOptionView) binding.content.previousOptions.removeView(it)
             else if (!options.any { o -> it.isShowing(o) }) binding.content.previousOptions.removeView(it)
         }
 
@@ -140,8 +152,14 @@ class DiscoverFragment : BaseFragment() {
             binding.content.previousOptions.children.firstOrNull { view ->
                 view is DiscoverOptionView && view.isShowing(it)
             } ?: DiscoverOptionView(requireContext()).apply {
-                show(it)
-                setOnClickListener { _ -> continueWithPreviouslyConnected(it) }
+                show(it, quickSwitchEnabled)
+                setOnClickListener { _ ->
+                    if (quickSwitchEnabled) {
+                        continueWithPreviouslyConnected(it)
+                    } else {
+                        continueWithEnableQuickSwitch()
+                    }
+                }
                 onDelete = { deleteAfterConfirmation(it) }
             }
         }.filter {
@@ -151,7 +169,8 @@ class DiscoverFragment : BaseFragment() {
         }
 
         // Update title visibility
-        binding.content.previousOptionsTitle.isVisible = binding.content.previousOptions.childCount > 0
+        binding.content.previousOptionsTitle.isVisible = binding.content.previousOptions.childCount > 1
+        binding.content.quickSwitchOption.isVisible = !quickSwitchEnabled && binding.content.previousOptionsTitle.isVisible
         binding.content.buttonDelete.isVisible = binding.content.buttonDelete.isVisible && binding.content.previousOptionsTitle.isVisible
     }
 
@@ -160,12 +179,14 @@ class DiscoverFragment : BaseFragment() {
     }
 
     private fun continueWithPreviouslyConnected(octoPrint: OctoPrintInstanceInformationV2) {
-        Toast.makeText(requireContext(), octoPrint.label, Toast.LENGTH_SHORT).show()
+        viewModel.activatePreviouslyConnected(octoPrint)
     }
 
     private fun continueWithManualConnect() {
         Toast.makeText(requireContext(), "Connect manually", Toast.LENGTH_SHORT).show()
     }
+
+    private fun continueWithEnableQuickSwitch() = UriLibrary.getPurchaseUri().open(requireOctoActivity())
 
     private fun deleteAfterConfirmation(option: OctoPrintInstanceInformationV2) {
         requireOctoActivity().showDialog(
