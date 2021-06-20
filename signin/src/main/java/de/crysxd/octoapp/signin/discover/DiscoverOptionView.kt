@@ -79,4 +79,8 @@ class DiscoverOptionView @JvmOverloads constructor(
         binding.buttonDelete.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_settings_foreground))
         binding.shevron.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_settings_foreground))
     }
+
+    fun showDelete() {
+        binding.buttonDelete.isVisible = true
+    }
 }

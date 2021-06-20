@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/margin_2">
+
+    <TextView
+        android:id="@+id/discoveredOptionsTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_3"
+        android:text="Discovered on your network"
+        android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+        android:textColor="@color/normal_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/discoveredHelp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_0"
+        android:text="Not what you are looking for? Connect manually below!"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
+        android:textColor="@color/light_text"
+        app:layout_constraintEnd_toEndOf="@+id/discoveredOptionsTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/discoveredOptionsTitle" />
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/discoveredOptions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_1"
+        android:orientation="vertical"
+        app:divider="@drawable/margin_0_1_divider"
+        app:layout_constraintTop_toBottomOf="@id/discoveredHelp"
+        app:showDividers="middle" />
+
+    <TextView
+        android:id="@+id/previousOptionsTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_3"
+        android:text="Previously connected"
+        android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+        android:textColor="@color/normal_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/discoveredOptions"
+        tools:layout_editor_absoluteX="20dp" />
+
+    <ImageView
+        android:id="@+id/buttonDelete"
+        style="@style/OctoTheme.Widget.Button.Image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="Show delete options"
+        android:src="@drawable/ic_round_delete_24"
+        android:tint="@color/green"
+        app:layout_constraintBottom_toBottomOf="@+id/previousOptionsTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/previousOptionsTitle" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/previousOptions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_1"
+        android:orientation="vertical"
+        app:divider="@drawable/margin_0_1_divider"
+        app:layout_constraintTop_toBottomOf="@id/previousOptionsTitle"
+        app:showDividers="middle" />
+
+    <TextView
+        android:id="@+id/otherOptionsTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_3"
+        android:text="Other options"
+        android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+        android:textColor="@color/normal_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/previousOptions" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/otherOptions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_1"
+        android:orientation="vertical"
+        app:divider="@drawable/margin_0_1_divider"
+        app:layout_constraintTop_toBottomOf="@id/otherOptionsTitle"
+        app:showDividers="middle">
+
+        <de.crysxd.octoapp.signin.discover.DiscoverOptionView
+            android:id="@+id/manualConnectOption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <de.crysxd.octoapp.signin.discover.DiscoverOptionView
+            android:id="@+id/helpOption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

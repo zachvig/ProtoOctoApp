@@ -10,6 +10,7 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.children
+import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
@@ -45,10 +46,17 @@ class DiscoverFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         scheduleContinueManually()
-        binding.helpOption.showHelp()
-        binding.helpOption.setOnClickListener { }
-        binding.manualConnectOption.showManualConnect()
-        binding.manualConnectOption.setOnClickListener { continueWithManualConnect() }
+        binding.content.helpOption.showHelp()
+        binding.content.helpOption.setOnClickListener { }
+        binding.content.manualConnectOption.showManualConnect()
+        binding.content.manualConnectOption.setOnClickListener { continueWithManualConnect() }
+        binding.content.buttonDelete.setOnClickListener {
+            beginDelayedTransition()
+            binding.content.buttonDelete.isVisible = false
+            binding.content.previousOptions.forEach {
+                (it as? DiscoverOptionView)?.showDelete()
+            }
+        }
 
         viewModel.uiState.observe(viewLifecycleOwner) {
             if (!viewMovedToSecondaryLayout && (it.connectedOctoPrint.isNotEmpty() || it.discoveredOctoPrint.isNotEmpty())) {
@@ -92,8 +100,16 @@ class DiscoverFragment : BaseFragment() {
 
     private fun createDiscoveredOptions(options: List<DiscoverOctoPrintUseCase.DiscoveredOctoPrint>) {
         beginDelayedTransition()
+
+        // Delete all that are not longer shown
+        binding.content.previousOptions.forEach {
+            if (it !is DiscoverOptionView) binding.content.discoveredOptions.removeView(it)
+            else if (!options.any { o -> it.isShowing(o) }) binding.content.discoveredOptions.removeView(it)
+        }
+
+        // Add all missing
         options.map {
-            binding.discoveredOptions.children.firstOrNull { view ->
+            binding.content.discoveredOptions.children.firstOrNull { view ->
                 view is DiscoverOptionView && view.isShowing(it)
             } ?: DiscoverOptionView(requireContext()).apply {
                 show(it)
@@ -102,42 +118,63 @@ class DiscoverFragment : BaseFragment() {
         }.filter {
             it.parent == null
         }.forEach {
-            binding.discoveredOptions.addView(it, ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            binding.content.discoveredOptions.addView(it, ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
         }
-        binding.discoveredOptionsTitle.isVisible = binding.discoveredOptions.childCount > 0
-        binding.discoveredHelp.isVisible = binding.discoveredOptionsTitle.isVisible
+
+        // Update title visibility
+        binding.content.discoveredOptionsTitle.isVisible = binding.content.discoveredOptions.childCount > 0
+        binding.content.discoveredHelp.isVisible = binding.content.discoveredOptionsTitle.isVisible
     }
 
     private fun createPreviouslyConnectedOptions(options: List<OctoPrintInstanceInformationV2>) {
         beginDelayedTransition()
+
+        // Delete all that are not longer shown
+        binding.content.previousOptions.forEach {
+            if (it !is DiscoverOptionView) binding.content.previousOptions.removeView(it)
+            else if (!options.any { o -> it.isShowing(o) }) binding.content.previousOptions.removeView(it)
+        }
+
+        // Add all missing
         options.map {
-            binding.previousOptions.children.firstOrNull { view ->
+            binding.content.previousOptions.children.firstOrNull { view ->
                 view is DiscoverOptionView && view.isShowing(it)
             } ?: DiscoverOptionView(requireContext()).apply {
                 show(it)
                 setOnClickListener { _ -> continueWithPreviouslyConnected(it) }
+                onDelete = { deleteAfterConfirmation(it) }
             }
         }.filter {
             it.parent == null
         }.forEach {
-            binding.previousOptions.addView(it, ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            binding.content.previousOptions.addView(it, ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
         }
-        binding.previousOptionsTitle.isVisible = binding.previousOptions.childCount > 0
 
+        // Update title visibility
+        binding.content.previousOptionsTitle.isVisible = binding.content.previousOptions.childCount > 0
+        binding.content.buttonDelete.isVisible = binding.content.buttonDelete.isVisible && binding.content.previousOptionsTitle.isVisible
     }
 
     private fun continueWithDiscovered(octoPrint: DiscoverOctoPrintUseCase.DiscoveredOctoPrint) {
         Toast.makeText(requireContext(), octoPrint.label, Toast.LENGTH_SHORT).show()
-
     }
 
     private fun continueWithPreviouslyConnected(octoPrint: OctoPrintInstanceInformationV2) {
         Toast.makeText(requireContext(), octoPrint.label, Toast.LENGTH_SHORT).show()
-
     }
 
     private fun continueWithManualConnect() {
         Toast.makeText(requireContext(), "Connect manually", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun deleteAfterConfirmation(option: OctoPrintInstanceInformationV2) {
+        requireOctoActivity().showDialog(
+            message = "Delete ${option.label} and all associated settings?",
+            positiveButton = "Delete",
+            positiveAction = { viewModel.deleteInstance(option.webUrl) },
+            neutralAction = {},
+            neutralButton = getString(R.string.cancel)
+        )
     }
 
     private fun moveToSecondaryLayout() {
