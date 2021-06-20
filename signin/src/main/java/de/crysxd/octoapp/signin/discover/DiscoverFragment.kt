@@ -1,5 +1,7 @@
 package de.crysxd.octoapp.signin.discover
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,6 +16,9 @@ import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
@@ -50,7 +55,12 @@ class DiscoverFragment : BaseFragment() {
 
         scheduleContinueManually()
         binding.content.helpOption.showHelp()
-        binding.content.helpOption.setOnClickListener { }
+        binding.content.helpOption.setOnClickListener {
+            continueWithHelp()
+        }
+        binding.needHelp.setOnClickListener {
+            continueWithHelp()
+        }
         binding.content.manualConnectOption.showManualConnect()
         binding.content.quickSwitchOption.showQuickSwitchOption()
         binding.content.quickSwitchOption.setOnClickListener {
@@ -184,6 +194,12 @@ class DiscoverFragment : BaseFragment() {
 
     private fun continueWithManualConnect() {
         Toast.makeText(requireContext(), "Connect manually", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun continueWithHelp() {
+        val uri = Uri.parse(Firebase.remoteConfig.getString("help_url_sign_in"))
+        OctoAnalytics.logEvent(OctoAnalytics.Event.SignInHelpOpened)
+        startActivity(Intent(Intent.ACTION_VIEW, uri))
     }
 
     private fun continueWithEnableQuickSwitch() = UriLibrary.getPurchaseUri().open(requireOctoActivity())
