@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/sign_in_nav_graph"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/discoverFragment">
 
     <include app:graph="@navigation/purchase_flow_nav_graph" />
     <include app:graph="@navigation/trouble_shoot_nav_graph" />
@@ -25,10 +25,10 @@
         app:popExitAnim="@anim/popExitAnim" />
 
     <fragment
-        android:id="@+id/loginFragment"
-        android:name="de.crysxd.octoapp.signin.ui.SignInFragment"
-        android:label="LoginFragment"
-        tools:layout="@layout/sign_in_fragment">
+        android:id="@+id/discoverFragment"
+        android:name="de.crysxd.octoapp.signin.discover.DiscoverFragment"
+        android:label="DiscoverFragment"
+        tools:layout="@layout/discover_fragment_initial">
         <action
             android:id="@+id/actionReadQrCode"
             app:destination="@id/readQrCodeFragment"

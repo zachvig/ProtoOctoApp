@@ -156,7 +156,7 @@ class MainActivity : OctoActivity() {
                 OctoAnalytics.logEvent(OctoAnalytics.Event.ScreenShown, bundleOf(FirebaseAnalytics.Param.SCREEN_NAME to destination.label?.toString()))
 
                 when (destination.id) {
-                    R.id.loginFragment -> OctoAnalytics.logEvent(OctoAnalytics.Event.LoginWorkspaceShown)
+                    R.id.discoverFragment -> OctoAnalytics.logEvent(OctoAnalytics.Event.LoginWorkspaceShown)
                     R.id.workspaceConnect -> OctoAnalytics.logEvent(OctoAnalytics.Event.ConnectWorkspaceShown)
                     R.id.workspacePrePrint -> OctoAnalytics.logEvent(OctoAnalytics.Event.PrePrintWorkspaceShown)
                     R.id.workspacePrint -> OctoAnalytics.logEvent(OctoAnalytics.Event.PrintWorkspaceShown)
@@ -320,7 +320,7 @@ class MainActivity : OctoActivity() {
                 R.id.workspacePrint,
                 R.id.terminalFragment,
                 R.id.fileDetailsFragment,
-                R.id.loginFragment,
+                R.id.discoverFragment,
                 R.id.fileListFragment,
             ).contains(navController.currentDestination?.id)
 

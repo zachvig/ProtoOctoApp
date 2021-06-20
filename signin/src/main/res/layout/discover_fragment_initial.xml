@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/white">
+
+    <de.crysxd.octoapp.base.ui.common.OctoBackgroundView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:alpha="0.5"
+        app:layout_constraintBottom_toBottomOf="@+id/progressBar"
+        app:layout_constraintTop_toTopOf="@+id/octoView" />
+
+    <de.crysxd.octoapp.base.ui.common.OctoView
+        android:id="@+id/octoView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_1"
+        app:layout_constraintBottom_toTopOf="@+id/title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.33"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_2"
+        android:layout_marginBottom="@dimen/margin_3"
+        android:maxLines="1"
+        android:text="Welcome to OctoApp!"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
+        android:textColor="@color/dark_text"
+        app:layout_constraintBottom_toTopOf="@+id/subtitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/octoView" />
+
+    <TextView
+        android:id="@+id/subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_2"
+        android:layout_marginBottom="@dimen/margin_0_1"
+        android:text="Searching your OctoPrint..."
+        android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+        android:textColor="@color/normal_text"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <TextView
+        android:id="@+id/needHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_2"
+        android:text="Need help?"
+        android:textAppearance="@style/OctoTheme.TextAppearance"
+        android:textColor="@color/accent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_4"
+        android:progressTint="@color/accent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/subtitle" />
+
+    <de.crysxd.octoapp.base.ui.common.OctoScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin_2"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/margin_2"
+        android:paddingBottom="@dimen/margin_2"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/discoveredOptionsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_2"
+                android:layout_marginTop="@dimen/margin_3"
+                android:text="Discovered on your network"
+                android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+                android:textColor="@color/normal_text" />
+
+            <TextView
+                android:id="@+id/discoveredHelp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_2"
+                android:layout_marginTop="@dimen/margin_0"
+                android:layout_marginBottom="@dimen/margin_1"
+                android:text="Not what you are looking for? Connect manually below!"
+                android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
+                android:textColor="@color/light_text" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/discoveredOptions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:divider="@drawable/margin_0_1_divider"
+                app:showDividers="middle" />
+
+            <TextView
+                android:id="@+id/previousOptionsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_2"
+                android:layout_marginTop="@dimen/margin_3"
+                android:layout_marginBottom="@dimen/margin_1"
+                android:text="Previously connected"
+                android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+                android:textColor="@color/normal_text" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/previousOptions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:divider="@drawable/margin_0_1_divider"
+                app:showDividers="middle" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_2"
+                android:layout_marginTop="@dimen/margin_3"
+                android:layout_marginBottom="@dimen/margin_1"
+                android:text="Other options"
+                android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+                android:textColor="@color/normal_text" />
+
+            <de.crysxd.octoapp.signin.discover.DiscoverOptionView
+                android:id="@+id/manualConnectOption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_0_1" />
+
+            <de.crysxd.octoapp.signin.discover.DiscoverOptionView
+                android:id="@+id/helpOption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </de.crysxd.octoapp.base.ui.common.OctoScrollView>
+
+    <TextView
+        android:id="@+id/wifiWarning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_2"
+        android:drawableStart="@drawable/ic_wifi_unavailable"
+        android:drawablePadding="@dimen/margin_1"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:text="No WiFi, usually OctoPrint is not available"
+        android:textAppearance="@style/OctoTheme.TextAppearance"
+        android:textColor="@color/light_text"
+        app:layout_constraintBottom_toTopOf="@+id/buttonConnectManually"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

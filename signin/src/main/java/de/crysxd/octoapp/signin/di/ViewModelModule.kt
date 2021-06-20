@@ -9,6 +9,8 @@ import de.crysxd.octoapp.base.di.ViewModelFactory
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
+import de.crysxd.octoapp.signin.discover.DiscoverViewModel
 import de.crysxd.octoapp.signin.ui.SignInViewModel
 import de.crysxd.octoapp.signin.usecases.VerifySignInInformationUseCase
 import javax.inject.Provider
@@ -33,5 +35,16 @@ open class ViewModelModule {
         validateSignInInformationUseCase,
         signInUseCase,
         sensitiveDataMask
+    )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(DiscoverViewModel::class)
+    open fun provideDiscoverViewModel(
+        discoverOctoPrintUseCase: DiscoverOctoPrintUseCase,
+        octoPrintRepository: OctoPrintRepository
+    ): ViewModel = DiscoverViewModel(
+        discoverOctoPrintUseCase = discoverOctoPrintUseCase,
+        octoPrintRepository = octoPrintRepository
     )
 }

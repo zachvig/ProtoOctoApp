@@ -81,7 +81,7 @@ class ReadQrCodeFragment : Fragment(), InsetAwareScreen {
             if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                 binding.scannerView.startCamera()
             } else {
-                findNavController().popBackStack(R.id.loginFragment, false)
+                findNavController().popBackStack(R.id.discoverFragment, false)
             }
         }
     }
