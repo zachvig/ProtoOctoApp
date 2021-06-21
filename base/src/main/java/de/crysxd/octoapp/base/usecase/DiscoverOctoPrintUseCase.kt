@@ -114,8 +114,8 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                     Timber.i("Resolved service ${resolvedService.serviceName}")
                     // Construct OctoPrint
                     val path = resolvedService.attributes["path"]?.let { String(it) } ?: "/"
-                    val user = resolvedService.attributes["u"]
-                    val password = resolvedService.attributes["p"]
+                    val user = resolvedService.attributes["u"]?.let { String(it) }
+                    val password = resolvedService.attributes["p"]?.let { String(it) }
                     val credentials = user?.let { u ->
                         password?.let { p -> "$u:$p@" } ?: "$u@"
                     } ?: ""
