@@ -28,7 +28,6 @@ class DiscoverViewModel(
     }.combine(updateConnectedTrigger.asFlow()) { it, _ ->
         Timber.i("Discovered ${it.discovered.size} instances")
         UiState(
-            error = it.error,
             discoveredOctoPrint = it.discovered,
             connectedOctoPrint = octoPrintRepository.getAll(),
             supportsQuickSwitch = false
@@ -56,7 +55,6 @@ class DiscoverViewModel(
     data class UiState(
         val connectedOctoPrint: List<OctoPrintInstanceInformationV2>,
         val discoveredOctoPrint: List<DiscoverOctoPrintUseCase.DiscoveredOctoPrint>,
-        val error: Exception? = null,
         val supportsQuickSwitch: Boolean,
     )
 }

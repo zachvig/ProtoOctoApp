@@ -3,11 +3,7 @@ package de.crysxd.octoapp.octoprint
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import de.crysxd.octoapp.octoprint.api.*
-import de.crysxd.octoapp.octoprint.interceptors.GenerateExceptionInterceptor
-import de.crysxd.octoapp.octoprint.interceptors.AlternativeWebUrlInterceptor
-import de.crysxd.octoapp.octoprint.interceptors.ApiKeyInterceptor
-import de.crysxd.octoapp.octoprint.interceptors.BasicAuthInterceptor
-import de.crysxd.octoapp.octoprint.interceptors.CatchAllInterceptor
+import de.crysxd.octoapp.octoprint.interceptors.*
 import de.crysxd.octoapp.octoprint.json.*
 import de.crysxd.octoapp.octoprint.logging.LoggingInterceptorLogger
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
@@ -16,6 +12,7 @@ import de.crysxd.octoapp.octoprint.models.job.ProgressInformation
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.socket.HistoricTemperatureData
 import de.crysxd.octoapp.octoprint.models.socket.Message
+import de.crysxd.octoapp.octoprint.plugins.applicationkeys.ApplicationKeysPluginApi
 import de.crysxd.octoapp.octoprint.plugins.materialmanager.MaterialManagerPluginsCollection
 import de.crysxd.octoapp.octoprint.plugins.octoeverywhere.OctoEverywhereApi
 import de.crysxd.octoapp.octoprint.plugins.power.PowerPluginsCollection
@@ -125,6 +122,9 @@ class OctoPrint(
 
     fun createConnectionApi(): ConnectionApi.Wrapper =
         ConnectionApi.Wrapper((createRetrofit().create(ConnectionApi::class.java)))
+
+    fun createApplicationKeysPluginApi(): ApplicationKeysPluginApi.Wrapper =
+        ApplicationKeysPluginApi.Wrapper((createRetrofit().create(ApplicationKeysPluginApi::class.java)))
 
     fun createSystemApi(): SystemApi.Wrapper =
         SystemApi.Wrapper((createRetrofit().create(SystemApi::class.java)))
