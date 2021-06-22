@@ -7,7 +7,6 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 
@@ -15,10 +14,6 @@ class DiscoverViewModel(
     private val discoverOctoPrintUseCase: DiscoverOctoPrintUseCase,
     private val octoPrintRepository: OctoPrintRepository,
 ) : BaseViewModel() {
-
-    companion object {
-        const val INITIAL_LOADING_DELAY_MS = 2000L
-    }
 
     private val updateConnectedTrigger = ConflatedBroadcastChannel(Unit)
     val uiState = flow {
@@ -34,12 +29,7 @@ class DiscoverViewModel(
         )
     }.combine(BillingManager.billingFlow()) { uiState, _ ->
         uiState.copy(supportsQuickSwitch = BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH))
-    }.onStart {
-        // Nothing connected yet? Keep search state for a bit more
-        if (octoPrintRepository.getAll().isEmpty()) {
-            delay(INITIAL_LOADING_DELAY_MS)
-        }
-    }.asLiveData()
+    }.sample(600).asLiveData()
 
     fun deleteInstance(webUrl: String) {
         octoPrintRepository.remove(webUrl)

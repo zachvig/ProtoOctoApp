@@ -15,6 +15,7 @@ import java.io.IOException
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
+
 class DiscoverOctoPrintUseCase @Inject constructor(
     private val context: Context,
     private val octoPrintProvider: OctoPrintProvider
@@ -38,6 +39,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
         val bonjourListener = discoverUsingBonjour(timber, coroutineContext, submitResult)
         discoverUsingUPnP(timber, coroutineContext, submitResult)
 
+        channel.offer(Result(emptyList()))
         return@withContext channel.asFlow().onCompletion {
             coroutineContext.cancel()
             timber.i("Finishing Bonjour discovery")
@@ -67,7 +69,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                 timber.e(it, "Bonjour discover error")
             }
         )
-        manager.discoverServices("_octoprint._tcp", NsdManager.PROTOCOL_DNS_SD, discoverListener)
+        manager.discoverServices("_http._tcp", NsdManager.PROTOCOL_DNS_SD, discoverListener)
         return discoverListener
     }
 
@@ -107,7 +109,6 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                     bonjourResolveBusy = false
 
                     GlobalScope.launch(coroutineContext) {
-                        delay(2000L)
                         resolveBonjourServiceFromBacklog(timber, coroutineContext, submitResult)
                     }
 
@@ -130,7 +131,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                             instance = DiscoveredOctoPrint(
                                 label = resolvedService.serviceName,
                                 detailLabel = "http://${maskedCredentials}${resolvedService.host.hostName}:${resolvedService.port}$path",
-                                webUrl = "http://${credentials}${resolvedService.host.hostAddress}:${resolvedService.port}$path",
+                                webUrl = "http://${credentials}${resolvedService.host.hostName}:${resolvedService.port}$path",
                                 bonjourServiceName = resolvedService.serviceName,
                                 bonjourServiceType = resolvedService.serviceType,
                                 source = "Bonjour"

@@ -33,7 +33,6 @@ import de.crysxd.octoapp.signin.databinding.DiscoverFragmentInitialBinding
 import de.crysxd.octoapp.signin.di.injectViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import timber.log.Timber
 import kotlin.math.floor
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
 
@@ -43,6 +42,10 @@ class DiscoverFragment : BaseFragment() {
     private lateinit var binding: DiscoverFragmentInitialBinding
     private var continueManuallyJob: Job? = null
     var viewMovedToSecondaryLayout = false
+
+    companion object {
+        const val INITIAL_LOADING_DELAY_MS = 2000L
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         DiscoverFragmentInitialBinding.inflate(inflater, container, false).also {
@@ -78,11 +81,14 @@ class DiscoverFragment : BaseFragment() {
         }
 
         viewModel.uiState.observe(viewLifecycleOwner) {
-            if (!viewMovedToSecondaryLayout && (it.connectedOctoPrint.isNotEmpty() || it.discoveredOctoPrint.isNotEmpty())) {
-                Timber.i("Content arrived, moving view state")
+            beginDelayedTransition()
+
+            // First and previously connected? Instantly move to secondary layout
+            if (it.connectedOctoPrint.isNotEmpty()) {
                 moveToSecondaryLayout()
                 continueManuallyJob?.cancel()
             }
+
 
             createDiscoveredOptions(it.discoveredOctoPrint)
             createPreviouslyConnectedOptions(it.connectedOctoPrint, it.supportsQuickSwitch)
@@ -106,22 +112,26 @@ class DiscoverFragment : BaseFragment() {
     private fun scheduleContinueManually() {
         // Delay the manual button a bit so we hopefully automatically find OctoPrint
         continueManuallyJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-            val delay = DiscoverViewModel.INITIAL_LOADING_DELAY_MS + 500
-            val steps = 100
-            val stepDelay = floor(delay / steps.toFloat()).toLong() / 2
+            val delay = INITIAL_LOADING_DELAY_MS
+            val steps = 200
+            val stepDelay = floor(delay / steps.toFloat()).toLong()
             binding.progressBar.max = steps
             repeat(steps) {
                 delay(stepDelay)
                 binding.progressBar.progress = it + 1
             }
             binding.progressBar.isIndeterminate = true
-            continueWithManualConnect()
+
+            if (binding.content.discoveredOptions.childCount > 0 || binding.content.previousOptions.childCount > 1) {
+                beginDelayedTransition()
+                moveToSecondaryLayout()
+            } else {
+                continueWithManualConnect()
+            }
         }
     }
 
     private fun createDiscoveredOptions(options: List<DiscoverOctoPrintUseCase.DiscoveredOctoPrint>) {
-        beginDelayedTransition()
-
         // Delete all that are not longer shown
         binding.content.discoveredOptions.children.toList().forEach {
             if (it !is DiscoverOptionView) binding.content.discoveredOptions.removeView(it)
@@ -148,8 +158,6 @@ class DiscoverFragment : BaseFragment() {
     }
 
     private fun createPreviouslyConnectedOptions(options: List<OctoPrintInstanceInformationV2>, quickSwitchEnabled: Boolean) {
-        beginDelayedTransition()
-
         // Delete all that are not longer shown
         binding.content.previousOptions.children.toList().forEach {
             if (it == binding.content.quickSwitchOption) return@forEach
@@ -215,7 +223,6 @@ class DiscoverFragment : BaseFragment() {
     }
 
     private fun moveToSecondaryLayout() {
-        beginDelayedTransition()
         viewMovedToSecondaryLayout = true
         val wifiWasVisible = binding.wifiWarning.isVisible
         ConstraintSet().let {
