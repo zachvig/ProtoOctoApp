@@ -69,7 +69,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                 timber.e(it, "Bonjour discover error")
             }
         )
-        manager.discoverServices("_http._tcp", NsdManager.PROTOCOL_DNS_SD, discoverListener)
+        manager.discoverServices("_octoprint._tcp", NsdManager.PROTOCOL_DNS_SD, discoverListener)
         return discoverListener
     }
 
