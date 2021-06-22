@@ -18,9 +18,7 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 /**
- * Android is a little stupid when it comes to resolving *.local and *.home domains. This is due to a "Private DNS" settings that
- * is depending on the manufacturer set. If enabled, this will bypass the local router as a DNS and directly head to 8.8.8.8 via DNS over HTTPS. As the
- * public DNS has no clue about our *.local and *.home domain, it can't be resolved.
+ * Android is a little stupid when it comes to resolving *.local and *.home domains, sometimes it bypasses the local router as DNS server.
  *
  * This interceptor will catch a UnknownHostException and will attempt to resolve the hostname with a custom DNS resolver which will contact the router directly but
  * also uses the standard Android resolver as a fallback. After the host was resolved, the request is continued with the resolved IP. This class also contains a simple
