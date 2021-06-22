@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.di.modules
 
+import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
 import dagger.Provides
@@ -42,8 +43,9 @@ open class OctoPrintModule {
         invalidApiKeyInterceptor: InvalidApiKeyInterceptor,
         octoPrintRepository: OctoPrintRepository,
         analytics: FirebaseAnalytics,
-        sslKeyStoreHandler: SslKeyStoreHandler
-    ) = OctoPrintProvider(timberHandler, invalidApiKeyInterceptor, octoPrintRepository, analytics, sslKeyStoreHandler)
+        sslKeyStoreHandler: SslKeyStoreHandler,
+        context: Context,
+    ) = OctoPrintProvider(timberHandler, invalidApiKeyInterceptor, octoPrintRepository, analytics, sslKeyStoreHandler, context)
 
     @BaseScope
     @Provides

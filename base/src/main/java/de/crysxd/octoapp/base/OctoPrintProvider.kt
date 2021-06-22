@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base
 
+import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
@@ -30,13 +31,15 @@ class OctoPrintProvider(
     private val invalidApiKeyInterceptor: InvalidApiKeyInterceptor,
     private val octoPrintRepository: OctoPrintRepository,
     private val analytics: FirebaseAnalytics,
-    private val sslKeyStoreHandler: SslKeyStoreHandler
+    private val sslKeyStoreHandler: SslKeyStoreHandler,
+    private val context: Context
 ) {
 
     private val octoPrintMutex = Mutex()
     private var octoPrintCache: Pair<OctoPrintInstanceInformationV2, OctoPrint>? = null
     private val currentMessageChannel = ConflatedBroadcastChannel<Message.CurrentMessage?>()
     private val connectEventChannel = ConflatedBroadcastChannel<Event.Connected?>()
+    private val localDnsInterceptor = LocalDnsInterceptor(context)
 
     init {
         // Passively collect data for the analytics profile
@@ -152,7 +155,7 @@ class OctoPrintProvider(
             rawWebUrl = it.webUrl,
             rawAlternativeWebUrl = it.alternativeWebUrl,
             apiKey = it.apiKey,
-            interceptors = listOf(invalidApiKeyInterceptor),
+            interceptors = listOf(invalidApiKeyInterceptor, localDnsInterceptor),
             keyStore = sslKeyStoreHandler.loadKeyStore(),
             hostnameVerifier = SubjectAlternativeNameCompatVerifier().takeIf { _ -> sslKeyStoreHandler.isWeakVerificationForHost(it.webUrl) },
             networkExceptionListener = ::handleNetworkException,

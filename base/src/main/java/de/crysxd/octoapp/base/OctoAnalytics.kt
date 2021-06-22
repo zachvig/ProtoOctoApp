@@ -46,6 +46,8 @@ object OctoAnalytics {
         object TroubleShootHttp2Failure : Event("troubleshoot_failure_http_2")
         object TroubleShootFromSignIn : Event("troubleshoot_sign_in")
 
+        object InbuiltDnsResolveSuccess : Event("inbuilt_dns_resolve_success")
+
         object QrCodeCompleted : Event("qr_code_login_completed")
         object QrCodeStarted : Event("qr_code_login")
         object SignInFailed : Event("sign_in_failure")
