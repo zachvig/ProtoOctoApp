@@ -67,16 +67,8 @@ class DiscoverOptionView @JvmOverloads constructor(
     fun isShowing(option: OctoPrintInstanceInformationV2) = option.webUrl == optionId
 
     fun showManualConnect() {
-        binding.title.text = "Connect manually"
-        binding.subtitle.text = "Enter a web URL manually"
-        binding.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.menu_style_settings_background))
-        binding.buttonDelete.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_settings_foreground))
-        binding.shevron.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_settings_foreground))
-    }
-
-    fun showHelp() {
-        binding.title.text = "Learn how to sign in"
-        binding.subtitle.text = "It's easier then you think!"
+        binding.title.text = "Connect manually H"
+        binding.subtitle.text = "Copy a web URL from your browser H"
         binding.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.menu_style_settings_background))
         binding.buttonDelete.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_settings_foreground))
         binding.shevron.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_settings_foreground))
@@ -87,8 +79,8 @@ class DiscoverOptionView @JvmOverloads constructor(
     }
 
     fun showQuickSwitchOption() {
-        binding.title.text = "Quick switch not enabled"
-        binding.subtitle.text = "Enable to reconnect"
+        binding.title.text = "Quick switch not enabled H"
+        binding.subtitle.text = "Enable to reconnect H"
         binding.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.menu_style_support_background))
         binding.buttonDelete.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_support_foreground))
         binding.shevron.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_support_foreground))

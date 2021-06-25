@@ -8,9 +8,7 @@ import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.io.IOException
 import java.util.*
@@ -30,7 +28,6 @@ class DiscoverOctoPrintUseCase @Inject constructor(
     override suspend fun doExecute(param: Unit, timber: Timber.Tree): Flow<Result> = withContext(Dispatchers.IO) {
         val channel = ConflatedBroadcastChannel(Result(emptyList()))
         val discoveredInstances = mutableListOf<DiscoveredOctoPrint>()
-        val coroutineContext = Job()
         val submitResult: (DiscoveredOctoPrint) -> Unit = { discovered ->
             if (!discoveredInstances.any { it.webUrl == discovered.webUrl }) {
                 discoveredInstances.add(discovered)
@@ -40,17 +37,20 @@ class DiscoverOctoPrintUseCase @Inject constructor(
 
         // Pixel devices need a multicast lock to find any Bonjour services
         val wifiManager = (context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
-        val multicastLock = wifiManager.createMulticastLock("octoprint-discovery")
-        multicastLock.setReferenceCounted(true)
-        multicastLock.acquire()
 
         // Start discovery and return results
-        val bonjourListener = discoverUsingBonjour(timber, coroutineContext, submitResult)
-        return@withContext channel.asFlow().onCompletion {
-            coroutineContext.cancel()
+        var multicastLock: WifiManager.MulticastLock? = null
+        var bonjourListener: NsdDiscoveryListener? = null
+        return@withContext channel.asFlow().onStart {
+            timber.i("Starting Bonjour discovery")
+            multicastLock = wifiManager.createMulticastLock("octoprint-discovery")
+            multicastLock?.setReferenceCounted(true)
+            multicastLock?.acquire()
+            bonjourListener = discoverUsingBonjour(timber, currentCoroutineContext(), submitResult)
+        }.onCompletion {
             timber.i("Finishing Bonjour discovery")
-            manager.stopServiceDiscovery(bonjourListener)
-            multicastLock.release()
+            bonjourListener?.let(manager::stopServiceDiscovery)
+            multicastLock?.release()
         }
     }
 
@@ -59,7 +59,6 @@ class DiscoverOctoPrintUseCase @Inject constructor(
         coroutineContext: CoroutineContext,
         submitResult: (DiscoveredOctoPrint) -> Unit
     ): NsdDiscoveryListener {
-        timber.i("Preparing Bonjour discovery")
 
         val discoverListener = NsdDiscoveryListener(
             timber = timber,
@@ -126,7 +125,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                         password?.let { p -> "***:***@" } ?: "***@"
                     } ?: ""
 
-                    GlobalScope.launch(coroutineContext) {
+                    GlobalScope.launch(coroutineContext + Dispatchers.IO) {
                         testDiscoveredInstanceAndPublishResult(
                             timber = timber,
                             submitResult = submitResult,

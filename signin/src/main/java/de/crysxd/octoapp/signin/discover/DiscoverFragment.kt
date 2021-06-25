@@ -57,10 +57,6 @@ class DiscoverFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         scheduleContinueManually()
-        binding.content.helpOption.showHelp()
-        binding.content.helpOption.setOnClickListener {
-            continueWithHelp()
-        }
         binding.needHelp.setOnClickListener {
             continueWithHelp()
         }
@@ -154,7 +150,6 @@ class DiscoverFragment : BaseFragment() {
 
         // Update title visibility
         binding.content.discoveredOptionsTitle.isVisible = binding.content.discoveredOptions.childCount > 0
-        binding.content.discoveredHelp.isVisible = binding.content.discoveredOptionsTitle.isVisible
     }
 
     private fun createPreviouslyConnectedOptions(options: List<OctoPrintInstanceInformationV2>, quickSwitchEnabled: Boolean) {
@@ -214,7 +209,7 @@ class DiscoverFragment : BaseFragment() {
 
     private fun deleteAfterConfirmation(option: OctoPrintInstanceInformationV2) {
         requireOctoActivity().showDialog(
-            message = "Delete ${option.label} and all associated settings?",
+            message = "Delete ${option.label} and all associated settings? H",
             positiveButton = "Delete",
             positiveAction = { viewModel.deleteInstance(option.webUrl) },
             neutralAction = {},
@@ -234,7 +229,7 @@ class DiscoverFragment : BaseFragment() {
             binding.title.setTextAppearance(R.style.OctoTheme_TextAppearance_Title)
             binding.subtitle.setTextAppearance(R.style.OctoTheme_TextAppearance)
         }
-        binding.subtitle.text = "Select a option below"
+        binding.subtitle.text = "Select a option below H"
         binding.wifiWarning.isVisible = wifiWasVisible
     }
 }

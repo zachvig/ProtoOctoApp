@@ -11,26 +11,14 @@
         android:id="@+id/discoveredOptionsTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_3"
-        android:text="Discovered on your network"
+        android:text="Discovered on your network H"
         android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
         android:textColor="@color/normal_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/discoveredHelp"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_0"
-        android:text="Not what you are looking for? Connect manually below!"
-        android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
-        android:textColor="@color/light_text"
-        app:layout_constraintEnd_toEndOf="@+id/discoveredOptionsTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/discoveredOptionsTitle" />
-
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/discoveredOptions"
@@ -39,15 +27,16 @@
         android:layout_marginTop="@dimen/margin_1"
         android:orientation="vertical"
         app:divider="@drawable/margin_0_1_divider"
-        app:layout_constraintTop_toBottomOf="@id/discoveredHelp"
+        app:layout_constraintTop_toBottomOf="@id/discoveredOptionsTitle"
         app:showDividers="middle" />
 
     <TextView
         android:id="@+id/previousOptionsTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_3"
-        android:text="Previously connected"
+        android:text="Previously connected H"
         android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
         android:textColor="@color/normal_text"
         app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +49,7 @@
         style="@style/OctoTheme.Widget.Button.Image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="Show delete options"
+        android:contentDescription="Show delete options H"
         android:src="@drawable/ic_round_delete_24"
         android:tint="@color/normal_text"
         app:layout_constraintBottom_toBottomOf="@+id/previousOptionsTitle"
@@ -88,8 +77,9 @@
         android:id="@+id/otherOptionsTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_3"
-        android:text="Other options"
+        android:text="Not what you where looking for? H"
         android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
         android:textColor="@color/normal_text"
         app:layout_constraintEnd_toEndOf="parent"
@@ -108,11 +98,6 @@
 
         <de.crysxd.octoapp.signin.discover.DiscoverOptionView
             android:id="@+id/manualConnectOption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <de.crysxd.octoapp.signin.discover.DiscoverOptionView
-            android:id="@+id/helpOption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

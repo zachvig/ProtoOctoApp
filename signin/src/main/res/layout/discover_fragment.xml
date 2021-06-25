@@ -19,7 +19,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/margin_2"
-        app:layout_constraintBottom_toBottomOf="@+id/needHelp"
+        app:layout_constraintBottom_toBottomOf="@+id/subtitle"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/title" />
@@ -31,7 +31,8 @@
         android:layout_marginStart="@dimen/margin_1"
         android:layout_marginTop="@dimen/margin_4"
         android:layout_marginEnd="@dimen/margin_2"
-        android:text="Welcome to OctoApp!"
+        android:paddingTop="@dimen/margin_1"
+        android:text="Welcome to OctoApp! H"
         android:textAppearance="@style/OctoTheme.TextAppearance.Title"
         android:textColor="@color/dark_text"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,9 +42,10 @@
     <TextView
         android:id="@+id/subtitle"
         android:layout_width="0dp"
+        android:layout_marginTop="@dimen/margin_0"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_0_1"
-        android:text="Searching your OctoPrint..."
+        android:paddingBottom="@dimen/margin_1"
+        android:text="Searching your OctoPrint... H"
         android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
         android:textColor="@color/normal_text"
         app:layout_constraintEnd_toEndOf="@+id/title"
@@ -56,12 +58,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Need help?"
-        android:textAppearance="@style/OctoTheme.TextAppearance"
         android:textColor="@color/accent"
-        app:layout_constraintEnd_toEndOf="@+id/subtitle"
+        style="@style/OctoTheme.Widget.Button.Borderless"
+        android:layout_margin="@dimen/margin_2"
+        android:gravity="center"
+        android:padding="@dimen/margin_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/subtitle"
-        app:layout_constraintTop_toBottomOf="@+id/subtitle" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -103,10 +108,10 @@
         android:drawableStart="@drawable/ic_wifi_unavailable"
         android:drawablePadding="@dimen/margin_1"
         android:gravity="center_vertical"
-        android:text="No WiFi, usually OctoPrint is not available"
+        android:text="No WiFi, usually OctoPrint is not available H"
         android:textAppearance="@style/OctoTheme.TextAppearance"
         android:textColor="@color/light_text"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/needHelp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
