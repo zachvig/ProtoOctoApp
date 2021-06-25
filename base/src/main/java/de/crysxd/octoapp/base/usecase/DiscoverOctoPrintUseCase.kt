@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.usecase
 import android.content.Context
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
+import android.net.wifi.WifiManager
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import kotlinx.coroutines.*
@@ -12,10 +13,11 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.onCompletion
 import timber.log.Timber
 import java.io.IOException
+import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-
+@Suppress("EXPERIMENTAL_API_USAGE")
 class DiscoverOctoPrintUseCase @Inject constructor(
     private val context: Context,
     private val octoPrintProvider: OctoPrintProvider
@@ -32,24 +34,24 @@ class DiscoverOctoPrintUseCase @Inject constructor(
         val submitResult: (DiscoveredOctoPrint) -> Unit = { discovered ->
             if (!discoveredInstances.any { it.webUrl == discovered.webUrl }) {
                 discoveredInstances.add(discovered)
-                channel.offer(Result(discovered = discoveredInstances))
+                channel.offer(Result(discovered = discoveredInstances.sortedBy { it.label }))
             }
         }
 
-        val bonjourListener = discoverUsingBonjour(timber, coroutineContext, submitResult)
-        discoverUsingUPnP(timber, coroutineContext, submitResult)
+        // Pixel devices need a multicast lock to find any Bonjour services
+        val wifiManager = (context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
+        val multicastLock = wifiManager.createMulticastLock("octoprint-discovery")
+        multicastLock.setReferenceCounted(true)
+        multicastLock.acquire()
 
-        channel.offer(Result(emptyList()))
+        // Start discovery and return results
+        val bonjourListener = discoverUsingBonjour(timber, coroutineContext, submitResult)
         return@withContext channel.asFlow().onCompletion {
             coroutineContext.cancel()
             timber.i("Finishing Bonjour discovery")
             manager.stopServiceDiscovery(bonjourListener)
+            multicastLock.release()
         }
-    }
-
-    private fun discoverUsingUPnP(timber: Timber.Tree, coroutineContext: CoroutineContext, submitResult: (DiscoveredOctoPrint) -> Unit) {
-        timber.i("Preparing UPnP discovery")
-
     }
 
     private fun discoverUsingBonjour(

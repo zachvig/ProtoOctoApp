@@ -35,5 +35,8 @@ dependencies {
      */
     implementation 'com.jjoe64:graphview:4.2.2'
 
+    /*
+     * Local backup DNS
+     */
     implementation 'com.qiniu:happy-dns:0.2.18'
 }
