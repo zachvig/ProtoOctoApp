@@ -209,8 +209,8 @@ class DiscoverFragment : BaseFragment() {
 
     private fun deleteAfterConfirmation(option: OctoPrintInstanceInformationV2) {
         requireOctoActivity().showDialog(
-            message = "Delete ${option.label} and all associated settings? H",
-            positiveButton = "Delete",
+            message = getString(R.string.signin___discovery___delete_printer_message, option.label),
+            positiveButton = getString(R.string.signin___discovery_delete_printer_confirmation),
             positiveAction = { viewModel.deleteInstance(option.webUrl) },
             neutralAction = {},
             neutralButton = getString(R.string.cancel)
@@ -229,7 +229,7 @@ class DiscoverFragment : BaseFragment() {
             binding.title.setTextAppearance(R.style.OctoTheme_TextAppearance_Title)
             binding.subtitle.setTextAppearance(R.style.OctoTheme_TextAppearance)
         }
-        binding.subtitle.text = "Select a option below H"
+        binding.subtitle.text = getString(R.string.signin___discovery___welcome_subtitle_select_option)
         binding.wifiWarning.isVisible = wifiWasVisible
     }
 }

@@ -67,8 +67,8 @@ class DiscoverOptionView @JvmOverloads constructor(
     fun isShowing(option: OctoPrintInstanceInformationV2) = option.webUrl == optionId
 
     fun showManualConnect() {
-        binding.title.text = "Connect manually H"
-        binding.subtitle.text = "Copy a web URL from your browser H"
+        binding.title.text = context.getString(R.string.signin___discovery___connect_manuallty_title)
+        binding.subtitle.text = context.getString(R.string.signin___discovery___connect_manually_subtitle)
         binding.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.menu_style_settings_background))
         binding.buttonDelete.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_settings_foreground))
         binding.shevron.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_settings_foreground))
@@ -79,8 +79,8 @@ class DiscoverOptionView @JvmOverloads constructor(
     }
 
     fun showQuickSwitchOption() {
-        binding.title.text = "Quick switch not enabled H"
-        binding.subtitle.text = "Enable to reconnect H"
+        binding.title.text = context.getString(R.string.signin___discovery___quick_switch_disabled_title)
+        binding.subtitle.text = context.getString(R.string.signin___discovery___quick_switch_disabled_subtitle)
         binding.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.menu_style_support_background))
         binding.buttonDelete.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_support_foreground))
         binding.shevron.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_support_foreground))
