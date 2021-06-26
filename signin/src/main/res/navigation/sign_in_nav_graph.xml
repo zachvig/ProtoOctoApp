@@ -30,8 +30,8 @@
         android:label="DiscoverFragment"
         tools:layout="@layout/discover_fragment_initial">
         <action
-            android:id="@+id/actionReadQrCode"
-            app:destination="@id/readQrCodeFragment"
+            android:id="@+id/action_manual_sign_in"
+            app:destination="@id/manualWebUrlFragment"
             app:enterAnim="@anim/enterAnim"
             app:exitAnim="@anim/exitAnim"
             app:popEnterAnim="@anim/popEnterAnim"
@@ -43,5 +43,11 @@
         android:name="de.crysxd.octoapp.signin.ui.ReadQrCodeFragment"
         android:label="ReadQrCodeFragment"
         tools:layout="@layout/read_qr_code_fragment" />
+
+    <fragment
+        android:id="@+id/manualWebUrlFragment"
+        android:name="de.crysxd.octoapp.signin.manual.ManualWebUrlFragment"
+        android:label="ManualWebUrlFragment"
+        tools:layout="@layout/manual_web_url_fragment" />
 
 </navigation>

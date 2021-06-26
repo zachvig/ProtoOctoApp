@@ -5,6 +5,7 @@ import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.net.wifi.WifiManager
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -18,7 +19,8 @@ import kotlin.coroutines.CoroutineContext
 @Suppress("EXPERIMENTAL_API_USAGE")
 class DiscoverOctoPrintUseCase @Inject constructor(
     private val context: Context,
-    private val octoPrintProvider: OctoPrintProvider
+    private val octoPrintProvider: OctoPrintProvider,
+    private val sensitiveDataMask: SensitiveDataMask,
 ) : UseCase<Unit, Flow<DiscoverOctoPrintUseCase.Result>>() {
 
     private val manager = context.getSystemService(Context.NSD_SERVICE) as NsdManager
@@ -145,6 +147,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
     }
 
     private suspend fun testDiscoveredInstanceAndPublishResult(timber: Timber.Tree, instance: DiscoveredOctoPrint, submitResult: (DiscoveredOctoPrint) -> Unit) {
+        sensitiveDataMask.registerWebUrl(instance.webUrl, instance.bonjourServiceName ?: "octoprint_from_bonjour")
         timber.i("Probing resolved instance at ${instance.webUrl} using ${instance.source}")
         val octoPrint = octoPrintProvider.createAdHocOctoPrint(OctoPrintInstanceInformationV2(webUrl = instance.webUrl, apiKey = ""))
         if (octoPrint.createApplicationKeysPluginApi().probe()) {

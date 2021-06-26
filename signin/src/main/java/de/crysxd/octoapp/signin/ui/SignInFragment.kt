@@ -29,7 +29,6 @@ import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
-import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootingFragmentArgs
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.ext.setTextAppearanceCompat
@@ -107,7 +106,7 @@ class SignInFragment : BaseFragment(), InsetAwareScreen {
 
         binding.inputApiKey.setOnActionListener {
             OctoAnalytics.logEvent(OctoAnalytics.Event.QrCodeStarted)
-            findNavController().navigate(R.id.actionReadQrCode)
+            //findNavController().navigate(R.id.actionReadQrCode)
         }
 
         val full = ConstraintSet().also { it.load(requireContext(), R.layout.sign_in_fragment) }

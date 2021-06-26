@@ -15,6 +15,7 @@ import androidx.core.view.children
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -196,7 +197,7 @@ class DiscoverFragment : BaseFragment() {
     }
 
     private fun continueWithManualConnect() {
-        Toast.makeText(requireContext(), "Connect manually", Toast.LENGTH_SHORT).show()
+        findNavController().navigate(R.id.action_manual_sign_in)
     }
 
     private fun continueWithHelp() {
