@@ -31,6 +31,7 @@ class InstantAutoTransition(
 
         if (explode) {
             addTransition(Explode().apply {
+                this.propagation = CircularPropagation()
                 explodeEpicenter?.let {
                     epicenterCallback = object : EpicenterCallback() {
                         override fun onGetEpicenter(transition: Transition) = it

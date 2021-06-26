@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
+    android:layout_marginBottom="@dimen/margin_2"
     android:orientation="vertical">
 
     <TextView
@@ -12,7 +13,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_2"
-        android:layout_marginTop="@dimen/margin_3"
+        android:layout_marginTop="@dimen/margin_2"
         android:text="@string/signin___discovery___discovered_devices"
         android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
         android:textColor="@color/normal_text"
@@ -36,6 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_3"
+        app:layout_goneMarginTop="@dimen/margin_2"
         android:text="@string/signin___discovery___previously_connected_devices"
         android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
         android:textColor="@color/normal_text"

@@ -123,15 +123,19 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
 
     private fun findBackgroundView() = (parent as? ViewGroup)?.children?.firstOrNull { it is OctoBackgroundView } as OctoBackgroundView?
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) = super.onMeasure(
-        MeasureSpec.makeMeasureSpec(
-            resources.getDimension(R.dimen.octo_view_width).toInt(),
-            MeasureSpec.EXACTLY
-        ), MeasureSpec.makeMeasureSpec(
-            resources.getDimension(R.dimen.octo_view_height).toInt(),
-            MeasureSpec.EXACTLY
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) = if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.AT_MOST) {
+        super.onMeasure(
+            MeasureSpec.makeMeasureSpec(
+                resources.getDimension(R.dimen.octo_view_width).toInt(),
+                MeasureSpec.EXACTLY
+            ), MeasureSpec.makeMeasureSpec(
+                resources.getDimension(R.dimen.octo_view_height).toInt(),
+                MeasureSpec.EXACTLY
+            )
         )
-    )
+    } else {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()

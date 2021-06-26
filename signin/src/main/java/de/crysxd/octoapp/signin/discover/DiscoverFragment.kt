@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.signin.discover
 
 import android.content.Intent
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -10,14 +11,14 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import androidx.transition.TransitionManager
+import androidx.transition.*
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -33,8 +34,8 @@ import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.databinding.DiscoverFragmentInitialBinding
 import de.crysxd.octoapp.signin.di.injectViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import timber.log.Timber
 import kotlin.math.floor
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
 
@@ -42,60 +43,81 @@ class DiscoverFragment : BaseFragment() {
     override val viewModel by injectViewModel<DiscoverViewModel>()
     private val wifiViewModel by injectViewModel<NetworkStateViewModel>(BaseInjector.get().viewModelFactory())
     private lateinit var binding: DiscoverFragmentInitialBinding
-    private var continueManuallyJob: Job? = null
-    private var viewMovedToSecondaryLayout = false
-    private var pendingNavigationToManual = false
-
-    companion object {
-        const val INITIAL_LOADING_DELAY_MS = 2000L
+    private val moveBackToOptionsBackPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() = viewModel.moveToOptionsState()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         DiscoverFragmentInitialBinding.inflate(inflater, container, false).also {
             binding = it
-            viewMovedToSecondaryLayout = false
         }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        scheduleContinueManually()
         binding.needHelp.setOnClickListener {
             continueWithHelp()
         }
-        binding.content.manualConnectOption.showManualConnect()
-        binding.content.quickSwitchOption.showQuickSwitchOption()
-        binding.content.quickSwitchOption.setOnClickListener {
+        binding.options.manualConnectOption.showManualConnect()
+        binding.options.manualConnectOption.setOnClickListener { viewModel.moveToManualState() }
+        binding.options.quickSwitchOption.showQuickSwitchOption()
+        binding.options.quickSwitchOption.setOnClickListener {
             continueWithEnableQuickSwitch()
         }
-        binding.content.manualConnectOption.setOnClickListener { continueWithManualConnect() }
-        binding.content.buttonDelete.setOnClickListener {
+        binding.options.buttonDelete.setOnClickListener {
             beginDelayedTransition()
-            binding.content.buttonDelete.isVisible = false
-            binding.content.previousOptions.forEach {
-                if (it != binding.content.quickSwitchOption) {
+            binding.options.buttonDelete.isVisible = false
+            binding.options.previousOptions.forEach {
+                if (it != binding.options.quickSwitchOption) {
                     (it as? DiscoverOptionView)?.showDelete()
                 }
             }
         }
+        binding.manual.buttonContinue.setOnClickListener {
+            viewModel.testWebUrl(binding.manual.input.editText.text?.toString() ?: "")
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, moveBackToOptionsBackPressedCallback)
 
+        playLoadingAnimation()
         viewModel.uiState.observe(viewLifecycleOwner) {
             beginDelayedTransition()
-
-            // First and previously connected? Instantly move to secondary layout
-            if (it.connectedOctoPrint.isNotEmpty()) {
-                moveToSecondaryLayout()
-                continueManuallyJob?.cancel()
+            when (it) {
+                DiscoverViewModel.UiState.Loading -> playLoadingAnimation()
+                is DiscoverViewModel.UiState.Options -> {
+                    createDiscoveredOptions(it.discoveredOptions)
+                    createPreviouslyConnectedOptions(it.previouslyConnectedOptions, it.supportsQuickSwitch)
+                    moveToOptionsLayout()
+                }
+                is DiscoverViewModel.UiState.Manual -> moveToManualLayout()
             }
 
+            if (it is DiscoverViewModel.UiState.ManualError) {
+                showManualError(it)
+            }
 
-            createDiscoveredOptions(it.discoveredOctoPrint)
-            createPreviouslyConnectedOptions(it.connectedOctoPrint, it.supportsQuickSwitch)
+            if (it is DiscoverViewModel.UiState.ManualSuccess) {
+                continueWithManualConnect(it.webUrl)
+            }
         }
 
-
         wifiViewModel.networkState.observe(viewLifecycleOwner) {
+            Timber.i("Wifi state: $it")
             binding.wifiWarning.isVisible = it is NetworkStateViewModel.NetworkState.WifiNotConnected
+        }
+    }
+
+    private fun showManualError(it: DiscoverViewModel.UiState.ManualError) {
+        it.handled = true
+        if (!it.message.isNullOrBlank()) {
+            requireOctoActivity().showDialog(
+                message = it.message,
+                neutralButton = getString(R.string.show_details),
+                neutralAction = { _ ->
+                    requireOctoActivity().showErrorDetailsDialog(it.exception, offerSupport = it.errorCount > 1)
+                }
+            )
+        } else {
+            requireOctoActivity().showErrorDetailsDialog(it.exception, offerSupport = it.errorCount > 1)
         }
     }
 
@@ -106,48 +128,41 @@ class DiscoverFragment : BaseFragment() {
         binding.scrollView.setupWithToolbar(requireOctoActivity())
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (pendingNavigationToManual) {
-            continueWithManualConnect()
-        }
-    }
+    private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(binding.root, InstantAutoTransition(
+        explode = true,
+        explodeEpicenter = Rect(binding.root.width / 2, 0, binding.root.width / 2, 0)
+    ).also {
+        // We accidentally also animated the label changes when the keyboard was automatically opened
+        it.excludeChildren(binding.manual.input, true)
+    })
 
-    private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(binding.root, InstantAutoTransition())
-
-    private fun scheduleContinueManually() {
-        // Delay the manual button a bit so we hopefully automatically find OctoPrint
-        continueManuallyJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-            val delay = INITIAL_LOADING_DELAY_MS
+    private fun playLoadingAnimation() {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             val steps = 200
+            val delay = DiscoverViewModel.INITIAL_DELAY_TIME
             val stepDelay = floor(delay / steps.toFloat()).toLong()
+            binding.octoView.swim()
             binding.progressBar.max = steps
+            binding.progressBar.isIndeterminate = false
             repeat(steps) {
                 delay(stepDelay)
                 binding.progressBar.progress = it + 1
             }
             binding.progressBar.isIndeterminate = true
-
-            if (binding.content.discoveredOptions.childCount > 0 || binding.content.previousOptions.childCount > 1) {
-                beginDelayedTransition()
-                moveToSecondaryLayout()
-            } else {
-                continueWithManualConnect()
-                pendingNavigationToManual = true
-            }
+            binding.octoView.idle()
         }
     }
 
     private fun createDiscoveredOptions(options: List<DiscoverOctoPrintUseCase.DiscoveredOctoPrint>) {
         // Delete all that are not longer shown
-        binding.content.discoveredOptions.children.toList().forEach {
-            if (it !is DiscoverOptionView) binding.content.discoveredOptions.removeView(it)
-            else if (!options.any { o -> it.isShowing(o) }) binding.content.discoveredOptions.removeView(it)
+        binding.options.discoveredOptions.children.toList().forEach {
+            if (it !is DiscoverOptionView) binding.options.discoveredOptions.removeView(it)
+            else if (!options.any { o -> it.isShowing(o) }) binding.options.discoveredOptions.removeView(it)
         }
 
         // Add all missing
         options.map {
-            binding.content.discoveredOptions.children.firstOrNull { view ->
+            binding.options.discoveredOptions.children.firstOrNull { view ->
                 view is DiscoverOptionView && view.isShowing(it)
             } ?: DiscoverOptionView(requireContext()).apply {
                 show(it)
@@ -156,24 +171,24 @@ class DiscoverFragment : BaseFragment() {
         }.filter {
             it.parent == null
         }.forEach {
-            binding.content.discoveredOptions.addView(it, ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            binding.options.discoveredOptions.addView(it, ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
         }
 
         // Update title visibility
-        binding.content.discoveredOptionsTitle.isVisible = binding.content.discoveredOptions.childCount > 0
+        binding.options.discoveredOptionsTitle.isVisible = binding.options.discoveredOptions.childCount > 0
     }
 
     private fun createPreviouslyConnectedOptions(options: List<OctoPrintInstanceInformationV2>, quickSwitchEnabled: Boolean) {
         // Delete all that are not longer shown
-        binding.content.previousOptions.children.toList().forEach {
-            if (it == binding.content.quickSwitchOption) return@forEach
-            else if (it !is DiscoverOptionView) binding.content.previousOptions.removeView(it)
-            else if (!options.any { o -> it.isShowing(o) }) binding.content.previousOptions.removeView(it)
+        binding.options.previousOptions.children.toList().forEach {
+            if (it == binding.options.quickSwitchOption) return@forEach
+            else if (it !is DiscoverOptionView) binding.options.previousOptions.removeView(it)
+            else if (!options.any { o -> it.isShowing(o) }) binding.options.previousOptions.removeView(it)
         }
 
         // Add all missing
         options.map {
-            binding.content.previousOptions.children.firstOrNull { view ->
+            binding.options.previousOptions.children.firstOrNull { view ->
                 view is DiscoverOptionView && view.isShowing(it)
             } ?: DiscoverOptionView(requireContext()).apply {
                 show(it, quickSwitchEnabled)
@@ -189,13 +204,13 @@ class DiscoverFragment : BaseFragment() {
         }.filter {
             it.parent == null
         }.forEach {
-            binding.content.previousOptions.addView(it, ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            binding.options.previousOptions.addView(it, ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
         }
 
         // Update title visibility
-        binding.content.previousOptionsTitle.isVisible = binding.content.previousOptions.childCount > 1
-        binding.content.quickSwitchOption.isVisible = !quickSwitchEnabled && binding.content.previousOptionsTitle.isVisible
-        binding.content.buttonDelete.isVisible = binding.content.buttonDelete.isVisible && binding.content.previousOptionsTitle.isVisible
+        binding.options.previousOptionsTitle.isVisible = binding.options.previousOptions.childCount > 1
+        binding.options.quickSwitchOption.isVisible = !quickSwitchEnabled && binding.options.previousOptionsTitle.isVisible
+        binding.options.buttonDelete.isVisible = binding.options.buttonDelete.isVisible && binding.options.previousOptionsTitle.isVisible
     }
 
     private fun continueWithDiscovered(octoPrint: DiscoverOctoPrintUseCase.DiscoveredOctoPrint) {
@@ -206,8 +221,8 @@ class DiscoverFragment : BaseFragment() {
         viewModel.activatePreviouslyConnected(octoPrint)
     }
 
-    private fun continueWithManualConnect() {
-        findNavController().navigate(R.id.action_manual_sign_in)
+    private fun continueWithManualConnect(webUrl: String) {
+        Toast.makeText(requireContext(), webUrl, Toast.LENGTH_SHORT).show()
     }
 
     private fun continueWithHelp() {
@@ -229,7 +244,7 @@ class DiscoverFragment : BaseFragment() {
     }
 
     private fun moveToSecondaryLayout() {
-        viewMovedToSecondaryLayout = true
+        binding.octoView.idle()
         val wifiWasVisible = binding.wifiWarning.isVisible
         ConstraintSet().let {
             it.load(requireContext(), R.layout.discover_fragment)
@@ -241,7 +256,25 @@ class DiscoverFragment : BaseFragment() {
             binding.subtitle.setTextAppearance(R.style.OctoTheme_TextAppearance)
             binding.subtitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.light_text))
         }
-        binding.subtitle.text = getString(R.string.signin___discovery___welcome_subtitle_select_option)
         binding.wifiWarning.isVisible = wifiWasVisible
+    }
+
+    private fun moveToOptionsLayout() {
+        beginDelayedTransition()
+        moveToSecondaryLayout()
+        binding.subtitle.text = getString(R.string.signin___discovery___welcome_subtitle_select_option)
+        binding.options.root.isVisible = true
+        binding.manual.root.isVisible = false
+        moveBackToOptionsBackPressedCallback.isEnabled = false
+    }
+
+    private fun moveToManualLayout() {
+        beginDelayedTransition()
+        moveToSecondaryLayout()
+        binding.subtitle.text = "Enter your OctoPrint web URL"
+        binding.options.root.isVisible = false
+        binding.manual.root.isVisible = true
+        binding.manual.input.showSoftKeyboard()
+        moveBackToOptionsBackPressedCallback.isEnabled = true
     }
 }

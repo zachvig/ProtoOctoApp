@@ -489,11 +489,11 @@
     <string name="webcam_settings___aspect_ratio_source">Aspect ratio</string>
     <string name="signin___discovery___discovered_devices">Discovered on your network</string>
     <string name="signin___discovery___previously_connected_devices">Previously connected</string>
-    <string name="signin___discovery___other_options">Not what you where looking for?</string>
+    <string name="signin___discovery___other_options">Not what you were looking for?</string>
     <string name="signin___discovery___need_help">Need help?</string>
     <string name="signin___discovery___welcome_subtitle_searching">Searching for your OctoPrint…</string>
     <string name="signin___discovery___welcome_title">Welcome to OctoApp!</string>
-    <string name="signin___discovery___no_wifi_warning">No WiFi, usually OctoPrint is not available</string>
+    <string name="signin___discovery___no_wifi_warning">No WiFi, OctoPrint might not be available</string>
     <string name="signin___discovery___welcome_subtitle_select_option">Select a option below</string>
     <string name="signin___discovery___connect_manuallty_title">Connect manually</string>
     <string name="signin___discovery___connect_manually_subtitle">Copy a web URL from your browser</string>

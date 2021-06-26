@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
-        android:alpha="0.5"
+        android:alpha="0.33"
         app:layout_constraintBottom_toBottomOf="@+id/progressBar"
         app:layout_constraintTop_toTopOf="@+id/octoView" />
 
@@ -52,7 +52,7 @@
         android:layout_marginBottom="@dimen/margin_0_1"
         android:paddingBottom="@dimen/margin_1"
         android:text="@string/signin___discovery___welcome_subtitle_searching"
-        android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+        android:textAppearance="@style/OctoTheme.TextAppearance"
         android:textColor="@color/light_text"
         app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintEnd_toEndOf="parent"
@@ -69,7 +69,6 @@
         android:gravity="center"
         android:text="@string/signin___discovery___need_help"
         android:textAppearance="@style/OctoTheme.TextAppearance"
-        android:textColor="@color/accent"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintEnd_toEndOf="parent"
@@ -84,6 +83,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_4"
         android:progressTint="@color/accent"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/accent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -96,17 +97,28 @@
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/margin_2"
         android:clipToPadding="false"
+        android:fillViewport="true"
         android:paddingHorizontal="@dimen/margin_2"
-        android:paddingBottom="@dimen/margin_2"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <include
-            android:id="@+id/content"
-            layout="@layout/discover_fragment_content"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+
+            <include
+                android:id="@+id/options"
+                layout="@layout/discover_fragment_options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <include
+                android:id="@+id/manual"
+                layout="@layout/discover_fragment_manual"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
 
     </de.crysxd.octoapp.base.ui.common.OctoScrollView>
 
@@ -125,5 +137,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/titleBarrier"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="subtitle,octoView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

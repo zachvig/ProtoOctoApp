@@ -48,6 +48,6 @@
         android:id="@+id/manualWebUrlFragment"
         android:name="de.crysxd.octoapp.signin.manual.ManualWebUrlFragment"
         android:label="ManualWebUrlFragment"
-        tools:layout="@layout/manual_web_url_fragment" />
+        tools:layout="@layout/discover_fragment_manual" />
 
 </navigation>
