@@ -11,6 +11,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
@@ -229,6 +230,7 @@ class DiscoverFragment : BaseFragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             binding.title.setTextAppearance(R.style.OctoTheme_TextAppearance_Title)
             binding.subtitle.setTextAppearance(R.style.OctoTheme_TextAppearance)
+            binding.subtitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.light_text))
         }
         binding.subtitle.text = getString(R.string.signin___discovery___welcome_subtitle_select_option)
         binding.wifiWarning.isVisible = wifiWasVisible

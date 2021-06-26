@@ -22,6 +22,9 @@ class ManualWebUrlViewModel(
         sensitiveDataMask.registerWebUrl(upgradedWebUrl, "manually_entered_web_url")
 
         try {
+            if (webUrl.isBlank()) {
+                throw IllegalArgumentException("URL is empty")
+            }
             Uri.parse(upgradedWebUrl)
             mutbaleViewState.postValue(ViewState.Success(webUrl = webUrl))
         } catch (e: Exception) {
