@@ -1,120 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:background="@color/white">
-
-    <de.crysxd.octoapp.base.ui.common.OctoBackgroundView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:alpha="0.5"
-        app:layout_constraintBottom_toBottomOf="@+id/octoView"
-        app:layout_constraintTop_toTopOf="@+id/octoView" />
-
-    <de.crysxd.octoapp.base.ui.common.OctoView
-        android:id="@+id/octoView"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="@dimen/margin_2"
-        android:layout_marginTop="@dimen/margin_0_1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/title" />
-
-    <TextView
-        android:id="@+id/wifiWarning"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_2"
-        android:drawableStart="@drawable/ic_wifi_unavailable"
-        android:drawablePadding="@dimen/margin_1"
-        android:gravity="center_vertical"
-        android:text="@string/signin___discovery___no_wifi_warning"
-        android:textAppearance="@style/OctoTheme.TextAppearance"
-        android:textColor="@color/light_text"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:visibility="visible" />
-
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_1"
-        android:layout_marginTop="@dimen/margin_2"
-        android:layout_marginEnd="@dimen/margin_2"
-        android:paddingTop="@dimen/margin_1"
-        android:text="@string/signin___discovery___welcome_title"
-        android:textAppearance="@style/OctoTheme.TextAppearance.Title"
-        android:textColor="@color/dark_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/octoView"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_goneMarginTop="@dimen/margin_3" />
-
-    <TextView
-        android:id="@+id/subtitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_0"
-        android:paddingBottom="@dimen/margin_1"
-        android:text="@string/signin___discovery___welcome_subtitle_searching"
-        android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
-        android:textColor="@color/normal_text"
-        app:layout_constraintEnd_toEndOf="@+id/title"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="@+id/title"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
-
-    <TextView
-        android:id="@+id/needHelp"
-        style="@style/OctoTheme.Widget.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_1_2"
-        android:gravity="center"
-        android:text="@string/signin___discovery___need_help"
-        android:textColor="@color/accent"
-        app:layout_constraintTop_toBottomOf="@id/titleBarrier"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:indeterminateTint="@color/accent"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@+id/subtitle"
-        app:layout_constraintStart_toStartOf="@+id/subtitle"
-        app:layout_constraintTop_toBottomOf="@+id/subtitle" />
+    android:gravity="center"
+    android:orientation="vertical">
 
     <de.crysxd.octoapp.base.ui.common.OctoScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_weight="1"
         android:clipToPadding="false"
-        android:padding="@dimen/margin_2"
-        app:layout_constraintBottom_toTopOf="@id/wifiWarning"
-        app:layout_constraintTop_toBottomOf="@+id/needHelp"
-        app:layout_constraintVertical_bias="1.0"
-        app:layout_goneMarginBottom="0dp"
-        tools:layout_editor_absoluteX="0dp">
+        android:fillViewport="true"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp">
 
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/contentWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <de.crysxd.octoapp.base.ui.common.OctoBackgroundView
+                    android:id="@+id/octoBackground"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <de.crysxd.octoapp.base.ui.common.OctoView
+                    android:id="@+id/octoView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:octoActivity="swim" />
+
+                <FrameLayout
+                    android:id="@+id/content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_1"
+                    android:paddingHorizontal="@dimen/margin_2"
+                    android:paddingTop="@dimen/margin_1"
+                    app:layout_constraintTop_toBottomOf="@+id/octoView">
+
+                    <include
+                        android:id="@+id/loading"
+                        layout="@layout/discover_fragment_content_initial" />
+
+                </FrameLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </FrameLayout>
     </de.crysxd.octoapp.base.ui.common.OctoScrollView>
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/titleBarrier"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="subtitle,octoView" />
+    <TextView
+        android:id="@+id/wifiWarning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_2"
+        android:drawableStart="@drawable/ic_wifi_unavailable"
+        android:drawablePadding="@dimen/margin_1"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:text="@string/signin___discovery___no_wifi_warning"
+        android:textAppearance="@style/OctoTheme.TextAppearance"
+        android:textColor="@color/light_text" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

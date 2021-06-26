@@ -4,22 +4,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
     android:layout_marginBottom="@dimen/margin_2"
+    android:clipToPadding="false"
     android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Which OctoPrint do you want to connect?"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/help"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_2"
+        android:text="@string/signin___discovery___need_help"
+        android:textColor="@color/accent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title" />
 
     <TextView
         android:id="@+id/discoveredOptionsTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_2"
-        android:layout_marginTop="@dimen/margin_2"
+        android:layout_marginTop="@dimen/margin_3"
         android:text="@string/signin___discovery___discovered_devices"
         android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
         android:textColor="@color/normal_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/help" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/discoveredOptions"
@@ -37,7 +57,6 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_3"
-        app:layout_goneMarginTop="@dimen/margin_2"
         android:text="@string/signin___discovery___previously_connected_devices"
         android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
         android:textColor="@color/normal_text"

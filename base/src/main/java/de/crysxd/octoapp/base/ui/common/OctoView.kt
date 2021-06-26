@@ -117,7 +117,7 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     }
 
     private fun triggerBackgroundAction(d: Drawable?) = when (d) {
-        swimDrawable -> findBackgroundView()?.triggerSwimBubbles()
+        swimDrawable -> Unit//findBackgroundView()?.triggerSwimBubbles()
         else -> Unit
     }
 

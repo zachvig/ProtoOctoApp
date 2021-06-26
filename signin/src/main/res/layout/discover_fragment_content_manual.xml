@@ -5,6 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_2"
+        android:gravity="center"
+        android:text="Enter your OctoPrint's web URL"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/help"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_2"
+        android:text="@string/signin___discovery___need_help"
+        android:textColor="@color/accent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
     <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
         android:id="@+id/input"
         android:layout_width="match_parent"
@@ -12,9 +33,10 @@
         android:layout_marginTop="@dimen/margin_3"
         app:example="http://192.168.1.134|octoprint.home:5000|https://myoctoprint.com|http://192.168.0.204:5000/octoprint"
         app:label="Web URL"
+        android:layout_marginBottom="@dimen/margin_3"
         app:labelActive="OctoPrint URL – Copy this from your browser!"
         app:layout_constraintBottom_toTopOf="@+id/buttonContinue"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/help"
         app:layout_constraintVertical_chainStyle="spread_inside"
         tools:layout_editor_absoluteX="20dp" />
 
