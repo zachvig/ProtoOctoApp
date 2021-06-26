@@ -16,22 +16,14 @@
         app:popEnterAnim="@anim/popEnterAnim"
         app:popExitAnim="@anim/popExitAnim" />
 
-    <action
-        android:id="@+id/action_show_purchase_flow"
-        app:destination="@id/purchase_flow_nav_graph"
-        app:enterAnim="@anim/enterAnim"
-        app:exitAnim="@anim/exitAnim"
-        app:popEnterAnim="@anim/popEnterAnim"
-        app:popExitAnim="@anim/popExitAnim" />
-
     <fragment
         android:id="@+id/discoverFragment"
         android:name="de.crysxd.octoapp.signin.discover.DiscoverFragment"
         android:label="DiscoverFragment"
         tools:layout="@layout/discover_fragment_initial">
         <action
-            android:id="@+id/action_manual_sign_in"
-            app:destination="@id/manualWebUrlFragment"
+            android:id="@+id/probe_web_url"
+            app:destination="@id/probeOctoPrintFragment"
             app:enterAnim="@anim/enterAnim"
             app:exitAnim="@anim/exitAnim"
             app:popEnterAnim="@anim/popEnterAnim"
@@ -45,9 +37,14 @@
         tools:layout="@layout/read_qr_code_fragment" />
 
     <fragment
-        android:id="@+id/manualWebUrlFragment"
-        android:name="de.crysxd.octoapp.signin.manual.ManualWebUrlFragment"
-        android:label="ManualWebUrlFragment"
-        tools:layout="@layout/discover_fragment_manual" />
+        android:id="@+id/probeOctoPrintFragment"
+        android:name="de.crysxd.octoapp.signin.probe.ProbeOctoPrintFragment"
+        android:label="ProbeOctoPrintFragment"
+        tools:layout="">
+
+        <argument
+            android:name="webUrl"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

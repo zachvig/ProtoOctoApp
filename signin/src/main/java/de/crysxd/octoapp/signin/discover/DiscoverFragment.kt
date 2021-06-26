@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
@@ -18,6 +17,7 @@ import androidx.core.view.children
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.transition.*
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -126,6 +126,14 @@ class DiscoverFragment : BaseFragment() {
         requireOctoActivity().octo.isVisible = false
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
         binding.scrollView.setupWithToolbar(requireOctoActivity())
+        if (binding.manual.input.isVisible) {
+            binding.manual.input.showSoftKeyboard()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.manual.input.hideSoftKeyboard()
     }
 
     private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(binding.root, InstantAutoTransition(
@@ -214,7 +222,7 @@ class DiscoverFragment : BaseFragment() {
     }
 
     private fun continueWithDiscovered(octoPrint: DiscoverOctoPrintUseCase.DiscoveredOctoPrint) {
-        Toast.makeText(requireContext(), octoPrint.label, Toast.LENGTH_SHORT).show()
+        findNavController().navigate(DiscoverFragmentDirections.probeWebUrl(octoPrint.webUrl))
     }
 
     private fun continueWithPreviouslyConnected(octoPrint: OctoPrintInstanceInformationV2) {
@@ -222,7 +230,7 @@ class DiscoverFragment : BaseFragment() {
     }
 
     private fun continueWithManualConnect(webUrl: String) {
-        Toast.makeText(requireContext(), webUrl, Toast.LENGTH_SHORT).show()
+        findNavController().navigate(DiscoverFragmentDirections.probeWebUrl(webUrl))
     }
 
     private fun continueWithHelp() {
