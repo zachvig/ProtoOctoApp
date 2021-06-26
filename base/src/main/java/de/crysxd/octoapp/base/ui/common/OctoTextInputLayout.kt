@@ -1,7 +1,9 @@
 package de.crysxd.octoapp.base.ui.common
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
@@ -12,16 +14,22 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.ViewOctoInputLayoutBinding
+import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
+import de.crysxd.octoapp.base.ui.ext.requestFocusAndOpenSoftKeyboard
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import kotlinx.parcelize.Parcelize
+import timber.log.Timber
+import kotlin.math.roundToInt
 
 
 class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, style: Int = 0) : FrameLayout(context, attrs, style) {
@@ -39,7 +47,12 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             field = value
             updateViewState()
         }
-    var example: CharSequence? = null
+    var examples: List<CharSequence> = emptyList()
+        set(value) {
+            field = value
+            visibleExampleIndex = 0
+        }
+    var visibleExampleIndex = 0
         set(value) {
             field = value
             updateViewState()
@@ -101,6 +114,10 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         }
         get() = null
 
+    private val changeExampleRunnable = Runnable {
+        showNextExample()
+    }
+
     @Suppress("unused")
     val editText: AppCompatEditText by lazy { binding.input }
 
@@ -116,7 +133,7 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             R.styleable.OctoTextInputLayout, 0, 0
         ).use {
             hintActive = it.getString(R.styleable.OctoTextInputLayout_labelActive)
-            example = it.getString(R.styleable.OctoTextInputLayout_example)
+            examples = it.getString(R.styleable.OctoTextInputLayout_example)?.split("|") ?: emptyList()
             hintNormal = it.getString(R.styleable.OctoTextInputLayout_label)
             selectAllOnFocus = it.getBoolean(R.styleable.OctoTextInputLayout_selectAllOnFocus, false)
             actionOnlyWithText = it.getBoolean(R.styleable.OctoTextInputLayout_actionOnlyWithText, false)
@@ -153,6 +170,52 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
         }
     }
 
+    private fun animateExampleAlpha(from: Float, to: Float, then: () -> Unit = {}) {
+        ValueAnimator.ofFloat(from, to).also {
+            it.addUpdateListener {
+                val color = binding.input.hintTextColors.defaultColor
+                val r = Color.red(color)
+                val g = Color.green(color)
+                val b = Color.blue(color)
+                val a = ((it.animatedValue as Float) * 255f).roundToInt()
+                val updatedColor = Color.argb(a, r, g, b)
+                binding.input.setHintTextColor(updatedColor)
+            }
+            it.doOnEnd {
+                then()
+            }
+            it.duration = 250
+            it.interpolator = AccelerateDecelerateInterpolator()
+        }.start()
+    }
+
+    private fun showNextExample() {
+        // Only show next example when the input has focus as examples are only shown in focused state
+        if (binding.input.hasFocus()) {
+            animateExampleAlpha(1f, 0f) {
+                visibleExampleIndex = (visibleExampleIndex + 1) % examples.size
+                Timber.i("visibleExampleIndex=$visibleExampleIndex")
+                animateExampleAlpha(0f, 1f)
+            }
+        }
+    }
+
+    private fun scheduleNextExampleToBeShown() {
+        // Might be null if called too early
+        handler?.removeCallbacks(changeExampleRunnable)
+        handler?.postDelayed(changeExampleRunnable, 2500)
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        scheduleNextExampleToBeShown()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        handler.removeCallbacks(changeExampleRunnable)
+    }
+
     private fun updateViewState() {
         val labelVisible = binding.input.hasFocus() || !binding.input.text.isNullOrEmpty() || error != null
         binding.label.text = if (binding.input.hasFocus()) {
@@ -161,7 +224,7 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             error ?: hintNormal
         }
         val hintText = if (labelVisible) {
-            example
+            examples.getOrNull(visibleExampleIndex) ?: examples.lastOrNull()
         } else {
             hintNormal
         }
@@ -177,12 +240,17 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             binding.input.hint = hintText
             binding.action.isVisible = actionVisible
         }
+
+        scheduleNextExampleToBeShown()
     }
 
     @Suppress("unused")
     fun setOnActionListener(l: (View) -> Unit) {
         binding.action.setOnClickListener(l)
     }
+
+    fun showSoftKeyboard() = binding.input.requestFocusAndOpenSoftKeyboard()
+    fun hideSoftKeyboard() = binding.input.clearFocusAndHideSoftKeyboard()
 
     override fun onSaveInstanceState(): Parcelable = SavedState(
         super.onSaveInstanceState()!!,
