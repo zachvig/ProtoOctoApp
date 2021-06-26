@@ -43,7 +43,8 @@ class DiscoverFragment : BaseFragment() {
     private val wifiViewModel by injectViewModel<NetworkStateViewModel>(BaseInjector.get().viewModelFactory())
     private lateinit var binding: DiscoverFragmentInitialBinding
     private var continueManuallyJob: Job? = null
-    var viewMovedToSecondaryLayout = false
+    private var viewMovedToSecondaryLayout = false
+    private var pendingNavigationToManual = false
 
     companion object {
         const val INITIAL_LOADING_DELAY_MS = 2000L
@@ -105,6 +106,13 @@ class DiscoverFragment : BaseFragment() {
         binding.scrollView.setupWithToolbar(requireOctoActivity())
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (pendingNavigationToManual) {
+            continueWithManualConnect()
+        }
+    }
+
     private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(binding.root, InstantAutoTransition())
 
     private fun scheduleContinueManually() {
@@ -125,6 +133,7 @@ class DiscoverFragment : BaseFragment() {
                 moveToSecondaryLayout()
             } else {
                 continueWithManualConnect()
+                pendingNavigationToManual = true
             }
         }
     }
