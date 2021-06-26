@@ -116,7 +116,8 @@ class DiscoverViewModel(
         ) : Manual()
 
         data class ManualSuccess(
-            val webUrl: String
+            val webUrl: String,
+            var handled: Boolean = false,
         ) : Manual()
     }
 

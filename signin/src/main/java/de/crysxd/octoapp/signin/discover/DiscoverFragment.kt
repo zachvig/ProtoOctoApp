@@ -91,11 +91,13 @@ class DiscoverFragment : BaseFragment() {
                 is DiscoverViewModel.UiState.Manual -> moveToManualLayout()
             }
 
-            if (it is DiscoverViewModel.UiState.ManualError) {
+            if (it is DiscoverViewModel.UiState.ManualError && !it.handled) {
+                it.handled = true
                 showManualError(it)
             }
 
-            if (it is DiscoverViewModel.UiState.ManualSuccess) {
+            if (it is DiscoverViewModel.UiState.ManualSuccess && !it.handled) {
+                it.handled = true
                 continueWithManualConnect(it.webUrl)
             }
         }
@@ -107,7 +109,6 @@ class DiscoverFragment : BaseFragment() {
     }
 
     private fun showManualError(it: DiscoverViewModel.UiState.ManualError) {
-        it.handled = true
         if (!it.message.isNullOrBlank()) {
             requireOctoActivity().showDialog(
                 message = it.message,
@@ -126,7 +127,7 @@ class DiscoverFragment : BaseFragment() {
         requireOctoActivity().octo.isVisible = false
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
         binding.scrollView.setupWithToolbar(requireOctoActivity())
-        if (binding.manual.input.isVisible) {
+        if (viewModel.uiState.value is DiscoverViewModel.UiState.Manual) {
             binding.manual.input.showSoftKeyboard()
         }
     }
