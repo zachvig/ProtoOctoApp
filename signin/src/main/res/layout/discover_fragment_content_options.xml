@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Which OctoPrint do you want to connect?"
+        android:text="@string/signin___discovery___options_title"
         android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
         app:layout_constraintTop_toTopOf="parent" />
 

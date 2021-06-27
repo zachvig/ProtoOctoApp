@@ -222,7 +222,7 @@ class DiscoverFragment : BaseFragment() {
     private fun deleteAfterConfirmation(option: OctoPrintInstanceInformationV2) {
         requireOctoActivity().showDialog(
             message = getString(R.string.signin___discovery___delete_printer_message, option.label),
-            positiveButton = getString(R.string.signin___discovery_delete_printer_confirmation),
+            positiveButton = getString(R.string.signin___discovery___delete_printer_confirmation),
             positiveAction = { viewModel.deleteInstance(option.webUrl) },
             neutralAction = {},
             neutralButton = getString(R.string.cancel)

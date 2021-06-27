@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_2"
         android:gravity="center"
-        android:text="Enter your OctoPrint's web URL"
+        android:text="@string/signin___discovery___connect_manually_title"
         android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -45,7 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_2"
-        android:text="Continue"
+        android:text="@string/signin___continue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/input" />
 

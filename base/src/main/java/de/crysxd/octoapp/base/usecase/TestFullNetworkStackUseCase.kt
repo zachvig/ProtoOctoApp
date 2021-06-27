@@ -45,7 +45,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
             timber.i("Passed")
 
             // Test reachability
-            timber.i("Testing rachability")
+            timber.i("Testing reachability")
             testReachability(host = host, ip = ip)?.let { return@withContext it }
             timber.i("Passed")
 
