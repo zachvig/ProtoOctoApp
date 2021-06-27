@@ -20,14 +20,10 @@
         android:id="@+id/discoverFragment"
         android:name="de.crysxd.octoapp.signin.discover.DiscoverFragment"
         android:label="DiscoverFragment"
-        tools:layout="@layout/discover_fragment_initial">
+        tools:layout="@layout/base_signin_fragment">
         <action
             android:id="@+id/probe_web_url"
-            app:destination="@id/probeOctoPrintFragment"
-            app:enterAnim="@anim/enterAnim"
-            app:exitAnim="@anim/exitAnim"
-            app:popEnterAnim="@anim/popEnterAnim"
-            app:popExitAnim="@anim/popExitAnim" />
+            app:destination="@id/probeOctoPrintFragment" />
     </fragment>
 
     <fragment
@@ -40,7 +36,7 @@
         android:id="@+id/probeOctoPrintFragment"
         android:name="de.crysxd.octoapp.signin.probe.ProbeOctoPrintFragment"
         android:label="ProbeOctoPrintFragment"
-        tools:layout="">
+        tools:layout="@layout/base_signin_fragment">
 
         <argument
             android:name="webUrl"

@@ -49,7 +49,7 @@ class OctoBackgroundView @JvmOverloads constructor(context: Context, attrs: Attr
                 bubblesView.isVisible = false
             }
         })
-        alpha = 0.5f
+        alpha = 0.33f
     }
 
     fun triggerSwimBubbles() {

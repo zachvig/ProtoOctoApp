@@ -3,6 +3,8 @@ package de.crysxd.octoapp.base.ui.common
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
@@ -13,22 +15,35 @@ import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.ColorTheme
+import timber.log.Timber
 import java.lang.Math.random
 
 class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, style: Int = 0) : AppCompatImageView(context, attrs, style) {
 
+    companion object {
+        private const val ANIMATION_DELAY = 2000L
+    }
+
     private var swimDrawable: Drawable? = null
     private var idleDrawable: Drawable? = null
     private var swimming = false
+    private val animationHandler = Handler(Looper.getMainLooper())
 
     private val loopCallback = object : Animatable2Compat.AnimationCallback() {
         override fun onAnimationEnd(drawable: Drawable) {
             super.onAnimationEnd(drawable)
-            handler?.postDelayed(startRunnable, getLoopDelay(currentDrawable))
+            if (queuedDrawable == null) {
+                animationHandler.postDelayed(startRunnable, getLoopDelay(currentDrawable))
+            } else {
+                val q = queuedDrawable
+                queuedDrawable = null
+                setImageDrawable(q)
+            }
         }
     }
 
     private var currentDrawable: Drawable? = null
+    private var queuedDrawable: Drawable? = null
 
     private val startRunnable = Runnable {
         (drawable as? AnimatedVectorDrawableCompat)?.start()
@@ -95,15 +110,28 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         ?: resources.getDrawable(res, context.theme)
 
     fun swim() {
-        setImageDrawable(swimDrawable)
+        Timber.v("Swim")
+        animationHandler.postDelayed({
+            setImageDrawable(swimDrawable)
+        }, ANIMATION_DELAY)
     }
 
     fun idle() {
+        Timber.v("Idle")
         setImageDrawable(idleDrawable)
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
+        // Currently animating? Let animation finish and then swap
+        if ((currentDrawable as? AnimatedVectorDrawableCompat)?.isRunning == true) {
+            Timber.v("Animation active, delaying new animation")
+            queuedDrawable = drawable
+            return
+        }
+        Timber.v("Starting new animation")
+
         super.setImageDrawable(drawable)
+        animationHandler.removeCallbacks(startRunnable)
         (swimDrawable as? AnimatedVectorDrawableCompat)?.stop()
         (idleDrawable as? AnimatedVectorDrawableCompat)?.stop()
         swimming = drawable == swimDrawable
@@ -117,7 +145,7 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     }
 
     private fun triggerBackgroundAction(d: Drawable?) = when (d) {
-        swimDrawable -> Unit//findBackgroundView()?.triggerSwimBubbles()
+        swimDrawable -> findBackgroundView()?.triggerSwimBubbles()
         else -> Unit
     }
 
@@ -139,6 +167,6 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        handler?.removeCallbacks(startRunnable)
+        animationHandler.removeCallbacks(startRunnable)
     }
 }

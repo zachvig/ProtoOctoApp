@@ -13,6 +13,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.*
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.transition.*
 import com.google.firebase.ktx.Firebase
@@ -27,7 +28,7 @@ import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
 import de.crysxd.octoapp.signin.R
-import de.crysxd.octoapp.signin.databinding.DiscoverFragmentBinding
+import de.crysxd.octoapp.signin.databinding.BaseSigninFragmentBinding
 import de.crysxd.octoapp.signin.databinding.DiscoverFragmentContentManualBinding
 import de.crysxd.octoapp.signin.databinding.DiscoverFragmentContentOptionsBinding
 import de.crysxd.octoapp.signin.di.injectViewModel
@@ -37,7 +38,7 @@ import de.crysxd.octoapp.base.di.Injector as BaseInjector
 class DiscoverFragment : BaseFragment() {
     override val viewModel by injectViewModel<DiscoverViewModel>()
     private val wifiViewModel by injectViewModel<NetworkStateViewModel>(BaseInjector.get().viewModelFactory())
-    private lateinit var binding: DiscoverFragmentBinding
+    private lateinit var binding: BaseSigninFragmentBinding
     private var optionsBinding: DiscoverFragmentContentOptionsBinding? = null
     private var manualBinding: DiscoverFragmentContentManualBinding? = null
     private val moveBackToOptionsBackPressedCallback = object : OnBackPressedCallback(false) {
@@ -45,7 +46,7 @@ class DiscoverFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
-        DiscoverFragmentBinding.inflate(inflater, container, false).also {
+        BaseSigninFragmentBinding.inflate(inflater, container, false).also {
             binding = it
         }.root
 
@@ -123,10 +124,11 @@ class DiscoverFragment : BaseFragment() {
 
     private fun playLoadingAnimation() {
         val duration = 600L
+        binding.loading.title.setText(R.string.signin___discovery___welcome_title)
+        binding.loading.subtitle.setText(R.string.signin___discovery___welcome_subtitle_searching)
         binding.octoBackground.alpha = 0f
         binding.loading.title.alpha = 0f
         binding.loading.subtitle.alpha = 0f
-        //   binding.octoView.swim()
 
         binding.octoBackground.animate().alpha(1f).setDuration(duration).setStartDelay(duration).start()
         binding.loading.title.animate().alpha(1f).setDuration(duration).setStartDelay(duration + 150).start()
@@ -194,7 +196,7 @@ class DiscoverFragment : BaseFragment() {
     }
 
     private fun continueWithDiscovered(octoPrint: DiscoverOctoPrintUseCase.DiscoveredOctoPrint) {
-        findNavController().navigate(DiscoverFragmentDirections.probeWebUrl(octoPrint.webUrl))
+        continueWithManualConnect(octoPrint.webUrl)
     }
 
     private fun continueWithPreviouslyConnected(octoPrint: OctoPrintInstanceInformationV2) {
@@ -202,7 +204,11 @@ class DiscoverFragment : BaseFragment() {
     }
 
     private fun continueWithManualConnect(webUrl: String) {
-        findNavController().navigate(DiscoverFragmentDirections.probeWebUrl(webUrl))
+        val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
+        findNavController().navigate(
+            DiscoverFragmentDirections.probeWebUrl(webUrl),
+            extras
+        )
     }
 
     private fun continueWithHelp() {
@@ -228,7 +234,6 @@ class DiscoverFragment : BaseFragment() {
         binding.octoView.idle()
         moveBackToOptionsBackPressedCallback.isEnabled = false
         binding.octoView.isVisible = true
-        binding.octoBackground.alpha = 0.5f
 
         binding.content.removeAllViews()
         val localOptionsBinding = optionsBinding ?: let {
@@ -265,7 +270,6 @@ class DiscoverFragment : BaseFragment() {
         moveBackToOptionsBackPressedCallback.isEnabled = true
         binding.octoView.idle()
         binding.octoView.isVisible = false
-        binding.octoBackground.alpha = 0.25f
 
         val localManualBinding = manualBinding ?: let {
             DiscoverFragmentContentManualBinding.inflate(LayoutInflater.from(requireContext()), binding.content, false)
