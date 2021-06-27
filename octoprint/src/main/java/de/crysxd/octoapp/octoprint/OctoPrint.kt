@@ -126,7 +126,7 @@ class OctoPrint(
         ConnectionApi.Wrapper((createRetrofit().create(ConnectionApi::class.java)))
 
     fun createApplicationKeysPluginApi(): ApplicationKeysPluginApi.Wrapper =
-        ApplicationKeysPluginApi.Wrapper((createRetrofit().create(ApplicationKeysPluginApi::class.java)))
+        ApplicationKeysPluginApi.Wrapper((createRetrofit(".").create(ApplicationKeysPluginApi::class.java)))
 
     fun createSystemApi(): SystemApi.Wrapper =
         SystemApi.Wrapper((createRetrofit().create(SystemApi::class.java)))

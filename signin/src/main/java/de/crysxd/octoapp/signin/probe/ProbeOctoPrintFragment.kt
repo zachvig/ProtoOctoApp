@@ -6,7 +6,6 @@ import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -69,7 +68,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
     private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(binding.root)
 
     private fun continueWithNoFindings() {
-        Toast.makeText(requireContext(), "Continue", Toast.LENGTH_SHORT).show()
+        findNavController().navigate(ProbeOctoPrintFragmentDirections.requestAccess(viewModel.webUrl))
     }
 
     private fun showLoading() {
