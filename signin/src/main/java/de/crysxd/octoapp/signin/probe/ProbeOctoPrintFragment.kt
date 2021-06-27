@@ -90,7 +90,6 @@ class ProbeOctoPrintFragment : BaseFragment() {
         binding.content.addView(b.root)
 
         val markwon = Markwon.builder(requireContext())
-            // .usePlugin(LinkifyPlugin.create())
             .usePlugin(ThemePlugin(requireContext()))
             .build()
 
@@ -102,6 +101,10 @@ class ProbeOctoPrintFragment : BaseFragment() {
         b.buttonContinue.text = getPrimaryActionText(finding)
         b.passwordInput.isVisible = finding is TestFullNetworkStackUseCase.Finding.BasicAuthRequired
         b.usernameInput.isVisible = b.passwordInput.isVisible
+        b.passwordInput.editText.setOnEditorActionListener { _, _, _ ->
+            performPrimaryAction(finding)
+            true
+        }
     }
 
     private fun getTitleForFinding(finding: TestFullNetworkStackUseCase.Finding) = when (finding) {

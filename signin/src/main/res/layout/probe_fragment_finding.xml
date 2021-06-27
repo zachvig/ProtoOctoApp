@@ -56,6 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_2"
+                android:autofillHints="user|username"
                 app:example="admin"
                 app:label="Username" />
 
@@ -66,6 +67,8 @@
                 android:layout_marginHorizontal="@dimen/margin_2"
                 android:layout_marginTop="@dimen/margin_1"
                 android:layout_marginBottom="@dimen/margin_2"
+                android:autofillHints="pw|password"
+                app:forPassword="true"
                 app:example="admin"
                 app:label="Password" />
 

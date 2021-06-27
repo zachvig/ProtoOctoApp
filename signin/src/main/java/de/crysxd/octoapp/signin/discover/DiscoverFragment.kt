@@ -130,7 +130,11 @@ class DiscoverFragment : BaseFragment() {
         binding.loading.title.alpha = 0f
         binding.loading.subtitle.alpha = 0f
 
-        binding.octoBackground.animate().alpha(1f).setDuration(duration).setStartDelay(duration).start()
+        binding.octoBackground.animate().alpha(1f).setDuration(duration).setStartDelay(duration).withEndAction {
+            if (viewModel.uiState.value is DiscoverViewModel.UiState.Loading) {
+                binding.octoView.swim()
+            }
+        }.start()
         binding.loading.title.animate().alpha(1f).setDuration(duration).setStartDelay(duration + 150).start()
         binding.loading.subtitle.animate().alpha(1f).setDuration(duration).setStartDelay(duration + 300).start()
     }
@@ -281,6 +285,10 @@ class DiscoverFragment : BaseFragment() {
         manualBinding?.input?.showSoftKeyboard()
         manualBinding?.input?.editText?.setText(webUrl)
         manualBinding?.input?.editText?.setSelection(webUrl.length)
+        manualBinding?.input?.editText?.setOnEditorActionListener { _, _, _ ->
+            manualBinding?.buttonContinue?.performClick()
+            true
+        }
 
 
         localManualBinding.buttonContinue.setOnClickListener {

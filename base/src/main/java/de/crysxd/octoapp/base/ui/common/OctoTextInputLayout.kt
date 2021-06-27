@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
+import android.text.method.PasswordTransformationMethod
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -137,6 +138,12 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             hintNormal = it.getString(R.styleable.OctoTextInputLayout_label)
             selectAllOnFocus = it.getBoolean(R.styleable.OctoTextInputLayout_selectAllOnFocus, false)
             actionOnlyWithText = it.getBoolean(R.styleable.OctoTextInputLayout_actionOnlyWithText, false)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                it.getString(R.styleable.OctoTextInputLayout_android_autofillHints)?.split("|")?.let { hints ->
+                    binding.input.setAutofillHints(*hints.toTypedArray())
+                    binding.input.importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
+                }
+            }
             binding.input.setText(it.getString(R.styleable.OctoTextInputLayout_defaultInputValue))
             val iconDrawable = it.getResourceId(R.styleable.OctoTextInputLayout_icon, 0)
             if (iconDrawable > 0) {
@@ -150,6 +157,9 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
             }
             actionIcon = it.getResourceId(R.styleable.OctoTextInputLayout_actionDrawable, 0)
             actionTint = ContextCompat.getColor(context, R.color.accent)
+            if (it.getBoolean(R.styleable.OctoTextInputLayout_forPassword, false)) {
+                setPasswordVisible(false)
+            }
         }
 
         initialLabelColors = binding.label.textColors
@@ -168,6 +178,12 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
 
             updateViewState()
         }
+    }
+
+    fun setPasswordVisible(visible: Boolean) {
+        actionIcon = if (visible) R.drawable.ic_round_visibility_off_24 else R.drawable.ic_round_visibility_24
+        setOnActionListener { setPasswordVisible(!visible) }
+        binding.input.transformationMethod = if (visible) null else PasswordTransformationMethod()
     }
 
     private fun animateExampleAlpha(from: Float, to: Float, then: () -> Unit = {}) {
