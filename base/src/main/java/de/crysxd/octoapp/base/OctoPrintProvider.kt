@@ -1,11 +1,12 @@
 package de.crysxd.octoapp.base
 
-import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.dns.LocalDnsInterceptor
+import de.crysxd.octoapp.base.dns.LocalDnsResolver
 import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
@@ -32,14 +33,14 @@ class OctoPrintProvider(
     private val octoPrintRepository: OctoPrintRepository,
     private val analytics: FirebaseAnalytics,
     private val sslKeyStoreHandler: SslKeyStoreHandler,
-    private val context: Context
+    private val localDnsResolver: LocalDnsResolver,
 ) {
 
     private val octoPrintMutex = Mutex()
     private var octoPrintCache: Pair<OctoPrintInstanceInformationV2, OctoPrint>? = null
     private val currentMessageChannel = ConflatedBroadcastChannel<Message.CurrentMessage?>()
     private val connectEventChannel = ConflatedBroadcastChannel<Event.Connected?>()
-    private val localDnsInterceptor = LocalDnsInterceptor(context)
+    private val localDnsInterceptor = LocalDnsInterceptor(localDnsResolver)
 
     init {
         // Passively collect data for the analytics profile

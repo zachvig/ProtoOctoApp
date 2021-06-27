@@ -91,7 +91,7 @@ class OctoPrint(
 
     fun getEventWebSocket() = webSocket
 
-    suspend fun probeConnection() = createRetrofit(".").create(ProbeApi::class.java).probe()
+    suspend fun probeConnection() = createRetrofit(".").create(ProbeApi::class.java).probe().code()
 
     fun createLoginApi(): LoginApi =
         createRetrofit().create(LoginApi::class.java)

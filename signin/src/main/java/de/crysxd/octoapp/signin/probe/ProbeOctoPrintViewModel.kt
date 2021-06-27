@@ -4,25 +4,31 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
-import de.crysxd.octoapp.base.usecase.ProbeOctoPrintUseCase
+import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ProbeOctoPrintViewModel(
-    private val useCase: ProbeOctoPrintUseCase
+    private val useCase: TestFullNetworkStackUseCase
 ) : BaseViewModel() {
+
+    companion object {
+        private const val MIN_PROBE_DURATION = 2000
+    }
 
     private val mutableUiState = MutableLiveData<UiState>(UiState.Loading)
     val uiState = mutableUiState.map { it }
 
     fun probe(webUrl: String) = viewModelScope.launch(coroutineExceptionHandler) {
+        val start = System.currentTimeMillis()
         mutableUiState.postValue(UiState.Loading)
-        val findings = useCase.execute(ProbeOctoPrintUseCase.Params(webUrl))
-        mutableUiState.postValue(UiState.FindingsReady(findings))
-
+        val finding = useCase.execute(TestFullNetworkStackUseCase.Params(webUrl))
+        (MIN_PROBE_DURATION - (System.currentTimeMillis() - start)).takeIf { it > 0 }?.let { delay(it) }
+        mutableUiState.postValue(UiState.FindingsReady(finding))
     }
 
     sealed class UiState {
         object Loading : UiState()
-        data class FindingsReady(val findings: List<ProbeOctoPrintUseCase.Finding>) : UiState()
+        data class FindingsReady(val finding: TestFullNetworkStackUseCase.Finding?) : UiState()
     }
 }

@@ -13,6 +13,7 @@ import de.crysxd.octoapp.base.datasource.LocalGcodeFileDataSource
 import de.crysxd.octoapp.base.datasource.RemoteGcodeFileDataSource
 import de.crysxd.octoapp.base.datasource.WidgetPreferencesDataSource
 import de.crysxd.octoapp.base.di.BaseScope
+import de.crysxd.octoapp.base.dns.LocalDnsResolver
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
@@ -44,8 +45,8 @@ open class OctoPrintModule {
         octoPrintRepository: OctoPrintRepository,
         analytics: FirebaseAnalytics,
         sslKeyStoreHandler: SslKeyStoreHandler,
-        context: Context,
-    ) = OctoPrintProvider(timberHandler, invalidApiKeyInterceptor, octoPrintRepository, analytics, sslKeyStoreHandler, context)
+        localDnsResolver: LocalDnsResolver
+    ) = OctoPrintProvider(timberHandler, invalidApiKeyInterceptor, octoPrintRepository, analytics, sslKeyStoreHandler, localDnsResolver)
 
     @BaseScope
     @Provides
@@ -89,4 +90,10 @@ open class OctoPrintModule {
     open fun provideTemperatureDataRepository(
         octoPrintProvider: OctoPrintProvider
     ) = TemperatureDataRepository(octoPrintProvider)
+
+    @BaseScope
+    @Provides
+    open fun provideLocalDnsResolver(
+        context: Context
+    ) = LocalDnsResolver(context)
 }

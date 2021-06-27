@@ -38,7 +38,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
         viewModel.probe(navArgs<ProbeOctoPrintFragmentArgs>().value.webUrl)
         viewModel.uiState.observe(viewLifecycleOwner) {
             when (it) {
-                is ProbeOctoPrintViewModel.UiState.FindingsReady -> Timber.i("${it.findings.size} findings")
+                is ProbeOctoPrintViewModel.UiState.FindingsReady -> it.finding?.let { Timber.i("Found: $it") } ?: Timber.i("No findings")
                 ProbeOctoPrintViewModel.UiState.Loading -> Timber.i("Loading")
             }
         }

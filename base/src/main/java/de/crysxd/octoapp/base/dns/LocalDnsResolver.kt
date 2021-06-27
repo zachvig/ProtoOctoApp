@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base
+package de.crysxd.octoapp.base.dns
 
 import android.content.Context
 import android.net.wifi.WifiManager
@@ -6,10 +6,8 @@ import com.qiniu.android.dns.DnsManager
 import com.qiniu.android.dns.NetworkInfo
 import com.qiniu.android.dns.local.AndroidDnsServer
 import com.qiniu.android.dns.local.Resolver
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.utils.measureTime
-import okhttp3.Interceptor
-import okhttp3.Request
-import okhttp3.Response
 import timber.log.Timber
 import java.net.InetAddress
 import java.net.UnknownHostException
@@ -17,40 +15,12 @@ import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-/**
- * Android is a little stupid when it comes to resolving *.local and *.home domains, sometimes it bypasses the local router as DNS server.
- *
- * This interceptor will catch a UnknownHostException and will attempt to resolve the hostname with a custom DNS resolver which will contact the router directly but
- * also uses the standard Android resolver as a fallback. After the host was resolved, the request is continued with the resolved IP. This class also contains a simple
- * TTL based cache to speed up consecutive requests.
- */
-class LocalDnsInterceptor(
-    private val context: Context
-) : Interceptor {
+class LocalDnsResolver(private val context: Context) {
 
     companion object {
         private val cache = mutableListOf<DnsEntry>()
         private const val CACHE_ENTRY_TTL = 600_000L
         private val resolveLock = ReentrantLock()
-    }
-
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request()
-
-        return try {
-            chain.proceed(request)
-        } catch (e: UnknownHostException) {
-            Timber.w("Unable to resolve ${request.url.host}, attempting local DNS resolution")
-            retryWithLocalDns(chain, request)
-        }
-    }
-
-    private fun retryWithLocalDns(chain: Interceptor.Chain, request: Request, attempt: Int = 0): Response {
-        val host = request.url.host
-        val ip = resolve(host)
-        val url = request.url.newBuilder().host(ip).build()
-        val upgradedRequest = request.newBuilder().url(url).build()
-        return chain.proceed(upgradedRequest)
     }
 
     fun resolve(hostName: String): String = resolveLock.withLock {

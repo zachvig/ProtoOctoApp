@@ -9,6 +9,7 @@ import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.SslKeyStoreHandler
 import de.crysxd.octoapp.base.datasource.LocalGcodeFileDataSource
 import de.crysxd.octoapp.base.di.modules.*
+import de.crysxd.octoapp.base.dns.LocalDnsResolver
 import de.crysxd.octoapp.base.logging.FirebaseTree
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.logging.TimberCacheTree
@@ -58,6 +59,7 @@ interface BaseComponent {
     fun pinnedMenuItemsRepository(): PinnedMenuItemRepository
     fun gcodeHistoryRepository(): GcodeHistoryRepository
     fun widgetPreferencesRepository(): WidgetPreferencesRepository
+    fun localDnsResolver(): LocalDnsResolver
 
     // UseCaseModule
     fun setTargetTemperatureUseCase(): SetTargetTemperaturesUseCase
