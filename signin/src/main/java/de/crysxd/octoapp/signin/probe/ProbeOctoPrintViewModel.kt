@@ -16,10 +16,11 @@ class ProbeOctoPrintViewModel(
         private const val MIN_PROBE_DURATION = 2000
     }
 
+    var webUrl: String = ""
     private val mutableUiState = MutableLiveData<UiState>(UiState.Loading)
     val uiState = mutableUiState.map { it }
 
-    fun probe(webUrl: String) = viewModelScope.launch(coroutineExceptionHandler) {
+    fun probe() = viewModelScope.launch(coroutineExceptionHandler) {
         val start = System.currentTimeMillis()
         mutableUiState.postValue(UiState.Loading)
         val finding = useCase.execute(TestFullNetworkStackUseCase.Params(webUrl))

@@ -74,7 +74,7 @@ class DiscoverViewModel(
         } else {
             webUrl
         }
-        sensitiveDataMask.registerWebUrl(upgradedWebUrl, "manually_entered_web_url")
+        sensitiveDataMask.registerWebUrl(upgradedWebUrl, "octoprint")
 
         try {
             if (webUrl.isBlank()) {

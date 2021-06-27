@@ -43,9 +43,9 @@ class LocalDnsResolver(private val context: Context) {
                 wifi.dhcpInfo.gateway.asIpString(),
                 wifi.dhcpInfo.serverAddress.asIpString(),
                 wifi.dhcpInfo.ipAddress.asIpString().split(".").toMutableList().also { it[3] = "1" }.joinToString("."),
-                "192.168.0.1",
-                "192.168.1.1",
-                "192.168.2.1",
+//                "192.168.0.1",
+//                "192.168.1.1",
+//                "192.168.2.1",
             ).distinct()
 
             Timber.i("Using as DNS server: $dnsIps")
@@ -58,8 +58,14 @@ class LocalDnsResolver(private val context: Context) {
             ).flatten().toTypedArray()
 
             // Resolve!
-            val dns = DnsManager(NetworkInfo.normal, resolvers)
-            val res = dns.query(hostName).firstOrNull() ?: throw UnknownHostException("Resolving $hostName resulted in null")
+            val res = try {
+                val dns = DnsManager(NetworkInfo.normal, resolvers)
+                dns.query(hostName).firstOrNull() ?: throw UnknownHostException("Resolving $hostName resulted in null")
+            } catch (e: Exception) {
+                Timber.e(e, "Unable to resolve host $hostName")
+                throw UnknownHostException(hostName)
+            }
+
             Timber.i("Resolved ${hostName}=$res")
             OctoAnalytics.logEvent(OctoAnalytics.Event.InbuiltDnsResolveSuccess)
             cache.add(

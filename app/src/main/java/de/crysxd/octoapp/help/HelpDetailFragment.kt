@@ -1,17 +1,12 @@
 package de.crysxd.octoapp.help
 
-import android.content.Context
 import android.graphics.Rect
-import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
@@ -22,16 +17,14 @@ import androidx.navigation.fragment.navArgs
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.squareup.picasso.Picasso
-import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ext.suspendedAwait
 import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.utils.ThemePlugin
 import de.crysxd.octoapp.databinding.HelpDetailFragmentBinding
-import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
-import io.noties.markwon.core.MarkwonTheme
 import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 import timber.log.Timber
@@ -132,37 +125,6 @@ class HelpDetailFragment : Fragment(), InsetAwareScreen {
         }
 
         binding.root.updatePadding(bottom = insets.bottom)
-    }
-
-    private class ThemePlugin(private val context: Context) : AbstractMarkwonPlugin() {
-
-        override fun configureTheme(builder: MarkwonTheme.Builder) {
-            super.configureTheme(builder)
-            val res = context.resources
-            val attrs = arrayOf(R.attr.fontFamily).toIntArray()
-            val typeface = context.obtainStyledAttributes(
-                R.style.OctoTheme_TextAppearance_Title,
-                attrs
-            ).use {
-                ResourcesCompat.getFont(context, it.getResourceId(0, 0))
-            } ?: Typeface.DEFAULT
-
-            builder.linkColor(ContextCompat.getColor(context, R.color.accent))
-            builder.headingBreakHeight(0)
-            builder.headingTextSizeMultipliers(
-                arrayOf(
-                    1.714f, // H1
-                    1.571f, // H2
-                    1.429f, // H3
-                    1.286f, // H4
-                    1.143f, // H5
-                    1f, // H6
-                ).toFloatArray()
-            )
-            builder.headingTypeface(typeface)
-            builder.bulletWidth(res.getDimension(R.dimen.margin_0_1).toInt())
-            builder.bulletListItemStrokeWidth(res.getDimension(R.dimen.margin_2).toInt())
-        }
     }
 
     override fun onStart() {

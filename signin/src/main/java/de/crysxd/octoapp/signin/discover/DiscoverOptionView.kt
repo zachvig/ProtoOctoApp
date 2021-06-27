@@ -67,7 +67,7 @@ class DiscoverOptionView @JvmOverloads constructor(
     fun isShowing(option: OctoPrintInstanceInformationV2) = option.webUrl == optionId
 
     fun showManualConnect() {
-        binding.title.text = context.getString(R.string.signin___discovery___connect_manuallty_title)
+        binding.title.text = context.getString(R.string.signin___discovery___connect_manually_title)
         binding.subtitle.text = context.getString(R.string.signin___discovery___connect_manually_title)
         binding.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.menu_style_settings_background))
         binding.buttonDelete.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_settings_foreground))

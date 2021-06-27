@@ -496,6 +496,7 @@
     <string name="signin___discovery___no_wifi_warning">No WiFi, OctoPrint might not be available</string>
     <string name="signin___discovery___options_title">Which OctoPrint do you want to connect?</string>
     <string name="signin___discovery___connect_manually_title">Enter your OctoPrint\'s web URL</string>
+    <string name="signin___discovery___connect_manually_subtitle">It\'s easy to set up</string>
     <string name="signin___discovery___quick_switch_disabled_title">Quick switch not enabled</string>
     <string name="signin___discovery___quick_switch_disabled_subtitle">Enable to reconnect</string>
     <string name="signin___discovery___delete_printer_message">Delete %s and all associated settings? H</string>

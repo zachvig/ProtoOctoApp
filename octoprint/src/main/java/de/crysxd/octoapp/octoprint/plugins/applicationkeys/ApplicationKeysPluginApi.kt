@@ -5,7 +5,7 @@ import retrofit2.http.GET
 
 interface ApplicationKeysPluginApi {
 
-    @GET("/plugin/appkeys/probe")
+    @GET("plugin/appkeys/probe")
     suspend fun probe(): Response<Unit>
 
     class Wrapper(private val wrapped: ApplicationKeysPluginApi) {

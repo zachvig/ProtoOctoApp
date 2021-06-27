@@ -20,10 +20,6 @@ import java.lang.Math.random
 
 class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, style: Int = 0) : AppCompatImageView(context, attrs, style) {
 
-    companion object {
-        private const val ANIMATION_DELAY = 2000L
-    }
-
     private var swimDrawable: Drawable? = null
     private var idleDrawable: Drawable? = null
     private var swimming = false
@@ -111,9 +107,7 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
 
     fun swim() {
         Timber.v("Swim")
-        animationHandler.postDelayed({
-            setImageDrawable(swimDrawable)
-        }, ANIMATION_DELAY)
+        setImageDrawable(swimDrawable)
     }
 
     fun idle() {

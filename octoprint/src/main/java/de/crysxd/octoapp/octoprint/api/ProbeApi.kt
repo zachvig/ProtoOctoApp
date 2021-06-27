@@ -5,7 +5,7 @@ import retrofit2.http.GET
 
 interface ProbeApi {
 
-    @GET("/")
+    @GET(".")
     suspend fun probe(): Response<Unit>
 
 }
