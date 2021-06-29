@@ -4,15 +4,19 @@ import android.app.Activity
 import android.content.Context
 import androidx.core.os.bundleOf
 import com.android.billingclient.api.*
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.di.Injector
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import timber.log.Timber
+
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 object BillingManager {
@@ -224,7 +228,20 @@ object BillingManager {
     }
 
     private fun logError(description: String, billingResult: BillingResult?) {
-        Timber.e(Exception("$description. responseCode=${billingResult?.responseCode} message=${billingResult?.debugMessage} billingResult=${billingResult?.let { "non-null" }}"))
+        val playServicesAvailable = try {
+            val googleApiAvailability = GoogleApiAvailability.getInstance()
+            val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(Injector.get().context())
+            resultCode == ConnectionResult.SUCCESS
+        } catch (e: java.lang.Exception) {
+            Timber.e(e)
+            null
+        }
+
+        if (playServicesAvailable != false) {
+            Timber.e(Exception("$description. responseCode=${billingResult?.responseCode} message=${billingResult?.debugMessage} billingResult=${billingResult?.let { "non-null" }} playServicesAvailable=$playServicesAvailable"))
+        } else {
+            Timber.w("BillingManager encountered problem but Play Services are not available")
+        }
     }
 
     private fun queryPurchases() = GlobalScope.launch(Dispatchers.IO) {
