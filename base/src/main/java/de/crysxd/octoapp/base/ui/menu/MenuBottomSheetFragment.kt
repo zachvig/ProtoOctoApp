@@ -298,6 +298,8 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                         }
                     }
                 }
+            } catch (e: Exception) {
+                requireOctoActivity().showDialog(e)
             } finally {
                 isLoading = false
             }

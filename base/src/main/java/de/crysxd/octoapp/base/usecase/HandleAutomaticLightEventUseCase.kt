@@ -15,78 +15,86 @@ class HandleAutomaticLightEventUseCase @Inject constructor(
 
     companion object {
         private var lastJob: Job? = null
-        private var isLastJobCancelled = false
         private var keepOnCounter = 0
         private val lock = Semaphore(1)
     }
 
     override suspend fun doExecute(param: Event, timber: Timber.Tree): Boolean = lock.withPermit {
-        if (!BillingManager.isFeatureEnabled(BillingManager.FEATURE_AUTOMATIC_LIGHTS)) {
-            timber.i("Automatic lights disabled, skipping any action")
-            return false
-        }
-
-        val autoIds = octoPreferences.automaticLights
-        val lights = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(queryState = false))
-            .filter { autoIds.contains(it.first.id) }
-            .map { it.first }
-
-        if (lights.isEmpty()) {
-            timber.i("No automatic lights set up, skipping any action")
-            return false
-        }
-
-        // Determine new state
-        val prevCounter = keepOnCounter
-        when (param) {
-            is Event.WebcamVisible -> keepOnCounter++
-            is Event.WebcamGone -> keepOnCounter--
-        }.coerceAtLeast(0)
-
-        val newState = when {
-            prevCounter == 0 && keepOnCounter > 0 -> true
-            prevCounter > 0 && keepOnCounter == 0 -> false
-            else -> {
-                timber.d("No action taken, still $keepOnCounter references")
-                null
+        try {
+            if (!BillingManager.isFeatureEnabled(BillingManager.FEATURE_AUTOMATIC_LIGHTS)) {
+                timber.i("Automatic lights disabled, skipping any action")
+                return false
             }
-        }
 
-        // Push new state
-        if (newState != null) {
-            lastJob?.cancelAndJoin()
-            lastJob = GlobalScope.launch {
-                if (param.delayAction) {
-                    delay(5000)
+            val autoIds = octoPreferences.automaticLights
+            val lights = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(queryState = false))
+                .filter { autoIds.contains(it.first.id) }
+                .map { it.first }
+
+            if (lights.isEmpty()) {
+                timber.i("No automatic lights set up, skipping any action")
+                return false
+            }
+
+            // Determine new state
+            val prevCounter = keepOnCounter
+            when (param) {
+                is Event.WebcamVisible -> keepOnCounter++
+                is Event.WebcamGone -> keepOnCounter--
+            }.coerceAtLeast(0)
+
+            val newState = when {
+                prevCounter == 0 && keepOnCounter > 0 -> true
+                prevCounter > 0 && keepOnCounter == 0 -> false
+                else -> {
+                    timber.d("No action taken, still $keepOnCounter references")
+                    null
                 }
+            }
 
-                if (lastJob?.isCancelled == true) {
-                    timber.i("Action cancelled: $newState")
-                    return@launch
-                }
+            // Push new state
+            if (newState != null) {
+                lastJob?.cancelAndJoin()
+                lastJob = GlobalScope.launch {
+                    try {
+                        if (param.delayAction) {
+                            delay(5000)
+                        }
 
-                lights.forEach {
-                    when (newState) {
-                        true -> {
-                            timber.i("☀️ Turning ${lights.size} lights on to illuminate webcam")
-                            it.turnOn()
+                        if (lastJob?.isCancelled == true) {
+                            timber.i("Action cancelled: $newState")
+                            return@launch
                         }
-                        false -> {
-                            timber.i("🌙 Turning ${lights.size} lights off")
-                            it.turnOff()
+
+                        lights.forEach {
+                            when (newState) {
+                                true -> {
+                                    timber.i("☀️ Turning ${lights.size} lights on to illuminate webcam")
+                                    it.turnOn()
+                                }
+                                false -> {
+                                    timber.i("🌙 Turning ${lights.size} lights off")
+                                    it.turnOff()
+                                }
+                                null -> Unit
+                            }
                         }
-                        null -> Unit
+                    } catch (e: Exception) {
+                        timber.e(e)
                     }
                 }
             }
-        }
 
-        // Wait for light to be on, but don't wait for it to be off
-        if (param is Event.WebcamVisible) {
-            lastJob?.join()
-        }
+            // Wait for light to be on, but don't wait for it to be off
+            if (param is Event.WebcamVisible) {
+                lastJob?.join()
+            }
 
-        return true
+            true
+        } catch (e: Exception) {
+            timber.e(e)
+            false
+        }
     }
 
     sealed class Event {
