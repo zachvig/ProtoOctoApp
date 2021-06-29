@@ -9,8 +9,8 @@ import com.github.triplet.gradle.androidpublisher.*
 android {
     defaultConfig{
         applicationId "de.crysxd.octoapp"
-        versionCode 1914
-        versionName "1.9.1"
+        versionCode 1915
+        versionName "1.9.2"
     }
 }
 
@@ -21,7 +21,7 @@ play {
     resolutionStrategy.set(ResolutionStrategy.IGNORE)
     releaseStatus.set(ReleaseStatus.IN_PROGRESS)
     updatePriority.set(2)
-    userFraction.set(0.1d)
+    userFraction.set(0.5d)
 }
 
 
