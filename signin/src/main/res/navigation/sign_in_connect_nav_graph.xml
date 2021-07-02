@@ -25,12 +25,6 @@
             android:name="baseUrl"
             app:argType="string" />
 
-        <argument
-            android:name="apiKey"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
-
         <action
             android:id="@+id/request_access"
             app:destination="@id/requestAccessFragment" />
