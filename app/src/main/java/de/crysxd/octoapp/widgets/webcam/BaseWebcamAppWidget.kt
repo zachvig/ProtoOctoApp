@@ -115,7 +115,11 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                     val octoPrintInfo = Injector.get().octorPrintRepository().let { repo ->
                         repo.getAll().firstOrNull { it.webUrl == webUrl }
                             ?: repo.getActiveInstanceSnapshot()
-                            ?: throw IllegalStateException("Unable to find info")
+                            ?: let {
+                                Timber.v("Unable to find configuration for $webUrl, cancelling")
+                                showFailed(context, appWidgetId, webUrl)
+                                return@launch
+                            }
                     }
 
                     // Push loading state
