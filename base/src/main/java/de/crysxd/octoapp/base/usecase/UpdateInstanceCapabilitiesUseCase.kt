@@ -6,6 +6,7 @@ import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ext.isHlsStreamUrl
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.octoprint.exceptions.MissingPermissionException
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import kotlinx.coroutines.Dispatchers
@@ -24,20 +25,29 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) {
         withContext(Dispatchers.IO) {
+            val octoPrint = try {
+                octoPrintProvider.octoPrint()
+            } catch (e: IllegalStateException) {
+                timber.w("Cancelling update, no OctoPrint available")
+                return@withContext
+            }
+
             // Perform online check. This will trigger switching to the primary web url
             // if we currently use a cloud/backup connection
             if (octoPrintRepository.getActiveInstanceSnapshot()?.alternativeWebUrl != null) {
                 timber.i("Checking for primary web url being online")
-                octoPrintProvider.octoPrint().performOnlineCheck()
+                octoPrint.performOnlineCheck()
             }
 
             // Gather all info in parallel
-            val settings = async { octoPrintProvider.octoPrint().createSettingsApi().getSettings() }
+            val settings = async { octoPrint.createSettingsApi().getSettings() }
             val commands = async {
                 try {
-                    octoPrintProvider.octoPrint().createSystemApi().getSystemCommands()
+                    octoPrint.createSystemApi().getSystemCommands()
+                } catch (e: MissingPermissionException) {
+                    Timber.w("Missing SYSTEM permission")
+                    null
                 } catch (e: Exception) {
-                    // Might fail for lacking permissions
                     Timber.e(e)
                     null
                 }
