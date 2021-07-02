@@ -44,6 +44,7 @@ class OctoPrint(
     val connectTimeoutMs: Long = 10000,
     val webSocketConnectionTimeout: Long = 5000,
     val webSocketPingPongTimeout: Long = 5000,
+    private val debug: Boolean,
 ) {
 
     val fullWebUrl = rawWebUrl.sanitizeUrl()
@@ -63,9 +64,10 @@ class OctoPrint(
         }
     )
     val isAlternativeUrlBeingUsed get() = !alternativeWebUrlInterceptor.isPrimaryUsed
+    private val okHttpClient = createOkHttpClient()
 
     private val webSocket = EventWebSocket(
-        httpClient = createOkHttpClient(),
+        httpClient = okHttpClient,
         webUrl = webUrl,
         getCurrentConnectionType = { alternativeWebUrlInterceptor.getActiveConnectionType() },
         gson = createGsonWithTypeAdapters(),
@@ -93,6 +95,9 @@ class OctoPrint(
 
     suspend fun probeConnection() = createRetrofit(".").create(ProbeApi::class.java).probe().code()
 
+    fun createUserApi(): UserApi =
+        createRetrofit().create(UserApi::class.java)
+
     fun createLoginApi(): LoginApi =
         createRetrofit().create(LoginApi::class.java)
 
@@ -111,7 +116,7 @@ class OctoPrint(
     fun createFilesApi(): FilesApi.Wrapper =
         FilesApi.Wrapper(
             webUrl = webUrl,
-            okHttpClient = createOkHttpClient(),
+            okHttpClient = okHttpClient,
             wrapped = createRetrofit().create(FilesApi::class.java)
         )
 
@@ -145,7 +150,7 @@ class OctoPrint(
     private fun createRetrofit(path: String = "api/") = Retrofit.Builder()
         .baseUrl(URI.create(webUrl).resolve(path).toURL())
         .addConverterFactory(GsonConverterFactory.create(createGsonWithTypeAdapters()))
-        .client(createOkHttpClient())
+        .client(okHttpClient)
         .build()
 
     private fun createGsonWithTypeAdapters(): Gson = createBaseGson().newBuilder()
@@ -180,8 +185,9 @@ class OctoPrint(
         }
 
         addInterceptor(CatchAllInterceptor(webUrl, apiKey))
+        this@OctoPrint.interceptors.forEach { addInterceptor(it) }
         addInterceptor(ApiKeyInterceptor(apiKey))
-        addInterceptor(GenerateExceptionInterceptor(networkExceptionListener))
+        addInterceptor(GenerateExceptionInterceptor(networkExceptionListener) { createUserApi() })
         addInterceptor(alternativeWebUrlInterceptor)
         addInterceptor(BasicAuthInterceptor(logger, fullWebUrl, fullAlternativeWebUrl))
         connectTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)
@@ -189,8 +195,7 @@ class OctoPrint(
         writeTimeout(readWriteTimeout, TimeUnit.MILLISECONDS)
         addInterceptor(
             HttpLoggingInterceptor(LoggingInterceptorLogger(logger))
-                .setLevel(HttpLoggingInterceptor.Level.HEADERS)
+                .setLevel(if (debug) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.HEADERS)
         )
-        this@OctoPrint.interceptors.forEach { addInterceptor(it) }
     }.build()
 }

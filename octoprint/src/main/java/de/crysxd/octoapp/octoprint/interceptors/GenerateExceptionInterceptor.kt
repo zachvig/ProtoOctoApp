@@ -1,6 +1,8 @@
 package de.crysxd.octoapp.octoprint.interceptors
 
+import de.crysxd.octoapp.octoprint.api.UserApi
 import de.crysxd.octoapp.octoprint.exceptions.*
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import retrofit2.HttpException
@@ -11,7 +13,10 @@ import java.security.cert.CertPathValidatorException
 import java.util.regex.Pattern
 import javax.net.ssl.SSLHandshakeException
 
-class GenerateExceptionInterceptor(private val networkExceptionListener: (Exception) -> Unit) : Interceptor {
+class GenerateExceptionInterceptor(
+    private val networkExceptionListener: (Exception) -> Unit,
+    private val userApiFactory: () -> UserApi,
+) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
@@ -29,7 +34,7 @@ class GenerateExceptionInterceptor(private val networkExceptionListener: (Except
                     in 200..204 -> response
                     409 -> throw PrinterNotOperationalException(request.url)
                     401 -> throw generate401Exception(response)
-                    403 -> throw InvalidApiKeyException(request.url)
+                    403 -> throw generate403Exception(response)
                     413 -> throw generate413Exception(response)
                     in 501..599 -> throw OctoPrintBootingException()
 
@@ -53,6 +58,21 @@ class GenerateExceptionInterceptor(private val networkExceptionListener: (Except
         } catch (e: Exception) {
             networkExceptionListener(e)
             throw e
+        }
+    }
+
+    private fun generate403Exception(response: Response): Exception = runBlocking {
+        // Prevent a loop. We will below request the /currentuser endpoint to test the API key
+        val invalidApiKeyException = InvalidApiKeyException(response.request.url)
+        if (response.request.url.pathSegments.last() == "currentuser") return@runBlocking invalidApiKeyException
+
+        // We don't know what caused the 403. Requesting the currentuser will tell us whether we are a guest, meaning the API
+        // key is not valid. If we are not a guest, 403 indicates a missing permission
+        val isGuest = userApiFactory().getCurrentUser().isGuest
+        return@runBlocking if (isGuest) {
+            invalidApiKeyException
+        } else {
+            MissingPermissionException(response.request.url)
         }
     }
 

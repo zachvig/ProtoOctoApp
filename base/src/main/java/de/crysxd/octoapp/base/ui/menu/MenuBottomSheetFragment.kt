@@ -20,6 +20,7 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.base.BaseBottomSheetDialogFragment
+import de.crysxd.octoapp.base.ui.ext.optionallyRequestOctoActivity
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.main.MainMenu
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
@@ -165,7 +166,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error while inflating menu")
-                requireOctoActivity().showDialog(e)
+                optionallyRequestOctoActivity()?.showDialog(e)
                 abortShowMenu()
             } finally {
                 isLoading = false
@@ -298,6 +299,8 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                         }
                     }
                 }
+            } catch (e: Exception) {
+                optionallyRequestOctoActivity()?.showDialog(e)
             } finally {
                 isLoading = false
             }
