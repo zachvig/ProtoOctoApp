@@ -42,7 +42,7 @@ class PluginSettingsDeserializer : JsonDeserializer<Settings.PluginSettingsGroup
     private fun deserializeGpioControlSettings(context: JsonDeserializationContext, element: JsonElement): Settings.GpioControlSettings {
         // ID of devices is null! The ID is the index in the array...
         val raw = context.deserialize<Settings.GpioControlSettings>(element, Settings.GpioControlSettings::class.java)
-        return raw.copy(devices = raw.devices.mapIndexed { index, device -> device.copy(index = index) })
+        return raw.copy(devices = raw.devices?.mapIndexed { index, device -> device.copy(index = index) })
     }
 
     private object Unknown : Settings.PluginSettings

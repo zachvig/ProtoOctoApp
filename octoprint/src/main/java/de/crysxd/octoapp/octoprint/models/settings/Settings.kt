@@ -63,7 +63,7 @@ data class Settings(
     ) : PluginSettings
 
     data class GpioControlSettings(
-        @SerializedName("gpio_configurations") val devices: List<GpioControlPowerDevice>
+        @SerializedName("gpio_configurations") val devices: List<GpioControlPowerDevice>?
     ) : PluginSettings
 
     class WS281xSettings : PluginSettings
