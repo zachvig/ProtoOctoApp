@@ -21,7 +21,7 @@ play {
     resolutionStrategy.set(ResolutionStrategy.IGNORE)
     releaseStatus.set(ReleaseStatus.IN_PROGRESS)
     updatePriority.set(2)
-    userFraction.set(0.5d)
+    userFraction.set(0.2d)
 }
 
 
