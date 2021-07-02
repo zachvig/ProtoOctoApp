@@ -3,13 +3,6 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.8">
       <module name="models" target="1.7" />
-      <module name="OctoApp.app" target="11" />
-      <module name="OctoApp.base" target="11" />
-      <module name="OctoApp.connect-printer" target="11" />
-      <module name="OctoApp.file-manager" target="11" />
-      <module name="OctoApp.pre-print-controls" target="11" />
-      <module name="OctoApp.print-controls" target="11" />
-      <module name="OctoApp.signin" target="11" />
       <module name="octoprint" target="1.7" />
     </bytecodeTargetLevel>
   </component>
