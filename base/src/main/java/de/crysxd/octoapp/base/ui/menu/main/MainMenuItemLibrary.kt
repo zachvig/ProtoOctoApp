@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.ui.menu.main
 
+import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.menu.MenuItem
 import de.crysxd.octoapp.base.ui.menu.material.MaterialPluginMenu
 import de.crysxd.octoapp.base.ui.menu.power.PowerControlsMenu
@@ -7,6 +8,7 @@ import de.crysxd.octoapp.base.ui.menu.switchprinter.AddInstanceMenuItem
 import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchInstanceMenuItem
 import de.crysxd.octoapp.base.ui.menu.temperature.ApplyTemperaturePresetMenuItem
 import de.crysxd.octoapp.base.ui.menu.webcam.WebcamSettingsMenu
+import timber.log.Timber
 
 const val MENU_ITEM_SUPPORT_OCTOAPP = "main___support_octoapp"
 const val MENU_ITEM_SETTINGS_MENU = "main___settings_menu"
@@ -87,11 +89,15 @@ class MenuItemLibrary {
         MENU_ITEM_AUTOMATIC_LIGHTS to AutomaticLightsSettingsMenuItem::class,
         MENU_ITEM_SHOW_WEBCAM_RESOLUTION to WebcamSettingsMenu.ShowResolutionMenuItem::class,
         MENU_ITEM_ENABLE_FULL_WEBCAM_RESOLUTION to WebcamSettingsMenu.EnableFullResolutionMenuItem::class,
-        MENU_ITEM_WEBCAM_ASPECT_RATIO_SOURCE to WebcamSettingsMenu.AspectRatioMenuItem::class,
     )
 
     operator fun get(itemId: String): MenuItem? = when {
-        map.containsKey(itemId) -> map[itemId]?.java?.constructors?.firstOrNull()?.newInstance() as? MenuItem
+        map.containsKey(itemId) -> try {
+            map[itemId]?.java?.constructors?.firstOrNull()?.newInstance() as? MenuItem
+        } catch (e: Exception) {
+            Timber.e(e, "Unable to inflate menu item with itemId=$itemId")
+            null
+        }
         itemId.startsWith(MENU_ITEM_SWITCH_INSTANCE) -> SwitchInstanceMenuItem.forItemId(itemId)
         itemId.startsWith(MENU_ITEM_APPLY_TEMPERATURE_PRESET) -> ApplyTemperaturePresetMenuItem.forItemId(itemId)
         itemId.startsWith(MENU_EXECUTE_SYSTEM_COMMAND) -> ExecuteSystemCommandMenuItem.forItemId(itemId)
@@ -100,6 +106,7 @@ class MenuItemLibrary {
         itemId.startsWith(MENU_ITEM_POWER_DEVICE_OFF) -> PowerControlsMenu.TurnPowerDeviceOffMenuItem.forItemId(itemId)
         itemId.startsWith(MENU_ITEM_POWER_DEVICE_ON) -> PowerControlsMenu.TurnPowerDeviceOnMenuItem.forItemId(itemId)
         itemId.startsWith(MENU_ITEM_POWER_DEVICE_CYCLE) -> PowerControlsMenu.CyclePowerDeviceMenuItem.forItemId(itemId)
+        itemId.startsWith(MENU_ITEM_WEBCAM_ASPECT_RATIO_SOURCE) -> WebcamSettingsMenu.AspectRatioMenuItem(Injector.get().localizedContext())
         else -> null
     }
 }
