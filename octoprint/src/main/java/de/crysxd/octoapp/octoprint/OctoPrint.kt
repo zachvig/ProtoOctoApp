@@ -3,11 +3,7 @@ package de.crysxd.octoapp.octoprint
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import de.crysxd.octoapp.octoprint.api.*
-import de.crysxd.octoapp.octoprint.interceptors.GenerateExceptionInterceptor
-import de.crysxd.octoapp.octoprint.interceptors.AlternativeWebUrlInterceptor
-import de.crysxd.octoapp.octoprint.interceptors.ApiKeyInterceptor
-import de.crysxd.octoapp.octoprint.interceptors.BasicAuthInterceptor
-import de.crysxd.octoapp.octoprint.interceptors.CatchAllInterceptor
+import de.crysxd.octoapp.octoprint.interceptors.*
 import de.crysxd.octoapp.octoprint.json.*
 import de.crysxd.octoapp.octoprint.logging.LoggingInterceptorLogger
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
@@ -47,6 +43,7 @@ class OctoPrint(
     val connectTimeoutMs: Long = 10000,
     val webSocketConnectionTimeout: Long = 5000,
     val webSocketPingPongTimeout: Long = 5000,
+    private val debug: Boolean,
 ) {
 
     val fullWebUrl = rawWebUrl.sanitizeUrl()
@@ -187,7 +184,7 @@ class OctoPrint(
         writeTimeout(readWriteTimeout, TimeUnit.MILLISECONDS)
         addInterceptor(
             HttpLoggingInterceptor(LoggingInterceptorLogger(logger))
-                .setLevel(HttpLoggingInterceptor.Level.HEADERS)
+                .setLevel(if (debug) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.HEADERS)
         )
         this@OctoPrint.interceptors.forEach { addInterceptor(it) }
     }.build()
