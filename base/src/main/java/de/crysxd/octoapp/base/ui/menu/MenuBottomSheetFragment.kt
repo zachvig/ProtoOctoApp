@@ -300,7 +300,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                     }
                 }
             } catch (e: Exception) {
-                optionallyRequestOctoActivity().showDialog(e)
+                optionallyRequestOctoActivity()?.showDialog(e)
             } finally {
                 isLoading = false
             }
