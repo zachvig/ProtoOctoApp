@@ -117,12 +117,11 @@ class MainActivity : OctoActivity() {
         octoWidgetRecycler.preInflateWidget(this) { ProgressWidget(this@MainActivity) }
         octoWidgetRecycler.preInflateWidget(this) { TuneWidget(this@MainActivity) }
 
-        Timber.i("onCreate ${viewModel.lastWebUrl}")
-
         SignInInjector.get().octoprintRepository().instanceInformationFlow()
             .filter {
-                val pass = viewModel.lastWebUrl != it?.webUrl
-                viewModel.lastWebUrl = it?.webUrl
+                val webUrlAndApiKey = "${it?.webUrl}:${it?.apiKey}"
+                val pass = viewModel.lastWebUrlAndApiKey != webUrlAndApiKey
+                viewModel.lastWebUrlAndApiKey = webUrlAndApiKey
                 pass
             }
             .asLiveData()

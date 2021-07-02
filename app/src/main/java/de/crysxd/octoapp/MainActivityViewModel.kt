@@ -9,7 +9,7 @@ class MainActivityViewModel : ViewModel() {
     var lastSuccessfulCapabilitiesUpdate = 0L
     var pendingUri: Uri? = null
     var lastNavigation = -1
-    var lastWebUrl: String? = "initial"
+    var lastWebUrlAndApiKey: String? = "initial"
     var pendingNavigation: Int? = null
     var connectionType: ConnectionType? = null
     var lastFlags: PrinterState.Flags? = null
