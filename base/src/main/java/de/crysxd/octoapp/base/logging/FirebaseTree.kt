@@ -11,6 +11,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 import java.io.IOException
+import java.net.URISyntaxException
 
 class FirebaseTree(
     private val mask: SensitiveDataMask
@@ -43,5 +44,6 @@ class FirebaseTree(
             t != lastException &&
             t !is IOException &&
             t !is CancellationException &&
-            t !is FirebaseRemoteConfigClientException
+            t !is FirebaseRemoteConfigClientException &&
+            t !is URISyntaxException
 }
