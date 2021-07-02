@@ -195,6 +195,11 @@ class DiscoverFragment : BaseFragment() {
         binding.previousOptionsTitle.isVisible = binding.previousOptions.childCount > 1
         binding.quickSwitchOption.isVisible = !quickSwitchEnabled && binding.previousOptionsTitle.isVisible
         binding.buttonDelete.isVisible = binding.buttonDelete.isVisible && binding.previousOptionsTitle.isVisible
+        binding.quickSwitchOption.setOnClickListener { continueWithPurchase() }
+    }
+
+    private fun continueWithPurchase() {
+        UriLibrary.getPurchaseUri().open(requireOctoActivity())
     }
 
     private fun continueWithDiscovered(octoPrint: DiscoverOctoPrintUseCase.DiscoveredOctoPrint) {
@@ -208,7 +213,8 @@ class DiscoverFragment : BaseFragment() {
     private fun continueWithManualConnect(webUrl: String) {
         val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
         findNavController().navigate(
-            DiscoverFragmentDirections.probeWebUrl(webUrl),
+            UriLibrary.getFixOctoPrintConnectionUri(baseUrl = Uri.parse(webUrl)),
+            null,
             extras
         )
     }

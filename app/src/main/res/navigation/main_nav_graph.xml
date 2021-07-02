@@ -10,7 +10,8 @@
     <include app:graph="@navigation/fullscreen_webcam_nav_graph" />
     <include app:graph="@navigation/trouble_shoot_nav_graph" />
     <include app:graph="@navigation/purchase_flow_nav_graph" />
-    <include app:graph="@navigation/sign_in_nav_graph" />
+    <include app:graph="@navigation/sign_in_discover_nav_graph" />
+    <include app:graph="@navigation/sign_in_connect_nav_graph" />
     <include app:graph="@navigation/connect_printer_nav_graph" />
     <include app:graph="@navigation/pre_print_controls_nav_graph" />
     <include app:graph="@navigation/print_controls_nav_graph" />
@@ -18,7 +19,7 @@
 
     <action
         android:id="@+id/action_sign_in_required"
-        app:destination="@id/sign_in_nav_graph"
+        app:destination="@id/sign_in_discover_nav_graph"
         app:enterAnim="@anim/enterAnim"
         app:exitAnim="@anim/exitAnim"
         app:popEnterAnim="@anim/popEnterAnim"

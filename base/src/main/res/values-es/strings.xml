@@ -238,7 +238,6 @@
     <string name="scan_the_qr_code">Escanea el código QR</string>
     <string name="you_can_find_the_api_key_in_octoprint_s_settings_under_api">Puede encontrar la clave de la API en la configuración de OctoPrint bajo API</string>
     <string name="you_can_find_the_api_key_in_octoprint_s_settings">Puedes encontrar la clave API en la configuración de OctoPrint.</string>
-    <string name="error_api_key_reported_invalid">OctoPrint informó que su clave API no es válida. Por favor, vuelva a iniciar sesión.</string>
     <string name="warning_server_version_too_new">Esta versión de la aplicación sólo fue probada con OctoPrint %1$s pero se usa %2$s</string>
     <string name="sign_in_succes_with_warnings">El registro tuvo éxito pero hubo advertencias:</string>
     <string name="web_url">Web URL</string>

@@ -169,6 +169,7 @@ abstract class OctoActivity : LocalizedActivity() {
         neutralAction: (Context) -> Unit = {},
         negativeButton: CharSequence? = null,
         negativeAction: (Context) -> Unit = {},
+        cancellable: Boolean = true,
     ) = handler.post {
         // Check activity state before showing dialog
         if (lifecycle.currentState >= Lifecycle.State.CREATED) {
@@ -186,6 +187,7 @@ abstract class OctoActivity : LocalizedActivity() {
                 negativeButton?.let {
                     builder.setNegativeButton(it) { _, _ -> negativeAction(this) }
                 }
+                builder.setCancelable(cancellable)
                 builder.show().also {
                     // Allow links to be clicked
                     it.findViewById<TextView>(android.R.id.message)?.movementMethod =

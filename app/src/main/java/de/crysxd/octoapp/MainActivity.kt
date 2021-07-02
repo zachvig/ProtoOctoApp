@@ -125,20 +125,34 @@ class MainActivity : OctoActivity() {
                 pass
             }
             .asLiveData()
-            .observe(this) {
-                if (it != null && it.apiKey.isNotBlank()) {
-                    Timber.i("Instance information received $this")
-                    updateCapabilities("instance_change", updateM115 = true, escalateError = false)
-                    navigate(R.id.action_connect_printer)
-                    viewModel.pendingUri?.let {
-                        viewModel.pendingUri = null
-                        handleDeepLink(it)
+            .observe(this) { instance ->
+                when {
+                    instance != null && instance.apiKey.isNotBlank() -> {
+                        Timber.i("Instance information received $this")
+                        updateCapabilities("instance_change", updateM115 = true, escalateError = false)
+                        navigate(R.id.action_connect_printer)
+                        viewModel.pendingUri?.let {
+                            viewModel.pendingUri = null
+                            handleDeepLink(it)
+                        }
                     }
-                } else {
-                    Timber.i("No instance active $this")
-                    navigate(R.id.action_sign_in_required)
-                    PrintNotificationManager.stop(this)
-                    (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).cancel(NOTIFICATION_ID)
+
+                    instance != null && instance.apiKey.isBlank() -> {
+                        Timber.i("Instance information received without API key $this")
+                        showDialog(
+                            message = getString(R.string.signin___error_api_key_revoked),
+                            positiveAction = { UriLibrary.getFixOctoPrintConnectionUri(baseUrl = Uri.parse(instance.webUrl)).open(this) },
+                            positiveButton = getString(R.string.signin___continue),
+                            cancellable = false
+                        )
+                    }
+
+                    else -> {
+                        Timber.i("No instance active $this")
+                        navigate(R.id.action_sign_in_required)
+                        PrintNotificationManager.stop(this)
+                        (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).cancel(NOTIFICATION_ID)
+                    }
                 }
             }
 
@@ -314,12 +328,14 @@ class MainActivity : OctoActivity() {
             // current screen is closed
             val currentDestinationAllowsAutoNavigate = listOf(
                 R.id.splashFragment,
+                R.id.discoverFragment,
+                R.id.probeOctoPrintFragment,
+                R.id.requestAccessFragment,
                 R.id.workspaceConnect,
                 R.id.workspacePrePrint,
                 R.id.workspacePrint,
                 R.id.terminalFragment,
                 R.id.fileDetailsFragment,
-                R.id.discoverFragment,
                 R.id.fileListFragment,
             ).contains(navController.currentDestination?.id)
 
@@ -327,7 +343,8 @@ class MainActivity : OctoActivity() {
                 viewModel.lastNavigation = id
                 navController.navigate(id)
             } else {
-                Timber.v("Current destination does not allow auto navigate, storing navigation action as pending")
+                val destinationName = resources.getResourceEntryName(id)
+                Timber.v("Current destination $destinationName does not allow auto navigate, storing navigation action as pending")
                 viewModel.pendingNavigation = id
             }
         }

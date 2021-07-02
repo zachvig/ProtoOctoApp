@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -27,6 +28,7 @@ class RequestAccessFragment : BaseFragment() {
     private val wifiViewModel by injectViewModel<NetworkStateViewModel>(Injector.get().viewModelFactory())
     private val mediaPlayer = MediaPlayer()
     private lateinit var contentBinding: ReqestAccessFragmentBinding
+    private val webUrl get() = navArgs<RequestAccessFragmentArgs>().value.webUrl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +47,7 @@ class RequestAccessFragment : BaseFragment() {
         contentBinding = ReqestAccessFragmentBinding.inflate(LayoutInflater.from(requireContext()), binding.content, true)
         contentBinding.buttonApiKey.setOnClickListener { continueWithManualApiKey() }
 
-        viewModel.useWebUrl(navArgs<RequestAccessFragmentArgs>().value.webUrl)
+        viewModel.useWebUrl(webUrl)
         viewModel.uiState.observe(viewLifecycleOwner) {
             when (it) {
                 RequestAccessViewModel.UiState.PendingApproval -> Unit
@@ -98,7 +100,12 @@ class RequestAccessFragment : BaseFragment() {
     }
 
     private fun continueWithApiKey(apiKey: String) {
-        Toast.makeText(requireContext(), apiKey, Toast.LENGTH_SHORT).show()
+        Injector.get().octorPrintRepository().setActive(
+            OctoPrintInstanceInformationV2(
+                webUrl = webUrl,
+                apiKey = apiKey
+            )
+        )
     }
 
     override fun onDestroy() {

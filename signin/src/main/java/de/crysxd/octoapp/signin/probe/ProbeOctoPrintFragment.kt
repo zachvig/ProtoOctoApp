@@ -45,7 +45,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
             binding.wifiWarning.isVisible = it is NetworkStateViewModel.NetworkState.WifiNotConnected
         }
 
-        viewModel.webUrl = navArgs<ProbeOctoPrintFragmentArgs>().value.webUrl
+        viewModel.webUrl = navArgs<ProbeOctoPrintFragmentArgs>().value.baseUrl
         startProbe()
         viewModel.uiState.observe(viewLifecycleOwner) {
             when (it) {

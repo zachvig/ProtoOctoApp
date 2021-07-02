@@ -2,29 +2,12 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/sign_in_nav_graph"
-    app:startDestination="@id/discoverFragment">
+    android:id="@+id/sign_in_connect_nav_graph"
+    app:startDestination="@id/probeOctoPrintFragment">
 
-    <include app:graph="@navigation/purchase_flow_nav_graph" />
-    <include app:graph="@navigation/trouble_shoot_nav_graph" />
-
-    <action
-        android:id="@+id/action_trouble_shoot"
-        app:destination="@id/trouble_shoot_nav_graph"
-        app:enterAnim="@anim/enterAnim"
-        app:exitAnim="@anim/exitAnim"
-        app:popEnterAnim="@anim/popEnterAnim"
-        app:popExitAnim="@anim/popExitAnim" />
-
-    <fragment
-        android:id="@+id/discoverFragment"
-        android:name="de.crysxd.octoapp.signin.discover.DiscoverFragment"
-        android:label="DiscoverFragment"
-        tools:layout="@layout/base_signin_fragment">
-        <action
-            android:id="@+id/probe_web_url"
-            app:destination="@id/probeOctoPrintFragment" />
-    </fragment>
+    <deepLink
+        android:id="@+id/deepLink"
+        app:uri="@string/uri___fix_octoprint_connection" />
 
     <fragment
         android:id="@+id/readQrCodeFragment"
@@ -39,8 +22,14 @@
         tools:layout="@layout/base_signin_fragment">
 
         <argument
-            android:name="webUrl"
+            android:name="baseUrl"
             app:argType="string" />
+
+        <argument
+            android:name="apiKey"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
 
         <action
             android:id="@+id/request_access"
@@ -57,6 +46,5 @@
             android:name="webUrl"
             app:argType="string" />
     </fragment>
-
 
 </navigation>
