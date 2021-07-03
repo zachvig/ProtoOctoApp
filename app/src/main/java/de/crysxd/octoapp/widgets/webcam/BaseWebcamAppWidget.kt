@@ -113,7 +113,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                 // Load frame or do live stream
                 try {
                     val octoPrintInfo = Injector.get().octorPrintRepository().let { repo ->
-                        repo.getAll().firstOrNull { it.webUrl == webUrl }
+                        repo.findOrNull(webUrl)
                             ?: repo.getActiveInstanceSnapshot()
                             ?: let {
                                 Timber.v("Unable to find configuration for $webUrl, cancelling")

@@ -4,7 +4,9 @@ import android.net.Uri
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.dns.LocalDnsResolver
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.exceptions.BasicAuthRequiredException
+import de.crysxd.octoapp.octoprint.exceptions.OctoPrintApiException
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintHttpsException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,14 +20,15 @@ import javax.inject.Inject
 
 class TestFullNetworkStackUseCase @Inject constructor(
     private val octoPrintProvider: OctoPrintProvider,
+    private val octoPrintRepository: OctoPrintRepository,
     private val localDnsResolver: LocalDnsResolver,
-) : UseCase<TestFullNetworkStackUseCase.Params, TestFullNetworkStackUseCase.Finding?>() {
+) : UseCase<TestFullNetworkStackUseCase.Params, TestFullNetworkStackUseCase.Finding>() {
 
     companion object {
         private const val PING_TIMEOUT = 2000
     }
 
-    override suspend fun doExecute(param: Params, timber: Timber.Tree): Finding? = withContext(Dispatchers.IO) {
+    override suspend fun doExecute(param: Params, timber: Timber.Tree): Finding = withContext(Dispatchers.IO) {
         try {
             // Parse URL
             timber.i("Testing URL syntax")
@@ -39,8 +42,8 @@ class TestFullNetworkStackUseCase @Inject constructor(
 
             // Test DNS
             timber.i("Testing DNS resolution")
-            val (ip, finding) = testDns(host = host, webUrl = baseUrl.toString())
-            finding?.let { return@withContext it }
+            val (ip, dnsFinding) = testDns(host = host, webUrl = baseUrl.toString())
+            dnsFinding?.let { return@withContext it }
             ip ?: throw RuntimeException("IP should be set if no finding was returned")
             timber.i("Passed")
 
@@ -69,11 +72,15 @@ class TestFullNetworkStackUseCase @Inject constructor(
 
             // Test that we actually are talking to an OctoPrint
             timber.i("Test server is OctoPrint")
-            testWebUrlIsOctoPrint(webUrl = param.webUrl, host = host)?.let { return@withContext it }
-            timber.i("Passed")
+            val finding = testApiKeyValid(webUrl = param.webUrl, host = host)
+            when (finding) {
+                is Finding.OctoPrintReady -> timber.i("Passed, OctoPrint is ready with a valid API key")
+                is Finding.InvalidApiKey -> timber.i("Passed, but API key is required")
+                else -> Unit
+            }
 
             // All good!
-            null
+            finding
         } catch (e: Exception) {
             Finding.UnexpectedIssue(
                 webUrl = param.webUrl,
@@ -144,15 +151,23 @@ class TestFullNetworkStackUseCase @Inject constructor(
         )
     }
 
-    private suspend fun testWebUrlIsOctoPrint(webUrl: String, host: String): Finding? = try {
-        val octoPrint = octoPrintProvider.createAdHocOctoPrint(OctoPrintInstanceInformationV2(webUrl = webUrl, apiKey = "notanapikey"))
-
-        if (octoPrint.createApplicationKeysPluginApi().probe()) {
-            null
+    private suspend fun testApiKeyValid(webUrl: String, host: String): Finding = try {
+        val apiKey = octoPrintRepository.findOrNull(webUrl)?.apiKey ?: ""
+        val octoPrint = octoPrintProvider.createAdHocOctoPrint(OctoPrintInstanceInformationV2(webUrl = webUrl, apiKey = apiKey))
+        val isApiKeyValid = octoPrint.createUserApi().getCurrentUser().isGuest.not()
+        if (isApiKeyValid) {
+            Finding.OctoPrintReady(webUrl = webUrl, apiKey = apiKey)
         } else {
-            Finding.ServerMightNotBeOctoPrint(
+            Finding.InvalidApiKey(webUrl = webUrl, host = host)
+        }
+    } catch (e: OctoPrintApiException) {
+        if (e.responseCode == 404) {
+            Finding.OctoPrintNotFound(webUrl = webUrl, host = host)
+        } else {
+            Finding.UnexpectedHttpIssue(
                 webUrl = webUrl,
-                host = host
+                exception = e,
+                host = host,
             )
         }
     } catch (e: Exception) {
@@ -168,66 +183,78 @@ class TestFullNetworkStackUseCase @Inject constructor(
     )
 
     sealed class Finding {
+        abstract val webUrl: String
+
         data class InvalidUrl(
-            val webUrl: String,
+            override val webUrl: String,
             val exception: Exception,
         ) : Finding()
 
         data class LocalDnsFailure(
-            val webUrl: String,
+            override val webUrl: String,
             val host: String
         ) : Finding()
 
         data class DnsFailure(
-            val webUrl: String,
+            override val webUrl: String,
             val host: String
         ) : Finding()
 
         data class HostNotReachable(
-            val webUrl: String,
+            override val webUrl: String,
             val host: String,
             val ip: String,
             val timeoutMs: Long
         ) : Finding()
 
         data class PortClosed(
-            val webUrl: String,
+            override val webUrl: String,
             val host: String,
             val port: Int
         ) : Finding()
 
         data class BasicAuthRequired(
-            val webUrl: String,
+            override val webUrl: String,
             val host: String,
             val userRealm: String
         ) : Finding()
 
         data class HttpsNotTrusted(
-            val webUrl: String,
+            override val webUrl: String,
             val host: String,
             val certificates: List<Certificate>,
             val weakHostnameVerificationRequired: Boolean,
         ) : Finding()
 
         data class OctoPrintNotFound(
-            val webUrl: String,
+            override val webUrl: String,
             val host: String,
         ) : Finding()
 
         data class UnexpectedHttpIssue(
-            val webUrl: String,
+            override val webUrl: String,
             val host: String,
             val exception: Throwable
         ) : Finding()
 
-        data class ServerMightNotBeOctoPrint(
-            val webUrl: String,
+        data class ServerIsNotOctoPrint(
+            override val webUrl: String,
+            val host: String,
+        ) : Finding()
+
+        data class InvalidApiKey(
+            override val webUrl: String,
             val host: String,
         ) : Finding()
 
         data class UnexpectedIssue(
-            val webUrl: String,
+            override val webUrl: String,
             val exception: Throwable
+        ) : Finding()
+
+        data class OctoPrintReady(
+            override val webUrl: String,
+            val apiKey: String,
         ) : Finding()
     }
 }

@@ -94,22 +94,40 @@
         android:clipToPadding="false"
         android:gravity="center_vertical"
         android:padding="@dimen/margin_2"
+        android:orientation="vertical"
         android:visibility="gone"
+        tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
-            android:id="@+id/buttonChangeOctoPrint"
-            style="@style/OctoTheme.Widget.Button.WithMore"
-            android:layout_width="0dp"
+            android:id="@+id/buttonTroubleShoot"
+            style="@style/OctoTheme.Widget.Button.Tertiary"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_1"
             android:layout_weight="1"
-            android:text="@string/connect_printer___action_change_octoprint" />
+            android:text="@string/connect_printer___action_troubleshooting" />
 
-        <Button
-            android:id="@+id/buttonMore5"
-            style="@style/OctoTheme.Widget.Button.More"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonChangeOctoPrint"
+                style="@style/OctoTheme.Widget.Button.WithMore"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/connect_printer___action_change_octoprint" />
+
+            <Button
+                android:id="@+id/buttonMore5"
+                style="@style/OctoTheme.Widget.Button.More"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -61,9 +61,7 @@ class SwitchInstanceMenuItem(private val webUrl: String, val showDelte: Boolean 
     }
 
     private val instanceInfo
-        get() = Injector.get().octorPrintRepository().getAll().firstOrNull {
-            it.webUrl == webUrl
-        }
+        get() = Injector.get().octorPrintRepository().findOrNull(webUrl)
 
     override val itemId = MENU_ITEM_SWITCH_INSTANCE + webUrl
     override var groupId = ""

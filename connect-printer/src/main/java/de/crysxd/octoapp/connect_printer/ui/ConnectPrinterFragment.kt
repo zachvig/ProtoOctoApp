@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.connect_printer.ui
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,13 +8,14 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
-import de.crysxd.octoapp.base.ui.menu.main.ChangeOctoPrintInstanceMenuItem
 import de.crysxd.octoapp.base.ui.menu.power.PowerControlsMenu
 import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.octoapp.connect_printer.R
@@ -72,6 +74,11 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
             binding.buttonMore3.setOnClickListener { showMenu() }
             binding.buttonMore4.setOnClickListener { showMenu() }
             binding.buttonMore5.setOnClickListener { showMenu() }
+            binding.buttonTroubleShoot.setOnClickListener {
+                viewModel.activeWebUrl?.let {
+                    UriLibrary.getFixOctoPrintConnectionUri(baseUrl = Uri.parse(it), allowApiKeyResuse = true).open(requireOctoActivity())
+                }
+            }
             binding.buttonBeginConnect.setOnClickListener {
                 requireOctoActivity().showDialog(
                     message = getString(R.string.connect_printer___begin_connection_confirmation_message),

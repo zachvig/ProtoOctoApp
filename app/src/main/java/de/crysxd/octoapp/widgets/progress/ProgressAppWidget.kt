@@ -4,7 +4,6 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.os.Bundle
-import android.widget.ImageView
 import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.R
@@ -230,7 +229,7 @@ class ProgressAppWidget : AppWidgetProvider() {
         }
 
         private fun applyColorTheme(views: RemoteViews, webUrl: String) {
-            val colorTheme = Injector.get().octorPrintRepository().getAll().firstOrNull { it.webUrl == webUrl }?.colorTheme ?: ColorTheme.default
+            val colorTheme = Injector.get().octorPrintRepository().findOrNull(webUrl)?.colorTheme ?: ColorTheme.default
             views.setInt(R.id.colorStrip, "setImageLevel", 2500)
             views.setViewVisibility(R.id.colorStrip, colorTheme != ColorTheme.default)
             views.setInt(R.id.colorStrip, "setColorFilter", colorTheme.dark)

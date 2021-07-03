@@ -103,7 +103,7 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
             if (webUrl == null) return@showSelectionDialog null
 
             ShortcutManager::class.java
-            val instance = Injector.get().octorPrintRepository().getAll().firstOrNull { it.webUrl == webUrl }
+            val instance = Injector.get().octorPrintRepository().findOrNull(webUrl)
             val label = instance?.label ?: getString(R.string.app_name)
             val drawable = when (instance.colorTheme.colorRes) {
                 R.color.blue_color_scheme -> R.mipmap.ic_launcher_blue

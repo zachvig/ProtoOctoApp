@@ -27,7 +27,7 @@ class CreateProgressAppWidgetDataUseCase @Inject constructor(
             ?: fromNetworkRequest(param.webUrl)
 
     private suspend fun fromNetworkRequest(webUrl: String): Result = withContext(Dispatchers.IO) {
-        val instance = octoPrintRepository.getAll().firstOrNull { it.webUrl == webUrl } ?: throw IllegalStateException("Unable to locate instance for $webUrl")
+        val instance = octoPrintRepository.findOrNull(webUrl) ?: throw IllegalStateException("Unable to locate instance for $webUrl")
         val octoPrint = octoPrintProvider.createAdHocOctoPrint(instance)
         val asyncJob = async { octoPrint.createJobApi().getJob() }
         val asyncState = async {

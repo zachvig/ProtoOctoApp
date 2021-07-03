@@ -25,6 +25,10 @@
             android:name="baseUrl"
             app:argType="string" />
 
+        <argument
+            android:name="allowApiKeyReuse"
+            app:argType="string" />
+
         <action
             android:id="@+id/request_access"
             app:destination="@id/requestAccessFragment" />

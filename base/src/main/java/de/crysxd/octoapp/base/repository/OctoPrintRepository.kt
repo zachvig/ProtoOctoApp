@@ -38,9 +38,7 @@ class OctoPrintRepository(
 
     private fun postActiveInstance() {
         val activeWebUrl = octoPreferences.activeInstanceWebUrl
-        val activeInstance = getAll().firstOrNull {
-            it.webUrl == activeWebUrl
-        }
+        val activeInstance = findOrNull(activeWebUrl)
         activeInstance?.let { instance ->
             sensitiveDataMask.registerWebUrl(instance.webUrl, "octoprint")
             sensitiveDataMask.registerWebUrl(instance.alternativeWebUrl, "alternative")
@@ -62,17 +60,14 @@ class OctoPrintRepository(
         }
 
         val updated = getAll().mapNotNull {
-            if (it.webUrl == webUrl) {
+            if (it.isForWebUrl(webUrl)) {
                 null
             } else {
                 it
             }
         }.toMutableList()
 
-        checked?.let {
-            updated.add(it)
-        }
-
+        checked?.let { updated.add(it) }
         dataSource.store(updated)
         postActiveInstance()
     }
@@ -104,7 +99,7 @@ class OctoPrintRepository(
 
     fun remove(webUrl: String) {
         Timber.i("Removing $webUrl")
-        val all = getAll().filter { it.webUrl != webUrl }
+        val all = getAll().filter { it.isForWebUrl(webUrl) }
         dataSource.store(all)
     }
 
@@ -116,4 +111,8 @@ class OctoPrintRepository(
     }
 
     fun getAll() = dataSource.get() ?: emptyList()
+
+    fun findOrNull(webUrl: String?) = webUrl?.let {
+        getAll().firstOrNull { it.isForWebUrl(webUrl) }
+    }
 }

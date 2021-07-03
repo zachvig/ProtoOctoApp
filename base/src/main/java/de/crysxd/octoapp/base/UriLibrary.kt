@@ -30,8 +30,8 @@ object UriLibrary {
     fun getTroubleShootUri(baseUrl: Uri, apiKey: String? = null): Uri =
         getUri(R.string.uri___troubleshoot, "{baseUrl}", baseUrl.toString().urlEncode(), "{apiKey}", apiKey ?: "")
 
-    fun getFixOctoPrintConnectionUri(baseUrl: Uri): Uri =
-        getUri(R.string.uri___fix_octoprint_connection, "{baseUrl}", baseUrl.toString().urlEncode())
+    fun getFixOctoPrintConnectionUri(baseUrl: Uri, allowApiKeyResuse: Boolean): Uri =
+        getUri(R.string.uri___fix_octoprint_connection, "{baseUrl}", baseUrl.toString().urlEncode(), "{allowApiKeyReuse}", allowApiKeyResuse.toString())
 
     fun getFaqUri(faqId: String) =
         getUri(R.string.uri___faq, "{faqId}", faqId)

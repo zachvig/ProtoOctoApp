@@ -10,7 +10,9 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -30,6 +32,12 @@ class ProbeOctoPrintFragment : BaseFragment() {
     private val wifiViewModel by injectViewModel<NetworkStateViewModel>(Injector.get().viewModelFactory())
     private var loadingBinding: ProbeFragmentInitialBinding? = null
     private var findingBinding: ProbeFragmentFindingBinding? = null
+    private val initialWebUrl by lazy {
+        navArgs<ProbeOctoPrintFragmentArgs>().value.baseUrl
+    }
+    private val allowApiKeyReuse by lazy {
+        navArgs<ProbeOctoPrintFragmentArgs>().value.allowApiKeyReuse == true.toString()
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         BaseSigninFragmentBinding.inflate(layoutInflater, container, false).also {
@@ -40,23 +48,23 @@ class ProbeOctoPrintFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.loading.subtitle.isVisible = false
-        binding.loading.title.text = "Testing the connection to OctoPrint..."
+        binding.loading.title.text = "Testing the connection to OctoPrint... H"
 
         wifiViewModel.networkState.observe(viewLifecycleOwner) {
             Timber.i("Wifi state: $it")
             binding.wifiWarning.isVisible = it is NetworkStateViewModel.NetworkState.WifiNotConnected
         }
 
-        viewModel.webUrl = navArgs<ProbeOctoPrintFragmentArgs>().value.baseUrl
-        startProbe()
+        val webUrl = viewModel.lastWebUrl ?: initialWebUrl
+        viewModel.probe(webUrl)
         viewModel.uiState.observe(viewLifecycleOwner) {
             when (it) {
                 ProbeOctoPrintViewModel.UiState.Loading -> showLoading()
                 is ProbeOctoPrintViewModel.UiState.FindingsReady -> {
-                    if (it.finding == null) {
-                        continueWithNoFindings()
-                    } else {
-                        showFinding(it.finding)
+                    when (it.finding) {
+                        is TestFullNetworkStackUseCase.Finding.OctoPrintReady -> continueWithPresentApiKey(it.finding)
+                        is TestFullNetworkStackUseCase.Finding.InvalidApiKey -> continueToRequestApiKey(it.finding.webUrl)
+                        else -> showFinding(it.finding)
                     }
                 }
             }
@@ -68,14 +76,29 @@ class ProbeOctoPrintFragment : BaseFragment() {
         })
     }
 
-    private fun startProbe() {
-        viewModel.probe()
-    }
 
     private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(binding.root)
 
-    private fun continueWithNoFindings() {
-        findNavController().navigate(ProbeOctoPrintFragmentDirections.requestAccess(viewModel.webUrl))
+    private fun continueToRequestApiKey(webUrl: String) {
+        findNavController().navigate(ProbeOctoPrintFragmentDirections.requestAccess(webUrl))
+    }
+
+    private fun continueWithPresentApiKey(finding: TestFullNetworkStackUseCase.Finding.OctoPrintReady) {
+        // If the "thing" which started this screen allowed us to reuse an existing API key OR the user has the quick switch feature, we can continue with the existing
+        // API key. Otherwise, the user is forced to reconnect OctoPrint. Reusing might be explicitly allowed, when this fragment is started to troubleshoot the connection.
+        if (allowApiKeyReuse || BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH)) {
+            val repo = Injector.get().octorPrintRepository()
+            val oldInstance = repo.findOrNull(finding.webUrl)
+            val instance = oldInstance?.copy(
+                webUrl = finding.webUrl,
+                apiKey = finding.apiKey
+            ) ?: OctoPrintInstanceInformationV2(
+                webUrl = finding.webUrl,
+                apiKey = finding.apiKey
+            )
+
+            Injector.get().octorPrintRepository().setActive(instance)
+        }
     }
 
     private fun showLoading() {
@@ -144,13 +167,15 @@ class ProbeOctoPrintFragment : BaseFragment() {
         is TestFullNetworkStackUseCase.Finding.PortClosed -> "Connected to **${finding.host}** but port **${finding.port}** is closed"
         is TestFullNetworkStackUseCase.Finding.UnexpectedHttpIssue -> "Failed to connect to **${finding.host}** via HTTP"
         is TestFullNetworkStackUseCase.Finding.UnexpectedIssue -> "Unexpected issue"
-        is TestFullNetworkStackUseCase.Finding.ServerMightNotBeOctoPrint -> "**${finding.host}** might not be an OctoPrint"
+        is TestFullNetworkStackUseCase.Finding.ServerIsNotOctoPrint -> "**${finding.host}** might not be an OctoPrint"
+        is TestFullNetworkStackUseCase.Finding.InvalidApiKey -> ""
+        is TestFullNetworkStackUseCase.Finding.OctoPrintReady -> ""
     }
 
     private fun getExplainerForFinding(finding: TestFullNetworkStackUseCase.Finding) = when (finding) {
         is TestFullNetworkStackUseCase.Finding.BasicAuthRequired -> "Please enter your Basic Auth credentials below, not your OctoPrint user and password."
-        is TestFullNetworkStackUseCase.Finding.DnsFailure -> "Android is not able to resolve the IP address for **${finding.host}**. Check following things to resolve the issue:\n\n- Ensure there is no typo\n- Make sure you are connected to the internet\n- Try to open [${finding.webUrl}](${finding.webUrl}) in your browser\n- Try using the **IP address** instead of **${finding.host}**"
-        is TestFullNetworkStackUseCase.Finding.LocalDnsFailure -> "Android is not able to resolve the IP address for **${finding.host}**. Android devices are sometimes configured by the manufacturer in a way that they cannot reliably resolve .home or .local domains. Check following things to resolve the issue:\n\n- Ensure there is no typo\n- Make sure you are connected to the internet\n- Try to open [${finding.webUrl}](${finding.webUrl}) in your browser\n- Try using the **IP address** instead of **${finding.host}**"
+        is TestFullNetworkStackUseCase.Finding.DnsFailure -> "Android is not able to resolve the IP address for **${finding.host}**. Check following things to resolve the issue:\n\n- Ensure there is no typo\n- Make sure you are connected to the internet\n- Make sure you are on the correct WiFi network\n- Try to open [${finding.webUrl}](${finding.webUrl}) in your browser\n- Try using the **IP address** instead of **${finding.host}**"
+        is TestFullNetworkStackUseCase.Finding.LocalDnsFailure -> "Android is not able to resolve the IP address for **${finding.host}**. Android devices are sometimes configured by the manufacturer in a way that they cannot reliably resolve .home or .local domains. Check following things to resolve the issue:\n\n- Ensure there is no typo\n- Make sure you are on the correct WiFi network\n- Try to open [${finding.webUrl}](${finding.webUrl}) in your browser\n- Try using the **IP address** instead of **${finding.host}**"
         is TestFullNetworkStackUseCase.Finding.HostNotReachable -> "OctoApp resolved the IP of **${finding.host}**, but **${finding.ip}** can't be reached within 2 seconds. Check following things to resolve the issue:\n\n- Make sure the machine hosting OctoPrint is turned on and connected\n- If your OctoPrint is only available locally, make sure you are connected to the correct WiFi network\n- Try to open [${finding.webUrl}](${finding.webUrl}) in your browser"
         is TestFullNetworkStackUseCase.Finding.HttpsNotTrusted -> if (finding.weakHostnameVerificationRequired) {
             "The SSL certificate presented by your OctoPrint can not be used to establish a HTTPS connection because Android does not trust the certificate. This is a common issue for self-signed certificates that were not installed on this phone.\n\nAdditionally, the certificate uses a deprecated format that does not comply to modern security standards. A \"subject alternative name\" (SAN) field is required from Android 9 onwards. \n\nOctoApp can add this certificate to a trusted list and will bypass Android’s check for this certificate."
@@ -162,12 +187,14 @@ class ProbeOctoPrintFragment : BaseFragment() {
         is TestFullNetworkStackUseCase.Finding.PortClosed -> "OctoApp was able to connect to **${finding.host}** but port **${finding.port}** is closed. Check following things to resolve the issue:\n\n- Make sure **${finding.port}** is correct. If you don't specify the port explicitly, OctoApp will use 80 for HTTP and 443 for HTTPS\n- Try to open [${finding.webUrl}](${finding.webUrl}) in your browser"
         is TestFullNetworkStackUseCase.Finding.UnexpectedHttpIssue -> "OctoApp was able to communicate with **${finding.host}**, but when trying to establish a HTTP(S) connection an unexpected error occurred. Android reports following issue:\n\n**${finding.exception.localizedMessage ?: "Unknown error"}**"
         is TestFullNetworkStackUseCase.Finding.UnexpectedIssue -> "OctoApp encountered an unexpected error. Android reports following issue:\n\n**${finding.exception.localizedMessage ?: "Unknown error"}**"
-        is TestFullNetworkStackUseCase.Finding.ServerMightNotBeOctoPrint -> "OctoApp was able to communicate with **${finding.host}**, but the server seems not to be a recent version of OctoPrint.\n\nYou can continue, but other issues may arise in the following steps."
+        is TestFullNetworkStackUseCase.Finding.ServerIsNotOctoPrint -> "OctoApp was able to communicate with **${finding.host}**, but the server seems not to be a recent version of OctoPrint.\n\nYou can continue, but other issues may arise in the following steps."
+        is TestFullNetworkStackUseCase.Finding.InvalidApiKey -> ""
+        is TestFullNetworkStackUseCase.Finding.OctoPrintReady -> ""
     }
 
     private fun getPrimaryActionText(finding: TestFullNetworkStackUseCase.Finding) = when (finding) {
         is TestFullNetworkStackUseCase.Finding.HttpsNotTrusted -> "Trust & Continue"
-        is TestFullNetworkStackUseCase.Finding.BasicAuthRequired, is TestFullNetworkStackUseCase.Finding.ServerMightNotBeOctoPrint -> "Continue"
+        is TestFullNetworkStackUseCase.Finding.BasicAuthRequired -> "Continue"
         else -> "Try again"
     }
 
@@ -181,7 +208,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
             }
 
             // Start again
-            startProbe()
+            viewModel.probe(finding.webUrl)
         }
         is TestFullNetworkStackUseCase.Finding.BasicAuthRequired -> {
             val user = findingBinding?.usernameInput?.editText?.text?.toString() ?: ""
@@ -192,12 +219,12 @@ class ProbeOctoPrintFragment : BaseFragment() {
                 user.isNotBlank() -> "$user@"
                 else -> ""
             }
-            viewModel.webUrl = uri.buildUpon().encodedAuthority("$credentials${uri.host}").build().toString()
-            Injector.get().sensitiveDataMask().registerWebUrl(viewModel.webUrl, "octoprint")
-            startProbe()
+            val webUrl = uri.buildUpon().encodedAuthority("$credentials${uri.host}").build().toString()
+            Injector.get().sensitiveDataMask().registerWebUrl(webUrl, "octoprint")
+            viewModel.probe(webUrl)
         }
-        is TestFullNetworkStackUseCase.Finding.ServerMightNotBeOctoPrint -> continueWithNoFindings()
-        else -> startProbe()
+
+        else -> viewModel.probe(finding.webUrl)
     }
 
     override fun onStart() {

@@ -63,7 +63,7 @@ class DiscoverViewModel(
     }
 
     fun activatePreviouslyConnected(octoPrint: OctoPrintInstanceInformationV2) {
-        octoPrintRepository.getAll().firstOrNull { it.webUrl == octoPrint.webUrl }?.let {
+        octoPrintRepository.findOrNull(octoPrint.webUrl)?.let {
             octoPrintRepository.setActive(it)
         }
     }

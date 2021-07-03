@@ -217,9 +217,12 @@ class DiscoverFragment : BaseFragment() {
     }
 
     private fun continueWithManualConnect(webUrl: String) {
+        // Start the "fix" flow, it will test the connection to the given URL
+        // We do not allow the API key to be reused to prevent the user from bypassing quick switch.
+        // If the user has BillingManager.FEATURE_QUICK_SWITCH, the fix flow will always allow API key reuse
         val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
         findNavController().navigate(
-            UriLibrary.getFixOctoPrintConnectionUri(baseUrl = Uri.parse(webUrl)),
+            UriLibrary.getFixOctoPrintConnectionUri(baseUrl = Uri.parse(webUrl), allowApiKeyResuse = false),
             null,
             extras
         )

@@ -34,6 +34,7 @@ class ConnectPrinterViewModel(
     private val octoPrintRepository: OctoPrintRepository,
 ) : BaseViewModel() {
 
+    val activeWebUrl get() = octoPrintRepository.getActiveInstanceSnapshot()?.webUrl
     private val connectionTimeoutNs = TimeUnit.SECONDS.toNanos(Firebase.remoteConfig.getLong("printer_connection_timeout_sec"))
     private var lastConnectionAttempt = 0L
     private var psuCyclingState = MutableLiveData<PsuCycledState>(PsuCycledState.NotCycled)

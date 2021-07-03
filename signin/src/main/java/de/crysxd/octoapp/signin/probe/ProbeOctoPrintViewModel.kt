@@ -16,20 +16,31 @@ class ProbeOctoPrintViewModel(
         private const val MIN_PROBE_DURATION = 2000
     }
 
-    var webUrl: String = ""
+    var lastWebUrl: String? = null
+        private set
+    var probeIsActive: Boolean = false
     private val mutableUiState = MutableLiveData<UiState>(UiState.Loading)
     val uiState = mutableUiState.map { it }
 
-    fun probe() = viewModelScope.launch(coroutineExceptionHandler) {
-        val start = System.currentTimeMillis()
-        mutableUiState.postValue(UiState.Loading)
-        val finding = useCase.execute(TestFullNetworkStackUseCase.Params(webUrl))
-        (MIN_PROBE_DURATION - (System.currentTimeMillis() - start)).takeIf { it > 0 }?.let { delay(it) }
-        mutableUiState.postValue(UiState.FindingsReady(finding))
+    fun probe(webUrl: String) = viewModelScope.launch(coroutineExceptionHandler) {
+        // Don't allow consecutive probes
+        if (probeIsActive) return@launch
+
+        try {
+            probeIsActive = true
+            val start = System.currentTimeMillis()
+            mutableUiState.postValue(UiState.Loading)
+            val finding = useCase.execute(TestFullNetworkStackUseCase.Params(webUrl))
+            (MIN_PROBE_DURATION - (System.currentTimeMillis() - start)).takeIf { it > 0 }?.let { delay(it) }
+            lastWebUrl = finding.webUrl
+            mutableUiState.postValue(UiState.FindingsReady(finding))
+        } finally {
+            probeIsActive = false
+        }
     }
 
     sealed class UiState {
         object Loading : UiState()
-        data class FindingsReady(val finding: TestFullNetworkStackUseCase.Finding?) : UiState()
+        data class FindingsReady(val finding: TestFullNetworkStackUseCase.Finding) : UiState()
     }
 }

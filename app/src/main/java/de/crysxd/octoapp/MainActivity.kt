@@ -141,7 +141,7 @@ class MainActivity : OctoActivity() {
                         Timber.i("Instance information received without API key $this")
                         showDialog(
                             message = getString(instance.issue?.messageRes ?: R.string.signin___broken_setup___api_key_revoked),
-                            positiveAction = { UriLibrary.getFixOctoPrintConnectionUri(baseUrl = Uri.parse(instance.webUrl)).open(this) },
+                            positiveAction = { UriLibrary.getFixOctoPrintConnectionUri(baseUrl = Uri.parse(instance.webUrl), allowApiKeyResuse = true).open(this) },
                             positiveButton = getString(R.string.signin___continue),
                             highPriority = true
                         )
@@ -215,7 +215,7 @@ class MainActivity : OctoActivity() {
         if (BillingManager.isFeatureEnabled(FEATURE_QUICK_SWITCH)) {
             intent?.getStringExtra(EXTRA_TARGET_OCTOPRINT_WEB_URL)?.let { webUrl ->
                 val repo = Injector.get().octorPrintRepository()
-                repo.getAll().firstOrNull { it.webUrl == webUrl }?.let {
+                repo.findOrNull(webUrl)?.let {
                     repo.setActive(it)
                 }
             }
