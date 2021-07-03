@@ -39,4 +39,9 @@ dependencies {
      * Local backup DNS
      */
     implementation 'com.qiniu:happy-dns:0.2.18'
+
+    /*
+     * Extra transitions
+     */
+    implementation "com.andkulikov:transitionseverywhere:2.1.0"
 }

@@ -8,6 +8,11 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.transition.ChangeBounds
+import androidx.transition.Fade
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
+import com.transitionseverywhere.ChangeText
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
@@ -50,20 +55,19 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
             Timber.i("$state")
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                val views = listOf(
-                    binding.psuTurnOffControls,
-                    binding.psuTurnOnControls,
-                    binding.psuUnvailableControls,
-                    binding.textViewState,
-                    binding.textViewSubState,
-                    binding.octoprintConnectedInfo
-                )
-                val duration = view.animate().duration
                 if (lastState != state) {
-                    views.forEach { it.animate().alpha(0f).start() }
-                    delay(duration)
+                    TransitionManager.beginDelayedTransition(binding.root, TransitionSet().also {
+                        it.addTransition(Fade(Fade.OUT))
+                        it.addTransition(Fade(Fade.IN).setStartDelay(300))
+                        it.addTransition(ChangeBounds().apply {
+                            excludeChildren(binding.root, true)
+                            addTarget(binding.noWifiWarning)
+                        })
+                        it.addTransition(ChangeText().apply {
+                            changeBehavior = ChangeText.CHANGE_BEHAVIOR_OUT_IN
+                        })
+                    })
                     handleUiStateUpdate(state)
-                    views.forEach { it.animate().alpha(1f).start() }
                 }
 
                 lastState = state
