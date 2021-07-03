@@ -34,6 +34,10 @@ class ConnectPrinterViewModel(
     private val octoPrintRepository: OctoPrintRepository,
 ) : BaseViewModel() {
 
+    companion object {
+        private const val MIN_LOADING_DELAY = 2000L
+    }
+
     val activeWebUrl get() = octoPrintRepository.getActiveInstanceSnapshot()?.webUrl
     private val connectionTimeoutNs = TimeUnit.SECONDS.toNanos(Firebase.remoteConfig.getLong("printer_connection_timeout_sec"))
     private var lastConnectionAttempt = 0L
@@ -44,6 +48,7 @@ class ConnectPrinterViewModel(
     }
 
     private var isPsuSupported = false
+    private var startedAt = System.currentTimeMillis()
     private val uiStateMediator = MediatorLiveData<UiState>()
     private val manualPsuState = MutableLiveData<Boolean?>(null)
     private var userAllowedConnectAt = 0L
@@ -105,41 +110,46 @@ class ConnectPrinterViewModel(
             val isAutoConnect = octoPreferences.isAutoConnectPrinter ||
                     TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - userAllowedConnectAt) < 3
 
+            val activeSince = System.currentTimeMillis() - startedAt
             Timber.d("-----")
             Timber.d("ConnectionResult: $connectionResult")
             Timber.d("PsuSupported: $isPsuSupported")
             Timber.d("PsuCycled: $psuCyclingState")
             Timber.d("PsuState: $isPsuTurnedOn")
+            Timber.d("activeSince: ${activeSince}ms")
 
-            return when {
-                isOctoPrintStarting(connectionResponse) ->
-                    UiState.OctoPrintStarting
+            if (connectionResponse != null || activeSince > MIN_LOADING_DELAY) {
+                return when {
+                    isOctoPrintStarting(connectionResponse) ->
+                        UiState.OctoPrintStarting
 
-                isOctoPrintUnavailable(connectionResponse) || connectionResult == null ->
-                    UiState.OctoPrintNotAvailable
+                    isOctoPrintUnavailable(connectionResponse) || connectionResult == null ->
+                        UiState.OctoPrintNotAvailable
 
-                !isAutoConnect ->
-                    UiState.WaitingForUser
+                    !isAutoConnect ->
+                        UiState.WaitingForUser
 
-                isPsuBeingCycled(psuCyclingState) ->
-                    UiState.PrinterPsuCycling
+                    isPsuBeingCycled(psuCyclingState) ->
+                        UiState.PrinterPsuCycling
 
-                isNoPrinterAvailable(connectionResult) ->
-                    UiState.WaitingForPrinterToComeOnline(isPsuTurnedOn)
+                    isNoPrinterAvailable(connectionResult) ->
+                        UiState.WaitingForPrinterToComeOnline(isPsuTurnedOn)
 
-                isPrinterOffline(connectionResult, psuCyclingState) ->
-                    UiState.PrinterOffline(isPsuSupported)
+                    isPrinterOffline(connectionResult, psuCyclingState) ->
+                        UiState.PrinterOffline(isPsuSupported)
 
-                isPrinterConnecting(connectionResult) ->
-                    UiState.PrinterConnecting
+                    isPrinterConnecting(connectionResult) ->
+                        UiState.PrinterConnecting
 
-                isPrinterConnected(connectionResult) ->
-                    UiState.PrinterConnected
+                    isPrinterConnected(connectionResult) ->
+                        UiState.PrinterConnected
 
-                else -> {
-                    // Printer ready to connect
-                    autoConnect(connectionResult)
-                    UiState.WaitingForPrinterToComeOnline(isPsuTurnedOn)
+                    else -> {
+                        // Printer ready to connect
+                        autoConnect(connectionResult)
+                        UiState.WaitingForPrinterToComeOnline(isPsuTurnedOn)
+                    }
+
                 }
             }
         } catch (e: Exception) {
