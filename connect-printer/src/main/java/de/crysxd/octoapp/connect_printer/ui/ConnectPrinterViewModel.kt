@@ -111,37 +111,35 @@ class ConnectPrinterViewModel(
             Timber.d("PsuCycled: $psuCyclingState")
             Timber.d("PsuState: $isPsuTurnedOn")
 
-            if (connectionResponse != null) {
-                return when {
-                    isOctoPrintStarting(connectionResponse) ->
-                        UiState.OctoPrintStarting
+            return when {
+                isOctoPrintStarting(connectionResponse) ->
+                    UiState.OctoPrintStarting
 
-                    isOctoPrintUnavailable(connectionResponse) || connectionResult == null ->
-                        UiState.OctoPrintNotAvailable
+                isOctoPrintUnavailable(connectionResponse) || connectionResult == null ->
+                    UiState.OctoPrintNotAvailable
 
-                    !isAutoConnect ->
-                        UiState.WaitingForUser
+                !isAutoConnect ->
+                    UiState.WaitingForUser
 
-                    isPsuBeingCycled(psuCyclingState) ->
-                        UiState.PrinterPsuCycling
+                isPsuBeingCycled(psuCyclingState) ->
+                    UiState.PrinterPsuCycling
 
-                    isNoPrinterAvailable(connectionResult) ->
-                        UiState.WaitingForPrinterToComeOnline(isPsuTurnedOn)
+                isNoPrinterAvailable(connectionResult) ->
+                    UiState.WaitingForPrinterToComeOnline(isPsuTurnedOn)
 
-                    isPrinterOffline(connectionResult, psuCyclingState) ->
-                        UiState.PrinterOffline(isPsuSupported)
+                isPrinterOffline(connectionResult, psuCyclingState) ->
+                    UiState.PrinterOffline(isPsuSupported)
 
-                    isPrinterConnecting(connectionResult) ->
-                        UiState.PrinterConnecting
+                isPrinterConnecting(connectionResult) ->
+                    UiState.PrinterConnecting
 
-                    isPrinterConnected(connectionResult) ->
-                        UiState.PrinterConnected
+                isPrinterConnected(connectionResult) ->
+                    UiState.PrinterConnected
 
-                    else -> {
-                        // Printer ready to connect
-                        autoConnect(connectionResult)
-                        UiState.WaitingForPrinterToComeOnline(isPsuTurnedOn)
-                    }
+                else -> {
+                    // Printer ready to connect
+                    autoConnect(connectionResult)
+                    UiState.WaitingForPrinterToComeOnline(isPsuTurnedOn)
                 }
             }
         } catch (e: Exception) {
