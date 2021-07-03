@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
@@ -20,6 +21,7 @@ import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.databinding.SignInSuccessFragmentBinding
 import de.crysxd.octoapp.signin.databinding.SignInSuccessFragmentContentBinding
+import de.crysxd.octoapp.signin.ext.goBackToDiscover
 
 class SignInSuccessFragment : Fragment(), InsetAwareScreen {
     private lateinit var binding: SignInSuccessFragmentBinding
@@ -51,6 +53,7 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
                 mediaPlayer.setSurface(holder.surface)
             }
         })
+
         binding.buttonContinue.setOnClickListener {
             val args = navArgs<SignInSuccessFragmentArgs>().value
             Injector.get().octorPrintRepository().setActive(
@@ -60,11 +63,17 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
                 )
             )
         }
+
         binding.videoMask.animate()
             .setStartDelay(500)
             .alpha(0.75f)
             .setDuration(800)
             .start()
+
+        // Disable back button, we can't go back here
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() = goBackToDiscover()
+        })
     }
 
     @RequiresApi(Build.VERSION_CODES.M)

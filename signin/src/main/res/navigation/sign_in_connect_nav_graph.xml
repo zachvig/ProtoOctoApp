@@ -34,8 +34,8 @@
             app:destination="@id/requestAccessFragment"
             app:enterAnim="@anim/sign_in_shared_element_fade_in"
             app:exitAnim="@anim/sign_in_shared_element_fade_out"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:popEnterAnim="@anim/sign_in_shared_element_fade_in"
+            app:popExitAnim="@anim/sign_in_shared_element_fade_out" />
     </fragment>
 
     <fragment
@@ -50,7 +50,11 @@
 
         <action
             android:id="@+id/action_success"
-            app:destination="@id/signInSuccessFragment" />
+            app:destination="@id/signInSuccessFragment"
+            app:enterAnim="@anim/sign_in_shared_element_fade_in"
+            app:exitAnim="@anim/sign_in_shared_element_fade_out"
+            app:popEnterAnim="@anim/sign_in_shared_element_fade_in"
+            app:popExitAnim="@anim/sign_in_shared_element_fade_out" />
     </fragment>
 
     <fragment

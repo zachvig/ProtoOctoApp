@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import de.crysxd.octoapp.base.di.Injector
@@ -36,7 +37,6 @@ class RequestAccessFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
-        sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
         postponeEnterTransition()
     }
 
@@ -114,7 +114,9 @@ class RequestAccessFragment : BaseFragment() {
     }
 
     private fun continueWithApiKey(apiKey: String) {
-        findNavController().navigate(RequestAccessFragmentDirections.actionSuccess(webUrl = webUrl, apiKey = apiKey))
+        val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
+        val directions = RequestAccessFragmentDirections.actionSuccess(webUrl = webUrl, apiKey = apiKey)
+        findNavController().navigate(directions, extras)
     }
 
     override fun onDestroy() {

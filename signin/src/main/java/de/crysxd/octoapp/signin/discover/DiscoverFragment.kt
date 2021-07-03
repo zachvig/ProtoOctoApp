@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.signin.discover
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -14,7 +13,6 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.animation.DecelerateInterpolator
-import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.*
@@ -39,6 +37,7 @@ import de.crysxd.octoapp.signin.databinding.BaseSigninFragmentBinding
 import de.crysxd.octoapp.signin.databinding.DiscoverFragmentContentManualBinding
 import de.crysxd.octoapp.signin.databinding.DiscoverFragmentContentOptionsBinding
 import de.crysxd.octoapp.signin.di.injectViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
@@ -49,14 +48,14 @@ class DiscoverFragment : BaseFragment() {
     private lateinit var binding: BaseSigninFragmentBinding
     private var optionsBinding: DiscoverFragmentContentOptionsBinding? = null
     private var manualBinding: DiscoverFragmentContentManualBinding? = null
+    private var loadingAnimationJob: Job? = null
+    private var backgroundAlpha = 1f
     private val moveBackToOptionsBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() = viewModel.moveToOptionsState()
     }
-    private val imm by lazy { requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
         sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
         sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
     }
@@ -70,6 +69,7 @@ class DiscoverFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, moveBackToOptionsBackPressedCallback)
+        backgroundAlpha = binding.octoBackground.alpha
 
         playLoadingAnimation()
         optionsBinding = null
@@ -86,7 +86,7 @@ class DiscoverFragment : BaseFragment() {
 
                 is DiscoverViewModel.UiState.Manual -> moveToManualLayout(
                     webUrl = (it as? DiscoverViewModel.UiState.ManualSuccess)?.webUrl ?: "",
-                    openSoftKeyboard = !(it is DiscoverViewModel.UiState.ManualSuccess && !it.handled)
+                    openSoftKeyboard = it !is DiscoverViewModel.UiState.ManualSuccess
                 )
             }
 
@@ -144,18 +144,24 @@ class DiscoverFragment : BaseFragment() {
     })
 
     private fun playLoadingAnimation() {
-        val duration = 600L
-        binding.loading.title.setText(R.string.signin___discovery___welcome_title)
-        binding.loading.subtitle.setText(R.string.signin___discovery___welcome_subtitle_searching)
-        binding.octoBackground.alpha = 0f
-        binding.loading.title.alpha = 0f
-        binding.loading.subtitle.alpha = 0f
+        loadingAnimationJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            val duration = 600L
+            binding.octoBackground.alpha = 0f
+            binding.loading.title.setText(R.string.signin___discovery___welcome_title)
+            binding.loading.subtitle.setText(R.string.signin___discovery___welcome_subtitle_searching)
+            binding.loading.title.alpha = 0f
+            binding.loading.subtitle.alpha = 0f
 
-        binding.octoBackground.animate().alpha(1f).setDuration(duration).setStartDelay(duration).withEndAction {
-            binding.octoView.swim()
-        }.start()
-        binding.loading.title.animate().alpha(1f).setDuration(duration).setStartDelay(duration + 150).start()
-        binding.loading.subtitle.animate().alpha(1f).setDuration(duration).setStartDelay(duration + 300).start()
+            delay(duration)
+            binding.octoBackground.animate().alpha(backgroundAlpha).setDuration(duration).withEndAction {
+                binding.octoView.swim()
+            }.start()
+            delay(150)
+            binding.loading.title.animate().alpha(1f).setDuration(duration).start()
+            delay(150)
+            binding.loading.subtitle.animate().alpha(1f).setDuration(duration).start()
+        }
+
     }
 
     private fun createDiscoveredOptions(options: List<DiscoverOctoPrintUseCase.DiscoveredOctoPrint>) = optionsBinding?.let { binding ->
@@ -311,7 +317,9 @@ class DiscoverFragment : BaseFragment() {
     }
 
     private fun moveToManualLayout(webUrl: String, openSoftKeyboard: Boolean) {
-        Timber.i("MANUAL $webUrl")
+        loadingAnimationJob?.cancel()
+        binding.octoBackground.clearAnimation()
+        binding.octoBackground.alpha = backgroundAlpha
         beginDelayedTransition()
         moveBackToOptionsBackPressedCallback.isEnabled = true
         binding.octoView.idle()
