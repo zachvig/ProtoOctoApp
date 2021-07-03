@@ -34,7 +34,7 @@ object BillingManager {
         Timber.i("On purchase updated: $billingResult $purchases")
         when (billingResult.responseCode) {
             BillingClient.BillingResponseCode.OK -> {
-                OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseFlowCompleted, bundleOf("sku" to purchases?.joinToString(",") { it.sku }))
+                OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseFlowCompleted, bundleOf("sku" to purchases?.map { it.skus }?.joinToString(",")))
                 GlobalScope.launch {
                     purchases?.let { handlePurchases(it) }
                 }
@@ -175,7 +175,7 @@ object BillingManager {
         }
     }
 
-    private suspend fun handlePurchases(purchases: List<Purchase>): Unit {
+    private suspend fun handlePurchases(purchases: List<Purchase>) {
         Timber.i("Handling ${purchases.size} purchases")
         try {
             // Check if premium is active
@@ -183,7 +183,7 @@ object BillingManager {
                 Purchase.PurchaseState.PURCHASED == it.purchaseState
             }
             val fromSubscription = purchases.any {
-                Purchase.PurchaseState.PURCHASED == it.purchaseState && it.sku.contains("_sub_")
+                Purchase.PurchaseState.PURCHASED == it.purchaseState && it.skus.any { sku -> sku.contains("_sub_") }
             }
 
             OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.PremiumUser, premiumActive.toString())
@@ -243,22 +243,21 @@ object BillingManager {
         }
 
         if (playServicesAvailable != false) {
-            Timber.e(Exception("$description. responseCode=${billingResult?.responseCode} message=${billingResult?.debugMessage} billingResult=${billingResult?.let { "non-null" }} playServicesAvailable=$playServicesAvailable"))
+            Timber.e(Exception("$description. responseCode=${billingResult.responseCode} message=${billingResult.debugMessage} billingResult=${billingResult.let { "non-null" }} playServicesAvailable=$playServicesAvailable"))
         } else {
             Timber.w("BillingManager encountered problem but Play Services are not available")
         }
     }
 
     private fun queryPurchases() = GlobalScope.launch(Dispatchers.IO) {
-        fun queryPurchases(@BillingClient.SkuType type: String): List<Purchase> {
-            val purchaseResult = billingClient?.queryPurchases(type)
-            if (purchaseResult?.billingResult?.responseCode != BillingClient.BillingResponseCode.OK) {
+        suspend fun queryPurchases(@BillingClient.SkuType type: String): List<Purchase> {
+            val purchaseResult = billingClient?.queryPurchasesAsync(type)
+            return if (purchaseResult?.billingResult?.responseCode != BillingClient.BillingResponseCode.OK) {
                 logError("Unable to query purchases", purchaseResult?.billingResult)
-            } else purchaseResult.purchasesList?.let {
-                return it
+                emptyList()
+            } else {
+                purchaseResult.purchasesList
             }
-
-            return emptyList()
         }
 
         try {
