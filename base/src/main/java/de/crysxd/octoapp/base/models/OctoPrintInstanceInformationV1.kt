@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.base.models
 
-import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.system.SystemCommand
@@ -21,7 +20,7 @@ data class OctoPrintInstanceInformationV2(
     val webUrl: String,
     val alternativeWebUrl: String? = null,
     val apiKey: String,
-    val apiKeyWasInvalid: Boolean = false,
+    val issue: ActiveInstanceIssue? = null,
     val m115Response: String? = null,
     val settings: Settings? = null,
     val activeProfile: PrinterProfiles.Profile? = null,
@@ -33,7 +32,6 @@ data class OctoPrintInstanceInformationV2(
         webUrl = "http://${legacy.hostName}:${legacy.port}",
         apiKey = legacy.apiKey,
         settings = null,
-        apiKeyWasInvalid = legacy.apiKeyWasInvalid
     )
 
     val isWebcamSupported get() = settings?.webcam?.webcamEnabled == true

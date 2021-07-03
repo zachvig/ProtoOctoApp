@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.repository
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.datasource.DataSource
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
+import de.crysxd.octoapp.base.models.ActiveInstanceIssue
 import de.crysxd.octoapp.base.models.AppSettings
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.octoprint.models.settings.Settings
@@ -107,8 +108,8 @@ class OctoPrintRepository(
         dataSource.store(all)
     }
 
-    suspend fun reportActiveApiKeyInvalid() = updateActive {
-        it.copy(apiKey = "", apiKeyWasInvalid = true)
+    suspend fun reportIssueWithActiveInstance(issue: ActiveInstanceIssue) = updateActive {
+        it.copy(apiKey = it.apiKey.takeUnless { issue is ActiveInstanceIssue.InvalidApiKey } ?: "", issue = issue)
     }
 
     fun getAll() = dataSource.get() ?: emptyList()

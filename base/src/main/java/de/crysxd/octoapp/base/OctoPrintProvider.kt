@@ -29,7 +29,7 @@ import java.util.logging.Level
 @Suppress("EXPERIMENTAL_API_USAGE")
 class OctoPrintProvider(
     private val timberHandler: TimberHandler,
-    private val invalidApiKeyInterceptor: InvalidApiKeyInterceptor,
+    private val detectBrokenSetupInterceptor: DetectBrokenSetupInterceptor,
     private val octoPrintRepository: OctoPrintRepository,
     private val analytics: FirebaseAnalytics,
     private val sslKeyStoreHandler: SslKeyStoreHandler,
@@ -156,7 +156,7 @@ class OctoPrintProvider(
             rawWebUrl = it.webUrl,
             rawAlternativeWebUrl = it.alternativeWebUrl,
             apiKey = it.apiKey,
-            interceptors = listOf(invalidApiKeyInterceptor, localDnsInterceptor),
+            interceptors = listOf(detectBrokenSetupInterceptor, localDnsInterceptor),
             keyStore = sslKeyStoreHandler.loadKeyStore(),
             hostnameVerifier = SubjectAlternativeNameCompatVerifier().takeIf { _ -> sslKeyStoreHandler.isWeakVerificationForHost(it.webUrl) },
             networkExceptionListener = ::handleNetworkException,

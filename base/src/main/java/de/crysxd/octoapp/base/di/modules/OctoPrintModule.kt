@@ -4,7 +4,7 @@ import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
 import dagger.Provides
-import de.crysxd.octoapp.base.InvalidApiKeyInterceptor
+import de.crysxd.octoapp.base.DetectBrokenSetupInterceptor
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.SslKeyStoreHandler
@@ -41,18 +41,18 @@ open class OctoPrintModule {
     @Provides
     open fun provideOctoPrintProvider(
         timberHandler: TimberHandler,
-        invalidApiKeyInterceptor: InvalidApiKeyInterceptor,
+        detectBrokenSetupInterceptor: DetectBrokenSetupInterceptor,
         octoPrintRepository: OctoPrintRepository,
         analytics: FirebaseAnalytics,
         sslKeyStoreHandler: SslKeyStoreHandler,
         localDnsResolver: LocalDnsResolver
-    ) = OctoPrintProvider(timberHandler, invalidApiKeyInterceptor, octoPrintRepository, analytics, sslKeyStoreHandler, localDnsResolver)
+    ) = OctoPrintProvider(timberHandler, detectBrokenSetupInterceptor, octoPrintRepository, analytics, sslKeyStoreHandler, localDnsResolver)
 
     @BaseScope
     @Provides
     open fun provideInvalidApiKeyInterceptor(
         octoPrintRepository: OctoPrintRepository
-    ) = InvalidApiKeyInterceptor(octoPrintRepository)
+    ) = DetectBrokenSetupInterceptor(octoPrintRepository)
 
     @BaseScope
     @Provides
