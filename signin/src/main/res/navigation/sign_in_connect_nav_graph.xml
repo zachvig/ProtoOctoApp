@@ -31,7 +31,11 @@
 
         <action
             android:id="@+id/request_access"
-            app:destination="@id/requestAccessFragment" />
+            app:destination="@id/requestAccessFragment"
+            app:enterAnim="@anim/sign_in_shared_element_fade_in"
+            app:exitAnim="@anim/sign_in_shared_element_fade_out"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit" />
     </fragment>
 
     <fragment

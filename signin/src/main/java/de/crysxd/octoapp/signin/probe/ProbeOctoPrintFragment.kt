@@ -2,12 +2,14 @@ package de.crysxd.octoapp.signin.probe
 
 import android.net.Uri
 import android.os.Bundle
+import android.transition.TransitionInflater
 import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import de.crysxd.octoapp.base.billing.BillingManager
@@ -18,6 +20,7 @@ import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import de.crysxd.octoapp.base.utils.ThemePlugin
+import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.databinding.BaseSigninFragmentBinding
 import de.crysxd.octoapp.signin.databinding.ProbeFragmentFindingBinding
 import de.crysxd.octoapp.signin.databinding.ProbeFragmentInitialBinding
@@ -37,6 +40,12 @@ class ProbeOctoPrintFragment : BaseFragment() {
     }
     private val allowApiKeyReuse by lazy {
         navArgs<ProbeOctoPrintFragmentArgs>().value.allowApiKeyReuse == true.toString()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
+        sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -79,8 +88,11 @@ class ProbeOctoPrintFragment : BaseFragment() {
 
     private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(binding.root)
 
-    private fun continueToRequestApiKey(webUrl: String) {
-        findNavController().navigate(ProbeOctoPrintFragmentDirections.requestAccess(webUrl))
+    private fun continueToRequestApiKey(webUrl: String) = binding.octoView.doAfterAnimation {
+        // Octo is now in a neutral position, we can animate states
+        val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
+        val directions = ProbeOctoPrintFragmentDirections.requestAccess(webUrl)
+        findNavController().navigate(directions, extras)
     }
 
     private fun continueWithPresentApiKey(finding: TestFullNetworkStackUseCase.Finding.OctoPrintReady) {
@@ -103,7 +115,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
 
     private fun showLoading() {
         beginDelayedTransition()
-        binding.octoView.swim()
+        binding.octoView.scheduleAnimation(600) { swim() }
         val b = loadingBinding ?: ProbeFragmentInitialBinding.inflate(LayoutInflater.from(requireContext()), binding.content, false)
         loadingBinding = b
         binding.content.removeAllViews()

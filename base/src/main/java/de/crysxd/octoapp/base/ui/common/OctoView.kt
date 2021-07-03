@@ -24,16 +24,20 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     private var idleDrawable: Drawable? = null
     private var swimming = false
     private val animationHandler = Handler(Looper.getMainLooper())
+    private var doAfterAnimation: () -> Boolean = { true }
+    private var scheduleRunnable: Runnable? = null
 
     private val loopCallback = object : Animatable2Compat.AnimationCallback() {
         override fun onAnimationEnd(drawable: Drawable) {
             super.onAnimationEnd(drawable)
-            if (queuedDrawable == null) {
-                animationHandler.postDelayed(startRunnable, getLoopDelay(currentDrawable))
-            } else {
-                val q = queuedDrawable
-                queuedDrawable = null
-                setImageDrawable(q)
+            if (doAfterAnimation()) {
+                if (queuedDrawable == null) {
+                    animationHandler.postDelayed(startRunnable, getLoopDelay(currentDrawable))
+                } else {
+                    val q = queuedDrawable
+                    queuedDrawable = null
+                    setImageDrawable(q)
+                }
             }
         }
     }
@@ -101,16 +105,36 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         }
     }
 
+    fun doAfterAnimation(block: () -> Unit) {
+        if (currentDrawable == idleDrawable) return block()
+        if ((currentDrawable as? AnimatedVectorDrawableCompat)?.isRunning == false) return block()
+        doAfterAnimation = {
+            doAfterAnimation = { true }
+            block()
+            false
+        }
+    }
+
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun loadAnimatedDrawable(@DrawableRes res: Int) = AnimatedVectorDrawableCompat.create(context, res)
         ?: resources.getDrawable(res, context.theme)
 
+    fun scheduleAnimation(delay: Long, block: OctoView.() -> Unit) {
+        scheduleRunnable?.let(animationHandler::removeCallbacks)
+        scheduleRunnable = Runnable {
+            block(this)
+        }
+        animationHandler.postDelayed(scheduleRunnable!!, delay)
+    }
+
     fun swim() {
+        scheduleRunnable?.let(animationHandler::removeCallbacks)
         Timber.v("Swim")
         setImageDrawable(swimDrawable)
     }
 
     fun idle() {
+        scheduleRunnable?.let(animationHandler::removeCallbacks)
         Timber.v("Idle")
         setImageDrawable(idleDrawable)
     }

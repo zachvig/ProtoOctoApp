@@ -5,6 +5,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.SurfaceHolder
 import android.view.View
@@ -33,6 +34,8 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
+        sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             postponeEnterTransition()
             playVideo()

@@ -83,6 +83,8 @@
         android:maxLines="1"
         android:text="@string/signin___discovery___no_wifi_warning"
         android:textAppearance="@style/OctoTheme.TextAppearance"
-        android:textColor="@color/light_text" />
+        android:textColor="@color/light_text"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

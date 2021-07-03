@@ -9,6 +9,28 @@
         android:id="@+id/discoverFragment"
         android:name="de.crysxd.octoapp.signin.discover.DiscoverFragment"
         android:label="DiscoverFragment"
-        tools:layout="@layout/base_signin_fragment" />
+        tools:layout="@layout/base_signin_fragment">
+
+        <action
+            android:id="@+id/probeConnection"
+            app:destination="@id/sign_in_connect_nav_graph"
+            app:enterAnim="@anim/sign_in_shared_element_fade_in"
+            app:exitAnim="@anim/sign_in_shared_element_fade_out"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit">
+
+            <argument
+                android:name="baseUrl"
+                app:argType="string" />
+
+            <argument
+                android:name="allowApiKeyReuse"
+                app:argType="string" />
+
+        </action>
+    </fragment>
+
+
+    <include app:graph="@navigation/sign_in_connect_nav_graph" />
 
 </navigation>

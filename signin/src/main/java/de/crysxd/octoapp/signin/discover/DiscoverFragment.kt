@@ -1,8 +1,12 @@
 package de.crysxd.octoapp.signin.discover
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.transition.AutoTransition
+import android.transition.TransitionInflater
+import android.transition.TransitionManager
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -10,12 +14,13 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.animation.DecelerateInterpolator
+import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.*
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import androidx.transition.*
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -25,6 +30,7 @@ import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
+import de.crysxd.octoapp.base.ui.ext.requestFocusAndOpenSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
 import de.crysxd.octoapp.signin.BuildConfig
@@ -33,6 +39,7 @@ import de.crysxd.octoapp.signin.databinding.BaseSigninFragmentBinding
 import de.crysxd.octoapp.signin.databinding.DiscoverFragmentContentManualBinding
 import de.crysxd.octoapp.signin.databinding.DiscoverFragmentContentOptionsBinding
 import de.crysxd.octoapp.signin.di.injectViewModel
+import kotlinx.coroutines.delay
 import timber.log.Timber
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
 
@@ -44,6 +51,14 @@ class DiscoverFragment : BaseFragment() {
     private var manualBinding: DiscoverFragmentContentManualBinding? = null
     private val moveBackToOptionsBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() = viewModel.moveToOptionsState()
+    }
+    private val imm by lazy { requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
+        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
+        sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -69,7 +84,10 @@ class DiscoverFragment : BaseFragment() {
                     createPreviouslyConnectedOptions(it.previouslyConnectedOptions, it.supportsQuickSwitch)
                 }
 
-                is DiscoverViewModel.UiState.Manual -> moveToManualLayout((it as? DiscoverViewModel.UiState.ManualSuccess)?.webUrl ?: "")
+                is DiscoverViewModel.UiState.Manual -> moveToManualLayout(
+                    webUrl = (it as? DiscoverViewModel.UiState.ManualSuccess)?.webUrl ?: "",
+                    openSoftKeyboard = !(it is DiscoverViewModel.UiState.ManualSuccess && !it.handled)
+                )
             }
 
             if (it is DiscoverViewModel.UiState.ManualError && !it.handled) {
@@ -113,9 +131,6 @@ class DiscoverFragment : BaseFragment() {
         requireOctoActivity().octo.isVisible = false
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
         binding.scrollView.setupWithToolbar(requireOctoActivity())
-        if (viewModel.uiState.value is DiscoverViewModel.UiState.Manual) {
-            manualBinding?.input?.showSoftKeyboard()
-        }
     }
 
     override fun onStop() {
@@ -228,15 +243,17 @@ class DiscoverFragment : BaseFragment() {
             return
         }
 
-        // Start the "fix" flow, it will test the connection to the given URL
-        // We do not allow the API key to be reused to prevent the user from bypassing quick switch.
-        // If the user has BillingManager.FEATURE_QUICK_SWITCH, the fix flow will always allow API key reuse
-        val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
-        findNavController().navigate(
-            UriLibrary.getFixOctoPrintConnectionUri(baseUrl = Uri.parse(webUrl), allowApiKeyResuse = false),
-            null,
-            extras
-        )
+        manualBinding?.input?.hideSoftKeyboard()
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            delay(200)
+
+            // Start the "fix" flow, it will test the connection to the given URL
+            // We do not allow the API key to be reused to prevent the user from bypassing quick switch.
+            // If the user has BillingManager.FEATURE_QUICK_SWITCH, the fix flow will always allow API key reuse
+            val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
+            val directions = DiscoverFragmentDirections.probeConnection(baseUrl = webUrl, allowApiKeyReuse = false.toString())
+            findNavController().navigate(directions, extras)
+        }
     }
 
     private fun continueWithHelp() {
@@ -272,7 +289,7 @@ class DiscoverFragment : BaseFragment() {
         binding.contentWrapper.updateLayoutParams<FrameLayout.LayoutParams> { gravity = Gravity.CENTER_VERTICAL }
         optionsBinding = localOptionsBinding
 
-        manualBinding?.input?.hideSoftKeyboard()
+        //   manualBinding?.input?.hideSoftKeyboard()
         localOptionsBinding.help.setOnClickListener {
             continueWithHelp()
         }
@@ -293,7 +310,8 @@ class DiscoverFragment : BaseFragment() {
         }
     }
 
-    private fun moveToManualLayout(webUrl: String) {
+    private fun moveToManualLayout(webUrl: String, openSoftKeyboard: Boolean) {
+        Timber.i("MANUAL $webUrl")
         beginDelayedTransition()
         moveBackToOptionsBackPressedCallback.isEnabled = true
         binding.octoView.idle()
@@ -306,13 +324,22 @@ class DiscoverFragment : BaseFragment() {
         binding.content.addView(localManualBinding.root)
         binding.contentWrapper.updateLayoutParams<FrameLayout.LayoutParams> { gravity = Gravity.TOP }
         manualBinding = localManualBinding
-        manualBinding?.input?.showSoftKeyboard()
+
+        // If we do not have a webURL
+        if (openSoftKeyboard) {
+            viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+                delay(300)
+                manualBinding?.input?.editText?.requestFocusAndOpenSoftKeyboard()
+            }
+        }
+
         manualBinding?.input?.editText?.setText(webUrl)
         manualBinding?.input?.editText?.setSelection(webUrl.length)
         manualBinding?.input?.editText?.setOnEditorActionListener { _, _, _ ->
             manualBinding?.buttonContinue?.performClick()
             true
         }
+
         if (BuildConfig.DEBUG) {
             manualBinding?.input?.editText?.setText("octoprint.home:5000")
         }
