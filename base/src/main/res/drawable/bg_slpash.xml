@@ -6,8 +6,8 @@
     <item
         android:drawable="@drawable/octo_swim"
         android:gravity="center"
-        android:width="128dp"
-        android:height="128dp"
+        android:width="@dimen/octo_view_width"
+        android:height="@dimen/octo_view_height"
         tools:ignore="UnusedAttribute" />
 
 </layer-list>

@@ -6,6 +6,7 @@ import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -19,6 +20,7 @@ import de.crysxd.octoapp.signin.databinding.BaseSigninFragmentBinding
 import de.crysxd.octoapp.signin.databinding.ProbeFragmentFindingBinding
 import de.crysxd.octoapp.signin.databinding.ProbeFragmentInitialBinding
 import de.crysxd.octoapp.signin.di.injectViewModel
+import de.crysxd.octoapp.signin.ext.goBackToDiscover
 import io.noties.markwon.Markwon
 import timber.log.Timber
 
@@ -59,6 +61,11 @@ class ProbeOctoPrintFragment : BaseFragment() {
                 }
             }
         }
+
+        // Disable back button, we can't go back here
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() = goBackToDiscover()
+        })
     }
 
     private fun startProbe() {
@@ -77,6 +84,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
         val b = loadingBinding ?: ProbeFragmentInitialBinding.inflate(LayoutInflater.from(requireContext()), binding.content, false)
         loadingBinding = b
         binding.content.removeAllViews()
+        (b.root.parent as? ViewGroup)?.removeView(b.root)
         binding.content.addView(b.root)
     }
 
@@ -95,7 +103,8 @@ class ProbeOctoPrintFragment : BaseFragment() {
         markwon.setMarkdown(b.content, getExplainerForFinding(finding))
         markwon.setMarkdown(b.title, getTitleForFinding(finding))
 
-        b.buttonEdit.setOnClickListener { findNavController().popBackStack() }
+        b.buttonEdit.text = getEditButtonText()
+        b.buttonEdit.setOnClickListener { getEditButtonAction() }
         b.buttonContinue.setOnClickListener { performPrimaryAction(finding) }
         b.buttonContinue.text = getPrimaryActionText(finding)
         b.passwordInput.isVisible = finding is TestFullNetworkStackUseCase.Finding.BasicAuthRequired
@@ -104,6 +113,24 @@ class ProbeOctoPrintFragment : BaseFragment() {
             performPrimaryAction(finding)
             true
         }
+    }
+
+    private fun getEditButtonAction() {
+        if (Injector.get().octorPrintRepository().getActiveInstanceSnapshot() != null) {
+            // Case A: We got here because a API key was invalid, there is an active instance
+            goBackToDiscover()
+        } else {
+            // Case B: User is signing in, but nothing is active yet
+            findNavController().popBackStack()
+        }
+    }
+
+    private fun getEditButtonText() = if (Injector.get().octorPrintRepository().getActiveInstanceSnapshot() != null) {
+        // Case A: We got here because a API key was invalid, there is an active instance
+        "Connect to an other OctoPrint H"
+    } else {
+        // Case B: User is signing in, but nothing is active yet
+        "Edit information H"
     }
 
     private fun getTitleForFinding(finding: TestFullNetworkStackUseCase.Finding) = when (finding) {

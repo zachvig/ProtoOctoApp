@@ -115,8 +115,16 @@
         style="@style/OctoTheme.Widget.Button.Tertiary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_0_1"
         android:text="Use API key instead H"
+        app:layout_constraintBottom_toTopOf="@id/buttonConnectOther" />
+
+    <Button
+        android:id="@+id/buttonConnectOther"
+        style="@style/OctoTheme.Widget.Button.Tertiary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_0_1"
+        android:text="Connect to other OctoPrint H"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

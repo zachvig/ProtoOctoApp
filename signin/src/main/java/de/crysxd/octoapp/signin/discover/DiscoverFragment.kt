@@ -86,6 +86,11 @@ class DiscoverFragment : BaseFragment() {
             Timber.i("Wifi state: $it")
             binding.wifiWarning.isVisible = it is NetworkStateViewModel.NetworkState.WifiNotConnected
         }
+
+        // Disable back button, we can't go back here
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() = requireActivity().finish()
+        })
     }
 
     private fun showManualError(it: DiscoverViewModel.UiState.ManualError) {

@@ -8,6 +8,7 @@ import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
 import de.crysxd.octoapp.base.di.Injector
@@ -19,6 +20,7 @@ import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.databinding.BaseSigninFragmentBinding
 import de.crysxd.octoapp.signin.databinding.ReqestAccessFragmentBinding
 import de.crysxd.octoapp.signin.di.injectViewModel
+import de.crysxd.octoapp.signin.ext.goBackToDiscover
 import timber.log.Timber
 
 
@@ -61,6 +63,15 @@ class RequestAccessFragment : BaseFragment() {
             Timber.i("Wifi state: $it")
             binding.wifiWarning.isVisible = it is NetworkStateViewModel.NetworkState.WifiNotConnected
         }
+
+        // Disable back button, we can't go back here
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() = goBackToDiscover()
+        })
+
+        // Case A: We got here because a API key was invalid. In this case we allow the user to go back to discover to connect an other OctoPrint
+        contentBinding.buttonConnectOther.setOnClickListener { goBackToDiscover() }
+        contentBinding.buttonConnectOther.isVisible = Injector.get().octorPrintRepository().getActiveInstanceSnapshot() != null
     }
 
     override fun onResume() {
