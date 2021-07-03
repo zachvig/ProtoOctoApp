@@ -39,7 +39,7 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
         sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
         sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            postponeEnterTransition()
+            //  postponeEnterTransition()
             playVideo()
         }
     }
@@ -64,12 +64,6 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
             )
         }
 
-        binding.videoMask.animate()
-            .setStartDelay(500)
-            .alpha(0.75f)
-            .setDuration(800)
-            .start()
-
         // Disable back button, we can't go back here
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() = goBackToDiscover()
@@ -88,7 +82,11 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
         }
         mediaPlayer.setOnInfoListener { _, what, _ ->
             if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                startPostponedEnterTransition()
+                binding.videoMask.animate()
+                    .setStartDelay(500)
+                    .alpha(0.75f)
+                    .setDuration(800)
+                    .start()
             }
 
             true
