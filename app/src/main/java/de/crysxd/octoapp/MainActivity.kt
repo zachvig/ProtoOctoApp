@@ -143,7 +143,7 @@ class MainActivity : OctoActivity() {
                             message = getString(instance.issue?.messageRes ?: R.string.signin___broken_setup___api_key_revoked),
                             positiveAction = { UriLibrary.getFixOctoPrintConnectionUri(baseUrl = Uri.parse(instance.webUrl)).open(this) },
                             positiveButton = getString(R.string.signin___continue),
-                            cancellable = false
+                            highPriority = true
                         )
                     }
 

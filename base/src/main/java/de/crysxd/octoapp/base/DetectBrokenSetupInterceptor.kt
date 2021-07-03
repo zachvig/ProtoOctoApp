@@ -16,17 +16,17 @@ class DetectBrokenSetupInterceptor(
         chain.proceed(chain.request())
     } catch (e: InvalidApiKeyException) {
         runBlocking {
-            octoPrintRepository.reportIssueWithActiveInstance(ActiveInstanceIssue.InvalidApiKey)
+            octoPrintRepository.reportIssueWithActiveInstance(ActiveInstanceIssue.INVALID_API_KEY)
             throw e
         }
     } catch (e: BasicAuthRequiredException) {
         runBlocking {
-            octoPrintRepository.reportIssueWithActiveInstance(ActiveInstanceIssue.BasicAuthRequired)
+            octoPrintRepository.reportIssueWithActiveInstance(ActiveInstanceIssue.BASIC_AUTH_REQUIRED)
             throw e
         }
     } catch (e: OctoPrintHttpsException) {
         runBlocking {
-            octoPrintRepository.reportIssueWithActiveInstance(ActiveInstanceIssue.HttpsIssue)
+            octoPrintRepository.reportIssueWithActiveInstance(ActiveInstanceIssue.HTTP_ISSUE)
             throw e
         }
     }

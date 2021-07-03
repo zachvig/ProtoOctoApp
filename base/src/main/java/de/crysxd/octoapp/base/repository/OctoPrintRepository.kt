@@ -108,8 +108,11 @@ class OctoPrintRepository(
         dataSource.store(all)
     }
 
-    suspend fun reportIssueWithActiveInstance(issue: ActiveInstanceIssue) = updateActive {
-        it.copy(apiKey = it.apiKey.takeUnless { issue is ActiveInstanceIssue.InvalidApiKey } ?: "", issue = issue)
+    suspend fun reportIssueWithActiveInstance(issue: ActiveInstanceIssue) {
+        Timber.w("Issue reported with")
+        updateActive {
+            it.copy(apiKey = it.apiKey.takeUnless { issue == ActiveInstanceIssue.INVALID_API_KEY } ?: "", issue = issue)
+        }
     }
 
     fun getAll() = dataSource.get() ?: emptyList()

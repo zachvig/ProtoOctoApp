@@ -69,7 +69,7 @@ class GenerateExceptionInterceptor(
         // We don't know what caused the 403. Requesting the currentuser will tell us whether we are a guest, meaning the API
         // key is not valid. If we are not a guest, 403 indicates a missing permission
         val isGuest = userApiFactory().getCurrentUser().isGuest
-        return@runBlocking if (isGuest) {
+        if (isGuest) {
             invalidApiKeyException
         } else {
             MissingPermissionException(response.request.url)

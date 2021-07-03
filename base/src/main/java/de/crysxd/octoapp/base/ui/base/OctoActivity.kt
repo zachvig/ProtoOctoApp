@@ -47,6 +47,7 @@ abstract class OctoActivity : LocalizedActivity() {
 
     val octoWidgetRecycler = OctoWidgetRecycler()
     private var dialog: AlertDialog? = null
+    private var dialogHasHighPriority = false
     abstract val octoToolbar: OctoToolbar
     abstract val octo: OctoView
     abstract val rootLayout: FrameLayout
@@ -169,15 +170,21 @@ abstract class OctoActivity : LocalizedActivity() {
         neutralAction: (Context) -> Unit = {},
         negativeButton: CharSequence? = null,
         negativeAction: (Context) -> Unit = {},
-        cancellable: Boolean = true,
+        highPriority: Boolean = false,
     ) = handler.post {
         // Check activity state before showing dialog
         if (lifecycle.currentState >= Lifecycle.State.CREATED) {
             // If message is aplain string, format with HTML
             val formattedMessage = (message as? String)?.let { HtmlCompat.fromHtml(message, HtmlCompat.FROM_HTML_MODE_COMPACT) } ?: message
 
+            if (dialog?.isShowing == true && dialogHasHighPriority) {
+                // A high priority dialog is visible, we can't overrule this
+                return@post
+            }
+
             Timber.i("Showing dialog: [message=$message, positiveButton=$positiveButton, neutralButton=$neutralButton")
             dialog?.dismiss()
+            dialogHasHighPriority = highPriority
             dialog = MaterialAlertDialogBuilder(this).let { builder ->
                 builder.setMessage(formattedMessage)
                 builder.setPositiveButton(positiveButton) { _, _ -> positiveAction(this) }
@@ -187,7 +194,7 @@ abstract class OctoActivity : LocalizedActivity() {
                 negativeButton?.let {
                     builder.setNegativeButton(it) { _, _ -> negativeAction(this) }
                 }
-                builder.setCancelable(cancellable)
+                builder.setCancelable(!highPriority)
                 builder.show().also {
                     // Allow links to be clicked
                     it.findViewById<TextView>(android.R.id.message)?.movementMethod =

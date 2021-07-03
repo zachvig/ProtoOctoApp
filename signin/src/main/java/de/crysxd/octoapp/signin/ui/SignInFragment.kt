@@ -264,7 +264,7 @@ class SignInFragment : BaseFragment(), InsetAwareScreen {
 
         // Show message if logout because of invalid API key
         // Do not show if already shown in this "session"
-        if (viewModel.getPreFillInfo().issue is ActiveInstanceIssue.InvalidApiKey && !viewModel.invalidApiKeyInfoWasShown) {
+        if (viewModel.getPreFillInfo().issue == ActiveInstanceIssue.INVALID_API_KEY && !viewModel.invalidApiKeyInfoWasShown) {
             viewModel.invalidApiKeyInfoWasShown = true
             requireOctoActivity().showDialog(requireContext().getString(R.string.signin___broken_setup___api_key_revoked))
         }

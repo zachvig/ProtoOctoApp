@@ -27,6 +27,7 @@ import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
+import de.crysxd.octoapp.signin.BuildConfig
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.databinding.BaseSigninFragmentBinding
 import de.crysxd.octoapp.signin.databinding.DiscoverFragmentContentManualBinding
@@ -298,7 +299,9 @@ class DiscoverFragment : BaseFragment() {
             manualBinding?.buttonContinue?.performClick()
             true
         }
-
+        if (BuildConfig.DEBUG) {
+            manualBinding?.input?.editText?.setText("octoprint.home:5000")
+        }
 
         localManualBinding.buttonContinue.setOnClickListener {
             viewModel.testWebUrl(localManualBinding.input.editText.text?.toString() ?: "")
