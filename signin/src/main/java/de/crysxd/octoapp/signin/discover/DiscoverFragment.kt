@@ -216,7 +216,18 @@ class DiscoverFragment : BaseFragment() {
         viewModel.activatePreviouslyConnected(octoPrint)
     }
 
-    private fun continueWithManualConnect(webUrl: String) {
+    private fun continueWithManualConnect(webUrl: String, confirmed: Boolean = false) {
+        if (Uri.parse(webUrl).host?.endsWith("octoeverywhere.com") == true && !confirmed) {
+            requireOctoActivity().showDialog(
+                message = "To get the most out of OctoApp and OctoEverywhere, connect your printer using the local web URL first. Once everything is set up, you can log in which your OctoEverywhere account.",
+                neutralButton = "Connect local first",
+                neutralAction = {},
+                positiveAction = { continueWithManualConnect(webUrl, true) },
+                positiveButton = "Connect OctoEverywhere now"
+            )
+            return
+        }
+
         // Start the "fix" flow, it will test the connection to the given URL
         // We do not allow the API key to be reused to prevent the user from bypassing quick switch.
         // If the user has BillingManager.FEATURE_QUICK_SWITCH, the fix flow will always allow API key reuse
