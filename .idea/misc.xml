@@ -17,9 +17,13 @@
         <entry key="base/src/main/res/layout/menu_bottom_sheet_fragment.xml" value="0.41435185185185186" />
         <entry key="connect-printer/src/main/res/layout/connect_printer_fragment.xml" value="0.37604166666666666" />
         <entry key="signin/src/main/res/layout/base_signin_fragment.xml" value="0.37604166666666666" />
+        <entry key="signin/src/main/res/layout/discover_fragment_content_initial.xml" value="0.37604166666666666" />
         <entry key="signin/src/main/res/layout/discover_fragment_content_options.xml" value="0.37604166666666666" />
+        <entry key="signin/src/main/res/layout/r_fragment_content_initial.xml" value="0.37604166666666666" />
         <entry key="signin/src/main/res/layout/reqest_access_fragment.xml" value="0.37604166666666666" />
         <entry key="signin/src/main/res/layout/sign_in_fragment.xml" value="0.37604166666666666" />
+        <entry key="signin/src/main/res/layout/sign_in_success_fragment.xml" value="0.37604166666666666" />
+        <entry key="signin/src/main/res/layout/sign_in_success_fragment_content.xml" value="0.37604166666666666" />
       </map>
     </option>
   </component>

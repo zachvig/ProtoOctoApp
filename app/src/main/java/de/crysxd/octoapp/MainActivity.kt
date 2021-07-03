@@ -326,24 +326,26 @@ class MainActivity : OctoActivity() {
             // Screens which must be/can be closed automatically when the state changes
             // Other screens will stay open and we navigate to the new state-based destination after the
             // current screen is closed
+            val currentDestination = navController.currentDestination?.id
             val currentDestinationAllowsAutoNavigate = listOf(
                 R.id.splashFragment,
                 R.id.discoverFragment,
                 R.id.probeOctoPrintFragment,
                 R.id.requestAccessFragment,
+                R.id.signInSuccessFragment,
                 R.id.workspaceConnect,
                 R.id.workspacePrePrint,
                 R.id.workspacePrint,
                 R.id.terminalFragment,
                 R.id.fileDetailsFragment,
                 R.id.fileListFragment,
-            ).contains(navController.currentDestination?.id)
+            ).contains(currentDestination)
 
             if (currentDestinationAllowsAutoNavigate) {
                 viewModel.lastNavigation = id
                 navController.navigate(id)
             } else {
-                val destinationName = resources.getResourceEntryName(id)
+                val destinationName = currentDestination?.let(resources::getResourceEntryName)
                 Timber.v("Current destination $destinationName does not allow auto navigate, storing navigation action as pending")
                 viewModel.pendingNavigation = id
             }

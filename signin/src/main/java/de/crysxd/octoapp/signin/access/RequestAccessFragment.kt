@@ -10,9 +10,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -111,12 +111,7 @@ class RequestAccessFragment : BaseFragment() {
     }
 
     private fun continueWithApiKey(apiKey: String) {
-        Injector.get().octorPrintRepository().setActive(
-            OctoPrintInstanceInformationV2(
-                webUrl = webUrl,
-                apiKey = apiKey
-            )
-        )
+        findNavController().navigate(RequestAccessFragmentDirections.actionSuccess(webUrl = webUrl, apiKey = apiKey))
     }
 
     override fun onDestroy() {

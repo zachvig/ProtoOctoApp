@@ -43,6 +43,25 @@
         <argument
             android:name="webUrl"
             app:argType="string" />
+
+        <action
+            android:id="@+id/action_success"
+            app:destination="@id/signInSuccessFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signInSuccessFragment"
+        android:name="de.crysxd.octoapp.signin.success.SignInSuccessFragment"
+        android:label="RequestAccessFragment"
+        tools:layout="@layout/base_signin_fragment">
+
+        <argument
+            android:name="webUrl"
+            app:argType="string" />
+
+        <argument
+            android:name="apiKey"
+            app:argType="string" />
     </fragment>
 
 </navigation>
