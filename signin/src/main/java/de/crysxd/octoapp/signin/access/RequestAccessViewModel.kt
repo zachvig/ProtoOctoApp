@@ -81,28 +81,31 @@ class RequestAccessViewModel(
                 true
             }.collect {
                 mutableUiState.postValue(it)
-
-                // Attempt to bring activity to front if the user has left the app to grant access
-                if (it is UiState.AccessGranted && cancelPollingJob?.isActive == true) OctoActivity.instance?.intent?.let { intent ->
-                    Timber.i("Access granted, but app in background")
-                    val channelId = "alerts"
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        notificationManager.createNotificationChannel(NotificationChannel(channelId, "Alerts", NotificationManager.IMPORTANCE_MAX))
-                    }
-                    notificationManager.notify(
-                        NOTIFICATION_ID,
-                        NotificationCompat.Builder(appContext, channelId)
-                            .setContentTitle("OctoApp is ready!")
-                            .setContentText("Tap here to return")
-                            .setAutoCancel(true)
-                            .setColorized(true)
-                            .setSmallIcon(R.drawable.ic_notification_default)
-                            .setContentIntent(PendingIntent.getActivity(appContext, 23, intent, PendingIntent.FLAG_UPDATE_CURRENT))
-                            .setPriority(NotificationCompat.PRIORITY_MAX)
-                            .build()
-                    )
-                }
+                considerShowingNotification(it)
             }
+        }
+    }
+
+    private fun considerShowingNotification(uiState: UiState) {
+        // Attempt to bring activity to front if the user has left the app to grant access
+        if (uiState is UiState.AccessGranted && cancelPollingJob?.isActive == true) OctoActivity.instance?.intent?.let { intent ->
+            Timber.i("Access granted, but app in background")
+            val channelId = "alerts"
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                notificationManager.createNotificationChannel(NotificationChannel(channelId, "Alerts", NotificationManager.IMPORTANCE_HIGH))
+            }
+            notificationManager.notify(
+                NOTIFICATION_ID,
+                NotificationCompat.Builder(appContext, channelId)
+                    .setContentTitle("OctoApp is ready!")
+                    .setContentText("Tap here to return")
+                    .setAutoCancel(true)
+                    .setColorized(true)
+                    .setSmallIcon(R.drawable.ic_notification_default)
+                    .setContentIntent(PendingIntent.getActivity(appContext, 23, intent, PendingIntent.FLAG_UPDATE_CURRENT))
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .build()
+            )
         }
     }
 
