@@ -23,16 +23,19 @@ class LocalDnsInterceptor(
         return try {
             chain.proceed(request)
         } catch (e: UnknownHostException) {
-            Timber.w("Unable to resolve ${request.url.host}, attempting local DNS resolution")
             retryWithLocalDns(chain, request)
         }
     }
 
-    private fun retryWithLocalDns(chain: Interceptor.Chain, request: Request, attempt: Int = 0): Response {
+    private fun retryWithLocalDns(chain: Interceptor.Chain, request: Request) = try {
         val host = request.url.host
         val ip = localDnsResolver.resolve(host)
         val url = request.url.newBuilder().host(ip).build()
         val upgradedRequest = request.newBuilder().url(url).build()
-        return chain.proceed(upgradedRequest)
+        Timber.w("Resolved ${request.url.host} locally")
+        chain.proceed(upgradedRequest)
+    } catch (e: UnknownHostException) {
+        Timber.v("System failed to resolve ${request.url.host} and also local resolution failed")
+        throw e
     }
 }

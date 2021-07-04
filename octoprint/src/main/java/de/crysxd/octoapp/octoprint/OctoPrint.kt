@@ -36,7 +36,8 @@ class OctoPrint(
     rawWebUrl: UrlString,
     rawAlternativeWebUrl: UrlString?,
     private val apiKey: String,
-    private val interceptors: List<Interceptor> = emptyList(),
+    private val lowLevelInterceptors: List<Interceptor> = emptyList(),
+    private val highLevelInterceptors: List<Interceptor> = emptyList(),
     private val keyStore: KeyStore? = null,
     private val hostnameVerifier: HostnameVerifier? = null,
     private val networkExceptionListener: (Exception) -> Unit = { },
@@ -184,15 +185,33 @@ class OctoPrint(
             sslSocketFactory(sslContext.socketFactory, x509TrustManager)
         }
 
-        addInterceptor(CatchAllInterceptor(webUrl, apiKey))
-        this@OctoPrint.interceptors.forEach { addInterceptor(it) }
-        addInterceptor(ApiKeyInterceptor(apiKey))
-        addInterceptor(GenerateExceptionInterceptor(networkExceptionListener) { createUserApi() })
-        addInterceptor(alternativeWebUrlInterceptor)
-        addInterceptor(BasicAuthInterceptor(logger, fullWebUrl, fullAlternativeWebUrl))
         connectTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)
         readTimeout(readWriteTimeout, TimeUnit.MILLISECONDS)
         writeTimeout(readWriteTimeout, TimeUnit.MILLISECONDS)
+
+        // 1. Add Catch-all interceptor. Uncaught exceptions other than IO lead to a crash,
+        // so we wrap any non-IOException in an IOException
+        addInterceptor(CatchAllInterceptor(webUrl, apiKey))
+
+        // 2. Add plug-in high level interceptors next
+        this@OctoPrint.highLevelInterceptors.forEach { addInterceptor(it) }
+
+        // 3. Sets the API key header
+        addInterceptor(ApiKeyInterceptor(apiKey))
+
+        // 4. Consumes raw exceptions and throws wrapped exceptions
+        addInterceptor(GenerateExceptionInterceptor(networkExceptionListener) { createUserApi() })
+
+        // 5. This interceptor consumes raw IOException and might switch the host
+        addInterceptor(alternativeWebUrlInterceptor)
+
+        // 6. Add plug-in low level interceptors next
+        this@OctoPrint.lowLevelInterceptors.forEach { addInterceptor(it) }
+
+        // 7. Basic Auth interceptor is the last because we might change the host above
+        addInterceptor(BasicAuthInterceptor(logger, fullWebUrl, fullAlternativeWebUrl))
+
+        // 8. Logger needs to be lowest level, we need to log any change made in the stack above
         addInterceptor(
             HttpLoggingInterceptor(LoggingInterceptorLogger(logger))
                 .setLevel(if (debug) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.HEADERS)
