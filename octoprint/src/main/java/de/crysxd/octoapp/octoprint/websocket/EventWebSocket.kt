@@ -186,7 +186,7 @@ class EventWebSocket(
                     logger.log(Level.WARNING, "Web socket was forcefully closed")
                 }
                 t is OctoPrintApiException && t.responseCode >= 400 -> {
-                    reconnect(WebSocketUpgradeFailedException(t.responseCode, webUrl), true)
+                    reconnect(WebSocketUpgradeFailedException(t.responseCode, webSocketUrl.toString()), true)
                 }
                 else -> {
                     reconnect(t)

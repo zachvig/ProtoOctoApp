@@ -180,8 +180,9 @@ class ProbeOctoPrintFragment : BaseFragment() {
         is TestFullNetworkStackUseCase.Finding.UnexpectedHttpIssue -> "Failed to connect to **${finding.host}** via HTTP"
         is TestFullNetworkStackUseCase.Finding.UnexpectedIssue -> "Unexpected issue"
         is TestFullNetworkStackUseCase.Finding.ServerIsNotOctoPrint -> "**${finding.host}** might not be an OctoPrint"
-        is TestFullNetworkStackUseCase.Finding.InvalidApiKey -> ""
-        is TestFullNetworkStackUseCase.Finding.OctoPrintReady -> ""
+        is TestFullNetworkStackUseCase.Finding.InvalidApiKey -> "" // Never shown
+        is TestFullNetworkStackUseCase.Finding.OctoPrintReady -> "" // Never shown
+        is TestFullNetworkStackUseCase.Finding.WebSocketUpgradeFailed -> "HTTP access to **${finding.host}** works, but web socket broken"
     }
 
     private fun getExplainerForFinding(finding: TestFullNetworkStackUseCase.Finding) = when (finding) {
@@ -200,8 +201,9 @@ class ProbeOctoPrintFragment : BaseFragment() {
         is TestFullNetworkStackUseCase.Finding.UnexpectedHttpIssue -> "OctoApp was able to communicate with **${finding.host}**, but when trying to establish a HTTP(S) connection an unexpected error occurred. Android reports following issue:\n\n**${finding.exception.localizedMessage ?: "Unknown error"}**"
         is TestFullNetworkStackUseCase.Finding.UnexpectedIssue -> "OctoApp encountered an unexpected error. Android reports following issue:\n\n**${finding.exception.localizedMessage ?: "Unknown error"}**"
         is TestFullNetworkStackUseCase.Finding.ServerIsNotOctoPrint -> "OctoApp was able to communicate with **${finding.host}**, but the server seems not to be a recent version of OctoPrint.\n\nYou can continue, but other issues may arise in the following steps."
-        is TestFullNetworkStackUseCase.Finding.InvalidApiKey -> ""
-        is TestFullNetworkStackUseCase.Finding.OctoPrintReady -> ""
+        is TestFullNetworkStackUseCase.Finding.InvalidApiKey -> "" // Never shown
+        is TestFullNetworkStackUseCase.Finding.OctoPrintReady -> "" // Never shown
+        is TestFullNetworkStackUseCase.Finding.WebSocketUpgradeFailed -> "OctoApp can communicate with **${finding.host}**, but the web socket failed to connect with response code **${finding.responseCode}**. This is a very common issue with incorrectly configured reverse proxy setups. Check following things to resolve the issue:\n\n- Make sure your proxy sets the `Upgrade: WebSocket` header for `${finding.webSocketUrl}` as it is not forwarded to OctoPrint by default\n- Refer to the [configuration examples in the OctoPrint community](https://community.octoprint.org/t/reverse-proxy-configuration-examples/1107) for Nginx, HAProxy, Apache and others"
     }
 
     private fun getPrimaryActionText(finding: TestFullNetworkStackUseCase.Finding) = when (finding) {

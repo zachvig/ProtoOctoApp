@@ -8,12 +8,14 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.dns.LocalDnsInterceptor
 import de.crysxd.octoapp.base.dns.LocalDnsResolver
 import de.crysxd.octoapp.base.logging.TimberHandler
+import de.crysxd.octoapp.base.models.ActiveInstanceIssue
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.SubjectAlternativeNameCompatVerifier
 import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereConnectionNotFoundException
 import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereSubscriptionMissingException
+import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.GlobalScope
@@ -68,6 +70,9 @@ class OctoPrintProvider(
 
                     ((event as? Event.Disconnected))?.let {
                         connectEventChannel.offer(null)
+                        if (it.exception is WebSocketUpgradeFailedException) {
+                            octoPrintRepository.reportIssueWithActiveInstance(ActiveInstanceIssue.HTTP_ISSUE)
+                        }
                     }
                 }
                 .retry { delay(1000); true }

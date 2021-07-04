@@ -8,14 +8,17 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.exceptions.BasicAuthRequiredException
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintApiException
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintHttpsException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
+import de.crysxd.octoapp.octoprint.models.socket.Event
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
 import timber.log.Timber
 import java.io.IOException
 import java.net.InetAddress
 import java.net.Socket
 import java.net.UnknownHostException
 import java.security.cert.Certificate
+import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 
 class TestFullNetworkStackUseCase @Inject constructor(
@@ -72,15 +75,18 @@ class TestFullNetworkStackUseCase @Inject constructor(
 
             // Test that we actually are talking to an OctoPrint
             timber.i("Test server is OctoPrint")
-            val finding = testApiKeyValid(webUrl = param.webUrl, host = host)
-            when (finding) {
-                is Finding.OctoPrintReady -> timber.i("Passed, OctoPrint is ready with a valid API key")
-                is Finding.InvalidApiKey -> timber.i("Passed, but API key is required")
-                else -> Unit
+            val (apiKeyFinding, apiKey) = testApiKeyValid(webUrl = param.webUrl, host = host)
+            if (apiKeyFinding != null && apiKeyFinding !is Finding.InvalidApiKey) {
+                return@withContext apiKeyFinding
             }
+            timber.i("Passed. API key valid: ${!apiKey.isNullOrBlank()}")
 
-            // All good!
-            finding
+            // Test the websocket
+            timber.i("Test web socket is working")
+            testWebSocket(webUrl = param.webUrl, apiKey = apiKey ?: "", host = host)?.let { return@withContext it }
+            timber.i("Passed")
+
+            apiKeyFinding ?: Finding.OctoPrintReady(webUrl = param.webUrl, apiKey = apiKey ?: "")
         } catch (e: Exception) {
             Finding.UnexpectedIssue(
                 webUrl = param.webUrl,
@@ -151,31 +157,52 @@ class TestFullNetworkStackUseCase @Inject constructor(
         )
     }
 
-    private suspend fun testApiKeyValid(webUrl: String, host: String): Finding = try {
+    private suspend fun testApiKeyValid(webUrl: String, host: String): Pair<Finding?, String?> = try {
         val apiKey = octoPrintRepository.findOrNull(webUrl)?.apiKey ?: ""
         val octoPrint = octoPrintProvider.createAdHocOctoPrint(OctoPrintInstanceInformationV2(webUrl = webUrl, apiKey = apiKey))
         val isApiKeyValid = octoPrint.createUserApi().getCurrentUser().isGuest.not()
         if (isApiKeyValid) {
-            Finding.OctoPrintReady(webUrl = webUrl, apiKey = apiKey)
+            null to apiKey
         } else {
-            Finding.InvalidApiKey(webUrl = webUrl, host = host)
+            Finding.InvalidApiKey(webUrl = webUrl, host = host) to null
         }
     } catch (e: OctoPrintApiException) {
         if (e.responseCode == 404) {
-            Finding.OctoPrintNotFound(webUrl = webUrl, host = host)
+            Finding.OctoPrintNotFound(webUrl = webUrl, host = host) to null
         } else {
             Finding.UnexpectedHttpIssue(
                 webUrl = webUrl,
                 exception = e,
                 host = host,
-            )
+            ) to null
         }
     } catch (e: Exception) {
         Finding.UnexpectedHttpIssue(
             webUrl = webUrl,
             exception = e,
             host = host,
-        )
+        ) to null
+    }
+
+    private suspend fun testWebSocket(webUrl: String, apiKey: String, host: String) = try {
+        withTimeout(3000) {
+            val instance = OctoPrintInstanceInformationV2(webUrl = webUrl, apiKey = apiKey)
+            when (val event = octoPrintProvider.createAdHocOctoPrint(instance).getEventWebSocket().eventFlow("test").first()) {
+                is Event.Connected -> null
+                is Event.Disconnected -> when (event.exception) {
+                    is WebSocketUpgradeFailedException -> Finding.WebSocketUpgradeFailed(
+                        webUrl = webUrl,
+                        host = host,
+                        webSocketUrl = (event.exception as WebSocketUpgradeFailedException).webSocketUrl,
+                        responseCode = (event.exception as WebSocketUpgradeFailedException).responseCode
+                    )
+                    else -> Finding.UnexpectedIssue(webUrl = webUrl, exception = event.exception ?: RuntimeException("Unknown issue"))
+                }
+                else -> Finding.UnexpectedIssue(webUrl = webUrl, exception = RuntimeException("Unknown issue (2)"))
+            }
+        }
+    } catch (e: TimeoutCancellationException) {
+        Finding.UnexpectedIssue(webUrl = webUrl, TimeoutException("Web socket test timed out"))
     }
 
     data class Params(
@@ -250,6 +277,13 @@ class TestFullNetworkStackUseCase @Inject constructor(
         data class UnexpectedIssue(
             override val webUrl: String,
             val exception: Throwable
+        ) : Finding()
+
+        data class WebSocketUpgradeFailed(
+            override val webUrl: String,
+            val host: String,
+            val webSocketUrl: String,
+            val responseCode: Int,
         ) : Finding()
 
         data class OctoPrintReady(

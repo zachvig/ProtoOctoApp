@@ -255,6 +255,7 @@
     <string name="signin___broken_setup___api_key_revoked">The API key OctoApp is no longer valid, please connect OctoPrint again</string>
     <string name="signin___broken_setup___https_issue">OctoApp was unable to connect via HTTPS due to an SSL issue, please check your setup</string>
     <string name="signin___broken_setup___basic_auth_required">OctoApp required Basic Auth credentials to access OctoPrint</string>
+    <string name="signin___broken_setup___websocket_upgrade_failed">OctoApp was unable to connect to the websocket of your OctoPrint due to an configuration issue</string>
     <string name="warning_server_version_too_new">This app version was only tested with OctoPrint %1$s but you use %2$s</string>
     <string name="sign_in_succes_with_warnings"><b>Sign in succeeded but there were warnings:</b></string>
     <string name="web_url">Web URL</string>
