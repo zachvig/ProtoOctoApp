@@ -40,7 +40,7 @@ import timber.log.Timber
 @Suppress("EXPERIMENTAL_API_USAGE")
 abstract class OctoActivity : LocalizedActivity() {
 
-    internal companion object {
+    companion object {
         var instance: OctoActivity? = null
             private set
     }

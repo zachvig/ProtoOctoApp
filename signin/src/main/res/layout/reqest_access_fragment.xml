@@ -52,7 +52,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_2"
-                android:text="Open OctoPrint in your browser and confirm that OctoApp is allowed to access your OctoPrint."
+
+                android:text="d"
                 android:textAppearance="@style/OctoTheme.TextAppearance"
                 android:textColor="@color/normal_text"
                 app:layout_constraintTop_toTopOf="parent"

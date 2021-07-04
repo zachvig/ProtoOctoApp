@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.signin.di
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.Module
@@ -67,8 +68,10 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(RequestAccessViewModel::class)
     open fun provideRequestAccessViewModel(
-        useCase: RequestApiAccessUseCase
+        useCase: RequestApiAccessUseCase,
+        context: Context,
     ): ViewModel = RequestAccessViewModel(
-        requestApiAccessUseCase = useCase
+        requestApiAccessUseCase = useCase,
+        context = context
     )
 }

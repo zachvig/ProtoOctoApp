@@ -15,7 +15,9 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.ui.base.BaseFragment
+import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.signin.R
@@ -51,6 +53,9 @@ class RequestAccessFragment : BaseFragment() {
         binding.content.removeAllViews()
         contentBinding = ReqestAccessFragmentBinding.inflate(LayoutInflater.from(requireContext()), binding.content, true)
         contentBinding.buttonApiKey.setOnClickListener { continueWithManualApiKey() }
+        contentBinding.text.text =
+            "Open OctoPrint on your computer or <a href=\"$webUrl\">in your phone's browser</a> and confirm that OctoApp is allowed to access your OctoPrint.".toHtml()
+        contentBinding.text.movementMethod = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(requireOctoActivity()))
 
         viewModel.useWebUrl(webUrl)
         viewModel.uiState.observe(viewLifecycleOwner) {
@@ -92,6 +97,7 @@ class RequestAccessFragment : BaseFragment() {
             override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) = Unit
             override fun surfaceDestroyed(holder: SurfaceHolder) = Unit
             override fun surfaceCreated(holder: SurfaceHolder) {
+                mediaPlayer.stop()
                 mediaPlayer.setSurface(holder.surface)
                 val mediaPath = Uri.parse("android.resource://${requireContext().packageName}/${R.raw.access_explainer}")
                 mediaPlayer.setDataSource(requireContext(), mediaPath)
