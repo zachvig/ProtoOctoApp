@@ -27,7 +27,9 @@ class AutomaticLightsSettingsMenu : Menu {
                 queryState = false,
                 requiredCapabilities = listOf(PowerDevice.Capability.Illuminate)
             )
-        ).map {
+        ).filter {
+            it.first.controlMethods.contains(PowerDevice.ControlMethod.TurnOnOff)
+        }.map {
             LightSettingMenuItem(it.first)
         }
 
