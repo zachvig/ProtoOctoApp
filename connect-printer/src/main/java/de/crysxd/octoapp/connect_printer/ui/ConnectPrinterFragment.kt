@@ -13,7 +13,6 @@ import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
-import de.crysxd.octoapp.base.ui.menu.main.ChangeOctoPrintInstanceMenuItem
 import de.crysxd.octoapp.base.ui.menu.power.PowerControlsMenu
 import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.octoapp.connect_printer.R
@@ -235,6 +234,10 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
         when (action) {
             PowerControlsMenu.Action.TurnOn -> viewModel.setDeviceOn(device, true)
             PowerControlsMenu.Action.TurnOff -> viewModel.setDeviceOn(device, false)
+            PowerControlsMenu.Action.Toggle -> viewModel.setDeviceOn(
+                device,
+                (viewModel.uiState.value as? ConnectPrinterViewModel.UiState.WaitingForPrinterToComeOnline)?.psuIsOn?.not() ?: false
+            )
             PowerControlsMenu.Action.Cycle -> viewModel.cyclePsu(device)
             else -> Unit
         }

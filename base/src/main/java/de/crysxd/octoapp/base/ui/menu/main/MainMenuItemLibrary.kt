@@ -49,6 +49,7 @@ const val MENU_ITEM_ACTIVATE_MATERIAL = "material___activate_material"
 const val MENU_ITEM_SHOW_POWER_DEVICE_ACTIONS = "power___show_device_actions"
 const val MENU_ITEM_POWER_DEVICE_OFF = "power___device_off"
 const val MENU_ITEM_POWER_DEVICE_ON = "power___device_on"
+const val MENU_ITEM_POWER_DEVICE_TOGGLE = "power___device_toggle"
 const val MENU_ITEM_POWER_DEVICE_CYCLE = "power___cycle"
 const val MENU_ITEM_ROTATE_APP = "lab___rotate"
 const val MENU_ITEM_SHOW_WEBCAM_RESOLUTION = "webcam___show_resolution"
@@ -106,6 +107,7 @@ class MenuItemLibrary {
         itemId.startsWith(MENU_ITEM_POWER_DEVICE_OFF) -> PowerControlsMenu.TurnPowerDeviceOffMenuItem.forItemId(itemId)
         itemId.startsWith(MENU_ITEM_POWER_DEVICE_ON) -> PowerControlsMenu.TurnPowerDeviceOnMenuItem.forItemId(itemId)
         itemId.startsWith(MENU_ITEM_POWER_DEVICE_CYCLE) -> PowerControlsMenu.CyclePowerDeviceMenuItem.forItemId(itemId)
+        itemId.startsWith(MENU_ITEM_POWER_DEVICE_TOGGLE) -> PowerControlsMenu.TogglePowerDeviceMenuItem.forItemId(itemId)
         itemId.startsWith(MENU_ITEM_WEBCAM_ASPECT_RATIO_SOURCE) -> WebcamSettingsMenu.AspectRatioMenuItem(Injector.get().localizedContext())
         else -> null
     }

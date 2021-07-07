@@ -67,6 +67,7 @@ object OctoAnalytics {
 
         object PsuCycled : Event("psu_cycle")
         object PsuTurnedOff : Event("psu_turned_off")
+        object PsuToggled : Event("psu_toggle")
         object PsuTurnedOn : Event("psu_turned_on")
 
         object AppUpdateAvailable : Event("app_update_available")

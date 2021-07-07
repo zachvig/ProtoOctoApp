@@ -6,6 +6,8 @@ import de.crysxd.octoapp.octoprint.plugins.power.gpiocontrol.GpioControlPowerPlu
 import de.crysxd.octoapp.octoprint.plugins.power.gpiocontrol.GpioCoontrolApi
 import de.crysxd.octoapp.octoprint.plugins.power.mystrom.MyStromApi
 import de.crysxd.octoapp.octoprint.plugins.power.mystrom.MyStromPowerPlugin
+import de.crysxd.octoapp.octoprint.plugins.power.ocotrelay.OctoRelayApi
+import de.crysxd.octoapp.octoprint.plugins.power.ocotrelay.OctoRelayPowerPlugin
 import de.crysxd.octoapp.octoprint.plugins.power.psucontrol.PsuControlApi
 import de.crysxd.octoapp.octoprint.plugins.power.psucontrol.PsuControlPowerPlugin
 import de.crysxd.octoapp.octoprint.plugins.power.tasmota.TasmotaApi
@@ -29,7 +31,8 @@ class PowerPluginsCollection(retrofit: Retrofit) {
         TuyaPowerPlugin(retrofit.create(TuyaApi::class.java)),
         WS281xPowerPlugin(retrofit.create(WS281xApi::class.java)),
         GpioControlPowerPlugin(retrofit.create(GpioCoontrolApi::class.java)),
-        MyStromPowerPlugin(retrofit.create(MyStromApi::class.java))
+        MyStromPowerPlugin(retrofit.create(MyStromApi::class.java)),
+        OctoRelayPowerPlugin(retrofit.create(OctoRelayApi::class.java))
     )
 
     fun getDevices(settings: Settings) = plugins.map {
