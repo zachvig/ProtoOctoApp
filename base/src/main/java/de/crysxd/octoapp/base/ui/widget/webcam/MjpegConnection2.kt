@@ -5,16 +5,27 @@ import android.graphics.BitmapFactory
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_FULL_WEBCAM_RESOLUTION
+import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.dns.LocalDnsInterceptor
+import de.crysxd.octoapp.octoprint.interceptors.GenerateExceptionInterceptor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
+import java.net.UnknownHostException
+import java.util.concurrent.TimeUnit
 
-class MjpegConnection2(private val streamUrl: String, private val authHeader: String?, private val name: String) {
+class MjpegConnection2(
+    private val streamUrl: String,
+    private val authHeader: String?,
+    name: String,
+    private val throwExceptions: Boolean = false
+) {
 
     private val tag = "MjpegConnection2/$name/${instanceCounter++}"
     private val bufferSize = 16_384
@@ -37,14 +48,14 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
             emit(MjpegConnection.MjpegSnapshot.Loading)
 
             Timber.tag(tag).i("Connecting")
-            val connection = connect()
+            val response = connect()
             hasBeenConnected = true
             Timber.tag(tag).i("Connected, getting boundary")
-            val boundary = extractBoundary(connection) ?: DEFAULT_HEADER_BOUNDARY
+            val boundary = extractBoundary(response) ?: DEFAULT_HEADER_BOUNDARY
             Timber.tag(tag).i("Boundary extracted, starting to load images")
 
             cache.reset()
-            val inputStream = connection.inputStream.buffered(bufferSize * 4)
+            val inputStream = response.body!!.byteStream().buffered(bufferSize * 4)
             while (true) {
                 emit(
                     MjpegConnection.MjpegSnapshot.Frame(
@@ -58,6 +69,10 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
             Timber.tag(tag).i("Started stream")
         }.retryWhen { cause, attempt ->
             Timber.tag(tag).e(cause)
+
+            if (throwExceptions) {
+                throw cause
+            }
 
             // If we had been connected in the past, wait 1s and try to reconnect once
             when {
@@ -106,26 +121,36 @@ class MjpegConnection2(private val streamUrl: String, private val authHeader: St
         return cache.readImage(boundaryStart, boundaryEnd) ?: readNextImage(cache, boundary, input, dropCount + 1)
     }
 
-    private fun connect(): HttpURLConnection {
-        val url = URL(streamUrl)
-        val connection = url.openConnection() as HttpURLConnection
-        connection.connectTimeout = 5000
-        connection.readTimeout = 5000
+    private fun connect(useLocalDns: Boolean = false): Response = try {
+        val client = OkHttpClient.Builder()
+            .addInterceptor(LocalDnsInterceptor(Injector.get().localDnsResolver()))
+            .addInterceptor(GenerateExceptionInterceptor(null, null))
+            .connectTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.SECONDS)
+            .build()
 
-        // Basic Auth
-        authHeader?.let {
-            connection.setRequestProperty("Authorization", authHeader)
+        val request = Request.Builder()
+            .get()
+            .also { builder ->
+                authHeader?.let { builder.addHeader("Authorization", it) }
+            }
+            .url(streamUrl)
+            .build()
+
+        client.newCall(request).execute()
+    } catch (e: UnknownHostException) {
+        // Try resolving using local DNS
+        if (!useLocalDns) {
+            connect(useLocalDns = true)
+        } else {
+            throw e
         }
-
-        connection.doInput = true
-        connection.connect()
-        return connection
     }
 
-    private fun extractBoundary(connection: HttpURLConnection): String? = try {
+    private fun extractBoundary(response: Response): String? = try {
         // Try to extract a boundary from HTTP header first.
         // If the information is not presented, throw an exception and use default value instead.
-        val contentType: String = connection.getHeaderField("Content-Type") ?: throw Exception("Unable to get content type")
+        val contentType: String = response.header("Content-Type") ?: throw Exception("Unable to get content type")
         val types = contentType.split(";".toRegex()).toTypedArray()
         if (types.isEmpty()) {
             throw Exception("Content type was empty")

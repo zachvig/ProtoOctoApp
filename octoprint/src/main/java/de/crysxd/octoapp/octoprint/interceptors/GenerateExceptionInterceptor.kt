@@ -14,8 +14,8 @@ import java.util.regex.Pattern
 import javax.net.ssl.SSLHandshakeException
 
 class GenerateExceptionInterceptor(
-    private val networkExceptionListener: (Exception) -> Unit,
-    private val userApiFactory: () -> UserApi,
+    private val networkExceptionListener: ((Exception) -> Unit)?,
+    private val userApiFactory: (() -> UserApi)?,
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -56,7 +56,7 @@ class GenerateExceptionInterceptor(
                 throw OctoPrintHttpsException(request.url, e)
             }
         } catch (e: Exception) {
-            networkExceptionListener(e)
+            networkExceptionListener?.invoke(e)
             throw e
         }
     }
@@ -64,11 +64,11 @@ class GenerateExceptionInterceptor(
     private fun generate403Exception(response: Response): Exception = runBlocking {
         // Prevent a loop. We will below request the /currentuser endpoint to test the API key
         val invalidApiKeyException = InvalidApiKeyException(response.request.url)
-        if (response.request.url.pathSegments.last() == "currentuser") return@runBlocking invalidApiKeyException
+        if (response.request.url.pathSegments.last() == "currentuser" || userApiFactory == null) return@runBlocking invalidApiKeyException
 
         // We don't know what caused the 403. Requesting the currentuser will tell us whether we are a guest, meaning the API
         // key is not valid. If we are not a guest, 403 indicates a missing permission
-        val isGuest = userApiFactory().getCurrentUser().isGuest
+        val isGuest = userApiFactory.invoke().getCurrentUser().isGuest
         if (isGuest) {
             invalidApiKeyException
         } else {

@@ -59,9 +59,11 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(ProbeOctoPrintViewModel::class)
     open fun provideProbeOctoPrintViewModel(
-        useCase: TestFullNetworkStackUseCase
+        useCase: TestFullNetworkStackUseCase,
+        octoPrintRepository: OctoPrintRepository,
     ): ViewModel = ProbeOctoPrintViewModel(
-        useCase = useCase
+        useCase = useCase,
+        octoPrintRepository = octoPrintRepository
     )
 
     @Provides

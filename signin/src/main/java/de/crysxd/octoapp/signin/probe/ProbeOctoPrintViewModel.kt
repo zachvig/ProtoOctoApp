@@ -3,13 +3,15 @@ package de.crysxd.octoapp.signin.probe
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ProbeOctoPrintViewModel(
-    private val useCase: TestFullNetworkStackUseCase
+    private val useCase: TestFullNetworkStackUseCase,
+    private val octoPrintRepository: OctoPrintRepository,
 ) : BaseViewModel() {
 
     companion object {
@@ -30,7 +32,9 @@ class ProbeOctoPrintViewModel(
             probeIsActive = true
             val start = System.currentTimeMillis()
             mutableUiState.postValue(UiState.Loading)
-            val finding = useCase.execute(TestFullNetworkStackUseCase.Params(webUrl))
+            val apiKey = octoPrintRepository.findOrNull(webUrl)?.apiKey ?: ""
+            val target = TestFullNetworkStackUseCase.Target.OctoPrint(webUrl = webUrl, apiKey = apiKey)
+            val finding = useCase.execute(target)
             (MIN_PROBE_DURATION - (System.currentTimeMillis() - start)).takeIf { it > 0 }?.let { delay(it) }
             lastWebUrl = finding.webUrl
             mutableUiState.postValue(UiState.FindingsReady(finding))

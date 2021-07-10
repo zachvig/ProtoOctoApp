@@ -13,7 +13,7 @@ class FindingDescriptionLibrary(private val context: Context) {
         is TestFullNetworkStackUseCase.Finding.HostNotReachable -> context.getString(R.string.help___probe_finding___title_host_unreachable, finding.host)
         is TestFullNetworkStackUseCase.Finding.HttpsNotTrusted -> context.getString(R.string.help___probe_finding___title_https_not_trusted, finding.host)
         is TestFullNetworkStackUseCase.Finding.InvalidUrl -> context.getString(R.string.help___probe_finding___title_url_syntax)
-        is TestFullNetworkStackUseCase.Finding.OctoPrintNotFound -> context.getString(R.string.help___probe_finding___title_octoprint_not_found)
+        is TestFullNetworkStackUseCase.Finding.NotFound -> context.getString(R.string.help___probe_finding___title_octoprint_not_found)
         is TestFullNetworkStackUseCase.Finding.PortClosed -> context.getString(R.string.help___probe_finding___title_port_closed, finding.host, finding.port)
         is TestFullNetworkStackUseCase.Finding.UnexpectedHttpIssue -> context.getString(R.string.help___probe_finding___title_failed_to_connect_via_http)
         is TestFullNetworkStackUseCase.Finding.UnexpectedIssue -> context.getString(R.string.help___probe_finding___title_unexpected_issue)
@@ -21,6 +21,9 @@ class FindingDescriptionLibrary(private val context: Context) {
         is TestFullNetworkStackUseCase.Finding.InvalidApiKey -> "" // Never shown
         is TestFullNetworkStackUseCase.Finding.OctoPrintReady -> "" // Never shown
         is TestFullNetworkStackUseCase.Finding.WebSocketUpgradeFailed -> context.getString(R.string.help___probe_finding___title_websocket_upgrade_failed, finding.host)
+        is TestFullNetworkStackUseCase.Finding.EmptyUrl -> TODO()
+        is TestFullNetworkStackUseCase.Finding.NoImage -> TODO()
+        is TestFullNetworkStackUseCase.Finding.WebcamReady -> TODO()
     }
 
     fun getExplainerForFinding(finding: TestFullNetworkStackUseCase.Finding) = when (finding) {
@@ -51,7 +54,7 @@ class FindingDescriptionLibrary(private val context: Context) {
             finding.webUrl,
             finding.exception.localizedMessage ?: "Unknown error"
         )
-        is TestFullNetworkStackUseCase.Finding.OctoPrintNotFound -> context.getString(
+        is TestFullNetworkStackUseCase.Finding.NotFound -> context.getString(
             R.string.help___probe_finding___explainer_octoprint_not_found,
             finding.webUrl
         )
@@ -82,5 +85,8 @@ class FindingDescriptionLibrary(private val context: Context) {
             finding.responseCode,
             finding.webSocketUrl
         )
+        is TestFullNetworkStackUseCase.Finding.EmptyUrl -> TODO()
+        is TestFullNetworkStackUseCase.Finding.NoImage -> TODO()
+        is TestFullNetworkStackUseCase.Finding.WebcamReady -> TODO()
     }
 }
