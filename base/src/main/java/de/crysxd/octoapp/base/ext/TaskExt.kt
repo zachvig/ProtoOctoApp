@@ -3,11 +3,11 @@ package de.crysxd.octoapp.base.ext
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.channels.Channel
 
-suspend fun Task<*>.suspendedAwait() {
-    val channel = Channel<Unit>(0)
+suspend fun <T> Task<T>.suspendedAwait(): T {
+    val channel = Channel<T>(0)
     addOnCompleteListener {
         it.exception?.let { e -> throw e }
-        channel.offer(Unit)
+        channel.offer(it.result)
     }
-    channel.receive()
+    return channel.receive()
 }
