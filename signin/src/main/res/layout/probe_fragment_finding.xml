@@ -14,7 +14,8 @@
         android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <Button
+        style="@style/OctoTheme.Widget.Button.Mini"
         android:id="@+id/help"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

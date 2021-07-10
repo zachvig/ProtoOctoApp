@@ -1,7 +1,14 @@
 package de.crysxd.octoapp.signin.ext
 
+import android.content.Intent
+import android.net.Uri
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 
 fun Fragment.goBackToDiscover() {
@@ -21,4 +28,16 @@ fun Fragment.goBackToDiscover() {
         },
         negativeButton = "Cancel"
     )
+}
+
+fun Fragment.setUpAsHelpButton(view: View) {
+    view.setOnClickListener {
+        val uri = Uri.parse(Firebase.remoteConfig.getString("help_url_sign_in"))
+        OctoAnalytics.logEvent(OctoAnalytics.Event.SignInHelpOpened)
+        startActivity(Intent(Intent.ACTION_VIEW, uri))
+    }
+    view.setOnLongClickListener {
+        SendFeedbackDialog().show(childFragmentManager, "feedback")
+        true
+    }
 }

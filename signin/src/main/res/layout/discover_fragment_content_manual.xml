@@ -15,8 +15,9 @@
         android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <Button
         android:id="@+id/help"
+        style="@style/OctoTheme.Widget.Button.Mini"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_2"
@@ -31,9 +32,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_3"
+        android:layout_marginBottom="@dimen/margin_3"
         app:example="http://192.168.1.134|octoprint.home:5000|https://myoctoprint.com|http://192.168.0.204:5000/octoprint"
         app:label="Web URL"
-        android:layout_marginBottom="@dimen/margin_3"
         app:labelActive="OctoPrint URL – Copy this from your browser!"
         app:layout_constraintBottom_toTopOf="@+id/buttonContinue"
         app:layout_constraintTop_toBottomOf="@id/help"

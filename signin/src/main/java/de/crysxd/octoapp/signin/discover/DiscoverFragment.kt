@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.signin.discover
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.transition.AutoTransition
@@ -19,9 +18,6 @@ import androidx.core.view.*
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.ktx.remoteConfig
-import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
@@ -37,6 +33,7 @@ import de.crysxd.octoapp.signin.databinding.BaseSigninFragmentBinding
 import de.crysxd.octoapp.signin.databinding.DiscoverFragmentContentManualBinding
 import de.crysxd.octoapp.signin.databinding.DiscoverFragmentContentOptionsBinding
 import de.crysxd.octoapp.signin.di.injectViewModel
+import de.crysxd.octoapp.signin.ext.setUpAsHelpButton
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import timber.log.Timber
@@ -262,12 +259,6 @@ class DiscoverFragment : BaseFragment() {
         }
     }
 
-    private fun continueWithHelp() {
-        val uri = Uri.parse(Firebase.remoteConfig.getString("help_url_sign_in"))
-        OctoAnalytics.logEvent(OctoAnalytics.Event.SignInHelpOpened)
-        startActivity(Intent(Intent.ACTION_VIEW, uri))
-    }
-
     private fun continueWithEnableQuickSwitch() = UriLibrary.getPurchaseUri().open(requireOctoActivity())
 
     private fun deleteAfterConfirmation(option: OctoPrintInstanceInformationV2) {
@@ -295,10 +286,7 @@ class DiscoverFragment : BaseFragment() {
         binding.contentWrapper.updateLayoutParams<FrameLayout.LayoutParams> { gravity = Gravity.CENTER_VERTICAL }
         optionsBinding = localOptionsBinding
 
-        //   manualBinding?.input?.hideSoftKeyboard()
-        localOptionsBinding.help.setOnClickListener {
-            continueWithHelp()
-        }
+        setUpAsHelpButton(localOptionsBinding.help)
         localOptionsBinding.manualConnectOption.showManualConnect()
         localOptionsBinding.manualConnectOption.setOnClickListener { viewModel.moveToManualState() }
         localOptionsBinding.quickSwitchOption.showQuickSwitchOption()
@@ -341,6 +329,7 @@ class DiscoverFragment : BaseFragment() {
             }
         }
 
+        setUpAsHelpButton(localManualBinding.help)
         manualBinding?.input?.editText?.setText(webUrl)
         manualBinding?.input?.editText?.setSelection(webUrl.length)
         manualBinding?.input?.editText?.setOnEditorActionListener { _, _, _ ->

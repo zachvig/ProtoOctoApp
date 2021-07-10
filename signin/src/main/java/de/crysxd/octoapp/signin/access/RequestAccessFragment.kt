@@ -25,6 +25,7 @@ import de.crysxd.octoapp.signin.databinding.BaseSigninFragmentBinding
 import de.crysxd.octoapp.signin.databinding.ReqestAccessFragmentBinding
 import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.ext.goBackToDiscover
+import de.crysxd.octoapp.signin.ext.setUpAsHelpButton
 import timber.log.Timber
 
 
@@ -56,6 +57,7 @@ class RequestAccessFragment : BaseFragment() {
         contentBinding.text.text =
             "Open OctoPrint on your computer or <a href=\"$webUrl\">in your phone's browser</a> and confirm that OctoApp is allowed to access your OctoPrint.".toHtml()
         contentBinding.text.movementMethod = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(requireOctoActivity()))
+        setUpAsHelpButton(contentBinding.help)
 
         viewModel.useWebUrl(webUrl)
         viewModel.uiState.observe(viewLifecycleOwner) {

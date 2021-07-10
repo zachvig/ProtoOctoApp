@@ -26,6 +26,7 @@ import de.crysxd.octoapp.signin.databinding.ProbeFragmentFindingBinding
 import de.crysxd.octoapp.signin.databinding.ProbeFragmentInitialBinding
 import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.ext.goBackToDiscover
+import de.crysxd.octoapp.signin.ext.setUpAsHelpButton
 import io.noties.markwon.Markwon
 import timber.log.Timber
 
@@ -130,6 +131,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
         findingBinding = b
         binding.content.removeAllViews()
         binding.content.addView(b.root)
+        setUpAsHelpButton(b.help)
 
         val markwon = Markwon.builder(requireContext())
             .usePlugin(ThemePlugin(requireContext()))
@@ -198,8 +200,8 @@ class ProbeOctoPrintFragment : BaseFragment() {
         is TestFullNetworkStackUseCase.Finding.InvalidUrl -> "The URL **${finding.webUrl}** seems to contain a syntax error and can't be parsed. Android reports following error:\n\n**${finding.exception.localizedMessage ?: "Unknown error"}**"
         is TestFullNetworkStackUseCase.Finding.OctoPrintNotFound -> "OctoApp was able to connect to **${finding.webUrl}** but received a 404 response. Check following things to resolve the issue:\n\n- Make sure you use the correct port and host\n- Make sure that you use the correct path in the URL\n- Try to open [**${finding.webUrl}](**${finding.webUrl}**) in your browser"
         is TestFullNetworkStackUseCase.Finding.PortClosed -> "OctoApp was able to connect to **${finding.host}** but port **${finding.port}** is closed. Check following things to resolve the issue:\n\n- Make sure **${finding.port}** is correct. If you don't specify the port explicitly, OctoApp will use 80 for HTTP and 443 for HTTPS\n- Try to open [${finding.webUrl}](${finding.webUrl}) in your browser"
-        is TestFullNetworkStackUseCase.Finding.UnexpectedHttpIssue -> "OctoApp was able to communicate with **${finding.host}**, but when trying to establish a HTTP(S) connection an unexpected error occurred. Android reports following issue:\n\n**${finding.exception.localizedMessage ?: "Unknown error"}**"
-        is TestFullNetworkStackUseCase.Finding.UnexpectedIssue -> "OctoApp encountered an unexpected error. Android reports following issue:\n\n**${finding.exception.localizedMessage ?: "Unknown error"}**"
+        is TestFullNetworkStackUseCase.Finding.UnexpectedHttpIssue -> "OctoApp was able to communicate with **${finding.host}**, but when trying to establish a HTTP(S) connection an unexpected error occurred. Android reports following issue:\n\n**${finding.exception.localizedMessage ?: "Unknown error"}**\n\nYou can **long-press \"Need help?\"** above to get support (please include logs)."
+        is TestFullNetworkStackUseCase.Finding.UnexpectedIssue -> "OctoApp encountered an unexpected error. Android reports following issue:\n\n**${finding.exception.localizedMessage ?: "Unknown error"}**\n\nYou can **long-press \"Need help?\"** above to get support (please include logs)."
         is TestFullNetworkStackUseCase.Finding.ServerIsNotOctoPrint -> "OctoApp was able to communicate with **${finding.host}**, but the server seems not to be a recent version of OctoPrint.\n\nYou can continue, but other issues may arise in the following steps."
         is TestFullNetworkStackUseCase.Finding.InvalidApiKey -> "" // Never shown
         is TestFullNetworkStackUseCase.Finding.OctoPrintReady -> "" // Never shown
