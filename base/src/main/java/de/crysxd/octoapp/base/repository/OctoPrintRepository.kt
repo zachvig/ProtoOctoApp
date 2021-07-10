@@ -99,7 +99,7 @@ class OctoPrintRepository(
 
     fun remove(webUrl: String) {
         Timber.i("Removing $webUrl")
-        val all = getAll().filter { it.isForWebUrl(webUrl) }
+        val all = getAll().filter { !it.isForWebUrl(webUrl) }
         dataSource.store(all)
     }
 

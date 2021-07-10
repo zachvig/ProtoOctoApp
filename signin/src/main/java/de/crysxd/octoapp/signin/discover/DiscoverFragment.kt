@@ -38,6 +38,7 @@ import de.crysxd.octoapp.signin.ext.setUpAsHelpButton
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import timber.log.Timber
+import kotlin.math.roundToLong
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
 
 class DiscoverFragment : BaseFragment() {
@@ -144,11 +145,13 @@ class DiscoverFragment : BaseFragment() {
     private fun playLoadingAnimation() {
         loadingAnimationJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             val duration = 600L
+            binding.loading.progress.isVisible = true
             binding.octoBackground.alpha = 0f
             binding.loading.title.setText(R.string.signin___discovery___welcome_title)
             binding.loading.subtitle.setText(R.string.signin___discovery___welcome_subtitle_searching)
             binding.loading.title.alpha = 0f
             binding.loading.subtitle.alpha = 0f
+            binding.loading.progress.alpha = 0f
 
             delay(duration)
             binding.octoBackground.animate().alpha(backgroundAlpha).setDuration(duration).withEndAction {
@@ -158,8 +161,19 @@ class DiscoverFragment : BaseFragment() {
             binding.loading.title.animate().alpha(1f).setDuration(duration).start()
             delay(150)
             binding.loading.subtitle.animate().alpha(1f).setDuration(duration).start()
-        }
+            delay(150)
+            binding.loading.progress.animate().alpha(1f).setDuration(duration).start()
 
+            val steps = 200
+            binding.loading.progress.max = steps
+            val delay = (viewModel.getLoadingDelay() / steps.toFloat()).roundToLong()
+            Timber.i("DELAY $delay")
+            repeat(steps) {
+                delay(delay)
+                binding.loading.progress.progress = it
+            }
+            binding.loading.progress.isIndeterminate = true
+        }
     }
 
     private fun createDiscoveredOptions(options: List<DiscoverOctoPrintUseCase.DiscoveredOctoPrint>) = optionsBinding?.let { binding ->

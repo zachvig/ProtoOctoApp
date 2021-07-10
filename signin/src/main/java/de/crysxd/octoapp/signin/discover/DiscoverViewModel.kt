@@ -42,6 +42,11 @@ class DiscoverViewModel(
         )
     }.combine(BillingManager.billingFlow()) { uiState, _ ->
         uiState.copy(supportsQuickSwitch = BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH))
+    }.onEach {
+        val delay = getLoadingDelay()
+        if (it.previouslyConnectedOptions.isEmpty() && delay > 0) {
+            delay(delay)
+        }
     }
 
     val uiState = stateChannel.asFlow().combine(options) { state, options ->
@@ -50,12 +55,12 @@ class DiscoverViewModel(
             options.previouslyConnectedOptions.isNotEmpty() || options.discoveredOptions.isNotEmpty() -> options
             else -> UiState.ManualIdle
         }
-    }.onEach {
-        val timeSinceCreated = System.currentTimeMillis() - viewModelCreationTime
-        if (it !is UiState.Loading && timeSinceCreated < INITIAL_DELAY_TIME) {
-            delay(INITIAL_DELAY_TIME - timeSinceCreated)
-        }
     }.debounce(300).asLiveData()
+
+    fun getLoadingDelay(): Long {
+        val timeSinceCreated = System.currentTimeMillis() - viewModelCreationTime
+        return INITIAL_DELAY_TIME - timeSinceCreated
+    }
 
     fun deleteInstance(webUrl: String) {
         octoPrintRepository.remove(webUrl)
