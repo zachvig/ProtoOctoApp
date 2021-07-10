@@ -71,9 +71,9 @@
         style="@style/OctoTheme.Widget.Button.Image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="Show delete options"
+        android:importantForAccessibility="no"
         android:src="@drawable/ic_round_delete_24"
-        android:tint="@color/normal_text"
+        app:tint="@color/normal_text"
         app:layout_constraintBottom_toBottomOf="@+id/previousOptionsTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/previousOptionsTitle" />

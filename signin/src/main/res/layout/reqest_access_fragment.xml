@@ -14,8 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Confirm access in the web interface"
-        android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big" />
+        android:text="@string/sign_in___access___confirm_in_web_interface"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/help"
@@ -53,8 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_2"
-
-                android:text="d"
+                tools:text="Placeholder lorem ipsum dolor sit amet"
                 android:textAppearance="@style/OctoTheme.TextAppearance"
                 android:textColor="@color/normal_text"
                 app:layout_constraintTop_toTopOf="parent"
@@ -100,7 +100,7 @@
                 android:layout_marginStart="@dimen/margin_0_1"
                 android:layout_marginTop="@dimen/margin_2"
                 android:layout_marginBottom="@dimen/margin_2"
-                android:text="Waiting for access..."
+                android:text="@string/sign_in___access___waiting_for_access"
                 android:textAppearance="@style/OctoTheme.TextAppearance"
                 android:textColor="@color/normal_text"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -117,7 +117,7 @@
         style="@style/OctoTheme.Widget.Button.Tertiary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Use API key instead H"
+        android:text="@string/sign_in___access___use_api_key"
         app:layout_constraintBottom_toTopOf="@id/buttonConnectOther" />
 
     <Button
@@ -126,7 +126,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_0_1"
-        android:text="Connect to other OctoPrint H"
+        android:text="@string/sign_in___connect_to_other_octoprint"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

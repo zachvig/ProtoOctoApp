@@ -15,8 +15,8 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        style="@style/OctoTheme.Widget.Button.Mini"
         android:id="@+id/help"
+        style="@style/OctoTheme.Widget.Button.Mini"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_2"
@@ -59,7 +59,7 @@
                 android:layout_marginHorizontal="@dimen/margin_2"
                 android:autofillHints="user|username"
                 app:example="admin"
-                app:label="Username" />
+                app:label="@string/sign_in___probe___basic_username" />
 
             <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
                 android:id="@+id/passwordInput"
@@ -69,9 +69,9 @@
                 android:layout_marginTop="@dimen/margin_1"
                 android:layout_marginBottom="@dimen/margin_2"
                 android:autofillHints="pw|password"
-                app:forPassword="true"
                 app:example="admin"
-                app:label="Password" />
+                app:forPassword="true"
+                app:label="@string/sign_in___probe___basic_username" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -83,9 +83,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_0_1"
-        android:text="Edit information H"
+        android:text="@string/sign_in___probe___edit_information"
         app:layout_constraintBottom_toTopOf="@id/buttonContinue" />
-
 
     <Button
         android:id="@+id/buttonContinue"

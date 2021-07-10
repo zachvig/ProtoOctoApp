@@ -252,10 +252,6 @@
     <string name="scan_the_qr_code">Scan the QR code</string>
     <string name="you_can_find_the_api_key_in_octoprint_s_settings_under_api">You can find the API key in OctoPrint\'s settings under API</string>
     <string name="you_can_find_the_api_key_in_octoprint_s_settings">You can find the API key in OctoPrint\'s settings</string>
-    <string name="signin___broken_setup___api_key_revoked">The API key OctoApp is no longer valid, please connect OctoPrint again</string>
-    <string name="signin___broken_setup___https_issue">OctoApp was unable to connect via HTTPS due to an SSL issue, please check your setup</string>
-    <string name="signin___broken_setup___basic_auth_required">OctoApp required Basic Auth credentials to access OctoPrint</string>
-    <string name="signin___broken_setup___websocket_upgrade_failed">OctoApp was unable to connect to the websocket of your OctoPrint due to an configuration issue</string>
     <string name="warning_server_version_too_new">This app version was only tested with OctoPrint %1$s but you use %2$s</string>
     <string name="sign_in_succes_with_warnings"><b>Sign in succeeded but there were warnings:</b></string>
     <string name="web_url">Web URL</string>
@@ -399,9 +395,8 @@
     <string name="app_widget___no_image">No image</string>
     <string name="app_widget___no_data">No data</string>
     <string name="main_menu___item_auto_connect_printer">Auto connect printer</string>
-    <string name="error_general_with_details"><![CDATA[         Something went wrong! Please try again.<br/><br/><small><font color="#%1$06X">%2$s</font></small>     ]]></string>
+    <string name="error_general_with_details"><![CDATA[Something went wrong! Please try again.<br/><br/><small><font color="#%1$06X">%2$s</font></small>]]></string>
     <string name="error_certificate_not_trusted_and_weak_hostname_required">Android does not trust the certificate provided by this server. This is usually the case for self signed certificates.  Further, the certificate does not provide a \"subject alternative name\" (SAN) field which is required from Android 9 onwards. OctoApp must use a weak hostname check to circumvent this issue. This will reduce the security of your connection.  Do you want to trust this server and use a weaker hostname verification?</string>
-    <string name="help___contact_detail_information" translatable="false">I speak English and German. My current local time is %1$s (%2$s).</string>
     <string name="material_menu___title_select_material">Select material to use</string>
     <string name="material_menu___title_neutral">Materials</string>
     <string name="material_menu___subtitle_select_material">The selected material will be activated for the print.</string>
@@ -427,44 +422,7 @@
     <string name="power_menu___device_provided_by_x"><![CDATA[<small>This device is provided by %s</small>]]></string>
     <string name="power_menu___device_is_on">Device is on</string>
     <string name="power_menu___device_is_off">Device is off</string>
-    <string name="privacy_menu___title" translatable="false">Privacy</string>
-    <string name="privacy_menu___subtitle" translatable="false">OctoApp does not collect any personalized information. I do not have any data about you, such as your email address. Even if you have an active subscription, you are completely anonymous.</string>
-    <string name="privacy_menu___bottom_text" translatable="false"><![CDATA[All data collected is in the app\'s legitimate interest. If you have any questions, please reach out to <a href="mailto">hello@octoapp.eu</a><br><br><a href="https://octoapp-4e438.web.app/privacy">Data privacy statement</a><br><br>OctoApp is an <a href="https://gitlab.com/crysxd/octoapp">open source</a> project.]]></string>
-    <string name="privacy_menu___crash_reporting_title" translatable="false">Anonymous crash reporting</string>
-    <string name="privacy_menu___crash_reporting_description" translatable="false">If enabled, OctoApp sends automated crash reports to Firebase Crashlytics, helping me make the app stable for all users and devices. These reports are anonymous and deleted after 90 days. They contain generic information about your device, such as the model or Android version and the most recent logs collected by the app. Crash reports do not contain any sensitive data as all API keys, host names or Basic Auth credentials are scrubbed (best effort) when any error is created and again before the logs are cached.</string>
-    <string name="privacy_menu___analytics_title" translatable="false">Anonymous usage statistics</string>
-    <string name="privacy_menu___analytics_description" translatable="false">If enabled, OctoApp sends anonymous usage information to Firebase Analytics which will be deleted after 90 days. This information helps me in determining which features of the app are used the most, and where I should spend time on improving to benefit users. This information does not contain any data except which features of the app are used and basic information about your setup, such as which plugins are installed or the OctoPrint version. The data is not linked to any advertisement profile or anything similar. If you reinstall the app or switch your device, I do not have any means to connect your data.</string>
-    <string name="help___content_not_available" translatable="false">This content is currently not available. Try again later!</string>
-    <string name="help___status_x" translatable="false">Status: %s</string>
-    <string name="help___octoprint_community" translatable="false">OctoPrint community</string>
-    <string name="help___octoprint_discord" translatable="false">OctoPrint Discord</string>
-    <string name="help___report_a_bug" translatable="false">I want to report a bug</string>
-    <string name="help___ask_a_question" translatable="false">I have an other question</string>
-    <string name="help___title" translatable="false"><![CDATA[FAQ & Help]]></string>
-    <string name="help___introduction_part_2" translatable="false">If you are new to OctoApp, you can check out this introduction to get started with the app’s concept!</string>
-    <string name="help___introduction_part_1" translatable="false">Hi! I’m Chris, the developer of OctoApp! Thanks for using the app. If you don’t find what you need below, you can always reach out! 🖖</string>
-    <string name="help___introduction_video_caption" translatable="false">1 minute introduction</string>
-    <string name="help___faq_title" translatable="false">FAQ</string>
-    <string name="help___bugs_title" translatable="false">Known bugs in this version</string>
-    <string name="help___contact_title" translatable="false">Still no answers?</string>
-    <string name="trouble_shooting___step_1_failure_title" translatable="false"><![CDATA[Can\'t resolve <b>%s</b>]]></string>
-    <string name="trouble_shooting___step_1_failure_description" translatable="false"><![CDATA[This indicates a configuration issue. The phone can\'t resolve a IP address for <b>%s</b>, this is not influenced by any OctoPrint settings or the API key.]]></string>
-    <string name="trouble_shooting___step_2_failure_title" translatable="false"><![CDATA[Host <b>%s</b> is not reachable]]></string>
-    <string name="trouble_shooting___step_2_failure_description" translatable="false"><![CDATA[This indicates a configuration issue. The phone can\'t reach <b>%s</b>, this is not influenced by any OctoPrint settings or the API key.]]></string>
-    <string name="trouble_shooting___step_3_failure_title" translatable="false"><![CDATA[Can connect to <b>%1$s</b> but not to port <b>%2$d</b>]]></string>
-    <string name="trouble_shooting___step_3_failure_description" translatable="false"><![CDATA[The phone can connect to the host, but the port <b>%d</b> does not accept incoming connections.]]></string>
-    <string name="trouble_shooting___step_4_failure_code_title" translatable="false"><![CDATA[Can connect but received <b>%d</b> instead of <b>200</b>]]></string>
-    <string name="trouble_shooting___step_4_failure_code_description" translatable="false"><![CDATA[The app was able to establish a connection to <b>%s</b>, but the server did not respond as expected.]]></string>
-    <string name="trouble_shooting___step_4_failure_title" translatable="false">Can\'t connect because of an error</string>
-    <string name="trouble_shooting___step_4_failure_description" translatable="false"><![CDATA[A unexpected error occurred while trying to connect to <b>%1$s</b> (%2$s)]]></string>
-    <string name="lab_menu___title" translatable="false">OctoApp Lab</string>
-    <string name="lab_menu___subtitle" translatable="false">Here you can find experimental settings and things I do not officially support but which you can use at your own will. Features might be removed without prior notice.</string>
-    <string name="lab_menu___allow_battery_saver_title" translatable="false">Notification battery saver</string>
-    <string name="lab_menu___allow_battery_saver_description" translatable="false">With version 1.8, I introduced a battery saving mechanic for the print notification as it was consuming a lot of power on some devices. You can disable it to return to the old behaviour. This might resolve issues with missing filament change notifications.</string>
-    <string name="lab_menu___allow_to_rotate_title" translatable="false">Allow OctoApp to rotate</string>
-    <string name="lab_menu___allow_to_rotate_description" translatable="false">OctoApp can rotate into landscape mode. The UI is not optimized and rotating might cause issues on some screens. Will take affect after restart.</string>
-    <string name="lab_menu___experimental_webcam_title" translatable="false">New webcam stack</string>
-    <string name="lab_menu___experimental_webcam_description" translatable="false">Completely new webcam implementation introduced with version 1.9.0. The new webcam stack is using less resources and has a lower latency. Will take affect after a restart.</string>
+    <string name="help___content_not_available">This content is currently not available. Try again later!</string>
     <string name="configure_remote_access___title">Configure Remote Access</string>
     <string name="configure_remote_acces___description"><![CDATA[Not at home? On it’s own, OctoApp can’t reach your OctoPrint as it is only available in your home network. You need to make OctoPrint available over the internet so that OctoApp can access it from wherever you are. Learn more <a href="https://app.octoapp.eu/help/use_remotely">here</a>.]]></string>
     <string name="configure_remote_acces___octoeverywhere___title">OctoEverywhere!</string>
@@ -506,4 +464,19 @@
     <string name="signin___discovery___delete_printer_message">Delete %s and all associated settings?</string>
     <string name="signin___discovery___delete_printer_confirmation">Delete OctoPrint</string>
     <string name="signin___continue">Continue</string>
+    <string name="signin___try_again">Try again</string>
+    <string name="sign_in___probe___edit_information">Edit information</string>
+    <string name="sign_in___connect_to_other_octoprint">Connect to an other OctoPrint</string>
+    <string name="sign_in___probe___probing_active_title">Testing the connection to OctoPrint…</string>
+    <string name="sign_in___probe___basic_username">Username</string>
+    <string name="sign_in___probe___basic_password">Password</string>
+    <string name="sing_in___probe___trust_and_continue"><![CDATA[Trust & Continue]]></string>
+    <string name="sign_in___access___confirm_in_web_interface">Confirm access in the web interface</string>
+    <string name="sign_in___access___waiting_for_access">Waiting for access…</string>
+    <string name="sign_in___access___use_api_key">Use API key instead</string>
+    <string name="sign_in___broken_setup___api_key_revoked">The API key OctoApp is no longer valid, please connect OctoPrint again</string>
+    <string name="sign_in___broken_setup___https_issue">OctoApp was unable to connect via HTTPS due to an SSL issue, please check your setup</string>
+    <string name="sign_in___broken_setup___basic_auth_required">OctoApp required Basic Auth credentials to access OctoPrint</string>
+    <string name="sign_in___broken_setup___websocket_upgrade_failed">OctoApp was unable to connect to the websocket of your OctoPrint due to an configuration issue</string>
+    <string name="sign_in___access___explainer"><![CDATA[Open OctoPrint on your computer or <a href="%s">in your phone\'s browser</a> and confirm that OctoApp is allowed to access your OctoPrint.]]></string>
 </resources>

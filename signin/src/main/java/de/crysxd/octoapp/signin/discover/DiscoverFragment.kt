@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.signin.discover
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.transition.AutoTransition
@@ -337,6 +338,7 @@ class DiscoverFragment : BaseFragment() {
             true
         }
 
+        @SuppressLint("SetTextI18n")
         if (BuildConfig.DEBUG) {
             manualBinding?.input?.editText?.setText("octoprint.home:5000")
         }

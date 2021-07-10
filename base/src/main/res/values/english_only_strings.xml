@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Privacy menu -->
+    <string name="privacy_menu___title" translatable="false">Privacy</string>
+    <string name="privacy_menu___subtitle" translatable="false">OctoApp does not collect any personalized information. I do not have any data about you, such as your email address. Even if you have an active subscription, you are completely anonymous.</string>
+    <string name="privacy_menu___bottom_text" translatable="false"><![CDATA[All data collected is in the app\'s legitimate interest. If you have any questions, please reach out to <a href="mailto">hello@octoapp.eu</a><br><br><a href="https://octoapp-4e438.web.app/privacy">Data privacy statement</a><br><br>OctoApp is an <a href="https://gitlab.com/crysxd/octoapp">open source</a> project.]]></string>
+    <string name="privacy_menu___crash_reporting_title" translatable="false">Anonymous crash reporting</string>
+    <string name="privacy_menu___crash_reporting_description" translatable="false">If enabled, OctoApp sends automated crash reports to Firebase Crashlytics, helping me make the app stable for all users and devices. These reports are anonymous and deleted after 90 days. They contain generic information about your device, such as the model or Android version and the most recent logs collected by the app. Crash reports do not contain any sensitive data as all API keys, host names or Basic Auth credentials are scrubbed (best effort) when any error is created and again before the logs are cached.</string>
+    <string name="privacy_menu___analytics_title" translatable="false">Anonymous usage statistics</string>
+    <string name="privacy_menu___analytics_description" translatable="false">If enabled, OctoApp sends anonymous usage information to Firebase Analytics which will be deleted after 90 days. This information helps me in determining which features of the app are used the most, and where I should spend time on improving to benefit users. This information does not contain any data except which features of the app are used and basic information about your setup, such as which plugins are installed or the OctoPrint version. The data is not linked to any advertisement profile or anything similar. If you reinstall the app or switch your device, I do not have any means to connect your data.</string>
+
+    <!-- Troubleshooting -->
+    <string name="trouble_shooting___step_1_failure_title" translatable="false"><![CDATA[Can\'t resolve <b>%s</b>]]></string>
+    <string name="trouble_shooting___step_1_failure_description" translatable="false"><![CDATA[This indicates a configuration issue. The phone can\'t resolve a IP address for <b>%s</b>, this is not influenced by any OctoPrint settings or the API key.]]></string>
+    <string name="trouble_shooting___step_2_failure_title" translatable="false"><![CDATA[Host <b>%s</b> is not reachable]]></string>
+    <string name="trouble_shooting___step_2_failure_description" translatable="false"><![CDATA[This indicates a configuration issue. The phone can\'t reach <b>%s</b>, this is not influenced by any OctoPrint settings or the API key.]]></string>
+    <string name="trouble_shooting___step_3_failure_title" translatable="false"><![CDATA[Can connect to <b>%1$s</b> but not to port <b>%2$d</b>]]></string>
+    <string name="trouble_shooting___step_3_failure_description" translatable="false"><![CDATA[The phone can connect to the host, but the port <b>%d</b> does not accept incoming connections.]]></string>
+    <string name="trouble_shooting___step_4_failure_code_title" translatable="false"><![CDATA[Can connect but received <b>%d</b> instead of <b>200</b>]]></string>
+    <string name="trouble_shooting___step_4_failure_code_description" translatable="false"><![CDATA[The app was able to establish a connection to <b>%s</b>, but the server did not respond as expected.]]></string>
+    <string name="trouble_shooting___step_4_failure_title" translatable="false">Can\'t connect because of an error</string>
+    <string name="trouble_shooting___step_4_failure_description" translatable="false"><![CDATA[A unexpected error occurred while trying to connect to <b>%1$s</b> (%2$s)]]></string>
+
+    <!-- Probe -->
+    <string name="help___probe_finding___title_basic_auth" translatable="false">Basic Authentication required</string>
+    <string name="help___probe_finding___explainer_basic_auth" translatable="false">Please enter your Basic Auth credentials below, not your OctoPrint user and password.</string>
+    <string name="help___probe_finding___title_dns_failure" translatable="false">Unable to resolve **%s**</string>
+    <string name="help___probe_finding___explainer_dns_failure" translatable="false">Android is not able to resolve the IP address for **%1$s**. Check following things to resolve the issue:\n\n- Ensure there is no typo\n- Make sure you are connected to the internet\n- Make sure you are on the correct WiFi network\n- Try to open [%2$s](%2$s) in your browser\n- Try using the **IP address** instead of **%1$s**</string>
+    <string name="help___probe_finding___title_local_dns_failure" translatable="false">Unable to resolve **%s**</string>
+    <string name="help___probe_finding___explainer_local_dns_failure" translatable="false">Android is not able to resolve the IP address for **%1$s**. Android devices are sometimes configured by the manufacturer in a way that they cannot reliably resolve .home or .local domains. Check following things to resolve the issue:\n\n- Ensure there is no typo\n- Make sure you are on the correct WiFi network\n- Try to open [%2$s](%2$s) in your browser\n- Try using the **IP address** instead of **%1$s**</string>
+    <string name="help___probe_finding___title_host_unreachable" translatable="false">Unable to connect to **%s**</string>
+    <string name="help___probe_finding___explainer_host_unreachable" translatable="false">OctoApp resolved the IP of **%1$s**, but **%2$s** can\'t be reached within 2 seconds. Check following things to resolve the issue:\n\n- Make sure the machine hosting OctoPrint is turned on and connected\n- If your OctoPrint is only available locally, make sure you are connected to the correct WiFi network\n- Try to open [%3$s](%3$s) in your browser</string>
+    <string name="help___probe_finding___title_https_not_trusted" translatable="false">Android does not trust **%s**</string>
+    <string name="help___probe_finding___explainer_https_not_trusted_weak_hostname_verification" translatable="false">The SSL certificate presented by your OctoPrint can not be used to establish a HTTPS connection because Android does not trust the certificate. This is a common issue for self-signed certificates that were not installed on this phone.\n\nAdditionally, the certificate uses a deprecated format that does not comply to modern security standards. A "subject alternative name" (SAN) field is required from Android 9 onwards.\n\nOctoApp can add this certificate to a trusted list and will bypass Android’s check for this certificate.</string>
+    <string name="help___probe_finding___explainer_https_not_trusted" translatable="false">The SSL certificate presented by your OctoPrint can not be used to establish a HTTPS connection because Android does not trust the certificate. This is a common issue for self-signed certificates that were not installed on this phone.\n\nOctoApp can add this certificate to a trusted list and will bypass Android’s check for this certificate.</string>
+    <string name="help___probe_finding___title_url_syntax" translatable="false">URL syntax error</string>
+    <string name="help___probe_finding___explainer_url_syntax" translatable="false">The URL **%1$s** seems to contain a syntax error and can\'t be parsed. Android reports following error:\n\n**%2$s**</string>
+    <string name="help___probe_finding___title_octoprint_not_found" translatable="false">OctoPrint not found</string>
+    <string name="help___probe_finding___explainer_octoprint_not_found" translatable="false">OctoApp was able to connect to **%1$s** but received a 404 response. Check following things to resolve the issue:\n\n- Make sure you use the correct port and host\n\n- Make sure that you use the correct path in the URL\n\n- Try to open [%1$s](**%1$s**) in your browser</string>
+    <string name="help___probe_finding___title_port_closed" translatable="false">Connected to **%1$s** but port **%2$d** is closed</string>
+    <string name="help___probe_finding___explainer_port_closed" translatable="false">OctoApp was able to connect to **%1$s** but port **%2$d** is closed. Check following things to resolve the issue:\n\n\n- Make sure **%2$d** is correct. If you don\'t specify the port explicitly, OctoApp will use 80 for HTTP and 443 for HTTPS\n\n- Try to open [%3$s](%3$s) in your browser</string>
+    <string name="help___probe_finding___title_failed_to_connect_via_http" translatable="false">Failed to connect to **%s** via HTTP</string>
+    <string name="help___probe_finding___explainer_failed_to_connect_via_http" translatable="false">OctoApp was able to communicate with **%1$s**, but when trying to establish a HTTP(S) connection an unexpected error occurred. Android reports following issue:\n\n**%2$s**\n\nYou can **long-press "Need help?"** above to get support (please include logs).</string>
+    <string name="help___probe_finding___title_unexpected_issue" translatable="false">Unexpected issue</string>
+    <string name="help___probe_finding___explainer_unexpected_issue" translatable="false">OctoApp encountered an unexpected error. Android reports following issue:\n\n**%1$s**\n\nYou can **long-press "Need help?"** above to get support (please include logs).</string>
+    <string name="help___probe_finding___title_might_not_be_octoprint" translatable="false">**%s** might not be an OctoPrint</string>
+    <string name="help___probe_finding___explainer_might_not_be_octoprint" translatable="false">OctoApp was able to communicate with **%1$s**, but the server seems not to be a recent version of OctoPrint.\n\nYou can continue, but other issues may arise in the following steps.</string>
+    <string name="help___probe_finding___title_websocket_upgrade_failed" translatable="false">HTTP access to **%s** works, but web socket broken</string>
+    <string name="help___probe_finding___explainer_websocket_upgrade_failed" translatable="false">OctoApp can communicate with **%1$s**, but the web socket failed to connect with response code **%2$d**. This is a very common issue with incorrectly configured reverse proxy setups. Check following things to resolve the issue:\n\n- Make sure your proxy sets the `Upgrade: WebSocket` header for `%3$s` as it is not forwarded to OctoPrint by default\n- Refer to the [configuration examples in the OctoPrint community](https://community.octoprint.org/t/reverse-proxy-configuration-examples/1107) for Nginx, HAProxy, Apache and others</string>
+
+    <!-- Help -->
+    <string name="help___status_x" translatable="false">Status: %s</string>
+    <string name="help___octoprint_community" translatable="false">OctoPrint community</string>
+    <string name="help___octoprint_discord" translatable="false">OctoPrint Discord</string>
+    <string name="help___report_a_bug" translatable="false">I want to report a bug</string>
+    <string name="help___ask_a_question" translatable="false">I have an other question</string>
+    <string name="help___title" translatable="false"><![CDATA[FAQ & Help]]></string>
+    <string name="help___introduction_part_2" translatable="false">If you are new to OctoApp, you can check out this introduction to get started with the app’s concept!</string>
+    <string name="help___introduction_part_1" translatable="false">Hi! I’m Chris, the developer of OctoApp! Thanks for using the app. If you don’t find what you need below, you can always reach out! 🖖</string>
+    <string name="help___introduction_video_caption" translatable="false">1 minute introduction</string>
+    <string name="help___faq_title" translatable="false">FAQ</string>
+    <string name="help___bugs_title" translatable="false">Known bugs in this version</string>
+    <string name="help___contact_title" translatable="false">Still no answers?</string>
+    <string name="help___contact_detail_information" translatable="false">I speak English and German. My current local time is %1$s (%2$s).</string>
+
+    <!-- OctoLab -->
+    <string name="lab_menu___title" translatable="false">OctoApp Lab</string>
+    <string name="lab_menu___subtitle" translatable="false">Here you can find experimental settings and things I do not officially support but which you can use at your own will. Features might be removed without prior notice.</string>
+    <string name="lab_menu___allow_battery_saver_title" translatable="false">Notification battery saver</string>
+    <string name="lab_menu___allow_battery_saver_description" translatable="false">With version 1.8, I introduced a battery saving mechanic for the print notification as it was consuming a lot of power on some devices. You can disable it to return to the old behaviour. This might resolve issues with missing filament change notifications.</string>
+    <string name="lab_menu___allow_to_rotate_title" translatable="false">Allow OctoApp to rotate</string>
+    <string name="lab_menu___allow_to_rotate_description" translatable="false">OctoApp can rotate into landscape mode. The UI is not optimized and rotating might cause issues on some screens. Will take affect after restart.</string>
+    <string name="lab_menu___experimental_webcam_title" translatable="false">New webcam stack</string>
+    <string name="lab_menu___experimental_webcam_description" translatable="false">Completely new webcam implementation introduced with version 1.9.0. The new webcam stack is using less resources and has a lower latency. Will take affect after a restart.</string>
+</resources>

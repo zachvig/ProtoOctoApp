@@ -54,8 +54,7 @@ class RequestAccessFragment : BaseFragment() {
         binding.content.removeAllViews()
         contentBinding = ReqestAccessFragmentBinding.inflate(LayoutInflater.from(requireContext()), binding.content, true)
         contentBinding.buttonApiKey.setOnClickListener { continueWithManualApiKey() }
-        contentBinding.text.text =
-            "Open OctoPrint on your computer or <a href=\"$webUrl\">in your phone's browser</a> and confirm that OctoApp is allowed to access your OctoPrint.".toHtml()
+        contentBinding.text.text = getString(R.string.sign_in___access___explainer, webUrl).toHtml()
         contentBinding.text.movementMethod = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(requireOctoActivity()))
         setUpAsHelpButton(contentBinding.help)
 

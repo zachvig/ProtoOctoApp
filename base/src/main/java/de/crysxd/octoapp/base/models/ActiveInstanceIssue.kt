@@ -11,9 +11,9 @@ enum class ActiveInstanceIssue {
 
     val messageRes: Int
         get() = when (this) {
-            WEBSOCKET_UPGRADE_FAILED -> R.string.signin___broken_setup___websocket_upgrade_failed
-            INVALID_API_KEY -> R.string.signin___broken_setup___api_key_revoked
-            HTTP_ISSUE -> R.string.signin___broken_setup___https_issue
-            BASIC_AUTH_REQUIRED -> R.string.signin___broken_setup___basic_auth_required
+            WEBSOCKET_UPGRADE_FAILED -> R.string.sign_in___broken_setup___websocket_upgrade_failed
+            INVALID_API_KEY -> R.string.sign_in___broken_setup___api_key_revoked
+            HTTP_ISSUE -> R.string.sign_in___broken_setup___https_issue
+            BASIC_AUTH_REQUIRED -> R.string.sign_in___broken_setup___basic_auth_required
         }
 }

@@ -266,7 +266,7 @@ class SignInFragment : BaseFragment(), InsetAwareScreen {
         // Do not show if already shown in this "session"
         if (viewModel.getPreFillInfo().issue == ActiveInstanceIssue.INVALID_API_KEY && !viewModel.invalidApiKeyInfoWasShown) {
             viewModel.invalidApiKeyInfoWasShown = true
-            requireOctoActivity().showDialog(requireContext().getString(R.string.signin___broken_setup___api_key_revoked))
+            requireOctoActivity().showDialog(requireContext().getString(R.string.sign_in___broken_setup___api_key_revoked))
         }
 
         binding.buttonMore.isVisible = viewModel.getKnownSignInInfo().isNotEmpty()
