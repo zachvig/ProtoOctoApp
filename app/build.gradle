@@ -32,6 +32,7 @@ dependencies {
     implementation project(':print-controls')
     implementation project(':pre-print-controls')
     implementation project(':file-manager')
+    implementation project(':help')
 
     /*
      * Google Play

@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.help
+package de.crysxd.octoapp.help.faq
 
 import android.graphics.Rect
 import android.net.Uri
@@ -23,7 +23,8 @@ import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.utils.ThemePlugin
-import de.crysxd.octoapp.databinding.HelpDetailFragmentBinding
+import de.crysxd.octoapp.help.R
+import de.crysxd.octoapp.help.databinding.HelpDetailFragmentBinding
 import io.noties.markwon.Markwon
 import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
@@ -84,7 +85,7 @@ class HelpDetailFragment : Fragment(), InsetAwareScreen {
         null
     } catch (e: Exception) {
         Timber.e(e)
-        requireOctoActivity().showDialog(getString(de.crysxd.octoapp.R.string.help___content_not_available),
+        requireOctoActivity().showDialog(getString(R.string.help___content_not_available),
             positiveAction = {
                 if (isAdded) {
                     findNavController().popBackStack()
@@ -96,7 +97,7 @@ class HelpDetailFragment : Fragment(), InsetAwareScreen {
 
     private fun bindBug(bug: KnownBug, markwon: Markwon) {
         binding.title.text = bug.title
-        binding.status.text = getString(de.crysxd.octoapp.R.string.help___status_x, bug.status)
+        binding.status.text = getString(R.string.help___status_x, bug.status)
         markwon.setMarkdown(binding.content, bug.content ?: "")
         binding.videoThumbnailContainer.isVisible = false
     }

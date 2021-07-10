@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.help
+package de.crysxd.octoapp.help.faq
 
 import android.os.Parcelable
 import com.google.gson.Gson

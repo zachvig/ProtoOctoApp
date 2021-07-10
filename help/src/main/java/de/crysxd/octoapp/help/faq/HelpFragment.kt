@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.help
+package de.crysxd.octoapp.help.faq
 
 import android.net.Uri
 import android.os.Bundle
@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
-import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ext.suspendedAwait
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
@@ -22,7 +21,8 @@ import de.crysxd.octoapp.base.ui.menu.MenuAdapter
 import de.crysxd.octoapp.base.ui.menu.MenuItem
 import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
 import de.crysxd.octoapp.base.ui.menu.PreparedMenuItem
-import de.crysxd.octoapp.databinding.HelpFragmentBinding
+import de.crysxd.octoapp.help.R
+import de.crysxd.octoapp.help.databinding.HelpFragmentBinding
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.util.concurrent.TimeUnit

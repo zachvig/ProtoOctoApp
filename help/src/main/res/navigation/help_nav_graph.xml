@@ -10,7 +10,7 @@
 
     <fragment
         android:id="@+id/helpOverviewFragment"
-        android:name="de.crysxd.octoapp.help.HelpFragment"
+        android:name="de.crysxd.octoapp.help.faq.HelpFragment"
         android:label="HelpOverviewFragment">
 
         <action
@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/helpDetail"
-        android:name="de.crysxd.octoapp.help.HelpDetailFragment"
+        android:name="de.crysxd.octoapp.help.faq.HelpDetailFragment"
         android:label="FaqFragment">
 
         <argument
@@ -39,8 +39,7 @@
 
         <argument
             android:name="bug"
-            android:defaultValue="@null"
-            app:argType="de.crysxd.octoapp.help.KnownBug"
+            app:argType="de.crysxd.octoapp.help.faq.KnownBug"
             app:nullable="true" />
 
         <deepLink

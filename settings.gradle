@@ -7,3 +7,4 @@ include ':base'
 include ':app'
 rootProject.name = "OctoApp"
 include ':file-manager'
+include ':help'
