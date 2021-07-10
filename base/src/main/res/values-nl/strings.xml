@@ -206,9 +206,6 @@
     <string name="eta">ETA</string>
     <string name="print_name">Naam</string>
     <string name="tune">Bijstellen</string>
-    <string name="cd_feed_rate">Aanvoersnelheid</string>
-    <string name="cd_flow_rate">Stroomsnelheid</string>
-    <string name="cd_fan_speed">Fan speed</string>
     <string name="why_are_the_values_not_always_shown">Waarom worden de waarden niet altijd getoond?</string>
     <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">OctoPrint kan de snelheid en de waarden van de ventilatoren niet opvragen. Waarden kunnen alleen worden getoond als er veranderingen worden waargenomen.</string>
     <string name="understood">Understood</string>

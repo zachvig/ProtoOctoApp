@@ -54,11 +54,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_2"
-                tools:text="Placeholder lorem ipsum dolor sit amet"
                 android:textAppearance="@style/OctoTheme.TextAppearance"
                 android:textColor="@color/normal_text"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:layout_editor_absoluteX="20dp" />
+                tools:layout_editor_absoluteX="20dp"
+                tools:text="Placeholder lorem ipsum dolor sit amet" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/videoContainer"
@@ -79,6 +79,12 @@
                     android:id="@+id/video"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+
+                <View
+                    android:id="@+id/videoOverlay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white" />
             </androidx.cardview.widget.CardView>
 
             <ProgressBar

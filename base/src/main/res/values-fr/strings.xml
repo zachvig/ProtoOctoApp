@@ -208,9 +208,6 @@
     <string name="eta">ETA</string>
     <string name="print_name">Nom de l\'impression</string>
     <string name="tune">Réglages</string>
-    <string name="cd_feed_rate">Vitesse de l\'extrudeur</string>
-    <string name="cd_flow_rate">Débit de l\'extrudeur</string>
-    <string name="cd_fan_speed">Vitesse du ventilateur</string>
     <string name="why_are_the_values_not_always_shown">Pourquoi les valeurs ne sont-elles pas toujours affichées ?</string>
     <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">OctoPrint ne peut pas interroger la vitesse et les taux des ventilateurs tout le temps. Les valeurs ne peuvent être affichées que si des changements sont constatés.</string>
     <string name="understood">Compris</string>

@@ -219,9 +219,6 @@
     <string name="eta">ETA</string>
     <string name="print_name">Print name</string>
     <string name="tune">Tune</string>
-    <string name="cd_feed_rate">Feed rate</string>
-    <string name="cd_flow_rate">Flow rate</string>
-    <string name="cd_fan_speed">Fan speed</string>
     <string name="why_are_the_values_not_always_shown">Why are the values not always shown?</string>
     <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">OctoPrint can\'t query fan speed and rates. Values can only be shown if changes are witnessed.</string>
     <string name="understood">Understood</string>
@@ -479,4 +476,6 @@
     <string name="sign_in___broken_setup___basic_auth_required">OctoApp required Basic Auth credentials to access OctoPrint</string>
     <string name="sign_in___broken_setup___websocket_upgrade_failed">OctoApp was unable to connect to the websocket of your OctoPrint due to an configuration issue</string>
     <string name="sign_in___access___explainer"><![CDATA[Open OctoPrint on your computer or <a href="%s">in your phone\'s browser</a> and confirm that OctoApp is allowed to access your OctoPrint.]]></string>
+    <string name="sign_in___success___subtile">Everything is ready!</string>
+    <string name="sign_in___success___title">Enjoy the app &amp;\nhappy printing!</string>
 </resources>

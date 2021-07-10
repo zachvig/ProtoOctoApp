@@ -204,9 +204,6 @@
     <string name="eta">ETA</string>
     <string name="print_name">Nome in stampa</string>
     <string name="tune">Tune</string>
-    <string name="cd_feed_rate">Tasso di alimentazione</string>
-    <string name="cd_flow_rate">Portata</string>
-    <string name="cd_fan_speed">Velocità del ventilatore</string>
     <string name="why_are_the_values_not_always_shown">Perché i valori non sempre vengono mostrati?</string>
     <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">OctoPrint non può interrogare la velocità e le tariffe delle ventole. I valori possono essere mostrati solo se si osservano dei cambiamenti.</string>
     <string name="understood">Capito</string>

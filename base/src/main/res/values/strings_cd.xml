@@ -17,4 +17,7 @@
     <string name="cd_next_layer" translatable="false">Next Layer</string>
     <string name="cd_sync_with_print_progress" translatable="false">Sync with print progress</string>
     <string name="cd_previous_layer" translatable="false">Previous Layer</string>
+    <string name="cd_feed_rate" translatable="false">Feed rate</string>
+    <string name="cd_flow_rate" translatable="false">Flow rate</string>
+    <string name="cd_fan_speed" translatable="false">Fan speed</string>
 </resources>

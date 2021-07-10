@@ -206,9 +206,6 @@
     <string name="eta">ETA</string>
     <string name="print_name">Druck Name</string>
     <string name="tune">Abstimmen</string>
-    <string name="cd_feed_rate">Vorschubgeschwindigkeit</string>
-    <string name="cd_flow_rate">Durchflussmenge</string>
-    <string name="cd_fan_speed">Lüftergeschwindigkeit</string>
     <string name="why_are_the_values_not_always_shown">Warum werden die Werte nicht immer angezeigt?</string>
     <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">OctoPrint kann diese Werte nicht abfragen. Die Werte können nur angezeigt werden, wenn Änderungen beobachtet werden.</string>
     <string name="understood">Verstanden</string>

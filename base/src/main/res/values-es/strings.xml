@@ -206,9 +206,6 @@
     <string name="eta">ETA</string>
     <string name="print_name">Nombre en letra de molde</string>
     <string name="tune">Sintoniza</string>
-    <string name="cd_feed_rate">Tasa de alimentación</string>
-    <string name="cd_flow_rate">La tasa de flujo</string>
-    <string name="cd_fan_speed">Velocidad del ventilador</string>
     <string name="why_are_the_values_not_always_shown">¿Por qué no se muestran siempre los valores?</string>
     <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">OctoPrint no puede consultar la velocidad del ventilador y las tasas. Los valores sólo se pueden mostrar si se observan cambios.</string>
     <string name="understood">Entendido</string>

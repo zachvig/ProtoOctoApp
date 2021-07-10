@@ -24,6 +24,11 @@ import de.crysxd.octoapp.signin.databinding.SignInSuccessFragmentContentBinding
 import de.crysxd.octoapp.signin.ext.goBackToDiscover
 
 class SignInSuccessFragment : Fragment(), InsetAwareScreen {
+
+    companion object {
+        private const val START_DELAY = 500L
+    }
+
     private lateinit var binding: SignInSuccessFragmentBinding
     private val mediaPlayer = MediaPlayer()
 
@@ -39,7 +44,6 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
         sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
         sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            //  postponeEnterTransition()
             playVideo()
         }
     }
@@ -53,6 +57,8 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
                 mediaPlayer.setSurface(holder.surface)
             }
         })
+
+        binding.buttonContinue.animate().setStartDelay(START_DELAY * 3).alpha(1f).start()
 
         binding.buttonContinue.setOnClickListener {
             val args = navArgs<SignInSuccessFragmentArgs>().value
@@ -72,7 +78,7 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun playVideo() {
-        val mediaPath = Uri.parse("android.resource://${requireContext().packageName}/${R.raw.success}")
+        val mediaPath = Uri.parse(getString(R.string.video_url___success))
         mediaPlayer.isLooping = true
         mediaPlayer.setDataSource(requireContext(), mediaPath)
         mediaPlayer.prepareAsync()
@@ -80,10 +86,12 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
         mediaPlayer.setOnPreparedListener {
             mediaPlayer.start()
         }
+        val loadingStart = System.currentTimeMillis()
         mediaPlayer.setOnInfoListener { _, what, _ ->
             if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+                val delay = (START_DELAY - (System.currentTimeMillis() - loadingStart)).coerceAtLeast(0)
                 binding.videoMask.animate()
-                    .setStartDelay(500)
+                    .setStartDelay(delay)
                     .alpha(0.75f)
                     .setDuration(800)
                     .start()

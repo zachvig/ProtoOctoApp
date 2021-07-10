@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Everything is ready! H"
+        android:text="@string/sign_in___success___subtile"
         android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle" />
 
     <TextView
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_1"
         android:gravity="center"
-        android:text="Enjoy the app &amp;\nhappy printing! H"
+        android:text="@string/sign_in___success___title"
         android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big" />
 
 

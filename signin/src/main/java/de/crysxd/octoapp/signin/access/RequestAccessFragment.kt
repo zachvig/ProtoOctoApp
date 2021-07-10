@@ -100,15 +100,16 @@ class RequestAccessFragment : BaseFragment() {
             override fun surfaceCreated(holder: SurfaceHolder) {
                 mediaPlayer.stop()
                 mediaPlayer.setSurface(holder.surface)
-                val mediaPath = Uri.parse("android.resource://${requireContext().packageName}/${R.raw.access_explainer}")
+                val mediaPath = Uri.parse(getString(R.string.video_url___access_explainer))
                 mediaPlayer.setDataSource(requireContext(), mediaPath)
                 mediaPlayer.prepareAsync()
+                startPostponedEnterTransition()
                 mediaPlayer.setOnPreparedListener {
                     mediaPlayer.start()
                 }
                 mediaPlayer.setOnInfoListener { _, what, _ ->
                     if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                        startPostponedEnterTransition()
+                        contentBinding.videoOverlay.animate().alpha(0f).setDuration(150).start()
                     }
                     true
                 }

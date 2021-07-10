@@ -22,7 +22,6 @@ import kotlinx.coroutines.delay
 import timber.log.Timber
 
 class PurchaseConfirmationDialog : DialogFragment() {
-
     private val mediaPlayer = MediaPlayer()
     private lateinit var binding: PurchaseCofirmationDialogBinding
 
@@ -33,21 +32,19 @@ class PurchaseConfirmationDialog : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mediaPlayer.isLooping = true
-        Firebase.remoteConfig.getString("purchase_confirmation_background_video").takeIf { it.isNotBlank() }?.let {
-            mediaPlayer.setDataSource(it)
-            mediaPlayer.prepareAsync()
-            mediaPlayer.playbackParams = mediaPlayer.playbackParams.also { p -> p.speed = 0.8f }
-            mediaPlayer.setOnPreparedListener {
-                mediaPlayer.start()
+        mediaPlayer.setDataSource(getString(R.string.video_url___success))
+        mediaPlayer.prepareAsync()
+        mediaPlayer.playbackParams = mediaPlayer.playbackParams.also { p -> p.speed = 0.6f }
+        mediaPlayer.setOnPreparedListener {
+            mediaPlayer.start()
+        }
+        mediaPlayer.setOnInfoListener { _, what, _ ->
+            if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+                Timber.i("Fading overlay out")
+                binding.backgroundSurfaceOverlay.animate()?.alpha(0.75f)?.start()
             }
-            mediaPlayer.setOnInfoListener { _, what, _ ->
-                if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                    Timber.i("Fading overlay out")
-                    binding.backgroundSurfaceOverlay.animate()?.alpha(0.9f)?.start()
-                }
 
-                true
-            }
+            true
         }
     }
 
