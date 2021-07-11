@@ -151,7 +151,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
     private fun testDns(host: String, webUrl: String): Pair<String?, Finding?> = try {
         localDnsResolver.resolve(host) to null
     } catch (e: UnknownHostException) {
-        if (host.endsWith(".local") || host.endsWith(".home")) {
+        if (host.endsWith(".local") || host.endsWith(".home") || host.endsWith(".lan")) {
             null to Finding.LocalDnsFailure(host = host, webUrl = webUrl)
         } else {
             null to Finding.DnsFailure(host = host, webUrl = webUrl)
