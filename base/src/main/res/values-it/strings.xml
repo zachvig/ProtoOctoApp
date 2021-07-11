@@ -438,4 +438,6 @@
     <string name="webcam_settings___aspect_ratio_source_octoprint">da OctoPrint</string>
     <string name="webcam_settings___aspect_ratio_source_image">dall\'immagine</string>
     <string name="webcam_settings___aspect_ratio_source">Rapporto d\'aspetto</string>
+    <string name="power_menu___toggle_x">Alzare %s</string>
+    <string name="power_menu___toggle">Alzare</string>
 </resources>

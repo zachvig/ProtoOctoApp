@@ -437,4 +437,6 @@
     <string name="webcam_settings___aspect_ratio_source_octoprint">van OctoPrint</string>
     <string name="webcam_settings___aspect_ratio_source_image">van beeld</string>
     <string name="webcam_settings___aspect_ratio_source">Beeldverhouding</string>
+    <string name="power_menu___toggle">Knevel</string>
+    <string name="power_menu___toggle_x">Knevel %s</string>
 </resources>

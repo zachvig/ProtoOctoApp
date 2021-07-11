@@ -18,6 +18,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.ext.suspendedAwait
 import de.crysxd.octoapp.notification.PrintNotificationSupportBroadcastReceiver
 import de.crysxd.octoapp.widgets.AppWidgetSupportBroadcastReceiver
 import kotlinx.coroutines.GlobalScope
@@ -27,6 +28,7 @@ import de.crysxd.octoapp.base.di.Injector as BaseInjector
 import de.crysxd.octoapp.connect_printer.di.Injector as ConnectPrintInjector
 import de.crysxd.octoapp.help.di.Injector as FileManagerInjector
 import de.crysxd.octoapp.help.di.Injector as HelpInjector
+import de.crysxd.octoapp.filemanager.di.Injector as FileManagerInjector
 import de.crysxd.octoapp.pre_print_controls.di.Injector as PrePrintControlsInjector
 import de.crysxd.octoapp.print_controls.di.Injector as PrintControlsInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
@@ -110,17 +112,26 @@ class OctoApp : Application() {
                 Firebase.auth.signInAnonymously().addOnSuccessListener {
                     Timber.i("Signed in anonymously as ${it.user?.uid}")
                     OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.UserId, it.user?.uid)
+                    FirebaseCrashlytics.getInstance().setCustomKey("User ID", Firebase.auth.currentUser?.uid ?: "???")
                 }.addOnFailureListener {
                     Timber.e("Failed to sign in: $it")
                 }
             } else {
                 Timber.i("Already signed in as ${Firebase.auth.currentUser?.uid}")
+                FirebaseCrashlytics.getInstance().setCustomKey("User ID", Firebase.auth.currentUser?.uid ?: "???")
                 OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.UserId, Firebase.auth.currentUser?.uid)
             }
 
             // Setup analytics
             // Do not enable if we are in a TestLab environment
             FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(BaseInjector.get().octoPreferences().isCrashReportingEnabled && !BuildConfig.DEBUG)
+            try {
+                val token = FirebaseMessaging.getInstance().token.suspendedAwait()
+                Timber.i("Push token: $token")
+                FirebaseCrashlytics.getInstance().setCustomKey("Push Token", token)
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
             val analyticsSuppressed = Settings.System.getString(contentResolver, "firebase.test.lab") == "true" || BuildConfig.DEBUG
             val analyticsEnabled = BaseInjector.get().octoPreferences().isAnalyticsEnabled
             Firebase.analytics.setAnalyticsCollectionEnabled(analyticsEnabled && !analyticsSuppressed)

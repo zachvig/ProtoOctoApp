@@ -10,6 +10,10 @@ class TurnOnPsuUseCase @Inject constructor() : UseCase<PowerDevice, Unit>() {
 
     override suspend fun doExecute(param: PowerDevice, timber: Timber.Tree) = runWithPowerPluginFixes(param) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PsuTurnedOn)
-        param.turnOn()
+        if (param.controlMethods.contains(PowerDevice.ControlMethod.TurnOnOff)) {
+            param.turnOn()
+        } else {
+            param.toggle()
+        }
     }
 }

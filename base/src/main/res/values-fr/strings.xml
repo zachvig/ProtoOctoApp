@@ -438,4 +438,6 @@
     <string name="webcam_settings___aspect_ratio_source_octoprint">de OctoPrint</string>
     <string name="webcam_settings___aspect_ratio_source_image">à partir de l\'image</string>
     <string name="webcam_settings___aspect_ratio_source">Rapport d\'aspect</string>
+    <string name="power_menu___toggle_x">Basculer %s</string>
+    <string name="power_menu___toggle">Basculer</string>
 </resources>

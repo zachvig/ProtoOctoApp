@@ -7,6 +7,7 @@ import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.ui.menu.Menu
 import de.crysxd.octoapp.base.ui.menu.MenuItem
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
+import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -17,10 +18,21 @@ class PowerDeviceMenu(
 ) : Menu {
 
     override suspend fun getMenuItem(): List<MenuItem> {
-        return listOf(
-            PowerControlsMenu.CyclePowerDeviceMenuItem(uniqueDeviceId = uniqueDeviceId, pluginName = pluginName, name = name, showName = false),
-            PowerControlsMenu.TurnPowerDeviceOffMenuItem(uniqueDeviceId = uniqueDeviceId, pluginName = pluginName, name = name, showName = false),
+        val device = Injector.get().getPowerDevicesUseCase().execute(
+            GetPowerDevicesUseCase.Params(
+                queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
+            )
+        ).first().first
+
+        return listOfNotNull(
+            PowerControlsMenu.CyclePowerDeviceMenuItem(uniqueDeviceId = uniqueDeviceId, pluginName = pluginName, name = name, showName = false)
+                .takeIf { device.controlMethods.contains(PowerDevice.ControlMethod.TurnOnOff) },
+            PowerControlsMenu.TurnPowerDeviceOffMenuItem(uniqueDeviceId = uniqueDeviceId, pluginName = pluginName, name = name, showName = false)
+                .takeIf { device.controlMethods.contains(PowerDevice.ControlMethod.TurnOnOff) },
             PowerControlsMenu.TurnPowerDeviceOnMenuItem(uniqueDeviceId = uniqueDeviceId, pluginName = pluginName, name = name, showName = false)
+                .takeIf { device.controlMethods.contains(PowerDevice.ControlMethod.TurnOnOff) },
+            PowerControlsMenu.TogglePowerDeviceMenuItem(uniqueDeviceId = uniqueDeviceId, pluginName = pluginName, name = name, showName = false)
+                .takeIf { device.controlMethods.contains(PowerDevice.ControlMethod.Toggle) },
         )
     }
 

@@ -6,14 +6,10 @@ import de.crysxd.octoapp.octoprint.plugins.power.runWithPowerPluginFixes
 import timber.log.Timber
 import javax.inject.Inject
 
-class TurnOffPsuUseCase @Inject constructor() : UseCase<PowerDevice, Unit>() {
+class TogglePsuUseCase @Inject constructor() : UseCase<PowerDevice, Unit>() {
 
     override suspend fun doExecute(param: PowerDevice, timber: Timber.Tree) = runWithPowerPluginFixes(param) {
-        OctoAnalytics.logEvent(OctoAnalytics.Event.PsuTurnedOff)
-        if (param.controlMethods.contains(PowerDevice.ControlMethod.TurnOnOff)) {
-            param.turnOff()
-        } else {
-            param.toggle()
-        }
+        OctoAnalytics.logEvent(OctoAnalytics.Event.PsuToggled)
+        param.toggle()
     }
 }

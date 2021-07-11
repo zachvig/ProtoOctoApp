@@ -91,6 +91,7 @@ interface BaseComponent {
     fun getMaterialsUseCase(): GetMaterialsUseCase
     fun activateMaterialUseCase(): ActivateMaterialUseCase
     fun cyclePsuUseCase(): CyclePsuUseCase
+    fun togglePsuUseCase(): TogglePsuUseCase
     fun handleOctoEverywhereAppPortalSuccessUseCase(): HandleOctoEverywhereAppPortalSuccessUseCase
     fun handleOctoEverywhereExceptionUseCase(): HandleOctoEverywhereExceptionUseCase
 

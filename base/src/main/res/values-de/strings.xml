@@ -437,4 +437,6 @@
     <string name="webcam_settings___aspect_ratio_source_octoprint">von OctoPrint</string>
     <string name="webcam_settings___aspect_ratio_source_image">aus Bild</string>
     <string name="webcam_settings___aspect_ratio_source">Seitenverhältnis</string>
+    <string name="power_menu___toggle_x">%s umschalten</string>
+    <string name="power_menu___toggle">Umschalten</string>
 </resources>

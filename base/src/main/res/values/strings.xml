@@ -413,7 +413,9 @@
     <string name="power_menu___turn_x_off">Turn %s off</string>
     <string name="power_menu___turn_off">Turn off</string>
     <string name="power_menu___turn_x_on">Turn %s on</string>
+    <string name="power_menu___toggle_x">Toggle %s</string>
     <string name="power_menu___turn_on">Turn on</string>
+    <string name="power_menu___toggle">Toggle</string>
     <string name="power_menu___cycle_x">Cycle %s</string>
     <string name="power_menu___cycle">Cycle</string>
     <string name="power_menu___device_provided_by_x"><![CDATA[<small>This device is provided by %s</small>]]></string>

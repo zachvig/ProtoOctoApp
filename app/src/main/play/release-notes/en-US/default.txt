@@ -2,4 +2,5 @@
 ⏲  Support for PrintTimeGenius plugin
 📹  The best webcam connection OctoApp ever had
 💡  Automatic lights when you use the webcam
+🔌  Support for OctoRelay plugin
 🔥  Many improvements throughout the app

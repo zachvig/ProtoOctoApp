@@ -11,12 +11,10 @@ import de.crysxd.octoapp.base.ext.urlEncode
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
-import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_POWER_DEVICE_CYCLE
-import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_POWER_DEVICE_OFF
-import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_POWER_DEVICE_ON
-import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SHOW_POWER_DEVICE_ACTIONS
+import de.crysxd.octoapp.base.ui.menu.main.*
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
+import kotlinx.coroutines.delay
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
@@ -25,6 +23,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
 
     override suspend fun shouldShowMenu(host: MenuBottomSheetFragment): Boolean {
         // Let's try to solve the task at hand without the user selecting somehting
+        val start = System.currentTimeMillis()
         val allDevices = Injector.get().getPowerDevicesUseCase().execute(
             GetPowerDevicesUseCase.Params(
                 queryState = false,
@@ -38,7 +37,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
             DeviceType.Light -> Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.appSettings?.defaultPowerDevices?.get(type.prefKey)
             DeviceType.Unspecified -> null
         }?.let { id ->
-            allDevices.firstOrNull { it.first.id == id }?.first
+            allDevices.firstOrNull { it.first.uniqueId == id }?.first
         }
 
         // Is there only one device?
@@ -51,8 +50,16 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
                 Action.TurnOn -> Injector.get().turnOnPsuUseCase().execute(deviceToUse)
                 Action.TurnOff -> Injector.get().turnOffPsuUseCase().execute(deviceToUse)
                 Action.Cycle -> Injector.get().cyclePsuUseCase().execute(deviceToUse)
+                Action.Toggle -> Injector.get().togglePsuUseCase().execute(deviceToUse)
                 Action.Unspecified -> Unit
             }
+
+            // Don't flash up. Load at least 500ms
+            val minDurationDelay = 750 - (System.currentTimeMillis() - start)
+            if (minDurationDelay > 0) {
+                delay(minDurationDelay)
+            }
+
             host.handleAction(action, type, deviceToUse)
             false
         } else {
@@ -70,16 +77,21 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         context.getString(R.string.power_menu___empty_state_subtitle)
 
     override suspend fun getMenuItem() = Injector.get().getPowerDevicesUseCase().execute(GetPowerDevicesUseCase.Params(queryState = false))
-        .map {
+        .mapNotNull {
             val name = it.first.displayName
             val id = it.first.uniqueId
             val pluginName = it.first.pluginDisplayName
+            val toggle = TogglePowerDeviceMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, showName = true, deviceType = type)
+                .takeIf { _ -> it.first.controlMethods.contains(PowerDevice.ControlMethod.Toggle) }
 
             when (action) {
                 Action.Unspecified -> ShowPowerDeviceActionsMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name)
                 Action.Cycle -> CyclePowerDeviceMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, showName = true, deviceType = type)
                 Action.TurnOff -> TurnPowerDeviceOffMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, showName = true, deviceType = type)
+                    .takeIf { _ -> it.first.controlMethods.contains(PowerDevice.ControlMethod.TurnOnOff) } ?: toggle
                 Action.TurnOn -> TurnPowerDeviceOnMenuItem(uniqueDeviceId = id, pluginName = pluginName, name = name, showName = true, deviceType = type)
+                    .takeIf { _ -> it.first.controlMethods.contains(PowerDevice.ControlMethod.TurnOnOff) } ?: toggle
+                Action.Toggle -> toggle
             }
         }
 
@@ -101,9 +113,14 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
             if (isCheckBoxChecked) {
                 Injector.get().octorPrintRepository().updateAppSettingsForActive {
                     it.copy(
-                        defaultPowerDevices = (it.defaultPowerDevices ?: emptyMap()).toMutableMap().apply { this[deviceType.prefKey] = device.uniqueId })
+                        defaultPowerDevices = (it.defaultPowerDevices ?: emptyMap())
+                            .toMutableMap().apply {
+                                this[deviceType.prefKey] = device.uniqueId
+                            }
+                    )
                 }
             }
+            dismissAllowingStateLoss()
         }
     }
 
@@ -198,6 +215,41 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         }
     }
 
+    class TogglePowerDeviceMenuItem(
+        val uniqueDeviceId: String,
+        val name: String,
+        val pluginName: String,
+        val showName: Boolean = true,
+        val deviceType: DeviceType = DeviceType.Unspecified,
+    ) : MenuItem {
+        companion object {
+            fun forItemId(itemId: String): TogglePowerDeviceMenuItem {
+                val parts = itemId.split("/")
+                return TogglePowerDeviceMenuItem(parts[1].urlDecode(), parts[2].urlDecode(), parts[3].urlDecode())
+            }
+        }
+
+        override val itemId = "$MENU_ITEM_POWER_DEVICE_TOGGLE/$uniqueDeviceId/${name.urlEncode()}/${pluginName.urlEncode()}"
+        override var groupId = ""
+        override val order = 335
+        override val style = MenuItemStyle.Printer
+        override val icon = R.drawable.ic_round_power_cycle_24px
+
+        override suspend fun getTitle(context: Context) =
+            if (showName) context.getString(R.string.power_menu___toggle_x, name) else context.getString(R.string.power_menu___toggle)
+
+        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+            val device = Injector.get().getPowerDevicesUseCase().execute(
+                GetPowerDevicesUseCase.Params(
+                    queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
+                )
+            ).first().first
+
+            Injector.get().togglePsuUseCase().execute(device)
+            host?.handleAction(Action.Toggle, deviceType, device)
+        }
+    }
+
     class CyclePowerDeviceMenuItem(
         val uniqueDeviceId: String,
         val name: String,
@@ -214,7 +266,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
 
         override val itemId = "$MENU_ITEM_POWER_DEVICE_CYCLE/$uniqueDeviceId/${name.urlEncode()}/${pluginName.urlEncode()}"
         override var groupId = ""
-        override val order = 335
+        override val order = 336
         override val style = MenuItemStyle.Printer
         override val icon = R.drawable.ic_round_power_cycle_24px
 
@@ -260,6 +312,9 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
     sealed class Action : Parcelable {
         @Parcelize
         object TurnOn : Action()
+
+        @Parcelize
+        object Toggle : Action()
 
         @Parcelize
         object TurnOff : Action()

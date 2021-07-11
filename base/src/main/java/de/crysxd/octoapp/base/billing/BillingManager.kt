@@ -233,6 +233,11 @@ object BillingManager {
             return
         }
 
+        if (billingResult.responseCode == -1) {
+            Timber.w("Service was disconnectedT")
+            return
+        }
+
         val playServicesAvailable = try {
             val googleApiAvailability = GoogleApiAvailability.getInstance()
             val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(Injector.get().context())

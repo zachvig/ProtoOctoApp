@@ -211,7 +211,7 @@ class ChangeOctoPrintInstanceMenuItem : SubMenuItem() {
 
     override suspend fun getTitle(context: Context) =
         context.getString(
-            if (Injector.get().octorPrintRepository().getAll().size <= 1) {
+            if (Injector.get().octorPrintRepository().getAll().size > 1) {
                 R.string.main_menu___item_change_octoprint_instance
             } else {
                 R.string.main_menu___item_add_octoprint_instance
