@@ -9,7 +9,6 @@
     <include app:graph="@navigation/help_nav_graph" />
     <include app:graph="@navigation/help_webcam_nav_graph" />
     <include app:graph="@navigation/fullscreen_webcam_nav_graph" />
-    <include app:graph="@navigation/trouble_shoot_nav_graph" />
     <include app:graph="@navigation/purchase_flow_nav_graph" />
     <include app:graph="@navigation/sign_in_discover_nav_graph" />
     <include app:graph="@navigation/sign_in_connect_nav_graph" />

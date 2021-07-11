@@ -20,7 +20,6 @@ import de.crysxd.octoapp.base.ui.common.configureremote.ConfigureRemoteAccessVie
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueViewModel
 import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
 import de.crysxd.octoapp.base.ui.common.terminal.TerminalViewModel
-import de.crysxd.octoapp.base.ui.common.troubleshoot.TroubleShootViewModel
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetViewModel
 import de.crysxd.octoapp.base.ui.widget.EditWidgetsViewModel
 import de.crysxd.octoapp.base.ui.widget.extrude.ExtrudeWidgetViewModel
@@ -36,12 +35,6 @@ open class ViewModelModule {
     @Provides
     fun bindViewModelFactory(creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>): BaseViewModelFactory =
         BaseViewModelFactory(creators)
-
-    @Provides
-    @IntoMap
-    @ViewModelKey(TroubleShootViewModel::class)
-    open fun provideTroubleShootViewModel(): ViewModel =
-        TroubleShootViewModel()
 
     @Provides
     @IntoMap

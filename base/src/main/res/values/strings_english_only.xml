@@ -9,18 +9,6 @@
     <string name="privacy_menu___analytics_title" translatable="false">Anonymous usage statistics</string>
     <string name="privacy_menu___analytics_description" translatable="false">If enabled, OctoApp sends anonymous usage information to Firebase Analytics which will be deleted after 90 days. This information helps me in determining which features of the app are used the most, and where I should spend time on improving to benefit users. This information does not contain any data except which features of the app are used and basic information about your setup, such as which plugins are installed or the OctoPrint version. The data is not linked to any advertisement profile or anything similar. If you reinstall the app or switch your device, I do not have any means to connect your data.</string>
 
-    <!-- Troubleshooting -->
-    <string name="trouble_shooting___step_1_failure_title" translatable="false"><![CDATA[Can\'t resolve <b>%s</b>]]></string>
-    <string name="trouble_shooting___step_1_failure_description" translatable="false"><![CDATA[This indicates a configuration issue. The phone can\'t resolve a IP address for <b>%s</b>, this is not influenced by any OctoPrint settings or the API key.]]></string>
-    <string name="trouble_shooting___step_2_failure_title" translatable="false"><![CDATA[Host <b>%s</b> is not reachable]]></string>
-    <string name="trouble_shooting___step_2_failure_description" translatable="false"><![CDATA[This indicates a configuration issue. The phone can\'t reach <b>%s</b>, this is not influenced by any OctoPrint settings or the API key.]]></string>
-    <string name="trouble_shooting___step_3_failure_title" translatable="false"><![CDATA[Can connect to <b>%1$s</b> but not to port <b>%2$d</b>]]></string>
-    <string name="trouble_shooting___step_3_failure_description" translatable="false"><![CDATA[The phone can connect to the host, but the port <b>%d</b> does not accept incoming connections.]]></string>
-    <string name="trouble_shooting___step_4_failure_code_title" translatable="false"><![CDATA[Can connect but received <b>%d</b> instead of <b>200</b>]]></string>
-    <string name="trouble_shooting___step_4_failure_code_description" translatable="false"><![CDATA[The app was able to establish a connection to <b>%s</b>, but the server did not respond as expected.]]></string>
-    <string name="trouble_shooting___step_4_failure_title" translatable="false">Can\'t connect because of an error</string>
-    <string name="trouble_shooting___step_4_failure_description" translatable="false"><![CDATA[A unexpected error occurred while trying to connect to <b>%1$s</b> (%2$s)]]></string>
-
     <!-- Probe -->
     <string name="sign_in___probe_finding___title_basic_auth" translatable="false">Basic Authentication required</string>
     <string name="sign_in___probe_finding___explainer_basic_auth" translatable="false">Please enter your Basic Auth credentials below, not your OctoPrint user and password.</string>
