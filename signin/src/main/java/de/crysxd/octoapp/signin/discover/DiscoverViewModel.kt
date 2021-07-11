@@ -21,7 +21,7 @@ class DiscoverViewModel(
 ) : BaseViewModel() {
 
     companion object {
-        const val INITIAL_DELAY_TIME = 2000
+        const val INITIAL_DELAY_TIME = 3000
     }
 
     private var manualFailureCounter = 0

@@ -477,7 +477,7 @@
     <string name="sign_in___broken_setup___https_issue">OctoApp was unable to connect via HTTPS due to an SSL issue, please check your setup</string>
     <string name="sign_in___broken_setup___basic_auth_required">OctoApp required Basic Auth credentials to access OctoPrint</string>
     <string name="sign_in___broken_setup___websocket_upgrade_failed">OctoApp was unable to connect to the websocket of your OctoPrint due to an configuration issue</string>
-    <string name="sign_in___access___explainer"><![CDATA[Open OctoPrint on your computer or <a href="%s">in your phone\'s browser</a> and confirm that OctoApp is allowed to access your OctoPrint.]]></string>
+    <string name="sign_in___access___explainer"><![CDATA[Open OctoPrint on your computer or <a href="%s">in your phone\'s browser</a> and confirm that OctoApp is allowed to access your OctoPrint.<br><br><small>Not seeing the prompt? Try reloading the page</small>]]></string>
     <string name="sign_in___success___subtile">Everything is ready!</string>
     <string name="sign_in___success___title">Enjoy the app &amp;\nhappy printing!</string>
     <string name="sign_in___manual_api_key___title">Enter your OctoPrint\'s API key</string>
