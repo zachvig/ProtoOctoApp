@@ -31,6 +31,11 @@ class HelpFragment : Fragment() {
 
     private lateinit var binding: HelpFragmentBinding
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        postponeEnterTransition()
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         HelpFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
 
@@ -49,6 +54,8 @@ class HelpFragment : Fragment() {
             ).also {
                 it.menuItems = createContactOptions().prepare()
             }
+
+            startPostponedEnterTransition()
 
             // Load FAQ (if remote config is old)
             val fetchAgeMinutes = TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - Firebase.remoteConfig.info.fetchTimeMillis)

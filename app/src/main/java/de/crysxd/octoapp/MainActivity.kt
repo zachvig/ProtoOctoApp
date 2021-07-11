@@ -8,6 +8,8 @@ import android.content.res.Configuration
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
@@ -235,24 +237,26 @@ class MainActivity : OctoActivity() {
     }
 
     private fun handleDeepLink(uri: Uri) {
-        if (UriLibrary.isActiveInstanceRequired(uri) && Injector.get().octorPrintRepository().getActiveInstanceSnapshot() == null) {
-            Timber.i("Uri requires active instance, delaying")
-            viewModel.pendingUri = uri
-        } else {
-            if (uri.path == "/$OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH") {
-                // Uh yeah, new OctoEverywhere connection
-                lifecycleScope.launchWhenCreated {
-                    try {
-                        Timber.i("Handling OctoEverywhere connection")
-                        Injector.get().handleOctoEverywhereAppPortalSuccessUseCase().execute(uri)
-                    } catch (e: Exception) {
-                        showDialog(e)
-                    }
-                }
+        Handler(Looper.getMainLooper()).post {
+            if (UriLibrary.isActiveInstanceRequired(uri) && Injector.get().octorPrintRepository().getActiveInstanceSnapshot() == null) {
+                Timber.i("Uri requires active instance, delaying")
+                viewModel.pendingUri = uri
             } else {
-                // Generic link
-                Timber.i("Handling generic URI: $uri")
-                uri.open(this@MainActivity)
+                if (uri.path == "/$OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH") {
+                    // Uh yeah, new OctoEverywhere connection
+                    lifecycleScope.launchWhenCreated {
+                        try {
+                            Timber.i("Handling OctoEverywhere connection")
+                            Injector.get().handleOctoEverywhereAppPortalSuccessUseCase().execute(uri)
+                        } catch (e: Exception) {
+                            showDialog(e)
+                        }
+                    }
+                } else {
+                    // Generic link
+                    Timber.i("Handling generic URI: $uri")
+                    uri.open(this@MainActivity)
+                }
             }
         }
     }

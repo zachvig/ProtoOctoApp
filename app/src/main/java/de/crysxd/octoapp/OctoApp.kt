@@ -26,9 +26,8 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
 import de.crysxd.octoapp.connect_printer.di.Injector as ConnectPrintInjector
-import de.crysxd.octoapp.help.di.Injector as FileManagerInjector
-import de.crysxd.octoapp.help.di.Injector as HelpInjector
 import de.crysxd.octoapp.filemanager.di.Injector as FileManagerInjector
+import de.crysxd.octoapp.help.di.Injector as HelpInjector
 import de.crysxd.octoapp.pre_print_controls.di.Injector as PrePrintControlsInjector
 import de.crysxd.octoapp.print_controls.di.Injector as PrintControlsInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
