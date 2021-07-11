@@ -7,6 +7,9 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_FULL_WEBCAM_RESOLUTION
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.dns.LocalDnsInterceptor
+import de.crysxd.octoapp.octoprint.SubjectAlternativeNameCompatVerifier
+import de.crysxd.octoapp.octoprint.ext.withHostnameVerifier
+import de.crysxd.octoapp.octoprint.ext.withSslKeystore
 import de.crysxd.octoapp.octoprint.interceptors.GenerateExceptionInterceptor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -122,9 +125,12 @@ class MjpegConnection2(
     }
 
     private fun connect(useLocalDns: Boolean = false): Response = try {
+        val sslKeystoreHandler = Injector.get().sslKeyStoreHandler()
         val client = OkHttpClient.Builder()
             .addInterceptor(LocalDnsInterceptor(Injector.get().localDnsResolver()))
             .addInterceptor(GenerateExceptionInterceptor(null, null))
+            .withHostnameVerifier(SubjectAlternativeNameCompatVerifier().takeIf { sslKeystoreHandler.isWeakVerificationForHost(streamUrl) })
+            .withSslKeystore(sslKeystoreHandler.loadKeyStore())
             .connectTimeout(5, TimeUnit.SECONDS)
             .readTimeout(5, TimeUnit.SECONDS)
             .build()

@@ -10,8 +10,6 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.lifecycleScope
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -27,10 +25,11 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
 import de.crysxd.octoapp.connect_printer.di.Injector as ConnectPrintInjector
+import de.crysxd.octoapp.help.di.Injector as FileManagerInjector
+import de.crysxd.octoapp.help.di.Injector as HelpInjector
 import de.crysxd.octoapp.pre_print_controls.di.Injector as PrePrintControlsInjector
 import de.crysxd.octoapp.print_controls.di.Injector as PrintControlsInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
-import de.crysxd.octoapp.filemanager.di.Injector as FileManagerInjector
 
 
 class OctoApp : Application() {
@@ -55,6 +54,7 @@ class OctoApp : Application() {
         PrePrintControlsInjector.init(BaseInjector.get())
         PrintControlsInjector.init(BaseInjector.get())
         FileManagerInjector.init(BaseInjector.get())
+        HelpInjector.init(BaseInjector.get())
 
         // Dark mode, must be done sync
         BaseInjector.get().applyLegacyDarkModeUseCase().executeBlocking(Unit)

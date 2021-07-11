@@ -1,21 +1,18 @@
 package de.crysxd.octoapp.base.usecase
 
+import android.graphics.Bitmap
 import android.net.Uri
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.dns.LocalDnsResolver
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.widget.webcam.MjpegConnection
 import de.crysxd.octoapp.base.ui.widget.webcam.MjpegConnection2
-import de.crysxd.octoapp.octoprint.exceptions.BasicAuthRequiredException
-import de.crysxd.octoapp.octoprint.exceptions.OctoPrintApiException
-import de.crysxd.octoapp.octoprint.exceptions.OctoPrintHttpsException
-import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
+import de.crysxd.octoapp.octoprint.exceptions.*
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
-import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.InetAddress
 import java.net.Socket
@@ -109,30 +106,44 @@ class TestFullNetworkStackUseCase @Inject constructor(
             timber.i("Test webcam")
             var startTime: Long? = null
             val frames = 30
-            MjpegConnection2(
+            val frame = MjpegConnection2(
                 streamUrl = target.webUrl,
                 authHeader = target.webcamSettings.authHeader,
                 name = "test",
                 throwExceptions = true
-            ).load().filter { it is MjpegConnection.MjpegSnapshot.Frame }.onEach {
+            ).load().mapNotNull { it as? MjpegConnection.MjpegSnapshot.Frame }.onEach {
                 startTime = startTime ?: System.currentTimeMillis()
-            }.take(frames).toList()
+            }.take(frames).toList().last()
             val endTime = System.currentTimeMillis()
             val fps = 1000 / ((endTime - (startTime ?: 0)) / frames.toFloat())
             timber.i("Passed (%.2f FPS)", fps)
-            Finding.WebcamReady(target.webUrl, fps)
-        } ?: Finding.NoImage(webUrl = target.webUrl)
-    } catch (e: FileNotFoundException) {
-        Finding.NotFound(
-            webUrl = target.webUrl,
-            host = host,
-        )
+            Finding.WebcamReady(target.webUrl, fps, frame.frame)
+        } ?: Finding.NoImage(webUrl = target.webUrl, host = host)
+    } catch (e: OctoPrintApiException) {
+        when (e.responseCode) {
+            404 -> Finding.NotFound(
+                host = host,
+                webUrl = target.webUrl
+            )
+
+            else -> Finding.UnexpectedHttpIssue(
+                webUrl = target.webUrl,
+                exception = e,
+                host = host
+            )
+        }
     } catch (e: BasicAuthRequiredException) {
         Finding.BasicAuthRequired(
             host = host,
             userRealm = e.userRealm,
             webUrl = target.webUrl,
         )
+    } catch (e: IOException) {
+        if (e.message?.contains("Connection broken", ignoreCase = true) == true) {
+            Finding.NoImage(webUrl = target.webUrl, host = host)
+        } else {
+            Finding.UnexpectedHttpIssue(webUrl = target.webUrl, host = host, exception = e)
+        }
     } catch (e: Exception) {
         Finding.UnexpectedIssue(target.webUrl, e)
     }
@@ -338,6 +349,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
 
         data class NoImage(
             override val webUrl: String,
+            val host: String,
         ) : Finding()
 
         data class OctoPrintReady(
@@ -348,6 +360,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
         data class WebcamReady(
             override val webUrl: String,
             val fps: Float,
+            val image: Bitmap
         ) : Finding()
     }
 }

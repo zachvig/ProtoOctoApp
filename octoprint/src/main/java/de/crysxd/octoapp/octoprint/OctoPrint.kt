@@ -3,6 +3,8 @@ package de.crysxd.octoapp.octoprint
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import de.crysxd.octoapp.octoprint.api.*
+import de.crysxd.octoapp.octoprint.ext.withHostnameVerifier
+import de.crysxd.octoapp.octoprint.ext.withSslKeystore
 import de.crysxd.octoapp.octoprint.interceptors.*
 import de.crysxd.octoapp.octoprint.json.*
 import de.crysxd.octoapp.octoprint.logging.LoggingInterceptorLogger
@@ -25,7 +27,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.URI
 import java.security.KeyStore
-import java.security.SecureRandom
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -169,22 +170,8 @@ class OctoPrint(
     fun createOkHttpClient() = OkHttpClient.Builder().apply {
         val logger = createHttpLogger()
 
-        hostnameVerifier?.let(::hostnameVerifier)
-        keyStore?.let { ks ->
-            val customTrustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).also {
-                it.init(ks)
-            }
-            val x509TrustManager = customTrustManagerFactory.trustManagers.mapNotNull {
-                it as? X509TrustManager
-            }.first()
-
-            val sslContext = SSLContext.getInstance("SSL")
-            val keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
-            keyManagerFactory.init(keyStore, "pass".toCharArray())
-            sslContext.init(keyManagerFactory.keyManagers, customTrustManagerFactory.trustManagers, SecureRandom())
-            sslSocketFactory(sslContext.socketFactory, x509TrustManager)
-        }
-
+        withHostnameVerifier(hostnameVerifier)
+        withSslKeystore(keyStore)
         connectTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)
         readTimeout(readWriteTimeout, TimeUnit.MILLISECONDS)
         writeTimeout(readWriteTimeout, TimeUnit.MILLISECONDS)

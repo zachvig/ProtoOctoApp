@@ -7,7 +7,6 @@ import androidx.lifecycle.*
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_HLS_WEBCAM
-import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.isHlsStreamUrl
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
@@ -93,16 +92,6 @@ class WebcamViewModel(
                         Timber.tag(tag).i("Refresh with streamUrl: $streamUrl")
                         Timber.tag(tag).i("Webcam count: $webcamCount")
                         emit(UiState.Loading(canSwitchWebcam))
-
-
-                        webcamSettings?.let {
-                            TestFullNetworkStackUseCase(
-                                Injector.get().octoPrintProvider(),
-                                Injector.get().localDnsResolver()
-                            ).execute(
-                                TestFullNetworkStackUseCase.Target.Webcam(it)
-                            )
-                        }
 
                         // Check if webcam is configured
                         if (webcamSettings?.webcamEnabled == false || streamUrl.isNullOrBlank()) {

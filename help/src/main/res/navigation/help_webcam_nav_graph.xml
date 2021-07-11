@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/help_nav_graph"
+    app:startDestination="@id/webcamTroubleShootingFragment">
+
+    <deepLink
+        android:id="@+id/deepLink2"
+        app:uri="@string/uri___webcam_troubleshooting" />
+
+    <fragment
+        android:id="@+id/webcamTroubleShootingFragment"
+        android:name="de.crysxd.octoapp.help.troubleshoot.WebcamTroubleShootingFragment"
+        android:label="WebcamTroubleShootingFragment"
+        tools:layout="@layout/help_webcam_troubleshooting" />
+
+</navigation>

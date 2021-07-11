@@ -167,8 +167,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 binding.buttonReconnect.text = context.getString(R.string.reconnect)
                 binding.buttonTroubleShoot.isVisible = supportsToubleShooting
                 binding.buttonTroubleShoot.setOnClickListener {
-                    UriLibrary.getTroubleShootUri(Uri.parse(newState.streamUrl))
-                        .open(findFragment<Fragment>().requireOctoActivity())
+                    UriLibrary.getWebcamTroubleshootingUri().open(findFragment<Fragment>().requireOctoActivity())
                 }
             }
             is WebcamState.HlsStreamReady -> displayHlsStream(newState)

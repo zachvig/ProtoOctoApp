@@ -21,12 +21,16 @@ object UriLibrary {
     fun getHelpUri(): Uri =
         getUri(R.string.uri___help)
 
+    fun getWebcamTroubleshootingUri(): Uri =
+        getUri(R.string.uri___webcam_troubleshooting)
+
     fun getFileManagerUri(): Uri =
         getUri(R.string.uri___file_manager)
 
     fun getWebcamUri(): Uri =
         getUri(R.string.uri___webcam)
 
+    @Deprecated("Don't use")
     fun getTroubleShootUri(baseUrl: Uri, apiKey: String? = null): Uri =
         getUri(R.string.uri___troubleshoot, "{baseUrl}", baseUrl.toString().urlEncode(), "{apiKey}", apiKey ?: "")
 
