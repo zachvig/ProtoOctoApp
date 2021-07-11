@@ -10,12 +10,6 @@
         app:uri="@string/uri___fix_octoprint_connection" />
 
     <fragment
-        android:id="@+id/readQrCodeFragment"
-        android:name="de.crysxd.octoapp.signin.ui.ReadQrCodeFragment"
-        android:label="ReadQrCodeFragment"
-        tools:layout="@layout/read_qr_code_fragment" />
-
-    <fragment
         android:id="@+id/probeOctoPrintFragment"
         android:name="de.crysxd.octoapp.signin.probe.ProbeOctoPrintFragment"
         android:label="ProbeOctoPrintFragment"
@@ -55,6 +49,14 @@
             app:exitAnim="@anim/sign_in_shared_element_fade_out"
             app:popEnterAnim="@anim/sign_in_shared_element_fade_in"
             app:popExitAnim="@anim/sign_in_shared_element_fade_out" />
+
+        <action
+            android:id="@+id/action_manually_enter_api_key"
+            app:destination="@id/manualApiKey"
+            app:enterAnim="@anim/sign_in_shared_element_fade_in"
+            app:exitAnim="@anim/sign_in_shared_element_fade_out"
+            app:popEnterAnim="@anim/sign_in_shared_element_fade_in"
+            app:popExitAnim="@anim/sign_in_shared_element_fade_out" />
     </fragment>
 
     <fragment
@@ -71,5 +73,39 @@
             android:name="apiKey"
             app:argType="string" />
     </fragment>
+
+    <fragment
+        android:id="@+id/manualApiKey"
+        android:name="de.crysxd.octoapp.signin.apikey.ManualApiKeyFragment"
+        android:label="RequestAccessFragment"
+        tools:layout="@layout/base_signin_fragment">
+
+        <argument
+            android:name="webUrl"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_read_qr_code"
+            app:destination="@id/readQrCodeFragment"
+            app:enterAnim="@anim/enterAnim"
+            app:exitAnim="@anim/exitAnim"
+            app:popEnterAnim="@anim/enterAnim"
+            app:popExitAnim="@anim/exitAnim" />
+
+        <action
+            android:id="@+id/action_success"
+            app:destination="@id/signInSuccessFragment"
+            app:enterAnim="@anim/sign_in_shared_element_fade_in"
+            app:exitAnim="@anim/sign_in_shared_element_fade_out"
+            app:popEnterAnim="@anim/sign_in_shared_element_fade_in"
+            app:popExitAnim="@anim/sign_in_shared_element_fade_out" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/readQrCodeFragment"
+        android:name="de.crysxd.octoapp.signin.apikey.ReadQrCodeFragment"
+        android:label="ReadQrCodeFragment"
+        tools:layout="@layout/read_qr_code_fragment" />
 
 </navigation>

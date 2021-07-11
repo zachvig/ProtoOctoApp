@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.signin.ui
+package de.crysxd.octoapp.signin.apikey
 
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -50,8 +50,8 @@ class ReadQrCodeFragment : Fragment(), InsetAwareScreen {
         super.onStart()
 
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            binding.scannerView?.postDelayed({
-                binding.scannerView?.startCamera()
+            binding.scannerView.postDelayed({
+                binding.scannerView.startCamera()
             }, 300)
         } else {
             requestPermissions(arrayOf(android.Manifest.permission.CAMERA), REQUEST_CODE_PERMISSION)

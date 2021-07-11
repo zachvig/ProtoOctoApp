@@ -480,4 +480,12 @@
     <string name="sign_in___access___explainer"><![CDATA[Open OctoPrint on your computer or <a href="%s">in your phone\'s browser</a> and confirm that OctoApp is allowed to access your OctoPrint.]]></string>
     <string name="sign_in___success___subtile">Everything is ready!</string>
     <string name="sign_in___success___title">Enjoy the app &amp;\nhappy printing!</string>
+    <string name="sign_in___manual_api_key___title">Enter your OctoPrint\'s API key</string>
+    <string name="sign_in___manual_api_key___error_invalid_api_key">The entered API key is not accepted by OctoPrint</string>
+    <string name="sign_in___manual_api_key___error_other">Octoapp wasn\'t abel to test the API key, run the troubleshooting to learn more</string>
+    <string name="sign_in___manual_api_key___hint">API key</string>
+    <string name="sign_in___manual_api_key___hint_active">API key – from your OctoPrint settings</string>
+    <string name="sign_in___manual_api_key___troubleshooting">Troubleshooting</string>
+    <string name="sign_in___discover___web_url_hint">OctoPrint URL</string>
+    <string name="sign_in___discover___web_url_hint_active">OctoPrint URL – Copy this from your browser!</string>
 </resources>

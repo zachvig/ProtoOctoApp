@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -118,7 +117,9 @@ class RequestAccessFragment : BaseFragment() {
     }
 
     private fun continueWithManualApiKey() {
-        Toast.makeText(requireContext(), "Manual API key", Toast.LENGTH_SHORT).show()
+        val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
+        val directions = RequestAccessFragmentDirections.actionManuallyEnterApiKey(webUrl)
+        findNavController().navigate(directions, extras)
     }
 
     private fun continueWithApiKey(apiKey: String) {

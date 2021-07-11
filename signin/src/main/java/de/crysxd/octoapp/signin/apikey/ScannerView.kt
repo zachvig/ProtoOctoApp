@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.signin.ui
+package de.crysxd.octoapp.signin.apikey
 
 import android.content.Context
 import android.graphics.Color

@@ -14,10 +14,9 @@ import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
 import de.crysxd.octoapp.base.usecase.RequestApiAccessUseCase
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import de.crysxd.octoapp.signin.access.RequestAccessViewModel
+import de.crysxd.octoapp.signin.apikey.ManualApiKeyViewModel
 import de.crysxd.octoapp.signin.discover.DiscoverViewModel
 import de.crysxd.octoapp.signin.probe.ProbeOctoPrintViewModel
-import de.crysxd.octoapp.signin.ui.SignInViewModel
-import de.crysxd.octoapp.signin.usecases.VerifySignInInformationUseCase
 import javax.inject.Provider
 
 @Module
@@ -26,21 +25,6 @@ open class ViewModelModule {
     @Provides
     fun bindViewModelFactory(creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>): ViewModelProvider.Factory =
         ViewModelFactory(creators)
-
-    @Provides
-    @IntoMap
-    @ViewModelKey(SignInViewModel::class)
-    open fun provideSignInViewModel(
-        octoPrintRepository: OctoPrintRepository,
-        validateSignInInformationUseCase: VerifySignInInformationUseCase,
-        signInUseCase: de.crysxd.octoapp.signin.usecases.SignInUseCase,
-        sensitiveDataMask: SensitiveDataMask
-    ): ViewModel = SignInViewModel(
-        octoPrintRepository,
-        validateSignInInformationUseCase,
-        signInUseCase,
-        sensitiveDataMask
-    )
 
     @Provides
     @IntoMap
@@ -64,6 +48,15 @@ open class ViewModelModule {
     ): ViewModel = ProbeOctoPrintViewModel(
         useCase = useCase,
         octoPrintRepository = octoPrintRepository
+    )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(ManualApiKeyViewModel::class)
+    open fun provideManualApiKeyViewModel(
+        useCase: TestFullNetworkStackUseCase,
+    ): ViewModel = ManualApiKeyViewModel(
+        testFullNetworkStackUseCase = useCase,
     )
 
     @Provides

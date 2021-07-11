@@ -45,6 +45,6 @@ class ProbeOctoPrintViewModel(
 
     sealed class UiState {
         object Loading : UiState()
-        data class FindingsReady(val finding: TestFullNetworkStackUseCase.Finding) : UiState()
+        data class FindingsReady(val finding: TestFullNetworkStackUseCase.Finding, var handled: Boolean = false) : UiState()
     }
 }

@@ -3,18 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/constraintLayout"
-    android:background="@color/black"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/black">
 
-    <de.crysxd.octoapp.signin.ui.ScannerView
+    <de.crysxd.octoapp.signin.apikey.ScannerView
         android:id="@+id/scannerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp">
-
-    </de.crysxd.octoapp.signin.ui.ScannerView>
+        tools:layout_editor_absoluteY="0dp" />
 
     <Button
         android:id="@+id/buttonCancel"

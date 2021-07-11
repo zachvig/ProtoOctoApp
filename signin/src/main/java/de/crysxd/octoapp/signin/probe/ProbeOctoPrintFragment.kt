@@ -48,6 +48,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
         sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
+        viewModel.probe(initialWebUrl)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -66,15 +67,29 @@ class ProbeOctoPrintFragment : BaseFragment() {
             binding.wifiWarning.isVisible = it is NetworkStateViewModel.NetworkState.WifiNotConnected
         }
 
-        val webUrl = viewModel.lastWebUrl ?: initialWebUrl
-        viewModel.probe(webUrl)
         viewModel.uiState.observe(viewLifecycleOwner) {
             when (it) {
                 ProbeOctoPrintViewModel.UiState.Loading -> showLoading()
                 is ProbeOctoPrintViewModel.UiState.FindingsReady -> {
                     when (it.finding) {
-                        is TestFullNetworkStackUseCase.Finding.OctoPrintReady -> continueWithPresentApiKey(it.finding)
-                        is TestFullNetworkStackUseCase.Finding.InvalidApiKey -> continueToRequestApiKey(it.finding.webUrl)
+                        is TestFullNetworkStackUseCase.Finding.OctoPrintReady,
+                        is TestFullNetworkStackUseCase.Finding.InvalidApiKey -> {
+                            // We might get navigated back to this fragment in case there are issues later down the road
+                            // This checks makes sure we are never reusing a old result to navigate away and instead restarting the probe if the screen
+                            // gets shown again
+                            if (it.handled) {
+                                viewModel.probe(viewModel.lastWebUrl ?: initialWebUrl)
+                                return@observe
+                            }
+
+                            it.handled = true
+                            when (it.finding) {
+                                is TestFullNetworkStackUseCase.Finding.OctoPrintReady -> continueWithPresentApiKey(it.finding)
+                                is TestFullNetworkStackUseCase.Finding.InvalidApiKey -> continueToRequestApiKey(it.finding.webUrl)
+                                else -> Unit
+                            }
+                        }
+
                         else -> showFinding(it.finding)
                     }
                 }

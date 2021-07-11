@@ -159,7 +159,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
     }
 
     private fun testReachability(host: String, ip: String, webUrl: String): Finding? = try {
-        InetAddress.getByName(ip).isReachable(PING_TIMEOUT)
+        require(InetAddress.getByName(ip).isReachable(PING_TIMEOUT)) { IOException("Unable to reach $host") }
         null
     } catch (e: Exception) {
         Finding.HostNotReachable(
