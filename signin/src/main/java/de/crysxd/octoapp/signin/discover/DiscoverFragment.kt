@@ -147,8 +147,8 @@ class DiscoverFragment : BaseFragment() {
             val duration = 600L
             binding.loading.progress.isVisible = true
             binding.octoBackground.alpha = 0f
-            binding.loading.title.setText(R.string.signin___discovery___welcome_title)
-            binding.loading.subtitle.setText(R.string.signin___discovery___welcome_subtitle_searching)
+            binding.loading.title.setText(R.string.sign_in___discovery___welcome_title)
+            binding.loading.subtitle.setText(R.string.sign_in___discovery___welcome_subtitle_searching)
             binding.loading.title.alpha = 0f
             binding.loading.subtitle.alpha = 0f
             binding.loading.progress.alpha = 0f
@@ -278,8 +278,8 @@ class DiscoverFragment : BaseFragment() {
 
     private fun deleteAfterConfirmation(option: OctoPrintInstanceInformationV2) {
         requireOctoActivity().showDialog(
-            message = getString(R.string.signin___discovery___delete_printer_message, option.label),
-            positiveButton = getString(R.string.signin___discovery___delete_printer_confirmation),
+            message = getString(R.string.sign_in___discovery___delete_printer_message, option.label),
+            positiveButton = getString(R.string.sign_in___discovery___delete_printer_confirmation),
             positiveAction = { viewModel.deleteInstance(option.webUrl) },
             neutralAction = {},
             neutralButton = getString(R.string.cancel)

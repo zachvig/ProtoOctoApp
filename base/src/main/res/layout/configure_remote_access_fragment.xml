@@ -145,8 +145,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin_2"
                     app:example="https://mydomain.com:5000"
-                    app:label="@string/web_url"
-                    app:labelActive="@string/web_url_active_hint" />
+                    app:label="@string/sign_in___discover___web_url_hint"
+                    app:labelActive="@string/sign_in___discover___web_url_hint_active" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/saveUrl"

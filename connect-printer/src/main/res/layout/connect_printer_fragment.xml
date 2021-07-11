@@ -64,7 +64,7 @@
         android:layout_marginBottom="@dimen/margin_2"
         android:drawablePadding="@dimen/margin_1"
         android:gravity="center"
-        android:text="@string/no_wifi_connection"
+        android:text="@string/connect_printer___no_wifi_connection"
         android:visibility="gone"
         app:drawableStartCompat="@drawable/ic_wifi_unavailable"
         app:layout_constraintBottom_toTopOf="@+id/bottomActionBarrier"

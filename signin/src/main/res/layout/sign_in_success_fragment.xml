@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_2"
             android:alpha="0"
-            android:text="@string/signin___continue" />
+            android:text="@string/sign_in___continue" />
     </FrameLayout>
 
 

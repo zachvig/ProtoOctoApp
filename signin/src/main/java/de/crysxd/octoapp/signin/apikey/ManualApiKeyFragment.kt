@@ -44,8 +44,8 @@ class ManualApiKeyFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpAsHelpButton(contentBinding.help)
-        contentBinding.input.hintNormal = getString(R.string.api_key)
-        contentBinding.input.hintActive = getString(R.string.api_key_active_hint)
+        contentBinding.input.hintNormal = getString(R.string.sign_in___manual_api_key___hint)
+        contentBinding.input.hintActive = getString(R.string.sign_in___manual_api_key___hint_active)
         contentBinding.input.actionIcon = R.drawable.ic_qr_code_scanner_24px
         contentBinding.title.setText(R.string.sign_in___manual_api_key___title)
         contentBinding.input.examples = listOf("076B961EEB9146F1AE7B3AF2ED1E3AD8", "3219DEEC978F49DF9B426CD42E793CE9", "FA7B1CF230124157A5DCC6322EEC1E9A")
@@ -73,7 +73,7 @@ class ManualApiKeyFragment : BaseFragment() {
             contentBinding.buttonContinue.isEnabled = it !is ManualApiKeyViewModel.ViewState.Loading
             contentBinding.buttonContinue.setText(
                 if (contentBinding.buttonContinue.isEnabled) {
-                    R.string.signin___continue
+                    R.string.sign_in___continue
                 } else {
                     R.string.loading
                 }

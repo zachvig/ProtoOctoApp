@@ -81,7 +81,7 @@
         android:drawablePadding="@dimen/margin_1"
         android:gravity="center_vertical"
         android:maxLines="1"
-        android:text="@string/signin___discovery___no_wifi_warning"
+        android:text="@string/sign_in___discovery___no_wifi_warning"
         android:textAppearance="@style/OctoTheme.TextAppearance"
         android:textColor="@color/light_text"
         android:visibility="gone"

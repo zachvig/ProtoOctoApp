@@ -188,8 +188,8 @@ class ProbeOctoPrintFragment : BaseFragment() {
 
     private fun getPrimaryActionText(finding: TestFullNetworkStackUseCase.Finding) = when (finding) {
         is TestFullNetworkStackUseCase.Finding.HttpsNotTrusted -> getString(R.string.sing_in___probe___trust_and_continue)
-        is TestFullNetworkStackUseCase.Finding.BasicAuthRequired -> getString(R.string.signin___continue)
-        else -> getString(R.string.signin___try_again)
+        is TestFullNetworkStackUseCase.Finding.BasicAuthRequired -> getString(R.string.sign_in___continue)
+        else -> getString(R.string.sign_in___try_again)
     }
 
     private fun performPrimaryAction(finding: TestFullNetworkStackUseCase.Finding) = when (finding) {

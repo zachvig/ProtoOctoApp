@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_2"
         android:gravity="center"
-        android:text="@string/signin___discovery___connect_manually_title"
+        android:text="@string/sign_in___discovery___connect_manually_title"
         android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_2"
-        android:text="@string/signin___discovery___need_help"
+        android:text="@string/sign_in___discovery___need_help"
         android:textColor="@color/accent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -92,7 +92,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_2"
-        android:text="@string/signin___continue"
+        android:text="@string/sign_in___continue"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 
