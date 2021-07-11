@@ -13,10 +13,10 @@ import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import de.crysxd.octoapp.base.utils.ThemePlugin
-import de.crysxd.octoapp.filemanager.di.injectViewModel
 import de.crysxd.octoapp.help.R
 import de.crysxd.octoapp.help.databinding.HelpWebcamTroubleshootingBinding
 import de.crysxd.octoapp.help.di.Injector
+import de.crysxd.octoapp.help.di.injectViewModel
 import io.noties.markwon.Markwon
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
 

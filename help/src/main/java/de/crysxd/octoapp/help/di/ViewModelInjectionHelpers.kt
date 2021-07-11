@@ -1,10 +1,9 @@
-package de.crysxd.octoapp.filemanager.di
+package de.crysxd.octoapp.help.di
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import de.crysxd.octoapp.help.di.Injector
 
 /**
  * For Actvities, allows declarations like
