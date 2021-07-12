@@ -13,7 +13,17 @@ class SensitiveDataMask {
         webUrl ?: return
         try {
             val uri = Uri.parse(webUrl)
-            registerSensitiveData(uri.host ?: webUrl, "${maskPrefix}_host")
+            when {
+                uri.host?.startsWith("192.168.") == true -> Unit
+                uri.host?.endsWith(".lan") == true -> Unit
+                uri.host?.endsWith(".local") == true -> Unit
+                uri.host?.endsWith(".home") == true -> Unit
+                else -> {
+                    val value = uri.host ?: webUrl
+                    val hash = value.hashCode().toString().take(4)
+                    registerSensitiveData(value, "${maskPrefix}_host_$hash")
+                }
+            }
             uri.userInfo?.let {
                 registerSensitiveData(it, "${maskPrefix}_user_info")
             }
