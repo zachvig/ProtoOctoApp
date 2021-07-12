@@ -35,8 +35,8 @@ class DiscoverOctoPrintUseCase @Inject constructor(
         val submitResult: (DiscoveredOctoPrint) -> Unit = { discovered ->
             if (!discoveredInstances.any { it.webUrl == discovered.webUrl }) {
                 discoveredInstances.add(discovered)
-                val uniqueDevices = discoveredInstances.groupBy { it.webUrl }.values.mapNotNull {
-                    it.maxByOrNull { it.quality }
+                val uniqueDevices = discoveredInstances.groupBy { it.id }.values.mapNotNull {
+                    it.maxByOrNull { i -> i.quality }
                 }.sortedBy { it.label }
                 channel.offer(Result(discovered = uniqueDevices))
             }
@@ -106,6 +106,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                                 label = "OctoPrint on ${it.hostAddress}",
                                 detailLabel = "http://${it.hostAddress}:80/",
                                 webUrl = "http://${it.hostAddress}:80/",
+                                id = "${it.hostAddress}:80".hashCode(),
                                 bonjourServiceName = null,
                                 bonjourServiceType = null,
                                 source = "Upnp",
@@ -179,6 +180,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                                 label = resolvedService.serviceName,
                                 detailLabel = "http://${maskedCredentials}${resolvedService.host.hostName}:${resolvedService.port}$path",
                                 webUrl = "http://${credentials}${resolvedService.host.hostName}:${resolvedService.port}$path",
+                                id = "${resolvedService.host.hostAddress}:${resolvedService.port}".hashCode(),
                                 bonjourServiceName = resolvedService.serviceName,
                                 bonjourServiceType = resolvedService.serviceType,
                                 source = "Bonjour",
@@ -193,14 +195,14 @@ class DiscoverOctoPrintUseCase @Inject constructor(
 
     private suspend fun testDiscoveredInstanceAndPublishResult(timber: Timber.Tree, instance: DiscoveredOctoPrint, submitResult: (DiscoveredOctoPrint) -> Unit) {
         sensitiveDataMask.registerWebUrl(instance.webUrl, instance.bonjourServiceName ?: "octoprint_from_bonjour")
-        timber.i("Probing resolved instance at ${instance.webUrl} using ${instance.source}")
+        timber.i("Probing for '${instance.label}' at ${instance.webUrl} using ${instance.source} (${instance.id})")
         val octoPrint = octoPrintProvider.createAdHocOctoPrint(OctoPrintInstanceInformationV2(webUrl = instance.webUrl, apiKey = ""))
         try {
             octoPrint.createUserApi().getCurrentUser().isGuest
-            timber.i("Probe for ${instance.label} at ${instance.webUrl} was SUCCESS 🥳")
+            timber.i("Probe for '${instance.label}' at ${instance.webUrl} was SUCCESS 🥳")
             submitResult(instance)
         } catch (e: java.lang.Exception) {
-            timber.i(e, "Probe for ${instance.label} at ${instance.webUrl} was FAILURE 😭")
+            timber.i("Probe for '${instance.label}' at ${instance.webUrl} was FAILURE 😭 (${e.message})")
         }
     }
 
@@ -212,6 +214,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
         val label: String,
         val detailLabel: String,
         val webUrl: String,
+        val id: Int,
         val bonjourServiceName: String?,
         val bonjourServiceType: String?,
         val source: String,
