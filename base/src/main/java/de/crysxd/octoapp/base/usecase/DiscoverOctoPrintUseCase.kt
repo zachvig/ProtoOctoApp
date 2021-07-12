@@ -195,11 +195,12 @@ class DiscoverOctoPrintUseCase @Inject constructor(
         sensitiveDataMask.registerWebUrl(instance.webUrl, instance.bonjourServiceName ?: "octoprint_from_bonjour")
         timber.i("Probing resolved instance at ${instance.webUrl} using ${instance.source}")
         val octoPrint = octoPrintProvider.createAdHocOctoPrint(OctoPrintInstanceInformationV2(webUrl = instance.webUrl, apiKey = ""))
-        if (octoPrint.createApplicationKeysPluginApi().probe()) {
+        try {
+            octoPrint.createUserApi().getCurrentUser().isGuest
             timber.i("Probe for ${instance.label} at ${instance.webUrl} was SUCCESS 🥳")
             submitResult(instance)
-        } else {
-            timber.i("Probe for ${instance.label} at ${instance.webUrl} was FAILURE 😭")
+        } catch (e: java.lang.Exception) {
+            timber.i(e, "Probe for ${instance.label} at ${instance.webUrl} was FAILURE 😭")
         }
     }
 
