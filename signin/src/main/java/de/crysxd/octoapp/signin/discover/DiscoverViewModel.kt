@@ -74,26 +74,15 @@ class DiscoverViewModel(
     }
 
     fun testWebUrl(webUrl: String) {
-        val upgradedWebUrl = if (!webUrl.startsWith("http://") && !webUrl.startsWith("https://")) {
-            "http://${webUrl}"
-        } else {
-            webUrl
-        }
-        val loginMarker = "/login/?redirect="
-        val fixedWebUrl = if (upgradedWebUrl.contains(loginMarker)) {
-            Timber.i("Removed $loginMarker from URL")
-            upgradedWebUrl.take(upgradedWebUrl.indexOf(loginMarker))
-        } else {
-            upgradedWebUrl
-        }
-        sensitiveDataMask.registerWebUrl(fixedWebUrl, "octoprint")
+        val upgradedUrl = upgradeUrl(webUrl)
+        sensitiveDataMask.registerWebUrl(upgradedUrl, "octoprint")
 
         try {
             if (webUrl.isBlank()) {
                 throw IllegalArgumentException("URL is empty")
             }
-            Uri.parse(fixedWebUrl)
-            stateChannel.offer(UiState.ManualSuccess(fixedWebUrl))
+            Uri.parse(upgradedUrl)
+            stateChannel.offer(UiState.ManualSuccess(upgradedUrl))
         } catch (e: Exception) {
             manualFailureCounter++
             stateChannel.offer(UiState.ManualError(message = "Please provide a valid URL H", exception = e, errorCount = manualFailureCounter))
@@ -106,6 +95,21 @@ class DiscoverViewModel(
 
     fun moveToOptionsState() {
         stateChannel.offer(UiState.Loading)
+    }
+
+    fun upgradeUrl(webUrl: String): String {
+        val upgradedWebUrl = if (!webUrl.startsWith("http://") && !webUrl.startsWith("https://")) {
+            "http://${webUrl}"
+        } else {
+            webUrl
+        }
+        val loginMarker = "/login/?redirect="
+        return if (upgradedWebUrl.contains(loginMarker)) {
+            Timber.i("Removed $loginMarker from URL")
+            upgradedWebUrl.take(upgradedWebUrl.indexOf(loginMarker))
+        } else {
+            upgradedWebUrl
+        }
     }
 
     sealed class UiState {

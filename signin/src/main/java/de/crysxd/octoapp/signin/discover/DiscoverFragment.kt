@@ -368,8 +368,8 @@ class DiscoverFragment : BaseFragment() {
             val clipboardText = clipboard.primaryClip?.getItemAt(0)?.text?.toString() ?: return
             if (clipboardText.startsWith("http")) {
                 try {
-                    val uri = Uri.parse(clipboardText)
-                    manualBinding?.input?.editText?.setText(uri.toString())
+                    val upgraded = viewModel.upgradeUrl(clipboardText)
+                    manualBinding?.input?.editText?.setText(upgraded)
                     Timber.i("Pasted from clipboard")
                     Toast.makeText(requireContext(), "Pasted URL from clipboard", Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
