@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.signin.discover
 
-import android.annotation.SuppressLint
+import android.content.ClipboardManager
+import android.content.Context.CLIPBOARD_SERVICE
 import android.net.Uri
 import android.os.Bundle
 import android.transition.AutoTransition
@@ -14,6 +15,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.*
 import androidx.lifecycle.lifecycleScope
@@ -28,7 +30,6 @@ import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requestFocusAndOpenSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
-import de.crysxd.octoapp.signin.BuildConfig
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.databinding.BaseSigninFragmentBinding
 import de.crysxd.octoapp.signin.databinding.DiscoverFragmentContentManualBinding
@@ -40,6 +41,7 @@ import kotlinx.coroutines.delay
 import timber.log.Timber
 import kotlin.math.roundToLong
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
+
 
 class DiscoverFragment : BaseFragment() {
     override val viewModel by injectViewModel<DiscoverViewModel>()
@@ -130,6 +132,7 @@ class DiscoverFragment : BaseFragment() {
         requireOctoActivity().octo.isVisible = false
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
         binding.scrollView.setupWithToolbar(requireOctoActivity())
+        tryToPasteWebUrl()
     }
 
     override fun onStop() {
@@ -352,13 +355,28 @@ class DiscoverFragment : BaseFragment() {
             true
         }
 
-        @SuppressLint("SetTextI18n")
-        if (BuildConfig.DEBUG) {
-            manualBinding?.input?.editText?.setText("octoprint.home:5000")
-        }
-
         localManualBinding.buttonContinue.setOnClickListener {
             viewModel.testWebUrl(localManualBinding.input.editText.text?.toString() ?: "")
+        }
+
+        tryToPasteWebUrl()
+    }
+
+    private fun tryToPasteWebUrl() {
+        if (manualBinding?.input?.editText?.text?.isEmpty() == true) {
+            val clipboard = requireContext().getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            val clipboardText = clipboard.primaryClip?.getItemAt(0)?.text?.toString() ?: return
+            if (clipboardText.startsWith("http")) {
+                try {
+                    val uri = Uri.parse(clipboardText)
+                    manualBinding?.input?.editText?.setText(uri.toString())
+                    Timber.i("Pasted from clipboard")
+                    Toast.makeText(requireContext(), "Pasted URL from clipboard", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Timber.i("Unable to paste from clipboard: $e")
+                    Toast.makeText(requireContext(), "Clipboard is invalid URL", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 }
