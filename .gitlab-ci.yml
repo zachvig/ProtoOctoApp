@@ -53,15 +53,15 @@ deploy_google_play:
   only:
     - tags
 
-deploy_gitlab:
-  stage: deploy
-  needs: [ "build" ]
-  image: registry.gitlab.com/gitlab-org/release-cli
-  script:
-    - release-cli create --name "$CI_COMMIT_TAG" --assets-link '{"name":"Asset1","url":"https://<domain>/some/location/1","link_type":"other","filepath":"xzy"}'
-    - gitlab-release --message "$CI_COMMIT_TAG" app/build/outputs/apk/release/app-release.apk
-  only:
-    - tags
+#deploy_gitlab:
+#  stage: deploy
+#  needs: [ "build" ]
+#  image: registry.gitlab.com/gitlab-org/release-cli
+#  script:
+#    - release-cli create --name "$CI_COMMIT_TAG" --assets-link '{"name":"Asset1","url":"https://<domain>/some/location/1","link_type":"other","filepath":"xzy"}'
+#    - gitlab-release --message "$CI_COMMIT_TAG" app/build/outputs/apk/release/app-release.apk
+#  only:
+#    - tags
 
 deploy_firebase:
   stage: deploy
