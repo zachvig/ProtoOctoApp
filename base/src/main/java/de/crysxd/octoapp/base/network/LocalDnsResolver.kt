@@ -108,8 +108,9 @@ class LocalDnsResolver(private val context: Context) : Dns {
             val channel = Channel<InetAddress>()
             val lock = wifi.createMulticastLock("mDnsResolution")
             lock.acquire()
+            var service: DNSSDService? = null
             val job = GlobalScope.launch {
-                dnssd.queryRecord(0, 0, hostname, 1, 1, object : QueryListener {
+                service = dnssd.queryRecord(0, 0, hostname, 1, 1, object : QueryListener {
                     override fun operationFailed(service: DNSSDService?, errorCode: Int) {
                         Timber.e("Unable to query $hostname (errorCode=$errorCode)")
                     }
@@ -132,6 +133,7 @@ class LocalDnsResolver(private val context: Context) : Dns {
             val address = channel.receive()
             job.invokeOnCompletion {
                 lock.release()
+                service?.stop()
             }
             job.cancel()
             listOf(address)

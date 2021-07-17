@@ -4,10 +4,7 @@ import android.content.Context
 import android.net.wifi.WifiManager
 import com.github.druk.dnssd.*
 import de.crysxd.octoapp.base.di.Injector
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.job
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.net.InetAddress
 import kotlin.coroutines.CoroutineContext
@@ -76,6 +73,7 @@ class OctoPrintDnsSdDiscovery(
                 port: Int,
                 txtRecord: MutableMap<String, String>
             ) {
+                resolver.stop()
                 queryService(
                     flags = flags,
                     ifIndex = ifIndex,
@@ -101,31 +99,29 @@ class OctoPrintDnsSdDiscovery(
         dnssd.queryRecord(flags, ifIndex, hostName, 1, 1, object : QueryListener {
             override fun operationFailed(service: DNSSDService, errorCode: Int) {
                 Timber.e("mDNS query failed (errorCode=$errorCode)")
-
             }
 
-            override fun queryAnswered(query: DNSSDService?, flags: Int, ifIndex: Int, fullName: String, rrtype: Int, rrclass: Int, rdata: ByteArray, ttl: Int) {
-                GlobalScope.launch(Dispatchers.IO) {
-                    val fixedHostname = hostName.removeSuffix(".")
-                    Timber.i("Resolved mDNS service $fixedHostname")
+            override fun queryAnswered(query: DNSSDService, flags: Int, ifIndex: Int, fullName: String, rrtype: Int, rrclass: Int, rdata: ByteArray, ttl: Int) {
+                query.stop()
+                val fixedHostname = hostName.removeSuffix(".")
+                Timber.i("Resolved mDNS service $fixedHostname")
 
-                    // Construct OctoPrint
-                    val path = txtRecord["path"] ?: "/"
-                    val user = txtRecord["u"]
-                    val password = txtRecord["p"]
-                    val credentials = user?.let { u ->
-                        password?.let { p -> "$u:$p@" } ?: "$u@"
-                    } ?: ""
-                    val device = Service(
-                        label = serviceName,
-                        hostname = fixedHostname,
-                        port = port,
-                        webUrl = "http://${credentials}${fixedHostname}:${port}$path",
-                        host = InetAddress.getByAddress(hostName, rdata)
-                    )
-                    Injector.get().localDnsResolver().addMDnsDeviceToCache(device)
-                    callback(device)
-                }
+                // Construct OctoPrint
+                val path = txtRecord["path"] ?: "/"
+                val user = txtRecord["u"]
+                val password = txtRecord["p"]
+                val credentials = user?.let { u ->
+                    password?.let { p -> "$u:$p@" } ?: "$u@"
+                } ?: ""
+                val device = Service(
+                    label = serviceName,
+                    hostname = fixedHostname,
+                    port = port,
+                    webUrl = "http://${credentials}${fixedHostname}:${port}$path",
+                    host = InetAddress.getByAddress(hostName, rdata)
+                )
+                Injector.get().localDnsResolver().addMDnsDeviceToCache(device)
+                callback(device)
             }
         })
     }
