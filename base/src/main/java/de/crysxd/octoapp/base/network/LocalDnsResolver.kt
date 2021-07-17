@@ -40,8 +40,10 @@ class LocalDnsResolver(private val context: Context) : Dns {
         }
 
         return try {
+            // Use default Android DNS system, let's give it a try
             InetAddress.getAllByName(hostname).toList()
         } catch (e: UnknownHostException) {
+            // Up to us now....
             Timber.v("Android failed to resolve $hostname, falling back")
             localLookup(hostname)
         }
@@ -68,10 +70,13 @@ class LocalDnsResolver(private val context: Context) : Dns {
             hostname.endsWith(".local") || hostname.endsWith(".home") -> measureTime("local_mdns_lookup") {
                 doMDnsLookup(hostname)
             }
+
             else -> measureTime("local_dns_lookup") {
                 doDnsLookup(hostname)
             }
         }
+        Timber.i("Resolved $hostname -> $hostname")
+
 
         // Add to cache
         addCacheEntry(
@@ -110,7 +115,7 @@ class LocalDnsResolver(private val context: Context) : Dns {
             lock.acquire()
             var service: DNSSDService? = null
             val job = GlobalScope.launch {
-                service = dnssd.queryRecord(0, 0, hostname, 1, 1, object : QueryListener {
+                service = dnssd.queryRecord(0, 0, hostname, 1 /* IPv4 */, 1, object : QueryListener {
                     override fun operationFailed(service: DNSSDService?, errorCode: Int) {
                         Timber.e("Unable to query $hostname (errorCode=$errorCode)")
                     }
@@ -125,7 +130,7 @@ class LocalDnsResolver(private val context: Context) : Dns {
                         rdata: ByteArray,
                         ttl: Int
                     ) {
-                        Timber.i("Query answered: $hostname")
+                        Timber.v("Query answered: $hostname")
                         channel.offer(InetAddress.getByAddress(hostname, rdata))
                     }
                 })
@@ -141,6 +146,8 @@ class LocalDnsResolver(private val context: Context) : Dns {
     }
 
     private fun doDnsLookup(hostname: String): List<InetAddress> {
+        Timber.i("Resolving via local DNS: $hostname")
+
         // This is a manual backup DNS which should help with .home domains. Some Android devices are configured
         // to ignore the router as DNS server and directly go to Cloudflare or Google
         //
