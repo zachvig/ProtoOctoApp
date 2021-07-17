@@ -4,6 +4,7 @@ import android.net.Uri
 import de.crysxd.octoapp.base.network.OctoPrintUpnpDiscovery.Companion.UPNP_ADDRESS_PREFIX
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
+import kotlin.math.absoluteValue
 
 class SensitiveDataMask {
 
@@ -15,6 +16,7 @@ class SensitiveDataMask {
         try {
             val uri = Uri.parse(webUrl)
             when {
+                webUrl.startsWith("/") -> Unit
                 uri.host?.startsWith("192.168.") == true -> Unit
                 uri.host?.endsWith(".lan") == true -> Unit
                 uri.host?.endsWith(".local") == true -> Unit
@@ -22,7 +24,7 @@ class SensitiveDataMask {
                 uri.host?.startsWith(UPNP_ADDRESS_PREFIX) == true -> Unit
                 else -> {
                     val value = uri.host ?: webUrl
-                    val hash = value.hashCode().toString().take(4)
+                    val hash = value.hashCode().absoluteValue.toString().take(4)
                     registerSensitiveData(value, "${maskPrefix}_host_$hash")
                 }
             }

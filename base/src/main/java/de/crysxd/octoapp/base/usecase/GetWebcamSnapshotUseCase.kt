@@ -5,6 +5,7 @@ import androidx.core.graphics.applyCanvas
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.widget.webcam.MjpegConnection
+import de.crysxd.octoapp.base.ui.widget.webcam.MjpegConnection2
 import de.crysxd.octoapp.base.utils.measureTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -23,6 +24,7 @@ class GetWebcamSnapshotUseCase @Inject constructor(
 ) : UseCase<GetWebcamSnapshotUseCase.Params, Flow<Bitmap>>() {
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) = withContext(Dispatchers.IO) {
+        var counter = 0
         withTimeout(10000) {
             // Get webcam settings.
             val instanceInfo = param.instanceInfo ?: octoPrintRepository.getActiveInstanceSnapshot() ?: throw IllegalStateException("No instance info")
@@ -33,9 +35,8 @@ class GetWebcamSnapshotUseCase @Inject constructor(
             var illuminated = false
 
             // Load single frame
-            val mjpegConnection = MjpegConnection(webcamSettings?.streamUrl ?: throw IllegalStateException("No stream URL"), authHeader, "widget")
-            mjpegConnection.load().mapNotNull { it as? MjpegConnection.MjpegSnapshot.Frame }.sample(param.sampleRateMs).map {
-                timber.i("Transforming image")
+            val mjpegConnection = MjpegConnection2(webcamSettings?.streamUrl ?: throw IllegalStateException("No stream URL"), authHeader, "widget")
+            mjpegConnection.load().mapNotNull { it as? MjpegConnection.MjpegSnapshot.Frame }.map {
                 measureTime("transform_frame_for_widget") {
                     val transformed = applyWebcamTransformationsUseCase.execute(ApplyWebcamTransformationsUseCase.Params(it.frame, settings = webcamSettings))
                     val width = transformed.width.coerceAtMost(param.maxWidthPx)
@@ -48,8 +49,7 @@ class GetWebcamSnapshotUseCase @Inject constructor(
                         clipPath(clip)
                         drawBitmap(transformed, Rect(0, 0, transformed.width, transformed.height), Rect(0, 0, width, height), paint)
                     }
-                    transformed.recycle()
-                    timber.i("Image transformed")
+                    if (transformed != it.frame) transformed.recycle()
                     final
                 }
             }.onStart {
@@ -64,7 +64,7 @@ class GetWebcamSnapshotUseCase @Inject constructor(
                     // is about to be terminated
                     handleAutomaticLightEventUseCase.executeBlocking(HandleAutomaticLightEventUseCase.Event.WebcamGone("webcam-snapshot-uc", delayAction = true))
                 }
-            }
+            }.sample(param.sampleRateMs)
         }
     }
 

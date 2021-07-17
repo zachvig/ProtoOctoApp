@@ -19,7 +19,6 @@ import okhttp3.Response
 import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
-import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 
 class MjpegConnection2(
@@ -59,6 +58,7 @@ class MjpegConnection2(
             cache.reset()
             val inputStream = response.body!!.byteStream().buffered(bufferSize * 4)
             while (true) {
+                Timber.i("Loop")
                 emit(
                     MjpegConnection.MjpegSnapshot.Frame(
                         readNextImage(cache, boundary, inputStream)
@@ -103,6 +103,7 @@ class MjpegConnection2(
             if (imageCounter > 100) {
                 Timber.tag(tag).i("FPS: %.1f", 1000 / (imageTimes / imageCounter.toFloat()))
                 imageCounter = 0
+                imageTimes = 0
             }
         }.flowOn(Dispatchers.IO)
     }
@@ -123,7 +124,7 @@ class MjpegConnection2(
         return cache.readImage(boundaryStart, boundaryEnd) ?: readNextImage(cache, boundary, input, dropCount + 1)
     }
 
-    private fun connect(useLocalDns: Boolean = false): Response = try {
+    private fun connect(): Response {
         val sslKeystoreHandler = Injector.get().sslKeyStoreHandler()
         val client = OkHttpClient.Builder()
             .dns(Injector.get().localDnsResolver())
@@ -142,14 +143,7 @@ class MjpegConnection2(
             .url(streamUrl)
             .build()
 
-        client.newCall(request).execute()
-    } catch (e: UnknownHostException) {
-        // Try resolving using local DNS
-        if (!useLocalDns) {
-            connect(useLocalDns = true)
-        } else {
-            throw e
-        }
+        return client.newCall(request).execute()
     }
 
     private fun extractBoundary(response: Response): String? = try {

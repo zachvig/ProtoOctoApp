@@ -18,6 +18,7 @@ import java.util.regex.Pattern
 const val TOLERATED_FRAME_LOSS_STREAK = 4
 const val DEFAULT_HEADER_BOUNDARY = "[_a-zA-Z0-9]*boundary"
 
+@Deprecated("Use MjpegConnection2")
 class MjpegConnection(private val streamUrl: String, private val authHeader: String?, private val name: String) {
 
     private val instanceId = instanceCounter++

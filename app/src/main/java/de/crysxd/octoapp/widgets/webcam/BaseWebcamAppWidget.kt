@@ -52,6 +52,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
         private const val LIVE_FOR_MS = 30_000L
         private const val FETCH_TIMEOUT_MS = 15_000L
         private const val BITMAP_WIDTH = 1080
+        private const val WEBCAM_LIVE_SAMPLE_RATE_MS = 500L
         private var lastUpdateJobs = mutableMapOf<Int, WeakReference<Job>>()
 
         internal fun cancelAllUpdates() {
@@ -175,10 +176,15 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
         ): Bitmap? = withContext(Dispatchers.IO) {
             var frame: Bitmap? = null
             val lock = ReentrantLock()
-            val sampleRateMs = 1000L
             // Thread A: Load webcam images
             launch {
-                createBitmapFlow(octoPrintInfo, sampleRateMs = sampleRateMs, appWidgetId = appWidgetId, context = context, illuminateIfPossible = true).collect {
+                createBitmapFlow(
+                    octoPrintInfo,
+                    sampleRateMs = WEBCAM_LIVE_SAMPLE_RATE_MS,
+                    appWidgetId = appWidgetId,
+                    context = context,
+                    illuminateIfPossible = true
+                ).collect {
                     Timber.v("Received frame")
                     lock.withLock { frame = it }
                 }
@@ -202,7 +208,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                     views.setOnClickPendingIntent(R.id.buttonCancelLive, createUpdateIntent(context, appWidgetId, false))
                     appWidgetManager.updateAppWidget(appWidgetId, views)
                     Timber.v("Pushed frame")
-                    delay(sampleRateMs)
+                    delay(WEBCAM_LIVE_SAMPLE_RATE_MS)
                 }
             }
             return@withContext frame
