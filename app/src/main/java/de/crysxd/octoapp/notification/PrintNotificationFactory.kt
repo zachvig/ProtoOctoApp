@@ -62,7 +62,7 @@ class PrintNotificationFactory(context: Context) : ContextWrapper(context) {
         .setProgress(maxProgress, progress, false)
         .setOngoing(true)
         .addCloseAction()
-        .setNotificationSilent()
+        .setSilent(true)
         .build()
 
     fun createCompletedNotification(name: String?) = createNotificationBuilder()
@@ -88,14 +88,14 @@ class PrintNotificationFactory(context: Context) : ContextWrapper(context) {
         .setProgress(maxProgress, 0, true)
         .addCloseAction()
         .setOngoing(false)
-        .setNotificationSilent()
+        .setSilent(true)
         .build()
 
     fun createDisconnectedNotification() = createNotificationBuilder()
         .setContentTitle(getString(R.string.print_notification___disconnected_title))
         .setContentText(getString(R.string.print_notification___disconnected_message, lastEta))
         .setOngoing(false)
-        .setNotificationSilent()
+        .setSilent(true)
         .setAutoCancel(true)
         .build()
 
@@ -104,7 +104,7 @@ class PrintNotificationFactory(context: Context) : ContextWrapper(context) {
         .setProgress(maxProgress, 0, true)
         .setOngoing(true)
         .addCloseAction()
-        .setNotificationSilent()
+        .setSilent(true)
         .build()
 
     fun NotificationCompat.Builder.addCloseAction() = addAction(
@@ -115,7 +115,7 @@ class PrintNotificationFactory(context: Context) : ContextWrapper(context) {
                 this@PrintNotificationFactory,
                 0,
                 Intent(this@PrintNotificationFactory, PrintNotificationService::class.java).setAction(ACTION_STOP),
-                0
+                PendingIntent.FLAG_UPDATE_CURRENT
             )
         ).build()
     )

@@ -5,7 +5,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import timber.log.Timber
-import java.util.*
 
 object OctoAnalytics {
 
@@ -35,7 +34,7 @@ object OctoAnalytics {
     sealed class Event(val name: String) {
         object OctoprintConnected : Event("octoprint_connected")
 
-        class PluginDetected(pluginName: String) : Event("zz_has_plugin_${pluginName.toLowerCase(Locale.ENGLISH)}".take(40 /* Limit for event name length */))
+        class PluginDetected(pluginName: String) : Event("zz_has_plugin_${pluginName.lowercase()}".take(40 /* Limit for event name length */))
 
         object SupportFromErrorDetails : Event("support_from_error_details")
         object TroubleShootFailureSupportTrigger : Event("troubleshoot_failure_support_trigger")

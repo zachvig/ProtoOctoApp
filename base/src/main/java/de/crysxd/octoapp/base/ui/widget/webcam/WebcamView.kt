@@ -24,7 +24,7 @@ import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.LoadEventInfo
 import com.google.android.exoplayer2.source.MediaLoadData
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import com.google.android.exoplayer2.video.VideoListener
+import com.google.android.exoplayer2.video.VideoSize
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.databinding.WebcamViewBinding
@@ -209,13 +209,12 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         if (!playerInitialized) {
             playerInitialized = true
 
-            hlsPlayer.addVideoListener(object : VideoListener {
-                override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int, pixelWidthHeightRatio: Float) {
-                    super.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio)
-                    applyAspectRatio(width, height)
+            hlsPlayer.addListener(object : Player.Listener {
+                override fun onVideoSizeChanged(videoSize: VideoSize) {
+                    super.onVideoSizeChanged(videoSize)
+                    applyAspectRatio(videoSize.width, videoSize.height)
                 }
             })
-
             hlsPlayer.addAnalyticsListener(object : AnalyticsListener {
                 override fun onIsPlayingChanged(eventTime: AnalyticsListener.EventTime, isPlaying: Boolean) {
                     super.onIsPlayingChanged(eventTime, isPlaying)

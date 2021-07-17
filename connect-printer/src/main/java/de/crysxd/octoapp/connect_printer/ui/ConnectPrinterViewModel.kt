@@ -20,7 +20,6 @@ import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintBootingException
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse.ConnectionState.MAYBE_ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT
-import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -226,7 +225,7 @@ class ConnectPrinterViewModel(
         lastConnectionAttempt = 0
     }
 
-    fun setDeviceOn(device: PowerDevice, on: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
+    fun setDeviceOn(on: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
         val wasPsuTurnedOn = manualPsuState.value
         try {
             manualPsuState.postValue(on)
@@ -236,7 +235,7 @@ class ConnectPrinterViewModel(
         }
     }
 
-    fun cyclePsu(device: PowerDevice) = viewModelScope.launch(coroutineExceptionHandler) {
+    fun cyclePsu() = viewModelScope.launch(coroutineExceptionHandler) {
         psuCyclingState.postValue(PsuCycledState.Cycled)
         manualPsuState.postValue(true)
         resetConnectionAttempt()

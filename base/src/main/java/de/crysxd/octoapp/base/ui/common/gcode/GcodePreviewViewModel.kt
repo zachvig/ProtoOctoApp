@@ -13,7 +13,6 @@ import de.crysxd.octoapp.base.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.GenerateRenderStyleUseCase
-import de.crysxd.octoapp.base.usecase.GetCurrentPrinterProfileUseCase
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.octoprint.models.socket.Message
@@ -28,7 +27,6 @@ class GcodePreviewViewModel(
     octoPrintProvider: OctoPrintProvider,
     octoPrintRepository: OctoPrintRepository,
     generateRenderStyleUseCase: GenerateRenderStyleUseCase,
-    getCurrentPrinterProfileUseCase: GetCurrentPrinterProfileUseCase,
     private val gcodeFileRepository: GcodeFileRepository
 ) : BaseViewModel() {
 

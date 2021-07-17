@@ -4,10 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import de.crysxd.octoapp.octoprint.exceptions.ProxyException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
-import okhttp3.Credentials
 import timber.log.Timber
 import java.io.BufferedInputStream
 import java.io.IOException
@@ -28,7 +26,6 @@ class MjpegConnection(private val streamUrl: String, private val authHeader: Str
         private var instanceCounter = 0
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Suppress("BlockingMethodInNonBlockingContext")
     fun load(): Flow<MjpegSnapshot> {
         var hasBeenConnected = false
@@ -100,7 +97,7 @@ class MjpegConnection(private val streamUrl: String, private val authHeader: Str
             Timber.i("[$instanceId/$name] Stopped stream")
         }.onStart {
             Timber.i("[$instanceId/$name] Starting stream")
-        }.retryWhen { cause, attempt ->
+        }.retryWhen { _, attempt ->
             // If we had been connected in the past, wait 1s and try to reconnect once
             when {
                 attempt >= 2 -> {

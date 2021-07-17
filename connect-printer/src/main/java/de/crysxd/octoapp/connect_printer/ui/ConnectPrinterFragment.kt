@@ -244,13 +244,12 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
 
     override fun onPowerActionCompleted(action: PowerControlsMenu.Action, device: PowerDevice) {
         when (action) {
-            PowerControlsMenu.Action.TurnOn -> viewModel.setDeviceOn(device, true)
-            PowerControlsMenu.Action.TurnOff -> viewModel.setDeviceOn(device, false)
+            PowerControlsMenu.Action.TurnOn -> viewModel.setDeviceOn(true)
+            PowerControlsMenu.Action.TurnOff -> viewModel.setDeviceOn(false)
             PowerControlsMenu.Action.Toggle -> viewModel.setDeviceOn(
-                device,
                 (viewModel.uiState.value as? ConnectPrinterViewModel.UiState.WaitingForPrinterToComeOnline)?.psuIsOn?.not() ?: false
             )
-            PowerControlsMenu.Action.Cycle -> viewModel.cyclePsu(device)
+            PowerControlsMenu.Action.Cycle -> viewModel.cyclePsu()
             else -> Unit
         }
     }

@@ -16,7 +16,6 @@ import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import kotlinx.coroutines.delay
 import kotlinx.parcelize.Parcelize
-import java.util.*
 
 @Parcelize
 class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val action: Action = Action.Unspecified) : Menu {
@@ -290,7 +289,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
     }
 
     sealed class DeviceType : Parcelable {
-        val prefKey get() = this::class.java.simpleName.toLowerCase(Locale.ENGLISH)
+        val prefKey get() = this::class.java.simpleName.lowercase()
         abstract val requiredCapabilities: List<PowerDevice.Capability>
 
         @Parcelize

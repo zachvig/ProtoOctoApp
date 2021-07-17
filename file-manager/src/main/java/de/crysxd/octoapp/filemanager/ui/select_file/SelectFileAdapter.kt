@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.filemanager.ui.select_file
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -18,9 +19,9 @@ import com.squareup.picasso.Picasso
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.ext.format
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
-import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.filemanager.R
 import de.crysxd.octoapp.filemanager.databinding.*
+import de.crysxd.octoapp.octoprint.models.files.FileObject
 import java.util.*
 
 class SelectFileAdapter(
@@ -55,6 +56,7 @@ class SelectFileAdapter(
         notifyDataSetChanged()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun showFiles(folderName: String?, files: List<FileObject>, showThumbnailHint: Boolean) {
         // Sort files by date, folders by name
         val groups = files.groupBy { it::class.java }

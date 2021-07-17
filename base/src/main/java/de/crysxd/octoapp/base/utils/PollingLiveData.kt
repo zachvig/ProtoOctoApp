@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.utils
 
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -12,7 +13,7 @@ class PollingLiveData<T>(
 ) : LiveData<PollingLiveData.Result<T>>() {
 
     private var job = Job()
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
     private val runnable = Runnable { poll() }
 
     override fun onActive() {

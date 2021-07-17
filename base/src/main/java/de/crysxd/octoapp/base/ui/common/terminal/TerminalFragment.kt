@@ -22,7 +22,6 @@ import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import timber.log.Timber
-import java.util.*
 
 class TerminalFragment : BaseFragment() {
 
@@ -123,7 +122,7 @@ class TerminalFragment : BaseFragment() {
     }
 
     private fun sendGcodeFromInput() {
-        val input = binding.gcodeInput.editText.text.toString().toUpperCase(Locale.ENGLISH)
+        val input = binding.gcodeInput.editText.text.toString().uppercase()
         if (input.isNotBlank()) {
             viewModel.executeGcode(input)
             binding.gcodeInput.editText.text = null

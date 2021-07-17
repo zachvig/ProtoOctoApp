@@ -5,7 +5,6 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import java.lang.reflect.Type
-import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -16,7 +15,7 @@ class ConnectionStateDeserializer(
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ConnectionResponse.ConnectionState {
         return try {
             val string = "MAYBE_" + json.asString
-                .toUpperCase(Locale.ENGLISH)
+                .uppercase()
                 .replace(" ", "_")
                 .replace(":", "")
 

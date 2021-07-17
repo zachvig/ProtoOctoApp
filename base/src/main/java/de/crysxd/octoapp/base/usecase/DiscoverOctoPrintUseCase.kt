@@ -168,8 +168,8 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                     val credentials = user?.let { u ->
                         password?.let { p -> "$u:$p@" } ?: "$u@"
                     } ?: ""
-                    val maskedCredentials = user?.let { u ->
-                        password?.let { p -> "***:***@" } ?: "***@"
+                    val maskedCredentials = user?.let { _ ->
+                        password?.let { _ -> "***:***@" } ?: "***@"
                     } ?: ""
 
                     GlobalScope.launch(coroutineContext + Dispatchers.IO) {

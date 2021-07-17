@@ -267,7 +267,7 @@ class MjpegConnection2(
             var startIndex = 0
             var startFound = false
             for (i in 0 until index) {
-                if (array[i].toChar() == boundaryStart[startIndex]) {
+                if (array[i].toInt().toChar() == boundaryStart[startIndex]) {
                     startIndex++
                 } else {
                     startIndex = 0
@@ -285,10 +285,10 @@ class MjpegConnection2(
             // Search end
             var endIndex = -1
             for (i in startIndex until index) {
-                val c1 = array[i].toChar()
-                val c2 = array[i + 1].toChar()
-                val c3 = array[i + 2].toChar()
-                val c4 = array[i + 3].toChar()
+                val c1 = array[i].toInt().toChar()
+                val c2 = array[i + 1].toInt().toChar()
+                val c3 = array[i + 2].toInt().toChar()
+                val c4 = array[i + 3].toInt().toChar()
                 if (c1 == '\n' && c2 == '\n') {
                     endIndex = i + 2
                     break

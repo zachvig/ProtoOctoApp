@@ -20,12 +20,12 @@ import androidx.lifecycle.lifecycleScope
 import com.squareup.picasso.Callback
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.ext.format
-import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.filemanager.R
 import de.crysxd.octoapp.filemanager.databinding.InfoTabFragmentBinding
 import de.crysxd.octoapp.filemanager.di.Injector
 import de.crysxd.octoapp.filemanager.di.injectParentViewModel
 import de.crysxd.octoapp.filemanager.ui.CropAlphaTransformation
+import de.crysxd.octoapp.octoprint.models.files.FileObject
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -92,8 +92,8 @@ class InfoTabFragment : Fragment() {
             addDetail(
                 label = R.string.filament_use,
                 value = file.gcodeAnalysis?.filament?.let {
-                    val totalLength = listOfNotNull(it.tool0, it.tool1).sumByDouble { s -> s.length }
-                    val totalVolume = listOfNotNull(it.tool0, it.tool1).sumByDouble { s -> s.volume }
+                    val totalLength = listOfNotNull(it.tool0, it.tool1).sumOf { s -> s.length }
+                    val totalVolume = listOfNotNull(it.tool0, it.tool1).sumOf { s -> s.volume }
                     String.format(Locale.getDefault(), "%.02f m / %.02f cm³", totalLength / 1000, totalVolume)
                 }
             )

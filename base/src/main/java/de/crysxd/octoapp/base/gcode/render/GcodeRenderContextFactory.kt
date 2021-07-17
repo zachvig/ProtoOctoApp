@@ -67,7 +67,7 @@ sealed class GcodeRenderContextFactory {
                     layerCount = gcode.layers.size,
                     layerZHeight = layerInfo.zHeight,
                     layerNumber = gcode.layers.indexOf(layerInfo),
-                    layerProgress = paths.sumBy { it.third.count } / layer.moves.values.sumBy { it.second.size }.toFloat()
+                    layerProgress = paths.sumOf { it.third.count } / layer.moves.values.sumOf { it.second.size }.toFloat()
                 )
             } catch (e: Exception) {
                 Timber.e(e)

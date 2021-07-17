@@ -170,7 +170,13 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor(
 
         param.screenshot?.let {
             zipStream.putNextEntry(ZipEntry("screenshot.webp"))
-            it.compress(Bitmap.CompressFormat.WEBP, 75, zipStream)
+            val format = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                Bitmap.CompressFormat.WEBP_LOSSY
+            } else {
+                @Suppress("Deprecation")
+                Bitmap.CompressFormat.WEBP
+            }
+            it.compress(format, 75, zipStream)
             zipStream.closeEntry()
             fileCount++
         }

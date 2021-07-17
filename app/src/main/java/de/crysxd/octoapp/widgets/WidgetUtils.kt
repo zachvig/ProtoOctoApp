@@ -78,4 +78,4 @@ internal fun getWidgetCount(context: Context) = AppWidgetManager.getInstance(con
     AppWidgetManager.getInstance(context).getAppWidgetIds(it)
 }.map {
     it.filter { ensureWidgetExists(it) }
-}.sumBy { it.size }
+}.sumOf { it.size }

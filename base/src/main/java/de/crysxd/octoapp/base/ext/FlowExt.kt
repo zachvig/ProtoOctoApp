@@ -16,7 +16,7 @@ inline fun <reified T : Message> Flow<Event>.filterEventsForMessageType(): Flow<
 fun <T> Flow<T>.rateLimit(rateMs: Long): Flow<T> {
     var lastPass = 0L
     return filter {
-        val pass = (System.currentTimeMillis() - lastPass) > 5000
+        val pass = (System.currentTimeMillis() - lastPass) > rateMs
         if (pass) {
             lastPass = System.currentTimeMillis()
         }

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.ClipDrawable
 import android.view.LayoutInflater
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
@@ -129,7 +128,7 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
 
     private fun updateProgressBar(progress: Float, progressPercent: Float) {
         ConstraintSet().apply {
-            clone(binding.root as ConstraintLayout)
+            clone(binding.root)
             constrainPercentWidth(R.id.progressBar, progress)
             clear(R.id.textViewProgressPercent, ConstraintSet.END)
             clear(R.id.textViewProgressPercent, ConstraintSet.START)

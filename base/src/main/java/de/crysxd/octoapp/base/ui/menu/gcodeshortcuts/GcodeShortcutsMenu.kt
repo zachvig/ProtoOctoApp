@@ -17,11 +17,10 @@ import de.crysxd.octoapp.base.ui.utils.NavigationResultMediator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class GcodeShortcutsMenu(private val command: GcodeHistoryItem, @IgnoredOnParcel private val insertCallback: ((GcodeHistoryItem) -> Unit)? = null) : Menu {
+class GcodeShortcutsMenu(private val command: GcodeHistoryItem, private val insertCallback: ((GcodeHistoryItem) -> Unit)? = null) : Menu {
     override fun shouldLoadBlocking() = true
     override suspend fun getTitle(context: Context) = command.name
     override suspend fun getSubtitle(context: Context) = if (command.name == command.oneLineCommand) null else command.oneLineCommand

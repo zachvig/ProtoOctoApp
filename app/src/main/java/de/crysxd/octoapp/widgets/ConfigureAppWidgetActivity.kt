@@ -9,6 +9,7 @@ import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import androidx.annotation.RequiresApi
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.ktx.Firebase
@@ -168,7 +169,7 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
 
             }
             .setOnDismissListener {
-                Handler().postDelayed({
+                Handler(Looper.getMainLooper()).postDelayed({
                     Timber.i("Closing ConfigureWidgetActivity, selected $selectedUrl")
 
                     if (selectedUrl != null) {
