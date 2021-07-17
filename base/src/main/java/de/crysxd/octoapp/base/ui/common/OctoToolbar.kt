@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.OctoToolbarBinding
