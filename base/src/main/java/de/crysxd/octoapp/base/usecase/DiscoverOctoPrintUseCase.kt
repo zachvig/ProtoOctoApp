@@ -7,14 +7,14 @@ import android.net.wifi.WifiManager
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
-import de.crysxd.octoapp.base.utils.UPnPDevice
-import de.crysxd.octoapp.base.utils.UPnPDiscovery
+import de.crysxd.octoapp.base.network.OctoPrintUpnpDiscovery
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.io.IOException
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -47,7 +47,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
 
         // Start discovery and return results
         var multicastLock: WifiManager.MulticastLock? = null
-        var upnpDiscovery: UPnPDiscovery? = null
+        var upnpDiscovery: Job? = null
         var bonjourListener: NsdDiscoveryListener? = null
         return@withContext channel.asFlow().onStart {
             timber.i("Starting Bonjour discovery")
@@ -60,7 +60,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
             timber.i("Finishing Bonjour discovery")
             bonjourListener?.let(manager::stopServiceDiscovery)
             multicastLock?.release()
-            upnpDiscovery?.cancel(true)
+            upnpDiscovery?.cancel()
         }
     }
 
@@ -83,42 +83,27 @@ class DiscoverOctoPrintUseCase @Inject constructor(
         return discoverListener
     }
 
-    private fun discoverUsingUpnp(
+    private suspend fun discoverUsingUpnp(
         timber: Timber.Tree,
         coroutineContext: CoroutineContext,
         submitResult: (DiscoveredOctoPrint) -> Unit
-    ): UPnPDiscovery {
-        val discoveryCache = mutableListOf<String>()
-        return UPnPDiscovery(
-            context,
-            UpnpDiscoveryListener(
+    ) = GlobalScope.launch(coroutineContext + Dispatchers.IO) {
+        OctoPrintUpnpDiscovery(context).discover(2, TimeUnit.SECONDS).forEach {
+            timber.i("Testing $it")
+            testDiscoveredInstanceAndPublishResult(
                 timber = timber,
-                onError = { timber.e(it, "Upnp error") },
-                onFound = {
-                    if (discoveryCache.contains(it.hostAddress)) return@UpnpDiscoveryListener
-
-                    discoveryCache.add(it.hostAddress)
-                    timber.i("Upnp device found: ${it.hostAddress}")
-                    GlobalScope.launch(coroutineContext + Dispatchers.IO) {
-                        testDiscoveredInstanceAndPublishResult(
-                            timber = timber,
-                            instance = DiscoveredOctoPrint(
-                                label = "OctoPrint on ${it.hostAddress}",
-                                detailLabel = "http://${it.hostAddress}:80/",
-                                webUrl = "http://${it.hostAddress}:80/",
-                                id = "${it.hostAddress}:80".hashCode(),
-                                bonjourServiceName = null,
-                                bonjourServiceType = null,
-                                source = "Upnp",
-                                quality = 0,
-                            ),
-                            submitResult = submitResult
-                        )
-                    }
-                }
+                instance = DiscoveredOctoPrint(
+                    label = "OctoPrint via UPnP",
+                    detailLabel = it.address.hostAddress,
+                    webUrl = "http://${it.upnpHostname}:80/",
+                    id = "${it.address.hostAddress}:80".hashCode(),
+                    bonjourServiceName = null,
+                    bonjourServiceType = null,
+                    source = "UPnP",
+                    quality = 0,
+                ),
+                submitResult = submitResult
             )
-        ).also {
-            it.execute()
         }
     }
 
@@ -178,7 +163,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                             submitResult = submitResult,
                             instance = DiscoveredOctoPrint(
                                 label = resolvedService.serviceName,
-                                detailLabel = "http://${maskedCredentials}${resolvedService.host.hostName}:${resolvedService.port}$path",
+                                detailLabel = resolvedService.host.hostName,
                                 webUrl = "http://${credentials}${resolvedService.host.hostName}:${resolvedService.port}$path",
                                 id = "${resolvedService.host.hostAddress}:${resolvedService.port}".hashCode(),
                                 bonjourServiceName = resolvedService.serviceName,
@@ -196,7 +181,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
     private suspend fun testDiscoveredInstanceAndPublishResult(timber: Timber.Tree, instance: DiscoveredOctoPrint, submitResult: (DiscoveredOctoPrint) -> Unit) {
         sensitiveDataMask.registerWebUrl(instance.webUrl, instance.bonjourServiceName ?: "octoprint_from_bonjour")
         timber.i("Probing for '${instance.label}' at ${instance.webUrl} using ${instance.source} (${instance.id})")
-        val octoPrint = octoPrintProvider.createAdHocOctoPrint(OctoPrintInstanceInformationV2(webUrl = instance.webUrl, apiKey = ""))
+        val octoPrint = octoPrintProvider.createAdHocOctoPrint(OctoPrintInstanceInformationV2(webUrl = instance.webUrl, apiKey = "not_an_api_key"))
         try {
             octoPrint.createUserApi().getCurrentUser().isGuest
             timber.i("Probe for '${instance.label}' at ${instance.webUrl} was SUCCESS 🥳")
@@ -255,28 +240,6 @@ class DiscoverOctoPrintUseCase @Inject constructor(
         override fun onServiceLost(service: NsdServiceInfo) {
             timber.i("Service lost: $service")
             onLost(service)
-        }
-    }
-
-    private class UpnpDiscoveryListener(
-        private val timber: Timber.Tree,
-        private val onFound: (UPnPDevice) -> Unit,
-        private val onError: (Exception) -> Unit
-    ) : UPnPDiscovery.OnDiscoveryListener {
-        override fun OnStart() {
-            timber.i("UPnp discovery started")
-        }
-
-        override fun OnFoundNewDevice(device: UPnPDevice) {
-            onFound(device)
-        }
-
-        override fun OnFinish() {
-            timber.i("UPnp discovery finished")
-        }
-
-        override fun OnError(e: java.lang.Exception) {
-            onError(e)
         }
     }
 

@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.logging
 
 import android.net.Uri
+import de.crysxd.octoapp.base.network.OctoPrintUpnpDiscovery.Companion.UPNP_ADDRESS_PREFIX
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
@@ -18,6 +19,7 @@ class SensitiveDataMask {
                 uri.host?.endsWith(".lan") == true -> Unit
                 uri.host?.endsWith(".local") == true -> Unit
                 uri.host?.endsWith(".home") == true -> Unit
+                uri.host?.startsWith(UPNP_ADDRESS_PREFIX) == true -> Unit
                 else -> {
                     val value = uri.host ?: webUrl
                     val hash = value.hashCode().toString().take(4)
