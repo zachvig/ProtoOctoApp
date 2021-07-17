@@ -7,7 +7,6 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.livedata.PollingLiveData
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.menu.power.PowerControlsMenu
@@ -16,6 +15,7 @@ import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase.Params
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.base.usecase.GetPrinterConnectionUseCase
 import de.crysxd.octoapp.base.usecase.execute
+import de.crysxd.octoapp.base.utils.PollingLiveData
 import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintBootingException
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse

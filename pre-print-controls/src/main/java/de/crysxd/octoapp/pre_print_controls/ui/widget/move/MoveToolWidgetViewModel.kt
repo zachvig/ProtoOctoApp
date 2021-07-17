@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
-import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
+import de.crysxd.octoapp.base.ui.utils.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.HomePrintHeadUseCase
 import de.crysxd.octoapp.base.usecase.JogPrintHeadUseCase
 import de.crysxd.octoapp.pre_print_controls.R

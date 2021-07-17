@@ -6,7 +6,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_FULL_WEBCAM_RESOLUTION
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.dns.LocalDnsInterceptor
+import de.crysxd.octoapp.base.network.dns.LocalDnsInterceptor
 import de.crysxd.octoapp.octoprint.SubjectAlternativeNameCompatVerifier
 import de.crysxd.octoapp.octoprint.ext.withHostnameVerifier
 import de.crysxd.octoapp.octoprint.ext.withSslKeystore

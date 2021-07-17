@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base
+package de.crysxd.octoapp.base.network
 
 import android.content.Context
 import android.net.Uri

@@ -3,8 +3,8 @@ package de.crysxd.octoapp.base.usecase
 import android.graphics.Bitmap
 import android.net.Uri
 import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.dns.LocalDnsResolver
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.network.dns.LocalDnsResolver
 import de.crysxd.octoapp.base.ui.widget.webcam.MjpegConnection
 import de.crysxd.octoapp.base.ui.widget.webcam.MjpegConnection2
 import de.crysxd.octoapp.octoprint.exceptions.*

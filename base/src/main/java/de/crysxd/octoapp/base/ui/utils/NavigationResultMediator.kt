@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui.navigation
+package de.crysxd.octoapp.base.ui.utils
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,6 +6,7 @@ import androidx.lifecycle.Transformations
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicInteger
 
+@Deprecated("We should remove this")
 object NavigationResultMediator {
 
     private var resultCounter = AtomicInteger()

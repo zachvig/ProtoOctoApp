@@ -6,13 +6,13 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
-import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
+import de.crysxd.octoapp.base.ui.utils.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.ExtrudeFilamentUseCase
 import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
-import de.crysxd.octoapp.base.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.distinctUntilChanged

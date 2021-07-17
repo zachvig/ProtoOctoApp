@@ -3,11 +3,11 @@ package de.crysxd.octoapp.print_controls.ui.widget.tune
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
-import de.crysxd.octoapp.base.livedata.PollingLiveData
 import de.crysxd.octoapp.base.models.SerialCommunication
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
+import de.crysxd.octoapp.base.utils.PollingLiveData
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

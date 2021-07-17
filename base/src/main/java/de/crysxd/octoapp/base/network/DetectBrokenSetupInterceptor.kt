@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base
+package de.crysxd.octoapp.base.network
 
 import de.crysxd.octoapp.base.models.ActiveInstanceIssue
 import de.crysxd.octoapp.base.repository.OctoPrintRepository

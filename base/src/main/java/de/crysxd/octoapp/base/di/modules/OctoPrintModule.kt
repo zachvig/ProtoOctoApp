@@ -4,20 +4,20 @@ import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
 import dagger.Provides
-import de.crysxd.octoapp.base.DetectBrokenSetupInterceptor
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.SslKeyStoreHandler
 import de.crysxd.octoapp.base.datasource.DataSource
 import de.crysxd.octoapp.base.datasource.LocalGcodeFileDataSource
 import de.crysxd.octoapp.base.datasource.RemoteGcodeFileDataSource
 import de.crysxd.octoapp.base.datasource.WidgetPreferencesDataSource
 import de.crysxd.octoapp.base.di.BaseScope
-import de.crysxd.octoapp.base.dns.LocalDnsResolver
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.network.DetectBrokenSetupInterceptor
+import de.crysxd.octoapp.base.network.SslKeyStoreHandler
+import de.crysxd.octoapp.base.network.dns.LocalDnsResolver
 import de.crysxd.octoapp.base.repository.*
 
 @Module

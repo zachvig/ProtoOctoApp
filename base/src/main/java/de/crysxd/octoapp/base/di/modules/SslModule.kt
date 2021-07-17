@@ -3,7 +3,7 @@ package de.crysxd.octoapp.base.di.modules
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import de.crysxd.octoapp.base.SslKeyStoreHandler
+import de.crysxd.octoapp.base.network.SslKeyStoreHandler
 
 @Module
 class SslModule {

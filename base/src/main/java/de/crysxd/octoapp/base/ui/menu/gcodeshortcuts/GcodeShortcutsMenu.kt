@@ -13,7 +13,7 @@ import de.crysxd.octoapp.base.ui.menu.Menu
 import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.ui.menu.MenuItem
 import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
-import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
+import de.crysxd.octoapp.base.ui.utils.NavigationResultMediator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext

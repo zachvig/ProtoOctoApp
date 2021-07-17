@@ -17,7 +17,7 @@ import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requestFocusAndOpenSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import de.crysxd.octoapp.base.ui.navigation.NavigationResultMediator
+import de.crysxd.octoapp.base.ui.utils.NavigationResultMediator
 import kotlinx.parcelize.Parcelize
 
 class EnterValueFragment : BaseFragment(R.layout.enter_value_fragment) {

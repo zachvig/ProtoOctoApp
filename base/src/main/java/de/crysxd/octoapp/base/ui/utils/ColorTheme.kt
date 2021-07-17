@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.ui
+package de.crysxd.octoapp.base.ui.utils
 
 import android.os.Parcelable
 import android.view.View

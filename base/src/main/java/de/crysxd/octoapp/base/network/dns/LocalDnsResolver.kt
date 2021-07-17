@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.dns
+package de.crysxd.octoapp.base.network.dns
 
 import android.content.Context
 import android.net.wifi.WifiManager

@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.livedata
+package de.crysxd.octoapp.base.utils
 
 import android.os.Handler
 import androidx.lifecycle.LiveData

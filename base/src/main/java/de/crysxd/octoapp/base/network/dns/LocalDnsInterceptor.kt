@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.base.dns
+package de.crysxd.octoapp.base.network.dns
 
 import okhttp3.Interceptor
 import okhttp3.Request
