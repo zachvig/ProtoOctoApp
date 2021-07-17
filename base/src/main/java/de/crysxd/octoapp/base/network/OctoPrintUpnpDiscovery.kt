@@ -34,7 +34,7 @@ class OctoPrintUpnpDiscovery(
     private val wifi = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
     private val uuidPattern = Pattern.compile("[uU][sS][nN]:.*[uU][uU][iI][dD]:([\\-0-9a-zA-Z]{36})")
 
-    suspend fun discover(callback: (Device) -> Unit) {
+    suspend fun discover(callback: (Service) -> Unit) {
         val lock = wifi.createMulticastLock("OctoPrintUpnpDiscovery")
 
         try {
@@ -47,7 +47,7 @@ class OctoPrintUpnpDiscovery(
         }
     }
 
-    private suspend fun discoverWithMulticastLock(callback: (Device) -> Unit) = withContext(Dispatchers.IO) {
+    private suspend fun discoverWithMulticastLock(callback: (Service) -> Unit) = withContext(Dispatchers.IO) {
         Timber.i("Opening port $PORT")
         val socket = DatagramSocket(PORT)
         try {
@@ -67,7 +67,7 @@ class OctoPrintUpnpDiscovery(
         }
     }
 
-    private fun readNextResponse(socket: DatagramSocket, callback: (Device) -> Unit) {
+    private fun readNextResponse(socket: DatagramSocket, callback: (Service) -> Unit) {
         try {
             val datagramPacket = DatagramPacket(ByteArray(1024), 1024)
             socket.receive(datagramPacket)
@@ -82,7 +82,7 @@ class OctoPrintUpnpDiscovery(
                     return
                 }
                 Timber.v("Discovered: $uuid")
-                val device = Device(
+                val device = Service(
                     upnpHostname = "$UPNP_ADDRESS_PREFIX$uuid",
                     address = datagramPacket.address,
                     upnpId = uuid
@@ -98,7 +98,7 @@ class OctoPrintUpnpDiscovery(
         }
     }
 
-    data class Device(
+    data class Service(
         val upnpHostname: String,
         val address: InetAddress,
         val upnpId: String,

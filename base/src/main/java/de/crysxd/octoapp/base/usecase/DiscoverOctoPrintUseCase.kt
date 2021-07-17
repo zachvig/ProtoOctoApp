@@ -10,6 +10,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
+import java.net.InetAddress
 import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -58,10 +59,10 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                 timber = timber,
                 instance = DiscoveredOctoPrint(
                     label = it.label,
-                    detailLabel = it.host.hostName,
+                    detailLabel = it.hostname,
                     webUrl = it.webUrl,
-                    hostAddress = it.host.hostAddress,
-                    source = "mDNS",
+                    host = it.host,
+                    source = "DNS-SD",
                     quality = 100,
                     port = it.port,
                 ),
@@ -90,7 +91,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                         detailLabel = it.address.hostAddress,
                         webUrl = "http://${it.upnpHostname}:80/",
                         port = 80,
-                        hostAddress = it.address.hostAddress,
+                        host = it.address,
                         source = "UPnP",
                         quality = 0,
                     ),
@@ -122,10 +123,10 @@ class DiscoverOctoPrintUseCase @Inject constructor(
         val detailLabel: String,
         val webUrl: String,
         val port: Int,
-        val hostAddress: String,
+        val host: InetAddress,
         val source: String,
         val quality: Int,
     ) {
-        val id get() = "$hostAddress:$port".hashCode()
+        val id get() = "${host.hostAddress}:$port".hashCode()
     }
 }

@@ -1,26 +1,25 @@
 package de.crysxd.octoapp.base.network
 
 import android.content.Context
-import android.net.nsd.NsdManager
-import android.net.nsd.NsdServiceInfo
 import android.net.wifi.WifiManager
+import com.github.druk.dnssd.*
 import de.crysxd.octoapp.base.di.Injector
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.IOException
 import java.net.InetAddress
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
+
 
 class OctoPrintDnsSdDiscovery(
     context: Context,
 ) {
     private val wifi = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-    private val nsd = context.applicationContext.getSystemService(Context.NSD_SERVICE) as NsdManager
-    private var bonjourResolveBusy = AtomicBoolean(false)
-    private var bonjourResolveBacklog = mutableListOf<NsdServiceInfo>()
+    private val dnssd = DNSSDBindable(context)
 
-    fun discover(coroutineContext: CoroutineContext, callback: (Device) -> Unit) {
+    fun discover(coroutineContext: CoroutineContext, callback: (Service) -> Unit) {
         val lock = wifi.createMulticastLock("OctoPrintUpnpDiscovery")
 
         try {
@@ -33,119 +32,109 @@ class OctoPrintDnsSdDiscovery(
         }
     }
 
-    private fun discoverWithMulticastLock(coroutineContext: CoroutineContext, callback: (Device) -> Unit) {
-        val discoverListener = NsdDiscoveryListener(
-            onFound = { discoveredService ->
-                Timber.i("Discovered service ${discoveredService.serviceName}")
-                resolve(discoveredService, callback)
-            },
-            onError = {
-                Timber.e(it, "Bonjour discover error")
+    private fun discoverWithMulticastLock(coroutineContext: CoroutineContext, callback: (Service) -> Unit) {
+        val service = dnssd.browse("_octoprint._tcp", object : BrowseListener {
+            override fun operationFailed(service: DNSSDService?, errorCode: Int) {
+                Timber.e("mDNS browse failed (errorCode=$errorCode)")
             }
-        )
 
-        nsd.discoverServices("_octoprint._tcp", NsdManager.PROTOCOL_DNS_SD, discoverListener)
+            override fun serviceFound(browser: DNSSDService, flags: Int, ifIndex: Int, serviceName: String, regType: String, domain: String) {
+                Timber.i("Found $serviceName $regType $domain")
+                resolveService(
+                    flags = flags,
+                    ifIndex = ifIndex,
+                    serviceName = serviceName,
+                    regType = regType,
+                    domain = domain,
+                    callback = callback
+                )
+            }
+
+            override fun serviceLost(browser: DNSSDService?, flags: Int, ifIndex: Int, serviceName: String?, regType: String?, domain: String?) {
+                Timber.i("Lost $browser $serviceName $regType $domain")
+            }
+        })
+
         coroutineContext.job.invokeOnCompletion {
-            nsd.stopServiceDiscovery(discoverListener)
+            service.stop()
         }
     }
 
-    private fun resolveFromBacklog(callback: (Device) -> Unit) {
-        if (bonjourResolveBacklog.isNotEmpty()) {
-            resolve(bonjourResolveBacklog.removeFirst(), callback)
-        }
+    private fun resolveService(flags: Int, ifIndex: Int, serviceName: String, regType: String, domain: String, callback: (Service) -> Unit) {
+        dnssd.resolve(flags, ifIndex, serviceName, regType, domain, object : ResolveListener {
+            override fun operationFailed(service: DNSSDService, errorCode: Int) {
+                Timber.e("mDNS resolve failed (errorCode=$errorCode)")
+
+            }
+
+            override fun serviceResolved(
+                resolver: DNSSDService,
+                flags: Int,
+                ifIndex: Int,
+                fullName: String,
+                hostName: String,
+                port: Int,
+                txtRecord: MutableMap<String, String>
+            ) {
+                queryService(
+                    flags = flags,
+                    ifIndex = ifIndex,
+                    serviceName = serviceName,
+                    hostName = hostName,
+                    port = port,
+                    txtRecord = txtRecord,
+                    callback = callback
+                )
+            }
+        })
     }
 
-    private fun resolve(service: NsdServiceInfo, callback: (Device) -> Unit): Job = GlobalScope.launch {
-        // Gate
-        if (!bonjourResolveBusy.compareAndSet(false, true)) {
-            Timber.v("Bonjour resolve is busy, adding ${service.serviceName} to backlog")
-            bonjourResolveBacklog.add(service)
-            return@launch
-        }
-        Timber.i("Resolving service ${service.serviceName}")
+    private fun queryService(
+        flags: Int,
+        ifIndex: Int,
+        serviceName: String,
+        hostName: String,
+        port: Int,
+        txtRecord: MutableMap<String, String>,
+        callback: (Service) -> Unit
+    ) {
+        dnssd.queryRecord(flags, ifIndex, hostName, 1, 1, object : QueryListener {
+            override fun operationFailed(service: DNSSDService, errorCode: Int) {
+                Timber.e("mDNS query failed (errorCode=$errorCode)")
 
-        // Resolve
-        nsd.resolveService(
-            service,
-            NsdResolveListener(
-                onError = {
-                    Timber.e(it, "Resolve error")
-                    bonjourResolveBusy.set(false)
-                    bonjourResolveBacklog.add(service)
-                    resolveFromBacklog(callback)
+            }
 
-                },
-                onResolved = { resolvedService ->
-                    bonjourResolveBusy.set(false)
-                    resolveFromBacklog(callback)
+            override fun queryAnswered(query: DNSSDService?, flags: Int, ifIndex: Int, fullName: String, rrtype: Int, rrclass: Int, rdata: ByteArray, ttl: Int) {
+                GlobalScope.launch(Dispatchers.IO) {
+                    val fixedHostname = hostName.removeSuffix(".")
+                    Timber.i("Resolved mDNS service $fixedHostname")
 
-                    Timber.i("Resolved service ${resolvedService.serviceName} (${resolvedService.host.hostAddress})")
                     // Construct OctoPrint
-                    val path = resolvedService.attributes["path"]?.let { String(it) } ?: "/"
-                    val user = resolvedService.attributes["u"]?.let { String(it) }
-                    val password = resolvedService.attributes["p"]?.let { String(it) }
+                    val path = txtRecord["path"] ?: "/"
+                    val user = txtRecord["u"]
+                    val password = txtRecord["p"]
                     val credentials = user?.let { u ->
                         password?.let { p -> "$u:$p@" } ?: "$u@"
                     } ?: ""
-                    val device = Device(
-                        label = resolvedService.serviceName,
-                        host = resolvedService.host,
-                        port = resolvedService.port,
-                        webUrl = "http://${credentials}${resolvedService.host.hostName}:${resolvedService.port}$path",
+                    val device = Service(
+                        label = serviceName,
+                        hostname = fixedHostname,
+                        port = port,
+                        webUrl = "http://${credentials}${fixedHostname}:${port}$path",
+                        host = InetAddress.getByAddress(hostName, rdata)
                     )
-                    Injector.get().localDnsResolver().addMdnsDeviceToCache(device)
+                    Injector.get().localDnsResolver().addMDnsDeviceToCache(device)
                     callback(device)
                 }
-            )
-        )
+            }
+        })
     }
 
-    private class NsdDiscoveryListener(
-        private val onError: (Exception) -> Unit,
-        private val onFound: (NsdServiceInfo) -> Unit,
-    ) : NsdManager.DiscoveryListener {
-
-        override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
-            onError(IOException("Failed to start discovery ($serviceType $errorCode)"))
-        }
-
-        override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) {
-            onError(IOException("Failed to stop discovery ($serviceType $errorCode)"))
-        }
-
-        override fun onDiscoveryStarted(serviceType: String) {
-            Timber.i("Discovery started: $serviceType")
-        }
-
-        override fun onDiscoveryStopped(serviceType: String) {
-            Timber.i("Discovery stopped: $serviceType")
-        }
-
-        override fun onServiceFound(service: NsdServiceInfo) {
-            onFound(service)
-        }
-
-        override fun onServiceLost(service: NsdServiceInfo) = Unit
-    }
-
-    private class NsdResolveListener(
-        private val onResolved: (NsdServiceInfo) -> Unit,
-        private val onError: (Exception) -> Unit
-    ) : NsdManager.ResolveListener {
-        override fun onResolveFailed(service: NsdServiceInfo, errorCode: Int) {
-            onError(IOException("Failed to resolve $service (errorCode=$errorCode)"))
-        }
-
-        override fun onServiceResolved(service: NsdServiceInfo) {
-            onResolved(service)
-        }
-    }
-
-    data class Device(
+    data class Service(
         val label: String,
         val webUrl: String,
         val port: Int,
         val host: InetAddress,
+        val hostname: String,
     )
 }

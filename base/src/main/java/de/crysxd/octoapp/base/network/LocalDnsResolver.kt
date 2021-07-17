@@ -2,6 +2,9 @@ package de.crysxd.octoapp.base.network
 
 import android.content.Context
 import android.net.wifi.WifiManager
+import com.github.druk.dnssd.DNSSDBindable
+import com.github.druk.dnssd.DNSSDService
+import com.github.druk.dnssd.QueryListener
 import com.qiniu.android.dns.DnsManager
 import com.qiniu.android.dns.NetworkInfo
 import com.qiniu.android.dns.local.Resolver
@@ -28,6 +31,9 @@ class LocalDnsResolver(private val context: Context) : Dns {
         private val resolveLock = ReentrantLock()
     }
 
+    private val dnssd = DNSSDBindable(context)
+    private val wifi = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+
     override fun lookup(hostname: String): List<InetAddress> {
         if (hostname.startsWith(UPNP_ADDRESS_PREFIX)) {
             return localLookup(hostname)
@@ -36,7 +42,7 @@ class LocalDnsResolver(private val context: Context) : Dns {
         return try {
             InetAddress.getAllByName(hostname).toList()
         } catch (e: UnknownHostException) {
-            Timber.v("Android failed to resolve address, falling back")
+            Timber.v("Android failed to resolve $hostname, falling back")
             localLookup(hostname)
         }
     }
@@ -48,7 +54,7 @@ class LocalDnsResolver(private val context: Context) : Dns {
 
         // Check cache
         cache.firstOrNull { it.hostname == hostname }?.let {
-            Timber.v("Cache hit for $hostname=${it.resolvedIp}")
+            Timber.v("Cache hit for $hostname -> ${it.resolvedIp}")
             return@withLock it.resolvedIp
         }
         Timber.v("Cache miss for $hostname")
@@ -96,33 +102,49 @@ class LocalDnsResolver(private val context: Context) : Dns {
         } ?: throw UnknownHostException(upnpHostname)
     }
 
-    private fun doMDnsLookup(upnpHostname: String): List<InetAddress> = runBlocking {
-        Timber.i("Resolving via mDns: $upnpHostname")
+    private fun doMDnsLookup(hostname: String): List<InetAddress> = runBlocking {
+        Timber.i("Resolving via mDns: $hostname")
         withTimeoutOrNull(TimeUnit.SECONDS.toMillis(RESOLVE_TIMEOUT)) {
             val channel = Channel<InetAddress>()
+            val lock = wifi.createMulticastLock("mDnsResolution")
+            lock.acquire()
             val job = GlobalScope.launch {
-                OctoPrintDnsSdDiscovery(context).discover(currentCoroutineContext()) {
-                    val names = listOf(
-                        upnpHostname,
-                        "${upnpHostname.split(".")[0]}.home",
-                        "${upnpHostname.split(".")[0]}.lan",
-                    )
-                    if (names.contains(it.host.hostName)) {
-                        channel.offer(it.host)
+                dnssd.queryRecord(0, 0, hostname, 1, 1, object : QueryListener {
+                    override fun operationFailed(service: DNSSDService?, errorCode: Int) {
+                        Timber.e("Unable to query $hostname (errorCode=$errorCode)")
                     }
-                }
+
+                    override fun queryAnswered(
+                        query: DNSSDService,
+                        flags: Int,
+                        ifIndex: Int,
+                        fullName: String,
+                        rrtype: Int,
+                        rrclass: Int,
+                        rdata: ByteArray,
+                        ttl: Int
+                    ) {
+                        Timber.i("Query answered: $hostname")
+                        channel.offer(InetAddress.getByAddress(hostname, rdata))
+                    }
+                })
             }
             val address = channel.receive()
+            job.invokeOnCompletion {
+                lock.release()
+            }
             job.cancel()
             listOf(address)
-        } ?: throw UnknownHostException(upnpHostname)
+        } ?: throw UnknownHostException(hostname)
     }
 
     private fun doDnsLookup(hostname: String): List<InetAddress> {
+        // This is a manual backup DNS which should help with .home domains. Some Android devices are configured
+        // to ignore the router as DNS server and directly go to Cloudflare or Google
+        //
         // From the WiFi manager, get the gateway and DHCP server address, also replace last octet of own ip address with 1
         // Both usually is the router
         // For good measure, also add common router IPs in case the user has a double DHCP issue
-        val wifi = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val dnsIps = listOf(
             wifi.dhcpInfo.gateway.asIpString(),
             wifi.dhcpInfo.serverAddress.asIpString(),
@@ -166,23 +188,23 @@ class LocalDnsResolver(private val context: Context) : Dns {
         }
     }
 
-    fun addUpnpDeviceToCache(upnpDevice: OctoPrintUpnpDiscovery.Device) {
+    fun addUpnpDeviceToCache(upnpService: OctoPrintUpnpDiscovery.Service) {
         // Directly add all devices we found to cache
         addCacheEntry(
             DnsEntry(
-                hostname = upnpDevice.upnpHostname,
-                resolvedIp = listOf(upnpDevice.address),
+                hostname = upnpService.upnpHostname,
+                resolvedIp = listOf(upnpService.address),
                 validUntil = Date(System.currentTimeMillis() + CACHE_ENTRY_TTL)
             )
         )
     }
 
-    fun addMdnsDeviceToCache(mdnsDevice: OctoPrintDnsSdDiscovery.Device) {
+    fun addMDnsDeviceToCache(mDnsService: OctoPrintDnsSdDiscovery.Service) {
         // Directly add all devices we found to cache
         addCacheEntry(
             DnsEntry(
-                hostname = mdnsDevice.host.hostName,
-                resolvedIp = listOf(mdnsDevice.host),
+                hostname = mDnsService.hostname,
+                resolvedIp = listOf(mDnsService.host),
                 validUntil = Date(System.currentTimeMillis() + CACHE_ENTRY_TTL)
             )
         )
