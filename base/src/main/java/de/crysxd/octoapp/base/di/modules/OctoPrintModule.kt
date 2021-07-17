@@ -16,8 +16,8 @@ import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.network.DetectBrokenSetupInterceptor
+import de.crysxd.octoapp.base.network.LocalDnsResolver
 import de.crysxd.octoapp.base.network.SslKeyStoreHandler
-import de.crysxd.octoapp.base.network.dns.LocalDnsResolver
 import de.crysxd.octoapp.base.repository.*
 
 @Module

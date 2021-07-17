@@ -20,6 +20,7 @@ import de.crysxd.octoapp.octoprint.plugins.octoeverywhere.OctoEverywhereApi
 import de.crysxd.octoapp.octoprint.plugins.power.PowerPluginsCollection
 import de.crysxd.octoapp.octoprint.websocket.ContinuousOnlineCheck
 import de.crysxd.octoapp.octoprint.websocket.EventWebSocket
+import okhttp3.Dns
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -37,8 +38,8 @@ class OctoPrint(
     rawWebUrl: UrlString,
     rawAlternativeWebUrl: UrlString?,
     private val apiKey: String,
-    private val lowLevelInterceptors: List<Interceptor> = emptyList(),
     private val highLevelInterceptors: List<Interceptor> = emptyList(),
+    private val customDns: Dns? = null,
     private val keyStore: KeyStore? = null,
     private val hostnameVerifier: HostnameVerifier? = null,
     private val networkExceptionListener: (Exception) -> Unit = { },
@@ -175,6 +176,7 @@ class OctoPrint(
         connectTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)
         readTimeout(readWriteTimeout, TimeUnit.MILLISECONDS)
         writeTimeout(readWriteTimeout, TimeUnit.MILLISECONDS)
+        customDns?.let { dns(it) }
 
         // 1. Add Catch-all interceptor. Uncaught exceptions other than IO lead to a crash,
         // so we wrap any non-IOException in an IOException
@@ -191,9 +193,6 @@ class OctoPrint(
 
         // 5. This interceptor consumes raw IOException and might switch the host
         addInterceptor(alternativeWebUrlInterceptor)
-
-        // 6. Add plug-in low level interceptors next
-        this@OctoPrint.lowLevelInterceptors.forEach { addInterceptor(it) }
 
         // 7. Basic Auth interceptor is the last because we might change the host above
         addInterceptor(BasicAuthInterceptor(logger, fullWebUrl, fullAlternativeWebUrl))

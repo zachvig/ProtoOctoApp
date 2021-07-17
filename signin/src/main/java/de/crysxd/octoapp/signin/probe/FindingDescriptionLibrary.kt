@@ -15,7 +15,10 @@ class FindingDescriptionLibrary(private val context: Context) {
         is TestFullNetworkStackUseCase.Finding.InvalidUrl -> context.getString(R.string.sign_in___probe_finding___title_url_syntax)
         is TestFullNetworkStackUseCase.Finding.NotFound -> context.getString(R.string.sign_in___probe_finding___title_octoprint_not_found)
         is TestFullNetworkStackUseCase.Finding.PortClosed -> context.getString(R.string.sign_in___probe_finding___title_port_closed, finding.host, finding.port)
-        is TestFullNetworkStackUseCase.Finding.UnexpectedHttpIssue -> context.getString(R.string.sign_in___probe_finding___title_failed_to_connect_via_http)
+        is TestFullNetworkStackUseCase.Finding.UnexpectedHttpIssue -> context.getString(
+            R.string.sign_in___probe_finding___title_failed_to_connect_via_http,
+            finding.host
+        )
         is TestFullNetworkStackUseCase.Finding.UnexpectedIssue -> context.getString(R.string.sign_in___probe_finding___title_unexpected_issue)
         is TestFullNetworkStackUseCase.Finding.ServerIsNotOctoPrint -> context.getString(R.string.sign_in___probe_finding___title_might_not_be_octoprint, finding.host)
         is TestFullNetworkStackUseCase.Finding.InvalidApiKey -> "" // Never shown

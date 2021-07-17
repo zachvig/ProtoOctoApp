@@ -6,7 +6,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_FULL_WEBCAM_RESOLUTION
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.network.dns.LocalDnsInterceptor
 import de.crysxd.octoapp.octoprint.SubjectAlternativeNameCompatVerifier
 import de.crysxd.octoapp.octoprint.ext.withHostnameVerifier
 import de.crysxd.octoapp.octoprint.ext.withSslKeystore
@@ -127,7 +126,7 @@ class MjpegConnection2(
     private fun connect(useLocalDns: Boolean = false): Response = try {
         val sslKeystoreHandler = Injector.get().sslKeyStoreHandler()
         val client = OkHttpClient.Builder()
-            .addInterceptor(LocalDnsInterceptor(Injector.get().localDnsResolver()))
+            .dns(Injector.get().localDnsResolver())
             .addInterceptor(GenerateExceptionInterceptor(null, null))
             .withHostnameVerifier(SubjectAlternativeNameCompatVerifier().takeIf { sslKeystoreHandler.isWeakVerificationForHost(streamUrl) })
             .withSslKeystore(sslKeystoreHandler.loadKeyStore())

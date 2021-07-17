@@ -1,14 +1,14 @@
-package de.crysxd.octoapp.base.network.dns
+package de.crysxd.octoapp.base.network
 
 import android.content.Context
 import android.net.wifi.WifiManager
 import com.qiniu.android.dns.DnsManager
 import com.qiniu.android.dns.NetworkInfo
-import com.qiniu.android.dns.local.AndroidDnsServer
 import com.qiniu.android.dns.local.Resolver
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.utils.measureTime
 import kotlinx.coroutines.*
+import okhttp3.Dns
 import timber.log.Timber
 import java.net.InetAddress
 import java.net.UnknownHostException
@@ -16,7 +16,7 @@ import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-class LocalDnsResolver(private val context: Context) {
+class LocalDnsResolver(private val context: Context) : Dns {
 
     companion object {
         private val cache = mutableListOf<DnsEntry>()
@@ -25,24 +25,24 @@ class LocalDnsResolver(private val context: Context) {
         private val resolveLock = ReentrantLock()
     }
 
-    fun resolve(hostName: String): String = resolveLock.withLock {
+    override fun lookup(hostname: String): List<InetAddress> = resolveLock.withLock {
         // Clean up cache
         val now = Date()
         cache.removeAll { it.validUntil < now }
 
         // Check cache
-        cache.firstOrNull { it.hostName == hostName }?.let {
-            Timber.v("Cache hit for $hostName=${it.resolvedIp}")
+        cache.firstOrNull { it.hostname == hostname }?.let {
+            Timber.v("Cache hit for $hostname=${it.resolvedIp}")
             return@withLock it.resolvedIp
         }
 
         // Resolve. We do this in a coroutine scope and execute the resolve async so we can limit the time effectively
-        measureTime("local_dns_resolve") {
-            doResolve(hostName)
+        measureTime("local_dns_lookup") {
+            doLookup(hostname)
         }
     }
 
-    private fun doResolve(hostName: String): String {
+    private fun doLookup(hostname: String): List<InetAddress> {
         // From the WiFi manager, get the gateway and DHCP server address, also replace last octet of own ip address with 1
         // Both usually is the router
         // For good measure, also add common router IPs in case the user has a double DHCP issue
@@ -58,28 +58,29 @@ class LocalDnsResolver(private val context: Context) {
 
         Timber.i("Using as DNS server: $dnsIps")
 
-        // Use the standard Android resolver as fallback
         // Add all DNS server from above
-        val resolvers = listOf(
-            listOf(AndroidDnsServer.defaultResolver(context)),
-            dnsIps.map { Resolver(InetAddress.getByName(it), RESOLVE_TIMEOUT) }
-        ).flatten().toTypedArray()
+        val resolvers = dnsIps.map { Resolver(InetAddress.getByName(it), RESOLVE_TIMEOUT) }.toTypedArray()
 
         // Resolve!
         val res = try {
             val dns = DnsManager(NetworkInfo.normal, resolvers)
             dns.queryErrorHandler = DnsManager.QueryErrorHandler { e, host -> Timber.w("Unable to resolve host $host (${e::class.java.simpleName}: ${e.message})") }
-            dns.query(hostName).firstOrNull() ?: throw UnknownHostException("Resolving $hostName resulted in null")
+            dns.query(hostname).map { InetAddress.getByName(it) }
         } catch (e: Exception) {
-            Timber.e(e, "Unable to resolve host $hostName")
-            throw UnknownHostException(hostName)
+            Timber.e(e, "Unable to resolve host $hostname")
+            throw UnknownHostException(hostname)
         }
 
-        Timber.i("Resolved ${hostName}=$res")
+        if (res.isEmpty()) {
+            Timber.w("No results for $hostname")
+            throw UnknownHostException(hostname)
+        }
+
+        Timber.i("Resolved ${hostname}=$res")
         OctoAnalytics.logEvent(OctoAnalytics.Event.InbuiltDnsResolveSuccess)
         cache.add(
             DnsEntry(
-                hostName = hostName,
+                hostname = hostname,
                 resolvedIp = res,
                 validUntil = Date(System.currentTimeMillis() + CACHE_ENTRY_TTL)
             )
@@ -97,8 +98,8 @@ class LocalDnsResolver(private val context: Context) {
     }
 
     private data class DnsEntry(
-        val hostName: String,
-        val resolvedIp: String,
+        val hostname: String,
+        val resolvedIp: List<InetAddress>,
         val validUntil: Date,
     )
 }

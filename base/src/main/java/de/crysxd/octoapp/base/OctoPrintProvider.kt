@@ -9,9 +9,8 @@ import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.models.ActiveInstanceIssue
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.network.DetectBrokenSetupInterceptor
+import de.crysxd.octoapp.base.network.LocalDnsResolver
 import de.crysxd.octoapp.base.network.SslKeyStoreHandler
-import de.crysxd.octoapp.base.network.dns.LocalDnsInterceptor
-import de.crysxd.octoapp.base.network.dns.LocalDnsResolver
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.SubjectAlternativeNameCompatVerifier
@@ -44,7 +43,6 @@ class OctoPrintProvider(
     private var octoPrintCache: Pair<OctoPrintInstanceInformationV2, OctoPrint>? = null
     private val currentMessageChannel = ConflatedBroadcastChannel<Message.CurrentMessage?>()
     private val connectEventChannel = ConflatedBroadcastChannel<Event.Connected?>()
-    private val localDnsInterceptor = LocalDnsInterceptor(localDnsResolver)
 
     init {
         // Passively collect data for the analytics profile
@@ -164,7 +162,7 @@ class OctoPrintProvider(
             rawAlternativeWebUrl = it.alternativeWebUrl,
             apiKey = it.apiKey,
             highLevelInterceptors = listOf(detectBrokenSetupInterceptor),
-            lowLevelInterceptors = listOf(localDnsInterceptor),
+            customDns = localDnsResolver,
             keyStore = sslKeyStoreHandler.loadKeyStore(),
             hostnameVerifier = SubjectAlternativeNameCompatVerifier().takeIf { _ -> sslKeyStoreHandler.isWeakVerificationForHost(it.webUrl) },
             networkExceptionListener = ::handleNetworkException,

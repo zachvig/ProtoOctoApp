@@ -33,6 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_3"
         android:layout_marginBottom="@dimen/margin_3"
+        android:inputType="text|textUri"
         app:example="http://192.168.1.134|octoprint.home:5000|https://myoctoprint.com|http://192.168.0.204:5000/octoprint"
         app:label="Web URL"
         app:labelActive="OctoPrint URL – Copy this from your browser!"

@@ -12,6 +12,7 @@
         <attr name="actionOnlyWithText" format="boolean" />
         <attr name="forPassword" format="boolean" />
         <attr name="android:autofillHints" format="string" />
+        <attr name="android:inputType" format="string" />
     </declare-styleable>
     <declare-styleable name="OctoView">
         <attr name="octoActivity" format="enum">

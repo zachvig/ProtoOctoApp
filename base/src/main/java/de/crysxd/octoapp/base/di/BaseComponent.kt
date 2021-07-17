@@ -11,8 +11,8 @@ import de.crysxd.octoapp.base.di.modules.*
 import de.crysxd.octoapp.base.logging.FirebaseTree
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.logging.TimberCacheTree
+import de.crysxd.octoapp.base.network.LocalDnsResolver
 import de.crysxd.octoapp.base.network.SslKeyStoreHandler
-import de.crysxd.octoapp.base.network.dns.LocalDnsResolver
 import de.crysxd.octoapp.base.repository.*
 import de.crysxd.octoapp.base.ui.base.BaseViewModelFactory
 import de.crysxd.octoapp.base.usecase.*

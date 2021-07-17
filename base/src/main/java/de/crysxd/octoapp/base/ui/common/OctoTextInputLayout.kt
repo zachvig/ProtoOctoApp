@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Parcelable
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
 import android.util.AttributeSet
@@ -144,6 +145,7 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
                     binding.input.importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
                 }
             }
+            binding.input.inputType = it.getInt(R.styleable.OctoTextInputLayout_android_inputType, InputType.TYPE_CLASS_TEXT)
             binding.input.setText(it.getString(R.styleable.OctoTextInputLayout_defaultInputValue))
             val iconDrawable = it.getResourceId(R.styleable.OctoTextInputLayout_icon, 0)
             if (iconDrawable > 0) {

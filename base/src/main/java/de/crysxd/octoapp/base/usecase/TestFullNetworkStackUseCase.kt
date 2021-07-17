@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
-import de.crysxd.octoapp.base.network.dns.LocalDnsResolver
+import de.crysxd.octoapp.base.network.LocalDnsResolver
 import de.crysxd.octoapp.base.ui.widget.webcam.MjpegConnection
 import de.crysxd.octoapp.base.ui.widget.webcam.MjpegConnection2
 import de.crysxd.octoapp.octoprint.exceptions.*
@@ -149,7 +149,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
     }
 
     private fun testDns(host: String, webUrl: String): Pair<String?, Finding?> = try {
-        localDnsResolver.resolve(host) to null
+        localDnsResolver.resolve(host).first().hostAddress to null
     } catch (e: UnknownHostException) {
         if (host.endsWith(".local") || host.endsWith(".home") || host.endsWith(".lan")) {
             null to Finding.LocalDnsFailure(host = host, webUrl = webUrl)

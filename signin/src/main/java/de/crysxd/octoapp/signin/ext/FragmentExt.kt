@@ -10,11 +10,12 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.signin.R
 
 fun Fragment.goBackToDiscover() {
     requireOctoActivity().showDialog(
-        message = "Do you want to cancel and connect to an other OctoPrint? H",
-        positiveButton = "Connect to other H",
+        message = getString(R.string.sign_in___cancel_and_use_other_information_message),
+        positiveButton = getString(R.string.sign_in___cancel_and_use_other_information_title),
         positiveAction = {
             val repo = de.crysxd.octoapp.base.di.Injector.get().octorPrintRepository()
             repo.getActiveInstanceSnapshot()?.let {
