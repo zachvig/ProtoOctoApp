@@ -11,8 +11,8 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftImageResource
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
 import de.crysxd.octoapp.base.ext.toBitmapWithColor
-import de.crysxd.octoapp.base.ui.ColorTheme
-import de.crysxd.octoapp.base.ui.colorTheme
+import de.crysxd.octoapp.base.ui.utils.ColorTheme
+import de.crysxd.octoapp.base.ui.utils.colorTheme
 import de.crysxd.octoapp.base.usecase.CreateProgressAppWidgetDataUseCase
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Message

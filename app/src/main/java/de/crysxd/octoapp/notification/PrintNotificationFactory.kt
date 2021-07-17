@@ -16,7 +16,7 @@ import androidx.core.app.NotificationManagerCompat
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ui.colorTheme
+import de.crysxd.octoapp.base.ui.utils.colorTheme
 
 class PrintNotificationFactory(context: Context) : ContextWrapper(context) {
 

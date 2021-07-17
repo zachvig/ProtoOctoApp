@@ -20,7 +20,7 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_INFINITE_WIDGETS
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.base.LocalizedActivity
-import de.crysxd.octoapp.base.ui.colorTheme
+import de.crysxd.octoapp.base.ui.utils.colorTheme
 import de.crysxd.octoapp.widgets.AppWidgetPreferences.ACTIVE_WEB_URL_MARKER
 import timber.log.Timber
 import java.util.*

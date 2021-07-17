@@ -14,7 +14,7 @@ import androidx.core.view.children
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.ui.ColorTheme
+import de.crysxd.octoapp.base.ui.utils.ColorTheme
 import timber.log.Timber
 import java.lang.Math.random
 

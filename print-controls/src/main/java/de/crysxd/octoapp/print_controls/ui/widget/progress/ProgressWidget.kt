@@ -17,7 +17,7 @@ import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftImageResource
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
-import de.crysxd.octoapp.base.ui.ColorTheme
+import de.crysxd.octoapp.base.ui.utils.ColorTheme
 import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
 import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.base.usecase.FormatDurationUseCase

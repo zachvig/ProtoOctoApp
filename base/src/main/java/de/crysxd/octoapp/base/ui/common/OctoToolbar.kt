@@ -7,12 +7,10 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.OctoToolbarBinding
-import de.crysxd.octoapp.base.ui.ColorTheme
+import de.crysxd.octoapp.base.ui.utils.ColorTheme
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 
 class OctoToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, style: Int = 0) : FrameLayout(context, attrs, style) {
