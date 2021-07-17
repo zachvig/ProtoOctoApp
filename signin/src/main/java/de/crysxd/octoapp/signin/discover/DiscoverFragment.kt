@@ -53,8 +53,9 @@ class DiscoverFragment : BaseFragment() {
     private var manualBinding: DiscoverFragmentContentManualBinding? = null
     private var loadingAnimationJob: Job? = null
     private var backgroundAlpha = 1f
-    private val moveBackToOptionsBackPressedCallback = object : OnBackPressedCallback(false) {
+    private val moveBackToOptionsBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
+            Timber.i("BACK")
             viewModel.moveToOptionsState()
         }
     }
@@ -73,7 +74,6 @@ class DiscoverFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, moveBackToOptionsBackPressedCallback)
         backgroundAlpha = binding.octoBackground.alpha
 
         playLoadingAnimation()
@@ -350,6 +350,7 @@ class DiscoverFragment : BaseFragment() {
         binding.octoBackground.alpha = backgroundAlpha
         beginDelayedTransition()
         moveBackToOptionsBackPressedCallback.isEnabled = true
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, moveBackToOptionsBackPressedCallback)
         binding.octoView.idle()
         binding.octoView.isVisible = false
 

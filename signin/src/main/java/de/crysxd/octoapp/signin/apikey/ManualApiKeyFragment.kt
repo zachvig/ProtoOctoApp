@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -20,6 +21,7 @@ import de.crysxd.octoapp.signin.databinding.DiscoverFragmentContentManualBinding
 import de.crysxd.octoapp.signin.di.Injector
 import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.ext.setUpAsHelpButton
+import kotlinx.coroutines.delay
 
 class ManualApiKeyFragment : BaseFragment() {
     private lateinit var binding: BaseSigninFragmentBinding
@@ -114,7 +116,10 @@ class ManualApiKeyFragment : BaseFragment() {
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octo.isVisible = false
-        contentBinding.input.showSoftKeyboard()
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            delay(600)
+            contentBinding.input.showSoftKeyboard()
+        }
     }
 
     override fun onStop() {
