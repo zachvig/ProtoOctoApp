@@ -54,12 +54,15 @@ class LocalDnsResolver(private val context: Context) : Dns {
         Timber.v("Cache miss for $hostname")
 
         // Resolve. We do this in a coroutine scope and execute the resolve async so we can limit the time effectively
-        val result = if (hostname.startsWith(UPNP_ADDRESS_PREFIX)) {
-            measureTime("local_upnp_dns_lookup") {
+        val result = when {
+            hostname.startsWith(UPNP_ADDRESS_PREFIX) -> measureTime("local_upnp_dns_lookup") {
                 doUpnpLookup(hostname)
             }
-        } else {
-            measureTime("local_dns_lookup") {
+
+            hostname.endsWith(".local") || hostname.endsWith(".home") -> measureTime("local_mdns_lookup") {
+                doMDnsLookup(hostname)
+            }
+            else -> measureTime("local_dns_lookup") {
                 doDnsLookup(hostname)
             }
         }
@@ -84,6 +87,28 @@ class LocalDnsResolver(private val context: Context) : Dns {
                 OctoPrintUpnpDiscovery(context).discover {
                     if (it.upnpHostname == upnpHostname) {
                         channel.offer(it.address)
+                    }
+                }
+            }
+            val address = channel.receive()
+            job.cancel()
+            listOf(address)
+        } ?: throw UnknownHostException(upnpHostname)
+    }
+
+    private fun doMDnsLookup(upnpHostname: String): List<InetAddress> = runBlocking {
+        Timber.i("Resolving via mDns: $upnpHostname")
+        withTimeoutOrNull(TimeUnit.SECONDS.toMillis(RESOLVE_TIMEOUT)) {
+            val channel = Channel<InetAddress>()
+            val job = GlobalScope.launch {
+                OctoPrintDnsSdDiscovery(context).discover(currentCoroutineContext()) {
+                    val names = listOf(
+                        upnpHostname,
+                        "${upnpHostname.split(".")[0]}.home",
+                        "${upnpHostname.split(".")[0]}.lan",
+                    )
+                    if (names.contains(it.host.hostName)) {
+                        channel.offer(it.host)
                     }
                 }
             }
@@ -147,6 +172,17 @@ class LocalDnsResolver(private val context: Context) : Dns {
             DnsEntry(
                 hostname = upnpDevice.upnpHostname,
                 resolvedIp = listOf(upnpDevice.address),
+                validUntil = Date(System.currentTimeMillis() + CACHE_ENTRY_TTL)
+            )
+        )
+    }
+
+    fun addMdnsDeviceToCache(mdnsDevice: OctoPrintDnsSdDiscovery.Device) {
+        // Directly add all devices we found to cache
+        addCacheEntry(
+            DnsEntry(
+                hostname = mdnsDevice.host.hostName,
+                resolvedIp = listOf(mdnsDevice.host),
                 validUntil = Date(System.currentTimeMillis() + CACHE_ENTRY_TTL)
             )
         )

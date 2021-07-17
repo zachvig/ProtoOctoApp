@@ -3,22 +3,24 @@ package de.crysxd.octoapp.base.network
 import android.content.Context
 import android.net.wifi.WifiManager
 import de.crysxd.octoapp.base.di.Injector
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
 import java.net.SocketTimeoutException
-import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 class OctoPrintUpnpDiscovery(
     context: Context,
-    private val port: Int = 1900
 ) {
     companion object {
         const val UPNP_ADDRESS_PREFIX = "octoprint-via-upnp---"
         private const val SOCKET_TIMEOUT = 500
+        private const val PORT = 1900
         private const val ADDRESS = "239.255.255.250"
         private const val LINE_END = "\r\n"
         private const val QUERY = "M-SEARCH * HTTP/1.1" + LINE_END +
@@ -31,18 +33,6 @@ class OctoPrintUpnpDiscovery(
 
     private val wifi = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
     private val uuidPattern = Pattern.compile("[uU][sS][nN]:.*[uU][uU][iI][dD]:([\\-0-9a-zA-Z]{36})")
-
-    suspend fun discover(timeout: Long, timeUnit: TimeUnit): List<Device> {
-        val results = mutableListOf<Device>()
-
-        withTimeoutOrNull(timeUnit.toMillis(timeout)) {
-            discover { results.add(it) }
-        }
-
-        val unique = results.distinctBy { it.upnpId }
-        Timber.i("Found ${unique.size} devices in $timeout $timeUnit")
-        return unique
-    }
 
     suspend fun discover(callback: (Device) -> Unit) {
         val lock = wifi.createMulticastLock("OctoPrintUpnpDiscovery")
@@ -58,13 +48,13 @@ class OctoPrintUpnpDiscovery(
     }
 
     private suspend fun discoverWithMulticastLock(callback: (Device) -> Unit) = withContext(Dispatchers.IO) {
-        Timber.i("Opening port $port")
-        val socket = DatagramSocket(port)
+        Timber.i("Opening port $PORT")
+        val socket = DatagramSocket(PORT)
         try {
             socket.reuseAddress = true
             val group = InetAddress.getByName(ADDRESS)
             val queryBytes = QUERY.toByteArray()
-            val datagramPacketRequest = DatagramPacket(queryBytes, queryBytes.size, group, port)
+            val datagramPacketRequest = DatagramPacket(queryBytes, queryBytes.size, group, PORT)
             socket.soTimeout = SOCKET_TIMEOUT
             socket.send(datagramPacketRequest)
 
@@ -72,7 +62,7 @@ class OctoPrintUpnpDiscovery(
                 readNextResponse(socket, callback)
             }
         } finally {
-            Timber.i("Closing port $port")
+            Timber.i("Closing port $PORT")
             socket.close()
         }
     }
