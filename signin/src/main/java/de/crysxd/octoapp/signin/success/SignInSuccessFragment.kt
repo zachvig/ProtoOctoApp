@@ -15,6 +15,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
@@ -62,6 +63,8 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
 
         binding.buttonContinue.setOnClickListener {
             val args = navArgs<SignInSuccessFragmentArgs>().value
+            OctoAnalytics.logEvent(OctoAnalytics.Event.Login)
+            OctoAnalytics.logEvent(OctoAnalytics.Event.SignInSuccess)
             Injector.get().octorPrintRepository().setActive(
                 OctoPrintInstanceInformationV2(
                     webUrl = args.webUrl,

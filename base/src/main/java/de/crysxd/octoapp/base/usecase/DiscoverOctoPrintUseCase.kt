@@ -62,7 +62,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                     detailLabel = it.hostname,
                     webUrl = it.webUrl,
                     host = it.host,
-                    source = "DNS-SD",
+                    method = DiscoveryMethod.DnsSd,
                     quality = 100,
                     port = it.port,
                 ),
@@ -92,7 +92,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                         webUrl = "http://${it.upnpHostname}:80/",
                         port = 80,
                         host = it.address,
-                        source = "UPnP",
+                        method = DiscoveryMethod.Upnp,
                         quality = 0,
                     ),
                     submitResult = submitResult
@@ -102,8 +102,8 @@ class DiscoverOctoPrintUseCase @Inject constructor(
     }
 
     private suspend fun testDiscoveredInstanceAndPublishResult(timber: Timber.Tree, instance: DiscoveredOctoPrint, submitResult: (DiscoveredOctoPrint) -> Unit) {
-        sensitiveDataMask.registerWebUrl(instance.webUrl, "octoprint_from_${instance.source.lowercase()}")
-        timber.i("Probing for '${instance.label}' at ${instance.webUrl} using ${instance.source} (${instance.id})")
+        sensitiveDataMask.registerWebUrl(instance.webUrl, "octoprint_from_${instance.method::class.java.simpleName.lowercase()}")
+        timber.i("Probing for '${instance.label}' at ${instance.webUrl} using ${instance.method} (${instance.id})")
         val octoPrint = octoPrintProvider.createAdHocOctoPrint(OctoPrintInstanceInformationV2(webUrl = instance.webUrl, apiKey = "not_an_api_key"))
         try {
             octoPrint.createUserApi().getCurrentUser().isGuest
@@ -124,9 +124,14 @@ class DiscoverOctoPrintUseCase @Inject constructor(
         val webUrl: String,
         val port: Int,
         val host: InetAddress,
-        val source: String,
+        val method: DiscoveryMethod,
         val quality: Int,
     ) {
         val id get() = "${host.hostAddress}:$port".hashCode()
+    }
+
+    sealed class DiscoveryMethod {
+        object DnsSd : DiscoveryMethod()
+        object Upnp : DiscoveryMethod()
     }
 }

@@ -34,6 +34,7 @@ class ReadQrCodeFragment : Fragment(), InsetAwareScreen {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        OctoAnalytics.logEvent(OctoAnalytics.Event.QrCodeStarted)
 
         binding.scannerView.setResultHandler {
             OctoAnalytics.logEvent(OctoAnalytics.Event.QrCodeCompleted)

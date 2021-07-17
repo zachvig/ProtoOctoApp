@@ -17,10 +17,12 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
 import androidx.core.view.*
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
@@ -52,7 +54,9 @@ class DiscoverFragment : BaseFragment() {
     private var loadingAnimationJob: Job? = null
     private var backgroundAlpha = 1f
     private val moveBackToOptionsBackPressedCallback = object : OnBackPressedCallback(false) {
-        override fun handleOnBackPressed() = viewModel.moveToOptionsState()
+        override fun handleOnBackPressed() {
+            viewModel.moveToOptionsState()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -245,6 +249,16 @@ class DiscoverFragment : BaseFragment() {
     }
 
     private fun continueWithDiscovered(octoPrint: DiscoverOctoPrintUseCase.DiscoveredOctoPrint) {
+        OctoAnalytics.logEvent(
+            when (octoPrint.method) {
+                DiscoverOctoPrintUseCase.DiscoveryMethod.DnsSd -> OctoAnalytics.Event.DnsServiceSelected
+                DiscoverOctoPrintUseCase.DiscoveryMethod.Upnp -> OctoAnalytics.Event.UpnpServiceSelected
+            },
+            bundleOf(
+                "options_count" to (optionsBinding?.discoveredOptions?.childCount ?: -1)
+            )
+        )
+
         continueWithManualConnect(octoPrint.webUrl)
     }
 
@@ -306,7 +320,15 @@ class DiscoverFragment : BaseFragment() {
 
         setUpAsHelpButton(localOptionsBinding.help)
         localOptionsBinding.manualConnectOption.showManualConnect()
-        localOptionsBinding.manualConnectOption.setOnClickListener { viewModel.moveToManualState() }
+        localOptionsBinding.manualConnectOption.setOnClickListener {
+            OctoAnalytics.logEvent(
+                OctoAnalytics.Event.ManualUrlSelected,
+                bundleOf(
+                    "options_count" to (optionsBinding?.discoveredOptions?.childCount ?: -1)
+                )
+            )
+            viewModel.moveToManualState()
+        }
         localOptionsBinding.quickSwitchOption.showQuickSwitchOption()
         localOptionsBinding.quickSwitchOption.setOnClickListener {
             continueWithEnableQuickSwitch()

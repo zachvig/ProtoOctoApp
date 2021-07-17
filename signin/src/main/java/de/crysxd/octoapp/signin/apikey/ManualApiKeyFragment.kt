@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.signin.R
@@ -44,6 +45,7 @@ class ManualApiKeyFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpAsHelpButton(contentBinding.help)
+        OctoAnalytics.logEvent(OctoAnalytics.Event.ManualApiKeyUsed)
         contentBinding.input.hintNormal = getString(R.string.sign_in___manual_api_key___hint)
         contentBinding.input.hintActive = getString(R.string.sign_in___manual_api_key___hint_active)
         contentBinding.input.actionIcon = R.drawable.ic_qr_code_scanner_24px

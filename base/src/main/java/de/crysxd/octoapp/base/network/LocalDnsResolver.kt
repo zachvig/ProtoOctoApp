@@ -77,7 +77,6 @@ class LocalDnsResolver(private val context: Context) : Dns {
         }
         Timber.i("Resolved $hostname -> $hostname")
 
-
         // Add to cache
         addCacheEntry(
             DnsEntry(
@@ -103,6 +102,7 @@ class LocalDnsResolver(private val context: Context) : Dns {
             }
             val address = channel.receive()
             job.cancel()
+            OctoAnalytics.logEvent(OctoAnalytics.Event.UpnpDnsResolveSuccess)
             listOf(address)
         } ?: throw UnknownHostException(upnpHostname)
     }
@@ -141,6 +141,7 @@ class LocalDnsResolver(private val context: Context) : Dns {
                 service?.stop()
             }
             job.cancel()
+            OctoAnalytics.logEvent(OctoAnalytics.Event.MDnsResolveSuccess)
             listOf(address)
         } ?: throw UnknownHostException(hostname)
     }
@@ -184,7 +185,7 @@ class LocalDnsResolver(private val context: Context) : Dns {
         }
 
         Timber.i("Resolved ${hostname}=$res")
-        OctoAnalytics.logEvent(OctoAnalytics.Event.InbuiltDnsResolveSuccess)
+        OctoAnalytics.logEvent(OctoAnalytics.Event.BackupDnsResolveSuccess)
         return res
     }
 
