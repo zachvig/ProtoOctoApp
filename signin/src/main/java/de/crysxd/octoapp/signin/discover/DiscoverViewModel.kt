@@ -74,14 +74,14 @@ class DiscoverViewModel(
     }
 
     fun testWebUrl(webUrl: String) {
-        val upgradedUrl = upgradeUrl(webUrl)
-        sensitiveDataMask.registerWebUrl(upgradedUrl, "octoprint")
-
         try {
+            val upgradedUrl = upgradeUrl(webUrl)
+            sensitiveDataMask.registerWebUrl(upgradedUrl, "octoprint")
+
             if (webUrl.isBlank()) {
                 throw IllegalArgumentException("URL is empty")
             }
-            Uri.parse(upgradedUrl)
+
             stateChannel.offer(UiState.ManualSuccess(upgradedUrl))
         } catch (e: Exception) {
             manualFailureCounter++
@@ -104,12 +104,17 @@ class DiscoverViewModel(
             webUrl
         }
         val loginMarker = "/login/?redirect="
-        return if (upgradedWebUrl.contains(loginMarker)) {
+        val withoutLogin = if (upgradedWebUrl.contains(loginMarker)) {
             Timber.i("Removed $loginMarker from URL")
             upgradedWebUrl.take(upgradedWebUrl.indexOf(loginMarker))
         } else {
             upgradedWebUrl
         }
+        return Uri.parse(withoutLogin).buildUpon()
+            .clearQuery()
+            .fragment("")
+            .build()
+            .toString()
     }
 
     sealed class UiState {
