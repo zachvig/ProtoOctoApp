@@ -65,7 +65,7 @@ class RequestAccessFragment : BaseFragment() {
                 is RequestAccessViewModel.UiState.AccessGranted -> continueWithApiKey(it.apiKey)
             }
         }
-        playVideo()
+        prepareVideo()
 
         wifiViewModel.networkState.observe(viewLifecycleOwner) {
             Timber.i("Wifi state: $it")
@@ -84,7 +84,12 @@ class RequestAccessFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        playVideo()
+        mediaPlayer.seekTo(0)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        contentBinding.videoOverlay.alpha = 1f
     }
 
     override fun onStart() {
@@ -92,17 +97,21 @@ class RequestAccessFragment : BaseFragment() {
         requireOctoActivity().octo.isVisible = false
     }
 
-    private fun playVideo() {
+    private fun prepareVideo() {
+        contentBinding.videoOverlay.alpha = 1f
+
         contentBinding.video.holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) = Unit
             override fun surfaceDestroyed(holder: SurfaceHolder) = Unit
             override fun surfaceCreated(holder: SurfaceHolder) {
-                mediaPlayer.stop()
-                mediaPlayer.setSurface(holder.surface)
                 val mediaPath = Uri.parse(getString(R.string.video_url___access_explainer))
                 mediaPlayer.setDataSource(requireContext(), mediaPath)
+                mediaPlayer.setDisplay(holder)
                 mediaPlayer.prepareAsync()
+                mediaPlayer.isLooping = true
+
                 startPostponedEnterTransition()
+
                 mediaPlayer.setOnPreparedListener {
                     mediaPlayer.start()
                 }
