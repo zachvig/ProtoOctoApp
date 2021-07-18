@@ -47,14 +47,14 @@ class TestFullNetworkStackUseCase @Inject constructor(
 
             // Test DNS
             timber.i("Testing DNS resolution")
-            val (ip, dnsFinding) = testDns(host = host, webUrl = baseUrl.toString())
+            val (ip, dnsFinding) = testDns(host = host, webUrl = baseUrl.toString(), timber = timber)
             dnsFinding?.let { return@withContext it }
             ip ?: throw RuntimeException("IP should be set if no finding was returned")
             timber.i("Passed")
 
             // Test reachability
             timber.i("Testing reachability")
-            testReachability(host = host, ip = ip, webUrl = baseUrl.toString())?.let { return@withContext it }
+            testReachability(host = host, ip = ip, webUrl = baseUrl.toString(), timber = timber)?.let { return@withContext it }
             timber.i("Passed")
 
             // Test port open
@@ -65,7 +65,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
                 baseUrl.scheme == "https" -> 443
                 else -> 80
             }
-            testPortOpen(host = host, ip = ip, port = port, webUrl = baseUrl.toString())?.let { return@withContext it }
+            testPortOpen(host = host, ip = ip, port = port, webUrl = baseUrl.toString(), timber = timber)?.let { return@withContext it }
             timber.i("Passed")
 
             when (param) {
@@ -85,17 +85,17 @@ class TestFullNetworkStackUseCase @Inject constructor(
         // Using the full stack here, just to be sure that the stack can also resolve the DNS
         // (should though as using same resolver)
         timber.i("Testing HTTP(S) connection")
-        testHttpAccess(webUrl = target.webUrl, host = host)?.let { return it }
+        testHttpAccess(webUrl = target.webUrl, host = host, timber = timber)?.let { return it }
         timber.i("Passed")
 
         // Test that we actually are talking to an OctoPrint
-        timber.i("Test server is OctoPrint and API key is valid")
-        testApiKeyValid(webUrl = target.webUrl, host = host, apiKey = target.apiKey)?.let { return it }
+        timber.i("Testing API key")
+        testApiKeyValid(webUrl = target.webUrl, host = host, apiKey = target.apiKey, timber = timber)?.let { return it }
         timber.i("Passed.")
 
         // Test the websocket
         timber.i("Test web socket is working")
-        testWebSocket(webUrl = target.webUrl, apiKey = target.apiKey, host = host)?.let { return it }
+        testWebSocket(webUrl = target.webUrl, apiKey = target.apiKey, host = host, timber = timber)?.let { return it }
         timber.i("Passed")
 
         return Finding.OctoPrintReady(webUrl = target.webUrl, apiKey = target.apiKey)
@@ -120,6 +120,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
             Finding.WebcamReady(target.webUrl, fps, frame.frame)
         } ?: Finding.NoImage(webUrl = target.webUrl, host = host)
     } catch (e: OctoPrintApiException) {
+        timber.w(e)
         when (e.responseCode) {
             404 -> Finding.NotFound(
                 host = host,
@@ -133,12 +134,14 @@ class TestFullNetworkStackUseCase @Inject constructor(
             )
         }
     } catch (e: BasicAuthRequiredException) {
+        timber.w(e)
         Finding.BasicAuthRequired(
             host = host,
             userRealm = e.userRealm,
             webUrl = target.webUrl,
         )
     } catch (e: IOException) {
+        timber.w(e)
         if (e.message?.contains("Connection broken", ignoreCase = true) == true) {
             Finding.NoImage(webUrl = target.webUrl, host = host)
         } else {
@@ -148,9 +151,10 @@ class TestFullNetworkStackUseCase @Inject constructor(
         Finding.UnexpectedIssue(target.webUrl, e)
     }
 
-    private fun testDns(host: String, webUrl: String): Pair<String?, Finding?> = try {
+    private fun testDns(host: String, webUrl: String, timber: Timber.Tree): Pair<String?, Finding?> = try {
         localDnsResolver.lookup(host).first().hostAddress to null
     } catch (e: UnknownHostException) {
+        timber.w(e)
         if (host.endsWith(".local") || host.endsWith(".home") || host.endsWith(".lan")) {
             null to Finding.LocalDnsFailure(host = host, webUrl = webUrl)
         } else {
@@ -158,10 +162,11 @@ class TestFullNetworkStackUseCase @Inject constructor(
         }
     }
 
-    private fun testReachability(host: String, ip: String, webUrl: String): Finding? = try {
+    private fun testReachability(host: String, ip: String, webUrl: String, timber: Timber.Tree): Finding? = try {
         require(InetAddress.getByName(ip).isReachable(PING_TIMEOUT)) { IOException("Unable to reach $host") }
         null
     } catch (e: Exception) {
+        timber.w(e)
         Finding.HostNotReachable(
             host = host,
             ip = ip,
@@ -170,11 +175,12 @@ class TestFullNetworkStackUseCase @Inject constructor(
         )
     }
 
-    private fun testPortOpen(host: String, ip: String, port: Int, webUrl: String): Finding? = try {
+    private fun testPortOpen(host: String, ip: String, port: Int, webUrl: String, timber: Timber.Tree): Finding? = try {
         val socket = Socket(ip, port)
         socket.getOutputStream()
         null
     } catch (e: Exception) {
+        timber.w(e)
         Finding.PortClosed(
             host = host,
             port = port,
@@ -182,7 +188,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
         )
     }
 
-    private suspend fun testHttpAccess(webUrl: String, host: String): Finding? = try {
+    private suspend fun testHttpAccess(webUrl: String, host: String, timber: Timber.Tree): Finding? = try {
         val octoPrint = octoPrintProvider.createAdHocOctoPrint(OctoPrintInstanceInformationV2(webUrl = webUrl, apiKey = "notanapikey"))
         when (val code = octoPrint.probeConnection()) {
             in 200..299 -> null
@@ -190,6 +196,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
             else -> Finding.UnexpectedHttpIssue(webUrl = webUrl, host = host, exception = IOException("Unexpected HTTP response code $code"))
         }
     } catch (e: OctoPrintHttpsException) {
+        timber.w(e)
         Finding.HttpsNotTrusted(
             webUrl = webUrl,
             host = host,
@@ -197,12 +204,14 @@ class TestFullNetworkStackUseCase @Inject constructor(
             weakHostnameVerificationRequired = e.weakHostnameVerificationRequired
         )
     } catch (e: BasicAuthRequiredException) {
+        timber.w(e)
         Finding.BasicAuthRequired(
             host = host,
             userRealm = e.userRealm,
             webUrl = webUrl,
         )
     } catch (e: Exception) {
+        timber.w(e)
         Finding.UnexpectedHttpIssue(
             webUrl = webUrl,
             exception = e,
@@ -210,7 +219,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
         )
     }
 
-    private suspend fun testApiKeyValid(webUrl: String, host: String, apiKey: String): Finding? = try {
+    private suspend fun testApiKeyValid(webUrl: String, host: String, apiKey: String, timber: Timber.Tree): Finding? = try {
         val octoPrint = octoPrintProvider.createAdHocOctoPrint(OctoPrintInstanceInformationV2(webUrl = webUrl, apiKey = apiKey))
         val isApiKeyValid = octoPrint.createUserApi().getCurrentUser().isGuest.not()
         if (isApiKeyValid) {
@@ -219,6 +228,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
             Finding.InvalidApiKey(webUrl = webUrl, host = host)
         }
     } catch (e: OctoPrintApiException) {
+        timber.w(e)
         if (e.responseCode == 404) {
             Finding.NotFound(webUrl = webUrl, host = host)
         } else {
@@ -229,6 +239,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
             )
         }
     } catch (e: Exception) {
+        timber.w(e)
         Finding.UnexpectedHttpIssue(
             webUrl = webUrl,
             exception = e,
@@ -236,7 +247,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
         )
     }
 
-    private suspend fun testWebSocket(webUrl: String, apiKey: String, host: String) = try {
+    private suspend fun testWebSocket(webUrl: String, apiKey: String, host: String, timber: Timber.Tree) = try {
         withTimeout(3000) {
             val instance = OctoPrintInstanceInformationV2(webUrl = webUrl, apiKey = apiKey)
             when (val event = octoPrintProvider.createAdHocOctoPrint(instance).getEventWebSocket().eventFlow("test").first()) {
@@ -254,6 +265,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
             }
         }
     } catch (e: TimeoutCancellationException) {
+        timber.w(e)
         Finding.UnexpectedIssue(webUrl = webUrl, TimeoutException("Web socket test timed out"))
     }
 

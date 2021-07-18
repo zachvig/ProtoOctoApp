@@ -37,7 +37,9 @@ class SensitiveDataMask {
     }
 
     fun registerApiKey(apiKey: String) {
-        registerSensitiveData(apiKey, "api_key")
+        if (apiKey.isNotBlank()) {
+            registerSensitiveData(apiKey, "api_key")
+        }
     }
 
     private fun registerSensitiveData(data: String, replacement: String) = lock.withLock {

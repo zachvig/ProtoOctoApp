@@ -259,7 +259,9 @@ class DiscoverFragment : BaseFragment() {
             )
         )
 
-        continueWithManualConnect(octoPrint.webUrl)
+        val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
+        val directions = DiscoverFragmentDirections.requestAccess(webUrl = octoPrint.webUrl)
+        findNavController().navigate(directions, extras)
     }
 
     private fun continueWithPreviouslyConnected(octoPrint: OctoPrintInstanceInformationV2) {

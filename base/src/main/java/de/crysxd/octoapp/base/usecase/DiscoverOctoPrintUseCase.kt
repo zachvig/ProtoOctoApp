@@ -1,9 +1,7 @@
 package de.crysxd.octoapp.base.usecase
 
 import android.content.Context
-import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.network.OctoPrintDnsSdDiscovery
 import de.crysxd.octoapp.base.network.OctoPrintUpnpDiscovery
 import kotlinx.coroutines.*
@@ -18,8 +16,8 @@ import kotlin.coroutines.CoroutineContext
 @Suppress("EXPERIMENTAL_API_USAGE")
 class DiscoverOctoPrintUseCase @Inject constructor(
     private val context: Context,
-    private val octoPrintProvider: OctoPrintProvider,
     private val sensitiveDataMask: SensitiveDataMask,
+    private val testFullNetworkStackUseCase: TestFullNetworkStackUseCase,
 ) : UseCase<Unit, Flow<DiscoverOctoPrintUseCase.Result>>() {
 
     override suspend fun doExecute(param: Unit, timber: Timber.Tree): Flow<Result> = withContext(Dispatchers.IO) {
@@ -104,13 +102,24 @@ class DiscoverOctoPrintUseCase @Inject constructor(
     private suspend fun testDiscoveredInstanceAndPublishResult(timber: Timber.Tree, instance: DiscoveredOctoPrint, submitResult: (DiscoveredOctoPrint) -> Unit) {
         sensitiveDataMask.registerWebUrl(instance.webUrl, "octoprint_from_${instance.method::class.java.simpleName.lowercase()}")
         timber.i("Probing for '${instance.label}' at ${instance.webUrl} using ${instance.method} (${instance.id})")
-        val octoPrint = octoPrintProvider.createAdHocOctoPrint(OctoPrintInstanceInformationV2(webUrl = instance.webUrl, apiKey = "not_an_api_key"))
         try {
-            octoPrint.createUserApi().getCurrentUser().isGuest
-            timber.i("Probe for '${instance.label}' at ${instance.webUrl} was SUCCESS 🥳")
-            submitResult(instance)
+            val result = testFullNetworkStackUseCase.execute(
+                TestFullNetworkStackUseCase.Target.OctoPrint(
+                    webUrl = instance.webUrl,
+                    apiKey = ""
+                )
+            )
+
+            when (result) {
+                is TestFullNetworkStackUseCase.Finding.OctoPrintReady,
+                is TestFullNetworkStackUseCase.Finding.InvalidApiKey -> {
+                    timber.i("Probe for '${instance.label}' at ${instance.webUrl} was SUCCESS 🥳")
+                    submitResult(instance)
+                }
+                else -> timber.i("Probe for '${instance.label}' at ${instance.webUrl} was FAILURE 😭 (finding=$result)")
+            }
         } catch (e: java.lang.Exception) {
-            timber.i("Probe for '${instance.label}' at ${instance.webUrl} was FAILURE 😭 (${e.message})")
+            timber.i("Probe for '${instance.label}' at ${instance.webUrl} was FAILURE because of an error 😭 (error=${e.message})")
         }
     }
 

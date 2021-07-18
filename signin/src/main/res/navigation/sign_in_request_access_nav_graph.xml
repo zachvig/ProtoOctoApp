@@ -2,35 +2,12 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/sign_in_connect_nav_graph"
-    app:startDestination="@id/probeOctoPrintFragment">
+    android:id="@+id/sign_in_request_access_nav_graph"
+    app:startDestination="@id/requestAccessFragment">
 
     <deepLink
         android:id="@+id/deepLink"
         app:uri="@string/uri___fix_octoprint_connection" />
-
-    <fragment
-        android:id="@+id/probeOctoPrintFragment"
-        android:name="de.crysxd.octoapp.signin.probe.ProbeOctoPrintFragment"
-        android:label="ProbeOctoPrintFragment"
-        tools:layout="@layout/base_signin_fragment">
-
-        <argument
-            android:name="baseUrl"
-            app:argType="string" />
-
-        <argument
-            android:name="allowApiKeyReuse"
-            app:argType="string" />
-
-        <action
-            android:id="@+id/request_access"
-            app:destination="@id/requestAccessFragment"
-            app:enterAnim="@anim/sign_in_shared_element_fade_in"
-            app:exitAnim="@anim/sign_in_shared_element_fade_out"
-            app:popEnterAnim="@anim/sign_in_shared_element_fade_in"
-            app:popExitAnim="@anim/sign_in_shared_element_fade_out" />
-    </fragment>
 
     <fragment
         android:id="@+id/requestAccessFragment"

@@ -13,7 +13,7 @@
 
         <action
             android:id="@+id/probeConnection"
-            app:destination="@id/sign_in_connect_nav_graph"
+            app:destination="@id/sign_in_probe_nav_graph"
             app:enterAnim="@anim/sign_in_shared_element_fade_in"
             app:exitAnim="@anim/sign_in_shared_element_fade_out"
             app:popEnterAnim="@anim/sign_in_shared_element_fade_in"
@@ -28,9 +28,25 @@
                 app:argType="string" />
 
         </action>
+
+        <action
+            android:id="@+id/requestAccess"
+            app:destination="@id/sign_in_request_access_nav_graph"
+            app:enterAnim="@anim/sign_in_shared_element_fade_in"
+            app:exitAnim="@anim/sign_in_shared_element_fade_out"
+            app:popEnterAnim="@anim/sign_in_shared_element_fade_in"
+            app:popExitAnim="@anim/sign_in_shared_element_fade_out">
+
+            <argument
+                android:name="webUrl"
+                app:argType="string" />
+
+
+        </action>
     </fragment>
 
 
-    <include app:graph="@navigation/sign_in_connect_nav_graph" />
+    <include app:graph="@navigation/sign_in_request_access_nav_graph" />
+    <include app:graph="@navigation/sign_in_probe_nav_graph" />
 
 </navigation>
