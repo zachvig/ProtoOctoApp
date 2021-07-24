@@ -10,7 +10,7 @@
         android:id="@+id/noImageCont"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/widget_background_dark"
+        android:background="@drawable/widget_background"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/margin_1"

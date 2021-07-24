@@ -7,6 +7,8 @@ sealed class MenuItemStyle(
     @ColorRes val backgroundColor: Int,
     @ColorRes val highlightColor: Int,
 ) {
+    // We have similar mapping in QuickAccessRemoteViewsFactory!
+
     object Red : MenuItemStyle(R.color.menu_style_support_background, R.color.menu_style_support_foreground)
     object Yellow : MenuItemStyle(R.color.menu_style_settings_background, R.color.menu_style_settings_foreground)
     object Green : MenuItemStyle(R.color.menu_style_octoprint_background, R.color.menu_style_octoprint_foreground)

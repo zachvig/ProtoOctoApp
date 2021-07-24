@@ -14,6 +14,7 @@ import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_QUICK_SWITCH
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.format
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
+import de.crysxd.octoapp.widgets.quickaccess.QuickAccessAppWidget
 import de.crysxd.octoapp.widgets.webcam.BaseWebcamAppWidget
 import de.crysxd.octoapp.widgets.webcam.ControlsWebcamAppWidget
 import de.crysxd.octoapp.widgets.webcam.NoControlsWebcamAppWidget
@@ -35,7 +36,7 @@ internal fun ensureWidgetExists(widgetId: Int) = AppWidgetManager.getInstance(In
 internal fun updateAllWidgets() {
     BaseWebcamAppWidget.notifyWidgetDataChanged()
     ProgressAppWidget.notifyWidgetDataChanged()
-
+    QuickAccessAppWidget.notifyWidgetDataChanged()
 }
 
 internal fun cancelAllUpdates() {

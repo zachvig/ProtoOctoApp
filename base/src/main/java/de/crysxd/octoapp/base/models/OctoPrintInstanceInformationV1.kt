@@ -41,7 +41,7 @@ data class OctoPrintInstanceInformationV2(
         get() = settings?.appearance?.name?.takeIf { it.isNotBlank() } ?: webUrl.let {
             val protocolEnd = it.indexOf("://") + 3
             val userInfoEnd = it.indexOf("@") + 1
-            it.substring(max(protocolEnd, userInfoEnd))
+            it.substring(max(protocolEnd, userInfoEnd)).removeSuffix("/")
         }
 
     // The URL contains the Basic Auth, if the user changes the basic auth the url does not exactly match but it references the same instance

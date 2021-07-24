@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:minHeight="@dimen/common_corner_radius"
+        android:padding="@dimen/margin_1"
+        android:text="@string/app_widget___controlling_x"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Label"
+        android:textColor="@color/normal_text" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/widget_background" />
+
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:divider="@drawable/margin_0_1_divider"
+        android:paddingLeft="@dimen/margin_0_1"
+        android:paddingTop="@dimen/margin_1"
+        android:paddingRight="@dimen/margin_0_1"
+        android:paddingBottom="@dimen/margin_1"
+        android:scrollbars="none" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/widget_background" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:minHeight="@dimen/common_corner_radius"
+        android:padding="@dimen/margin_0_1"
+        android:text="@string/app_widget___edit_items_in_app"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
+        android:textColor="@color/light_text" />
+
+</LinearLayout>

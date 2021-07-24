@@ -34,14 +34,14 @@
                 android:maxLines="1"
                 android:text="@string/app_widget___updating"
                 android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
-                android:textColor="@color/black" />
+                android:textColor="@color/dark_text" />
 
             <TextView
                 android:id="@+id/updatedAt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
-                android:textColor="@color/black_translucent"
+                android:textColor="@color/normal_text"
                 android:visibility="gone" />
 
         </LinearLayout>

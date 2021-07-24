@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical|start"
             android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
-            android:textColor="@color/black"
+            android:textColor="@color/dark_text"
             tools:text="80%" />
 
         <TextView
@@ -32,7 +32,7 @@
             android:gravity="center_vertical|start"
             android:maxLines="1"
             android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
-            android:textColor="@color/black_translucent"
+            android:textColor="@color/normal_text"
             tools:text="Printing..." />
 
     </LinearLayout>
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
-            android:textColor="@color/black_translucent"
+            android:textColor="@color/normal_text"
             tools:text="1:42h left, ETA 23:45" />
 
         <ImageView
