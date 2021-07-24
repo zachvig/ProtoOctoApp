@@ -2,7 +2,7 @@ package de.crysxd.octoapp.octoprint.plugins.materialmanager.spoolmanager
 
 data class ListSpoolResponse(
     val allSpools: List<Spool>,
-    val selectedSpool: Spool?
+    val selectedSpools: List<Spool>?
 ) {
     data class Spool(
         val color: String,

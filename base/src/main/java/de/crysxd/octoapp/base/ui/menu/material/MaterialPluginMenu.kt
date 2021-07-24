@@ -2,8 +2,6 @@ package de.crysxd.octoapp.base.ui.menu.material
 
 import android.content.Context
 import androidx.core.text.HtmlCompat
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
@@ -76,6 +74,7 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
             startPrintAfterSelection?.let {
                 Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
             }
+            host?.reloadMenu()
         }
     }
 
@@ -95,6 +94,7 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
             startPrintAfterSelection?.let {
                 Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
             }
+            host?.reloadMenu()
         }
     }
 }
