@@ -13,7 +13,7 @@
     <string name="app_widget___free_widgets_exceeded_action">@android:string/ok</string>
     <string name="app_widget___free_widgets_exceeded_message">You can only have %d widgets without supporting OctoApp. You can support OctoApp from the app\'s main menu.</string>
     <string name="app_widget___idle">Ready</string>
-    <string name="app_widget___information_always_synced">This widget will always control the OctoPrint instance that is currently active in the app</string>
+    <string name="app_widget___information_always_synced">This widget is still in BETA. Some menu items might not behave correctly, please report a bug if you find something!\n\nThe widget will always control the OctoPrint instance that is currently active in the app</string>
     <string name="app_widget___information_title">Information</string>
     <string name="app_widget___link_widget__option_synced">Sync with app</string>
     <string name="app_widget___link_widget__option_x">Always „%s“</string>
