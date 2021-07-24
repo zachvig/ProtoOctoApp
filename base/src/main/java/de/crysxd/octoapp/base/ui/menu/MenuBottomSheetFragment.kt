@@ -5,6 +5,7 @@ import android.graphics.drawable.Animatable
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import android.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -239,12 +240,31 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         showMenu(viewModel.menuBackStack.last())
     }
 
-    private fun executeLongClick(item: MenuItem) {
+    private fun executeLongClick(item: MenuItem, anchor: View) {
         val repo = Injector.get().pinnedMenuItemsRepository()
-        repo.toggleMenuItemPinned(MenuId.MainMenu, item.itemId)
 
-        // We need to reload the main menu if a favorite was changed in case it was removed
-        reloadMenu()
+        val menu = PopupMenu(anchor.context, anchor)
+        repo.checkPinnedState(item.itemId).forEach {
+            val text = getString(
+                if (it.second) R.string.menu_controls___unpin_from_x else R.string.menu_controls___pin_to_x,
+                getString(it.first.label)
+            )
+            menu.menu.add(android.view.Menu.NONE, it.first.hashCode(), android.view.Menu.NONE, text)
+        }
+        menu.show()
+        menu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                MenuId.MainMenu.hashCode() -> repo.toggleMenuItemPinned(MenuId.MainMenu, item.itemId)
+                MenuId.PrintWorkspace.hashCode() -> repo.toggleMenuItemPinned(MenuId.PrintWorkspace, item.itemId)
+                MenuId.PrepareWorkspace.hashCode() -> repo.toggleMenuItemPinned(MenuId.PrepareWorkspace, item.itemId)
+                else -> Unit
+            }
+
+            // We need to reload the main menu if a favorite was changed in case it was removed
+            reloadMenu()
+
+            true
+        }
     }
 
     private fun executeSecondaryClick(item: MenuItem) {

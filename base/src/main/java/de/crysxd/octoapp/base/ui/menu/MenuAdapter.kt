@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
@@ -27,8 +28,9 @@ import java.lang.ref.WeakReference
 
 class MenuAdapter(
     private val onClick: (MenuItem) -> Unit,
-    private val onSecondaryClick: (MenuItem) -> Unit,
-    private val onPinItem: (MenuItem) -> Unit,
+    private val onSecondaryClick: (MenuItem) -> Unit = {},
+    private val onPinItem: (MenuItem, View) -> Unit = { _, _ -> },
+    private val menuId: MenuId = MenuId.Other,
 ) : RecyclerView.Adapter<MenuItemHolder>() {
     var recyclerView: RecyclerView? = null
 
@@ -111,7 +113,7 @@ class MenuAdapter(
                 }
 
 
-                onPinItem(item)
+                onPinItem(item, it)
             }
             true
         }

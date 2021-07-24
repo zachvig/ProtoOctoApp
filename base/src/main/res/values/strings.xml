@@ -454,4 +454,10 @@
     <string name="sign_in___discover___web_url_hint_active">OctoPrint URL – Copy this from your browser!</string>
     <string name="sign_in___cancel_and_use_other_information_message">Do you want to cancel and connect to an other OctoPrint?</string>
     <string name="sign_in___cancel_and_use_other_information_title">Connect to other</string>
+    <string name="menu_controls___main">main menu</string>
+    <string name="menu_controls___print_workspace">print workspace</string>
+    <string name="menu_controls___prepare_workspace">prepare workspace</string>
+    <string name="menu_controls___other">other</string>
+    <string name="menu_controls___unpin_from_x">Unpin from %s</string>
+    <string name="menu_controls___pin_to_x">Pin to %s</string>
 </resources>
