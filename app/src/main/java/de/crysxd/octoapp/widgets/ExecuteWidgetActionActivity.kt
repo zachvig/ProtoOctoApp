@@ -7,10 +7,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.models.exceptions.UserMessageException
 import de.crysxd.octoapp.base.ui.base.LocalizedActivity
+import de.crysxd.octoapp.base.ui.menu.ConfirmedMenuItem
+import de.crysxd.octoapp.base.ui.menu.MenuItem
+import de.crysxd.octoapp.base.ui.menu.main.MenuItemLibrary
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
 import de.crysxd.octoapp.widgets.webcam.BaseWebcamAppWidget
@@ -28,10 +33,12 @@ class ExecuteWidgetActionActivity : LocalizedActivity() {
         private const val EXTRA_TASK = "de.crysxd.octoapp.widgets.progress.TASK"
         private const val EXTRA_APP_WIDGET_ID = "de.crysxd.octoapp.widgets.progress.APP_WIDGET_ID"
         private const val EXTRA_PLAY_LIVE = "de.crysxd.octoapp.widgets.progress.PLAY_LIVE"
+        private const val EXTRA_MENU_ITEM_ID = "de.crysxd.octoapp.widgets.progress.MENU_ITEM_ID"
         private const val TASK_CANCEL = "cancel"
         private const val TASK_PAUSE = "pause"
         private const val TASK_RESUME = "resume"
         private const val TASK_REFRESH = "refresh"
+        private const val TASK_CLICK_MENU_ITEM = "click"
 
         fun createRefreshTaskPendingIntent(context: Context, appWidgetId: Int, playLive: Boolean) =
             createTaskPendingIntent(context, TASK_REFRESH, "ExecuteWidgetActionActivity/$TASK_REFRESH/$appWidgetId/$playLive") {
@@ -42,6 +49,11 @@ class ExecuteWidgetActionActivity : LocalizedActivity() {
         fun createCancelTaskPendingIntent(context: Context) = createTaskPendingIntent(context, TASK_CANCEL)
         fun createPauseTaskPendingIntent(context: Context) = createTaskPendingIntent(context, TASK_PAUSE)
         fun createResumeTaskPendingIntent(context: Context) = createTaskPendingIntent(context, TASK_RESUME)
+        fun createClickMenuItemPendingIntentTemplate(context: Context) = createTaskPendingIntent(context, TASK_CLICK_MENU_ITEM)
+        fun createClickMenuItemFillIntent(menuItemId: String) = Intent().also {
+            it.putExtra(EXTRA_MENU_ITEM_ID, menuItemId)
+        }
+
         private fun createTaskPendingIntent(
             context: Context,
             task: String,
@@ -96,11 +108,17 @@ class ExecuteWidgetActionActivity : LocalizedActivity() {
         finish()
     }
 
-    private fun confirmAction() {
+    private fun confirmAction() = lifecycleScope.launchWhenCreated {
+        val menuItem = MenuItemLibrary()[intent.getStringExtra(EXTRA_MENU_ITEM_ID) ?: ""]
+
         val message = when (task) {
-            TASK_CANCEL -> R.string.cancel_print_confirmation_message
-            TASK_PAUSE -> R.string.pause_print_confirmation_message
-            TASK_RESUME -> R.string.resume_print_confirmation_message
+            TASK_CANCEL -> getString(R.string.cancel_print_confirmation_message)
+            TASK_PAUSE -> getString(R.string.pause_print_confirmation_message)
+            TASK_RESUME -> getString(R.string.resume_print_confirmation_message)
+            TASK_CLICK_MENU_ITEM -> getString(
+                R.string.app_widget___click_menu_item_confirmation_message,
+                menuItem?.getTitle(this@ExecuteWidgetActionActivity)
+            )
             else -> null
         }
 
@@ -108,16 +126,17 @@ class ExecuteWidgetActionActivity : LocalizedActivity() {
             TASK_CANCEL -> R.string.cancel_print_confirmation_action
             TASK_PAUSE -> R.string.pause_print_confirmation_action
             TASK_RESUME -> R.string.resume_print_confirmation_action
+            TASK_CLICK_MENU_ITEM -> R.string.app_widget___click_menu_item_confirmation_action
             else -> null
         }
 
         if (message == null || action == null) {
             Timber.e(IllegalArgumentException("Activity started with task $task, did not find action or message"))
             finish()
-            return
+            return@launchWhenCreated
         }
 
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this@ExecuteWidgetActionActivity)
             .setMessage(message)
             .setPositiveButton(action) { _, _ ->
                 Timber.i("Task $task confirmed")
@@ -127,6 +146,7 @@ class ExecuteWidgetActionActivity : LocalizedActivity() {
                         when (task) {
                             TASK_CANCEL -> Injector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(false))
                             TASK_PAUSE, TASK_RESUME -> Injector.get().togglePausePrintJobUseCase().execute(Unit)
+                            TASK_CLICK_MENU_ITEM -> menuItem?.let { performMenuItemClick(it) }
                             else -> Unit
                         }
                     } catch (e: Exception) {
@@ -140,5 +160,23 @@ class ExecuteWidgetActionActivity : LocalizedActivity() {
                 finish()
             }
             .show()
+    }
+
+    private suspend fun performMenuItemClick(menuItem: MenuItem) {
+        try {
+            Timber.i("Executing ${menuItem.itemId}")
+            if (menuItem is ConfirmedMenuItem) {
+                menuItem.onConfirmed(null)
+            } else {
+                menuItem.onClicked(null)
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+            Toast.makeText(
+                this,
+                (e as? UserMessageException)?.userMessage?.let(::getString) ?: e.localizedMessage ?: "Something went wrong",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 }

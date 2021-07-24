@@ -10,6 +10,7 @@ import de.crysxd.octoapp.base.models.MenuId
 import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
 import de.crysxd.octoapp.base.ui.menu.PreparedMenuItem
 import de.crysxd.octoapp.base.ui.menu.main.MenuItemLibrary
+import de.crysxd.octoapp.widgets.ExecuteWidgetActionActivity
 import kotlinx.coroutines.runBlocking
 
 class QuickAccessRemoteViewsFactory(private val context: Context) : RemoteViewsFactory {
@@ -49,6 +50,7 @@ class QuickAccessRemoteViewsFactory(private val context: Context) : RemoteViewsF
         views.setInt(R.id.container, "setBackgroundResource", getBackground(item.style))
         views.setInt(R.id.icon, "setColorFilter", ContextCompat.getColor(context, item.style.highlightColor))
         views.setImageViewResource(R.id.icon, item.icon)
+        views.setOnClickFillInIntent(R.id.container, ExecuteWidgetActionActivity.createClickMenuItemFillIntent(item.itemId))
         return views
     }
 

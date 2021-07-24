@@ -10,10 +10,7 @@ import android.widget.RemoteViews
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.MenuId
-import de.crysxd.octoapp.widgets.AppWidgetPreferences
-import de.crysxd.octoapp.widgets.createLaunchAppIntent
-import de.crysxd.octoapp.widgets.getWidgetHeight
-import de.crysxd.octoapp.widgets.setViewVisibility
+import de.crysxd.octoapp.widgets.*
 import timber.log.Timber
 
 
@@ -47,6 +44,7 @@ class QuickAccessAppWidget : AppWidgetProvider() {
                 val views = RemoteViews(context.packageName, layout)
                 val intent = Intent(context, QuickAccessRemoteViewsService::class.java)
                 views.setRemoteAdapter(R.id.list, intent)
+                views.setPendingIntentTemplate(R.id.list, ExecuteWidgetActionActivity.createClickMenuItemPendingIntentTemplate(context))
                 views.setTextViewText(R.id.footer, title)
                 views.setViewVisibility(R.id.footer, isLarge)
                 views.setViewVisibility(R.id.footerLine, isLarge)
