@@ -378,7 +378,7 @@
     <string name="sign_in___continue">Ga door</string>
     <string name="sign_in___discover___web_url_hint">OctoPrint URL</string>
     <string name="sign_in___discover___web_url_hint_active">OctoPrint URL - Kopieer deze van uw browser!</string>
-    <string name="sign_in___discovery___connect_manually_subtitle">Het is gemakkelijk op te zetten</string>
+    <string name="sign_in___discovery___connect_manually_subtitle">Het is simpel!</string>
     <string name="sign_in___discovery___connect_manually_title">Voer de web URL van uw OctoPrint in</string>
     <string name="sign_in___discovery___delete_printer_confirmation">OctoPrint verwijderen</string>
     <string name="sign_in___discovery___delete_printer_message">%s en alle bijbehorende instellingen verwijderen?</string>

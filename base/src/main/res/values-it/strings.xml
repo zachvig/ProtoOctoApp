@@ -376,8 +376,8 @@
     <string name="sign_in___continue">Continua</string>
     <string name="sign_in___discover___web_url_hint">URL di OctoPrint</string>
     <string name="sign_in___discover___web_url_hint_active">OctoPrint URL - Copia questo dal tuo browser!</string>
-    <string name="sign_in___discovery___connect_manually_subtitle">È facile da impostare</string>
-    <string name="sign_in___discovery___connect_manually_title">Inserisci l\'URL della tua OctoPrint</string>
+    <string name="sign_in___discovery___connect_manually_subtitle">È semplice!</string>
+    <string name="sign_in___discovery___connect_manually_title">Collegare manualmente</string>
     <string name="sign_in___discovery___delete_printer_confirmation">Cancellare OctoPrint</string>
     <string name="sign_in___discovery___delete_printer_message">Cancellare %s e tutte le impostazioni associate?</string>
     <string name="sign_in___discovery___discovered_devices">Scoperto sulla tua rete</string>

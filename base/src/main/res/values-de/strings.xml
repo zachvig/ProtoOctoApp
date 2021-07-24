@@ -99,7 +99,7 @@
     <string name="enable">Aktiviere</string>
     <string name="enable_gcode_preview">Gcode Vorschau aktivieren</string>
     <string name="enter_label">Alias eingeben</string>
-    <string name="error_certificate_not_trusted_and_weak_hostname_required">Android vertraut dem von diesem Server bereitgestellten Zertifikat nicht. Dies ist normalerweise bei selbstsignierten Zertifikaten der Fall.  Außerdem bietet das Zertifikat kein Feld für einen \"subject alternative name\" (SAN), der ab Android 9 erforderlich ist. OctoApp muss eine schwache Hostnamenprüfung verwenden, um dieses Problem zu umgehen. Dadurch wird die Sicherheit Ihrer Verbindung reduziert.  Möchten Sie diesem Server vertrauen und eine schwächere Hostnamenüberprüfung verwenden?</string>
+    <string name="error_certificate_not_trusted_and_weak_hostname_required">Android vertraut dem von diesem Server bereitgestellten Zertifikat nicht. Dies ist normalerweise bei selbstsignierten Zertifikaten der Fall.  Außerdem bietet das Zertifikat kein Feld für einen \"subject alternative name\" (SAN), der ab Android 9 erforderlich ist. OctoApp muss eine schwache Hostnamenprüfung verwenden, um dieses Problem zu umgehen. Dadurch wird die Sicherheit Ihrer Verbindung reduziert.  Möchtest du diesem Server vertrauen und eine schwächere Hostnamenüberprüfung verwenden?</string>
     <string name="error_cold_extrusion">Das Hotend ist unterhalb der Mindesttemperatur</string>
     <string name="error_general">Etwas ist schief gelaufen! Bitte versuche es noch einmal.</string>
     <string name="error_general_with_details">
@@ -190,7 +190,7 @@
     <string name="main_menu___item_cancel_print">Druck abbrechen</string>
     <string name="main_menu___item_cancel_print_keep_temp">Druck abbrechen (Temp. halten)</string>
     <string name="main_menu___item_change_octoprint_instance">OctoPrint wechseln</string>
-    <string name="main_menu___item_confirm_power_off">Bestätigen Sie das Ausschalten</string>
+    <string name="main_menu___item_confirm_power_off">Bestätigtes Ausschalten</string>
     <string name="main_menu___item_customize_widgets">Steuerelemente anpassen</string>
     <string name="main_menu___item_emergency_stop">Not-Aus</string>
     <string name="main_menu___item_help_faq_and_feedback">FAQ, Hilfe und Feedback</string>
@@ -217,11 +217,11 @@
     <string name="main_menu___show_webcam">Webcam zeigen</string>
     <string name="main_menu___submenu_subtitle">Elemente gedrückt halten um anzupinnen</string>
     <string name="main_menu___subtitle_automatic_lights">Wähle die Lichter aus, die eingeschaltet werden sollen, wenn deine Webcam aktiv ist. Dies ist praktisch, um deinen Druck automatisch zu beleuchten wenn du nachts auf deine Webcam schaust.</string>
-    <string name="main_menu___subtitle_confirm_power_off">Wähle aus, welche Geräte nur nach Bestätigung ausgeschaltet werden können. Damit können Sie z. B. verhindern, dass du deinen Drucker versehentlich ausschaltest.</string>
+    <string name="main_menu___subtitle_confirm_power_off">Wähle aus, welche Geräte nur nach Bestätigung ausgeschaltet werden können. Damit kannst du z.B. verhindern, dass du deinen Drucker versehentlich ausschaltest.</string>
     <string name="main_menu___subtitle_quick_switch_disabled">Schnellwechsel erlaubt es reibungslos zwischen mehreren OctoPrint zu wechseln. Ohne diese Funktion benötigst du die Web URL und den API Schlüssel erneut.</string>
     <string name="main_menu___system_command_executed">\"%s\" ausgeführt</string>
     <string name="main_menu___title_automatic_lights">Automatisches Licht</string>
-    <string name="main_menu___title_confirm_power_off">Bestätigen Sie das Ausschalten</string>
+    <string name="main_menu___title_confirm_power_off">Bestätigtes Ausschalten</string>
     <string name="main_menu___title_quick_switch">OctoPrint wechseln</string>
     <string name="main_menu___title_quick_switch_disabled">Schnellwechsel deaktiviert</string>
     <string name="material_menu___bottom_text">
@@ -292,7 +292,7 @@
     </string>
     <string name="power_menu___checkbox_label">Gerät in Zukunft immer verwenden</string>
     <string name="power_menu___confirm_cycle_x">" Willst du wirklich %s neu starten?"</string>
-    <string name="power_menu___confirm_toggle_x">Wollen Sie wirklich %s umschalten?</string>
+    <string name="power_menu___confirm_toggle_x">Willst du wirklich %s umschalten?</string>
     <string name="power_menu___confirm_turn_x_off">Willst du %s wirklich ausschalten?</string>
     <string name="power_menu___cycle">Neustarten</string>
     <string name="power_menu___cycle_x">%s neustarten</string>
@@ -371,16 +371,16 @@
     <string name="sign_in___broken_setup___https_issue">OctoApp konnte sich aufgrund eines SSL-Problems nicht über HTTPS verbinden, bitte überprüfen deine Einstellungen</string>
     <string name="sign_in___broken_setup___websocket_upgrade_failed">OctoApp konnte sich aufgrund eines Konfigurationsproblems nicht mit dem Websocket Ihres OctoPrint verbinden</string>
     <string name="sign_in___cancel_and_use_other_information_message">Möchtest du abbrechen und eine Verbindung zu einem anderen OctoPrint herstellen?</string>
-    <string name="sign_in___cancel_and_use_other_information_title">Mit anderen verbinden</string>
-    <string name="sign_in___connect_to_other_octoprint">Mit anderen OctoPrint verbinden</string>
+    <string name="sign_in___cancel_and_use_other_information_title">Mit anderem verbinden</string>
+    <string name="sign_in___connect_to_other_octoprint">Mit anderem OctoPrint verbinden</string>
     <string name="sign_in___continue">Weiter</string>
     <string name="sign_in___discover___web_url_hint">OctoPrint URL</string>
     <string name="sign_in___discover___web_url_hint_active">OctoPrint URL - Kopiere das von deinem Browser!</string>
-    <string name="sign_in___discovery___connect_manually_subtitle">Es ist einfach einzurichten</string>
-    <string name="sign_in___discovery___connect_manually_title">Gebe die Web-URL deines OctoPrint ein</string>
+    <string name="sign_in___discovery___connect_manually_subtitle">Es ist einfach!</string>
+    <string name="sign_in___discovery___connect_manually_title">Manuell verbinden</string>
     <string name="sign_in___discovery___delete_printer_confirmation">OctoPrint löschen</string>
     <string name="sign_in___discovery___delete_printer_message">%s und alle zugehörigen Einstellungen löschen?</string>
-    <string name="sign_in___discovery___discovered_devices">Entdeckt in Ihrem Netzwerk</string>
+    <string name="sign_in___discovery___discovered_devices">Entdeckt in deinem Netzwerk</string>
     <string name="sign_in___discovery___need_help">Brauchst du Hilfe?</string>
     <string name="sign_in___discovery___no_wifi_warning">Kein WiFi, OctoPrint ist möglicherweise nicht verfügbar</string>
     <string name="sign_in___discovery___options_title">Welches OctoPrint möchtest du verbinden?</string>
@@ -391,10 +391,10 @@
     <string name="sign_in___discovery___welcome_subtitle_searching">Suche nach deinem OctoPrint…</string>
     <string name="sign_in___discovery___welcome_title">Willkommen bei OctoApp</string>
     <string name="sign_in___manual_api_key___error_invalid_api_key">Der eingegebene API-Schlüssel wird von OctoPrint nicht akzeptiert</string>
-    <string name="sign_in___manual_api_key___error_other">Octoapp war nicht in der Lage, den API-Schlüssel zu testen, führen Sie die Fehlerbehebung durch, um mehr zu erfahren</string>
+    <string name="sign_in___manual_api_key___error_other">Octoapp war nicht in der Lage, den API-Schlüssel zu testen, führe die Fehlerbehebung durch, um mehr zu erfahren</string>
     <string name="sign_in___manual_api_key___hint">API-Schlüssel</string>
     <string name="sign_in___manual_api_key___hint_active">API-Schlüssel - aus deinen OctoPrint-Einstellungen</string>
-    <string name="sign_in___manual_api_key___title">Geben Sie den API-Schlüssel von OctoPrint ein</string>
+    <string name="sign_in___manual_api_key___title">Gebe den API-Schlüssel von OctoPrint ein</string>
     <string name="sign_in___manual_api_key___troubleshooting">Fehlersuche</string>
     <string name="sign_in___probe___basic_password">Passwort</string>
     <string name="sign_in___probe___basic_username">Benutzername</string>
