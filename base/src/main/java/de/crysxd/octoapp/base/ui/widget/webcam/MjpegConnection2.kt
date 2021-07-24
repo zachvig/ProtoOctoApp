@@ -58,7 +58,6 @@ class MjpegConnection2(
             cache.reset()
             val inputStream = response.body!!.byteStream().buffered(bufferSize * 4)
             while (true) {
-                Timber.i("Loop")
                 emit(
                     MjpegConnection.MjpegSnapshot.Frame(
                         readNextImage(cache, boundary, inputStream)
