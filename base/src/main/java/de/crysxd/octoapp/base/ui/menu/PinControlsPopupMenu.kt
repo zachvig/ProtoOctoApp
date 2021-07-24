@@ -41,19 +41,14 @@ class PinControlsPopupMenu(private val context: Context, private val menuId: Men
             }
 
             // Add to menu
-            menu.menu.add(android.view.Menu.NONE, it.first.hashCode(), android.view.Menu.NONE, spanned)
+            menu.menu.add(android.view.Menu.NONE, it.first.ordinal, android.view.Menu.NONE, spanned)
         }
 
         // Show menu
         menu.show()
         menu.setOnMenuItemClickListener {
-            when (it.itemId) {
-                MenuId.MainMenu.hashCode() -> repo.toggleMenuItemPinned(MenuId.MainMenu, itemId)
-                MenuId.PrintWorkspace.hashCode() -> repo.toggleMenuItemPinned(MenuId.PrintWorkspace, itemId)
-                MenuId.PrePrintWorkspace.hashCode() -> repo.toggleMenuItemPinned(MenuId.PrePrintWorkspace, itemId)
-                else -> Unit
-            }
-
+            val menuId = MenuId.values()[it.itemId]
+            repo.toggleMenuItemPinned(menuId, itemId)
             onDone()
             true
         }

@@ -173,7 +173,9 @@
     <string name="main___banner_connected_via_octoeverywhere">Connected via OctoEverywhere!</string>
     <string name="main___banner_connection_lost_reconnecting">Connection lost, reconnecting…</string>
     <string name="main_menu___about_text">
-        <![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> was<br/>made <font color="%1$06x"><b>for you</b></font> with love in Europe ]]>🇪🇺<![CDATA[<br><a href="privacy">Data privacy</a>]]>
+        <![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> was<br/>made <font color="%1$06x"><b>for you</b></font> with love in Europe ]]>
+        &#127466;&#127482;
+        <![CDATA[<br><a href="privacy">Data privacy</a>]]>
     </string>
     <string name="main_menu___button_enable_automatic_lights">Enable</string>
     <string name="main_menu___configure_remote_access">Configure remote access</string>
@@ -221,6 +223,7 @@
     <string name="main_menu___subtitle_automatic_lights">Select lights which will be turned on when your webcam is active. This is handy to illuminate your print automatically when you look at your webcam at night.</string>
     <string name="main_menu___subtitle_confirm_power_off">Select which devices can be turned off only after confirmation. You can use this to e.g. prevent yourself from accidentally turning off your printer</string>
     <string name="main_menu___subtitle_quick_switch_disabled">Quick switch allows you to seamlessly switch between multiple OctoPrint instances. Without this feature, you need to enter your web URL and API key again.</string>
+    <string name="main_menu___switch_to_octoprint">Activate „%s“</string>
     <string name="main_menu___system_command_executed">\"%s\" executed</string>
     <string name="main_menu___title_automatic_lights">Automatic lights</string>
     <string name="main_menu___title_confirm_power_off">Confirm power off</string>
@@ -245,6 +248,7 @@
     <string name="menu_controls___prepare_workspace">\"Prepare\"</string>
     <string name="menu_controls___print_workspace">\"print\"</string>
     <string name="menu_controls___unpin_from_x">Unpin from %1$s</string>
+    <string name="menu_controls___widget">widget</string>
     <string name="message">Message</string>
     <string name="mm_0_025">0.025 mm</string>
     <string name="mm_0_1">0.1 mm</string>
@@ -363,7 +367,11 @@
     <string name="show_details">Show Details</string>
     <string name="show_logs">Show logs</string>
     <string name="sign_in___access___confirm_in_web_interface">Confirm access in the web interface</string>
-    <string name="sign_in___access___explainer">"         <![CDATA[Open OctoPrint on your computer or <a href="%s">in your phone\'s browser</a> and confirm that OctoApp is allowed to access your OctoPrint.<br><br><small>Not seeing the prompt? Try reloading the page</small>]]>     "</string>
+    <string name="sign_in___access___explainer">
+        "         
+        <![CDATA[Open OctoPrint on your computer or <a href="%s">in your phone\'s browser</a> and confirm that OctoApp is allowed to access your OctoPrint.<br><br><small>Not seeing the prompt? Try reloading the page</small>]]>
+             "
+    </string>
     <string name="sign_in___access___use_api_key" translatable="false">Use API key</string>
     <string name="sign_in___access___waiting_for_access">Waiting for access…</string>
     <string name="sign_in___broken_setup___api_key_revoked">The API key OctoApp is no longer valid, please connect OctoPrint again</string>
@@ -488,5 +496,4 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">You can change this limit in OctoPrint settings</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Z feedrate (mm/min)</string>
-    <string name="main_menu___switch_to_octoprint">Activate „%s“</string>
 </resources>

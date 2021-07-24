@@ -93,13 +93,16 @@
     <string name="emergency_stop">Parada de emergencia</string>
     <string name="emergency_stop_confirmation_action">Parada de emergencia</string>
     <string name="emergency_stop_confirmation_message">
-                " 
+                        " 
+        
         
         <![CDATA[¿Desea detener la impresora en caso de emergencia?<br><br><small>Esto activa un comando M112 con su impresora. Por favor, vea esto como una \"cancelación inmediata\" donde la impresora se detiene sin trabajar fuera de la cola.<br><br>Importante: ¡La impresora debe ser reiniciada después de una parada de emergencia!</small>]]>
-                . 
+                        . 
+        
         
         <![CDATA[Vuoi fermare d'emergenza la stampante? <br><br><small>Questo attiva un comando M112 con la tua stampante. Per favore vedilo come un "annullamento immediato" dove la stampante si ferma senza lavorare dalla coda.<br><br>Importante: la stampante deve essere riavviata dopo un arresto di emergenza!</small>]]>
-                 "
+                         "
+    
     
     </string>
     <string name="empty">Vacío</string>
@@ -177,7 +180,8 @@
     <string name="main___banner_connection_lost_reconnecting">Conexión perdida, reconectando…</string>
     <string name="main_menu___about_text">
         <![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> was<br/>made <font color="%1$06x"><b>para ti</b></font> con amor en Europa ]]>
-        &#127466;&#127482;
+                &#127466;&#127482;
+        
         <![CDATA[<br><a href="privacy">Data privacy</a>]]>
     </string>
     <string name="main_menu___button_enable_automatic_lights">Activar</string>
@@ -226,6 +230,7 @@
     <string name="main_menu___subtitle_automatic_lights">Selecciona las luces que se encenderán cuando tu webcam esté activa. Esto es útil para iluminar su impresión automáticamente cuando mira su webcam por la noche.</string>
     <string name="main_menu___subtitle_confirm_power_off">Seleccione qué dispositivos se pueden apagar sólo después de la confirmación. Puede utilizar esto para, por ejemplo, evitar que usted mismo apague accidentalmente su impresora</string>
     <string name="main_menu___subtitle_quick_switch_disabled">El cambio rápido le permite cambiar sin problemas entre múltiples instancias de OctoPrint. Sin esta función, usted necesita ingresar nuevamente su URL web y su clave API.</string>
+    <string name="main_menu___switch_to_octoprint">Activar „%s“</string>
     <string name="main_menu___system_command_executed">\"%s\" ejecutado</string>
     <string name="main_menu___title_automatic_lights">Luces automáticas</string>
     <string name="main_menu___title_confirm_power_off">Confirmar el apagado</string>
@@ -250,6 +255,7 @@
     <string name="menu_controls___prepare_workspace">\"Prepara\"</string>
     <string name="menu_controls___print_workspace">\"Imprimir\"</string>
     <string name="menu_controls___unpin_from_x">Desenganche de %1$s</string>
+    <string name="menu_controls___widget">widget</string>
     <string name="message">Mensaje</string>
     <string name="mm_0_025">0.025 mm</string>
     <string name="mm_0_1">0,1 mm</string>
@@ -367,9 +373,11 @@
     <string name="show_logs">Mostrar los registros</string>
     <string name="sign_in___access___confirm_in_web_interface">Confirmar el acceso en la interfaz web</string>
     <string name="sign_in___access___explainer">
-        " 
+                " 
+        
         <![CDATA[Abra OctoPrint en su ordenador o <a href="%s">en el navegador de su teléfono</a> y confirme que OctoApp tiene permiso para acceder a su OctoPrint.<br><br><small>¿No ve el aviso? Intente recargar la página</small>]]>
-           "
+                   "
+    
     </string>
     <string name="sign_in___access___use_api_key" translatable="false">Utilizar la clave API</string>
     <string name="sign_in___access___waiting_for_access">Esperando el acceso…</string>
@@ -495,5 +503,4 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">Puede cambiar este límite en la configuración de OctoPrint</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Velocidad de avance Z (mm/min)</string>
-    <string name="main_menu___switch_to_octoprint">Activar „%s“</string>
 </resources>

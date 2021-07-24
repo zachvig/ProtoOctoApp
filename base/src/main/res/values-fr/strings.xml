@@ -39,7 +39,8 @@
     <string name="completed">Terminé</string>
     <string name="configure_remote_acces___description">
         <![CDATA[Pas à la maison ? Seul, OctoApp ne peut pas atteindre votre OctoPrint car il n\'est disponible que dans votre réseau domestique. Vous devez rendre OctoPrint disponible sur internet afin que OctoApp puisse y accéder où que vous soyez. Pour en savoir plus <a href="https://app.octoapp.eu/help/use_remotely">ici</a>.]]>
-                .
+                        .
+    
     
     </string>
     <string name="configure_remote_acces___ignore_issue">Ignorer et continuer</string>
@@ -96,7 +97,8 @@
     <string name="emergency_stop_confirmation_action">Arrêt d\'urgence</string>
     <string name="emergency_stop_confirmation_message">
         <![CDATA[Voulez-vous arrêter d\'urgence l\'imprimante?<br><br><small>Cela déclenche une commande M112 avec votre imprimante. Veuillez considérer cela comme une \"annulation immédiate\" où l\'imprimante s\'arrête sans travailler sur la file d\'attente.<br><br>Important : l\'imprimante doit être redémarrée après un arrêt d\'urgence !</small>]]>
-                .
+                        .
+    
     
     </string>
     <string name="empty">Vide</string>
@@ -174,9 +176,11 @@
     <string name="main___banner_connection_lost_reconnecting">Connexion perdue, reconnexion…</string>
     <string name="main_menu___about_text">
         <![CDATA[La version <font color="%1$06x"><b>%2$s</b></font> à été<br/>crée <font color="%1$06x"><b>pour vous</b></font> avec amour en Europe ]]>
-        &#127466;&#127482;
+                &#127466;&#127482;
+        
         <![CDATA[<br/>Traduction française par Electrocat0 ]]>
-        &#127467;&#127479;
+                &#127467;&#127479;
+        
         <![CDATA[<br><a href="privacy">Data privacy</a>]]>
     </string>
     <string name="main_menu___button_enable_automatic_lights">Activer</string>
@@ -188,7 +192,8 @@
     <string name="main_menu___enable_quick_switch">Activer le changement rapide d\'OctoPrint</string>
     <string name="main_menu___hint_name_and_colorscheme">
         <![CDATA[<small>Vous avez un couple OctoPrint? Définissez le <b>nom et la palette de couleurs</b> dans les paramètres d\'apparence d\'OctoPrint\!</small>]]>
-                .
+                        .
+    
     
     </string>
     <string name="main_menu___item_add_instance">Ajouter un nouvel OctoPrint</string>
@@ -227,6 +232,7 @@
     <string name="main_menu___subtitle_automatic_lights">Sélectionnez les lumières qui s\'allument lorsque votre webcam est active. Ceci est pratique pour éclairer automatiquement votre impression lorsque vous regardez votre webcam la nuit.</string>
     <string name="main_menu___subtitle_confirm_power_off">Sélectionnez les appareils qui ne peuvent être mis hors tension qu\'après confirmation. Vous pouvez utiliser cette fonction pour éviter, par exemple, d\'éteindre accidentellement votre imprimante.</string>
     <string name="main_menu___subtitle_quick_switch_disabled">Le changement rapide d\'OctoPrint vous permet de basculer entre plusieurs OctoPrint sans avoir à réécrire l\'URL et la clé d\'API.</string>
+    <string name="main_menu___switch_to_octoprint">Activez „%s“</string>
     <string name="main_menu___system_command_executed">\"%s\" exécutée</string>
     <string name="main_menu___title_automatic_lights">Lumières automatiques</string>
     <string name="main_menu___title_confirm_power_off">Confirmer la mise hors tension</string>
@@ -251,6 +257,7 @@
     <string name="menu_controls___prepare_workspace">\"Préparer\"</string>
     <string name="menu_controls___print_workspace">\"Imprimer\"</string>
     <string name="menu_controls___unpin_from_x">Déplacer de %1$s</string>
+    <string name="menu_controls___widget">widget</string>
     <string name="message">Message</string>
     <string name="mm_0_025">0.025 mm</string>
     <string name="mm_0_1">0.1 mm</string>
@@ -494,5 +501,4 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">Vous pouvez changer cette limite dans les paramètres d\'OctoPrint</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Vitesse Z (mm/min)</string>
-    <string name="main_menu___switch_to_octoprint">Activez „%s“</string>
 </resources>

@@ -17,6 +17,7 @@ class LocalPinnedMenuItemsDataSource(private val sharedPreferences: SharedPrefer
         MenuId.MainMenu -> "pinned_menu_items"
         MenuId.PrePrintWorkspace -> "pinned_menu_items_preprint"
         MenuId.PrintWorkspace -> "pinned_menu_items_print"
+        MenuId.Widget -> "pinned_menu_items_widget"
         MenuId.Other -> throw IllegalArgumentException("Can't store MenuId.Other!")
     }
 }
