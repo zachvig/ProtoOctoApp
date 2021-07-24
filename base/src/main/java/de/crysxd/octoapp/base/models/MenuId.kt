@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.models
 
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.ui.menu.MenuItem
 
 enum class MenuId {
 
@@ -9,6 +10,8 @@ enum class MenuId {
     PrePrintWorkspace,
     Widget,
     Other;
+
+    fun canPin(menuItem: MenuItem) = (this != Widget || menuItem.canRunWithAppInBackground) && this != Other
 
     val label
         get() = when (this) {
