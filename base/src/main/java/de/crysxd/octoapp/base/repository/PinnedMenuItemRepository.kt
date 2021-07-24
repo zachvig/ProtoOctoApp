@@ -1,11 +1,12 @@
 package de.crysxd.octoapp.base.repository
 
-import de.crysxd.octoapp.base.datasource.DataSource
+import de.crysxd.octoapp.base.datasource.LocalPinnedMenuItemsDataSource
+import de.crysxd.octoapp.base.models.MenuId
 import de.crysxd.octoapp.base.ui.menu.main.*
 
 
 class PinnedMenuItemRepository(
-    private val dataSource: DataSource<Set<String>>
+    private val dataSource: LocalPinnedMenuItemsDataSource
 ) {
 
     private val defaults = setOf(
@@ -20,16 +21,15 @@ class PinnedMenuItemRepository(
         MENU_ITEM_HELP
     )
 
-    fun toggleMenuItemPinned(itemId: String) {
-        val data = (dataSource.get() ?: defaults).toMutableList()
+    fun toggleMenuItemPinned(menuId: MenuId, itemId: String) {
+        val data = (dataSource.load(menuId) ?: defaults).toMutableList()
         if (data.contains(itemId)) {
             data.remove(itemId)
         } else {
             data.add(itemId)
         }
-        dataSource.store(data.toSet())
+        dataSource.store(menuId, data.toSet())
     }
 
-    fun getPinnedMenuItems() = dataSource.get() ?: defaults
-
+    fun getPinnedMenuItems(menuId: MenuId) = dataSource.load(menuId) ?: defaults
 }

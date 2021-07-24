@@ -2,17 +2,20 @@ package de.crysxd.octoapp.base.datasource
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import de.crysxd.octoapp.base.models.MenuId
 
-private const val KEY_PINNED_MENU_ITEM = "pinned_menu_items"
 
-class LocalPinnedMenuItemsDataSource(private val sharedPreferences: SharedPreferences) : DataSource<Set<String>> {
+class LocalPinnedMenuItemsDataSource(private val sharedPreferences: SharedPreferences) {
 
-    override fun store(t: Set<String>?) {
-        sharedPreferences.edit {
-            putStringSet(KEY_PINNED_MENU_ITEM, t?.toSet())
-        }
+    fun store(menuId: MenuId, items: Set<String>) = sharedPreferences.edit {
+        putStringSet(getKey(menuId), items)
     }
 
-    override fun get() = sharedPreferences.getStringSet(KEY_PINNED_MENU_ITEM, null)
+    fun load(menuId: MenuId): Set<String>? = sharedPreferences.getStringSet(getKey(menuId), null)
 
+    private fun getKey(menuId: MenuId) = when (menuId) {
+        MenuId.MainMenu -> "pinned_menu_items"
+        MenuId.PrepareWorkspace -> "pinned_menu_items_prepare"
+        MenuId.PrintWorkspace -> "pinned_menu_items_print"
+    }
 }

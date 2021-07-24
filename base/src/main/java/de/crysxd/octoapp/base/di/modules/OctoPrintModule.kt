@@ -6,10 +6,7 @@ import dagger.Module
 import dagger.Provides
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.datasource.DataSource
-import de.crysxd.octoapp.base.datasource.LocalGcodeFileDataSource
-import de.crysxd.octoapp.base.datasource.RemoteGcodeFileDataSource
-import de.crysxd.octoapp.base.datasource.WidgetPreferencesDataSource
+import de.crysxd.octoapp.base.datasource.*
 import de.crysxd.octoapp.base.di.BaseScope
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.logging.TimberHandler
@@ -63,7 +60,7 @@ open class OctoPrintModule {
     @BaseScope
     @Provides
     open fun providePinnedMenuItemRepository(
-        dataSource: DataSource<Set<String>>
+        dataSource: LocalPinnedMenuItemsDataSource
     ) = PinnedMenuItemRepository(dataSource)
 
     @BaseScope

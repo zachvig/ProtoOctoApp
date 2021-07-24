@@ -19,6 +19,7 @@ import de.crysxd.octoapp.base.databinding.MenuBottomSheetFragmentBinding
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.models.MenuId
 import de.crysxd.octoapp.base.ui.base.BaseBottomSheetDialogFragment
 import de.crysxd.octoapp.base.ui.ext.optionallyRequestOctoActivity
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -240,7 +241,8 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
 
     private fun executeLongClick(item: MenuItem) {
         val repo = Injector.get().pinnedMenuItemsRepository()
-        repo.toggleMenuItemPinned(item.itemId)
+        repo.toggleMenuItemPinned(MenuId.MainMenu, item.itemId)
+
         // We need to reload the main menu if a favorite was changed in case it was removed
         reloadMenu()
     }

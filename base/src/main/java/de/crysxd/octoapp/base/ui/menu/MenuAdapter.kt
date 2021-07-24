@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.MenuItemBinding
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.models.MenuId
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.base.ui.ext.oneOffEndAction
 import java.lang.ref.WeakReference
@@ -34,7 +35,7 @@ class MenuAdapter(
     var pinnedItemIds: Set<String> = emptySet()
     var menuItems: List<PreparedMenuItem> = emptyList()
         set(value) {
-            pinnedItemIds = Injector.get().pinnedMenuItemsRepository().getPinnedMenuItems()
+            pinnedItemIds = Injector.get().pinnedMenuItemsRepository().getPinnedMenuItems(MenuId.MainMenu)
             field = value
             notifyDataSetChanged()
         }

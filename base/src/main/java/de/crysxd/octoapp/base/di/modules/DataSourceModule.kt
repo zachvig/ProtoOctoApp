@@ -40,7 +40,7 @@ class DataSourceModule {
         LocalGcodeHistoryDataSource(sharedPreferences, Gson())
 
     @Provides
-    fun provideLocalPinnedMenuItemsDataSource(sharedPreferences: SharedPreferences): DataSource<Set<String>> =
+    fun provideLocalPinnedMenuItemsDataSource(sharedPreferences: SharedPreferences): LocalPinnedMenuItemsDataSource =
         LocalPinnedMenuItemsDataSource(sharedPreferences)
 
     @Provides

@@ -11,6 +11,7 @@ import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.models.MenuId
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
 import kotlinx.parcelize.Parcelize
@@ -28,7 +29,7 @@ class MainMenu : Menu {
         )
 
         val library = MenuItemLibrary()
-        val pinnedItems = Injector.get().pinnedMenuItemsRepository().getPinnedMenuItems().mapNotNull {
+        val pinnedItems = Injector.get().pinnedMenuItemsRepository().getPinnedMenuItems(MenuId.MainMenu).mapNotNull {
             val item = library[it]
             item?.groupId = "pinned"
             item
