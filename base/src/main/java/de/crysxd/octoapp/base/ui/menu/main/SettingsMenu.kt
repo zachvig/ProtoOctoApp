@@ -98,6 +98,7 @@ class CustomizeWidgetsMenuItem : MenuItem {
     override val style = MenuItemStyle.Settings
     override val enforceSingleLine = false
     override val icon = R.drawable.ic_round_person_pin_24
+    override val canRunWithAppInBackground = false
 
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint || destinationId == R.id.workspacePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_customize_widgets)
