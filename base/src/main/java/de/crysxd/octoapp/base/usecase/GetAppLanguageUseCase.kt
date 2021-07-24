@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.usecase
 
 import android.content.res.Resources
 import androidx.core.os.ConfigurationCompat
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPreferences
 import timber.log.Timber
 import java.util.*
@@ -39,6 +40,8 @@ class GetAppLanguageUseCase @Inject constructor(
             listOf("de", "nl", "it", "es", "fr").contains(deviceLanguage) -> Locale.forLanguageTag(deviceLanguage)
             else -> null
         }
+
+        OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.AppLanguage, appLanguage)
 
         return Result(
             appLanguageLocale = appLanguage.let { Locale.forLanguageTag(it) },
