@@ -307,6 +307,7 @@ class DiscoverFragment : BaseFragment() {
 
     private fun moveToOptionsLayout() {
         beginDelayedTransition()
+        loadingAnimationJob?.cancel()
         binding.octoView.idle()
         moveBackToOptionsBackPressedCallback.isEnabled = false
         binding.octoView.isVisible = true
