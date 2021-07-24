@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.ui.menu
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -26,6 +27,7 @@ import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.base.ui.ext.oneOffEndAction
 import java.lang.ref.WeakReference
 
+@SuppressLint("NotifyDataSetChanged")
 class MenuAdapter(
     private val onClick: (MenuItem) -> Unit,
     private val onSecondaryClick: (MenuItem) -> Unit = {},
@@ -142,9 +144,22 @@ class MenuAdapter(
         // Margins
         val nextItem = menuItems.getOrNull(position + 1)?.menuItem
         val groupChanged = nextItem != null && nextItem.groupId != item.groupId
+        val lastItem = nextItem == null
+        var column = 0
+        for (it in menuItems) {
+            if (it.menuItem == item) break
+            column = if (it.menuItem.showAsHalfWidth) (column + 1) % 2 else 0
+        }
         holder.itemView.updateLayoutParams<GridLayoutManager.LayoutParams> {
-            bottomMargin = context.resources.getDimension(if (groupChanged) R.dimen.margin_2 else R.dimen.margin_0_1).toInt()
-            marginEnd = context.resources.getDimension(R.dimen.margin_0_1).toInt()
+            bottomMargin = when {
+                lastItem -> null
+                groupChanged -> R.dimen.margin_2
+                else -> R.dimen.margin_0_1
+            }?.let {
+                context.resources.getDimension(it).toInt()
+            } ?: 0
+            marginEnd = if (item.showAsHalfWidth && column == 0) context.resources.getDimension(R.dimen.margin_0_1).toInt() else 0
+            marginStart = if (item.showAsHalfWidth && column == 1) context.resources.getDimension(R.dimen.margin_0_1).toInt() else 0
         }
 
         // Colors

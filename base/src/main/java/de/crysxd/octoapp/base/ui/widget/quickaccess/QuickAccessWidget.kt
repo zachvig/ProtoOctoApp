@@ -3,9 +3,11 @@ package de.crysxd.octoapp.base.ui.widget.quickaccess
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.QuickAccessWidgetBinding
 import de.crysxd.octoapp.base.di.injectViewModel
@@ -40,7 +42,12 @@ abstract class QuickAccessWidget(
     override fun onResume(lifecycleOwner: LifecycleOwner) {
         super.onResume(lifecycleOwner)
 
-        parent.requireOctoActivity()
+        baseViewModel.executing.observe(lifecycleOwner) {
+            TransitionManager.beginDelayedTransition(binding.root)
+            binding.loadingOverlay.setOnClickListener { /* Block clicks */ }
+            binding.loadingOverlay.isVisible = it
+        }
+
         baseViewModel.load(menuId).observe(lifecycleOwner) {
             // Start animation so the update is smooooth
             parent.requestTransition(quickTransition = true)
@@ -67,6 +74,7 @@ abstract class QuickAccessWidget(
     private fun onShowPinMenu(menuItem: MenuItem, anchor: View) = PinControlsPopupMenu(context, menuId).show(menuItem.itemId, anchor)
 
     private fun onMenuItemClicked(menuItem: MenuItem) {
+        binding.loadingOverlay.setOnClickListener {}
         baseViewModel.execute {
             MenuItemClickExecutor(this@QuickAccessWidget, adapter).execute(menuItem)
         }

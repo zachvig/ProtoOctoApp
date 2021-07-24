@@ -43,7 +43,7 @@
             android:clipToPadding="false"
             android:paddingVertical="@dimen/margin_2"
             android:paddingStart="@dimen/margin_2"
-            android:paddingEnd="@dimen/margin_1_2"
+            android:paddingEnd="@dimen/margin_2"
             android:visibility="gone" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
