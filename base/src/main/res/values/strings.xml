@@ -488,4 +488,5 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">You can change this limit in OctoPrint settings</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Z feedrate (mm/min)</string>
+    <string name="main_menu___switch_to_octoprint">Activate „%s“</string>
 </resources>

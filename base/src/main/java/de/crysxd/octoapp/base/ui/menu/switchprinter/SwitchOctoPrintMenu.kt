@@ -73,7 +73,7 @@ class SwitchInstanceMenuItem(private val webUrl: String, val showDelte: Boolean 
     override suspend fun isVisible(destinationId: Int) = instanceInfo != null && isQuickSwitchEnabled &&
             Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl != webUrl
 
-    override suspend fun getTitle(context: Context) = instanceInfo?.label ?: webUrl
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___switch_to_octoprint, instanceInfo?.label ?: webUrl)
     override suspend fun onClicked(host: MenuHost?) {
         val repo = Injector.get().octorPrintRepository()
         instanceInfo?.let { repo.setActive(it) }
