@@ -3,7 +3,7 @@
     android:configure="de.crysxd.octoapp.widgets.ConfigureAppWidgetActivity"
     android:initialKeyguardLayout="@layout/app_widget_quick_access_item"
     android:initialLayout="@layout/app_widget_quick_access_item"
-    android:minWidth="110dp"
+    android:minWidth="200dp"
     android:minHeight="40dp"
     android:previewImage="@drawable/widget_preview_progress"
     android:resizeMode="horizontal|vertical"

@@ -71,6 +71,10 @@ internal fun applyDebugOptions(views: RemoteViews, appWidgetId: Int) {
     views.setViewVisibility(R.id.widgetId, BuildConfig.DEBUG)
 }
 
+internal fun getWidgetWidth(appWidgetId: Int) = AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).first
+
+internal fun getWidgetHeight(appWidgetId: Int) = AppWidgetPreferences.getWidgetDimensionsForWidgetId(appWidgetId).second
+
 internal fun getWidgetCount(context: Context) = AppWidgetManager.getInstance(context).installedProviders.map {
     it.provider
 }.filter {
