@@ -28,7 +28,7 @@ class RequestAccessViewModel(
 ) : BaseViewModel() {
 
     companion object {
-        private const val REQUEST_GRACE_PERIOD_MS = 900_000L
+        private const val REQUEST_GRACE_PERIOD_MS = 90_000L
         private const val NOTIFICATION_ID = 3432
     }
 
