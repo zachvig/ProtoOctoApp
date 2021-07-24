@@ -35,7 +35,8 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
     private val adapter = MenuAdapter(
         onClick = ::executeClick,
         onPinItem = ::executeLongClick,
-        onSecondaryClick = ::executeSecondaryClick
+        onSecondaryClick = ::executeSecondaryClick,
+        menuId = MenuId.MainMenu,
     )
     private val showLoadingRunnable = Runnable {
         viewBinding.loadingOverlay.isVisible = true

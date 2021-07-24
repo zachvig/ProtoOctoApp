@@ -32,13 +32,14 @@ class MenuAdapter(
     private val onClick: (MenuItem) -> Unit,
     private val onSecondaryClick: (MenuItem) -> Unit = {},
     private val onPinItem: (MenuItem, View) -> Unit = { _, _ -> },
+    private val menuId: MenuId = MenuId.Other,
 ) : RecyclerView.Adapter<MenuItemHolder>() {
     private var recyclerView: RecyclerView? = null
 
-    var pinnedItemIds: Set<String> = emptySet()
+    private var pinnedItemIds: Set<String> = emptySet()
     var menuItems: List<PreparedMenuItem> = emptyList()
         set(value) {
-            pinnedItemIds = Injector.get().pinnedMenuItemsRepository().getPinnedMenuItems(MenuId.MainMenu)
+            pinnedItemIds = Injector.get().pinnedMenuItemsRepository().getPinnedMenuItems(menuId)
             field = value
             notifyDataSetChanged()
         }

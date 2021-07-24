@@ -28,11 +28,14 @@ abstract class QuickAccessWidget(
 
     override val binding = QuickAccessWidgetBinding.inflate(LayoutInflater.from(context))
     private val library = MenuItemLibrary()
-    private val adapter = MenuAdapter(
-        onClick = ::onMenuItemClicked,
-        onPinItem = ::onShowPinMenu
-    ).also {
-        binding.recyclerView.adapter = it
+    private val adapter by lazy {
+        MenuAdapter(
+            onClick = ::onMenuItemClicked,
+            onPinItem = ::onShowPinMenu,
+            menuId = menuId
+        ).also {
+            binding.recyclerView.adapter = it
+        }
     }
 
     override fun createNewViewModel(parent: BaseWidgetHostFragment) = parent.injectViewModel<QuickAccessWidgetViewModel>().value
@@ -53,7 +56,6 @@ abstract class QuickAccessWidget(
             parent.requestTransition(quickTransition = true)
 
             lifecycleOwner.lifecycleScope.launchWhenCreated {
-                adapter.pinnedItemIds = it
                 adapter.menuItems = it.mapNotNull {
                     library[it]
                 }.sortedBy {
