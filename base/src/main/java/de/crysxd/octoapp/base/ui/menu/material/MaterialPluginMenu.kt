@@ -73,6 +73,7 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
             startPrintAfterSelection?.let {
                 Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
             }
+            host?.reloadMenu()
         }
     }
 
@@ -92,6 +93,7 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
             startPrintAfterSelection?.let {
                 Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
             }
+            host?.reloadMenu()
         }
     }
 }

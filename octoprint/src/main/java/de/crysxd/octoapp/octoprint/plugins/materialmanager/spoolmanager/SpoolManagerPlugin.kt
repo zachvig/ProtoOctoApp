@@ -17,10 +17,10 @@ class SpoolManagerPlugin(private val spoolManagerApi: SpoolManagerApi) : Materia
                 material = it.material ?: "Unknown",
                 pluginDisplayName = "SpoolManager",
                 pluginId = pluginId,
-                isActivated = response.selectedSpool?.databaseId == it.databaseId
+                isActivated = response.selectedSpools?.any { s -> s.databaseId == it.databaseId } == true
             )
         }
     }
 
-    override suspend fun activateSpool(id: String) = spoolManagerApi.selectSpool(SelectSpoolBody(id))
+    override suspend fun activateSpool(id: String) = spoolManagerApi.selectSpool(SelectSpoolBody(id.toInt()))
 }

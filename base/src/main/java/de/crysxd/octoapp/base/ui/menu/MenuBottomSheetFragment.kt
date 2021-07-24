@@ -105,7 +105,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
 
     override fun getWidgetHostFragment() = parentFragment as? WidgetHostFragment
 
-    private fun showMenu(settingsMenu: Menu) {
+    private fun showMenu(settingsMenu: Menu, smallChange: Boolean = false) {
         val internal = suspend {
             try {
                 // Check if the menu wants to be shown (e.g. power menu can auto handle some requests)
@@ -133,7 +133,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
                     // Prepare animation
                     isLoading = false
                     viewBinding.bottom.movementMethod = null
-                    beginDelayedTransition {
+                    beginDelayedTransition(smallChange) {
                         // Need to be applied after transition to prevent glitches, but also check we are still added to ensure state
                         if (isAdded) {
                             viewBinding.bottom.movementMethod = settingsMenu.getBottomMovementMethod(this@MenuBottomSheetFragment)
@@ -239,8 +239,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
     }
 
     override fun reloadMenu() {
-        beginDelayedTransition(true)
-        showMenu(viewModel.menuBackStack.last())
+        showMenu(viewModel.menuBackStack.last(), smallChange = true)
     }
 
     override fun isCheckBoxChecked() = viewBinding.checkbox.isChecked
