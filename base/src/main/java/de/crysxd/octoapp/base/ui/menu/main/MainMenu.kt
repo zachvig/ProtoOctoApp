@@ -45,6 +45,7 @@ class SupportOctoAppMenuItem : MenuItem {
     override val order = 0
     override val style = MenuItemStyle.Support
     override val showAsSubMenu = true
+    override val canBePinned = false
     override val icon = R.drawable.ic_round_favorite_24
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_support_octoapp)
@@ -64,6 +65,7 @@ class ShowSettingsMenuItem : SubMenuItem() {
     override val style = MenuItemStyle.Settings
     override val showAsSubMenu = true
     override val showAsHalfWidth = true
+    override val canBePinned = false
     override val icon = R.drawable.ic_round_settings_24
     override val subMenu = SettingsMenu()
 
@@ -76,6 +78,7 @@ class ShowPrinterMenuItem : SubMenuItem() {
     override val order = 40
     override val style = MenuItemStyle.Printer
     override val showAsSubMenu = true
+    override val canBePinned = false
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_round_print_24
     override val subMenu = PrinterMenu()
@@ -89,6 +92,7 @@ class ShowOctoPrintMenuItem : MenuItem {
     override val order = 30
     override val style = MenuItemStyle.OctoPrint
     override val showAsSubMenu = true
+    override val canBePinned = false
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_octoprint_24px
 
@@ -104,6 +108,7 @@ class ShowNewsMenuItem : MenuItem {
     override val order = 20
     override val style = MenuItemStyle.Neutral
     override val showAsSubMenu = true
+    override val canBePinned = false
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_twitter_24px
 
