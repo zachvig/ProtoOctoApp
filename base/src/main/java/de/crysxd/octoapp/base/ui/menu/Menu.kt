@@ -7,7 +7,7 @@ import android.text.method.MovementMethod
 interface Menu : Parcelable {
     fun shouldLoadBlocking() = false
     suspend fun getMenuItem(): List<MenuItem>
-    suspend fun shouldShowMenu(host: MenuBottomSheetFragment) = true
+    suspend fun shouldShowMenu(host: MenuHost) = true
     suspend fun getTitle(context: Context): CharSequence? = null
     suspend fun getSubtitle(context: Context): CharSequence? = null
     fun getEmptyStateIcon(): Int = 0
@@ -16,5 +16,5 @@ interface Menu : Parcelable {
     fun getEmptyStateSubtitle(context: Context): CharSequence? = null
     fun getCheckBoxText(context: Context): CharSequence? = null
     fun getBottomText(context: Context): CharSequence? = null
-    fun getBottomMovementMethod(host: MenuBottomSheetFragment): MovementMethod? = null
+    fun getBottomMovementMethod(host: MenuHost): MovementMethod? = null
 }

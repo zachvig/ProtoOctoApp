@@ -4,7 +4,7 @@ import android.content.Context
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.menu.Menu
-import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.MenuHost
 import de.crysxd.octoapp.base.ui.menu.MenuItem
 import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_APPLY_TEMPERATURE_PRESET
@@ -34,7 +34,7 @@ class ApplyTemperaturePresetMenuItem(val presetName: String) : MenuItem {
     override val icon = R.drawable.ic_round_local_fire_department_24
     override suspend fun getTitle(context: Context) = context.getString(R.string.temperature_menu___item_preheat, presetName)
     override suspend fun isVisible(destinationId: Int) = destinationId != R.id.workspaceConnect
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+    override suspend fun onClicked(host: MenuHost?) {
         Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.settings?.temperature?.profiles?.firstOrNull {
             it.name == presetName
         }?.let {

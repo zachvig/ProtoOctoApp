@@ -10,9 +10,8 @@ import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_QUICK_SWITCH
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ext.toHtml
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.Menu
-import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.MenuHost
 import de.crysxd.octoapp.base.ui.menu.MenuItem
 import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ADD_INSTANCE
@@ -75,21 +74,21 @@ class SwitchInstanceMenuItem(private val webUrl: String, val showDelte: Boolean 
             Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl != webUrl
 
     override suspend fun getTitle(context: Context) = instanceInfo?.label ?: webUrl
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+    override suspend fun onClicked(host: MenuHost?) {
         val repo = Injector.get().octorPrintRepository()
         instanceInfo?.let { repo.setActive(it) }
     }
 
-    override suspend fun onSecondaryClicked(host: MenuBottomSheetFragment?) {
-        host?.requireOctoActivity()?.showDialog(
-            message = host.getString(R.string.main_menu___delete_octoprint_dialog_message, instanceInfo?.label ?: webUrl),
-            positiveButton = host.getString(R.string.main_menu___delete_octoprint_dialog_button),
+    override suspend fun onSecondaryClicked(host: MenuHost?) {
+        host?.getOctoActivity()?.showDialog(
+            message = host.requireContext().getString(R.string.main_menu___delete_octoprint_dialog_message, instanceInfo?.label ?: webUrl),
+            positiveButton = host.requireContext().getString(R.string.main_menu___delete_octoprint_dialog_button),
             positiveAction = {
                 Injector.get().octorPrintRepository().remove(webUrl)
                 host.reloadMenu()
             },
             negativeAction = {},
-            negativeButton = host.getString(R.string.cancel),
+            negativeButton = host.requireContext().getString(R.string.cancel),
         )
     }
 }
@@ -103,7 +102,7 @@ class AddInstanceMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = isQuickSwitchEnabled && isAnyActive
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_add_instance)
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+    override suspend fun onClicked(host: MenuHost?) {
         Injector.get().octorPrintRepository().clearActive()
     }
 }
@@ -118,7 +117,7 @@ class SignOutMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = !isQuickSwitchEnabled && isAnyActive
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_sign_out)
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+    override suspend fun onClicked(host: MenuHost?) {
         Injector.get().octorPrintRepository().clearActive()
     }
 }
@@ -133,9 +132,9 @@ class EnableQuickSwitchMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = !isQuickSwitchEnabled
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___enable_quick_switch)
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+    override suspend fun onClicked(host: MenuHost?) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "switch_menu"))
-        host?.requireOctoActivity()?.let {
+        host?.getOctoActivity()?.let {
             UriLibrary.getPurchaseUri().open(it)
         }
     }

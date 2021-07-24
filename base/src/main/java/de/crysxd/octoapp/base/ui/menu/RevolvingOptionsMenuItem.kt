@@ -10,7 +10,7 @@ abstract class RevolvingOptionsMenuItem : MenuItem {
     override suspend fun getRightDetail(context: Context) = options.firstOrNull { it.value == activeValue }?.label
         ?: options.firstOrNull()?.label
 
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+    override suspend fun onClicked(host: MenuHost?) {
         val current = options.indexOfFirst { it.value == activeValue }.coerceAtLeast(0)
         val next = (current + 1) % options.size
         handleOptionActivated(options[next])

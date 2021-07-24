@@ -3,14 +3,13 @@ package de.crysxd.octoapp.base.ui.menu.gcodeshortcuts
 import android.content.Context
 import android.text.InputType
 import androidx.lifecycle.asFlow
-import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.menu.Menu
-import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.MenuHost
 import de.crysxd.octoapp.base.ui.menu.MenuItem
 import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
 import de.crysxd.octoapp.base.ui.utils.NavigationResultMediator
@@ -46,9 +45,9 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, private val inse
         override val order = 1
         override val icon = R.drawable.ic_round_push_pin_24
         override suspend fun getTitle(context: Context) = context.getString(R.string.toggle_favorite)
-        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        override suspend fun onClicked(host: MenuHost?) {
             repo.setFavorite(command.command, !command.isFavorite)
-            host?.dismissAllowingStateLoss()
+            host?.closeMenu()
         }
     }
 
@@ -57,9 +56,9 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, private val inse
         override val order = 2
         override val icon = R.drawable.ic_round_content_paste_24
         override suspend fun getTitle(context: Context) = context.getString(R.string.insert)
-        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        override suspend fun onClicked(host: MenuHost?) {
             callback(command)
-            host?.dismissAllowingStateLoss()
+            host?.closeMenu()
         }
     }
 
@@ -67,12 +66,12 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, private val inse
         override val order = 3
         override val icon = R.drawable.ic_round_label_24
         override suspend fun getTitle(context: Context) = context.getString(R.string.enter_label)
-        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        override suspend fun onClicked(host: MenuHost?) {
             host ?: return
             val result = NavigationResultMediator.registerResultCallback<String?>()
             val context = host.requireContext()
 
-            host.findNavController().navigate(
+            host.getNavController().navigate(
                 R.id.action_enter_value,
                 EnterValueFragmentArgs(
                     title = context.getString(R.string.enter_label),
@@ -89,7 +88,7 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, private val inse
                 result.second.asFlow().first()
             }?.let { label ->
                 repo.setLabelForGcode(command = command.command, label = label)
-                host.dismissAllowingStateLoss()
+                host.closeMenu()
             }
         }
     }
@@ -98,9 +97,9 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, private val inse
         override val order = 4
         override val icon = R.drawable.ic_round_label_off_24
         override suspend fun getTitle(context: Context) = context.getString(R.string.clear_lebel)
-        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        override suspend fun onClicked(host: MenuHost?) {
             repo.setLabelForGcode(command.command, null)
-            host?.dismissAllowingStateLoss()
+            host?.closeMenu()
         }
     }
 
@@ -108,9 +107,9 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, private val inse
         override val order = 5
         override val icon = R.drawable.ic_round_delete_24
         override suspend fun getTitle(context: Context) = context.getString(R.string.remove_shortcut)
-        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        override suspend fun onClicked(host: MenuHost?) {
             repo.removeEntry(command.command)
-            host?.dismissAllowingStateLoss()
+            host?.closeMenu()
         }
     }
 }

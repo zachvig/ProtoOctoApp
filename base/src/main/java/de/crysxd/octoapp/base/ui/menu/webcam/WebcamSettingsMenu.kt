@@ -9,7 +9,6 @@ import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ENABLE_FULL_WEBCAM_RESOLUTION
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SHOW_WEBCAM_RESOLUTION
@@ -41,7 +40,7 @@ class WebcamSettingsMenu : Menu {
 
         override suspend fun getTitle(context: Context) = context.getString(R.string.webcam_settings___show_resolution)
 
-        override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+        override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             Injector.get().octoPreferences().isShowWebcamResolution = enabled
         }
     }
@@ -79,8 +78,8 @@ class WebcamSettingsMenu : Menu {
         override suspend fun getTitle(context: Context) = context.getString(R.string.webcam_settings___enable_full_resolution)
         override suspend fun getDescription(context: Context) = context.getString(R.string.webcam_settings___enable_full_resolution_explainer, maxResolution)
 
-        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
-            host?.requireOctoActivity()?.let {
+        override suspend fun onClicked(host: MenuHost?) {
+            host?.getOctoActivity()?.let {
                 UriLibrary.getPurchaseUri().open(it)
             }
         }

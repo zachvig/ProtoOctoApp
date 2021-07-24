@@ -24,11 +24,12 @@ import de.crysxd.octoapp.base.ui.ext.optionallyRequestOctoActivity
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.main.MainMenu
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
+import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import kotlinx.coroutines.*
 import timber.log.Timber
 
 
-open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
+open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
     override val viewModel by injectViewModel<MenuBottomSheetViewModel>()
     private lateinit var viewBinding: MenuBottomSheetFragmentBinding
     private val adapter = MenuAdapter(
@@ -51,11 +52,6 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
                 view?.removeCallbacks(showLoadingRunnable)
             }
 
-        }
-    var isCheckBoxChecked
-        get() = viewBinding.checkbox.isChecked
-        set(value) {
-            viewBinding.checkbox.isChecked = value
         }
 
     companion object {
@@ -95,10 +91,18 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
 
     fun show(fm: FragmentManager) = show(fm, "main-menu")
 
-    fun pushMenu(settingsMenu: Menu) {
-        viewModel.menuBackStack.add(settingsMenu)
-        showMenu(settingsMenu)
+    override fun pushMenu(subMenu: Menu) {
+        viewModel.menuBackStack.add(subMenu)
+        showMenu(subMenu)
     }
+
+    override fun closeMenu() = dismissAllowingStateLoss()
+
+    override fun getNavController() = findNavController()
+
+    override fun getOctoActivity() = requireOctoActivity()
+
+    override fun getWidgetHostFragment() = parentFragment as? WidgetHostFragment
 
     private fun showMenu(settingsMenu: Menu) {
         val internal = suspend {
@@ -233,10 +237,12 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
         }
     }
 
-    fun reloadMenu() {
+    override fun reloadMenu() {
         beginDelayedTransition(true)
         showMenu(viewModel.menuBackStack.last())
     }
+
+    override fun isCheckBoxChecked() = viewBinding.checkbox.isChecked
 
     private fun executeLongClick(item: MenuItem, anchor: View) = PinControlsPopupMenu(requireContext(), MenuId.MainMenu).show(item.itemId, anchor) {
         // We need to reload the main menu if a favorite was changed in case it was removed
@@ -264,41 +270,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             try {
                 isLoading = true
                 lastClickedMenuItem = item
-                when (item) {
-                    is ToggleMenuItem -> {
-                        item.handleToggleFlipped(this@MenuBottomSheetFragment, !item.isEnabled)
-                        adapter.setToggle(item, item.isEnabled)
-                    }
-
-                    is RevolvingOptionsMenuItem -> {
-                        item.onClicked(this@MenuBottomSheetFragment)
-                        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-                            adapter.updateMenuItem(
-                                item = item,
-                                startAnimation = { beginDelayedTransition(smallChange = true, root = it) },
-                                update = { it.copy(right = item.getRightDetail(requireContext())) }
-                            )
-                        }
-                    }
-
-                    else -> {
-                        val before = viewModel.menuBackStack.last()
-
-                        item.onClicked(this@MenuBottomSheetFragment)
-
-                        // We did not change the menu, the holder is still showing the same item and the OS is fancy
-                        // Play success animation
-                        val after = viewModel.menuBackStack.last()
-                        if (after == before && isAdded) {
-                            viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-                                delay(100)
-                                adapter.playSuccessAnimationForItem(item)
-                            }
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                optionallyRequestOctoActivity()?.showDialog(e)
+                MenuItemClickExecutor(this, adapter).execute(item)
             } finally {
                 isLoading = false
             }

@@ -9,10 +9,8 @@ import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
 import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchOctoPrintMenu
-import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
@@ -43,8 +41,8 @@ class SettingsMenu : Menu {
         HtmlCompat.FROM_HTML_MODE_COMPACT
     )
 
-    override fun getBottomMovementMethod(host: MenuBottomSheetFragment) =
-        LinkClickMovementMethod(object : LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.requireOctoActivity()) {
+    override fun getBottomMovementMethod(host: MenuHost) =
+        LinkClickMovementMethod(object : LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.getOctoActivity()) {
             override fun onLinkClicked(context: Context, url: String?): Boolean {
                 return if (url == "privacy") {
                     host.pushMenu(PrivacyMenu())
@@ -65,11 +63,11 @@ class HelpMenuItem : MenuItem {
     override val icon = R.drawable.ic_round_help_outline_24
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_help_faq_and_feedback)
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
-        host?.requireOctoActivity()?.let {
+    override suspend fun onClicked(host: MenuHost?) {
+        host?.getOctoActivity()?.let {
             UriLibrary.getHelpUri().open(it)
         }
-        host?.dismissAllowingStateLoss()
+        host?.closeMenu()
     }
 }
 
@@ -83,9 +81,9 @@ class ChangeLanguageMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = Injector.get().getAppLanguageUseCase().execute(Unit).canSwitchLocale
     override suspend fun getTitle(context: Context) = Injector.get().getAppLanguageUseCase().execute(Unit).switchLanguageText ?: ""
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+    override suspend fun onClicked(host: MenuHost?) {
         val newLocale = Injector.get().getAppLanguageUseCase().execute(Unit).switchLanguageLocale
-        host?.activity?.let {
+        host?.getOctoActivity()?.let {
             Injector.get().setAppLanguageUseCase().execute(SetAppLanguageUseCase.Param(newLocale, it))
         }
     }
@@ -101,9 +99,9 @@ class CustomizeWidgetsMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint || destinationId == R.id.workspacePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_customize_widgets)
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
-        (host?.parentFragment as? WidgetHostFragment)?.startEdit()
-        host?.dismissAllowingStateLoss()
+    override suspend fun onClicked(host: MenuHost?) {
+        host?.getWidgetHostFragment()?.startEdit()
+        host?.closeMenu()
     }
 }
 
@@ -118,7 +116,7 @@ class NightThemeMenuItem : ToggleMenuItem() {
 
     override suspend fun isVisible(destinationId: Int) = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_use_dark_mode)
-    override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+    override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
         Injector.get().octoPreferences().isManualDarkModeEnabled = enabled
     }
 }
@@ -133,13 +131,13 @@ class PrintNotificationMenuItem : ToggleMenuItem() {
     override val icon = R.drawable.ic_round_notifications_active_24
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_turn_print_notification_on)
 
-    override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+    override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
         Injector.get().octoPreferences().isPrintNotificationEnabled = enabled
 
         try {
             if (enabled) {
                 Timber.i("Service enabled, starting service")
-                host.requireOctoActivity().startPrintNotificationService()
+                host.getOctoActivity().startPrintNotificationService()
             }
         } catch (e: IllegalStateException) {
             // User might have closed app just in time so we can't start the service
@@ -156,7 +154,7 @@ class KeepScreenOnDuringPrintMenuItem : ToggleMenuItem() {
     override val icon = R.drawable.ic_round_brightness_high_24
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_keep_screen_on_during_pinrt_on)
-    override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+    override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
         Injector.get().octoPreferences().isKeepScreenOnDuringPrint = enabled
     }
 }
@@ -170,7 +168,7 @@ class AutoConnectPrinterMenuItem : ToggleMenuItem() {
     override val icon = R.drawable.ic_round_hdr_auto_24px
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_auto_connect_printer)
-    override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+    override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
         Injector.get().octoPreferences().isAutoConnectPrinter = enabled
     }
 }

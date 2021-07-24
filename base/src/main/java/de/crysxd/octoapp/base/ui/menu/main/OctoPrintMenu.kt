@@ -2,12 +2,10 @@ package de.crysxd.octoapp.base.ui.menu.main
 
 import android.content.Context
 import androidx.core.text.HtmlCompat
-import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
 import kotlinx.parcelize.Parcelize
 
@@ -49,7 +47,7 @@ class OpenOctoPrintMenuItem : MenuItem {
     override val icon = R.drawable.ic_round_open_in_browser_24
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_octoprint)
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+    override suspend fun onClicked(host: MenuHost?) {
         Injector.get().openOctoPrintWebUseCase().execute(Injector.get().context())
 
     }
@@ -64,11 +62,11 @@ class ConfigureRemoteAccessMenuItem : MenuItem {
     override val icon = R.drawable.ic_round_cloud_24
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___configure_remote_access)
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
-        host?.requireOctoActivity()?.let {
+    override suspend fun onClicked(host: MenuHost?) {
+        host?.getOctoActivity()?.let {
             UriLibrary.getConfigureRemoteAccessUri().open(it)
         }
-        host?.dismissAllowingStateLoss()
+        host?.closeMenu()
     }
 }
 
@@ -81,11 +79,11 @@ class ShowFilesMenuItem : MenuItem {
     override val icon = R.drawable.ic_round_folder_24
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___show_files)
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
-        host?.requireOctoActivity()?.let {
+    override suspend fun onClicked(host: MenuHost?) {
+        host?.getOctoActivity()?.let {
             UriLibrary.getFileManagerUri().open(it)
         }
-        host?.dismissAllowingStateLoss()
+        host?.closeMenu()
     }
 }
 
@@ -116,7 +114,7 @@ class ExecuteSystemCommandMenuItem(val source: String, val action: String) : Con
     override suspend fun getTitle(context: Context) = systemCommand?.name ?: "Unknown system command"
     override fun getConfirmMessage(context: Context) = systemCommand?.confirm ?: "Execute?"
     override fun getConfirmPositiveAction(context: Context) = systemCommand?.name ?: context.getString(android.R.string.ok)
-    override suspend fun onConfirmed(host: MenuBottomSheetFragment) {
+    override suspend fun onConfirmed(host: MenuHost) {
         Injector.get().executeSystemCommandUseCase().execute(systemCommand!!)
     }
 }

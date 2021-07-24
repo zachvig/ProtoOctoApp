@@ -1,12 +1,10 @@
 package de.crysxd.octoapp.base.ui.menu.main
 
 import android.content.Context
-import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
 import de.crysxd.octoapp.base.ui.menu.material.MaterialPluginMenu
 import de.crysxd.octoapp.base.ui.menu.power.PowerControlsMenu
@@ -68,11 +66,11 @@ class ShowWebcamMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.isWebcamSupported == true
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___show_webcam)
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
-        host?.requireOctoActivity()?.let {
+    override suspend fun onClicked(host: MenuHost?) {
+        host?.getOctoActivity()?.let {
             UriLibrary.getWebcamUri().open(it)
         }
-        host?.dismissAllowingStateLoss()
+        host?.closeMenu()
     }
 }
 
@@ -98,7 +96,7 @@ class TurnPsuOffMenuItem : MenuItem {
     ).isNotEmpty() && destinationId == R.id.workspacePrePrint
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_turn_psu_off)
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+    override suspend fun onClicked(host: MenuHost?) {
         host?.pushMenu(PowerControlsMenu(PowerControlsMenu.DeviceType.PrinterPsu, PowerControlsMenu.Action.TurnOff))
     }
 }
@@ -112,9 +110,9 @@ class OpenTerminalMenuItem : MenuItem {
 
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint || destinationId == R.id.workspacePrePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_terminal)
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
-        host?.findNavController()?.navigate(R.id.action_open_terminal)
-        host?.dismissAllowingStateLoss()
+    override suspend fun onClicked(host: MenuHost?) {
+        host?.getNavController()?.navigate(R.id.action_open_terminal)
+        host?.closeMenu()
     }
 }
 
@@ -129,7 +127,7 @@ class EmergencyStopMenuItem : ConfirmedMenuItem() {
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.emergency_stop_confirmation_action)
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_emergency_stop)
-    override suspend fun onConfirmed(host: MenuBottomSheetFragment) {
+    override suspend fun onConfirmed(host: MenuHost) {
         Injector.get().emergencyStopUseCase().execute(Unit)
     }
 }
@@ -145,7 +143,7 @@ class CancelPrintKeepTemperaturesMenuItem : ConfirmedMenuItem() {
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.cancel_print_confirmation_action)
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_cancel_print_keep_temp)
-    override suspend fun onConfirmed(host: MenuBottomSheetFragment) {
+    override suspend fun onConfirmed(host: MenuHost) {
         Injector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(restoreTemperatures = true))
     }
 }
@@ -161,7 +159,7 @@ class CancelPrintMenuItem : ConfirmedMenuItem() {
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.cancel_print_confirmation_action)
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_cancel_print)
-    override suspend fun onConfirmed(host: MenuBottomSheetFragment) {
+    override suspend fun onConfirmed(host: MenuHost) {
         Injector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(restoreTemperatures = false))
     }
 }

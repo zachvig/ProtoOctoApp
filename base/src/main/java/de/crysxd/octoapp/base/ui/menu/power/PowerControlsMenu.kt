@@ -9,18 +9,18 @@ import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.ext.urlDecode
 import de.crysxd.octoapp.base.ext.urlEncode
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
 import de.crysxd.octoapp.base.ui.menu.main.*
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import kotlinx.coroutines.delay
 import kotlinx.parcelize.Parcelize
+import timber.log.Timber
 
 @Parcelize
 class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val action: Action = Action.Unspecified) : Menu {
 
-    override suspend fun shouldShowMenu(host: MenuBottomSheetFragment): Boolean {
+    override suspend fun shouldShowMenu(host: MenuHost): Boolean {
         // Let's try to solve the task at hand without the user selecting somehting
         val start = System.currentTimeMillis()
         val allDevices = Injector.get().getPowerDevicesUseCase().execute(
@@ -103,13 +103,14 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
     override fun getBottomText(context: Context) =
         context.getString(R.string.power_menu___bottom_text).toHtml()
 
-    override fun getBottomMovementMethod(host: MenuBottomSheetFragment) =
-        LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.requireOctoActivity()))
+    override fun getBottomMovementMethod(host: MenuHost) =
+        LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.getOctoActivity()))
 
     companion object {
-        private suspend fun MenuBottomSheetFragment.handleAction(action: Action, deviceType: DeviceType, device: PowerDevice) {
-            (parentFragment as? PowerControlsCallback)?.onPowerActionCompleted(action, device)
-            if (isCheckBoxChecked) {
+        private suspend fun MenuHost.handleAction(action: Action, deviceType: DeviceType, device: PowerDevice) {
+            val fragment = this as? MenuBottomSheetFragment ?: return Timber.e("NOT A BOTTOMSHEET!")
+            (fragment as? PowerControlsCallback)?.onPowerActionCompleted(action, device)
+            if (isCheckBoxChecked()) {
                 Injector.get().octorPrintRepository().updateAppSettingsForActive {
                     it.copy(
                         defaultPowerDevices = (it.defaultPowerDevices ?: emptyMap())
@@ -119,7 +120,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
                     )
                 }
             }
-            dismissAllowingStateLoss()
+            closeMenu()
         }
     }
 
@@ -167,7 +168,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override suspend fun getTitle(context: Context) =
             if (showName) context.getString(R.string.power_menu___turn_x_off, name) else context.getString(R.string.power_menu___turn_off)
 
-        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        override suspend fun onClicked(host: MenuHost?) {
             val device = Injector.get().getPowerDevicesUseCase().execute(
                 GetPowerDevicesUseCase.Params(
                     queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
@@ -202,7 +203,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override suspend fun getTitle(context: Context) =
             if (showName) context.getString(R.string.power_menu___turn_x_on, name) else context.getString(R.string.power_menu___turn_on)
 
-        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        override suspend fun onClicked(host: MenuHost?) {
             val device = Injector.get().getPowerDevicesUseCase().execute(
                 GetPowerDevicesUseCase.Params(
                     queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
@@ -237,7 +238,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override suspend fun getTitle(context: Context) =
             if (showName) context.getString(R.string.power_menu___toggle_x, name) else context.getString(R.string.power_menu___toggle)
 
-        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        override suspend fun onClicked(host: MenuHost?) {
             val device = Injector.get().getPowerDevicesUseCase().execute(
                 GetPowerDevicesUseCase.Params(
                     queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
@@ -272,7 +273,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override suspend fun getTitle(context: Context) =
             if (showName) context.getString(R.string.power_menu___cycle_x, name) else context.getString(R.string.power_menu___cycle)
 
-        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        override suspend fun onClicked(host: MenuHost?) {
             val device = Injector.get().getPowerDevicesUseCase().execute(
                 GetPowerDevicesUseCase.Params(
                     queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId

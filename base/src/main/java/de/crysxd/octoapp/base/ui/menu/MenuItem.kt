@@ -26,6 +26,6 @@ interface MenuItem {
     suspend fun getRightDetail(context: Context): CharSequence? = null
     suspend fun getDescription(context: Context): CharSequence? = null
     suspend fun isVisible(@IdRes destinationId: Int) = true
-    suspend fun onClicked(host: MenuBottomSheetFragment?)
-    suspend fun onSecondaryClicked(host: MenuBottomSheetFragment?) = Unit
+    suspend fun onClicked(host: MenuHost?)
+    suspend fun onSecondaryClicked(host: MenuHost?) = Unit
 }

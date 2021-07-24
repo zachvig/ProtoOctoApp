@@ -2,15 +2,12 @@ package de.crysxd.octoapp.base.ui.menu.material
 
 import android.content.Context
 import androidx.core.text.HtmlCompat
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.Menu
-import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.MenuHost
 import de.crysxd.octoapp.base.ui.menu.MenuItem
 import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ACTIVATE_MATERIAL
@@ -40,8 +37,8 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
         HtmlCompat.FROM_HTML_MODE_COMPACT
     )
 
-    override fun getBottomMovementMethod(host: MenuBottomSheetFragment) =
-        LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.requireOctoActivity()))
+    override fun getBottomMovementMethod(host: MenuHost) =
+        LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.getOctoActivity()))
 
     override suspend fun getMenuItem() = listOf(
         Injector.get().getMaterialsUseCase().execute(Unit).map {
@@ -71,7 +68,7 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
         override suspend fun getTitle(context: Context) =
             if (startPrintAfterSelection != null) displayName else context.getString(R.string.material_menu___print_with_material, displayName)
 
-        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        override suspend fun onClicked(host: MenuHost?) {
             Injector.get().activateMaterialUseCase().execute(ActivateMaterialUseCase.Params(uniqueMaterialId))
             startPrintAfterSelection?.let {
                 Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
@@ -91,7 +88,7 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
         override val style = MenuItemStyle.Printer
         override val icon = R.drawable.ic_round_layers_clear_24
         override suspend fun getTitle(context: Context) = context.getString(R.string.material_menu___print_without_selection)
-        override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+        override suspend fun onClicked(host: MenuHost?) {
             startPrintAfterSelection?.let {
                 Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
             }

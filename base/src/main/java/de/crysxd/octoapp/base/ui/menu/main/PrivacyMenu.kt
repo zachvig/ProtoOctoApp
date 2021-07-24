@@ -6,7 +6,6 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
 import kotlinx.parcelize.Parcelize
 
@@ -21,11 +20,13 @@ class PrivacyMenu : Menu {
         context.getString(R.string.privacy_menu___bottom_text).toHtml()
 
 
-    override fun getBottomMovementMethod(host: MenuBottomSheetFragment) =
-        LinkClickMovementMethod(object : LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.requireOctoActivity()) {
+    override fun getBottomMovementMethod(host: MenuHost) =
+        LinkClickMovementMethod(object : LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.getOctoActivity()) {
             override fun onLinkClicked(context: Context, url: String?): Boolean {
                 return if (url == "mailto") {
-                    SendFeedbackDialog().show(host.childFragmentManager, "feedback")
+                    host.getFragmentManager()?.let {
+                        SendFeedbackDialog().show(it, "feedback")
+                    }
                     true
                 } else {
                     super.onLinkClicked(context, url)
@@ -49,7 +50,7 @@ class PrivacyMenu : Menu {
         override suspend fun getTitle(context: Context) = context.getString(R.string.privacy_menu___crash_reporting_title)
         override suspend fun getDescription(context: Context) = context.getString(R.string.privacy_menu___crash_reporting_description)
 
-        override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+        override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             Injector.get().octoPreferences().isCrashReportingEnabled = enabled
         }
     }
@@ -65,7 +66,7 @@ class PrivacyMenu : Menu {
         override suspend fun getTitle(context: Context) = context.getString(R.string.privacy_menu___analytics_title)
         override suspend fun getDescription(context: Context) = context.getString(R.string.privacy_menu___analytics_description)
 
-        override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+        override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             Injector.get().octoPreferences().isAnalyticsEnabled = enabled
         }
     }

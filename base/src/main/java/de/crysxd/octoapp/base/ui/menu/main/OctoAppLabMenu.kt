@@ -4,7 +4,7 @@ import android.content.Context
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.menu.Menu
-import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.MenuHost
 import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
 import de.crysxd.octoapp.base.ui.menu.ToggleMenuItem
 import kotlinx.parcelize.Parcelize
@@ -31,7 +31,7 @@ class OctoAppLabMenu : Menu {
 
         override suspend fun getTitle(context: Context) = context.getString(R.string.lab_menu___allow_battery_saver_title)
         override suspend fun getDescription(context: Context) = context.getString(R.string.lab_menu___allow_battery_saver_description)
-        override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+        override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             Injector.get().octoPreferences().allowNotificationBatterySaver = enabled
         }
     }
@@ -47,7 +47,7 @@ class OctoAppLabMenu : Menu {
 
         override suspend fun getTitle(context: Context) = context.getString(R.string.lab_menu___allow_to_rotate_title)
         override suspend fun getDescription(context: Context) = context.getString(R.string.lab_menu___allow_to_rotate_description)
-        override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+        override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             Injector.get().octoPreferences().allowAppRotation = enabled
         }
     }
@@ -63,7 +63,7 @@ class OctoAppLabMenu : Menu {
 
         override suspend fun getTitle(context: Context) = context.getString(R.string.lab_menu___experimental_webcam_title)
         override suspend fun getDescription(context: Context) = context.getString(R.string.lab_menu___experimental_webcam_description)
-        override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+        override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             Injector.get().octoPreferences().experimentalWebcam = enabled
         }
     }

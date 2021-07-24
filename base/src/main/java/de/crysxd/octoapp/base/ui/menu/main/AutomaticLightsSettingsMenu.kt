@@ -7,7 +7,7 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_AUTOMATIC_LIGHTS
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.menu.Menu
-import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.MenuHost
 import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
 import de.crysxd.octoapp.base.ui.menu.ToggleMenuItem
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
@@ -68,7 +68,7 @@ class AutomaticLightsSettingsMenu : Menu {
         override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_lights_for_widget)
         override suspend fun getDescription(context: Context) = context.getString(R.string.main_menu___item_lights_for_widget_description)
 
-        override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+        override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             prefs.automaticLightsForWidgetRefresh = enabled
         }
     }
@@ -84,7 +84,7 @@ class AutomaticLightsSettingsMenu : Menu {
         override val icon = R.drawable.ic_round_wb_incandescent_24
         override suspend fun getTitle(context: Context) = device.displayName
 
-        override suspend fun handleToggleFlipped(host: MenuBottomSheetFragment, enabled: Boolean) {
+        override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             val base = prefs.automaticLights.toMutableSet()
             if (enabled) base.add(device.id) else base.remove(device.id)
             prefs.automaticLights = base

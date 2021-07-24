@@ -4,7 +4,7 @@ abstract class SubMenuItem : MenuItem {
     abstract val subMenu: Menu
     override val showAsSubMenu = true
 
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) {
+    override suspend fun onClicked(host: MenuHost?) {
         host?.pushMenu(subMenu)
     }
 }

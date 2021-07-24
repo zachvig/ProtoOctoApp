@@ -1,7 +1,7 @@
 package de.crysxd.octoapp.help.faq
 
 import android.content.Context
-import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.MenuHost
 import de.crysxd.octoapp.base.ui.menu.MenuItem
 import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
 
@@ -13,5 +13,5 @@ class HelpMenuItem(override val style: MenuItemStyle, private val title: CharSeq
     override val showAsSubMenu = true
 
     override suspend fun getTitle(context: Context) = title
-    override suspend fun onClicked(host: MenuBottomSheetFragment?) = onClick()
+    override suspend fun onClicked(host: MenuHost?) = onClick()
 }
