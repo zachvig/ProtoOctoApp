@@ -57,6 +57,7 @@
     <string name="connect_printer___action_change_octoprint">Wissel OctoPrint</string>
     <string name="connect_printer___action_cycle_psu">PSU opnieuw opstarten</string>
     <string name="connect_printer___action_retry">Opnieuw proberen verbinding te maken</string>
+    <string name="connect_printer___action_troubleshooting">Probleemoplossing starten</string>
     <string name="connect_printer___action_turn_psu_off">Zet de PSU uit</string>
     <string name="connect_printer___action_turn_psu_on">Zet PSU aan</string>
     <string name="connect_printer___auto_selection_failed">Niet in staat om de poort automatisch te detecteren, eerste wordt geselecteerd</string>
@@ -146,6 +147,7 @@
     <string name="give_feedback">Feedback geven</string>
     <string name="heat_hotend">Warmtebron</string>
     <string name="heating_hotend">Verwarmingswarmte tot %d℃</string>
+    <string name="help___content_not_available">Dieser Inhalt ist derzeit nicht verfügbar. Versuche es später noch einmal!</string>
     <string name="hide">Verberg</string>
     <string name="history">Geschiedenis</string>
     <string name="hls_stream_disabled_title">HLS webcam</string>
@@ -167,7 +169,9 @@
     <string name="main___banner_connected_via_octoeverywhere">Verbonden via OctoEverywhere!</string>
     <string name="main___banner_connection_lost_reconnecting">Verbinding verbroken, opnieuw verbonden…</string>
     <string name="main_menu___about_text">
-        <![CDATA[Versie <font color="%1$06x"><b>%2$s</b></font> was <br/>gemaakt <font color="%1$06x"><b>voor u</b></font> met liefde in Europa ]]>🇪🇺<![CDATA[<br><a href="privacy">Data privacy</a>]]>
+        <![CDATA[Versie <font color="%1$06x"><b>%2$s</b></font> was <br/>gemaakt <font color="%1$06x"><b>voor u</b></font> met liefde in Europa ]]>
+        &#127466;&#127482;
+        <![CDATA[<br><a href="privacy">Data privacy</a>]]>
     </string>
     <string name="main_menu___button_enable_automatic_lights">Activeer</string>
     <string name="main_menu___configure_remote_access">Toegang op afstand configureren</string>
@@ -186,6 +190,7 @@
     <string name="main_menu___item_cancel_print">Afdrukken annuleren</string>
     <string name="main_menu___item_cancel_print_keep_temp">Afdrukken annuleren (temp. vasthouden)</string>
     <string name="main_menu___item_change_octoprint_instance">Wissel OctoPrint</string>
+    <string name="main_menu___item_confirm_power_off">Bevestig uitschakeling</string>
     <string name="main_menu___item_customize_widgets">Bedieningselementen aanpassen</string>
     <string name="main_menu___item_emergency_stop">Noodstop</string>
     <string name="main_menu___item_help_faq_and_feedback">FAQ, hulp en feedback</string>
@@ -212,9 +217,11 @@
     <string name="main_menu___show_webcam">Toon webcam</string>
     <string name="main_menu___submenu_subtitle">Druk op een item om het vast te zetten</string>
     <string name="main_menu___subtitle_automatic_lights">Selecteer verlichting die wordt ingeschakeld wanneer uw webcam actief is. Dit is handig om uw afdruk automatisch te verlichten wanneer u \'s nachts naar uw webcam kijkt.</string>
+    <string name="main_menu___subtitle_confirm_power_off">Selecteer welke apparaten pas na bevestiging kunnen worden uitgeschakeld. U kunt dit bijvoorbeeld gebruiken om te voorkomen dat u per ongeluk uw printer uitschakelt</string>
     <string name="main_menu___subtitle_quick_switch_disabled">Met de Snelwissel kunt u naadloos wisselen tussen meerdere OctoPrint-instanties. Zonder deze functie moet u uw web-URL en API-sleutel opnieuw invoeren.</string>
     <string name="main_menu___system_command_executed">\"%s\" uitgevoerd</string>
     <string name="main_menu___title_automatic_lights">Automatisch licht</string>
+    <string name="main_menu___title_confirm_power_off">Bevestig uitschakeling</string>
     <string name="main_menu___title_quick_switch">Wissel OctoPrint</string>
     <string name="main_menu___title_quick_switch_disabled">Snelwissel uitgeschakeld</string>
     <string name="material_menu___bottom_text">
@@ -230,6 +237,12 @@
     <string name="material_menu___title_select_material">Kies materiaal</string>
     <string name="menu___completed_command">Succes: „%s“</string>
     <string name="menu___executing_command">Uitvoeren: „%s“</string>
+    <string name="menu_controls___main">hoofdmenu</string>
+    <string name="menu_controls___other">andere</string>
+    <string name="menu_controls___pin_to_x">Pin naar %1$s</string>
+    <string name="menu_controls___prepare_workspace">\"Voorbereiden\"</string>
+    <string name="menu_controls___print_workspace">\"Print\"</string>
+    <string name="menu_controls___unpin_from_x">Ontkoppel van %1$s</string>
     <string name="message">Bericht</string>
     <string name="mm_0_025">0.025 mm</string>
     <string name="mm_0_1">0,1 mm</string>
@@ -276,9 +289,13 @@
     <string name="power_controls___x_offline">%s (offline)</string>
     <string name="power_menu___bottom_text">
         <![CDATA[<small>Voedingsapparaten worden geleverd door een <a href="https://app.octoapp.eu/help/supported_plugin">ondersteunde plugin</a></small>]]>
-        .
+                .
+    
     </string>
     <string name="power_menu___checkbox_label">Gebruik dit apparaat altijd in de toekomst</string>
+    <string name="power_menu___confirm_cycle_x">" Wil je echt %s opnieuw opstarten?"</string>
+    <string name="power_menu___confirm_toggle_x">Wil je echt %s wisselen?</string>
+    <string name="power_menu___confirm_turn_x_off">Wil je %s echt uitzetten?</string>
     <string name="power_menu___cycle">Herstarten</string>
     <string name="power_menu___cycle_x">%s herstarten</string>
     <string name="power_menu___device_is_off">Apparaat is uit</string>
@@ -343,9 +360,55 @@
     <string name="show_actions">Toon acties</string>
     <string name="show_details">Toon details</string>
     <string name="show_logs">Toon logboeken</string>
+    <string name="sign_in___access___confirm_in_web_interface">Toegang bevestigen in de webinterface</string>
+    <string name="sign_in___access___explainer">
+        "         
+        <![CDATA[Open OctoPrint op uw computer of <a href="%s">in de browser van uw telefoon</a> en bevestig dat OctoApp toegang heeft tot uw OctoPrint.<br><br><small>Krijgt u de prompt niet te zien? Probeer de pagina opnieuw te laden</small>]]>
+           "
+    </string>
+    <string name="sign_in___access___use_api_key" translatable="false">API sleutel gebruiken</string>
+    <string name="sign_in___access___waiting_for_access">Wachten op toegang…</string>
+    <string name="sign_in___broken_setup___api_key_revoked">De API sleutel OctoApp is niet langer geldig, gelieve OctoPrint opnieuw te verbinden</string>
+    <string name="sign_in___broken_setup___basic_auth_required">OctoApp vereist BasicAuth referenties voor toegang tot OctoPrint</string>
+    <string name="sign_in___broken_setup___https_issue">OctoApp kon geen verbinding maken via HTTPS vanwege een SSL-probleem, controleer uw instellingen</string>
+    <string name="sign_in___broken_setup___websocket_upgrade_failed">OctoApp kon geen verbinding maken met de websocket van uw OctoPrint vanwege een configuratieprobleem</string>
+    <string name="sign_in___cancel_and_use_other_information_message">Wilt u annuleren en verbinding maken met een andere OctoPrint?</string>
+    <string name="sign_in___cancel_and_use_other_information_title">Aansluiten op andere</string>
+    <string name="sign_in___connect_to_other_octoprint">Verbinding maken met een andere OctoPrint</string>
+    <string name="sign_in___continue">Ga door</string>
+    <string name="sign_in___discover___web_url_hint">OctoPrint URL</string>
+    <string name="sign_in___discover___web_url_hint_active">OctoPrint URL - Kopieer deze van uw browser!</string>
+    <string name="sign_in___discovery___connect_manually_subtitle">Het is gemakkelijk op te zetten</string>
+    <string name="sign_in___discovery___connect_manually_title">Voer de web URL van uw OctoPrint in</string>
+    <string name="sign_in___discovery___delete_printer_confirmation">OctoPrint verwijderen</string>
+    <string name="sign_in___discovery___delete_printer_message">%s en alle bijbehorende instellingen verwijderen?</string>
+    <string name="sign_in___discovery___discovered_devices">Ontdekt op uw netwerk</string>
+    <string name="sign_in___discovery___need_help">Heb je hulp nodig?</string>
+    <string name="sign_in___discovery___no_wifi_warning">Geen WiFi, OctoPrint is misschien niet beschikbaar</string>
+    <string name="sign_in___discovery___options_title">Welke OctoPrint wilt u aansluiten?</string>
+    <string name="sign_in___discovery___other_options">Niet wat je zocht?</string>
+    <string name="sign_in___discovery___previously_connected_devices">Eerder aangesloten</string>
+    <string name="sign_in___discovery___quick_switch_disabled_subtitle">Inschakelen om opnieuw aan te sluiten</string>
+    <string name="sign_in___discovery___quick_switch_disabled_title">Quick switch niet ingeschakeld</string>
+    <string name="sign_in___discovery___welcome_subtitle_searching">Op zoek naar uw OctoPrint…</string>
+    <string name="sign_in___discovery___welcome_title">Welkom bij OctoApp</string>
+    <string name="sign_in___manual_api_key___error_invalid_api_key">De ingevoerde API-sleutel wordt niet geaccepteerd door OctoPrint</string>
+    <string name="sign_in___manual_api_key___error_other">Octoapp was niet in staat om de API-sleutel te testen, voer het oplossen van problemen uit om meer te leren</string>
+    <string name="sign_in___manual_api_key___hint">API-sleutel</string>
+    <string name="sign_in___manual_api_key___hint_active">API sleutel - van uw OctoPrint instellingen</string>
+    <string name="sign_in___manual_api_key___title">Voer uw OctoPrint\'s API sleutel in</string>
+    <string name="sign_in___manual_api_key___troubleshooting">Problemen oplossen</string>
+    <string name="sign_in___probe___basic_password">Wachtwoord</string>
+    <string name="sign_in___probe___basic_username">Gebruikersnaam</string>
+    <string name="sign_in___probe___edit_information">Informatie bewerken</string>
+    <string name="sign_in___probe___probing_active_title">De verbinding met OctoPrint testen…</string>
     <string name="sign_in___qr_code___hint">Je kunt de API sleutel vinden in OctoPrint\'s instellingen onder API</string>
     <string name="sign_in___qr_code___scan_the_qr_code">Scan de QR-code</string>
+    <string name="sign_in___success___subtile">Alles is klaar!</string>
+    <string name="sign_in___success___title">Veel plezier met de app &amp;\ngelukkig printen!</string>
+    <string name="sign_in___try_again">Probeer het opnieuw</string>
     <string name="sign_out">Uitloggen</string>
+    <string name="sing_in___probe___trust_and_continue">Vertrouwen &amp; Ga door</string>
     <string name="size">Grootte</string>
     <string name="start_printing">Starten met printen</string>
     <string name="stream_stalled">Stream is vastgelopen</string>
@@ -394,6 +457,7 @@
     <string name="widget_gcode_preview">Gcode</string>
     <string name="widget_gcode_send">Stuur Gcode</string>
     <string name="widget_move">Verplaats</string>
+    <string name="widget_quick_access">Snelle toegang</string>
     <string name="widget_temperature">Temperaturen</string>
     <string name="x">X</string>
     <plurals name="x_days">

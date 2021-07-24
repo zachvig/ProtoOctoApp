@@ -57,6 +57,7 @@
     <string name="connect_printer___action_change_octoprint">Interruttore OctoPrint</string>
     <string name="connect_printer___action_cycle_psu">Ciclo PSU</string>
     <string name="connect_printer___action_retry">Riprova la connessione</string>
+    <string name="connect_printer___action_troubleshooting">Iniziare la risoluzione dei problemi</string>
     <string name="connect_printer___action_turn_psu_off">Spegnere l\'alimentatore</string>
     <string name="connect_printer___action_turn_psu_on">Accendere l\'alimentatore</string>
     <string name="connect_printer___auto_selection_failed">Impossibile rilevare automaticamente la porta, selezionando prima</string>
@@ -146,6 +147,7 @@
     <string name="give_feedback">Dai un feedback</string>
     <string name="heat_hotend">Calore hotend</string>
     <string name="heating_hotend">Riscaldamento a %d℃</string>
+    <string name="help___content_not_available">Questo contenuto non è attualmente disponibile. Riprova più tardi!</string>
     <string name="hide">Nascondi</string>
     <string name="history">Storia</string>
     <string name="hls_stream_disabled_title">Webcam HLS</string>
@@ -167,7 +169,9 @@
     <string name="main___banner_connected_via_octoeverywhere">Collegato tramite OctoEverywhere!</string>
     <string name="main___banner_connection_lost_reconnecting">Connessione persa, ricollegamento…</string>
     <string name="main_menu___about_text">
-        <![CDATA[Versione <font color="%1$06x"><b>%2$s</b></font> è stato fatto<br/><font color="%1$06x"><b>per te</b></font> con amore in Europa ]]>🇪🇺<![CDATA[<br><a href="privacy">Data privacy</a>]]>
+        <![CDATA[Versione <font color="%1$06x"><b>%2$s</b></font> è stato fatto<br/><font color="%1$06x"><b>per te</b></font> con amore in Europa ]]>
+        &#127466;&#127482;
+        <![CDATA[<br><a href="privacy">Data privacy</a>]]>
     </string>
     <string name="main_menu___button_enable_automatic_lights">Abilita</string>
     <string name="main_menu___configure_remote_access">Configurare l\'accesso remoto</string>
@@ -186,6 +190,7 @@
     <string name="main_menu___item_cancel_print">Annulla la stampa</string>
     <string name="main_menu___item_cancel_print_keep_temp">Annulla la stampa (tenere la temp.)</string>
     <string name="main_menu___item_change_octoprint_instance">Interruttore OctoPrint</string>
+    <string name="main_menu___item_confirm_power_off">Confermare lo spegnimento</string>
     <string name="main_menu___item_customize_widgets">Personalizzare i controlli</string>
     <string name="main_menu___item_emergency_stop">Arresto di emergenza</string>
     <string name="main_menu___item_help_faq_and_feedback">FAQ, aiuto e feedback</string>
@@ -212,9 +217,11 @@
     <string name="main_menu___show_webcam">Mostra la webcam</string>
     <string name="main_menu___submenu_subtitle">Premere a lungo qualsiasi articolo per appuntarlo</string>
     <string name="main_menu___subtitle_automatic_lights">Seleziona le luci che si accendono quando la tua webcam è attiva. Questo è utile per illuminare automaticamente la tua stampa quando guardi la tua webcam di notte.</string>
+    <string name="main_menu___subtitle_confirm_power_off">Seleziona quali dispositivi possono essere spenti solo dopo la conferma. Puoi usare questo per evitare, ad esempio, che tu spenga accidentalmente la tua stampante.</string>
     <string name="main_menu___subtitle_quick_switch_disabled">Lo switch rapido consente di passare senza soluzione di continuità tra più istanze di OctoPrint. Senza questa funzione, è necessario inserire nuovamente l\'URL web e la chiave API.</string>
     <string name="main_menu___system_command_executed">\"%s\" eseguito</string>
     <string name="main_menu___title_automatic_lights">Luci automatiche</string>
+    <string name="main_menu___title_confirm_power_off">Confermare lo spegnimento</string>
     <string name="main_menu___title_quick_switch">Interruttore OctoPrint</string>
     <string name="main_menu___title_quick_switch_disabled">Interruttore rapido disattivato</string>
     <string name="material_menu___bottom_text">
@@ -230,6 +237,12 @@
     <string name="material_menu___title_select_material">Seleziona il materiale</string>
     <string name="menu___completed_command">Successo: „%s“</string>
     <string name="menu___executing_command">Esecuzione: „%s“</string>
+    <string name="menu_controls___main">menu principale</string>
+    <string name="menu_controls___other">altro</string>
+    <string name="menu_controls___pin_to_x">Collegarsi a %1$s</string>
+    <string name="menu_controls___prepare_workspace">\"Preparare\"</string>
+    <string name="menu_controls___print_workspace">\"Stampare\"</string>
+    <string name="menu_controls___unpin_from_x">Disconnetti da %1$s</string>
     <string name="message">Message</string>
     <string name="mm_0_025">0.025 mm</string>
     <string name="mm_0_1">0,1 mm</string>
@@ -278,6 +291,9 @@
         <![CDATA[<small>I dispositivi di alimentazione sono forniti da un <a href="https://app.octoapp.eu/help/supported_plugin"> plugin supportato</a></small>]]>
     </string>
     <string name="power_menu___checkbox_label">Utilizzare sempre questo dispositivo in futuro</string>
+    <string name="power_menu___confirm_cycle_x">" Vuoi davvero riavviare %s?"</string>
+    <string name="power_menu___confirm_toggle_x">Vuoi davvero cambiare %s?</string>
+    <string name="power_menu___confirm_turn_x_off">Vuoi davvero spegnere %s?</string>
     <string name="power_menu___cycle">Riavviare</string>
     <string name="power_menu___cycle_x">Riavviare %s</string>
     <string name="power_menu___device_is_off">Il dispositivo è spento</string>
@@ -342,9 +358,55 @@
     <string name="show_actions">Mostra le azioni</string>
     <string name="show_details">Mostra dettagli</string>
     <string name="show_logs">Mostra i log</string>
+    <string name="sign_in___access___confirm_in_web_interface">Confermare l\'accesso nell\'interfaccia web</string>
+    <string name="sign_in___access___explainer">
+        " 
+        <![CDATA[Apri OctoPrint sul tuo computer o <a href="%s">nel browser del tuo telefono</a> e conferma che OctoApp è autorizzata ad accedere al tuo OctoPrint.<br><br><small>Non vedi il prompt? Prova a ricaricare la pagina</small>]]>
+             "
+    </string>
+    <string name="sign_in___access___use_api_key" translatable="false">Usa la chiave API</string>
+    <string name="sign_in___access___waiting_for_access">In attesa dell\'accesso…</string>
+    <string name="sign_in___broken_setup___api_key_revoked">La chiave API OctoApp non è più valida, connetti nuovamente OctoPrint</string>
+    <string name="sign_in___broken_setup___basic_auth_required">OctoApp ha richiesto le credenziali BasicAuth per accedere a OctoPrint</string>
+    <string name="sign_in___broken_setup___https_issue">OctoApp non è stato in grado di connettersi via HTTPS a causa di un problema SSL, controlla la tua configurazione</string>
+    <string name="sign_in___broken_setup___websocket_upgrade_failed">OctoApp non è riuscita a connettersi al websocket del tuo OctoPrint a causa di un problema di configurazione</string>
+    <string name="sign_in___cancel_and_use_other_information_message">Vuoi cancellare e connetterti ad un altro OctoPrint?</string>
+    <string name="sign_in___cancel_and_use_other_information_title">Collegarsi ad altri</string>
+    <string name="sign_in___connect_to_other_octoprint">Collegarsi ad un altro OctoPrint</string>
+    <string name="sign_in___continue">Continua</string>
+    <string name="sign_in___discover___web_url_hint">URL di OctoPrint</string>
+    <string name="sign_in___discover___web_url_hint_active">OctoPrint URL - Copia questo dal tuo browser!</string>
+    <string name="sign_in___discovery___connect_manually_subtitle">È facile da impostare</string>
+    <string name="sign_in___discovery___connect_manually_title">Inserisci l\'URL della tua OctoPrint</string>
+    <string name="sign_in___discovery___delete_printer_confirmation">Cancellare OctoPrint</string>
+    <string name="sign_in___discovery___delete_printer_message">Cancellare %s e tutte le impostazioni associate?</string>
+    <string name="sign_in___discovery___discovered_devices">Scoperto sulla tua rete</string>
+    <string name="sign_in___discovery___need_help">Hai bisogno di aiuto?</string>
+    <string name="sign_in___discovery___no_wifi_warning">Senza WiFi, OctoPrint potrebbe non essere disponibile</string>
+    <string name="sign_in___discovery___options_title">Quale OctoPrint vuoi collegare?</string>
+    <string name="sign_in___discovery___other_options">Non è quello che stavi cercando?</string>
+    <string name="sign_in___discovery___previously_connected_devices">Precedentemente collegato</string>
+    <string name="sign_in___discovery___quick_switch_disabled_subtitle">Abilita a riconnettersi</string>
+    <string name="sign_in___discovery___quick_switch_disabled_title">Interruttore rapido non abilitato</string>
+    <string name="sign_in___discovery___welcome_subtitle_searching">Ricerca della tua OctoPrint…</string>
+    <string name="sign_in___discovery___welcome_title">Benvenuti in OctoApp</string>
+    <string name="sign_in___manual_api_key___error_invalid_api_key">La chiave API inserita non è accettata dalla OctoPrint</string>
+    <string name="sign_in___manual_api_key___error_other">Octoapp non è stato in grado di testare la chiave API, eseguire la risoluzione dei problemi per saperne di più</string>
+    <string name="sign_in___manual_api_key___hint">Chiave API</string>
+    <string name="sign_in___manual_api_key___hint_active">Chiave API - dalle tue impostazioni OctoPrint</string>
+    <string name="sign_in___manual_api_key___title">Inserisci la tua chiave API della OctoPrint</string>
+    <string name="sign_in___manual_api_key___troubleshooting">Risoluzione dei problemi</string>
+    <string name="sign_in___probe___basic_password">Password</string>
+    <string name="sign_in___probe___basic_username">Nome utente</string>
+    <string name="sign_in___probe___edit_information">Modifica informazioni</string>
+    <string name="sign_in___probe___probing_active_title">Testare la connessione alla OctoPrint…</string>
     <string name="sign_in___qr_code___hint">Puoi trovare la chiave API nelle impostazioni di OctoPrint sotto API</string>
     <string name="sign_in___qr_code___scan_the_qr_code">Scansione del codice QR</string>
+    <string name="sign_in___success___subtile">Tutto è pronto!</string>
+    <string name="sign_in___success___title">Godetevi l\'app &amp;\nfelice stampa!</string>
+    <string name="sign_in___try_again">Prova di nuovo</string>
     <string name="sign_out">Esci</string>
+    <string name="sing_in___probe___trust_and_continue">Trust &amp; Continua</string>
     <string name="size">Dimensione</string>
     <string name="start_printing">Inizia a stampare</string>
     <string name="stream_stalled">Flusso in stallo</string>
@@ -393,6 +455,7 @@
     <string name="widget_gcode_preview">Gcode</string>
     <string name="widget_gcode_send">Invia Gcode</string>
     <string name="widget_move">Spostati</string>
+    <string name="widget_quick_access">Accesso rapido</string>
     <string name="widget_temperature">Temperature</string>
     <string name="x">X</string>
     <plurals name="x_days">
