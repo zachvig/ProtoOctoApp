@@ -30,6 +30,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_PRINT_NOTIFICATION_WAS_PAUSED = "print_notification_was_paused"
         private const val KEY_EXPERIMENTAL_WEBCAM = "experimental_webcam"
         private const val KEY_AUTO_LIGHTS = "auto_lights"
+        private const val KEY_CONFIRM_POWER_OFF_DEVICES = "confirm_power_off_devices"
         private const val KEY_AUTO_LIGHTS_FOR_WIDGET_REFRESH = "auto_lights_for_widget_refresh"
         private const val KEY_SHOW_WEBCAM_RESOLUTION = "show_webcam_resolution"
         private const val KEY_WEBCAM_ASPECT_RATIO_SOURCE = "webcam_aspect_ratio_source"
@@ -138,6 +139,12 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         get() = sharedPreferences.getStringSet(KEY_AUTO_LIGHTS, emptySet()) ?: emptySet()
         set(value) {
             edit { putStringSet(KEY_AUTO_LIGHTS, value) }
+        }
+
+    var confirmPowerOffDevices
+        get() = sharedPreferences.getStringSet(KEY_CONFIRM_POWER_OFF_DEVICES, emptySet()) ?: emptySet()
+        set(value) {
+            edit { putStringSet(KEY_CONFIRM_POWER_OFF_DEVICES, value) }
         }
 
     var automaticLightsForWidgetRefresh

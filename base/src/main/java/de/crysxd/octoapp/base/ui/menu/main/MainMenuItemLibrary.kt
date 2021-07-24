@@ -26,6 +26,7 @@ const val MENU_EXECUTE_SYSTEM_COMMAND = "octoprint___execute_system_command"
 const val MENU_ITEM_NIGHT_THEME = "settings___night_theme"
 const val MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE = "settings___change_octoprint_instnace"
 const val MENU_ITEM_AUTOMATIC_LIGHTS = "settings___automatic_lights"
+const val MENU_ITEM_CONFIRM_POWER_OFF = "settings___confirm_power_off"
 const val MENU_ITEM_SHOW_OCTOAPP_LAB = "settings___open_octoapp_lab"
 const val MENU_ITEM_CUSTOMIZE_WIDGETS = "settings___customize_widgets"
 const val MENU_ITEM_PRINT_NOTIFICATION = "settings___print_notification"
@@ -90,6 +91,7 @@ class MenuItemLibrary {
         MENU_ITEM_AUTOMATIC_LIGHTS to AutomaticLightsSettingsMenuItem::class,
         MENU_ITEM_SHOW_WEBCAM_RESOLUTION to WebcamSettingsMenu.ShowResolutionMenuItem::class,
         MENU_ITEM_ENABLE_FULL_WEBCAM_RESOLUTION to WebcamSettingsMenu.EnableFullResolutionMenuItem::class,
+        MENU_ITEM_CONFIRM_POWER_OFF to ConfirmPowerOffSettingsMenuItem::class,
     )
 
     operator fun get(itemId: String): MenuItem? = when {

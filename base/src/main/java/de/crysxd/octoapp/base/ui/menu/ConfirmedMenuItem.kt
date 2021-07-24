@@ -11,7 +11,7 @@ import java.util.concurrent.CountDownLatch
 abstract class ConfirmedMenuItem : MenuItem {
     abstract fun getConfirmMessage(context: Context): String
     abstract fun getConfirmPositiveAction(context: Context): CharSequence
-    abstract suspend fun onConfirmed(host: MenuHost)
+    abstract suspend fun onConfirmed(host: MenuHost?)
 
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun onClicked(host: MenuHost?) = withContext(Dispatchers.Main) {

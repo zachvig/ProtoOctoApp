@@ -151,7 +151,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         val pluginName: String,
         val showName: Boolean = true,
         val deviceType: DeviceType = DeviceType.Unspecified,
-    ) : MenuItem {
+    ) : ConfirmedMenuItem() {
         companion object {
             fun forItemId(itemId: String): TurnPowerDeviceOffMenuItem {
                 val parts = itemId.split("/")
@@ -164,11 +164,16 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val order = 333
         override val style = MenuItemStyle.Printer
         override val icon = R.drawable.ic_round_power_off_24
+        private val needsConfirmation = Injector.get().octoPreferences().confirmPowerOffDevices.contains(uniqueDeviceId)
 
         override suspend fun getTitle(context: Context) =
             if (showName) context.getString(R.string.power_menu___turn_x_off, name) else context.getString(R.string.power_menu___turn_off)
 
-        override suspend fun onClicked(host: MenuHost?) {
+
+        override fun getConfirmMessage(context: Context) = context.getString(R.string.power_menu___confirm_turn_x_off, name)
+        override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.power_menu___turn_x_off, name)
+
+        override suspend fun onConfirmed(host: MenuHost?) {
             val device = Injector.get().getPowerDevicesUseCase().execute(
                 GetPowerDevicesUseCase.Params(
                     queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
@@ -177,6 +182,14 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
 
             Injector.get().turnOffPsuUseCase().execute(device)
             host?.handleAction(Action.TurnOff, deviceType, device)
+        }
+
+        override suspend fun onClicked(host: MenuHost?) {
+            if (needsConfirmation) {
+                super.onClicked(host)
+            } else {
+                onConfirmed(host)
+            }
         }
     }
 
@@ -221,7 +234,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         val pluginName: String,
         val showName: Boolean = true,
         val deviceType: DeviceType = DeviceType.Unspecified,
-    ) : MenuItem {
+    ) : ConfirmedMenuItem() {
         companion object {
             fun forItemId(itemId: String): TogglePowerDeviceMenuItem {
                 val parts = itemId.split("/")
@@ -234,11 +247,15 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val order = 335
         override val style = MenuItemStyle.Printer
         override val icon = R.drawable.ic_round_power_cycle_24px
+        private val needsConfirmation = Injector.get().octoPreferences().confirmPowerOffDevices.contains(uniqueDeviceId)
 
         override suspend fun getTitle(context: Context) =
             if (showName) context.getString(R.string.power_menu___toggle_x, name) else context.getString(R.string.power_menu___toggle)
 
-        override suspend fun onClicked(host: MenuHost?) {
+        override fun getConfirmMessage(context: Context) = context.getString(R.string.power_menu___confirm_toggle_x, name)
+        override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.power_menu___toggle_x, name)
+
+        override suspend fun onConfirmed(host: MenuHost?) {
             val device = Injector.get().getPowerDevicesUseCase().execute(
                 GetPowerDevicesUseCase.Params(
                     queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
@@ -248,6 +265,14 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
             Injector.get().togglePsuUseCase().execute(device)
             host?.handleAction(Action.Toggle, deviceType, device)
         }
+
+        override suspend fun onClicked(host: MenuHost?) {
+            if (needsConfirmation) {
+                super.onClicked(host)
+            } else {
+                onConfirmed(host)
+            }
+        }
     }
 
     class CyclePowerDeviceMenuItem(
@@ -256,7 +281,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         val pluginName: String,
         val showName: Boolean = true,
         val deviceType: DeviceType = DeviceType.Unspecified,
-    ) : MenuItem {
+    ) : ConfirmedMenuItem() {
         companion object {
             fun forItemId(itemId: String): CyclePowerDeviceMenuItem {
                 val parts = itemId.split("/")
@@ -269,11 +294,16 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val order = 336
         override val style = MenuItemStyle.Printer
         override val icon = R.drawable.ic_round_power_cycle_24px
+        private val needsConfirmation = Injector.get().octoPreferences().confirmPowerOffDevices.contains(uniqueDeviceId)
 
         override suspend fun getTitle(context: Context) =
             if (showName) context.getString(R.string.power_menu___cycle_x, name) else context.getString(R.string.power_menu___cycle)
 
-        override suspend fun onClicked(host: MenuHost?) {
+
+        override fun getConfirmMessage(context: Context) = context.getString(R.string.power_menu___confirm_cycle_x, name)
+        override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.power_menu___cycle_x, name)
+
+        override suspend fun onConfirmed(host: MenuHost?) {
             val device = Injector.get().getPowerDevicesUseCase().execute(
                 GetPowerDevicesUseCase.Params(
                     queryState = false, onlyGetDeviceWithUniqueId = uniqueDeviceId
@@ -282,6 +312,14 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
 
             Injector.get().cyclePsuUseCase().execute(device)
             host?.handleAction(Action.Cycle, deviceType, device)
+        }
+
+        override suspend fun onClicked(host: MenuHost?) {
+            if (needsConfirmation) {
+                super.onClicked(host)
+            } else {
+                onConfirmed(host)
+            }
         }
     }
 

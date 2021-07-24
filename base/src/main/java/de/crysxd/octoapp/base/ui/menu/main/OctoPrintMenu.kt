@@ -113,7 +113,7 @@ class ExecuteSystemCommandMenuItem(val source: String, val action: String) : Con
     override suspend fun getTitle(context: Context) = systemCommand?.name ?: "Unknown system command"
     override fun getConfirmMessage(context: Context) = systemCommand?.confirm ?: "Execute?"
     override fun getConfirmPositiveAction(context: Context) = systemCommand?.name ?: context.getString(android.R.string.ok)
-    override suspend fun onConfirmed(host: MenuHost) {
+    override suspend fun onConfirmed(host: MenuHost?) {
         Injector.get().executeSystemCommandUseCase().execute(systemCommand!!)
     }
 }

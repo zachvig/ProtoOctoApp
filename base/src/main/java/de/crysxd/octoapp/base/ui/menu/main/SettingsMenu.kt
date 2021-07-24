@@ -11,6 +11,7 @@ import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.menu.*
 import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchOctoPrintMenu
+import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
@@ -28,6 +29,7 @@ class SettingsMenu : Menu {
         CustomizeWidgetsMenuItem(),
         ShowOctoAppLabMenuItem(),
         AutomaticLightsSettingsMenuItem(),
+        ConfirmPowerOffSettingsMenuItem(),
     )
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___menu_settings_title)
@@ -185,10 +187,25 @@ class AutomaticLightsSettingsMenuItem : SubMenuItem() {
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_automatic_lights)
 }
 
+class ConfirmPowerOffSettingsMenuItem : SubMenuItem() {
+    override val itemId = MENU_ITEM_CONFIRM_POWER_OFF
+    override var groupId = ""
+    override val order = 109
+    override val style = MenuItemStyle.Settings
+    override val enforceSingleLine = false
+    override val icon = R.drawable.ic_round_power_24
+    override val subMenu: Menu get() = ConfirmPowerOffSettingsMenu()
+    override suspend fun isVisible(destinationId: Int) = Injector.get().getPowerDevicesUseCase().execute(
+        GetPowerDevicesUseCase.Params(queryState = false)
+    ).isNotEmpty()
+
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_confirm_power_off)
+}
+
 class ShowOctoAppLabMenuItem : SubMenuItem() {
     override val itemId = MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE
     override var groupId = ""
-    override val order = 109
+    override val order = 110
     override val style = MenuItemStyle.Settings
     override val enforceSingleLine = false
     override val icon = R.drawable.ic_round_science_24px

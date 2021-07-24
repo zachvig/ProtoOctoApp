@@ -127,7 +127,7 @@ class EmergencyStopMenuItem : ConfirmedMenuItem() {
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.emergency_stop_confirmation_action)
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_emergency_stop)
-    override suspend fun onConfirmed(host: MenuHost) {
+    override suspend fun onConfirmed(host: MenuHost?) {
         Injector.get().emergencyStopUseCase().execute(Unit)
     }
 }
@@ -143,7 +143,7 @@ class CancelPrintKeepTemperaturesMenuItem : ConfirmedMenuItem() {
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.cancel_print_confirmation_action)
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_cancel_print_keep_temp)
-    override suspend fun onConfirmed(host: MenuHost) {
+    override suspend fun onConfirmed(host: MenuHost?) {
         Injector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(restoreTemperatures = true))
     }
 }
@@ -159,7 +159,7 @@ class CancelPrintMenuItem : ConfirmedMenuItem() {
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.cancel_print_confirmation_action)
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_cancel_print)
-    override suspend fun onConfirmed(host: MenuHost) {
+    override suspend fun onConfirmed(host: MenuHost?) {
         Injector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(restoreTemperatures = false))
     }
 }
