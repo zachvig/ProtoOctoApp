@@ -11,6 +11,7 @@ import de.crysxd.octoapp.base.di.injectViewModel
 import de.crysxd.octoapp.base.models.MenuId
 import de.crysxd.octoapp.base.ui.menu.MenuAdapter
 import de.crysxd.octoapp.base.ui.menu.MenuItem
+import de.crysxd.octoapp.base.ui.menu.PinControlsPopupMenu
 import de.crysxd.octoapp.base.ui.menu.PreparedMenuItem
 import de.crysxd.octoapp.base.ui.menu.main.MenuItemLibrary
 import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
@@ -38,6 +39,9 @@ abstract class QuickAccessWidget(context: Context) : RecyclableOctoWidget<QuickA
         super.onResume(lifecycleOwner)
 
         baseViewModel.load(menuId).observe(lifecycleOwner) {
+            // Start animation so the update is smooooth
+            parent.requestTransition(quickTransition = true)
+
             lifecycleOwner.lifecycleScope.launchWhenCreated {
                 adapter.pinnedItemIds = it
                 adapter.menuItems = it.mapNotNull {
@@ -57,9 +61,7 @@ abstract class QuickAccessWidget(context: Context) : RecyclableOctoWidget<QuickA
         }
     }
 
-    private fun onShowPinMenu(menuItem: MenuItem, anchor: View) {
-
-    }
+    private fun onShowPinMenu(menuItem: MenuItem, anchor: View) = PinControlsPopupMenu(context, menuId).show(menuItem.itemId, anchor)
 
     private fun onMenuItemClicked(menuItem: MenuItem) {
 

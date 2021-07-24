@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.WidgetHostFragmentBinding
@@ -16,6 +17,7 @@ import de.crysxd.octoapp.base.models.WidgetList
 import de.crysxd.octoapp.base.models.WidgetPreferences
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 import timber.log.Timber
 
 abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
@@ -51,8 +53,11 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
         requestTransition()
     }
 
-    override fun requestTransition() {
-        TransitionManager.beginDelayedTransition(view as ViewGroup)
+    override fun requestTransition(quickTransition: Boolean) {
+        TransitionManager.beginDelayedTransition(
+            view as ViewGroup,
+            if (quickTransition) InstantAutoTransition() else AutoTransition()
+        )
     }
 
     fun installWidgets(list: List<WidgetClass>) {

@@ -458,7 +458,7 @@
     <string name="menu_controls___print_workspace">print workspace</string>
     <string name="menu_controls___prepare_workspace">prepare workspace</string>
     <string name="menu_controls___other">other</string>
-    <string name="menu_controls___unpin_from_x">Unpin from %s</string>
-    <string name="menu_controls___pin_to_x">Pin to %s</string>
+    <string name="menu_controls___unpin_from_x">Unpin from %1$s</string>
+    <string name="menu_controls___pin_to_x">Pin to %1$s</string>
     <string name="widget_quick_access">Quick access</string>
 </resources>

@@ -46,7 +46,7 @@ class EditWidgetsFragment : BaseWidgetHostFragment() {
         binding.widgetList.setupWithToolbar(requireOctoActivity())
     }
 
-    override fun requestTransition() = Unit
+    override fun requestTransition(quickTransition: Boolean) = Unit
 
     override fun reloadWidgets() = Unit
 
