@@ -10,6 +10,7 @@ import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_QUICK_SWITCH
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ext.toHtml
+import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.menu.Menu
 import de.crysxd.octoapp.base.ui.menu.MenuHost
 import de.crysxd.octoapp.base.ui.menu.MenuItem
@@ -80,7 +81,7 @@ class SwitchInstanceMenuItem(private val webUrl: String, val showDelte: Boolean 
     }
 
     override suspend fun onSecondaryClicked(host: MenuHost?) {
-        host?.getOctoActivity()?.showDialog(
+        (host?.getMenuActivity() as? OctoActivity)?.showDialog(
             message = host.requireContext().getString(R.string.main_menu___delete_octoprint_dialog_message, instanceInfo?.label ?: webUrl),
             positiveButton = host.requireContext().getString(R.string.main_menu___delete_octoprint_dialog_button),
             positiveAction = {
@@ -134,7 +135,7 @@ class EnableQuickSwitchMenuItem : MenuItem {
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___enable_quick_switch)
     override suspend fun onClicked(host: MenuHost?) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "switch_menu"))
-        host?.getOctoActivity()?.let {
+        host?.getMenuActivity()?.let {
             UriLibrary.getPurchaseUri().open(it)
         }
     }

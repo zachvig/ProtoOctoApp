@@ -51,7 +51,7 @@ class SupportOctoAppMenuItem : MenuItem {
     override suspend fun isVisible(@IdRes destinationId: Int) = BillingManager.shouldAdvertisePremium()
     override suspend fun onClicked(host: MenuHost?) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "main_menu"))
-        host?.getOctoActivity()?.let {
+        host?.getMenuActivity()?.let {
             UriLibrary.getPurchaseUri().open(it)
         }
     }
@@ -115,6 +115,6 @@ class ShowNewsMenuItem : MenuItem {
     override suspend fun onClicked(host: MenuHost?) {
         val i = Intent(Intent.ACTION_VIEW)
         i.data = Uri.parse("https://twitter.com/realoctoapp")
-        host?.getOctoActivity()?.startActivity(i)
+        host?.getMenuActivity()?.startActivity(i)
     }
 }

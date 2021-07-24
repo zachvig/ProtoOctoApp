@@ -229,7 +229,7 @@
     <string name="main_menu___subtitle_confirm_power_off">Select which devices can be turned off only after confirmation. You can use this to e.g. prevent yourself from accidentally turning off your printer</string>
     <string name="main_menu___subtitle_quick_switch_disabled">Quick switch allows you to seamlessly switch between multiple OctoPrint instances. Without this feature, you need to enter your web URL and API key again.</string>
     <string name="main_menu___switch_to_octoprint">Activate „%s“</string>
-    <string name="main_menu___system_command_executed">\"%s\" executed</string>
+    <string name="main_menu___system_command_executed">„%s“ executed</string>
     <string name="main_menu___title_automatic_lights">Automatic lights</string>
     <string name="main_menu___title_confirm_power_off">Confirm power off</string>
     <string name="main_menu___title_quick_switch">Switch OctoPrint</string>

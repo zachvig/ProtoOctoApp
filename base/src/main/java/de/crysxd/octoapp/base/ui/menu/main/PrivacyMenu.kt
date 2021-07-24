@@ -21,10 +21,10 @@ class PrivacyMenu : Menu {
 
 
     override fun getBottomMovementMethod(host: MenuHost) =
-        LinkClickMovementMethod(object : LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.getOctoActivity()) {
+        LinkClickMovementMethod(object : LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.getMenuActivity()) {
             override fun onLinkClicked(context: Context, url: String?): Boolean {
                 return if (url == "mailto") {
-                    host.getFragmentManager()?.let {
+                    host.getMenuFragmentManager()?.let {
                         SendFeedbackDialog().show(it, "feedback")
                     }
                     true

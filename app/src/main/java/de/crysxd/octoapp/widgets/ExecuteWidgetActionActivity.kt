@@ -7,15 +7,22 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.mainActivityClass
 import de.crysxd.octoapp.base.models.exceptions.UserMessageException
 import de.crysxd.octoapp.base.ui.base.LocalizedActivity
 import de.crysxd.octoapp.base.ui.menu.ConfirmedMenuItem
+import de.crysxd.octoapp.base.ui.menu.Menu
+import de.crysxd.octoapp.base.ui.menu.MenuHost
 import de.crysxd.octoapp.base.ui.menu.MenuItem
 import de.crysxd.octoapp.base.ui.menu.main.MenuItemLibrary
+import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
 import de.crysxd.octoapp.widgets.webcam.BaseWebcamAppWidget
@@ -27,7 +34,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
-class ExecuteWidgetActionActivity : LocalizedActivity() {
+class ExecuteWidgetActionActivity : LocalizedActivity(), MenuHost {
 
     companion object {
         private const val EXTRA_TASK = "de.crysxd.octoapp.widgets.progress.TASK"
@@ -163,13 +170,21 @@ class ExecuteWidgetActionActivity : LocalizedActivity() {
     }
 
     private suspend fun performMenuItemClick(menuItem: MenuItem) {
+        // This is very ugly...
+        mainActivityClass = MainActivity::class.java
+
         try {
             Timber.i("Executing ${menuItem.itemId}")
             if (menuItem is ConfirmedMenuItem) {
-                menuItem.onConfirmed(null)
+                menuItem.onConfirmed(this)
             } else {
-                menuItem.onClicked(null)
+                menuItem.onClicked(this)
             }
+            Toast.makeText(
+                this,
+                getString(R.string.menu___completed_command, menuItem.getTitle(this)),
+                Toast.LENGTH_SHORT
+            ).show()
         } catch (e: Exception) {
             Timber.e(e)
             Toast.makeText(
@@ -179,4 +194,22 @@ class ExecuteWidgetActionActivity : LocalizedActivity() {
             ).show()
         }
     }
+
+    override fun requireContext() = this
+
+    override fun pushMenu(subMenu: Menu) = Unit
+
+    override fun closeMenu() = Unit
+
+    override fun getNavController(): NavController? = null
+
+    override fun getMenuActivity() = this
+
+    override fun getMenuFragmentManager(): FragmentManager? = null
+
+    override fun getWidgetHostFragment(): WidgetHostFragment? = null
+
+    override fun reloadMenu() = Unit
+
+    override fun isCheckBoxChecked() = false
 }

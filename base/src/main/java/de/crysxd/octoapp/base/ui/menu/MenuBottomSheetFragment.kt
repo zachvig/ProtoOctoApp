@@ -101,7 +101,9 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
 
     override fun getNavController() = findNavController()
 
-    override fun getOctoActivity() = requireOctoActivity()
+    override fun getMenuActivity() = requireOctoActivity()
+    
+    override fun getMenuFragmentManager() = childFragmentManager
 
     override fun getWidgetHostFragment() = parentFragment as? WidgetHostFragment
 

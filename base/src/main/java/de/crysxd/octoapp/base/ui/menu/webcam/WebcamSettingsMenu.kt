@@ -79,7 +79,7 @@ class WebcamSettingsMenu : Menu {
         override suspend fun getDescription(context: Context) = context.getString(R.string.webcam_settings___enable_full_resolution_explainer, maxResolution)
 
         override suspend fun onClicked(host: MenuHost?) {
-            host?.getOctoActivity()?.let {
+            host?.getMenuActivity()?.let {
                 UriLibrary.getPurchaseUri().open(it)
             }
         }

@@ -71,7 +71,7 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, private val inse
             val result = NavigationResultMediator.registerResultCallback<String?>()
             val context = host.requireContext()
 
-            host.getNavController().navigate(
+            host.getNavController()?.navigate(
                 R.id.action_enter_value,
                 EnterValueFragmentArgs(
                     title = context.getString(R.string.enter_label),

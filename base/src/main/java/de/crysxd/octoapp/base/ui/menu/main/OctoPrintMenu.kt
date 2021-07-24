@@ -62,7 +62,7 @@ class ConfigureRemoteAccessMenuItem : MenuItem {
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___configure_remote_access)
     override suspend fun onClicked(host: MenuHost?) {
-        host?.getOctoActivity()?.let {
+        host?.getMenuActivity()?.let {
             UriLibrary.getConfigureRemoteAccessUri().open(it)
         }
         host?.closeMenu()
@@ -79,7 +79,7 @@ class ShowFilesMenuItem : MenuItem {
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___show_files)
     override suspend fun onClicked(host: MenuHost?) {
-        host?.getOctoActivity()?.let {
+        host?.getMenuActivity()?.let {
             UriLibrary.getFileManagerUri().open(it)
         }
         host?.closeMenu()

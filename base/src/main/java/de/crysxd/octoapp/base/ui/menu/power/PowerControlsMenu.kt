@@ -104,7 +104,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         context.getString(R.string.power_menu___bottom_text).toHtml()
 
     override fun getBottomMovementMethod(host: MenuHost) =
-        LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.getOctoActivity()))
+        LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.getMenuActivity()))
 
     companion object {
         private suspend fun MenuHost.handleAction(action: Action, deviceType: DeviceType, device: PowerDevice) {
