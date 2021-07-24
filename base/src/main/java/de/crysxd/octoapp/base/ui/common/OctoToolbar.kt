@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.ui.common
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
 import android.util.AttributeSet
@@ -63,9 +64,9 @@ class OctoToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
         binding.chips.textViewStep1.text = ""
         binding.chips.textViewStep2.text = ""
         binding.chips.textViewStep3.text = ""
-        binding.chips.textViewStep1.foregroundCompat?.alpha = 255
-        binding.chips.textViewStep2.foregroundCompat?.alpha = 255
-        binding.chips.textViewStep3.foregroundCompat?.alpha = 255
+        binding.chips.textViewStep1.foregroundTintListCompat = binding.chips.textViewStep1.textColors
+        binding.chips.textViewStep2.foregroundTintListCompat = binding.chips.textViewStep2.textColors
+        binding.chips.textViewStep3.foregroundTintListCompat = binding.chips.textViewStep3.textColors
         binding.chips.textViewStep1.background.setTint(darkColor)
         binding.chips.textViewStep2.background.setTint(darkColor)
         binding.chips.textViewStep3.background.setTint(darkColor)
@@ -75,29 +76,34 @@ class OctoToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
                 binding.chips.textViewStep1Label.isVisible = true
                 binding.chips.textViewStep1.text = "1"
                 binding.chips.textViewStep1.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
-                binding.chips.textViewStep1.foregroundCompat?.alpha = 0
+                binding.chips.textViewStep1.foregroundTintListCompat = ColorStateList.valueOf(Color.TRANSPARENT)
             }
             State.Prepare -> {
                 binding.chips.textViewStep2Label.isVisible = true
                 binding.chips.textViewStep2.text = "2"
                 binding.chips.textViewStep2.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
-                binding.chips.textViewStep2.foregroundCompat?.alpha = 0
+                binding.chips.textViewStep2.foregroundTintListCompat = ColorStateList.valueOf(Color.TRANSPARENT)
             }
             State.Print -> {
                 binding.chips.textViewStep3Label.isVisible = true
                 binding.chips.textViewStep3.text = "3"
                 binding.chips.textViewStep3.setBackgroundResource(R.drawable.bg_toolbar_chip_number)
-                binding.chips.textViewStep3.foregroundCompat?.alpha = 0
+                binding.chips.textViewStep3.foregroundTintListCompat = ColorStateList.valueOf(Color.TRANSPARENT)
             }
             State.Hidden -> Unit
         }
     }
 
-    private val View.foregroundCompat
+    private var View.foregroundTintListCompat
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            foreground
+            foregroundTintList
         } else {
             null
+        }
+        set(value) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                foregroundTintList = value
+            }
         }
 
     sealed class State {
