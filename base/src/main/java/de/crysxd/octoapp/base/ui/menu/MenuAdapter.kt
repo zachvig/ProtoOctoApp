@@ -30,9 +30,8 @@ class MenuAdapter(
     private val onClick: (MenuItem) -> Unit,
     private val onSecondaryClick: (MenuItem) -> Unit = {},
     private val onPinItem: (MenuItem, View) -> Unit = { _, _ -> },
-    private val menuId: MenuId = MenuId.Other,
 ) : RecyclerView.Adapter<MenuItemHolder>() {
-    var recyclerView: RecyclerView? = null
+    private var recyclerView: RecyclerView? = null
 
     var pinnedItemIds: Set<String> = emptySet()
     var menuItems: List<PreparedMenuItem> = emptyList()

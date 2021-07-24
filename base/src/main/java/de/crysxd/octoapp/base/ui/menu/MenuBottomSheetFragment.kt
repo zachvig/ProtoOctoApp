@@ -256,7 +256,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment() {
             when (it.itemId) {
                 MenuId.MainMenu.hashCode() -> repo.toggleMenuItemPinned(MenuId.MainMenu, item.itemId)
                 MenuId.PrintWorkspace.hashCode() -> repo.toggleMenuItemPinned(MenuId.PrintWorkspace, item.itemId)
-                MenuId.PrepareWorkspace.hashCode() -> repo.toggleMenuItemPinned(MenuId.PrepareWorkspace, item.itemId)
+                MenuId.PrePrintWorkspace.hashCode() -> repo.toggleMenuItemPinned(MenuId.PrePrintWorkspace, item.itemId)
                 else -> Unit
             }
 
