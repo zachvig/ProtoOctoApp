@@ -31,7 +31,7 @@ build:
     - tags
     - /^release\/.*$/
   script:
-    - ./gradlew assembleRelease
+    - ./gradlew assembleRelease --no-daemon
     - mkdir outputs
     - git tag -l --format='%(contents)' "$CI_COMMIT_TAG" > outputs/release_notes.txt
   artifacts:
