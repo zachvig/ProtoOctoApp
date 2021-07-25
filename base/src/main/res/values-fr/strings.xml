@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="announcement___new_version_detail">Vous pouvez maintenant utiliser le plugin GPIO Control et laisser OctoPrint allumer automatiquement les lumières lorsque vous regardez votre webcam. La toute nouvelle connexion à la webcam est également plus rapide que jamais !</string>
+    <string name="announcement___new_version_detail">" OctoApp peut maintenant fonctionner avec des noms d'hôtes comme octopi.local et offre de nouvelles options de personnalisation ! Regardez la vidéo d'introduction pour en savoir plus !  "</string>
     <string name="announcement___new_version_learn_more">Vidéo d\'introduction</string>
-    <string name="announcement___new_version_title">Bienvenue dans OctoApp 1.9 ! &#127870;</string>
+    <string name="announcement___new_version_title">Bienvenue dans OctoApp 1.10 ! &#127870;</string>
     <string name="announcement___octoeverywhere_detail">Vous pouvez désormais connecter votre abonnement OctoEverywhere pour utiliser OctoApp lorsque vous n\'êtes pas chez vous.</string>
     <string name="announcement___octoeverywhere_learn_more">Connecter</string>
     <string name="announcement___octoeverywhere_title">Octo(App)Everywhere!</string>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="announcement___new_version_detail">U kunt nu de GPIO Control-plugin gebruiken en OctoPrint automatisch lichten laten aansteken wanneer u naar uw webcam kijkt. De geheel nieuwe webcamverbinding is ook zo snel als nooit tevoren!</string>
+    <string name="announcement___new_version_detail">"OctoApp kan nu werken met hostnamen zoals octopi.local en biedt nieuwe aanpassingsmogelijkheden! Bekijk de intro video voor meer informatie! "</string>
     <string name="announcement___new_version_learn_more">Intro video</string>
-    <string name="announcement___new_version_title">Welkom in OctoApp 1.9!</string>
+    <string name="announcement___new_version_title">Welkom in OctoApp 1.10!</string>
     <string name="announcement___octoeverywhere_detail">U kunt nu uw OctoEverywhere abonnement aansluiten om OctoApp te gebruiken wanneer u niet thuis bent.</string>
     <string name="announcement___octoeverywhere_learn_more">Nu verbinden</string>
     <string name="announcement___octoeverywhere_title">Octo(App)Everywhere!</string>
@@ -170,7 +170,8 @@
     <string name="main___banner_connection_lost_reconnecting">Verbinding verbroken, opnieuw verbonden…</string>
     <string name="main_menu___about_text">
         <![CDATA[Versie <font color="%1$06x"><b>%2$s</b></font> was <br/>gemaakt <font color="%1$06x"><b>voor u</b></font> met liefde in Europa ]]>
-                &#127466;&#127482;
+                        &#127466;&#127482;
+        
         
         <![CDATA[<br><a href="privacy">Data privacy</a>]]>
     </string>
@@ -292,7 +293,8 @@
     <string name="power_controls___x_offline">%s (offline)</string>
     <string name="power_menu___bottom_text">
         <![CDATA[<small>Voedingsapparaten worden geleverd door een <a href="https://app.octoapp.eu/help/supported_plugin">ondersteunde plugin</a></small>]]>
-                        .
+                                .
+    
     
     
     </string>
@@ -366,10 +368,12 @@
     <string name="show_logs">Toon logboeken</string>
     <string name="sign_in___access___confirm_in_web_interface">Toegang bevestigen in de webinterface</string>
     <string name="sign_in___access___explainer">
-                "         
+                        "         
+        
         
         <![CDATA[Open OctoPrint op uw computer of <a href="%s">in de browser van uw telefoon</a> en bevestig dat OctoApp toegang heeft tot uw OctoPrint.<br><br><small>Krijgt u de prompt niet te zien? Probeer de pagina opnieuw te laden</small>]]>
-                   "
+                           "
+    
     
     </string>
     <string name="sign_in___access___use_api_key" translatable="false">API sleutel gebruiken</string>

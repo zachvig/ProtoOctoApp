@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="announcement___new_version_detail">Ora è possibile utilizzare il plugin GPIO Control e lasciare che la OctoPrint accenda automaticamente le luci quando si guarda la webcam. La nuovissima connessione webcam è anche veloce come non mai!</string>
+    <string name="announcement___new_version_detail">"OctoApp può ora lavorare con hostname come octopi.local e offre nuove opzioni di personalizzazione! Guarda il video introduttivo per saperne di più! "</string>
     <string name="announcement___new_version_learn_more">Video introduttivo</string>
-    <string name="announcement___new_version_title">Benvenuti a OctoApp 1.9! &#127870;</string>
+    <string name="announcement___new_version_title">Benvenuti a OctoApp 1.10! &#127870;</string>
     <string name="announcement___octoeverywhere_detail">Ora puoi collegare il tuo abbonamento OctoEverywhere per usare OctoApp quando non sei a casa.</string>
     <string name="announcement___octoeverywhere_learn_more">Collegati ora</string>
     <string name="announcement___octoeverywhere_title">Octo(App)Everywhere!</string>
@@ -170,7 +170,8 @@
     <string name="main___banner_connection_lost_reconnecting">Connessione persa, ricollegamento…</string>
     <string name="main_menu___about_text">
         <![CDATA[Versione <font color="%1$06x"><b>%2$s</b></font> è stato fatto<br/><font color="%1$06x"><b>per te</b></font> con amore in Europa ]]>
-                &#127466;&#127482;
+                        &#127466;&#127482;
+        
         
         <![CDATA[<br><a href="privacy">Data privacy</a>]]>
     </string>
@@ -363,10 +364,12 @@
     <string name="show_logs">Mostra i log</string>
     <string name="sign_in___access___confirm_in_web_interface">Confermare l\'accesso nell\'interfaccia web</string>
     <string name="sign_in___access___explainer">
-                " 
+                        " 
+        
         
         <![CDATA[Apri OctoPrint sul tuo computer o <a href="%s">nel browser del tuo telefono</a> e conferma che OctoApp è autorizzata ad accedere al tuo OctoPrint.<br><br><small>Non vedi il prompt? Prova a ricaricare la pagina</small>]]>
-                     "
+                             "
+    
     
     </string>
     <string name="sign_in___access___use_api_key" translatable="false">Usa la chiave API</string>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="announcement___new_version_detail">You can now use the GPIO Control plugin and let OctoPrint turn lights automatically on when you look at your webcam. The all-new webcam connection is also as fast as never before!</string>
+    <string name="announcement___new_version_detail">"OctoApp can now work with hostnames like octopi.local and offers new customization options! Watch the intro video to learn more! "</string>
     <string name="announcement___new_version_learn_more">Watch the video</string>
-    <string name="announcement___new_version_title">Welcome to OctoApp 1.9! &#127870;</string>
+    <string name="announcement___new_version_title">Welcome to OctoApp 1.10! &#127870;</string>
     <string name="announcement___octoeverywhere_detail">You can now connect your OctoEverywhere subscription to use OctoApp when you are not at home.</string>
     <string name="announcement___octoeverywhere_learn_more">Connect now</string>
     <string name="announcement___octoeverywhere_title">Octo(App)Everywhere!</string>
@@ -178,7 +178,8 @@
     <string name="main___banner_connection_lost_reconnecting">Connection lost, reconnecting…</string>
     <string name="main_menu___about_text">
         <![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> was<br/>made <font color="%1$06x"><b>for you</b></font> with love in Europe ]]>
-                &#127466;&#127482;
+                        &#127466;&#127482;
+        
         
         <![CDATA[<br><a href="privacy">Data privacy</a>]]>
     </string>
@@ -251,7 +252,7 @@
     <string name="menu_controls___other">other</string>
     <string name="menu_controls___pin_to_x">Pin to %1$s</string>
     <string name="menu_controls___prepare_workspace">\"Prepare\"</string>
-    <string name="menu_controls___print_workspace">\"print\"</string>
+    <string name="menu_controls___print_workspace">\"Print\"</string>
     <string name="menu_controls___unpin_from_x">Unpin from %1$s</string>
     <string name="menu_controls___widget">widget</string>
     <string name="message">Message</string>
@@ -373,10 +374,12 @@
     <string name="show_logs">Show logs</string>
     <string name="sign_in___access___confirm_in_web_interface">Confirm access in the web interface</string>
     <string name="sign_in___access___explainer">
-                "         
+                        "         
+        
         
         <![CDATA[Open OctoPrint on your computer or <a href="%s">in your phone\'s browser</a> and confirm that OctoApp is allowed to access your OctoPrint.<br><br><small>Not seeing the prompt? Try reloading the page</small>]]>
-                     "
+                             "
+    
     
     </string>
     <string name="sign_in___access___use_api_key" translatable="false">Use API key</string>
