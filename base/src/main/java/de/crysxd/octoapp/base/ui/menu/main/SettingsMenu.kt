@@ -8,6 +8,7 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.menu.*
 import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchOctoPrintMenu
@@ -44,7 +45,7 @@ class SettingsMenu : Menu {
     )
 
     override fun getBottomMovementMethod(host: MenuHost) =
-        LinkClickMovementMethod(object : LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.getOctoActivity()) {
+        LinkClickMovementMethod(object : LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.getMenuActivity()) {
             override fun onLinkClicked(context: Context, url: String?): Boolean {
                 return if (url == "privacy") {
                     host.pushMenu(PrivacyMenu())
@@ -66,7 +67,7 @@ class HelpMenuItem : MenuItem {
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_help_faq_and_feedback)
     override suspend fun onClicked(host: MenuHost?) {
-        host?.getOctoActivity()?.let {
+        host?.getMenuActivity()?.let {
             UriLibrary.getHelpUri().open(it)
         }
         host?.closeMenu()
@@ -85,7 +86,7 @@ class ChangeLanguageMenuItem : MenuItem {
     override suspend fun getTitle(context: Context) = Injector.get().getAppLanguageUseCase().execute(Unit).switchLanguageText ?: ""
     override suspend fun onClicked(host: MenuHost?) {
         val newLocale = Injector.get().getAppLanguageUseCase().execute(Unit).switchLanguageLocale
-        host?.getOctoActivity()?.let {
+        host?.getMenuActivity()?.let {
             Injector.get().setAppLanguageUseCase().execute(SetAppLanguageUseCase.Param(newLocale, it))
         }
     }
@@ -98,6 +99,7 @@ class CustomizeWidgetsMenuItem : MenuItem {
     override val style = MenuItemStyle.Settings
     override val enforceSingleLine = false
     override val icon = R.drawable.ic_round_person_pin_24
+    override val canRunWithAppInBackground = false
 
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint || destinationId == R.id.workspacePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_customize_widgets)
@@ -139,7 +141,7 @@ class PrintNotificationMenuItem : ToggleMenuItem() {
         try {
             if (enabled) {
                 Timber.i("Service enabled, starting service")
-                host.getOctoActivity().startPrintNotificationService()
+                (host.getMenuActivity() as? OctoActivity)?.startPrintNotificationService()
             }
         } catch (e: IllegalStateException) {
             // User might have closed app just in time so we can't start the service

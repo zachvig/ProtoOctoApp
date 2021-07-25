@@ -170,7 +170,8 @@
     <string name="main___banner_connection_lost_reconnecting">Connessione persa, ricollegamento…</string>
     <string name="main_menu___about_text">
         <![CDATA[Versione <font color="%1$06x"><b>%2$s</b></font> è stato fatto<br/><font color="%1$06x"><b>per te</b></font> con amore in Europa ]]>
-        &#127466;&#127482;
+                &#127466;&#127482;
+        
         <![CDATA[<br><a href="privacy">Data privacy</a>]]>
     </string>
     <string name="main_menu___button_enable_automatic_lights">Abilita</string>
@@ -219,6 +220,7 @@
     <string name="main_menu___subtitle_automatic_lights">Seleziona le luci che si accendono quando la tua webcam è attiva. Questo è utile per illuminare automaticamente la tua stampa quando guardi la tua webcam di notte.</string>
     <string name="main_menu___subtitle_confirm_power_off">Seleziona quali dispositivi possono essere spenti solo dopo la conferma. Puoi usare questo per evitare, ad esempio, che tu spenga accidentalmente la tua stampante.</string>
     <string name="main_menu___subtitle_quick_switch_disabled">Lo switch rapido consente di passare senza soluzione di continuità tra più istanze di OctoPrint. Senza questa funzione, è necessario inserire nuovamente l\'URL web e la chiave API.</string>
+    <string name="main_menu___switch_to_octoprint">Attivare „%s“</string>
     <string name="main_menu___system_command_executed">\"%s\" eseguito</string>
     <string name="main_menu___title_automatic_lights">Luci automatiche</string>
     <string name="main_menu___title_confirm_power_off">Confermare lo spegnimento</string>
@@ -243,6 +245,7 @@
     <string name="menu_controls___prepare_workspace">\"Preparare\"</string>
     <string name="menu_controls___print_workspace">\"Stampare\"</string>
     <string name="menu_controls___unpin_from_x">Disconnetti da %1$s</string>
+    <string name="menu_controls___widget">widget</string>
     <string name="message">Message</string>
     <string name="mm_0_025">0.025 mm</string>
     <string name="mm_0_1">0,1 mm</string>
@@ -360,9 +363,11 @@
     <string name="show_logs">Mostra i log</string>
     <string name="sign_in___access___confirm_in_web_interface">Confermare l\'accesso nell\'interfaccia web</string>
     <string name="sign_in___access___explainer">
-        " 
+                " 
+        
         <![CDATA[Apri OctoPrint sul tuo computer o <a href="%s">nel browser del tuo telefono</a> e conferma che OctoApp è autorizzata ad accedere al tuo OctoPrint.<br><br><small>Non vedi il prompt? Prova a ricaricare la pagina</small>]]>
-             "
+                     "
+    
     </string>
     <string name="sign_in___access___use_api_key" translatable="false">Usa la chiave API</string>
     <string name="sign_in___access___waiting_for_access">In attesa dell\'accesso…</string>
@@ -488,5 +493,4 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">Puoi cambiare questo limite nelle impostazioni di OctoPrint</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Velocità di avanzamento Z (mm/min)</string>
-    <string name="main_menu___switch_to_octoprint">Attivare „%s“</string>
 </resources>

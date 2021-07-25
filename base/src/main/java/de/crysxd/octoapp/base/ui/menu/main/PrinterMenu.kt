@@ -67,7 +67,7 @@ class ShowWebcamMenuItem : MenuItem {
     override suspend fun isVisible(destinationId: Int) = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.isWebcamSupported == true
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___show_webcam)
     override suspend fun onClicked(host: MenuHost?) {
-        host?.getOctoActivity()?.let {
+        host?.getMenuActivity()?.let {
             UriLibrary.getWebcamUri().open(it)
         }
         host?.closeMenu()

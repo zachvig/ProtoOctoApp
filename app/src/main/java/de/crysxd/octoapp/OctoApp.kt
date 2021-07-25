@@ -19,9 +19,12 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.ext.suspendedAwait
+import de.crysxd.octoapp.base.models.MenuId
 import de.crysxd.octoapp.notification.PrintNotificationSupportBroadcastReceiver
 import de.crysxd.octoapp.widgets.AppWidgetSupportBroadcastReceiver
+import de.crysxd.octoapp.widgets.quickaccess.QuickAccessAppWidget
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import de.crysxd.octoapp.base.di.Injector as BaseInjector
@@ -149,5 +152,13 @@ class OctoApp : Application() {
         ResourcesCompat.getFont(this@OctoApp, R.font.roboto_medium, callback, handler)
         ResourcesCompat.getFont(this@OctoApp, R.font.roboto_light, callback, handler)
         ResourcesCompat.getFont(this@OctoApp, R.font.roboto_regular, callback, handler)
+
+        // Push widget updates
+        GlobalScope.launch {
+            BaseInjector.get().pinnedMenuItemsRepository().observePinnedMenuItems(MenuId.Widget).collect {
+                Timber.i("Refreshing widget, repository changed")
+                QuickAccessAppWidget.notifyWidgetDataChanged()
+            }
+        }
     }
 }

@@ -85,16 +85,16 @@ abstract class QuickAccessWidget(
     override fun requireContext() = parent.requireContext()
 
     override fun pushMenu(subMenu: Menu) {
-        MenuBottomSheetFragment.createForMenu(subMenu).show(getFragmentManager())
+        MenuBottomSheetFragment.createForMenu(subMenu).show(getMenuFragmentManager())
     }
 
     override fun closeMenu() = Unit
 
     override fun getNavController() = parent.findNavController()
 
-    override fun getOctoActivity() = parent.requireOctoActivity()
+    override fun getMenuActivity() = parent.requireOctoActivity()
 
-    override fun getFragmentManager() = parent.childFragmentManager
+    override fun getMenuFragmentManager() = parent.childFragmentManager
 
     override fun getWidgetHostFragment() = parent as? WidgetHostFragment
 

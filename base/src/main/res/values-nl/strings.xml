@@ -170,7 +170,8 @@
     <string name="main___banner_connection_lost_reconnecting">Verbinding verbroken, opnieuw verbonden…</string>
     <string name="main_menu___about_text">
         <![CDATA[Versie <font color="%1$06x"><b>%2$s</b></font> was <br/>gemaakt <font color="%1$06x"><b>voor u</b></font> met liefde in Europa ]]>
-        &#127466;&#127482;
+                &#127466;&#127482;
+        
         <![CDATA[<br><a href="privacy">Data privacy</a>]]>
     </string>
     <string name="main_menu___button_enable_automatic_lights">Activeer</string>
@@ -219,6 +220,7 @@
     <string name="main_menu___subtitle_automatic_lights">Selecteer verlichting die wordt ingeschakeld wanneer uw webcam actief is. Dit is handig om uw afdruk automatisch te verlichten wanneer u \'s nachts naar uw webcam kijkt.</string>
     <string name="main_menu___subtitle_confirm_power_off">Selecteer welke apparaten pas na bevestiging kunnen worden uitgeschakeld. U kunt dit bijvoorbeeld gebruiken om te voorkomen dat u per ongeluk uw printer uitschakelt</string>
     <string name="main_menu___subtitle_quick_switch_disabled">Met de Snelwissel kunt u naadloos wisselen tussen meerdere OctoPrint-instanties. Zonder deze functie moet u uw web-URL en API-sleutel opnieuw invoeren.</string>
+    <string name="main_menu___switch_to_octoprint">Activeer „%s“</string>
     <string name="main_menu___system_command_executed">\"%s\" uitgevoerd</string>
     <string name="main_menu___title_automatic_lights">Automatisch licht</string>
     <string name="main_menu___title_confirm_power_off">Bevestig uitschakeling</string>
@@ -243,6 +245,7 @@
     <string name="menu_controls___prepare_workspace">\"Voorbereiden\"</string>
     <string name="menu_controls___print_workspace">\"Print\"</string>
     <string name="menu_controls___unpin_from_x">Ontkoppel van %1$s</string>
+    <string name="menu_controls___widget">widget</string>
     <string name="message">Bericht</string>
     <string name="mm_0_025">0.025 mm</string>
     <string name="mm_0_1">0,1 mm</string>
@@ -289,7 +292,8 @@
     <string name="power_controls___x_offline">%s (offline)</string>
     <string name="power_menu___bottom_text">
         <![CDATA[<small>Voedingsapparaten worden geleverd door een <a href="https://app.octoapp.eu/help/supported_plugin">ondersteunde plugin</a></small>]]>
-                .
+                        .
+    
     
     </string>
     <string name="power_menu___checkbox_label">Gebruik dit apparaat altijd in de toekomst</string>
@@ -362,9 +366,11 @@
     <string name="show_logs">Toon logboeken</string>
     <string name="sign_in___access___confirm_in_web_interface">Toegang bevestigen in de webinterface</string>
     <string name="sign_in___access___explainer">
-        "         
+                "         
+        
         <![CDATA[Open OctoPrint op uw computer of <a href="%s">in de browser van uw telefoon</a> en bevestig dat OctoApp toegang heeft tot uw OctoPrint.<br><br><small>Krijgt u de prompt niet te zien? Probeer de pagina opnieuw te laden</small>]]>
-           "
+                   "
+    
     </string>
     <string name="sign_in___access___use_api_key" translatable="false">API sleutel gebruiken</string>
     <string name="sign_in___access___waiting_for_access">Wachten op toegang…</string>
@@ -490,5 +496,4 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">Je kunt deze limiet wijzigen in OctoPrint instellingen</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Z-feedrate (mm/min)</string>
-    <string name="main_menu___switch_to_octoprint">Activeer „%s“</string>
 </resources>

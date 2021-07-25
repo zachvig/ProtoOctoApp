@@ -51,6 +51,16 @@
                 android:resource="@xml/progress_widget_info" />
         </receiver>
 
+        <receiver android:name=".widgets.quickaccess.QuickAccessAppWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/quick_access_widget_info" />
+        </receiver>
+
         <activity
             android:name=".widgets.ConfigureAppWidgetActivity"
             android:theme="@style/OctoTheme.Transparent">
@@ -61,6 +71,10 @@
                 <action android:name="android.intent.action.CREATE_SHORTCUT" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".widgets.quickaccess.QuickAccessRemoteViewsService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <activity
             android:name=".widgets.ExecuteWidgetActionActivity"

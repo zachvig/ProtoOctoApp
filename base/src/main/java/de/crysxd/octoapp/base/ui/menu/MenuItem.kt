@@ -4,8 +4,6 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 
-typealias SuspendExecutor = suspend (suspend () -> Unit) -> Unit
-
 interface MenuItem {
     val itemId: String
     var groupId: String
@@ -17,6 +15,7 @@ interface MenuItem {
     val canBePinned: Boolean get() = true
     val enforceSingleLine: Boolean get() = true
     val secondaryButtonIcon: Int? get() = null
+    val canRunWithAppInBackground: Boolean get() = true
 
 
     @get:DrawableRes

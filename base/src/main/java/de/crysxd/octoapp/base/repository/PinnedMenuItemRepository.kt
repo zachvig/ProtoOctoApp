@@ -33,15 +33,21 @@ class PinnedMenuItemRepository(
             MENU_ITEM_OPEN_OCTOPRINT,
             MENU_ITEM_OPEN_TERMINAL,
             MENU_ITEM_HELP
+        ),
+        MenuId.Widget to setOf(
+            MENU_ITEM_OPEN_OCTOPRINT,
+            MENU_ITEM_SHOW_FILES,
+            MENU_ITEM_HELP
         )
     )
     private val channels = mutableMapOf<MenuId, ConflatedBroadcastChannel<Set<String>>>()
 
-    fun checkPinnedState(itemId: String) = listOf(
-        MenuId.MainMenu to getPinnedMenuItems(MenuId.MainMenu).contains(itemId),
-        MenuId.PrePrintWorkspace to getPinnedMenuItems(MenuId.PrePrintWorkspace).contains(itemId),
-        MenuId.PrintWorkspace to getPinnedMenuItems(MenuId.PrintWorkspace).contains(itemId),
-    )
+    fun checkPinnedState(itemId: String) = MenuId.values().filter {
+        // We can't store other
+        it != MenuId.Other
+    }.map {
+        it to getPinnedMenuItems(it).contains(itemId)
+    }
 
     fun toggleMenuItemPinned(menuId: MenuId, itemId: String) {
         val data = (dataSource.load(menuId) ?: defaults[menuId] ?: emptySet()).toMutableList()

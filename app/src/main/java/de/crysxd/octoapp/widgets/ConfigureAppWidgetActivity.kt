@@ -23,6 +23,7 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.base.LocalizedActivity
 import de.crysxd.octoapp.base.ui.utils.colorTheme
 import de.crysxd.octoapp.widgets.AppWidgetPreferences.ACTIVE_WEB_URL_MARKER
+import de.crysxd.octoapp.widgets.quickaccess.QuickAccessAppWidget
 import timber.log.Timber
 import java.util.*
 
@@ -153,11 +154,24 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
         val titles = instances.map { it.label }.map { getString(R.string.app_widget___link_widget__option_x, it) }
         val webUrls = instances.map { it.webUrl }
 
-//        if (webUrls.size <= 1) {
-//            Timber.i("Only ${webUrls.size} options, auto picking sync option")
-//            finishWithSuccess(result(ACTIVE_WEB_URL_MARKER))
-//            return
-//        }
+        if (webUrls.size <= 1) {
+            Timber.i("Only ${webUrls.size} options, auto picking sync option")
+            finishWithSuccess(result(ACTIVE_WEB_URL_MARKER))
+            return
+        }
+
+        val c = AppWidgetManager.getInstance(this).getAppWidgetInfo(appWidgetId).provider.className
+        if (c == QuickAccessAppWidget::class.java.name) {
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.app_widget___information_title)
+                .setMessage(R.string.app_widget___information_always_synced)
+                .setPositiveButton(android.R.string.ok, null)
+                .setOnDismissListener {
+                    finishWithSuccess(result(ACTIVE_WEB_URL_MARKER))
+                }
+                .show()
+            return
+        }
 
         val allTitles = listOf(listOf(getString(R.string.app_widget___link_widget__option_synced)), titles).flatten()
         val allWebUrls = listOf(listOf(ACTIVE_WEB_URL_MARKER), webUrls).flatten()

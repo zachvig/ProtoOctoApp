@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.MenuId
+import de.crysxd.octoapp.base.ui.menu.main.MenuItemLibrary
 
 
 class PinControlsPopupMenu(private val context: Context, private val menuId: MenuId) {
@@ -18,9 +19,12 @@ class PinControlsPopupMenu(private val context: Context, private val menuId: Men
 
         // Build menu
         val menu = PopupMenu(anchor.context, anchor)
+        val menuItem = MenuItemLibrary().get(itemId) ?: return
         repo.checkPinnedState(itemId).sortedBy {
             // Sort current menu up
             if (it.first == menuId) "0${it.first}" else "1${it.first}"
+        }.filter {
+            it.first.canPin(menuItem)
         }.forEach {
             // Create text
             val text = context.getString(
@@ -41,19 +45,14 @@ class PinControlsPopupMenu(private val context: Context, private val menuId: Men
             }
 
             // Add to menu
-            menu.menu.add(android.view.Menu.NONE, it.first.hashCode(), android.view.Menu.NONE, spanned)
+            menu.menu.add(android.view.Menu.NONE, it.first.ordinal, android.view.Menu.NONE, spanned)
         }
 
         // Show menu
         menu.show()
         menu.setOnMenuItemClickListener {
-            when (it.itemId) {
-                MenuId.MainMenu.hashCode() -> repo.toggleMenuItemPinned(MenuId.MainMenu, itemId)
-                MenuId.PrintWorkspace.hashCode() -> repo.toggleMenuItemPinned(MenuId.PrintWorkspace, itemId)
-                MenuId.PrePrintWorkspace.hashCode() -> repo.toggleMenuItemPinned(MenuId.PrePrintWorkspace, itemId)
-                else -> Unit
-            }
-
+            val menuId = MenuId.values()[it.itemId]
+            repo.toggleMenuItemPinned(menuId, itemId)
             onDone()
             true
         }

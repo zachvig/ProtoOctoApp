@@ -38,7 +38,7 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
     )
 
     override fun getBottomMovementMethod(host: MenuHost) =
-        LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.getOctoActivity()))
+        LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.getMenuActivity()))
 
     override suspend fun getMenuItem() = listOf(
         Injector.get().getMaterialsUseCase().execute(Unit).map {

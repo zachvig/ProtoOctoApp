@@ -3,7 +3,11 @@
 
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="@dimen/widget_corner_radius" />
+            <corners
+                android:bottomLeftRadius="@dimen/widget_corner_radius"
+                android:bottomRightRadius="@dimen/widget_corner_radius"
+                android:topLeftRadius="@dimen/widget_corner_radius_small"
+                android:topRightRadius="@dimen/widget_corner_radius_small" />
             <solid android:color="@color/widget_background" />
         </shape>
     </item>

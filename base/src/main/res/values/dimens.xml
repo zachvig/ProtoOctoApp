@@ -8,6 +8,7 @@
     <dimen name="gcode_render_view_print_head_size">3dp</dimen>
     <dimen name="tab_layout_height">50dp</dimen>
     <dimen name="widget_corner_radius">20dp</dimen>
+    <dimen name="widget_corner_radius_small">5dp</dimen>
 
     <dimen name="common_view_top_padding">@dimen/margin_6</dimen>
     <dimen name="common_corner_radius">@dimen/margin_2</dimen>

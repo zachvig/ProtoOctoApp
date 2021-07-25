@@ -341,8 +341,6 @@ class MainActivity : OctoActivity() {
                 R.id.workspacePrePrint,
                 R.id.workspacePrint,
                 R.id.terminalFragment,
-                R.id.fileDetailsFragment,
-                R.id.fileListFragment,
             ).contains(currentDestination)
 
             if (currentDestinationAllowsAutoNavigate) {
