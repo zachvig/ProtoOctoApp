@@ -496,4 +496,7 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">Puoi cambiare questo limite nelle impostazioni di OctoPrint</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Velocità di avanzamento Z (mm/min)</string>
+    <string name="widget_quick_access___tutorial_detail">È possibile premere a lungo qualsiasi voce di menu per fissarla in posizioni di accesso rapido, nel menu principale o in un widget della schermata iniziale.</string>
+    <string name="widget_quick_access___tutorial_title">Fai tua OctoApp!</string>
+    <string name="widget_quick_access___tutorial_learn_more">Guarda il tutorial</string>
 </resources>

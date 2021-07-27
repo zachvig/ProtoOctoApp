@@ -496,4 +496,7 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">Du kannst dieses Limit in den OctoPrint Einstellungen ändern</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Z Vorschub (mm/min)</string>
+    <string name="widget_quick_access___tutorial_detail">Durch langes Drücken auf ein beliebiges Menüelement kannst du es an den Schnellzugriff, an das Hauptmenü oder an ein Widget für den Startbildschirm anheften.</string>
+    <string name="widget_quick_access___tutorial_title">Mache OctoApp deins!</string>
+    <string name="widget_quick_access___tutorial_learn_more">Tutorial ansehen</string>
 </resources>

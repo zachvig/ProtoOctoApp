@@ -1,29 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <de.crysxd.octoapp.base.ui.common.TutorialView
+        android:id="@+id/tutorial"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
+        app:detail="@string/widget_quick_access___tutorial_detail"
+        app:hidePrefName="customization_tutorial_quick_access"
+        app:learnMoreButton="@string/widget_quick_access___tutorial_learn_more"
+        app:title="@string/widget_quick_access___tutorial_title" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/loadingOverlay"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:cardBackgroundColor="@color/black_translucent_2"
-        app:cardCornerRadius="@dimen/widget_corner_radius"
-        app:cardElevation="0dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <ProgressBar
-            android:layout_width="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
 
-    </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/loadingOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardBackgroundColor="@color/black_translucent_2"
+            app:cardCornerRadius="@dimen/widget_corner_radius"
+            app:cardElevation="0dp">
 
-</FrameLayout>
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+
+        </androidx.cardview.widget.CardView>
+
+    </FrameLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

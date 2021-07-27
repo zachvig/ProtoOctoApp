@@ -506,4 +506,7 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">You can change this limit in OctoPrint settings</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Z feedrate (mm/min)</string>
+    <string name="widget_quick_access___tutorial_detail">You can long-press any menu item to pin it to Quick Access locations, to the main menu or a home screen widget.</string>
+    <string name="widget_quick_access___tutorial_title">Make OctoApp yours!</string>
+    <string name="widget_quick_access___tutorial_learn_more">Watch the tutorial</string>
 </resources>

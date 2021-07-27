@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.ui.widget.quickaccess
 
 import android.content.Context
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.isVisible
@@ -11,6 +12,7 @@ import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.QuickAccessWidgetBinding
 import de.crysxd.octoapp.base.di.injectViewModel
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.models.MenuId
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.*
@@ -44,6 +46,10 @@ abstract class QuickAccessWidget(
     override fun isVisible() = baseViewModel.hasAny(menuId)
     override fun onResume(lifecycleOwner: LifecycleOwner) {
         super.onResume(lifecycleOwner)
+
+        binding.tutorial.onLearnMoreAction = {
+            Uri.parse(parent.getString(R.string.quick_access_tutorial_learn_more_link)).open(parent.requireActivity())
+        }
 
         baseViewModel.executing.observe(lifecycleOwner) {
             TransitionManager.beginDelayedTransition(binding.root)

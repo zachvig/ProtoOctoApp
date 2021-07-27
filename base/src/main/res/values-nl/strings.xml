@@ -500,4 +500,7 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">Je kunt deze limiet wijzigen in OctoPrint instellingen</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Z-feedrate (mm/min)</string>
+    <string name="widget_quick_access___tutorial_detail">U kunt op elk menu-item lang drukken om het vast te maken aan Snelle toegang, het hoofdmenu of een widget op het beginscherm.</string>
+    <string name="widget_quick_access___tutorial_title">Maak OctoApp de jouwe!</string>
+    <string name="widget_quick_access___tutorial_learn_more">Bekijk de handleiding</string>
 </resources>
