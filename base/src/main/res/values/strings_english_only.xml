@@ -9,6 +9,12 @@
     <string name="privacy_menu___analytics_title" translatable="false">Anonymous usage statistics</string>
     <string name="privacy_menu___analytics_description" translatable="false">If enabled, OctoApp sends anonymous usage information to Firebase Analytics which will be deleted after 90 days. This information helps me in determining which features of the app are used the most, and where I should spend time on improving to benefit users. This information does not contain any data except which features of the app are used and basic information about your setup, such as which plugins are installed or the OctoPrint version. The data is not linked to any advertisement profile or anything similar. If you reinstall the app or switch your device, I do not have any means to connect your data.</string>
 
+    <!-- Discover -->
+    <string name="sign_in___discovery___octoeverywhere_error_comply" translatable="false">Connect local first</string>
+    <string name="sign_in___discovery___octoeverywhere_error_ignore" translatable="false">Connect OctoEverywhere now</string>
+    <string name="sign_in___discovery___octoeverywhere_error_message" translatable="false">To get the most out of OctoApp and OctoEverywhere, connect your printer using the local web URL first. Once everything is set up, you can log in with your OctoEverywhere account.</string>
+    <string name="sign_in___discovery___octoeverywhere_error_message_addition_shared_connection" translatable="false"><![CDATA[You need to create a shared connection on the OctoEverywhere webpage, normal OctoEverywhere URLs can\'t be used.<br><br>To get the most out of OctoApp and OctoEverywhere, connect your printer using the local web URL first. Once everything is set up, you can log in with your OctoEverywhere account.]]></string>
+
     <!-- Probe -->
     <string name="sign_in___probe_finding___title_basic_auth" translatable="false">Basic Authentication required</string>
     <string name="sign_in___probe_finding___explainer_basic_auth" translatable="false">Please enter your Basic Auth credentials below, not your OctoPrint user and password.</string>

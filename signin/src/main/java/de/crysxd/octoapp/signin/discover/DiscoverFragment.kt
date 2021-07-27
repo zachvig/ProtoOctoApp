@@ -55,7 +55,6 @@ class DiscoverFragment : BaseFragment() {
     private var backgroundAlpha = 1f
     private val moveBackToOptionsBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            Timber.i("BACK")
             viewModel.moveToOptionsState()
         }
     }
@@ -269,13 +268,26 @@ class DiscoverFragment : BaseFragment() {
     }
 
     private fun continueWithManualConnect(webUrl: String, confirmed: Boolean = false) {
-        if (Uri.parse(webUrl).host?.endsWith("octoeverywhere.com") == true && !confirmed) {
+        if (!confirmed && Uri.parse(webUrl).host?.endsWith("octoeverywhere.com") == true) {
+            val isSharedConnection = Uri.parse(webUrl).host?.startsWith("shared-") == true
             requireOctoActivity().showDialog(
-                message = "To get the most out of OctoApp and OctoEverywhere, connect your printer using the local web URL first. Once everything is set up, you can log in which your OctoEverywhere account.",
-                neutralButton = "Connect local first",
+                message = getString(
+                    if (isSharedConnection) {
+                        R.string.sign_in___discovery___octoeverywhere_error_message
+                    } else {
+                        R.string.sign_in___discovery___octoeverywhere_error_message_addition_shared_connection
+                    }
+                ),
+                neutralButton = getString(R.string.sign_in___discovery___octoeverywhere_error_comply).takeIf { isSharedConnection },
                 neutralAction = {},
-                positiveAction = { continueWithManualConnect(webUrl, true) },
-                positiveButton = "Connect OctoEverywhere now"
+                positiveAction = { if (isSharedConnection) continueWithManualConnect(webUrl, true) },
+                positiveButton = getString(
+                    if (isSharedConnection) {
+                        R.string.sign_in___discovery___octoeverywhere_error_ignore
+                    } else {
+                        android.R.string.ok
+                    }
+                )
             )
             return
         }

@@ -163,7 +163,11 @@ class TestFullNetworkStackUseCase @Inject constructor(
     }
 
     private fun testReachability(host: String, ip: String, webUrl: String, timber: Timber.Tree): Finding? = try {
-        require(InetAddress.getByName(ip).isReachable(PING_TIMEOUT)) { IOException("Unable to reach $host") }
+        if (host.endsWith("octoeverywhere.com")) {
+            timber.i("Can't ping octoeverywhere.com, skipping test")
+        } else {
+            require(InetAddress.getByName(ip).isReachable(PING_TIMEOUT)) { IOException("Unable to reach $host") }
+        }
         null
     } catch (e: Exception) {
         timber.w(e)
