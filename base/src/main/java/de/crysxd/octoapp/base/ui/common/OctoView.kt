@@ -22,6 +22,7 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
 
     private var swimDrawable: Drawable? = null
     private var idleDrawable: Drawable? = null
+    private var partyDrawable: Drawable? = null
     private var swimming = false
     private val animationHandler = Handler(Looper.getMainLooper())
     private var doAfterAnimation: () -> Boolean = { true }
@@ -32,7 +33,9 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
             super.onAnimationEnd(drawable)
             if (doAfterAnimation()) {
                 if (queuedDrawable == null) {
-                    animationHandler.postDelayed(startRunnable, getLoopDelay(currentDrawable))
+                    getLoopDelay(currentDrawable)?.let {
+                        animationHandler.postDelayed(startRunnable, it)
+                    }
                 } else {
                     val q = queuedDrawable
                     queuedDrawable = null
@@ -81,9 +84,11 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
                     else -> R.drawable.octo_blink
                 }
             )
+            partyDrawable = loadAnimatedDrawable(R.drawable.octo_party)
 
             (swimDrawable as? AnimatedVectorDrawableCompat)?.registerAnimationCallback(loopCallback)
             (idleDrawable as? AnimatedVectorDrawableCompat)?.registerAnimationCallback(loopCallback)
+            (partyDrawable as? AnimatedVectorDrawableCompat)?.registerAnimationCallback(loopCallback)
 
             if (swimming) {
                 swim()
@@ -133,6 +138,12 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         setImageDrawable(swimDrawable)
     }
 
+    fun party() {
+        scheduleRunnable?.let(animationHandler::removeCallbacks)
+        Timber.v("Party")
+        setImageDrawable(partyDrawable)
+    }
+
     fun idle() {
         scheduleRunnable?.let(animationHandler::removeCallbacks)
         Timber.v("Idle")
@@ -159,6 +170,7 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
 
     private fun getLoopDelay(d: Drawable?) = when (d) {
         idleDrawable -> (2000 + 2000 * random()).toLong()
+        partyDrawable -> null
         else -> 0L
     }
 

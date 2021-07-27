@@ -61,6 +61,10 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
 
         binding.buttonContinue.animate().setStartDelay(START_DELAY * 4).setDuration(600).alpha(1f).start()
 
+        binding.base.octoView.scheduleAnimation(1000) {
+            party()
+        }
+
         binding.buttonContinue.setOnClickListener {
             val args = navArgs<SignInSuccessFragmentArgs>().value
             OctoAnalytics.logEvent(OctoAnalytics.Event.Login)
