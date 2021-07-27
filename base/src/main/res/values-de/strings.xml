@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="announcement___new_version_detail">"OctoApp può ora lavorare con hostname come octopi.local e offre nuove opzioni di personalizzazione! Guarda il video introduttivo per saperne di più! "</string>
+    <string name="announcement___new_version_detail">OctoApp kann jetzt mit Hostnamen wie octopi.local umgehen und bietet neue Anpassungsmöglichkeiten! Schau das Intro-Video an um mehr zu lernen!</string>
     <string name="announcement___new_version_learn_more">Video ansehen</string>
     <string name="announcement___new_version_title">Wilkommen bei OctoApp 1.10! &#127870;</string>
     <string name="announcement___octoeverywhere_detail">Du kannst jetzt dein OctoEverywhere-Abonnement verbinden, um OctoApp zu nutzen, wenn du nicht zu Hause bist.</string>
@@ -243,10 +243,10 @@
     <string name="menu_controls___main">Hauptmenü</string>
     <string name="menu_controls___other">andere</string>
     <string name="menu_controls___pin_to_x">An %1$s anheften</string>
-    <string name="menu_controls___prepare_workspace">\"Vorbereiten\"</string>
-    <string name="menu_controls___print_workspace">\"Drucken\"</string>
+    <string name="menu_controls___prepare_workspace">\"Vorbereiten\" (Schnellzugriff)</string>
+    <string name="menu_controls___print_workspace">\"Drucken\" (Schnellzugriff)</string>
     <string name="menu_controls___unpin_from_x">von %1$s lösen</string>
-    <string name="menu_controls___widget">widget</string>
+    <string name="menu_controls___widget">Widget</string>
     <string name="message">Nachricht</string>
     <string name="mm_0_025">0,025 mm</string>
     <string name="mm_0_1">0,1 mm</string>

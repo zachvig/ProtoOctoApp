@@ -243,8 +243,8 @@
     <string name="menu_controls___main">hoofdmenu</string>
     <string name="menu_controls___other">andere</string>
     <string name="menu_controls___pin_to_x">Pin naar %1$s</string>
-    <string name="menu_controls___prepare_workspace">\"Voorbereiden\"</string>
-    <string name="menu_controls___print_workspace">\"Print\"</string>
+    <string name="menu_controls___prepare_workspace">\"Voorbereiden\" (Snelle toegang)</string>
+    <string name="menu_controls___print_workspace">\"Print\" (Snelle toegang)</string>
     <string name="menu_controls___unpin_from_x">Ontkoppel van %1$s</string>
     <string name="menu_controls___widget">widget</string>
     <string name="message">Bericht</string>

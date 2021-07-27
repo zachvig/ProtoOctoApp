@@ -17,7 +17,7 @@
     <string name="app_widget___information_title">Information</string>
     <string name="app_widget___link_widget__option_synced">Sync with app</string>
     <string name="app_widget___link_widget__option_x">Always „%s“</string>
-    <string name="app_widget___link_widget_title">Which OctoPrint should this widget use?</string>
+    <string name="app_widget___link_widget_title" translatable="false">Which OctoPrint should this widget use?</string>
     <string name="app_widget___live">Live</string>
     <string name="app_widget___live_for_x">Live for %ds</string>
     <string name="app_widget___no_data">No data</string>
@@ -251,8 +251,8 @@
     <string name="menu_controls___main">main menu</string>
     <string name="menu_controls___other">other</string>
     <string name="menu_controls___pin_to_x">Pin to %1$s</string>
-    <string name="menu_controls___prepare_workspace">\"Prepare\"</string>
-    <string name="menu_controls___print_workspace">\"Print\"</string>
+    <string name="menu_controls___prepare_workspace">\"Prepare\" (Quick access)</string>
+    <string name="menu_controls___print_workspace">\"Print\" (Quick access)</string>
     <string name="menu_controls___unpin_from_x">Unpin from %1$s</string>
     <string name="menu_controls___widget">widget</string>
     <string name="message">Message</string>

@@ -243,8 +243,8 @@
     <string name="menu_controls___main">menu principale</string>
     <string name="menu_controls___other">altro</string>
     <string name="menu_controls___pin_to_x">Collegarsi a %1$s</string>
-    <string name="menu_controls___prepare_workspace">\"Preparare\"</string>
-    <string name="menu_controls___print_workspace">\"Stampare\"</string>
+    <string name="menu_controls___prepare_workspace">\"Preparare\" (Accesso rapido)</string>
+    <string name="menu_controls___print_workspace">\"Stampare\" (Accesso rapido)</string>
     <string name="menu_controls___unpin_from_x">Disconnetti da %1$s</string>
     <string name="menu_controls___widget">widget</string>
     <string name="message">Message</string>
