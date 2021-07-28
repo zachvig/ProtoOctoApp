@@ -126,6 +126,8 @@ class ProbeOctoPrintFragment : BaseFragment() {
                 apiKey = finding.apiKey
             )
 
+            // Clearing and setting the instance will ensure we reset the navigation
+            Injector.get().octorPrintRepository().clearActive()
             Injector.get().octorPrintRepository().setActive(instance)
         }
     }
@@ -169,7 +171,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
     }
 
     private fun getEditButtonAction() {
-        if (Injector.get().octorPrintRepository().getActiveInstanceSnapshot() != null) {
+        if (isInTestOnlyMode()) {
             // Case A: We got here because a API key was invalid, there is an active instance
             goBackToDiscover()
         } else {
@@ -178,13 +180,15 @@ class ProbeOctoPrintFragment : BaseFragment() {
         }
     }
 
-    private fun getEditButtonText() = if (Injector.get().octorPrintRepository().getActiveInstanceSnapshot() != null) {
+    private fun getEditButtonText() = if (isInTestOnlyMode()) {
         // Case A: We got here because a API key was invalid, there is an active instance
         getString(R.string.sign_in___connect_to_other_octoprint)
     } else {
         // Case B: User is signing in, but nothing is active yet
         getString(R.string.sign_in___probe___edit_information)
     }
+
+    private fun isInTestOnlyMode() = Injector.get().octorPrintRepository().getActiveInstanceSnapshot() != null
 
     private fun getPrimaryActionText(finding: TestFullNetworkStackUseCase.Finding) = when (finding) {
         is TestFullNetworkStackUseCase.Finding.HttpsNotTrusted -> getString(R.string.sing_in___probe___trust_and_continue)
