@@ -69,6 +69,10 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
             val args = navArgs<SignInSuccessFragmentArgs>().value
             OctoAnalytics.logEvent(OctoAnalytics.Event.Login)
             OctoAnalytics.logEvent(OctoAnalytics.Event.SignInSuccess)
+
+            // Clearing and setting the active will enforce the navigation to be reset
+            // This is important in case we got here after a API key was invalid
+            Injector.get().octorPrintRepository().clearActive()
             Injector.get().octorPrintRepository().setActive(
                 OctoPrintInstanceInformationV2(
                     webUrl = args.webUrl,
