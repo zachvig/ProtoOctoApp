@@ -1,6 +1,8 @@
-🚀  OctoEverywhere integration
-⏲  Support for PrintTimeGenius plugin
-📹  The best webcam connection OctoApp ever had
-💡  Automatic lights when you use the webcam
-🔌  Support for OctoRelay plugin
-🔥  Many improvements throughout the app
+🦄  All new login flow with no manual inputs (for OctoPi)
+🤯  Build-in DNS resolver to support .local hostnames
+⚡️  Quick access for menu items from the print/prepare screens
+💡  New widget to access menu items (beta)
+📹  Slight refinements on the webcam connection
+🔥  As always, many improvements throughout the app
+
+Enjoy the app & happy printing! 🥳
