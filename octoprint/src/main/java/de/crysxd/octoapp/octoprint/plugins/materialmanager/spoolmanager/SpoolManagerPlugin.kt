@@ -17,7 +17,9 @@ class SpoolManagerPlugin(private val spoolManagerApi: SpoolManagerApi) : Materia
                 material = it.material ?: "Unknown",
                 pluginDisplayName = "SpoolManager",
                 pluginId = pluginId,
-                isActivated = response.selectedSpools?.any { s -> s.databaseId == it.databaseId } == true
+                isActivated = response.selectedSpools?.filterNotNull()?.any { s ->
+                    s.databaseId == it.databaseId
+                } == true
             )
         }
     }
