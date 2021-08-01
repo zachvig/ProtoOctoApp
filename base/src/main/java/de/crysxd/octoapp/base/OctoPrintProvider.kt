@@ -6,6 +6,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.logging.TimberHandler
+import de.crysxd.octoapp.base.logging.TimberLogger
 import de.crysxd.octoapp.base.models.ActiveInstanceIssue
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.network.DetectBrokenSetupInterceptor
@@ -27,7 +28,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
-import java.util.logging.Level
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class OctoPrintProvider(
@@ -172,10 +172,7 @@ class OctoPrintProvider(
             webSocketPingPongTimeout = Firebase.remoteConfig.getLong("web_socket_ping_pong_timeout_ms"),
             debug = BuildConfig.DEBUG,
         ).also { octoPrint ->
-            val logger = octoPrint.getLogger()
-            logger.handlers.forEach { logger.removeHandler(it) }
-            logger.addHandler(timberHandler)
-            logger.level = Level.ALL
-            logger.useParentHandlers = false
+            // Setup logger to use timber
+            TimberLogger(octoPrint.getLogger())
         }
 }
