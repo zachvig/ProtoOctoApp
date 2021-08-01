@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.models
 
+import de.crysxd.octoapp.base.network.OctoPrintUpnpDiscovery.Companion.UPNP_ADDRESS_PREFIX
 import de.crysxd.octoapp.octoprint.extractAndRemoveUserInfo
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.octoprint.models.settings.Settings
@@ -38,10 +39,18 @@ data class OctoPrintInstanceInformationV2(
     val isWebcamSupported get() = settings?.webcam?.webcamEnabled == true
 
     val label
-        get() = settings?.appearance?.name?.takeIf { it.isNotBlank() } ?: webUrl.let {
+        get() = settings?.appearance?.name?.takeIf {
+            it.isNotBlank()
+        } ?: webUrl.let {
             val protocolEnd = it.indexOf("://") + 3
             val userInfoEnd = it.indexOf("@") + 1
-            it.substring(max(protocolEnd, userInfoEnd)).removeSuffix("/")
+            val host = it.substring(max(protocolEnd, userInfoEnd)).removeSuffix("/")
+            if (host.startsWith(UPNP_ADDRESS_PREFIX)) {
+                val id = String.format("%x", host.hashCode()).take(3).uppercase()
+                String.format("OctoPrint via UPnP ($id)")
+            } else {
+                host
+            }
         }
 
     // The URL contains the Basic Auth, if the user changes the basic auth the url does not exactly match but it references the same instance
