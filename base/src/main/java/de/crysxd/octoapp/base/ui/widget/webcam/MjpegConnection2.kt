@@ -6,6 +6,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_FULL_WEBCAM_RESOLUTION
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.logging.TimberLogger
 import de.crysxd.octoapp.octoprint.SubjectAlternativeNameCompatVerifier
 import de.crysxd.octoapp.octoprint.ext.withHostnameVerifier
@@ -180,6 +181,7 @@ class MjpegConnection2(
     }
 
     private class ByteCache {
+        private val maxSize = 1024 * 1024 * 5L
         private val array = ByteArrayOutputStream()
         private var bitmaps = emptyList<Bitmap>()
         private var lastBitmapUsed = 0
@@ -193,6 +195,7 @@ class MjpegConnection2(
         }
 
         fun push(bytes: ByteArray, length: Int) {
+            require((array.size() + length) < maxSize) { "Byte cached overflow: ${maxSize.asStyleFileSize()}" }
             array.write(bytes, 0, length)
         }
 
