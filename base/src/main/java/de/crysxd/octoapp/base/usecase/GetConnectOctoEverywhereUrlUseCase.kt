@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.base.usecase
 
-import android.net.Uri
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -9,8 +8,6 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import timber.log.Timber
-import java.lang.Exception
-import java.lang.IllegalStateException
 import javax.inject.Inject
 
 
@@ -36,7 +33,7 @@ class GetConnectOctoEverywhereUrlUseCase @Inject constructor(
         } catch (e: Exception) {
             Timber.w(e)
             null
-        } ?: throw IllegalStateException("OctoEverywhere not installed")
+        } ?: throw OctoEverywhereNotInstalledException()
 
         OctoAnalytics.logEvent(OctoAnalytics.Event.OctoEverywhereConnectStarted)
         Result.Success(
@@ -49,6 +46,7 @@ class GetConnectOctoEverywhereUrlUseCase @Inject constructor(
         Result.Error(Injector.get().localizedContext().getString(R.string.configure_remote_acces___octoeverywhere___error_install_plugin), e)
     }
 
+    class OctoEverywhereNotInstalledException : IllegalStateException("OctoEverywhere not installed")
 
     sealed class Result {
         data class Error(val errorMessage: String, val exception: Exception) : Result()
