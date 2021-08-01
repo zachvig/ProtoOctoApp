@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primary">@color/green</color>
-    <color name="primary_dark">#169300</color>
+    <color name="primary_dark">@color/green_3</color>
     <color name="accent">@color/blue</color>
 
     <color name="window_background">@color/white</color>
