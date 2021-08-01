@@ -5,6 +5,7 @@ import androidx.core.text.HtmlCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.menu.Menu
 import de.crysxd.octoapp.base.ui.menu.MenuHost
@@ -72,6 +73,8 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
             Injector.get().activateMaterialUseCase().execute(ActivateMaterialUseCase.Params(uniqueMaterialId))
             startPrintAfterSelection?.let {
                 Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
+                // Make sure we are navigated to the print space automatically
+                (host?.getMenuActivity() as? OctoActivity)?.enforceAllowAutomaticNavigationFromCurrentDestination()
             }
             host?.reloadMenu()
         }
@@ -92,6 +95,8 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
         override suspend fun onClicked(host: MenuHost?) {
             startPrintAfterSelection?.let {
                 Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
+                // Make sure we are navigated to the print space automatically
+                (host?.getMenuActivity() as? OctoActivity)?.enforceAllowAutomaticNavigationFromCurrentDestination()
             }
             host?.reloadMenu()
         }

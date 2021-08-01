@@ -83,6 +83,8 @@ abstract class OctoActivity : LocalizedActivity() {
         it.value?.let(this::showDialog)
     }
 
+    abstract fun enforceAllowAutomaticNavigationFromCurrentDestination()
+
     fun observerMessageEvents(events: LiveData<Event<Message>>) = events.observe(this) { event ->
         when (val message = event.value) {
             null -> Unit

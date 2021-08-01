@@ -51,6 +51,12 @@ class FileDetailsFragment : BaseFragment(), InsetAwareScreen {
                         MenuBottomSheetFragment.createForMenu(MaterialPluginMenu(startPrintAfterSelection = args.file))
                             .show(childFragmentManager)
 
+                    is FileDetailsViewModel.ViewEvent.PrintStarted -> {
+                        // We started a print. Soon OctoPrint will report the print as started. We want to automatically
+                        // navigate to the print state, but by default we don't allow auto navigation here so we need to
+                        // make an exception.
+                        requireOctoActivity().enforceAllowAutomaticNavigationFromCurrentDestination()
+                    }
                 }
             }
         }

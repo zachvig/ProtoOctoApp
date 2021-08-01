@@ -83,6 +83,7 @@ class MainActivity : OctoActivity() {
     override val octo: OctoView by lazy { binding.toolbarOctoView }
     override val rootLayout by lazy { binding.coordinator }
     override val navController get() = findNavController(R.id.mainNavController)
+    private var enforceAutoamticNavigationAllowed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -325,6 +326,11 @@ class MainActivity : OctoActivity() {
         BillingManager.onPause()
     }
 
+    override fun enforceAllowAutomaticNavigationFromCurrentDestination() {
+        Timber.i("Enforcing auto navigation for the next navigation event")
+        enforceAutoamticNavigationAllowed = true
+    }
+
     private fun navigate(id: Int) {
         if (id != viewModel.lastNavigation) {
             // Screens which must be/can be closed automatically when the state changes
@@ -343,7 +349,8 @@ class MainActivity : OctoActivity() {
                 R.id.terminalFragment,
             ).contains(currentDestination)
 
-            if (currentDestinationAllowsAutoNavigate) {
+            if (currentDestinationAllowsAutoNavigate || enforceAutoamticNavigationAllowed) {
+                enforceAutoamticNavigationAllowed = false
                 viewModel.lastNavigation = id
                 navController.navigate(id)
             } else {
