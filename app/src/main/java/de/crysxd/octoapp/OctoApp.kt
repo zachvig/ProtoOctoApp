@@ -152,5 +152,11 @@ class OctoApp : Application() {
                 QuickAccessAppWidget.notifyWidgetDataChanged()
             }
         }
+
+        // Update app language property
+        GlobalScope.launch {
+            val appLanguage = BaseInjector.get().getAppLanguageUseCase().execute(Unit).appLanguageLocale?.language ?: "en"
+            OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.AppLanguage, appLanguage)
+        }
     }
 }
