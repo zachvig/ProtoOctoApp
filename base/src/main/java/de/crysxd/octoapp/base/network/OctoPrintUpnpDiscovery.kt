@@ -78,7 +78,7 @@ class OctoPrintUpnpDiscovery(
                 val uuid = if (uuidMatcher.find()) {
                     uuidMatcher.group(1)
                 } else {
-                    Timber.e(IllegalStateException("No uuid in $response"))
+                    Timber.i("No uuid in:\n$response")
                     return
                 }
                 Timber.v("Discovered: $uuid")
