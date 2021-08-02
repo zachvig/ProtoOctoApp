@@ -287,10 +287,10 @@ class MjpegConnection2(
             // Search end
             var endIndex = -1
             for (i in startIndex until array.size) {
-                val c1 = array[i].toInt().toChar()
-                val c2 = array[i + 1].toInt().toChar()
-                val c3 = array[i + 2].toInt().toChar()
-                val c4 = array[i + 3].toInt().toChar()
+                val c1 = array.getOrNull(i + 0)?.toInt()?.toChar()
+                val c2 = array.getOrNull(i + 1)?.toInt()?.toChar()
+                val c3 = array.getOrNull(i + 2)?.toInt()?.toChar()
+                val c4 = array.getOrNull(i + 3)?.toInt()?.toChar()
                 if (c1 == '\n' && c2 == '\n') {
                     endIndex = i + 2
                     break
