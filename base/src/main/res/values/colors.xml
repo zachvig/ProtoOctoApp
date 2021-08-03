@@ -59,6 +59,12 @@
     <color name="black_color_scheme">@color/black</color>
     <color name="black_color_scheme_light">#BCBCBC</color>
 
+    <!-- Don't link up! Has always dark background-->
+    <color name="gcode_extrusion">#ffffff</color>
+    <color name="gcode_unsupported">#FFC000</color>
+    <color name="gcode_travel">#13C100</color>
+    <color name="gcode_print_head">#EE3F3F</color>
+
     <color name="snackbar_neutral">@color/light_grey</color>
     <color name="snackbar_positive">@color/primary</color>
     <color name="snackbar_negative">@color/red</color>

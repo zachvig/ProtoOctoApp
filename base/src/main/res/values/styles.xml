@@ -16,6 +16,13 @@
         <item name="android:statusBarColor">@color/black</item>
         <item name="android:textAppearance">@style/OctoTheme.TextAppearance</item>
 
+        <!--
+        Prevent xiaomi from inverting colors?!
+        https://stackoverflow.com/questions/62696305/theme-problem-when-dark-mode-is-activated-under-miui-11-12
+        https://gitlab.com/crysxd/octoapp/-/issues/726
+        -->
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+
         <item name="materialAlertDialogTheme">@style/OctoTheme.AlertDialog</item>
         <item name="materialButtonStyle">@style/OctoTheme.Widget.Button</item>
         <item name="imageButtonStyle">@style/OctoTheme.Widget.Button.Image</item>
