@@ -34,7 +34,6 @@ class DiscoverOctoPrintUseCase @Inject constructor(
         }
 
         // Start discovery and return results
-        var job: Job? = null
         return@withContext channel.asFlow().onStart {
             timber.i("Starting OctoPrint discovery")
             job = Job()
@@ -42,7 +41,6 @@ class DiscoverOctoPrintUseCase @Inject constructor(
             discoverUsingUpnp(timber, currentCoroutineContext(), submitResult)
         }.onCompletion {
             timber.i("Finishing OctoPrint discovery")
-            job?.cancel()
         }
     }
 

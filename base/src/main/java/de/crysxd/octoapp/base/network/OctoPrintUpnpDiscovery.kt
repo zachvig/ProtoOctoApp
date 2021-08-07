@@ -19,6 +19,7 @@ class OctoPrintUpnpDiscovery(
 ) {
     companion object {
         const val UPNP_ADDRESS_PREFIX = "octoprint-via-upnp---"
+        private const val DISCOVER_TIMEOUT = 3000
         private const val SOCKET_TIMEOUT = 500
         private const val PORT = 1900
         private const val ADDRESS = "239.255.255.250"
@@ -48,7 +49,8 @@ class OctoPrintUpnpDiscovery(
     }
 
     private suspend fun discoverWithMulticastLock(callback: (Service) -> Unit) = withContext(Dispatchers.IO) {
-        Timber.i("Opening port $PORT")
+        Timber.i("Opening port $PORT, searching for ${DISCOVER_TIMEOUT}ms")
+        val start = System.currentTimeMillis()
         val socket = DatagramSocket(PORT)
         try {
             socket.reuseAddress = true
@@ -58,11 +60,11 @@ class OctoPrintUpnpDiscovery(
             socket.soTimeout = SOCKET_TIMEOUT
             socket.send(datagramPacketRequest)
 
-            while (currentCoroutineContext().isActive) {
+            while (currentCoroutineContext().isActive && (System.currentTimeMillis() < start + DISCOVER_TIMEOUT)) {
                 readNextResponse(socket, callback)
             }
         } finally {
-            Timber.i("Closing port $PORT")
+            Timber.i("Closing port $PORT after ${System.currentTimeMillis() - start}")
             socket.close()
         }
     }

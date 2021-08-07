@@ -100,7 +100,7 @@ class LocalDnsResolver(private val context: Context) : Dns {
                     }
                 }
             }
-            val address = channel.receive()
+            val address = withTimeout(RESOLVE_TIMEOUT) { channel.receive() }
             job.cancel()
             OctoAnalytics.logEvent(OctoAnalytics.Event.UpnpDnsResolveSuccess)
             listOf(address)
