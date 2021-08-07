@@ -14,7 +14,6 @@ import javax.inject.Inject
 class OpenOctoprintWebUseCase @Inject constructor(
     private val octoPrintProvider: OctoPrintProvider,
     private val localDnsResolver: LocalDnsResolver,
-    private val intentFactory: (Uri) -> Intent = { Intent(Intent.ACTION_VIEW, it) }
 ) : UseCase<OpenOctoprintWebUseCase.Params, Unit>() {
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) {
@@ -27,7 +26,7 @@ class OpenOctoprintWebUseCase @Inject constructor(
             } else {
                 uri
             }
-            param.context.startActivity(intentFactory(resolvedUrl).also {
+            param.context.startActivity(Intent(Intent.ACTION_VIEW, resolvedUrl).also {
                 it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             })
         }

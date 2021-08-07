@@ -23,23 +23,23 @@ after_script:
   - rm local.properties
   - eval "$DEBUGGING_STATEMENT_AFTER"
   # Always stop emulator (or at least try)
-  - ~/ci-scripts/stop_emulator.sh || 1
+  - ~/ci-scripts/stop-emulator.sh || 1
 
 build:
-  stage: build
+  stage: testAndBuild
   tags:
     - test_env
   only:
     - tags
     - /^release\/.*$/
   before_script:
-    - ~/ci-scripts/start_emulator.sh
+    - ~/ci-scripts/start-emulator.sh
   script:
     - ./gradlew testReleaseUnitTest connectedAndroidTest assembleRelease
     - mkdir outputs
     - git tag -l --format='%(contents)' "$CI_COMMIT_TAG" > outputs/release_notes.txt
   after_script:
-    - ~/ci-scripts/stop_emulator.sh
+    - ~/ci-scripts/stop-emulator.sh
   artifacts:
     when: always
     paths:
