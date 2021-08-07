@@ -30,14 +30,6 @@ class SetAlternativeWebUrlUseCase @Inject constructor(
                 return Result.Failure(context.getString(R.string.configure_remote_acces___manual___error_invalid_url), e)
             }
 
-            val settings = try {
-                val octoprint = octoPrintProvider.createAdHocOctoPrint(instance.copy(webUrl = uri.toString(), alternativeWebUrl = null))
-                octoprint.createSettingsApi().getSettings()
-            } catch (e: Exception) {
-                Timber.e(e)
-                OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigManuallySetFailed)
-                return Result.Failure(context.getString(R.string.configure_remote_acces___manual___error_unable_to_connect), e)
-            }
 
             val isOe = uri.host?.endsWith("octoeverywhere.com") == true
             val isShared = uri.host?.startsWith("shared-") == true
@@ -52,6 +44,19 @@ class SetAlternativeWebUrlUseCase @Inject constructor(
                     allowToProceed = true,
                     exception = IllegalArgumentException("Given URL is a shared OctoEverywhere URL")
                 )
+                !uri.isAbsolute -> return Result.Failure(
+                    errorMessage = context.getString(R.string.configure_remote_acces___manual___error_invalid_url),
+                    exception = IllegalArgumentException("URI is not absolute")
+                )
+            }
+
+            val settings = try {
+                val octoprint = octoPrintProvider.createAdHocOctoPrint(instance.copy(webUrl = uri.toString(), alternativeWebUrl = null))
+                octoprint.createSettingsApi().getSettings()
+            } catch (e: Exception) {
+                Timber.e(e)
+                OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigManuallySetFailed)
+                return Result.Failure(context.getString(R.string.configure_remote_acces___manual___error_unable_to_connect), e)
             }
 
             try {
