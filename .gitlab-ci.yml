@@ -25,8 +25,8 @@ after_script:
   # Always stop emulator (or at least try)
   - ~/ci-scripts/stop-emulator.sh || 1
 
-build:
-  stage: testAndBuild
+test_and_build:
+  stage: build
   tags:
     - test_env
   only:
