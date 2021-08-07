@@ -54,7 +54,13 @@ class RequestAccessFragment : BaseFragment() {
         contentBinding = ReqestAccessFragmentBinding.inflate(LayoutInflater.from(requireContext()), binding.content, true)
         contentBinding.buttonApiKey.setOnClickListener { continueWithManualApiKey() }
         contentBinding.text.text = getString(R.string.sign_in___access___explainer, webUrl).toHtml()
-        contentBinding.text.movementMethod = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(requireOctoActivity()))
+        contentBinding.text.movementMethod = LinkClickMovementMethod { _, url ->
+            // Use clicked open in web link
+            url?.let {
+                viewModel.openInWeb(it)
+                true
+            } ?: false
+        }
         setUpAsHelpButton(contentBinding.help)
 
         viewModel.useWebUrl(webUrl)

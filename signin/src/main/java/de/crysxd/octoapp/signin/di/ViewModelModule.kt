@@ -11,6 +11,7 @@ import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
+import de.crysxd.octoapp.base.usecase.OpenOctoprintWebUseCase
 import de.crysxd.octoapp.base.usecase.RequestApiAccessUseCase
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import de.crysxd.octoapp.signin.access.RequestAccessViewModel
@@ -64,9 +65,11 @@ open class ViewModelModule {
     @ViewModelKey(RequestAccessViewModel::class)
     open fun provideRequestAccessViewModel(
         useCase: RequestApiAccessUseCase,
+        openOctoprintWebUseCase: OpenOctoprintWebUseCase,
         context: Context,
     ): ViewModel = RequestAccessViewModel(
         requestApiAccessUseCase = useCase,
+        openOctoprintWebUseCase = openOctoprintWebUseCase,
         context = context
     )
 }

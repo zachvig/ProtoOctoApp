@@ -7,6 +7,7 @@ import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.menu.*
+import de.crysxd.octoapp.base.usecase.OpenOctoprintWebUseCase
 import kotlinx.parcelize.Parcelize
 
 
@@ -48,7 +49,9 @@ class OpenOctoPrintMenuItem : MenuItem {
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_octoprint)
     override suspend fun onClicked(host: MenuHost?) {
-        Injector.get().openOctoPrintWebUseCase().execute(Injector.get().context())
+        Injector.get().openOctoPrintWebUseCase().execute(
+            OpenOctoprintWebUseCase.Params(context = Injector.get().context())
+        )
     }
 }
 

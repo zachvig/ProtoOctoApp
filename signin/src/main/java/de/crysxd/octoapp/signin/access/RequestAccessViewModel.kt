@@ -12,6 +12,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.base.OctoActivity
+import de.crysxd.octoapp.base.usecase.OpenOctoprintWebUseCase
 import de.crysxd.octoapp.base.usecase.RequestApiAccessUseCase
 import de.crysxd.octoapp.signin.R
 import kotlinx.coroutines.Job
@@ -24,6 +25,7 @@ import timber.log.Timber
 @Suppress("EXPERIMENTAL_API_USAGE")
 class RequestAccessViewModel(
     private val requestApiAccessUseCase: RequestApiAccessUseCase,
+    private val openOctoprintWebUseCase: OpenOctoprintWebUseCase,
     context: Context
 ) : BaseViewModel() {
 
@@ -113,6 +115,10 @@ class RequestAccessViewModel(
         webUrlChannel.offer(webUrl)
     } else {
         false
+    }
+
+    fun openInWeb(url: String) = viewModelScope.launch(coroutineExceptionHandler) {
+        openOctoprintWebUseCase.execute(OpenOctoprintWebUseCase.Params(octoPrintWebUrl = url, context = appContext))
     }
 
     sealed class UiState {
