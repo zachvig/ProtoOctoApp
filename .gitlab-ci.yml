@@ -1,5 +1,3 @@
-image: jangrewe/gitlab-ci-android
-
 cache:
   key: ${CI_PROJECT_ID}
   paths:
@@ -24,16 +22,24 @@ after_script:
   - rm app/key.keystore
   - rm local.properties
   - eval "$DEBUGGING_STATEMENT_AFTER"
+  # Always stop emulator (or at least try)
+  - ~/ci-scripts/stop_emulator.sh || 1
 
 build:
   stage: build
+  tags:
+    - test_env
   only:
     - tags
     - /^release\/.*$/
+  before_script:
+    - ~/ci-scripts/start_emulator.sh
   script:
-    - ./gradlew assembleRelease --no-daemon
+    - ./gradlew testReleaseUnitTest connectedAndroidTest assembleRelease
     - mkdir outputs
     - git tag -l --format='%(contents)' "$CI_COMMIT_TAG" > outputs/release_notes.txt
+  after_script:
+    - ~/ci-scripts/stop_emulator.sh
   artifacts:
     when: always
     paths:
@@ -42,7 +48,8 @@ build:
       - app/build/outputs/apk/release/app-release.apk
 
 deploy_google_play:
-  stage: build
+  stage: deploy
+  image: jangrewe/gitlab-ci-android
   script:
     - ./gradlew publishReleaseBundle
   artifacts:
