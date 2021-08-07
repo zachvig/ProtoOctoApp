@@ -36,7 +36,6 @@ class DiscoverOctoPrintUseCase @Inject constructor(
         // Start discovery and return results
         return@withContext channel.asFlow().onStart {
             timber.i("Starting OctoPrint discovery")
-            job = Job()
             discoverUsingDnsSd(timber, currentCoroutineContext(), submitResult)
             discoverUsingUpnp(timber, currentCoroutineContext(), submitResult)
         }.onCompletion {
