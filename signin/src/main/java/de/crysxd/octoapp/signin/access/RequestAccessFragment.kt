@@ -14,9 +14,7 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.ui.base.BaseFragment
-import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.signin.R
@@ -53,14 +51,7 @@ class RequestAccessFragment : BaseFragment() {
         binding.content.removeAllViews()
         contentBinding = ReqestAccessFragmentBinding.inflate(LayoutInflater.from(requireContext()), binding.content, true)
         contentBinding.buttonApiKey.setOnClickListener { continueWithManualApiKey() }
-        contentBinding.text.text = getString(R.string.sign_in___access___explainer, webUrl).toHtml()
-        contentBinding.text.movementMethod = LinkClickMovementMethod { _, url ->
-            // Use clicked open in web link
-            url?.let {
-                viewModel.openInWeb(it)
-                true
-            } ?: false
-        }
+        contentBinding.openWeb.setOnClickListener { viewModel.openInWeb(webUrl) }
         setUpAsHelpButton(contentBinding.help)
 
         viewModel.useWebUrl(webUrl)

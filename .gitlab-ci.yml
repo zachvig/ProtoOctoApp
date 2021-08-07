@@ -34,9 +34,6 @@ test_and_build:
   stage: build
   tags:
     - test_env
-  only:
-    - tags
-    - /^release\/.*$/
   script:
     - ./gradlew test
     - ./gradlew assembleDebugAndroidTest

@@ -170,7 +170,8 @@
     <string name="main___banner_connection_lost_reconnecting">Connessione persa, ricollegamento…</string>
     <string name="main_menu___about_text">
         <![CDATA[Versione <font color="%1$06x"><b>%2$s</b></font> è stato fatto<br/><font color="%1$06x"><b>per te</b></font> con amore in Europa ]]>
-                        &#127466;&#127482;
+                                &#127466;&#127482;
+        
         
         
         <![CDATA[<br><a href="privacy">Data privacy</a>]]>
@@ -362,18 +363,10 @@
     <string name="show_actions">Mostra le azioni</string>
     <string name="show_details">Mostra dettagli</string>
     <string name="show_logs">Mostra i log</string>
-    <string name="sign_in___access___confirm_in_web_interface">Confermare l\'accesso nell\'interfaccia web</string>
-    <string name="sign_in___access___explainer">
-                        " 
-        
-        
-        <![CDATA[Apri OctoPrint sul tuo computer o <a href="%s">nel browser del tuo telefono</a> e conferma che OctoApp è autorizzata ad accedere al tuo OctoPrint.<br><br><small>Non vedi il prompt? Prova a ricaricare la pagina</small>]]>
-                             "
-    
-    
-    </string>
-    <string name="sign_in___access___use_api_key" translatable="false">Usa la chiave API</string>
-    <string name="sign_in___access___waiting_for_access">In attesa dell\'accesso…</string>
+    <string name="sign_in___access___confirm_in_web_interface">Aprire l\'interfaccia web e permettere l\'accesso</string>
+    <string name="sign_in___access___explainer">Aprire OctoPrint e confermare che OctoApp è autorizzato ad accedere:</string>
+    <string name="sign_in___access___open_web">Consentire l\'accesso</string>
+    <string name="sign_in___access___use_api_key">…o inserire una chiave API</string>
     <string name="sign_in___broken_setup___api_key_revoked">La chiave API OctoApp non è più valida, connetti nuovamente OctoPrint</string>
     <string name="sign_in___broken_setup___basic_auth_required">OctoApp ha richiesto le credenziali BasicAuth per accedere a OctoPrint</string>
     <string name="sign_in___broken_setup___https_issue">OctoApp non è stato in grado di connettersi via HTTPS a causa di un problema SSL, controlla la tua configurazione</string>
@@ -398,6 +391,7 @@
     <string name="sign_in___discovery___quick_switch_disabled_title">Interruttore rapido non abilitato</string>
     <string name="sign_in___discovery___welcome_subtitle_searching">Ricerca della tua OctoPrint…</string>
     <string name="sign_in___discovery___welcome_title">Benvenuti in OctoApp</string>
+    <string name="sign_in___manual_api_key___directions">La tua chiave API si trova nelle impostazioni della OctoPrint o nelle impostazioni utente (interfaccia web, clicca sul nome utente in alto a destra). Copia la chiave nell\'input qui sopra o usa l\'icona del codice QR per scansionare il codice QR!</string>
     <string name="sign_in___manual_api_key___error_invalid_api_key">La chiave API inserita non è accettata dalla OctoPrint</string>
     <string name="sign_in___manual_api_key___error_other">Octoapp non è stato in grado di testare la chiave API, eseguire la risoluzione dei problemi per saperne di più</string>
     <string name="sign_in___manual_api_key___hint">Chiave API</string>
@@ -464,6 +458,9 @@
     <string name="widget_gcode_send">Invia Gcode</string>
     <string name="widget_move">Spostati</string>
     <string name="widget_quick_access">Accesso rapido</string>
+    <string name="widget_quick_access___tutorial_detail">È possibile premere a lungo qualsiasi voce di menu per fissarla in posizioni di accesso rapido, nel menu principale o in un widget della schermata iniziale.</string>
+    <string name="widget_quick_access___tutorial_learn_more">Guarda il tutorial</string>
+    <string name="widget_quick_access___tutorial_title">Fai tua OctoApp!</string>
     <string name="widget_temperature">Temperature</string>
     <string name="x">X</string>
     <plurals name="x_days">
@@ -496,7 +493,4 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">Puoi cambiare questo limite nelle impostazioni di OctoPrint</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Velocità di avanzamento Z (mm/min)</string>
-    <string name="widget_quick_access___tutorial_detail">È possibile premere a lungo qualsiasi voce di menu per fissarla in posizioni di accesso rapido, nel menu principale o in un widget della schermata iniziale.</string>
-    <string name="widget_quick_access___tutorial_title">Fai tua OctoApp!</string>
-    <string name="widget_quick_access___tutorial_learn_more">Guarda il tutorial</string>
 </resources>

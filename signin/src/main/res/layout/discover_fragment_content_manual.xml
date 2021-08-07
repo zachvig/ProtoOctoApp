@@ -42,13 +42,25 @@
         app:layout_constraintVertical_chainStyle="spread_inside"
         tools:layout_editor_absoluteX="20dp" />
 
+    <TextView
+        android:id="@+id/apiKeyDirections"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_1"
+        android:gravity="center"
+        android:text="@string/sign_in___manual_api_key___directions"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Label"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/input" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonContinue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_2"
         android:layout_marginBottom="@dimen/margin_2"
         android:text="@string/sign_in___continue"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input" />
+        app:layout_constraintTop_toBottomOf="@+id/apiKeyDirections" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
