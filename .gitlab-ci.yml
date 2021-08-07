@@ -36,11 +36,12 @@ test_and_build:
   only:
     - tags
     - /^release\/.*$/
-  before_script:
-    - ~/ci-scripts/start-emulator.sh
-    - *default_before_script
   script:
-    - ./gradlew testReleaseUnitTest connectedAndroidTest assembleRelease
+    - ./gradlew test
+    - ./gradlew assembleDebugAndroidTest
+    - ~/ci-scripts/start-emulator.sh
+    - ./gradlew connectedDebugAndroidTest
+    - ./gradlew assembleRelease
     - mkdir outputs
     - git tag -l --format='%(contents)' "$CI_COMMIT_TAG" > outputs/release_notes.txt
   after_script:
