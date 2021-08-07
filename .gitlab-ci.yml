@@ -42,10 +42,12 @@ test_and_build:
     - ./gradlew assembleDebugAndroidTest
     - ~/ci-scripts/start-emulator.sh
     - ./gradlew connectedDebugAndroidTest
+    - ~/ci-scripts/stop-emulator.sh
     - ./gradlew assembleRelease
     - mkdir outputs
     - git tag -l --format='%(contents)' "$CI_COMMIT_TAG" > outputs/release_notes.txt
   after_script:
+    # Ensure emulator is stopped
     - ~/ci-scripts/stop-emulator.sh
     - *default_after_script
   artifacts:
