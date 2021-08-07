@@ -72,7 +72,7 @@ deploy_google_play:
 
 deploy_firebase:
   stage: deploy
-  needs: [ "build" ]
+  needs: [ "test_and_build" ]
   image: node
   script:
     - npm install -g firebase-tools
