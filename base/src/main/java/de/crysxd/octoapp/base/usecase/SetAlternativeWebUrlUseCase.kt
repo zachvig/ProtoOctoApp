@@ -1,16 +1,21 @@
 package de.crysxd.octoapp.base.usecase
 
+import android.content.Context
 import android.net.Uri
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.di.modules.AndroidModule
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Named
 
 class SetAlternativeWebUrlUseCase @Inject constructor(
     private val octoPrintProvider: OctoPrintProvider,
     private val octoPrintRepository: OctoPrintRepository,
+    @Named(AndroidModule.LOCALIZED) private val context: Context
 ) : UseCase<SetAlternativeWebUrlUseCase.Params, SetAlternativeWebUrlUseCase.Result>() {
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree): Result {
@@ -22,7 +27,7 @@ class SetAlternativeWebUrlUseCase @Inject constructor(
             } catch (e: Exception) {
                 Timber.e(e)
                 OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigManuallySetFailed)
-                return Result.Failure("Please provide a valid URL", e)
+                return Result.Failure(context.getString(R.string.configure_remote_acces___manual___error_invalid_url), e)
             }
 
             val settings = try {
@@ -31,7 +36,22 @@ class SetAlternativeWebUrlUseCase @Inject constructor(
             } catch (e: Exception) {
                 Timber.e(e)
                 OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigManuallySetFailed)
-                return Result.Failure("Unable to connect", e)
+                return Result.Failure(context.getString(R.string.configure_remote_acces___manual___error_unable_to_connect), e)
+            }
+
+            val isOe = uri.host?.endsWith("octoeverywhere.com") == true
+            val isShared = uri.host?.startsWith("shared-") == true
+            when {
+                isOe && !isShared -> return Result.Failure(
+                    errorMessage = context.getString(R.string.configure_remote_acces___manual___error_normal_octoeverywhere_url),
+                    allowToProceed = false,
+                    exception = IllegalArgumentException("Given URL is a standard OctoEverywhere URL")
+                )
+                isOe && isShared -> return Result.Failure(
+                    errorMessage = context.getString(R.string.configure_remote_acces___manual___error_shared_octoeverywhere_url),
+                    allowToProceed = true,
+                    exception = IllegalArgumentException("Given URL is a shared OctoEverywhere URL")
+                )
             }
 
             try {
@@ -44,7 +64,7 @@ class SetAlternativeWebUrlUseCase @Inject constructor(
                 }
             } catch (e: Exception) {
                 OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigManuallySetFailed)
-                return Result.Failure("Unable to verify that the remote URL points to the same instance", e, true)
+                return Result.Failure(context.getString(R.string.configure_remote_acces___manual___error_unable_to_verify), e, true)
             }
         }
 
