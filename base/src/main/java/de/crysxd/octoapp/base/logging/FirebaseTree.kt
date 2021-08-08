@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.logging
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigClientException
+import de.crysxd.octoapp.base.usecase.GetConnectOctoEverywhereUrlUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -45,5 +46,6 @@ class FirebaseTree(
             t !is IOException &&
             t !is CancellationException &&
             t !is FirebaseRemoteConfigClientException &&
-            t !is URISyntaxException
+            t !is URISyntaxException &&
+            t !is GetConnectOctoEverywhereUrlUseCase.OctoEverywhereNotInstalledException
 }

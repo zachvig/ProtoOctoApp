@@ -100,13 +100,14 @@ class LocalDnsResolver(private val context: Context) : Dns {
                     }
                 }
             }
-            val address = channel.receive()
+            val address = withTimeout(RESOLVE_TIMEOUT) { channel.receive() }
             job.cancel()
             OctoAnalytics.logEvent(OctoAnalytics.Event.UpnpDnsResolveSuccess)
             listOf(address)
         } ?: throw UnknownHostException(upnpHostname)
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     private fun doMDnsLookup(hostname: String): List<InetAddress> = runBlocking {
         Timber.i("Resolving via mDns: $hostname")
         withTimeoutOrNull(TimeUnit.SECONDS.toMillis(RESOLVE_TIMEOUT)) {
@@ -148,6 +149,9 @@ class LocalDnsResolver(private val context: Context) : Dns {
 
     private fun doDnsLookup(hostname: String): List<InetAddress> {
         Timber.i("Resolving via local DNS: $hostname")
+
+        // Sometimes the internal Dnssd service is not running...we can start it with this:
+        context.applicationContext.getSystemService(Context.NSD_SERVICE)
 
         // This is a manual backup DNS which should help with .home domains. Some Android devices are configured
         // to ignore the router as DNS server and directly go to Cloudflare or Google

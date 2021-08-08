@@ -6,11 +6,11 @@ import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
+import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class FileDetailsViewModel(
@@ -35,6 +35,8 @@ class FileDetailsViewModel(
             val result = startPrintJobUseCase.execute(StartPrintJobUseCase.Params(file = file, materialSelectionConfirmed = false))
             if (result == StartPrintJobUseCase.Result.MaterialSelectionRequired) {
                 mutableViewEvents.postValue(ViewEvent.MaterialSelectionRequired())
+            } else {
+                OctoActivity.instance?.enforceAllowAutomaticNavigationFromCurrentDestination()
             }
         } catch (e: Exception) {
             // Disable loading state on error, but keep on success as we will be navigated away
@@ -46,5 +48,6 @@ class FileDetailsViewModel(
         var isConsumed = false
 
         class MaterialSelectionRequired : ViewEvent()
+        class PrintStarted : ViewEvent()
     }
 }

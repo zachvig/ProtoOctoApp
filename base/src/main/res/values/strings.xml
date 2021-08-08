@@ -178,7 +178,8 @@
     <string name="main___banner_connection_lost_reconnecting">Connection lost, reconnecting…</string>
     <string name="main_menu___about_text">
         <![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> was<br/>made <font color="%1$06x"><b>for you</b></font> with love in Europe ]]>
-                        &#127466;&#127482;
+                                &#127466;&#127482;
+        
         
         
         <![CDATA[<br><a href="privacy">Data privacy</a>]]>
@@ -372,18 +373,10 @@
     <string name="show_actions">Show actions</string>
     <string name="show_details">Show Details</string>
     <string name="show_logs">Show logs</string>
-    <string name="sign_in___access___confirm_in_web_interface">Confirm access in the web interface</string>
-    <string name="sign_in___access___explainer">
-                        "         
-        
-        
-        <![CDATA[Open OctoPrint on your computer or <a href="%s">in your phone\'s browser</a> and confirm that OctoApp is allowed to access your OctoPrint.<br><br><small>Not seeing the prompt? Try reloading the page</small>]]>
-                             "
-    
-    
-    </string>
-    <string name="sign_in___access___use_api_key" translatable="false">Use API key</string>
-    <string name="sign_in___access___waiting_for_access">Waiting for access…</string>
+    <string name="sign_in___access___confirm_in_web_interface">Open the web interface and allow access</string>
+    <string name="sign_in___access___explainer">Open OctoPrint and confirm that OctoApp is allowed to access:</string>
+    <string name="sign_in___access___open_web">Allow access</string>
+    <string name="sign_in___access___use_api_key">…or enter an API key</string>
     <string name="sign_in___broken_setup___api_key_revoked">The API key OctoApp is no longer valid, please connect OctoPrint again</string>
     <string name="sign_in___broken_setup___basic_auth_required">OctoApp required Basic Auth credentials to access OctoPrint</string>
     <string name="sign_in___broken_setup___https_issue">OctoApp was unable to connect via HTTPS due to an SSL issue, please check your setup</string>
@@ -408,6 +401,7 @@
     <string name="sign_in___discovery___quick_switch_disabled_title">Quick switch not enabled</string>
     <string name="sign_in___discovery___welcome_subtitle_searching">Searching for your OctoPrint…</string>
     <string name="sign_in___discovery___welcome_title">Welcome to OctoApp</string>
+    <string name="sign_in___manual_api_key___directions">Your API key is in the OctoPrint settings or in the user settings (web interface, click the user name in the top right). Copy the key to the input above or use the QR code icon to scan the QR code!</string>
     <string name="sign_in___manual_api_key___error_invalid_api_key">The entered API key is not accepted by OctoPrint</string>
     <string name="sign_in___manual_api_key___error_other">Octoapp wasn\'t abel to test the API key, run the troubleshooting to learn more</string>
     <string name="sign_in___manual_api_key___hint">API key</string>
@@ -474,6 +468,9 @@
     <string name="widget_gcode_send">Send Gcode</string>
     <string name="widget_move">Move</string>
     <string name="widget_quick_access">Quick access</string>
+    <string name="widget_quick_access___tutorial_detail">You can long-press any menu item to pin it to Quick Access locations, to the main menu or a home screen widget.</string>
+    <string name="widget_quick_access___tutorial_learn_more">Watch the tutorial</string>
+    <string name="widget_quick_access___tutorial_title">Make OctoApp yours!</string>
     <string name="widget_temperature">Temperature</string>
     <string name="x">X</string>
     <plurals name="x_days">
@@ -506,7 +503,4 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">You can change this limit in OctoPrint settings</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Z feedrate (mm/min)</string>
-    <string name="widget_quick_access___tutorial_detail">You can long-press any menu item to pin it to Quick Access locations, to the main menu or a home screen widget.</string>
-    <string name="widget_quick_access___tutorial_title">Make OctoApp yours!</string>
-    <string name="widget_quick_access___tutorial_learn_more">Watch the tutorial</string>
 </resources>

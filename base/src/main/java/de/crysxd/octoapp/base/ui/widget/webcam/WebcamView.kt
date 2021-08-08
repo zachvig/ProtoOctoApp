@@ -57,6 +57,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
     private var transitionActive = false
     private var nativeAspectRation: Point? = null
+    private var animatedMatrix = false
     var supportsToubleShooting = false
     var scaleToFill: Boolean = false
         set(value) {
@@ -140,7 +141,6 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         if (state !is WebcamState.MjpegFrameReady) {
             binding.mjpegSurface.setImageBitmap(null)
         }
-
 
         when (newState) {
             WebcamState.Loading -> binding.loadingState.isVisible = true
@@ -307,7 +307,10 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             beginDelayedTransition()
         }
 
+        // Update image matrix and set the animated flag. As it's now initialized, we can animate changes
         binding.mjpegSurface.imageMatrix = createMjpegMatrix(scaleToFill, state)
+        animatedMatrix = true
+
         val size = min(state.frame.width, state.frame.height)
         @SuppressLint("SetTextI18n")
         binding.resolutionIndicator.text = "${size}p"
@@ -318,7 +321,9 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
     private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(this, TransitionSet().also {
         it.addTransition(Fade())
-        it.addTransition(ChangeImageTransform())
+        if (animatedMatrix) {
+            it.addTransition(ChangeImageTransform())
+        }
         it.addListener(object : Transition.TransitionListener {
             override fun onTransitionStart(transition: Transition) {
                 transitionActive = true

@@ -117,14 +117,14 @@ class InfoTabFragment : Fragment() {
             )
             addDetail(
                 label = R.string.uploaded,
-                value = Date(file.date).format()
+                value = Date(file.date * 1000).format()
             )
 
             addTitle(R.string.history)
             addDetail(
                 label = R.string.last_print,
                 value = file.prints?.last?.let {
-                    getString(if (it.success) R.string.last_print_at_x_success else R.string.last_print_at_x_failure, Date(it.date).format())
+                    getString(if (it.success) R.string.last_print_at_x_success else R.string.last_print_at_x_failure, Date(it.date * 1000).format())
                 } ?: getString(R.string.never)
             )
             addDetail(

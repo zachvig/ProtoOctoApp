@@ -102,8 +102,7 @@ class GcodeRenderView @JvmOverloads constructor(
     }
 
     fun enableAsyncRender(coroutineScope: CoroutineScope) {
-        renderScope = coroutineScope
-        useAsyncRender = true
+
     }
 
     private fun enforceScrollLimits(params: RenderParams) {

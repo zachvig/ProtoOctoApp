@@ -96,4 +96,11 @@
     <string name="lab_menu___allow_to_rotate_description" translatable="false">OctoApp can rotate into landscape mode. The UI is not optimized and rotating might cause issues on some screens. Will take affect after restart.</string>
     <string name="lab_menu___experimental_webcam_title" translatable="false">New webcam stack</string>
     <string name="lab_menu___experimental_webcam_description" translatable="false">Completely new webcam implementation introduced with version 1.9.0. The new webcam stack is using less resources and has a lower latency. Will take affect after a restart.</string>
+
+    <!-- Remote access -->
+    <string name="configure_remote_acces___manual___error_normal_octoeverywhere_url" translatable="false">You can\'t use a normal OctoEverywhere URL. Please create a shared connection URL on octoeverywhere.com or directly sign in with OctoEverywhere (preferred)</string>
+    <string name="configure_remote_acces___manual___error_shared_octoeverywhere_url" translatable="false">It\'s better to directly sign in with OctoEverywhere than using a shared connection! You can proceed if you want.</string>
+    <string name="configure_remote_acces___manual___error_unable_to_verify" translatable="false">Unable to verify that the remote URL points to the same instance</string>
+    <string name="configure_remote_acces___manual___error_unable_to_connect" translatable="false">Unable to connect</string>
+    <string name="configure_remote_acces___manual___error_invalid_url" translatable="false">Please provide a valid URL (including http:// or https://)</string>
 </resources>

@@ -11,10 +11,11 @@ dependencies {
     implementation "androidx.browser:browser:1.3.0"
 
     /*
-     * HLS webcam streams
+     * Webcam streams
      */
     implementation 'com.google.android.exoplayer:exoplayer-core:2.14.1'
     implementation 'com.google.android.exoplayer:exoplayer-hls:2.14.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.8.0'
 
     /*
      * Billing

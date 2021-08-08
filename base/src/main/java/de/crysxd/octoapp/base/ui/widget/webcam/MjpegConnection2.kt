@@ -6,20 +6,26 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_FULL_WEBCAM_RESOLUTION
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.asStyleFileSize
+import de.crysxd.octoapp.base.logging.TimberLogger
 import de.crysxd.octoapp.octoprint.SubjectAlternativeNameCompatVerifier
 import de.crysxd.octoapp.octoprint.ext.withHostnameVerifier
 import de.crysxd.octoapp.octoprint.ext.withSslKeystore
 import de.crysxd.octoapp.octoprint.interceptors.GenerateExceptionInterceptor
+import de.crysxd.octoapp.octoprint.logging.LoggingInterceptorLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
+import java.util.logging.Logger
 
 class MjpegConnection2(
     private val streamUrl: String,
@@ -125,9 +131,11 @@ class MjpegConnection2(
 
     private fun connect(): Response {
         val sslKeystoreHandler = Injector.get().sslKeyStoreHandler()
+        val logger = TimberLogger(Logger.getLogger("Mjpeg2Connection/HTTP")).logger
         val client = OkHttpClient.Builder()
             .dns(Injector.get().localDnsResolver())
             .addInterceptor(GenerateExceptionInterceptor(null, null))
+            .addInterceptor(HttpLoggingInterceptor(LoggingInterceptorLogger(logger)).setLevel(HttpLoggingInterceptor.Level.HEADERS))
             .withHostnameVerifier(SubjectAlternativeNameCompatVerifier().takeIf { sslKeystoreHandler.isWeakVerificationForHost(streamUrl) })
             .withSslKeystore(sslKeystoreHandler.loadKeyStore())
             .connectTimeout(5, TimeUnit.SECONDS)
@@ -172,24 +180,23 @@ class MjpegConnection2(
         null
     }
 
-    private class ByteCache(val size: Int = 1024 * 1024 * 2) {
-        private val array = ByteArray(size)
-        private var index: Int = 0
+    private class ByteCache {
+        private val maxSize = 1024 * 1024 * 5L
+        private val array = ByteArrayOutputStream()
         private var bitmaps = emptyList<Bitmap>()
         private var lastBitmapUsed = 0
         private val bitmapPoolSize = 3
         private var sampleSize = 1
 
         fun reset() {
-            index = 0
+            array.reset()
             sampleSize = 1
             bitmaps = emptyList()
         }
 
         fun push(bytes: ByteArray, length: Int) {
-            require(index + length < array.size) { "Byte cached overflow: ${index + length} exceeds $size" }
-            bytes.copyInto(array, index, startIndex = 0, endIndex = length)
-            index += length
+            require((array.size() + length) < maxSize) { "Byte cached overflow: ${maxSize.asStyleFileSize()}" }
+            array.write(bytes, 0, length)
         }
 
         fun readImage(length: Int, boundaryLength: Int): Bitmap? {
@@ -199,7 +206,7 @@ class MjpegConnection2(
                     val ops = BitmapFactory.Options()
                     ops.inBitmap = bitmap
                     ops.inSampleSize = sampleSize
-                    BitmapFactory.decodeByteArray(array, 0, length, ops)
+                    BitmapFactory.decodeByteArray(array.toByteArray(), 0, length, ops)
                 } catch (e: Exception) {
                     Timber.w("Failed to decode frame: $e")
                     null
@@ -217,7 +224,7 @@ class MjpegConnection2(
                 Timber.i("Creating bitmap pool")
                 val ops = BitmapFactory.Options()
                 ops.inJustDecodeBounds = true
-                BitmapFactory.decodeByteArray(array, 0, length, ops)
+                BitmapFactory.decodeByteArray(array.toByteArray(), 0, length, ops)
 
                 // Calc used size
                 val maxSize = if (BillingManager.isFeatureEnabled(FEATURE_FULL_WEBCAM_RESOLUTION)) {
@@ -249,16 +256,19 @@ class MjpegConnection2(
         }
 
         private fun dropUntil(until: Int) {
-            val length = (index - until).coerceAtLeast(0)
-            System.arraycopy(array, until, array, 0, length)
-            index = length
+            val length = array.size() - until
+            val buf = ByteArray(array.size() - until)
+            System.arraycopy(array.toByteArray(), until, buf, 0, length)
+            array.reset()
+            array.write(buf)
         }
 
         fun indexOf(boundaryStart: String): Pair<Int?, Int?> {
             // Search start
             var startIndex = 0
             var startFound = false
-            for (i in 0 until index) {
+            val array = array.toByteArray()
+            for (i in array.indices) {
                 if (array[i].toInt().toChar() == boundaryStart[startIndex]) {
                     startIndex++
                 } else {
@@ -276,11 +286,11 @@ class MjpegConnection2(
 
             // Search end
             var endIndex = -1
-            for (i in startIndex until index) {
-                val c1 = array[i].toInt().toChar()
-                val c2 = array[i + 1].toInt().toChar()
-                val c3 = array[i + 2].toInt().toChar()
-                val c4 = array[i + 3].toInt().toChar()
+            for (i in startIndex until array.size) {
+                val c1 = array.getOrNull(i + 0)?.toInt()?.toChar()
+                val c2 = array.getOrNull(i + 1)?.toInt()?.toChar()
+                val c3 = array.getOrNull(i + 2)?.toInt()?.toChar()
+                val c4 = array.getOrNull(i + 3)?.toInt()?.toChar()
                 if (c1 == '\n' && c2 == '\n') {
                     endIndex = i + 2
                     break

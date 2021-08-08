@@ -11,13 +11,16 @@ import kotlin.coroutines.CoroutineContext
 
 
 class OctoPrintDnsSdDiscovery(
-    context: Context,
+    private val context: Context,
 ) {
     private val wifi = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
     private val dnssd = DNSSDBindable(context)
 
     fun discover(coroutineContext: CoroutineContext, callback: (Service) -> Unit) {
         val lock = wifi.createMulticastLock("OctoPrintUpnpDiscovery")
+
+        // Sometimes the internal Dnssd service is not running...we can start it with this:
+        context.applicationContext.getSystemService(Context.NSD_SERVICE)
 
         try {
             lock.acquire()

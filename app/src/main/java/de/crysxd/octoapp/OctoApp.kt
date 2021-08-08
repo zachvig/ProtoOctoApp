@@ -18,7 +18,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.ext.suspendedAwait
 import de.crysxd.octoapp.base.models.MenuId
 import de.crysxd.octoapp.notification.PrintNotificationSupportBroadcastReceiver
 import de.crysxd.octoapp.widgets.AppWidgetSupportBroadcastReceiver
@@ -127,13 +126,6 @@ class OctoApp : Application() {
             // Setup analytics
             // Do not enable if we are in a TestLab environment
             FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(BaseInjector.get().octoPreferences().isCrashReportingEnabled && !BuildConfig.DEBUG)
-            try {
-                val token = FirebaseMessaging.getInstance().token.suspendedAwait()
-                Timber.i("Push token: $token")
-                FirebaseCrashlytics.getInstance().setCustomKey("Push Token", token)
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
             val analyticsSuppressed = Settings.System.getString(contentResolver, "firebase.test.lab") == "true" || BuildConfig.DEBUG
             val analyticsEnabled = BaseInjector.get().octoPreferences().isAnalyticsEnabled
             Firebase.analytics.setAnalyticsCollectionEnabled(analyticsEnabled && !analyticsSuppressed)
@@ -159,6 +151,12 @@ class OctoApp : Application() {
                 Timber.i("Refreshing widget, repository changed")
                 QuickAccessAppWidget.notifyWidgetDataChanged()
             }
+        }
+
+        // Update app language property
+        GlobalScope.launch {
+            val appLanguage = BaseInjector.get().getAppLanguageUseCase().execute(Unit).appLanguageLocale?.language ?: "en"
+            OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.AppLanguage, appLanguage)
         }
     }
 }

@@ -29,10 +29,10 @@
     <TextView
         android:id="@+id/live"
         style="@style/OctoTheme.Chip.Live"
-        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_2"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,31 +40,32 @@
         android:id="@+id/slow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_2"
         android:layout_marginEnd="@dimen/margin_0_1"
         android:alpha="0"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_slow"
+        app:layout_constraintBottom_toBottomOf="@+id/live"
         app:layout_constraintEnd_toStartOf="@+id/live"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/live" />
 
     <TextView
         android:id="@+id/unsupportedGcode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_1"
-        android:layout_marginTop="@dimen/margin_2"
+        android:layout_marginTop="@dimen/margin_1"
         android:background="@drawable/bg_chip"
-        android:backgroundTint="@color/red"
+        android:backgroundTint="@color/yellow"
         android:importantForAccessibility="no"
-        android:text="Unsupported Gcode detected (red)"
+        android:text="Unsupported Gcode detected (yellow)"
         android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
         android:textColor="@color/white"
         android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/slow"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
     <LinearLayout
         android:id="@+id/renderControls"

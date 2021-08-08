@@ -170,7 +170,8 @@
     <string name="main___banner_connection_lost_reconnecting">Verbindung verloren, wiederherstellen…</string>
     <string name="main_menu___about_text">
         <![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> wurde <font color="%1$06x"><b>für dich</b><br/></font> mit Liebe in Europa gemacht ]]>
-                        &#127466;&#127482;
+                                &#127466;&#127482;
+        
         
         
         <![CDATA[<br><a href="privacy">Data privacy</a>]]>
@@ -362,18 +363,11 @@
     <string name="show_actions">Aktionen anzeigen</string>
     <string name="show_details">Details anzeigen</string>
     <string name="show_logs">Logs anzeigen</string>
-    <string name="sign_in___access___confirm_in_web_interface">Bestätige den Zugang in der Weboberfläche</string>
-    <string name="sign_in___access___explainer">
-                        "         
-        
-        
-        <![CDATA[Öffne OctoPrint auf deinem Computer oder <a href="%s">im Browser deines Telefons</a> und bestätige, dass OctoApp auf dein OctoPrint zugreifen darf. <br><br><small>Siehst du die Aufforderung nicht? Versuche, die Seite neu zu laden</small>]]>
-                             "
-    
-    
-    </string>
-    <string name="sign_in___access___use_api_key" translatable="false">API-Schlüssel verwenden</string>
-    <string name="sign_in___access___waiting_for_access">Warten auf Zugang…</string>
+    <string name="sign_in___access___confirm_in_web_interface">Webinterface öffnen und Zugriff erlauben</string>
+    <string name="sign_in___access___explainer">Öffne OctoPrint und bestätige, dass OctoApp zugreifen darf:</string>
+    <string name="sign_in___access___open_web">Zugriff gewähren</string>
+    <string name="sign_in___access___use_api_key">…oder API-Schlüssel eingeben</string>
+    <string name="sign_in___access___waiting_for_access">Warten auf Zugriff…</string>
     <string name="sign_in___broken_setup___api_key_revoked">Der API-Schlüssel OctoApp ist nicht mehr gültig, bitte verbinde OctoPrint erneut</string>
     <string name="sign_in___broken_setup___basic_auth_required">OctoApp benötigt BasicAuth-Anmeldedaten für den Zugriff auf OctoPrint</string>
     <string name="sign_in___broken_setup___https_issue">OctoApp konnte sich aufgrund eines SSL-Problems nicht über HTTPS verbinden, bitte überprüfen deine Einstellungen</string>
@@ -398,6 +392,7 @@
     <string name="sign_in___discovery___quick_switch_disabled_title">Quick Switch nicht aktiviert</string>
     <string name="sign_in___discovery___welcome_subtitle_searching">Suche nach deinem OctoPrint…</string>
     <string name="sign_in___discovery___welcome_title">Willkommen bei OctoApp</string>
+    <string name="sign_in___manual_api_key___directions">Deine API-Schlüssel findest du in den OctoPrint-Einstellungen oder in den Benutzereinstellungen (Webinterface, klicke oben rechts auf den Benutzernamen). Kopiere den Schlüssel in die obige Eingabe oder verwende das QR-Code-Symbol, um den QR-Code zu scannen!</string>
     <string name="sign_in___manual_api_key___error_invalid_api_key">Der eingegebene API-Schlüssel wird von OctoPrint nicht akzeptiert</string>
     <string name="sign_in___manual_api_key___error_other">Octoapp war nicht in der Lage, den API-Schlüssel zu testen, führe die Fehlerbehebung durch, um mehr zu erfahren</string>
     <string name="sign_in___manual_api_key___hint">API-Schlüssel</string>
@@ -464,6 +459,9 @@
     <string name="widget_gcode_send">Sende Gcode</string>
     <string name="widget_move">Bewegen</string>
     <string name="widget_quick_access">Schnellzugriff</string>
+    <string name="widget_quick_access___tutorial_detail">Durch langes Drücken auf ein beliebiges Menüelement kannst du es an den Schnellzugriff, an das Hauptmenü oder an ein Widget für den Startbildschirm anheften.</string>
+    <string name="widget_quick_access___tutorial_learn_more">Tutorial ansehen</string>
+    <string name="widget_quick_access___tutorial_title">Mache OctoApp deins!</string>
     <string name="widget_temperature">Temperaturen</string>
     <string name="x">X</string>
     <plurals name="x_days">
@@ -496,7 +494,4 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">Du kannst dieses Limit in den OctoPrint Einstellungen ändern</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Z Vorschub (mm/min)</string>
-    <string name="widget_quick_access___tutorial_detail">Durch langes Drücken auf ein beliebiges Menüelement kannst du es an den Schnellzugriff, an das Hauptmenü oder an ein Widget für den Startbildschirm anheften.</string>
-    <string name="widget_quick_access___tutorial_title">Mache OctoApp deins!</string>
-    <string name="widget_quick_access___tutorial_learn_more">Tutorial ansehen</string>
 </resources>

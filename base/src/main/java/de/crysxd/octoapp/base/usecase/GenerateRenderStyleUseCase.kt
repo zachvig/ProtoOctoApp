@@ -1,7 +1,8 @@
 package de.crysxd.octoapp.base.usecase
 
-import android.graphics.Color
+import android.content.Context
 import android.graphics.Paint
+import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.models.RenderStyle
@@ -9,49 +10,45 @@ import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import timber.log.Timber
 import javax.inject.Inject
 
-class GenerateRenderStyleUseCase @Inject constructor() : UseCase<OctoPrintInstanceInformationV2?, RenderStyle>() {
+class GenerateRenderStyleUseCase @Inject constructor(
+    context: Context
+) : UseCase<OctoPrintInstanceInformationV2?, RenderStyle>() {
 
-    companion object {
-        private val extrudePaint = Paint().apply {
-            style = Paint.Style.STROKE
-            isAntiAlias = true
-            color = Color.WHITE
-//            strokeCap = Paint.Cap.BUTT
-        }
-
-        private val unsupportedPaint = Paint().apply {
-            style = Paint.Style.STROKE
-            isAntiAlias = true
-            color = Color.RED
-            strokeCap = Paint.Cap.BUTT
-        }
-
-        private val travelPaint = Paint().apply {
-            style = Paint.Style.STROKE
-            isAntiAlias = true
-            color = Color.GREEN
-//            strokeCap = Paint.Cap.BUTT
-        }
-
-        private val printHeadPaint = Paint().apply {
-            style = Paint.Style.FILL
-            isAntiAlias = true
-            color = Color.RED
-//            strokeCap = Paint.Cap.ROUND
-        }
-
-        val defaultStyle = RenderStyle(
-            printHeadPaint = printHeadPaint,
-            paintPalette = {
-                when (it) {
-                    Move.Type.Travel -> travelPaint
-                    Move.Type.Extrude -> extrudePaint
-                    Move.Type.Unsupported -> unsupportedPaint
-                }
-            },
-            background = R.drawable.print_bed_generic
-        )
+    private val extrudePaint = Paint().apply {
+        style = Paint.Style.STROKE
+        isAntiAlias = true
+        color = ContextCompat.getColor(context, R.color.gcode_extrusion)
     }
+
+    private val unsupportedPaint = Paint().apply {
+        style = Paint.Style.STROKE
+        isAntiAlias = true
+        color = ContextCompat.getColor(context, R.color.gcode_unsupported)
+    }
+
+    private val travelPaint = Paint().apply {
+        style = Paint.Style.STROKE
+        isAntiAlias = true
+        color = ContextCompat.getColor(context, R.color.gcode_travel)
+    }
+
+    private val printHeadPaint = Paint().apply {
+        style = Paint.Style.FILL
+        isAntiAlias = true
+        color = ContextCompat.getColor(context, R.color.gcode_print_head)
+    }
+
+    private val defaultStyle = RenderStyle(
+        printHeadPaint = printHeadPaint,
+        paintPalette = {
+            when (it) {
+                Move.Type.Travel -> travelPaint
+                Move.Type.Extrude -> extrudePaint
+                Move.Type.Unsupported -> unsupportedPaint
+            }
+        },
+        background = R.drawable.print_bed_generic
+    )
 
     override suspend fun doExecute(param: OctoPrintInstanceInformationV2?, timber: Timber.Tree): RenderStyle = try {
         // Combine info to one string

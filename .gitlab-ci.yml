@@ -1,5 +1,3 @@
-image: jangrewe/gitlab-ci-android
-
 cache:
   key: ${CI_PROJECT_ID}
   paths:
@@ -7,33 +5,51 @@ cache:
     - .gradle/
 
 stages:
+  - test
   - build
   - deploy
 
-before_script:
+.default_before_script: &default_before_script
   - chmod +x gradlew
   - echo $KEY_FILE_B64 | base64 -d > app/key.keystore
   - echo $SERVICE_ACCOUNT_JSON > app/service-account.json
   - echo "signing.storePassword=$KEY_STORE_PASSWORD" >> local.properties
   - echo "signing.storeAlias=$RELEASE_KEY_ALIAS" >> local.properties
   - echo "signing.keyPassword=$RELEASE_KEY_PASSWORD" >> local.properties
+  - echo "org.gradle.jvmargs=-Xmx4096m" >> local.properties
   - eval "$DEBUGGING_STATEMENT_BEFORE"
 
-after_script:
+.default_after_script: &default_after_script
   - rm app/service-account.json
   - rm app/key.keystore
   - rm local.properties
   - eval "$DEBUGGING_STATEMENT_AFTER"
 
-build:
+before_script:
+  - *default_before_script
+
+after_script:
+  - *default_after_script
+
+test:
   stage: build
-  only:
+  tags:
+    - test_env
+  except:
     - tags
     - /^release\/.*$/
   script:
-    - ./gradlew assembleRelease --no-daemon
+    - ./gradlew test
+    - ./gradlew assembleDebugAndroidTest
+    - ~/ci-scripts/start-emulator.sh
+    - ./gradlew connectedDebugAndroidTest
+    - ~/ci-scripts/stop-emulator.sh
     - mkdir outputs
     - git tag -l --format='%(contents)' "$CI_COMMIT_TAG" > outputs/release_notes.txt
+  after_script:
+    # Ensure emulator is stopped
+    - ~/ci-scripts/stop-emulator.sh
+    - *default_after_script
   artifacts:
     when: always
     paths:
@@ -41,8 +57,37 @@ build:
       - app/build/reports/
       - app/build/outputs/apk/release/app-release.apk
 
-deploy_google_play:
+test_and_build:
   stage: build
+  tags:
+    - test_env
+  only:
+    - tags
+    - /^release\/.*$/
+  script:
+    - ./gradlew testRelease
+    - ./gradlew assembleAndroidTest
+    - ~/ci-scripts/start-emulator.sh
+    - ./gradlew connectedAndroidTest
+    - ~/ci-scripts/stop-emulator.sh
+    - ./gradlew assembleRelease
+    - mkdir outputs
+    - git tag -l --format='%(contents)' "$CI_COMMIT_TAG" > outputs/release_notes.txt
+  after_script:
+    # Ensure emulator is stopped
+    - ~/ci-scripts/stop-emulator.sh
+    - *default_after_script
+  artifacts:
+    when: always
+    paths:
+      - outputs/release_notes.txt
+      - app/build/reports/
+      - app/build/outputs/apk/release/app-release.apk
+
+
+deploy_google_play:
+  stage: deploy
+  image: jangrewe/gitlab-ci-android
   script:
     - ./gradlew publishReleaseBundle
   artifacts:
@@ -65,7 +110,7 @@ deploy_google_play:
 
 deploy_firebase:
   stage: deploy
-  needs: [ "build" ]
+  needs: [ "test_and_build" ]
   image: node
   script:
     - npm install -g firebase-tools
