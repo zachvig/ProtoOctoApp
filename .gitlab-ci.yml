@@ -5,6 +5,7 @@ cache:
     - .gradle/
 
 stages:
+  - test
   - build
   - deploy
 
@@ -30,7 +31,7 @@ before_script:
 after_script:
   - *default_after_script
 
-test_and_build:
+test:
   stage: build
   tags:
     - test_env
@@ -39,6 +40,32 @@ test_and_build:
     - ./gradlew assembleDebugAndroidTest
     - ~/ci-scripts/start-emulator.sh
     - ./gradlew connectedDebugAndroidTest
+    - ~/ci-scripts/stop-emulator.sh
+    - mkdir outputs
+    - git tag -l --format='%(contents)' "$CI_COMMIT_TAG" > outputs/release_notes.txt
+  after_script:
+    # Ensure emulator is stopped
+    - ~/ci-scripts/stop-emulator.sh
+    - *default_after_script
+  artifacts:
+    when: always
+    paths:
+      - outputs/release_notes.txt
+      - app/build/reports/
+      - app/build/outputs/apk/release/app-release.apk
+
+test_and_build:
+  stage: build
+  tags:
+    - test_env
+  only:
+    - tags
+    - /^release\/.*$/
+  script:
+    - ./gradlew testRelease
+    - ./gradlew assembleReleaseAndroidTest
+    - ~/ci-scripts/start-emulator.sh
+    - ./gradlew connectedReleaseAndroidTest
     - ~/ci-scripts/stop-emulator.sh
     - ./gradlew assembleRelease
     - mkdir outputs
@@ -53,6 +80,7 @@ test_and_build:
       - outputs/release_notes.txt
       - app/build/reports/
       - app/build/outputs/apk/release/app-release.apk
+
 
 deploy_google_play:
   stage: deploy
