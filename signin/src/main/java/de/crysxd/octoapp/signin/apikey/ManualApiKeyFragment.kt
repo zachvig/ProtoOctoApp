@@ -52,7 +52,9 @@ class ManualApiKeyFragment : BaseFragment() {
         contentBinding.input.hintActive = getString(R.string.sign_in___manual_api_key___hint_active)
         contentBinding.input.actionIcon = R.drawable.ic_qr_code_scanner_24px
         contentBinding.title.setText(R.string.sign_in___manual_api_key___title)
-        contentBinding.input.examples = listOf("076B961EEB9146F1AE7B3AF2ED1E3AD8", "3219DEEC978F49DF9B426CD42E793CE9", "FA7B1CF230124157A5DCC6322EEC1E9A")
+        contentBinding.apiKeyDirections.isVisible = true
+        contentBinding.input.examples =
+            listOf("e.g. 076B961EEB9146F1AE7B3AF2ED1E3AD8", "e.g. 3219DEEC978F49DF9B426CD42E793CE9", "e.g. FA7B1CF230124157A5DCC6322EEC1E9A")
         contentBinding.input.setOnActionListener {
             findNavController().navigate(R.id.action_read_qr_code)
         }

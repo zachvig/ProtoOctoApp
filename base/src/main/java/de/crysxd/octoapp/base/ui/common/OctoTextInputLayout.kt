@@ -210,10 +210,14 @@ class OctoTextInputLayout @JvmOverloads constructor(context: Context, attrs: Att
     private fun showNextExample() {
         // Only show next example when the input has focus as examples are only shown in focused state
         if (binding.input.hasFocus() && examples.isNotEmpty()) {
-            animateExampleAlpha(1f, 0f) {
-                visibleExampleIndex = (visibleExampleIndex + 1) % examples.size
-                Timber.i("visibleExampleIndex=$visibleExampleIndex")
-                animateExampleAlpha(0f, 1f)
+            if (examples.size == 1) {
+                visibleExampleIndex = 0
+            } else {
+                animateExampleAlpha(1f, 0f) {
+                    visibleExampleIndex = (visibleExampleIndex + 1) % examples.size
+                    Timber.i("visibleExampleIndex=$visibleExampleIndex")
+                    animateExampleAlpha(0f, 1f)
+                }
             }
         }
     }

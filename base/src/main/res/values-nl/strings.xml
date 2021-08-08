@@ -170,7 +170,10 @@
     <string name="main___banner_connection_lost_reconnecting">Verbinding verbroken, opnieuw verbonden…</string>
     <string name="main_menu___about_text">
         <![CDATA[Versie <font color="%1$06x"><b>%2$s</b></font> was <br/>gemaakt <font color="%1$06x"><b>voor u</b></font> met liefde in Europa ]]>
-                        &#127466;&#127482;
+                                                &#127466;&#127482;
+        
+        
+        
         
         
         <![CDATA[<br><a href="privacy">Data privacy</a>]]>
@@ -293,7 +296,10 @@
     <string name="power_controls___x_offline">%s (offline)</string>
     <string name="power_menu___bottom_text">
         <![CDATA[<small>Voedingsapparaten worden geleverd door een <a href="https://app.octoapp.eu/help/supported_plugin">ondersteunde plugin</a></small>]]>
-                                .
+                                                        .
+    
+    
+    
     
     
     
@@ -366,18 +372,10 @@
     <string name="show_actions">Toon acties</string>
     <string name="show_details">Toon details</string>
     <string name="show_logs">Toon logboeken</string>
-    <string name="sign_in___access___confirm_in_web_interface">Toegang bevestigen in de webinterface</string>
-    <string name="sign_in___access___explainer">
-                        "         
-        
-        
-        <![CDATA[Open OctoPrint op uw computer of <a href="%s">in de browser van uw telefoon</a> en bevestig dat OctoApp toegang heeft tot uw OctoPrint.<br><br><small>Krijgt u de prompt niet te zien? Probeer de pagina opnieuw te laden</small>]]>
-                           "
-    
-    
-    </string>
-    <string name="sign_in___access___use_api_key" translatable="false">API sleutel gebruiken</string>
-    <string name="sign_in___access___waiting_for_access">Wachten op toegang…</string>
+    <string name="sign_in___access___confirm_in_web_interface">Open de webinterface en geef toegang</string>
+    <string name="sign_in___access___explainer">Open OctoPrint en bevestig dat OctoApp toegang heeft:</string>
+    <string name="sign_in___access___open_web">Toegang verlenen</string>
+    <string name="sign_in___access___use_api_key">…of voer een API sleutel in</string>
     <string name="sign_in___broken_setup___api_key_revoked">De API sleutel OctoApp is niet langer geldig, gelieve OctoPrint opnieuw te verbinden</string>
     <string name="sign_in___broken_setup___basic_auth_required">OctoApp vereist BasicAuth referenties voor toegang tot OctoPrint</string>
     <string name="sign_in___broken_setup___https_issue">OctoApp kon geen verbinding maken via HTTPS vanwege een SSL-probleem, controleer uw instellingen</string>
@@ -402,6 +400,7 @@
     <string name="sign_in___discovery___quick_switch_disabled_title">Quick switch niet ingeschakeld</string>
     <string name="sign_in___discovery___welcome_subtitle_searching">Op zoek naar uw OctoPrint…</string>
     <string name="sign_in___discovery___welcome_title">Welkom bij OctoApp</string>
+    <string name="sign_in___manual_api_key___directions">Uw API sleutel staat in de OctoPrint instellingen of in de gebruikersinstellingen (web interface, klik op de gebruikersnaam in de rechterbovenhoek). Kopieer de sleutel naar de invoer hierboven of gebruik het QR code icoon om de QR code te scannen!</string>
     <string name="sign_in___manual_api_key___error_invalid_api_key">De ingevoerde API-sleutel wordt niet geaccepteerd door OctoPrint</string>
     <string name="sign_in___manual_api_key___error_other">Octoapp was niet in staat om de API-sleutel te testen, voer het oplossen van problemen uit om meer te leren</string>
     <string name="sign_in___manual_api_key___hint">API-sleutel</string>
@@ -468,6 +467,9 @@
     <string name="widget_gcode_send">Stuur Gcode</string>
     <string name="widget_move">Verplaats</string>
     <string name="widget_quick_access">Snelle toegang</string>
+    <string name="widget_quick_access___tutorial_detail">U kunt op elk menu-item lang drukken om het vast te maken aan Snelle toegang, het hoofdmenu of een widget op het beginscherm.</string>
+    <string name="widget_quick_access___tutorial_learn_more">Bekijk de handleiding</string>
+    <string name="widget_quick_access___tutorial_title">Maak OctoApp de jouwe!</string>
     <string name="widget_temperature">Temperaturen</string>
     <string name="x">X</string>
     <plurals name="x_days">
@@ -500,7 +502,4 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">Je kunt deze limiet wijzigen in OctoPrint instellingen</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Z-feedrate (mm/min)</string>
-    <string name="widget_quick_access___tutorial_detail">U kunt op elk menu-item lang drukken om het vast te maken aan Snelle toegang, het hoofdmenu of een widget op het beginscherm.</string>
-    <string name="widget_quick_access___tutorial_title">Maak OctoApp de jouwe!</string>
-    <string name="widget_quick_access___tutorial_learn_more">Bekijk de handleiding</string>
 </resources>

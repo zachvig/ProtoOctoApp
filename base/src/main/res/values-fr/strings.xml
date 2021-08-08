@@ -39,7 +39,8 @@
     <string name="completed">Terminé</string>
     <string name="configure_remote_acces___description">
         <![CDATA[Pas à la maison ? Seul, OctoApp ne peut pas atteindre votre OctoPrint car il n\'est disponible que dans votre réseau domestique. Vous devez rendre OctoPrint disponible sur internet afin que OctoApp puisse y accéder où que vous soyez. Pour en savoir plus <a href="https://app.octoapp.eu/help/use_remotely">ici</a>.]]>
-                        .
+                                .
+    
     
     
     </string>
@@ -97,7 +98,8 @@
     <string name="emergency_stop_confirmation_action">Arrêt d\'urgence</string>
     <string name="emergency_stop_confirmation_message">
         <![CDATA[Voulez-vous arrêter d\'urgence l\'imprimante?<br><br><small>Cela déclenche une commande M112 avec votre imprimante. Veuillez considérer cela comme une \"annulation immédiate\" où l\'imprimante s\'arrête sans travailler sur la file d\'attente.<br><br>Important : l\'imprimante doit être redémarrée après un arrêt d\'urgence !</small>]]>
-                        .
+                                .
+    
     
     
     </string>
@@ -176,10 +178,12 @@
     <string name="main___banner_connection_lost_reconnecting">Connexion perdue, reconnexion…</string>
     <string name="main_menu___about_text">
         <![CDATA[La version <font color="%1$06x"><b>%2$s</b></font> à été<br/>crée <font color="%1$06x"><b>pour vous</b></font> avec amour en Europe ]]>
-                &#127466;&#127482;
+                        &#127466;&#127482;
+        
         
         <![CDATA[<br/>Traduction française par Electrocat0 ]]>
-                &#127467;&#127479;
+                        &#127467;&#127479;
+        
         
         <![CDATA[<br><a href="privacy">Data privacy</a>]]>
     </string>
@@ -192,7 +196,8 @@
     <string name="main_menu___enable_quick_switch">Activer le changement rapide d\'OctoPrint</string>
     <string name="main_menu___hint_name_and_colorscheme">
         <![CDATA[<small>Vous avez un couple OctoPrint? Définissez le <b>nom et la palette de couleurs</b> dans les paramètres d\'apparence d\'OctoPrint\!</small>]]>
-                        .
+                                .
+    
     
     
     </string>
@@ -373,12 +378,10 @@
     <string name="show_actions">Afficher les actions</string>
     <string name="show_details">Afficher les détails</string>
     <string name="show_logs">Afficher les journaux (logs)</string>
-    <string name="sign_in___access___confirm_in_web_interface">Confirmer l\'accès dans l\'interface web</string>
-    <string name="sign_in___access___explainer">
-        <![CDATA[Ouvrez OctoPrint sur votre ordinateur ou <a href="%s">dans le navigateur de votre téléphone</a> et confirmez que OctoApp est autorisé à accéder à votre OctoPrint.<br><br><small>Vous ne voyez pas l\'invite ? Essayez de recharger la page</small>]]>
-    </string>
-    <string name="sign_in___access___use_api_key" translatable="false">Utiliser la clé API</string>
-    <string name="sign_in___access___waiting_for_access">En attendant l\'accès…</string>
+    <string name="sign_in___access___confirm_in_web_interface">Ouvrez l\'interface web et autorisez l\'accès</string>
+    <string name="sign_in___access___explainer">Ouvrez OctoPrint et confirmez que OctoApp est autorisé à accéder :</string>
+    <string name="sign_in___access___open_web">Autoriser l\'accès</string>
+    <string name="sign_in___access___use_api_key">…ou entrez une clé API</string>
     <string name="sign_in___broken_setup___api_key_revoked">La clé API OctoApp n\'est plus valide, veuillez vous connecter à nouveau à OctoPrint.</string>
     <string name="sign_in___broken_setup___basic_auth_required">OctoApp a demandé des informations d\'identification BasicAuth pour accéder à OctoPrint.</string>
     <string name="sign_in___broken_setup___https_issue">OctoApp n\'a pas pu se connecter via HTTPS en raison d\'un problème de SSL, veuillez vérifier votre configuration.</string>
@@ -403,6 +406,7 @@
     <string name="sign_in___discovery___quick_switch_disabled_title">Le commutateur rapide n\'est pas activé</string>
     <string name="sign_in___discovery___welcome_subtitle_searching">Recherche de votre OctoPrint…</string>
     <string name="sign_in___discovery___welcome_title">Bienvenue à OctoApp</string>
+    <string name="sign_in___manual_api_key___directions">Votre clé API se trouve dans les paramètres OctoPrint ou dans les paramètres utilisateur (interface web, cliquez sur le nom de l\'utilisateur en haut à droite). Copiez la clé dans l\'entrée ci-dessus ou utilisez l\'icône du code QR pour scanner le code QR !</string>
     <string name="sign_in___manual_api_key___error_invalid_api_key">La clé API entrée n\'est pas acceptée par OctoPrint.</string>
     <string name="sign_in___manual_api_key___error_other">Octoapp n\'a pas pu tester la clé API, lancez le dépannage pour en savoir plus.</string>
     <string name="sign_in___manual_api_key___hint">Clé API</string>
@@ -469,6 +473,9 @@
     <string name="widget_gcode_send">Envoyer le Gcode</string>
     <string name="widget_move">Déplacement</string>
     <string name="widget_quick_access">Accès rapide</string>
+    <string name="widget_quick_access___tutorial_detail">Vous pouvez appuyer longuement sur n\'importe quel élément de menu pour l\'épingler à l\'accès rapide, au menu principal ou à un widget de l\'écran d\'accueil.</string>
+    <string name="widget_quick_access___tutorial_learn_more">Regardez le tutoriel</string>
+    <string name="widget_quick_access___tutorial_title">Faites d\'OctoApp le vôtre !</string>
     <string name="widget_temperature">Températures</string>
     <string name="x">X</string>
     <plurals name="x_days">
@@ -501,7 +508,4 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">Vous pouvez changer cette limite dans les paramètres d\'OctoPrint</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Vitesse Z (mm/min)</string>
-    <string name="widget_quick_access___tutorial_detail">Vous pouvez appuyer longuement sur n\'importe quel élément de menu pour l\'épingler à l\'accès rapide, au menu principal ou à un widget de l\'écran d\'accueil.</string>
-    <string name="widget_quick_access___tutorial_title">Faites d\'OctoApp le vôtre !</string>
-    <string name="widget_quick_access___tutorial_learn_more">Regardez le tutoriel</string>
 </resources>
