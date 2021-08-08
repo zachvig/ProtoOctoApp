@@ -107,7 +107,7 @@ deploy_google_play:
       - app/build/outputs/bundle/release/*.aab
       - outputs/release_notes.txt
   only:
-    - /^\d+\.\d+.\d+$/
+    - /^\d+\.\d+\.\d+$/
 
 #deploy_gitlab:
 #  stage: deploy
