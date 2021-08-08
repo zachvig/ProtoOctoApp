@@ -31,8 +31,8 @@ before_script:
 after_script:
   - *default_after_script
 
-test:
-  stage: build
+test_debug:
+  stage: test
   tags:
     - test_env
   except:
@@ -57,8 +57,8 @@ test:
       - app/build/reports/
       - app/build/outputs/apk/release/app-release.apk
 
-test_and_build:
-  stage: build
+test_release:
+  stage: test
   tags:
     - test_env
   only:
@@ -71,8 +71,6 @@ test_and_build:
     - ./gradlew connectedAndroidTest
     - ~/ci-scripts/stop-emulator.sh
     - ./gradlew assembleRelease
-    - mkdir outputs
-    - git tag -l --format='%(contents)' "$CI_COMMIT_TAG" > outputs/release_notes.txt
   after_script:
     # Ensure emulator is stopped
     - ~/ci-scripts/stop-emulator.sh
@@ -80,8 +78,21 @@ test_and_build:
   artifacts:
     when: always
     paths:
-      - outputs/release_notes.txt
       - app/build/reports/
+
+build_release:
+  stage: build
+  image: jangrewe/gitlab-ci-android
+  only:
+    - /^\d+\.\d+-beta\d+$/
+  script:
+    - ./gradlew assembleRelease
+    - mkdir outputs
+    - git tag -l --format='%(contents)' "$CI_COMMIT_TAG" > outputs/release_notes.txt
+  artifacts:
+    when: always
+    paths:
+      - outputs/release_notes.txt
       - app/build/outputs/apk/release/app-release.apk
 
 
@@ -96,7 +107,7 @@ deploy_google_play:
       - app/build/outputs/bundle/release/*.aab
       - outputs/release_notes.txt
   only:
-    - tags
+    - /^\d+\.\d+.\d+$/
 
 #deploy_gitlab:
 #  stage: deploy
@@ -110,10 +121,10 @@ deploy_google_play:
 
 deploy_firebase:
   stage: deploy
-  needs: [ "test_and_build" ]
+  needs: [ "build" ]
   image: node
   script:
     - npm install -g firebase-tools
     - firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk --token "$FIREBASE_CLI_TOKEN" --app "$FIREBASE_APP_ID" --release-notes-file "outputs/release_notes.txt" --groups "$FIREBASE_TESTER_GROUPS"
   only:
-    - tags
+    - /^\d+\.\d+-beta\d+$/
