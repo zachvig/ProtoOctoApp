@@ -35,6 +35,9 @@ test:
   stage: build
   tags:
     - test_env
+  except:
+    - tags
+    - /^release\/.*$/
   script:
     - ./gradlew test
     - ./gradlew assembleDebugAndroidTest
@@ -63,9 +66,9 @@ test_and_build:
     - /^release\/.*$/
   script:
     - ./gradlew testRelease
-    - ./gradlew assembleReleaseAndroidTest
+    - ./gradlew assembleAndroidTest
     - ~/ci-scripts/start-emulator.sh
-    - ./gradlew connectedReleaseAndroidTest
+    - ./gradlew connectedAndroidTest
     - ~/ci-scripts/stop-emulator.sh
     - ./gradlew assembleRelease
     - mkdir outputs
