@@ -69,9 +69,9 @@
                 android:layout_marginTop="@dimen/margin_1"
                 android:layout_marginBottom="@dimen/margin_2"
                 android:autofillHints="pw|password"
-                app:example="admin"
+                app:example="secret"
                 app:forPassword="true"
-                app:label="@string/sign_in___probe___basic_username" />
+                app:label="@string/sign_in___probe___basic_password" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

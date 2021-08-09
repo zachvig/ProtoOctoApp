@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.urlEncode
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
@@ -213,8 +214,8 @@ class ProbeOctoPrintFragment : BaseFragment() {
             val password = findingBinding?.passwordInput?.editText?.text?.toString() ?: ""
             val uri = Uri.parse(finding.webUrl)
             val credentials = when {
-                user.isNotBlank() && password.isNotBlank() -> "$user:$password@"
-                user.isNotBlank() -> "$user@"
+                user.isNotBlank() && password.isNotBlank() -> "${user.urlEncode()}:${password.urlEncode()}@"
+                user.isNotBlank() -> "${user.urlEncode()}@"
                 else -> ""
             }
             val webUrl = uri.buildUpon().encodedAuthority("$credentials${uri.host}").build().toString()
