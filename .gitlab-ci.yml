@@ -16,7 +16,6 @@ stages:
   - echo "signing.storePassword=$KEY_STORE_PASSWORD" >> local.properties
   - echo "signing.storeAlias=$RELEASE_KEY_ALIAS" >> local.properties
   - echo "signing.keyPassword=$RELEASE_KEY_PASSWORD" >> local.properties
-  - echo "org.gradle.jvmargs=-Xmx4096m" >> local.properties
   - eval "$DEBUGGING_STATEMENT_BEFORE"
 
 .default_after_script: &default_after_script
@@ -39,10 +38,10 @@ test_debug:
     - tags
     - /^release\/.*$/
   script:
-    - ./gradlew test
-    - ./gradlew assembleDebugAndroidTest
+    - ./gradlew test -Dorg.gradle.jvmargs='-Xmx5g' --parallel --daemon
+    - ./gradlew assembleDebugAndroidTest -Dorg.gradle.jvmargs='-Xmx5g' --parallel --daemon
     - ~/ci-scripts/start-emulator.sh
-    - ./gradlew connectedDebugAndroidTest
+    - ./gradlew connectedDebugAndroidTest -Dorg.gradle.jvmargs='-Xmx5g' --parallel --daemon
     - ~/ci-scripts/stop-emulator.sh
     - mkdir outputs
     - git tag -l --format='%(contents)' "$CI_COMMIT_TAG" > outputs/release_notes.txt
