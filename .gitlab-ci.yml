@@ -64,12 +64,12 @@ test_release:
     - tags
     - /^release\/.*$/
   script:
-    - ./gradlew testRelease -Dorg.gradle.jvmargs='-Xmx5g' --parallel --daemon
-    - ./gradlew assembleAndroidTest -Dorg.gradle.jvmargs='-Xmx5g' --parallel --daemon
+    - ./gradlew testRelease
+    - ./gradlew assembleAndroidTest
     - ~/ci-scripts/start-emulator.sh
-    - ./gradlew connectedAndroidTest -Dorg.gradle.jvmargs='-Xmx5g' --parallel --daemon
+    - ./gradlew connectedAndroidTest
     - ~/ci-scripts/stop-emulator.sh
-    - ./gradlew assembleRelease -Dorg.gradle.jvmargs='-Xmx5g' --parallel --daemon
+    - ./gradlew assembleRelease
   after_script:
     # Ensure emulator is stopped
     - ~/ci-scripts/stop-emulator.sh
