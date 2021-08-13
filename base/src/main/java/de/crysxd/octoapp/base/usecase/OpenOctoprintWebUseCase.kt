@@ -20,7 +20,7 @@ class OpenOctoprintWebUseCase @Inject constructor(
         (param.octoPrintWebUrl ?: octoPrintProvider.octoPrint().webUrl).let { webUrl ->
             val uri = Uri.parse(webUrl)
             val host = uri.host ?: throw IllegalArgumentException("No host in $uri")
-            val resolvedUrl = if (host.startsWith(UPNP_ADDRESS_PREFIX)) {
+            val resolvedUrl = if (host.startsWith(UPNP_ADDRESS_PREFIX) || host.endsWith(".local")) {
                 val resolvedHost = withContext(Dispatchers.IO) { localDnsResolver.lookup(host).first() }
                 uri.buildUpon().authority(resolvedHost.hostAddress).build()
             } else {
