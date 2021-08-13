@@ -4,12 +4,14 @@ import com.google.gson.annotations.SerializedName
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 
 data class TradfriPowerDevice(
-    override val id: String,
+    @SerializedName("id") val idInt: Int,
     @Transient val plugin: TradfriPowerPlugin?,
     @SerializedName("name") override val displayName: String,
 ) : PowerDevice() {
     override val capabilities
         get() = listOf(Capability.ControlPrinterPower, Capability.Illuminate)
+
+    override val id: String get() = idInt.toString()
 
     @Transient
     override val pluginDisplayName = "Trådfri"
