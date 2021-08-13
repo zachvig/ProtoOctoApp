@@ -373,7 +373,7 @@
     <string name="show_details">Toon details</string>
     <string name="show_logs">Toon logboeken</string>
     <string name="sign_in___access___confirm_in_web_interface">Open de webinterface en geef toegang</string>
-    <string name="sign_in___access___explainer">Open OctoPrint en bevestig dat OctoApp toegang heeft:</string>
+    <string name="sign_in___access___explainer">Open OctoPrint op uw telefoon of computer en bevestig dat OctoApp toegang heeft:</string>
     <string name="sign_in___access___open_web">Toegang verlenen</string>
     <string name="sign_in___access___use_api_key">…of voer een API sleutel in</string>
     <string name="sign_in___broken_setup___api_key_revoked">De API sleutel OctoApp is niet langer geldig, gelieve OctoPrint opnieuw te verbinden</string>

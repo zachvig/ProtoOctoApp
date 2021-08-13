@@ -379,7 +379,7 @@
     <string name="show_details">Afficher les détails</string>
     <string name="show_logs">Afficher les journaux (logs)</string>
     <string name="sign_in___access___confirm_in_web_interface">Ouvrez l\'interface web et autorisez l\'accès</string>
-    <string name="sign_in___access___explainer">Ouvrez OctoPrint et confirmez que OctoApp est autorisé à accéder :</string>
+    <string name="sign_in___access___explainer">Ouvrez OctoPrint sur votre téléphone ou votre ordinateur et confirmez que OctoApp est autorisé à accéder :</string>
     <string name="sign_in___access___open_web">Autoriser l\'accès</string>
     <string name="sign_in___access___use_api_key">…ou entrez une clé API</string>
     <string name="sign_in___broken_setup___api_key_revoked">La clé API OctoApp n\'est plus valide, veuillez vous connecter à nouveau à OctoPrint.</string>

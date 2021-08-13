@@ -364,7 +364,7 @@
     <string name="show_details">Details anzeigen</string>
     <string name="show_logs">Logs anzeigen</string>
     <string name="sign_in___access___confirm_in_web_interface">Webinterface öffnen und Zugriff erlauben</string>
-    <string name="sign_in___access___explainer">Öffne OctoPrint und bestätige, dass OctoApp zugreifen darf:</string>
+    <string name="sign_in___access___explainer">Öffne OctoPrint auf deinem Telefon oder Computer und bestätige, dass OctoApp der zugreifen darf:</string>
     <string name="sign_in___access___open_web">Zugriff gewähren</string>
     <string name="sign_in___access___use_api_key">…oder API-Schlüssel eingeben</string>
     <string name="sign_in___access___waiting_for_access">Warten auf Zugriff…</string>

@@ -374,7 +374,7 @@
     <string name="show_details">Show Details</string>
     <string name="show_logs">Show logs</string>
     <string name="sign_in___access___confirm_in_web_interface">Open the web interface and allow access</string>
-    <string name="sign_in___access___explainer">Open OctoPrint and confirm that OctoApp is allowed to access:</string>
+    <string name="sign_in___access___explainer">Open OctoPrint on your phone or computer and confirm that OctoApp is allowed to access:</string>
     <string name="sign_in___access___open_web">Allow access</string>
     <string name="sign_in___access___use_api_key">…or enter an API key</string>
     <string name="sign_in___broken_setup___api_key_revoked">The API key OctoApp is no longer valid, please connect OctoPrint again</string>
