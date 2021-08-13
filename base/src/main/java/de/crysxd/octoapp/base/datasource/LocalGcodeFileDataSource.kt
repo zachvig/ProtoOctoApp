@@ -20,7 +20,6 @@ import kotlinx.coroutines.launch
 import org.nustaq.serialization.FSTConfiguration
 import timber.log.Timber
 import java.io.*
-import java.util.*
 import kotlin.math.absoluteValue
 
 
@@ -32,8 +31,9 @@ class LocalGcodeFileDataSource(
     private val sharedPreferences: SharedPreferences
 ) {
 
-    private val cacheRoot = File(context.cacheDir, "gcode3")
+    private val cacheRoot = File(context.cacheDir, "gcode4")
     private val oldCacheRoots = listOf(
+        File(context.cacheDir, "gcode3"),
         File(context.cacheDir, "gcode2"),
         File(context.cacheDir, "gcode")
     )
@@ -159,7 +159,7 @@ class LocalGcodeFileDataSource(
     private fun getDataFile(cacheKey: CacheKey) = File(cacheRoot, "$cacheKey.bin")
 
     data class CacheEntry(
-        val cachedAt: Date,
+        val cachedAt: Long,
         val fileDate: Long,
     )
 
@@ -174,7 +174,7 @@ class LocalGcodeFileDataSource(
 
         init {
             dataFile.parentFile?.mkdirs()
-            val cacheEntry = CacheEntry(cachedAt = Date(), fileDate = file.date)
+            val cacheEntry = CacheEntry(cachedAt = System.currentTimeMillis(), fileDate = file.date)
             dataSource.sharedPreferences.edit {
                 putString(cacheKey, dataSource.gson.toJson(cacheEntry))
             }
