@@ -27,7 +27,8 @@ import javax.inject.Named
         DataSourceModule::class,
         ViewModelModule::class,
         FirebaseModule::class,
-        SslModule::class
+        SslModule::class,
+        UseCaseModule::class,
     ]
 )
 interface BaseComponent {
@@ -94,6 +95,7 @@ interface BaseComponent {
     fun togglePsuUseCase(): TogglePsuUseCase
     fun handleOctoEverywhereAppPortalSuccessUseCase(): HandleOctoEverywhereAppPortalSuccessUseCase
     fun handleOctoEverywhereExceptionUseCase(): HandleOctoEverywhereExceptionUseCase
+    fun discoverOctoPrintUseCase(): DiscoverOctoPrintUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

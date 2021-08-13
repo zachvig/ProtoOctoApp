@@ -12,6 +12,7 @@ object Injector {
             .build()
     }
 
-    fun get(): SignInComponent = instance
+    fun get(): SignInComponent =
+        instance
 
 }
