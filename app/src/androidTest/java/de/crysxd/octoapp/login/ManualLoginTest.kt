@@ -29,6 +29,7 @@ import de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
 import de.crysxd.octoapp.base.usecase.RequestApiAccessUseCase
 import de.crysxd.octoapp.framework.LazyActivityScenarioRule
+import de.crysxd.octoapp.framework.RetryRule
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.waitFor
 import de.crysxd.octoapp.framework.waitForDialog
@@ -52,8 +53,8 @@ class ManualLoginTest {
         Intent(InstrumentationRegistry.getInstrumentation().targetContext, MainActivity::class.java)
     }
 
-//    @get:Rule
-//    val retryRule = RetryRule(activityScenarioRule = activityRule)
+    @get:Rule
+    val retryRule = RetryRule(activityScenarioRule = activityRule)
 
     private val discoverUseCase = mock<DiscoverOctoPrintUseCase>()
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
@@ -69,6 +70,7 @@ class ManualLoginTest {
         de.crysxd.octoapp.signin.di.Injector.init(mockBase)
     }
 
+    var first = true
     @Test
     fun WHEN_no_instances_are_found_THEN_we_directly_move_to_manual_and_can_sign_in() = runBlocking {
         // GIVEN
@@ -91,6 +93,11 @@ class ManualLoginTest {
 
         // Wait for checks to fail
         waitForChecksToFailWithUnableToResolveHost(domain)
+
+        if (first) {
+            first = false
+            onView(withId(R.id.manualConnectOption)).perform(click())
+        }
     }
 
     @Test

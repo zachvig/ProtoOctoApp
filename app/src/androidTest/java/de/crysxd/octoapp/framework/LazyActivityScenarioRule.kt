@@ -2,6 +2,7 @@ package de.crysxd.octoapp.framework
 
 import android.app.Activity
 import android.content.Intent
+import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import org.junit.rules.ExternalResource
 
@@ -28,7 +29,6 @@ class LazyActivityScenarioRule<A : Activity> : ExternalResource {
 
     private var scenario: ActivityScenario<A>? = null
 
-    private var scenarioLaunched: Boolean = false
 
     override fun before() {
         if (launchActivity) {
@@ -41,12 +41,11 @@ class LazyActivityScenarioRule<A : Activity> : ExternalResource {
     }
 
     fun launch(newIntent: Intent? = null) {
-        if (scenarioLaunched) throw IllegalStateException("Scenario has already been launched!")
+        if ((scenario?.state ?: Lifecycle.State.INITIALIZED) >= Lifecycle.State.CREATED) throw IllegalStateException("Scenario has already been launched!")
 
         newIntent?.let { scenarioSupplier = { ActivityScenario.launch<A>(it) } }
 
         scenario = scenarioSupplier()
-        scenarioLaunched = true
     }
 
     fun getScenario(): ActivityScenario<A> = checkNotNull(scenario)
