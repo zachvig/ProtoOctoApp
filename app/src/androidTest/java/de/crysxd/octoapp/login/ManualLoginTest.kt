@@ -70,7 +70,6 @@ class ManualLoginTest {
         de.crysxd.octoapp.signin.di.Injector.init(mockBase)
     }
 
-    var first = true
     @Test
     fun WHEN_no_instances_are_found_THEN_we_directly_move_to_manual_and_can_sign_in() = runBlocking {
         // GIVEN
@@ -93,11 +92,6 @@ class ManualLoginTest {
 
         // Wait for checks to fail
         waitForChecksToFailWithUnableToResolveHost(domain)
-
-        if (first) {
-            first = false
-            onView(withId(R.id.manualConnectOption)).perform(click())
-        }
     }
 
     @Test
