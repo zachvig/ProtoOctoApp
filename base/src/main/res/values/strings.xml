@@ -385,6 +385,7 @@
     <string name="sign_in___cancel_and_use_other_information_title">Connect to other</string>
     <string name="sign_in___connect_to_other_octoprint">Connect to an other OctoPrint</string>
     <string name="sign_in___continue">Continue</string>
+    <string name="sign_in___discovery___error_invalid_url">Please provide a valid URL</string>
     <string name="sign_in___discover___web_url_hint">OctoPrint URL</string>
     <string name="sign_in___discover___web_url_hint_active">OctoPrint URL – Copy this from your browser!</string>
     <string name="sign_in___discovery___connect_manually_subtitle">It\'s easy!</string>

@@ -3,14 +3,21 @@ package de.crysxd.octoapp.signin.discover
 import android.net.Uri
 import androidx.lifecycle.asLiveData
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
+import de.crysxd.octoapp.signin.R
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
@@ -85,7 +92,13 @@ class DiscoverViewModel(
             stateChannel.offer(UiState.ManualSuccess(upgradedUrl))
         } catch (e: Exception) {
             manualFailureCounter++
-            stateChannel.offer(UiState.ManualError(message = "Please provide a valid URL H", exception = e, errorCount = manualFailureCounter))
+            stateChannel.offer(
+                UiState.ManualError(
+                    message = Injector.get().localizedContext().getString(R.string.sign_in___discovery___error_invalid_url),
+                    exception = e,
+                    errorCount = manualFailureCounter
+                )
+            )
         }
     }
 

@@ -10,10 +10,11 @@ import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.net.InetAddress
 import java.util.*
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 @Suppress("EXPERIMENTAL_API_USAGE")
-class DiscoverOctoPrintUseCase constructor(
+class DiscoverOctoPrintUseCase @Inject constructor(
     private val context: Context,
     private val sensitiveDataMask: SensitiveDataMask,
     private val testFullNetworkStackUseCase: TestFullNetworkStackUseCase,

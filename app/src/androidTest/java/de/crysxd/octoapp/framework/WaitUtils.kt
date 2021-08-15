@@ -5,6 +5,7 @@ import androidx.test.espresso.Espresso
 import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
+import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.util.HumanReadables
 import androidx.test.espresso.util.TreeIterables
@@ -12,7 +13,7 @@ import org.hamcrest.Matcher
 import java.util.concurrent.TimeoutException
 
 private fun waitForAction(
-    matcher: Matcher<View>,
+    matcher: Matcher<View>?,
     inverted: Boolean,
     timeout: Long = 3000L
 ): ViewAction {
@@ -31,7 +32,7 @@ private fun waitForAction(
             val endTime = startTime + timeout
             do {
                 val match = TreeIterables.breadthFirstViewTraversal(view).any {
-                    matcher.matches(it)
+                    matcher?.matches(it) ?: false
                 }
 
                 if (inverted != match) {
@@ -40,11 +41,14 @@ private fun waitForAction(
 
                 uiController.loopMainThreadForAtLeast(50)
             } while (System.currentTimeMillis() < endTime)
-            throw PerformException.Builder()
-                .withActionDescription(this.description)
-                .withViewDescription(HumanReadables.describe(view))
-                .withCause(TimeoutException())
-                .build()
+
+            if (matcher != null) {
+                throw PerformException.Builder()
+                    .withActionDescription(this.description)
+                    .withViewDescription(HumanReadables.describe(view))
+                    .withCause(TimeoutException())
+                    .build()
+            }
         }
     }
 }
@@ -59,6 +63,22 @@ fun waitFor(
     timeout: Long = 3000L
 ) {
     Espresso.onView(ViewMatchers.isRoot()).perform(waitForAction(viewMatcher, false, timeout))
+}
+
+/**
+ * Perform action of waiting for a specific view id.
+ * @param viewId The id of the view to wait for.
+ * @param timeout The timeout of until when to wait for.
+ */
+fun waitForDialog(
+    viewMatcher: Matcher<View>,
+    timeout: Long = 3000L
+) {
+    Espresso.onView(ViewMatchers.isRoot()).inRoot(isDialog()).perform(waitForAction(viewMatcher, false, timeout))
+}
+
+fun waitTime(time: Long) {
+    Espresso.onView(ViewMatchers.isRoot()).perform(waitForAction(null, false, time))
 }
 
 /**
