@@ -17,7 +17,6 @@ class RetryRule(retries: Int = 2, private val activityScenarioRule: LazyActivity
                 } catch (t: Throwable) {
                     if (retryCount.get() > 0) {
                         activityScenarioRule?.getScenario()?.closeQuietly()
-//                        activityScenarioRule.la
                         System.err.println(
                             description.displayName +
                                     ": Failed, " +
