@@ -7,7 +7,7 @@ import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.system.SystemCommand
 import kotlin.math.max
 
-private const val M115_MASK = "{m155 response}"
+private const val M115_MASK = "{m115 response}"
 
 data class OctoPrintInstanceInformationV1(
     val hostName: String,
@@ -23,6 +23,7 @@ data class OctoPrintInstanceInformationV2(
     val alternativeWebUrl: String? = null,
     val apiKey: String,
     val issue: ActiveInstanceIssue? = null,
+    // m115Response is only updated if Gcode Preview feature is enabled
     val m115Response: String? = null,
     val settings: Settings? = null,
     val activeProfile: PrinterProfiles.Profile? = null,
