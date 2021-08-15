@@ -6,4 +6,4 @@ update:
     - test_env
   stage: update
   script:
-    - ~./ci-scripts/update-test-environment.sh
+    - ~/ci-scripts/update-test-environment.sh
