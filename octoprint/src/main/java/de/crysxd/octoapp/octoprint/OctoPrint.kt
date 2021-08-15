@@ -98,8 +98,8 @@ class OctoPrint(
 
     suspend fun probeConnection() = createRetrofit(".").create(ProbeApi::class.java).probe().code()
 
-    fun createUserApi(): UserApi =
-        createRetrofit().create(UserApi::class.java)
+    fun createUserApi(retrofit: Retrofit = createRetrofit()): UserApi =
+        retrofit.create(UserApi::class.java)
 
     fun createLoginApi(): LoginApi =
         createRetrofit().create(LoginApi::class.java)
@@ -150,7 +150,7 @@ class OctoPrint(
         return logger
     }
 
-    private fun createRetrofit(path: String = "api/") = Retrofit.Builder()
+    private fun createRetrofit(path: String = "api/", okHttpClient: OkHttpClient = this.okHttpClient) = Retrofit.Builder()
         .baseUrl(URI.create(webUrl).resolve(path).toURL())
         .addConverterFactory(GsonConverterFactory.create(createGsonWithTypeAdapters()))
         .client(okHttpClient)
@@ -168,7 +168,7 @@ class OctoPrint(
         .registerTypeAdapter(ProgressInformation::class.java, ProgressInformationDeserializer(Gson()))
         .create()
 
-    fun createOkHttpClient() = OkHttpClient.Builder().apply {
+    fun createOkHttpClient(): OkHttpClient = OkHttpClient.Builder().apply {
         val logger = createHttpLogger()
 
         withHostnameVerifier(hostnameVerifier)
@@ -189,7 +189,9 @@ class OctoPrint(
         addInterceptor(ApiKeyInterceptor(apiKey))
 
         // 4. Consumes raw exceptions and throws wrapped exceptions
-        addInterceptor(GenerateExceptionInterceptor(networkExceptionListener) { createUserApi() })
+        addInterceptor(GenerateExceptionInterceptor(networkExceptionListener) {
+            createUserApi(createRetrofit(okHttpClient = createOkHttpClient()))
+        })
 
         // 5. This interceptor consumes raw IOException and might switch the host
         addInterceptor(alternativeWebUrlInterceptor)
