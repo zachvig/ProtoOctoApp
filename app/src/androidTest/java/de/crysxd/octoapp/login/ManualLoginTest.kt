@@ -16,6 +16,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.any
@@ -45,6 +46,7 @@ import org.junit.Test
 import timber.log.Timber
 import java.net.InetAddress
 
+@LargeTest
 class ManualLoginTest {
 
     @get:Rule
@@ -66,7 +68,7 @@ class ManualLoginTest {
         de.crysxd.octoapp.signin.di.Injector.init(mockBase)
     }
 
-    @Test
+    @Test(timeout = 300_000L)
     fun WHEN_no_instances_are_found_THEN_we_directly_move_to_manual_and_can_sign_in() = runBlocking {
         // GIVEN
         whenever(discoverUseCase.execute(Unit)).thenReturn(flowOf(DiscoverOctoPrintUseCase.Result(emptyList())))
@@ -91,7 +93,7 @@ class ManualLoginTest {
         waitForChecksToFailWithUnableToResolveHost(domain)
     }
 
-    @Test
+    @Test(timeout = 300_000L)
     fun WHEN_some_instances_are_found_THEN_we_can_still_move_to_manual() = runBlocking {
         // GIVEN
         whenever(discoverUseCase.execute(Unit)).thenReturn(
