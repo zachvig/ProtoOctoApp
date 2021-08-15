@@ -7,8 +7,8 @@ import androidx.test.espresso.action.ViewActions.clearText
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.pressBack
+import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.action.ViewActions.swipeUp
-import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
@@ -29,7 +29,6 @@ import de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
 import de.crysxd.octoapp.base.usecase.RequestApiAccessUseCase
 import de.crysxd.octoapp.framework.LazyActivityScenarioRule
-import de.crysxd.octoapp.framework.RetryRule
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.waitFor
 import de.crysxd.octoapp.framework.waitForDialog
@@ -53,9 +52,6 @@ class ManualLoginTest {
         Intent(InstrumentationRegistry.getInstrumentation().targetContext, MainActivity::class.java)
     }
 
-    @get:Rule
-    val retryRule = RetryRule(activityScenarioRule = activityRule)
-
     private val discoverUseCase = mock<DiscoverOctoPrintUseCase>()
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
     private val testEnv = TestEnvironmentLibrary.Terrier
@@ -77,9 +73,10 @@ class ManualLoginTest {
         activityRule.launch()
 
         // Check loading
-        onView(withId(R.id.title))
+        onView(allOf(withId(R.id.title), withText(R.string.sign_in___discovery___welcome_title)))
             .check(matches(isDisplayed()))
-            .check(matches(withText(R.string.sign_in___discovery___welcome_title)))
+
+//        manualInput.check(matches(isDisplayed()))
 
         // Wait for loading done and move to manual
         waitForManualToBeShown()
@@ -87,7 +84,7 @@ class ManualLoginTest {
         // Enter text and
         // Enter random web url (without http)
         val domain = "somelocaldomain.local"
-        manualInput.perform(typeText(domain))
+        manualInput.perform(replaceText(domain))
         continueButton.perform(click())
 
         // Wait for checks to fail
@@ -157,7 +154,7 @@ class ManualLoginTest {
 
         // Enter random web url (without http)
         val domain = "randomdomain.local"
-        manualInput.perform(clearText()).perform(typeText(domain))
+        manualInput.perform(replaceText(domain))
         continueButton.perform(click())
 
         // Wait for checks to fail
@@ -180,7 +177,7 @@ class ManualLoginTest {
         // Check text prefilled, correct and start again
         waitForManualToBeShown()
         manualInput.check(matches(withText("http://$domain")))
-        manualInput.perform(clearText()).perform(typeText(testEnv.webUrl))
+        manualInput.perform(replaceText(testEnv.webUrl))
         continueButton.perform(click())
 
 
@@ -261,7 +258,6 @@ class ManualLoginTest {
 
     @After
     fun tearDown() {
-        activityRule.getScenario().close()
         reset(discoverUseCase)
     }
 
