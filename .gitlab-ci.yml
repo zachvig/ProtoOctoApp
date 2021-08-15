@@ -2,7 +2,8 @@ stages:
   - update
 
 update:
-  tags: test_env
+  tags: 
+    - test_env
   stage: update
   script:
     - ~./ci-scripts/update-test-environment.sh
