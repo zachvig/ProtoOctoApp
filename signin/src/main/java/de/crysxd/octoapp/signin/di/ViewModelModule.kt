@@ -37,7 +37,7 @@ open class ViewModelModule {
     ): ViewModel = DiscoverViewModel(
         discoverOctoPrintUseCase = discoverOctoPrintUseCase,
         octoPrintRepository = octoPrintRepository,
-        sensitiveDataMask = sensitiveDataMask
+        sensitiveDataMask = sensitiveDataMask,
     )
 
     @Provides

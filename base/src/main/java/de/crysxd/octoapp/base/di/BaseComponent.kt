@@ -7,15 +7,59 @@ import dagger.Component
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.datasource.LocalGcodeFileDataSource
-import de.crysxd.octoapp.base.di.modules.*
+import de.crysxd.octoapp.base.di.modules.AndroidModule
+import de.crysxd.octoapp.base.di.modules.DataSourceModule
+import de.crysxd.octoapp.base.di.modules.FirebaseModule
+import de.crysxd.octoapp.base.di.modules.LoggingModule
+import de.crysxd.octoapp.base.di.modules.OctoPrintModule
+import de.crysxd.octoapp.base.di.modules.SslModule
+import de.crysxd.octoapp.base.di.modules.ViewModelModule
 import de.crysxd.octoapp.base.logging.FirebaseTree
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.logging.TimberCacheTree
 import de.crysxd.octoapp.base.network.LocalDnsResolver
 import de.crysxd.octoapp.base.network.SslKeyStoreHandler
-import de.crysxd.octoapp.base.repository.*
+import de.crysxd.octoapp.base.repository.GcodeFileRepository
+import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.repository.PinnedMenuItemRepository
+import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
+import de.crysxd.octoapp.base.repository.WidgetPreferencesRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModelFactory
-import de.crysxd.octoapp.base.usecase.*
+import de.crysxd.octoapp.base.usecase.ActivateMaterialUseCase
+import de.crysxd.octoapp.base.usecase.ApplyLegacyDarkMode
+import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
+import de.crysxd.octoapp.base.usecase.CreateProgressAppWidgetDataUseCase
+import de.crysxd.octoapp.base.usecase.CyclePsuUseCase
+import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
+import de.crysxd.octoapp.base.usecase.EmergencyStopUseCase
+import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
+import de.crysxd.octoapp.base.usecase.ExecuteSystemCommandUseCase
+import de.crysxd.octoapp.base.usecase.ExtrudeFilamentUseCase
+import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
+import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
+import de.crysxd.octoapp.base.usecase.GetAppLanguageUseCase
+import de.crysxd.octoapp.base.usecase.GetMaterialsUseCase
+import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
+import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
+import de.crysxd.octoapp.base.usecase.GetWebcamSnapshotUseCase
+import de.crysxd.octoapp.base.usecase.HandleOctoEverywhereAppPortalSuccessUseCase
+import de.crysxd.octoapp.base.usecase.HandleOctoEverywhereExceptionUseCase
+import de.crysxd.octoapp.base.usecase.HomePrintHeadUseCase
+import de.crysxd.octoapp.base.usecase.JogPrintHeadUseCase
+import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
+import de.crysxd.octoapp.base.usecase.OpenEmailClientForFeedbackUseCase
+import de.crysxd.octoapp.base.usecase.OpenOctoprintWebUseCase
+import de.crysxd.octoapp.base.usecase.RequestApiAccessUseCase
+import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
+import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
+import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
+import de.crysxd.octoapp.base.usecase.TakeScreenshotUseCase
+import de.crysxd.octoapp.base.usecase.TogglePausePrintJobUseCase
+import de.crysxd.octoapp.base.usecase.TogglePsuUseCase
+import de.crysxd.octoapp.base.usecase.TurnOffPsuUseCase
+import de.crysxd.octoapp.base.usecase.TurnOnPsuUseCase
+import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
 import javax.inject.Named
 
 @BaseScope
@@ -27,7 +71,7 @@ import javax.inject.Named
         DataSourceModule::class,
         ViewModelModule::class,
         FirebaseModule::class,
-        SslModule::class
+        SslModule::class,
     ]
 )
 interface BaseComponent {
@@ -94,6 +138,8 @@ interface BaseComponent {
     fun togglePsuUseCase(): TogglePsuUseCase
     fun handleOctoEverywhereAppPortalSuccessUseCase(): HandleOctoEverywhereAppPortalSuccessUseCase
     fun handleOctoEverywhereExceptionUseCase(): HandleOctoEverywhereExceptionUseCase
+    fun discoverOctoPrintUseCase(): DiscoverOctoPrintUseCase
+    fun requestApiAccessUseCase(): RequestApiAccessUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory
