@@ -35,7 +35,9 @@ class LocalGcodeFileDataSource(
     private val oldCacheRoots = listOf(
         File(context.cacheDir, "gcode3"),
         File(context.cacheDir, "gcode2"),
-        File(context.cacheDir, "gcode")
+        File(context.cacheDir, "gcode"),
+        File(File(context.cacheDir.parentFile, "shared_prefs"), "gcode_cache_index_1"),
+        File(File(context.cacheDir.parentFile, "shared_prefs"), "gcode_cache_index_2"),
     )
     private lateinit var fstConfig: FSTConfiguration
     private val initJob = GlobalScope.launch(Dispatchers.IO) {

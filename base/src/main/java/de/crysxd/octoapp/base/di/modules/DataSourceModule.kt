@@ -47,7 +47,7 @@ class DataSourceModule {
     @BaseScope
     fun provideLocalGcodeFileDataSource(
         context: Context,
-    ) = LocalGcodeFileDataSource(context, Gson(), context.getSharedPreferences("gcode_cache_index_2", Context.MODE_PRIVATE))
+    ) = LocalGcodeFileDataSource(context, Gson(), context.getSharedPreferences("gcode_cache_index_3", Context.MODE_PRIVATE))
 
     @Provides
     @BaseScope
