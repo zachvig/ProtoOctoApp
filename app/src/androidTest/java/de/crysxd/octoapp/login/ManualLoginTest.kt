@@ -87,7 +87,7 @@ class ManualLoginTest {
         // Enter text and
         // Enter random web url (without http)
         val domain = "somelocaldomain.local"
-        manualInput.perform(clearText()).perform(typeText(domain))
+        manualInput.perform(typeText(domain))
         continueButton.perform(click())
 
         // Wait for checks to fail
@@ -215,6 +215,7 @@ class ManualLoginTest {
 
         // Wait for connected screen
         waitFor(
+            timeout = 5000,
             viewMatcher = allOf(
                 isDisplayed(),
                 withText(R.string.widget_temperature)

@@ -9,6 +9,7 @@ import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
+import de.crysxd.octoapp.base.utils.AnimationTestUtils
 import de.crysxd.octoapp.signin.R
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
@@ -29,6 +30,7 @@ class DiscoverViewModel(
 
     companion object {
         const val INITIAL_DELAY_TIME = 3000
+        const val TEST_DELAY = 2000L
     }
 
     private var manualFailureCounter = 0
@@ -64,9 +66,11 @@ class DiscoverViewModel(
         }
     }.debounce(300).asLiveData()
 
-    fun getLoadingDelay(): Long {
+    fun getLoadingDelay() = if (AnimationTestUtils.animationsDisabled) {
+        TEST_DELAY
+    } else {
         val timeSinceCreated = System.currentTimeMillis() - viewModelCreationTime
-        return INITIAL_DELAY_TIME - timeSinceCreated
+        INITIAL_DELAY_TIME - timeSinceCreated
     }
 
     fun deleteInstance(webUrl: String) {
