@@ -7,6 +7,7 @@ import de.crysxd.octoapp.octoprint.exceptions.InvalidApiKeyException
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintHttpsException
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
+import timber.log.Timber
 
 class DetectBrokenSetupInterceptor(
     private val octoPrintRepository: OctoPrintRepository
@@ -15,16 +16,19 @@ class DetectBrokenSetupInterceptor(
     override fun intercept(chain: Interceptor.Chain) = try {
         chain.proceed(chain.request())
     } catch (e: InvalidApiKeyException) {
+        Timber.w("Caught InvalidApiKeyException, setup broken")
         runBlocking {
             octoPrintRepository.reportIssueWithActiveInstance(ActiveInstanceIssue.INVALID_API_KEY)
             throw e
         }
     } catch (e: BasicAuthRequiredException) {
+        Timber.w("Caught BasicAuthRequiredException, setup broken")
         runBlocking {
             octoPrintRepository.reportIssueWithActiveInstance(ActiveInstanceIssue.BASIC_AUTH_REQUIRED)
             throw e
         }
     } catch (e: OctoPrintHttpsException) {
+        Timber.w("Caught OctoPrintHttpsException, setup broken")
         runBlocking {
             octoPrintRepository.reportIssueWithActiveInstance(ActiveInstanceIssue.HTTP_ISSUE)
             throw e
