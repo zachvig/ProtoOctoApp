@@ -57,6 +57,7 @@ class OctoPrint(
     private val alternativeWebUrlInterceptor = AlternativeWebUrlInterceptor(createHttpLogger(), webUrl, alternativeWebUrl)
     private val continuousOnlineCheck = ContinuousOnlineCheck(
         url = webUrl,
+        localDns = customDns,
         logger = createHttpLogger(),
         onOnline = {
             if (!alternativeWebUrlInterceptor.isPrimaryUsed) {

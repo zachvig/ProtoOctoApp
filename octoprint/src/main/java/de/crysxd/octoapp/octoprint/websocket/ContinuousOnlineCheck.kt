@@ -1,7 +1,12 @@
 package de.crysxd.octoapp.octoprint.websocket
 
 import de.crysxd.octoapp.octoprint.UrlString
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import okhttp3.Dns
 import java.net.HttpURLConnection
 import java.net.InetAddress
 import java.net.URL
@@ -13,7 +18,8 @@ class ContinuousOnlineCheck(
     private val logger: Logger,
     private val onOnline: () -> Unit,
     private val connectionTimeoutMs: Int = 3_000,
-    private val intervalMs: Long = 60_000L
+    private val intervalMs: Long = 5_000L,
+    private val localDns: Dns? = null,
 ) {
     private var checkJob: Job? = null
 
@@ -31,10 +37,12 @@ class ContinuousOnlineCheck(
     fun checkNow() = try {
         // Try to ping
         val url = URL(url)
-        InetAddress.getByName(url.host).isReachable(connectionTimeoutMs)
+        val address = (localDns?.lookup(url.host)?.firstOrNull() ?: InetAddress.getByName(url.host))
+        address.isReachable(connectionTimeoutMs)
+        val resolvedUrl = URL(url.protocol, address.hostAddress, url.port, url.file)
 
         // Try to connect
-        val connection = url.openConnection() as HttpURLConnection
+        val connection = resolvedUrl.openConnection() as HttpURLConnection
         connection.connectTimeout = connectionTimeoutMs
         connection.requestMethod = "HEAD"
         connection.connect()
@@ -45,10 +53,11 @@ class ContinuousOnlineCheck(
             onOnline()
             true
         } else {
+            logger.log(Level.INFO, "$url is OFFLINE (${connection.responseCode})")
             false
         }
     } catch (e: Exception) {
-        logger.log(Level.INFO, "$url is OFFLINE")
+        logger.log(Level.INFO, "$url is OFFLINE (${e::class.java.simpleName}: ${e.message})")
         // Well...too bad. Offline.
         false
     }
