@@ -92,66 +92,101 @@ class LocalDnsResolver(private val context: Context) : Dns {
     private fun doUpnpLookup(upnpHostname: String): List<InetAddress> = runBlocking {
         Timber.i("Resolving via UPnP: $upnpHostname")
         withTimeoutOrNull(TimeUnit.SECONDS.toMillis(RESOLVE_TIMEOUT)) {
-            val channel = Channel<InetAddress>()
+            val channel = Channel<Any>()
+
+            // Switch to a new thread so we can kill it on timeout without having issues with blocking IO operations
             val job = GlobalScope.launch {
-                OctoPrintUpnpDiscovery(context).discover {
-                    if (it.upnpHostname == upnpHostname) {
-                        channel.offer(it.address)
+                try {
+                    OctoPrintUpnpDiscovery(context).discover {
+                        if (it.upnpHostname == upnpHostname) {
+                            channel.offer(it.address)
+                        }
                     }
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    channel.offer(e)
                 }
             }
-            val address = withTimeout(RESOLVE_TIMEOUT) { channel.receive() }
-            job.cancel()
-            OctoAnalytics.logEvent(OctoAnalytics.Event.UpnpDnsResolveSuccess)
-            listOf(address)
+
+            try {
+                val address = when (val res = withTimeout(RESOLVE_TIMEOUT) { channel.receive() }) {
+                    is Throwable -> throw res
+                    is InetAddress -> res
+                    else -> throw Exception("Unexpected result $res")
+                }
+                OctoAnalytics.logEvent(OctoAnalytics.Event.UpnpDnsResolveSuccess)
+                listOf(address)
+            } finally {
+                // Ensure job gets cancelled
+                job.cancel()
+            }
         } ?: throw UnknownHostException(upnpHostname)
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
     private fun doMDnsLookup(hostname: String): List<InetAddress> = runBlocking {
         Timber.i("Resolving via mDns: $hostname")
+
+        // Sometimes the internal Dnssd service is not running...we can start it with this:
+        context.applicationContext.getSystemService(Context.NSD_SERVICE)
+
         withTimeoutOrNull(TimeUnit.SECONDS.toMillis(RESOLVE_TIMEOUT)) {
-            val channel = Channel<InetAddress>()
+            val channel = Channel<Any>()
             val lock = wifi.createMulticastLock("mDnsResolution")
             lock.acquire()
             var service: DNSSDService? = null
-            val job = GlobalScope.launch {
-                service = dnssd.queryRecord(0, 0, hostname, 1 /* IPv4 */, 1, object : QueryListener {
-                    override fun operationFailed(service: DNSSDService?, errorCode: Int) {
-                        Timber.e("Unable to query $hostname (errorCode=$errorCode)")
-                    }
 
-                    override fun queryAnswered(
-                        query: DNSSDService,
-                        flags: Int,
-                        ifIndex: Int,
-                        fullName: String,
-                        rrtype: Int,
-                        rrclass: Int,
-                        rdata: ByteArray,
-                        ttl: Int
-                    ) {
-                        Timber.v("Query answered: $hostname")
-                        channel.offer(InetAddress.getByAddress(hostname, rdata))
-                    }
-                })
+            // Switch to a new thread so we can kill it on timeout without having issues with blocking IO operations
+            val job = GlobalScope.launch {
+                try {
+                    service = dnssd.queryRecord(0, 0, hostname, 1 /* IPv4 */, 1, object : QueryListener {
+                        override fun operationFailed(service: DNSSDService?, errorCode: Int) {
+                            val e = Exception("Unable to query $hostname (errorCode=$errorCode)")
+                            Timber.e(e)
+                            channel.offer(e)
+                        }
+
+                        override fun queryAnswered(
+                            query: DNSSDService,
+                            flags: Int,
+                            ifIndex: Int,
+                            fullName: String,
+                            rrtype: Int,
+                            rrclass: Int,
+                            rdata: ByteArray,
+                            ttl: Int
+                        ) {
+                            Timber.v("Query answered: $hostname")
+                            channel.offer(InetAddress.getByAddress(hostname, rdata))
+                        }
+                    })
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    channel.offer(e)
+                }
             }
-            val address = channel.receive()
-            job.invokeOnCompletion {
-                lock.release()
-                service?.stop()
+
+            try {
+                val address = when (val res = channel.receive()) {
+                    is Throwable -> throw res
+                    is InetAddress -> res
+                    else -> throw Exception("Unexpected result $res")
+                }
+                job.invokeOnCompletion {
+                    lock.release()
+                    service?.stop()
+                }
+                OctoAnalytics.logEvent(OctoAnalytics.Event.MDnsResolveSuccess)
+                listOf(address)
+            } finally {
+                // Ensure job gets cancelled
+                job.cancel()
             }
-            job.cancel()
-            OctoAnalytics.logEvent(OctoAnalytics.Event.MDnsResolveSuccess)
-            listOf(address)
         } ?: throw UnknownHostException(hostname)
     }
 
     private fun doDnsLookup(hostname: String): List<InetAddress> {
         Timber.i("Resolving via local DNS: $hostname")
-
-        // Sometimes the internal Dnssd service is not running...we can start it with this:
-        context.applicationContext.getSystemService(Context.NSD_SERVICE)
 
         // This is a manual backup DNS which should help with .home domains. Some Android devices are configured
         // to ignore the router as DNS server and directly go to Cloudflare or Google
