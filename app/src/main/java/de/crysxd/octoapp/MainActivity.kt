@@ -122,24 +122,15 @@ class MainActivity : OctoActivity() {
 
         SignInInjector.get().octoprintRepository().instanceInformationFlow()
             .filter {
-                val webUrlAndApiKey = "${it?.webUrl}:${it?.apiKey}"
+                val webUrlAndApiKey = "${it?.webUrl}:${it?.apiKey}:${it?.issue}"
                 val pass = viewModel.lastWebUrlAndApiKey != webUrlAndApiKey
                 viewModel.lastWebUrlAndApiKey = webUrlAndApiKey
+                Timber.i("Instance information filter $it => $pass")
                 pass
             }
             .asLiveData()
             .observe(this) { instance ->
                 when {
-                    instance != null && instance.apiKey.isNotBlank() -> {
-                        Timber.i("Instance information received $this")
-                        updateCapabilities("instance_change", updateM115 = true, escalateError = false)
-                        navigate(R.id.action_connect_printer)
-                        viewModel.pendingUri?.let {
-                            viewModel.pendingUri = null
-                            handleDeepLink(it)
-                        }
-                    }
-
                     instance != null && (instance.apiKey.isBlank() || instance.issue != null) -> {
                         Timber.i("Instance information received without API key $this")
                         showDialog(
@@ -148,6 +139,16 @@ class MainActivity : OctoActivity() {
                             positiveButton = getString(R.string.sign_in___continue),
                             highPriority = true
                         )
+                    }
+
+                    instance != null && instance.apiKey.isNotBlank() -> {
+                        Timber.i("Instance information received $this")
+                        updateCapabilities("instance_change", updateM115 = true, escalateError = false)
+                        navigate(R.id.action_connect_printer)
+                        viewModel.pendingUri?.let {
+                            viewModel.pendingUri = null
+                            handleDeepLink(it)
+                        }
                     }
 
                     else -> {
