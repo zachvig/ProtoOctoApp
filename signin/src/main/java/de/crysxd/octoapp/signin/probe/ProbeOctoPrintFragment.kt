@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.urlEncode
@@ -32,6 +33,7 @@ import io.noties.markwon.Markwon
 import timber.log.Timber
 
 class ProbeOctoPrintFragment : BaseFragment() {
+
     override val viewModel by injectViewModel<ProbeOctoPrintViewModel>()
     private lateinit var binding: BaseSigninFragmentBinding
     private val wifiViewModel by injectViewModel<NetworkStateViewModel>(Injector.get().viewModelFactory())
@@ -39,7 +41,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
     private var findingBinding: ProbeFragmentFindingBinding? = null
     private val findingDescriptionLibrary by lazy { FindingDescriptionLibrary(requireContext()) }
     private val initialWebUrl by lazy {
-        navArgs<ProbeOctoPrintFragmentArgs>().value.baseUrl
+        UriLibrary.secureDecodeUrl(navArgs<ProbeOctoPrintFragmentArgs>().value.baseUrl)
     }
     private val allowApiKeyReuse by lazy {
         navArgs<ProbeOctoPrintFragmentArgs>().value.allowApiKeyReuse == true.toString()

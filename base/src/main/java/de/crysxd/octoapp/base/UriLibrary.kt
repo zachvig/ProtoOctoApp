@@ -1,9 +1,9 @@
 package de.crysxd.octoapp.base
 
 import android.net.Uri
+import android.util.Base64
 import androidx.annotation.StringRes
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ext.urlEncode
 
 object UriLibrary {
     private fun getUri(@StringRes string: Int, vararg placeholder: String) =
@@ -30,12 +30,14 @@ object UriLibrary {
     fun getWebcamUri(): Uri =
         getUri(R.string.uri___webcam)
 
-    @Deprecated("Don't use")
-    fun getTroubleShootUri(baseUrl: Uri, apiKey: String? = null): Uri =
-        getUri(R.string.uri___troubleshoot, "{baseUrl}", baseUrl.toString().urlEncode(), "{apiKey}", apiKey ?: "")
-
     fun getFixOctoPrintConnectionUri(baseUrl: Uri, allowApiKeyResuse: Boolean): Uri =
-        getUri(R.string.uri___fix_octoprint_connection, "{baseUrl}", baseUrl.toString().urlEncode(), "{allowApiKeyReuse}", allowApiKeyResuse.toString())
+        getUri(
+            R.string.uri___fix_octoprint_connection,
+            "{baseUrl}",
+            secureEncodeUrl(baseUrl.toString()),
+            "{allowApiKeyReuse}",
+            allowApiKeyResuse.toString()
+        )
 
     fun getFaqUri(faqId: String) =
         getUri(R.string.uri___faq, "{faqId}", faqId)
@@ -47,4 +49,9 @@ object UriLibrary {
         getConfigureRemoteAccessUri().path -> true
         else -> false
     }
+
+    // When passing URLs as query params, weird shit is happening where Android would "double decode" URLs in params causing
+    // problems if the original URL contains encoded parts. To circumvent this we encode as Base64
+    fun secureEncodeUrl(url: String): String = Base64.encodeToString(url.toByteArray(), Base64.NO_WRAP)
+    fun secureDecodeUrl(url: String) = String(Base64.decode(url, Base64.NO_WRAP))
 }

@@ -13,6 +13,10 @@ class MockDiscoveryRule : AbstractUseCaseMockRule() {
 
     val discoverUseCase = mock<DiscoverOctoPrintUseCase>()
 
+    init {
+        mockForNothingFound()
+    }
+
     override fun createBaseComponent(base: BaseComponent) = MockBaseComponent(base)
 
     fun mockForNothingFound() = runBlocking {

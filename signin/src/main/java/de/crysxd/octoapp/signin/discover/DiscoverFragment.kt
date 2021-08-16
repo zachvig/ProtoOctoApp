@@ -264,7 +264,7 @@ class DiscoverFragment : BaseFragment() {
         )
 
         val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
-        val directions = DiscoverFragmentDirections.requestAccess(webUrl = octoPrint.webUrl)
+        val directions = DiscoverFragmentDirections.requestAccess(webUrl = UriLibrary.secureEncodeUrl(octoPrint.webUrl))
         findNavController().navigate(directions, extras)
     }
 
@@ -305,7 +305,7 @@ class DiscoverFragment : BaseFragment() {
             // We do not allow the API key to be reused to prevent the user from bypassing quick switch.
             // If the user has BillingManager.FEATURE_QUICK_SWITCH, the fix flow will always allow API key reuse
             val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
-            val directions = DiscoverFragmentDirections.probeConnection(baseUrl = webUrl, allowApiKeyReuse = false.toString())
+            val directions = DiscoverFragmentDirections.probeConnection(baseUrl = UriLibrary.secureEncodeUrl(webUrl), allowApiKeyReuse = false.toString())
             findNavController().navigate(directions, extras)
         }
     }

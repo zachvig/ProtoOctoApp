@@ -1,7 +1,6 @@
 package de.crysxd.octoapp.login
 
 import android.content.Intent
-import android.widget.EditText
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.clearText
 import androidx.test.espresso.action.ViewActions.click
@@ -11,7 +10,6 @@ import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.action.ViewActions.swipeUp
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
-import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -20,7 +18,10 @@ import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
-import de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
+import de.crysxd.octoapp.framework.SignInUtils.continueButton
+import de.crysxd.octoapp.framework.SignInUtils.manualInput
+import de.crysxd.octoapp.framework.SignInUtils.waitForChecksToFailWithUnableToResolveHost
+import de.crysxd.octoapp.framework.SignInUtils.waitForManualToBeShown
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
 import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
@@ -38,8 +39,6 @@ class ManualLoginTest {
 
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
     private val testEnv = TestEnvironmentLibrary.Terrier
-    private val manualInput get() = onView(allOf(withId(R.id.input), isAssignableFrom(EditText::class.java))).check(matches(isDisplayed()))
-    private val continueButton get() = onView(withText(R.string.sign_in___continue))
 
     @get:Rule
     val activityRule = LazyActivityScenarioRule<MainActivity>(launchActivity = false) {
@@ -52,7 +51,7 @@ class ManualLoginTest {
     @get:Rule
     val acceptAccessRequestRule = AcceptAllAccessRequestRule(testEnv)
 
-    @Test(timeout = 300_000L)
+    @Test(timeout = 60_000L)
     fun WHEN_no_instances_are_found_THEN_we_directly_move_to_manual_and_can_sign_in() = runBlocking {
         // GIVEN
         discoveryRule.mockForNothingFound()
@@ -75,7 +74,7 @@ class ManualLoginTest {
         waitForChecksToFailWithUnableToResolveHost(domain)
     }
 
-    @Test(timeout = 300_000L)
+    @Test(timeout = 120_000L)
     fun WHEN_some_instances_are_found_THEN_we_can_still_move_to_manual() = runBlocking {
         // GIVEN
         discoveryRule.mockForRandomFound()
@@ -189,42 +188,6 @@ class ManualLoginTest {
             viewMatcher = allOf(
                 isDisplayed(),
                 withText(R.string.widget_temperature)
-            )
-        )
-    }
-
-    private fun waitForManualToBeShown() {
-        waitFor(
-            viewMatcher = allOf(
-                withId(R.id.title),
-                isDisplayed(),
-                withText(R.string.sign_in___discovery___connect_manually_title)
-            )
-        )
-        waitFor(
-            viewMatcher = allOf(
-                withId(R.id.input),
-                isAssignableFrom(OctoTextInputLayout::class.java),
-                isDisplayed(),
-            )
-        )
-    }
-
-    private fun waitForChecksToFailWithUnableToResolveHost(domain: String) {
-        // Wait for checks to fail
-        waitFor(
-            viewMatcher = allOf(
-                withId(R.id.title),
-                isDisplayed(),
-                withText(R.string.sign_in___probe___probing_active_title)
-            )
-        )
-        waitFor(
-            timeout = 5000,
-            viewMatcher = allOf(
-                withId(R.id.title),
-                isDisplayed(),
-                withText(context.getString(R.string.sign_in___probe_finding___title_local_dns_failure).replace("**%s**", domain)),
             )
         )
     }

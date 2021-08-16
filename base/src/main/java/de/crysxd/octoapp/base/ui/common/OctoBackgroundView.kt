@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.utils.AnimationTestUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -34,7 +35,9 @@ class OctoBackgroundView @JvmOverloads constructor(context: Context, attrs: Attr
         addView(ImageView(context).also {
             it.setImageResourceAsync(R.drawable.water_background)
             it.rotation = 180f
-            it.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in_out_loop))
+            if (!AnimationTestUtils.animationsDisabled) {
+                it.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in_out_loop))
+            }
             it.adjustViewBounds = true
         })
 
@@ -53,6 +56,7 @@ class OctoBackgroundView @JvmOverloads constructor(context: Context, attrs: Attr
     }
 
     fun triggerSwimBubbles() {
+        if (AnimationTestUtils.animationsDisabled) return
         bubblesView.isVisible = true
         bubblesAnimation?.stop()
         bubblesAnimation?.start()
