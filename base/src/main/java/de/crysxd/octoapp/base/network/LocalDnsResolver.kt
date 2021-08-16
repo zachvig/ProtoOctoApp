@@ -109,7 +109,7 @@ class LocalDnsResolver(private val context: Context) : Dns {
             }
 
             try {
-                val address = when (val res = withTimeout(RESOLVE_TIMEOUT) { channel.receive() }) {
+                val address = when (val res = withTimeout(TimeUnit.SECONDS.toMillis(RESOLVE_TIMEOUT)) { channel.receive() }) {
                     is Throwable -> throw res
                     is InetAddress -> res
                     else -> throw Exception("Unexpected result $res")
