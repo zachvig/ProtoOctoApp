@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.framework
+package de.crysxd.octoapp.framework.rules
 
 import android.app.Activity
 import android.content.Intent
