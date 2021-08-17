@@ -69,6 +69,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                     if (param.updateM115 && BillingManager.isFeatureEnabled(BillingManager.FEATURE_GCODE_PREVIEW) && !octoPreferences.suppressM115Request) {
                         executeM115()
                     } else {
+                        Timber.i("Skipping M115")
                         null
                     }
                 } catch (e: Exception) {
