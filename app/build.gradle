@@ -18,7 +18,7 @@ play {
     serviceAccountCredentials.set(file("service-account.json"))
     track.set("production")
     defaultToAppBundles.set(true)
-    resolutionStrategy.set(ResolutionStrategy.IGNORE)
+    resolutionStrategy.set(ResolutionStrategy.AUTO)
     releaseStatus.set(ReleaseStatus.IN_PROGRESS)
     updatePriority.set(2)
     userFraction.set(0.1d)
