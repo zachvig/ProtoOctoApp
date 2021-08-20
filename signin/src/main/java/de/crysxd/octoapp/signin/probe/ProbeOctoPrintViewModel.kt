@@ -16,8 +16,8 @@ class ProbeOctoPrintViewModel(
 ) : BaseViewModel() {
 
     companion object {
-        private const val MIN_PROBE_DURATION = 2000
-        private const val MIN_TEST_PROBE_DURATION = 500L
+        private const val MIN_PROBE_DURATION = 2000L
+        private const val MIN_TEST_PROBE_DURATION = 1000L
     }
 
     var lastWebUrl: String? = null
@@ -37,11 +37,8 @@ class ProbeOctoPrintViewModel(
             val apiKey = octoPrintRepository.findOrNull(webUrl)?.apiKey ?: ""
             val target = TestFullNetworkStackUseCase.Target.OctoPrint(webUrl = webUrl, apiKey = apiKey)
             val finding = useCase.execute(target)
-            if (!AnimationTestUtils.animationsDisabled) {
-                (MIN_PROBE_DURATION - (System.currentTimeMillis() - start)).takeIf { it > 0 }?.let { delay(it) }
-            } else {
-                delay(MIN_TEST_PROBE_DURATION)
-            }
+            val delay = if (AnimationTestUtils.animationsDisabled) MIN_TEST_PROBE_DURATION else MIN_PROBE_DURATION
+            (delay - (System.currentTimeMillis() - start)).takeIf { it > 0 }?.let { delay(it) }
             lastWebUrl = finding.webUrl
             mutableUiState.postValue(UiState.FindingsReady(finding))
         } finally {

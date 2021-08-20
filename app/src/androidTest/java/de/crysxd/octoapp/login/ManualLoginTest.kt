@@ -29,6 +29,7 @@ import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
 import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
+import de.crysxd.octoapp.framework.rules.MockTestFullNetworkStackRule
 import de.crysxd.octoapp.framework.waitFor
 import de.crysxd.octoapp.framework.waitForDialog
 import de.crysxd.octoapp.framework.waitTime
@@ -52,6 +53,9 @@ class ManualLoginTest {
 
     @get:Rule
     val acceptAccessRequestRule = AcceptAllAccessRequestRule(testEnv)
+
+    @get:Rule
+    val mockTestFullNetworkStackRule = MockTestFullNetworkStackRule()
 
     @Test(timeout = 60_000L)
     fun WHEN_no_instances_are_found_THEN_we_directly_move_to_manual_and_can_sign_in() = runBlocking {
@@ -117,6 +121,7 @@ class ManualLoginTest {
         // Enter random web url (without http)
         val domain = "randomdomain.local"
         manualInput.perform(replaceText(domain))
+        mockTestFullNetworkStackRule.mockLocalForDnsFailure()
         continueButton.perform(click())
 
         // Wait for checks to fail
@@ -129,6 +134,7 @@ class ManualLoginTest {
         // Check text prefilled and start again
         waitForManualToBeShown()
         manualInput.check(matches(withText("http://$domain")))
+        mockTestFullNetworkStackRule.mockLocalForDnsFailure()
         continueButton.perform(click())
 
         // Wait for checks to fail and go back
@@ -140,6 +146,7 @@ class ManualLoginTest {
         waitForManualToBeShown()
         manualInput.check(matches(withText("http://$domain")))
         manualInput.perform(replaceText(testEnv.webUrl))
+        mockTestFullNetworkStackRule.mockForInvalidApiKey()
         continueButton.perform(click())
 
         SignInUtils.waitForChecks()

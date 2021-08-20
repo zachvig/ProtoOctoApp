@@ -17,25 +17,27 @@ class MockTestFullNetworkStackRule : AbstractUseCaseMockRule() {
         return MockBaseComponent(base)
     }
 
-    fun mockForInvalidApiKey() = runBlocking {
-        whenever(mock.execute(any())).thenAnswer {
-            val param = it.arguments[1] as TestFullNetworkStackUseCase.Params
-            TestFullNetworkStackUseCase.Finding.InvalidApiKey(
-                webUrl = param.webUrl,
-                host = Uri.parse(param.webUrl).host!!
-            )
+    fun mockForInvalidApiKey() {
+        runBlocking {
+            whenever(mock.execute(any())).thenAnswer {
+                val param = it.arguments[0] as TestFullNetworkStackUseCase.Target.OctoPrint
+                TestFullNetworkStackUseCase.Finding.InvalidApiKey(
+                    webUrl = param.webUrl,
+                    host = Uri.parse(param.webUrl).host!!
+                )
+            }
         }
     }
 
-    fun mockForHostNotReachable() = runBlocking {
-        whenever(mock.execute(any())).thenAnswer {
-            val param = it.arguments[1] as TestFullNetworkStackUseCase.Params
-            TestFullNetworkStackUseCase.Finding.HostNotReachable(
-                webUrl = param.webUrl,
-                host = Uri.parse(param.webUrl).host!!,
-                ip = "0.0.0.0",
-                timeoutMs = 4200
-            )
+    fun mockLocalForDnsFailure() {
+        runBlocking {
+            whenever(mock.execute(any())).thenAnswer {
+                val param = it.arguments[0] as TestFullNetworkStackUseCase.Target.OctoPrint
+                TestFullNetworkStackUseCase.Finding.LocalDnsFailure(
+                    webUrl = param.webUrl,
+                    host = Uri.parse(param.webUrl).host!!,
+                )
+            }
         }
     }
 
