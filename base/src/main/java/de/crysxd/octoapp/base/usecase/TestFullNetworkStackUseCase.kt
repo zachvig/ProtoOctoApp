@@ -28,6 +28,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
 
     companion object {
         private const val PING_TIMEOUT = 2000
+        private const val SOCKET_TIMEOUT = 3000
     }
 
     override suspend fun doExecute(param: Target, timber: Timber.Tree): Finding = withContext(Dispatchers.IO) {
@@ -181,6 +182,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
 
     private fun testPortOpen(host: String, ip: String, port: Int, webUrl: String, timber: Timber.Tree): Finding? = try {
         val socket = Socket(ip, port)
+        socket.soTimeout = SOCKET_TIMEOUT
         socket.getOutputStream()
         null
     } catch (e: Exception) {
