@@ -7,7 +7,6 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.pressBack
 import androidx.test.espresso.action.ViewActions.replaceText
-import androidx.test.espresso.action.ViewActions.swipeUp
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -90,7 +89,7 @@ class ManualLoginTest {
         waitForDiscoveryOptionsToBeShown()
 
         // Move to manual
-        onView(withId(R.id.scrollView)).perform(swipeUp())
+        SignInUtils.scrollDown()
         onView(withId(R.id.manualConnectOption)).perform(click())
 
         // Wait for manual shown
@@ -103,7 +102,7 @@ class ManualLoginTest {
 
         // Move to manual
         waitFor(allOf(withText(R.string.sign_in___discovery___discovered_devices), isDisplayed()))
-        onView(withId(R.id.scrollView)).perform(swipeUp())
+        SignInUtils.scrollDown()
         onView(withId(R.id.manualConnectOption)).perform(click())
 
         // Enter empty URL
@@ -128,7 +127,7 @@ class ManualLoginTest {
         waitForChecksToFailWithUnableToResolveHost(domain)
 
         // Go back
-        onView(withId(R.id.scrollView)).perform(swipeUp())
+        SignInUtils.scrollDown()
         onView(withText(R.string.sign_in___probe___edit_information)).perform(click())
 
         // Check text prefilled and start again

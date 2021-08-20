@@ -6,7 +6,6 @@ import android.widget.EditText
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
-import androidx.test.espresso.action.ViewActions.swipeUp
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
@@ -37,7 +36,6 @@ class BasicAuthTest {
     private val basicAuthFormMatcher = allOf(withId(R.id.usernameInput), isDisplayed())
     private val userNameInput = onView(allOf(isDescendantOfA(withId(R.id.usernameInput)), isAssignableFrom(EditText::class.java)))
     private val passwordInput = onView(allOf(isDescendantOfA(withId(R.id.passwordInput)), isAssignableFrom(EditText::class.java)))
-    private val scrollView = onView(withId(R.id.scrollView))
 
     @get:Rule
     val activityRule = LazyActivityScenarioRule<MainActivity>(launchActivity = false) {
@@ -65,7 +63,7 @@ class BasicAuthTest {
         val wrongPassword = "secretpass$@&/?=§:;323"
         userNameInput.perform(replaceText(wrongUser))
         passwordInput.perform(replaceText(wrongPassword))
-        scrollView.perform(swipeUp())
+        SignInUtils.scrollDown()
         SignInUtils.continueButton.perform(click())
 
         // Wait for shown again and verify prefilled
@@ -77,7 +75,7 @@ class BasicAuthTest {
         // Enter correct user
         userNameInput.perform(replaceText(username))
         passwordInput.perform(replaceText(password))
-        scrollView.perform(swipeUp())
+        SignInUtils.scrollDown()
         SignInUtils.continueButton.perform(click())
         SignInUtils.waitForChecks()
 
@@ -111,7 +109,7 @@ class BasicAuthTest {
         // Enter correct user
         userNameInput.perform(replaceText(username))
         passwordInput.perform(replaceText(password))
-        scrollView.perform(swipeUp())
+        SignInUtils.scrollDown()
         SignInUtils.continueButton.perform(click())
         SignInUtils.waitForChecks()
 

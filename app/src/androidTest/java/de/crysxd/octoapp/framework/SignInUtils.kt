@@ -1,8 +1,11 @@
 package de.crysxd.octoapp.framework
 
 import android.widget.EditText
+import androidx.annotation.StringRes
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.swipeDown
+import androidx.test.espresso.action.ViewActions.swipeUp
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
@@ -96,26 +99,46 @@ object SignInUtils {
         ).perform(ViewActions.click())
     }
 
-    fun waitForSignInToBeCompleted() {
-        // Wait for access screen
-        waitFor(
-            timeout = 5000,
-            viewMatcher = allOf(
-                withId(R.id.title),
-                isDisplayed(),
-                withText(R.string.sign_in___access___confirm_in_web_interface)
+    fun selectDiscoveryOptionWithText(@StringRes text: Int) {
+        // Select discovered
+        onView(
+            allOf(
+                isAssignableFrom(DiscoverOptionView::class.java),
+                hasDescendant(withText(text))
             )
-        )
+        ).perform(ViewActions.click())
+    }
 
-        // Wait for success and continue
-        waitFor(
-            viewMatcher = allOf(
-                withId(R.id.title),
-                isDisplayed(),
-                withText(R.string.sign_in___success___title)
+    fun scrollDown() {
+        onView(withId(R.id.scrollView)).perform(swipeUp())
+    }
+
+    fun scrollUp() {
+        onView(withId(R.id.scrollView)).perform(swipeDown())
+    }
+
+    fun waitForSignInToBeCompleted(skipAccess: Boolean = false) {
+        // Wait for access screen
+        if (!skipAccess) {
+            waitFor(
+                timeout = 5000,
+                viewMatcher = allOf(
+                    withId(R.id.title),
+                    isDisplayed(),
+                    withText(R.string.sign_in___access___confirm_in_web_interface)
+                )
             )
-        )
-        continueButton.perform(ViewActions.click())
+
+            // Wait for success and continue
+            waitFor(
+                viewMatcher = allOf(
+                    withId(R.id.title),
+                    isDisplayed(),
+                    withText(R.string.sign_in___success___title)
+                )
+            )
+            continueButton.perform(ViewActions.click())
+        }
 
         // Wait for connected screen
         waitFor(

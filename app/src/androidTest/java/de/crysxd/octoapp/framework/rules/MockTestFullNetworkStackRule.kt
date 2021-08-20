@@ -14,6 +14,7 @@ class MockTestFullNetworkStackRule : AbstractUseCaseMockRule() {
 
     override fun createBaseComponent(base: BaseComponent): MockBaseComponent {
         reset(mock)
+        mockLocalForDnsFailure()
         return MockBaseComponent(base)
     }
 

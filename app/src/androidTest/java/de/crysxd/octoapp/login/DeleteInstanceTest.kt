@@ -3,8 +3,6 @@ package de.crysxd.octoapp.login
 import android.content.Intent
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.swipeDown
-import androidx.test.espresso.action.ViewActions.swipeUp
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
@@ -21,6 +19,7 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
+import de.crysxd.octoapp.framework.SignInUtils
 import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.SpyOctoPrintRepositoryRule
@@ -70,12 +69,24 @@ class DeleteInstanceTest {
 
         // We stay on manual
         onView(withText(R.string.sign_in___discovery___previously_connected_devices)).check(matches(not(isDisplayed())))
-        onView(withId(R.id.scrollView)).perform(swipeDown())
+        SignInUtils.scrollUp()
         onView(withText(R.string.sign_in___discovery___options_title)).check(matches(isDisplayed()))
     }
 
     @Test(timeout = 30_000L)
     fun WHEN_a_instance_is_deleted_and_nothing_is_discovered_THEN_it_is_removed() {
+        discoveryRule.mockForNothingFound()
+
+        performDelete()
+
+        // Nothing else to be shown on options page, we move to manual
+        onView(withText(R.string.sign_in___discovery___connect_manually_title)).check(matches(isDisplayed()))
+        onView(allOf(withId(R.id.input), isAssignableFrom(OctoTextInputLayout::class.java))).check(matches(isDisplayed()))
+    }
+
+    @Test(timeout = 30_000L)
+    fun WHEN_a_instance_is_deleted_and_quick_switch_disabled_THEN_it_is_removed() {
+        BillingManager.enabledForTest = false
         discoveryRule.mockForNothingFound()
 
         performDelete()
@@ -98,7 +109,7 @@ class DeleteInstanceTest {
         )
 
         // Check shown
-        onView(withId(R.id.scrollView)).perform(swipeUp())
+        SignInUtils.scrollDown()
         val previousConnectedTitle = onView(withText(R.string.sign_in___discovery___previously_connected_devices))
         val instanceTitle = onView(withText(instance.label))
         previousConnectedTitle.check(matches(isDisplayed()))
