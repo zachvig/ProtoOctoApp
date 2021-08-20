@@ -29,7 +29,7 @@ class DiscoverViewModel(
 ) : BaseViewModel() {
 
     companion object {
-        const val INITIAL_DELAY_TIME = 3000
+        const val INITIAL_DELAY_TIME = 3000L
         const val TEST_DELAY = 2000L
     }
 
@@ -66,11 +66,10 @@ class DiscoverViewModel(
         }
     }.debounce(300).asLiveData()
 
-    fun getLoadingDelay() = if (AnimationTestUtils.animationsDisabled) {
-        TEST_DELAY
-    } else {
+    fun getLoadingDelay(): Long {
         val timeSinceCreated = System.currentTimeMillis() - viewModelCreationTime
-        INITIAL_DELAY_TIME - timeSinceCreated
+        val delay = if (AnimationTestUtils.animationsDisabled) TEST_DELAY else INITIAL_DELAY_TIME
+        return delay - timeSinceCreated
     }
 
     fun deleteInstance(webUrl: String) {

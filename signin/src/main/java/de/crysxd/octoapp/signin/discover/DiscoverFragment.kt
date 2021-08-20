@@ -244,7 +244,7 @@ class DiscoverFragment : BaseFragment() {
         // Update title visibility
         binding.previousOptionsTitle.isVisible = binding.previousOptions.childCount > 1
         binding.quickSwitchOption.isVisible = !quickSwitchEnabled && binding.previousOptionsTitle.isVisible
-        binding.buttonDelete.isVisible = binding.buttonDelete.isVisible && binding.previousOptionsTitle.isVisible
+        binding.buttonShowDelete.isVisible = binding.buttonShowDelete.isVisible && binding.previousOptionsTitle.isVisible
         binding.quickSwitchOption.setOnClickListener { continueWithPurchase() }
     }
 
@@ -353,9 +353,9 @@ class DiscoverFragment : BaseFragment() {
         localOptionsBinding.quickSwitchOption.setOnClickListener {
             continueWithEnableQuickSwitch()
         }
-        localOptionsBinding.buttonDelete.setOnClickListener {
+        localOptionsBinding.buttonShowDelete.setOnClickListener {
             beginDelayedTransition()
-            localOptionsBinding.buttonDelete.isVisible = false
+            localOptionsBinding.buttonShowDelete.isVisible = false
             localOptionsBinding.previousOptions.forEach {
                 if (it != localOptionsBinding.quickSwitchOption) {
                     (it as? DiscoverOptionView)?.showDelete()
