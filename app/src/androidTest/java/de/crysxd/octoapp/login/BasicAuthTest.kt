@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.login
 
-import android.content.Intent
 import android.net.Uri
 import android.widget.EditText
 import androidx.test.espresso.Espresso.onView
@@ -13,14 +12,12 @@ import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.platform.app.InstrumentationRegistry
-import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.urlEncode
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.framework.SignInRobot
-import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
+import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.waitFor
 import de.crysxd.octoapp.framework.waitForDialog
@@ -38,9 +35,7 @@ class BasicAuthTest {
     private val passwordInput = onView(allOf(isDescendantOfA(withId(R.id.passwordInput)), isAssignableFrom(EditText::class.java)))
 
     @get:Rule
-    val activityRule = LazyActivityScenarioRule<MainActivity>(launchActivity = false) {
-        Intent(InstrumentationRegistry.getInstrumentation().targetContext, MainActivity::class.java)
-    }
+    val activityRule = LazyMainActivityScenarioRule()
 
     @get:Rule
     val discoveryRule = MockDiscoveryRule()

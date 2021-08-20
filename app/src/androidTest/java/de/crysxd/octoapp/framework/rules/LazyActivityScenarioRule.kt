@@ -6,7 +6,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import org.junit.rules.ExternalResource
 
-class LazyActivityScenarioRule<A : Activity> : ExternalResource {
+open class LazyActivityScenarioRule<A : Activity> : ExternalResource {
 
     constructor(launchActivity: Boolean, startActivityIntentSupplier: () -> Intent) {
         this.launchActivity = launchActivity

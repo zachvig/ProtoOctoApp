@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.login
 
-import android.content.Intent
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -13,14 +12,13 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.verify
-import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
 import de.crysxd.octoapp.framework.SignInRobot
-import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
+import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.SpyOctoPrintRepositoryRule
 import de.crysxd.octoapp.framework.waitFor
@@ -35,9 +33,7 @@ import org.junit.Test
 class DeleteInstanceTest {
 
     @get:Rule
-    val activityRule = LazyActivityScenarioRule<MainActivity>(launchActivity = false) {
-        Intent(InstrumentationRegistry.getInstrumentation().targetContext, MainActivity::class.java)
-    }
+    val activityRule = LazyMainActivityScenarioRule()
 
     @get:Rule
     val discoveryRule = MockDiscoveryRule()

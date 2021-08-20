@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.login
 
-import android.content.Intent
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.clearText
 import androidx.test.espresso.action.ViewActions.click
@@ -14,8 +13,6 @@ import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.filters.LargeTest
-import androidx.test.platform.app.InstrumentationRegistry
-import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.SignInRobot.continueButton
@@ -26,7 +23,7 @@ import de.crysxd.octoapp.framework.SignInRobot.waitForManualToBeShown
 import de.crysxd.octoapp.framework.SignInRobot.waitForWelcomeTitleToBeShown
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
-import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
+import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.MockTestFullNetworkStackRule
 import de.crysxd.octoapp.framework.waitFor
@@ -43,9 +40,7 @@ class ManualLoginTest {
     private val testEnv = TestEnvironmentLibrary.Terrier
 
     @get:Rule
-    val activityRule = LazyActivityScenarioRule<MainActivity>(launchActivity = false) {
-        Intent(InstrumentationRegistry.getInstrumentation().targetContext, MainActivity::class.java)
-    }
+    val activityRule = LazyMainActivityScenarioRule()
 
     @get:Rule
     val discoveryRule = MockDiscoveryRule()

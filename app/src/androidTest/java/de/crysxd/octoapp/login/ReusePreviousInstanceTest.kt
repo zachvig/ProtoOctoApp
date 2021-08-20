@@ -1,22 +1,19 @@
 package de.crysxd.octoapp.login
 
-import android.content.Intent
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.pressBack
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.verifyZeroInteractions
-import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
-import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
+import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.MockTestFullNetworkStackRule
 import de.crysxd.octoapp.framework.waitFor
@@ -31,9 +28,7 @@ class ReusePreviousInstanceTest {
     private val testEnv = TestEnvironmentLibrary.Terrier
 
     @get:Rule
-    val activityRule = LazyActivityScenarioRule<MainActivity>(launchActivity = false) {
-        Intent(InstrumentationRegistry.getInstrumentation().targetContext, MainActivity::class.java)
-    }
+    val activityRule = LazyMainActivityScenarioRule()
 
     @get:Rule
     val discoveryRule = MockDiscoveryRule()

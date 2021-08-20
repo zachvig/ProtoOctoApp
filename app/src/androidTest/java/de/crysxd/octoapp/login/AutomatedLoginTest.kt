@@ -1,14 +1,11 @@
 package de.crysxd.octoapp.login
 
-import android.content.Intent
-import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.verifyZeroInteractions
-import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
-import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
+import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.MockTestFullNetworkStackRule
 import org.junit.Rule
@@ -19,9 +16,7 @@ class AutomatedLoginTest {
     private val testEnv = TestEnvironmentLibrary.Terrier
 
     @get:Rule
-    val activityRule = LazyActivityScenarioRule<MainActivity>(launchActivity = false) {
-        Intent(InstrumentationRegistry.getInstrumentation().targetContext, MainActivity::class.java)
-    }
+    val activityRule = LazyMainActivityScenarioRule()
 
     @get:Rule
     val discoveryRule = MockDiscoveryRule()

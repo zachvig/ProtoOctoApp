@@ -1,16 +1,15 @@
 package de.crysxd.octoapp.login
 
-import android.content.Intent
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
-import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.framework.MenuRobot
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
-import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
+import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
+import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import org.junit.After
 import org.junit.Before
@@ -24,9 +23,10 @@ class ChangePrinterTest {
     private val testEnv2 = TestEnvironmentLibrary.Frenchie
 
     @get:Rule
-    val activityRule = LazyActivityScenarioRule<MainActivity>(launchActivity = false) {
-        Intent(InstrumentationRegistry.getInstrumentation().targetContext, MainActivity::class.java)
-    }
+    val activityRule = LazyMainActivityScenarioRule()
+
+    @get:Rule
+    val idleRule = IdleTestEnvironmentRule(testEnv1, testEnv2)
 
     @get:Rule
     val discoveryRule = MockDiscoveryRule()
