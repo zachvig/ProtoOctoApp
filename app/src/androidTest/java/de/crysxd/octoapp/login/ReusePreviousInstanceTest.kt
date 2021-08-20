@@ -13,6 +13,7 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
+import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.MockTestFullNetworkStackRule
@@ -35,6 +36,9 @@ class ReusePreviousInstanceTest {
 
     @get:Rule
     val mockTestFullNetworkStackRule = MockTestFullNetworkStackRule()
+
+    @get:Rule
+    val idleRule = IdleTestEnvironmentRule(testEnv)
 
     @Before
     fun setUp() {

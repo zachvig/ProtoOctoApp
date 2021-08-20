@@ -5,6 +5,7 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
+import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.MockTestFullNetworkStackRule
@@ -26,6 +27,9 @@ class AutomatedLoginTest {
 
     @get:Rule
     val mockTestFullNetworkStackRule = MockTestFullNetworkStackRule()
+
+    @get:Rule
+    val idleRule = IdleTestEnvironmentRule(testEnv)
 
     @Test(timeout = 30_000L)
     fun WHEN_connecting_to_a_discovered_instance_THEN_we_can_sign_in() {

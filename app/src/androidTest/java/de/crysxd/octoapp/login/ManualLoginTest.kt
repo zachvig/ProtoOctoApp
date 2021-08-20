@@ -23,6 +23,7 @@ import de.crysxd.octoapp.framework.SignInRobot.waitForManualToBeShown
 import de.crysxd.octoapp.framework.SignInRobot.waitForWelcomeTitleToBeShown
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
+import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.MockTestFullNetworkStackRule
@@ -50,6 +51,9 @@ class ManualLoginTest {
 
     @get:Rule
     val mockTestFullNetworkStackRule = MockTestFullNetworkStackRule()
+
+    @get:Rule
+    val idleRule = IdleTestEnvironmentRule(testEnv)
 
     @Test(timeout = 60_000L)
     fun WHEN_no_instances_are_found_THEN_we_directly_move_to_manual_and_can_sign_in() = runBlocking {

@@ -9,6 +9,7 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
+import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.waitForDialog
@@ -30,6 +31,8 @@ class ApiKeyTest {
         it.instanceInformation = testEnv
     }
 
+    @get:Rule
+    val idleRule = IdleTestEnvironmentRule(testEnv)
 
     @Test(timeout = 30_000)
     fun WHEN_api_key_become_invalid_THEN_new_api_key_is_requested() {
