@@ -12,7 +12,11 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.models.MenuId
-import de.crysxd.octoapp.base.ui.menu.*
+import de.crysxd.octoapp.base.ui.menu.Menu
+import de.crysxd.octoapp.base.ui.menu.MenuHost
+import de.crysxd.octoapp.base.ui.menu.MenuItem
+import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
+import de.crysxd.octoapp.base.ui.menu.SubMenuItem
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -95,7 +99,7 @@ class ShowOctoPrintMenuItem : MenuItem {
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_octoprint_24px
 
-    override suspend fun getTitle(context: Context) = "OctoPrint"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_octoprint)
     override suspend fun onClicked(host: MenuHost?) {
         host?.pushMenu(OctoPrintMenu())
     }

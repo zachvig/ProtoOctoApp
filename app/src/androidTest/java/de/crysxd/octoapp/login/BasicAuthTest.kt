@@ -19,7 +19,7 @@ import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.urlEncode
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
-import de.crysxd.octoapp.framework.SignInUtils
+import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.waitFor
@@ -51,9 +51,9 @@ class BasicAuthTest {
         activityRule.launch()
 
         // Start sign in
-        SignInUtils.waitForManualToBeShown()
-        SignInUtils.manualInput.perform(replaceText(testUrl))
-        SignInUtils.continueButton.perform(click())
+        SignInRobot.waitForManualToBeShown()
+        SignInRobot.manualInput.perform(replaceText(testUrl))
+        SignInRobot.continueButton.perform(click())
 
         // Wait for basic auth form to be shown
         waitFor(basicAuthFormMatcher, timeout = 5000)
@@ -63,11 +63,11 @@ class BasicAuthTest {
         val wrongPassword = "secretpass$@&/?=§:;323"
         userNameInput.perform(replaceText(wrongUser))
         passwordInput.perform(replaceText(wrongPassword))
-        SignInUtils.scrollDown()
-        SignInUtils.continueButton.perform(click())
+        SignInRobot.scrollDown()
+        SignInRobot.continueButton.perform(click())
 
         // Wait for shown again and verify prefilled
-        SignInUtils.waitForChecks()
+        SignInRobot.waitForChecks()
         waitFor(basicAuthFormMatcher, timeout = 5000)
         userNameInput.check(matches(withText(wrongUser)))
         passwordInput.check(matches(withText(wrongPassword)))
@@ -75,9 +75,9 @@ class BasicAuthTest {
         // Enter correct user
         userNameInput.perform(replaceText(username))
         passwordInput.perform(replaceText(password))
-        SignInUtils.scrollDown()
-        SignInUtils.continueButton.perform(click())
-        SignInUtils.waitForChecks()
+        SignInRobot.scrollDown()
+        SignInRobot.continueButton.perform(click())
+        SignInRobot.waitForChecks()
 
         // Check accepted (aka OctoPrint not found as we don't connect to a OctoPrint)
         waitFor(withText(R.string.sign_in___probe_finding___title_octoprint_not_found), timeout = 5000)
@@ -103,15 +103,15 @@ class BasicAuthTest {
         onView(withText(R.string.sign_in___continue)).inRoot(isDialog()).perform(click())
 
         // Wait for shown again and verify prefilled
-        SignInUtils.waitForChecks()
+        SignInRobot.waitForChecks()
         waitFor(basicAuthFormMatcher, timeout = 5_000)
 
         // Enter correct user
         userNameInput.perform(replaceText(username))
         passwordInput.perform(replaceText(password))
-        SignInUtils.scrollDown()
-        SignInUtils.continueButton.perform(click())
-        SignInUtils.waitForChecks()
+        SignInRobot.scrollDown()
+        SignInRobot.continueButton.perform(click())
+        SignInRobot.waitForChecks()
 
         // Check accepted (aka OctoPrint not found as we don't connect to a OctoPrint)
         waitFor(withText(R.string.sign_in___probe_finding___title_octoprint_not_found))

@@ -14,7 +14,7 @@ import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.framework.SignInUtils
+import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
@@ -59,20 +59,20 @@ class ReusePreviousInstanceTest {
         BillingManager.enabledForTest = false
         activityRule.launch()
 
-        SignInUtils.waitForDiscoveryOptionsToBeShown()
-        SignInUtils.scrollDown()
+        SignInRobot.waitForDiscoveryOptionsToBeShown()
+        SignInRobot.scrollDown()
 
         onView(withText(R.string.sign_in___discovery___previously_connected_devices)).check(matches(isDisplayed()))
         onView(withText(R.string.sign_in___discovery___quick_switch_disabled_title)).check(matches(isDisplayed()))
         onView(withText(R.string.sign_in___discovery___quick_switch_disabled_subtitle)).check(matches(isDisplayed()))
 
         // Select env...should start purchase flow
-        SignInUtils.selectDiscoveryOptionWithText(testEnv.label)
+        SignInRobot.selectDiscoveryOptionWithText(testEnv.label)
         waitFor(allOf(withText(R.string.billing_unsupported_title), isDisplayed()))
 
         // Go back and select purchase item
         onView(isRoot()).perform(pressBack())
-        SignInUtils.selectDiscoveryOptionWithText(R.string.sign_in___discovery___quick_switch_disabled_title)
+        SignInRobot.selectDiscoveryOptionWithText(R.string.sign_in___discovery___quick_switch_disabled_title)
         waitFor(allOf(withText(R.string.billing_unsupported_title), isDisplayed()))
     }
 
@@ -81,10 +81,10 @@ class ReusePreviousInstanceTest {
         BillingManager.enabledForTest = true
         activityRule.launch()
 
-        SignInUtils.waitForDiscoveryOptionsToBeShown()
-        SignInUtils.scrollDown()
-        SignInUtils.selectDiscoveryOptionWithText(testEnv.label)
-        SignInUtils.waitForSignInToBeCompleted(skipAccess = true)
+        SignInRobot.waitForDiscoveryOptionsToBeShown()
+        SignInRobot.scrollDown()
+        SignInRobot.selectDiscoveryOptionWithText(testEnv.label)
+        SignInRobot.waitForSignInToBeCompleted(skipAccess = true)
 
         assertThat(Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl).isEqualTo(testEnv.webUrl)
         verifyZeroInteractions(Injector.get().testFullNetworkStackUseCase())

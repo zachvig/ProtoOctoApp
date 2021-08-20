@@ -9,7 +9,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.framework.SignInUtils
+import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
 import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
@@ -47,7 +47,7 @@ class ApiKeyTest {
         onView(withText(R.string.sign_in___continue)).inRoot(isDialog()).perform(click())
 
         // Wait test, access request, success, connected
-        SignInUtils.waitForChecks()
-        SignInUtils.waitForSignInToBeCompleted()
+        SignInRobot.waitForChecks()
+        SignInRobot.waitForSignInToBeCompleted()
     }
 }

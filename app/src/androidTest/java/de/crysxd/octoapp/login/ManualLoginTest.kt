@@ -17,13 +17,13 @@ import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
-import de.crysxd.octoapp.framework.SignInUtils
-import de.crysxd.octoapp.framework.SignInUtils.continueButton
-import de.crysxd.octoapp.framework.SignInUtils.manualInput
-import de.crysxd.octoapp.framework.SignInUtils.waitForChecksToFailWithUnableToResolveHost
-import de.crysxd.octoapp.framework.SignInUtils.waitForDiscoveryOptionsToBeShown
-import de.crysxd.octoapp.framework.SignInUtils.waitForManualToBeShown
-import de.crysxd.octoapp.framework.SignInUtils.waitForWelcomeTitleToBeShown
+import de.crysxd.octoapp.framework.SignInRobot
+import de.crysxd.octoapp.framework.SignInRobot.continueButton
+import de.crysxd.octoapp.framework.SignInRobot.manualInput
+import de.crysxd.octoapp.framework.SignInRobot.waitForChecksToFailWithUnableToResolveHost
+import de.crysxd.octoapp.framework.SignInRobot.waitForDiscoveryOptionsToBeShown
+import de.crysxd.octoapp.framework.SignInRobot.waitForManualToBeShown
+import de.crysxd.octoapp.framework.SignInRobot.waitForWelcomeTitleToBeShown
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
 import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
@@ -89,7 +89,7 @@ class ManualLoginTest {
         waitForDiscoveryOptionsToBeShown()
 
         // Move to manual
-        SignInUtils.scrollDown()
+        SignInRobot.scrollDown()
         onView(withId(R.id.manualConnectOption)).perform(click())
 
         // Wait for manual shown
@@ -102,7 +102,7 @@ class ManualLoginTest {
 
         // Move to manual
         waitFor(allOf(withText(R.string.sign_in___discovery___discovered_devices), isDisplayed()))
-        SignInUtils.scrollDown()
+        SignInRobot.scrollDown()
         onView(withId(R.id.manualConnectOption)).perform(click())
 
         // Enter empty URL
@@ -127,7 +127,7 @@ class ManualLoginTest {
         waitForChecksToFailWithUnableToResolveHost(domain)
 
         // Go back
-        SignInUtils.scrollDown()
+        SignInRobot.scrollDown()
         onView(withText(R.string.sign_in___probe___edit_information)).perform(click())
 
         // Check text prefilled and start again
@@ -148,7 +148,7 @@ class ManualLoginTest {
         mockTestFullNetworkStackRule.mockForInvalidApiKey()
         continueButton.perform(click())
 
-        SignInUtils.waitForChecks()
-        SignInUtils.waitForSignInToBeCompleted()
+        SignInRobot.waitForChecks()
+        SignInRobot.waitForSignInToBeCompleted()
     }
 }

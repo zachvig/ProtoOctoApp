@@ -18,7 +18,7 @@ import de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
 import de.crysxd.octoapp.signin.discover.DiscoverOptionView
 import org.hamcrest.Matchers.allOf
 
-object SignInUtils {
+object SignInRobot {
 
     val manualInput
         get() = onView(allOf(withId(R.id.input), isAssignableFrom(EditText::class.java)))

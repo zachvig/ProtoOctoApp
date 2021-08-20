@@ -19,7 +19,7 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
-import de.crysxd.octoapp.framework.SignInUtils
+import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.SpyOctoPrintRepositoryRule
@@ -69,7 +69,7 @@ class DeleteInstanceTest {
 
         // We stay on manual
         onView(withText(R.string.sign_in___discovery___previously_connected_devices)).check(matches(not(isDisplayed())))
-        SignInUtils.scrollUp()
+        SignInRobot.scrollUp()
         onView(withText(R.string.sign_in___discovery___options_title)).check(matches(isDisplayed()))
     }
 
@@ -109,7 +109,7 @@ class DeleteInstanceTest {
         )
 
         // Check shown
-        SignInUtils.scrollDown()
+        SignInRobot.scrollDown()
         val previousConnectedTitle = onView(withText(R.string.sign_in___discovery___previously_connected_devices))
         val instanceTitle = onView(withText(instance.label))
         previousConnectedTitle.check(matches(isDisplayed()))

@@ -5,7 +5,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.framework.SignInUtils
+import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
 import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
@@ -37,10 +37,10 @@ class AutomatedLoginTest {
         discoveryRule.mockForTestEnvironment(testEnv)
         activityRule.launch()
 
-        SignInUtils.waitForWelcomeTitleToBeShown()
-        SignInUtils.waitForDiscoveryOptionsToBeShown()
-        SignInUtils.selectDiscoveryOptionWithText(testEnv.label)
-        SignInUtils.waitForSignInToBeCompleted()
+        SignInRobot.waitForWelcomeTitleToBeShown()
+        SignInRobot.waitForDiscoveryOptionsToBeShown()
+        SignInRobot.selectDiscoveryOptionWithText(testEnv.label)
+        SignInRobot.waitForSignInToBeCompleted()
 
         // Auto discover should continue without any checks
         verifyZeroInteractions(Injector.get().testFullNetworkStackUseCase())
