@@ -10,7 +10,6 @@ import de.crysxd.octoapp.base.usecase.RequestApiAccessUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
-import timber.log.Timber
 
 class AcceptAllAccessRequestRule(var instanceInformation: OctoPrintInstanceInformationV2) : AbstractUseCaseMockRule() {
 
@@ -19,23 +18,19 @@ class AcceptAllAccessRequestRule(var instanceInformation: OctoPrintInstanceInfor
     inner class MockBaseComponent(real: BaseComponent) : BaseComponent by real {
         override fun requestApiAccessUseCase() = mock<RequestApiAccessUseCase>().also {
             runBlocking {
-                try {
-                    whenever(it.execute(any())).thenAnswer {
-                        // Check correct web url
-                        val params = it.arguments.mapNotNull { it as? RequestApiAccessUseCase.Params }.first()
-                        Truth.assertThat(params.webUrl).isEqualTo(instanceInformation.webUrl)
+                whenever(it.execute(any())).thenAnswer {
+                    // Check correct web url
+                    val params = it.arguments.mapNotNull { it as? RequestApiAccessUseCase.Params }.first()
+                    Truth.assertThat(params.webUrl).isEqualTo(instanceInformation.webUrl)
 
-                        // Return flow
-                        flow {
-                            repeat(5) {
-                                emit(RequestApiAccessUseCase.State.Pending)
-                                delay(200)
-                            }
-                            emit(RequestApiAccessUseCase.State.AccessGranted(apiKey = instanceInformation.apiKey))
+                    // Return flow
+                    flow {
+                        repeat(5) {
+                            emit(RequestApiAccessUseCase.State.Pending)
+                            delay(200)
                         }
+                        emit(RequestApiAccessUseCase.State.AccessGranted(apiKey = instanceInformation.apiKey))
                     }
-                } catch (e: Exception) {
-                    Timber.e(e)
                 }
             }
         }

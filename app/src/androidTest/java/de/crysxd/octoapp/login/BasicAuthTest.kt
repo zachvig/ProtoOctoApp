@@ -69,7 +69,7 @@ class BasicAuthTest {
         SignInUtils.continueButton.perform(click())
 
         // Wait for shown again and verify prefilled
-        waitFor(withText(R.string.sign_in___probe___probing_active_title))
+        SignInUtils.waitForChecks()
         waitFor(basicAuthFormMatcher, timeout = 5000)
         userNameInput.check(matches(withText(wrongUser)))
         passwordInput.check(matches(withText(wrongPassword)))
@@ -79,7 +79,7 @@ class BasicAuthTest {
         passwordInput.perform(replaceText(password))
         scrollView.perform(swipeUp())
         SignInUtils.continueButton.perform(click())
-        waitFor(withText(R.string.sign_in___probe___probing_active_title))
+        SignInUtils.waitForChecks()
 
         // Check accepted (aka OctoPrint not found as we don't connect to a OctoPrint)
         waitFor(withText(R.string.sign_in___probe_finding___title_octoprint_not_found), timeout = 5000)
@@ -105,7 +105,7 @@ class BasicAuthTest {
         onView(withText(R.string.sign_in___continue)).inRoot(isDialog()).perform(click())
 
         // Wait for shown again and verify prefilled
-        waitFor(withText(R.string.sign_in___probe___probing_active_title))
+        SignInUtils.waitForChecks()
         waitFor(basicAuthFormMatcher, timeout = 5_000)
 
         // Enter correct user
@@ -113,7 +113,7 @@ class BasicAuthTest {
         passwordInput.perform(replaceText(password))
         scrollView.perform(swipeUp())
         SignInUtils.continueButton.perform(click())
-        waitFor(withText(R.string.sign_in___probe___probing_active_title))
+        SignInUtils.waitForChecks()
 
         // Check accepted (aka OctoPrint not found as we don't connect to a OctoPrint)
         waitFor(withText(R.string.sign_in___probe_finding___title_octoprint_not_found))

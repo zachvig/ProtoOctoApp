@@ -10,17 +10,17 @@ class LazyActivityScenarioRule<A : Activity> : ExternalResource {
 
     constructor(launchActivity: Boolean, startActivityIntentSupplier: () -> Intent) {
         this.launchActivity = launchActivity
-        scenarioSupplier = { ActivityScenario.launch<A>(startActivityIntentSupplier()) }
+        scenarioSupplier = { ActivityScenario.launch(startActivityIntentSupplier()) }
     }
 
     constructor(launchActivity: Boolean, startActivityIntent: Intent) {
         this.launchActivity = launchActivity
-        scenarioSupplier = { ActivityScenario.launch<A>(startActivityIntent) }
+        scenarioSupplier = { ActivityScenario.launch(startActivityIntent) }
     }
 
     constructor(launchActivity: Boolean, startActivityClass: Class<A>) {
         this.launchActivity = launchActivity
-        scenarioSupplier = { ActivityScenario.launch<A>(startActivityClass) }
+        scenarioSupplier = { ActivityScenario.launch(startActivityClass) }
     }
 
     private var launchActivity: Boolean

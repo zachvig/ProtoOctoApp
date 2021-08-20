@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
@@ -32,7 +33,7 @@ class RequestAccessFragment : BaseFragment() {
     private val wifiViewModel by injectViewModel<NetworkStateViewModel>(Injector.get().viewModelFactory())
     private val mediaPlayer = MediaPlayer()
     private lateinit var contentBinding: ReqestAccessFragmentBinding
-    private val webUrl get() = navArgs<RequestAccessFragmentArgs>().value.webUrl
+    private val webUrl get() = UriLibrary.secureDecodeUrl(navArgs<RequestAccessFragmentArgs>().value.webUrl)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

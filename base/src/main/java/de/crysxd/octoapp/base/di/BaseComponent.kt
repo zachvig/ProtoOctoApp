@@ -55,6 +55,7 @@ import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
 import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
 import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
 import de.crysxd.octoapp.base.usecase.TakeScreenshotUseCase
+import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import de.crysxd.octoapp.base.usecase.TogglePausePrintJobUseCase
 import de.crysxd.octoapp.base.usecase.TogglePsuUseCase
 import de.crysxd.octoapp.base.usecase.TurnOffPsuUseCase
@@ -140,6 +141,7 @@ interface BaseComponent {
     fun handleOctoEverywhereExceptionUseCase(): HandleOctoEverywhereExceptionUseCase
     fun discoverOctoPrintUseCase(): DiscoverOctoPrintUseCase
     fun requestApiAccessUseCase(): RequestApiAccessUseCase
+    fun testFullNetworkStackUseCase(): TestFullNetworkStackUseCase
 
     // ViewModelModule
     fun viewModelFactory(): BaseViewModelFactory

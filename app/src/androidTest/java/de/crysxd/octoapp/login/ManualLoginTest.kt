@@ -18,10 +18,13 @@ import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
+import de.crysxd.octoapp.framework.SignInUtils
 import de.crysxd.octoapp.framework.SignInUtils.continueButton
 import de.crysxd.octoapp.framework.SignInUtils.manualInput
 import de.crysxd.octoapp.framework.SignInUtils.waitForChecksToFailWithUnableToResolveHost
+import de.crysxd.octoapp.framework.SignInUtils.waitForDiscoveryOptionsToBeShown
 import de.crysxd.octoapp.framework.SignInUtils.waitForManualToBeShown
+import de.crysxd.octoapp.framework.SignInUtils.waitForWelcomeTitleToBeShown
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
 import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
@@ -37,7 +40,6 @@ import org.junit.Test
 @LargeTest
 class ManualLoginTest {
 
-    private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
     private val testEnv = TestEnvironmentLibrary.Terrier
 
     @get:Rule
@@ -58,8 +60,7 @@ class ManualLoginTest {
         activityRule.launch()
 
         // Check loading
-        onView(allOf(withId(R.id.title), withText(R.string.sign_in___discovery___welcome_title)))
-            .check(matches(isDisplayed()))
+        waitForWelcomeTitleToBeShown()
 
         // Wait for loading done and move to manual
         waitForManualToBeShown()
@@ -80,20 +81,9 @@ class ManualLoginTest {
         discoveryRule.mockForRandomFound()
         activityRule.launch()
 
-        // Check loading
-        onView(withId(R.id.title))
-            .check(matches(isDisplayed()))
-            .check(matches(withText(R.string.sign_in___discovery___welcome_title)))
-
-        // Wait for loading done and show options
-        waitFor(
-            viewMatcher = allOf(
-                withId(R.id.title),
-                isDisplayed(),
-                withText(R.string.sign_in___discovery___options_title)
-            ),
-            timeout = 5_000
-        )
+        // Check loading and loaded
+        waitForWelcomeTitleToBeShown()
+        waitForDiscoveryOptionsToBeShown()
 
         // Move to manual
         onView(withId(R.id.scrollView)).perform(swipeUp())
@@ -152,43 +142,7 @@ class ManualLoginTest {
         manualInput.perform(replaceText(testEnv.webUrl))
         continueButton.perform(click())
 
-
-        // Wait for checks
-        waitFor(
-            viewMatcher = allOf(
-                withId(R.id.title),
-                isDisplayed(),
-                withText(R.string.sign_in___probe___probing_active_title)
-            )
-        )
-
-        // Wait for access screen
-        waitFor(
-            timeout = 5000,
-            viewMatcher = allOf(
-                withId(R.id.title),
-                isDisplayed(),
-                withText(R.string.sign_in___access___confirm_in_web_interface)
-            )
-        )
-
-        // Wait for success and continue
-        waitFor(
-            viewMatcher = allOf(
-                withId(R.id.title),
-                isDisplayed(),
-                withText(R.string.sign_in___success___title)
-            )
-        )
-        continueButton.perform(click())
-
-        // Wait for connected screen
-        waitFor(
-            timeout = 5000,
-            viewMatcher = allOf(
-                isDisplayed(),
-                withText(R.string.widget_temperature)
-            )
-        )
+        SignInUtils.waitForChecks()
+        SignInUtils.waitForSignInToBeCompleted()
     }
 }

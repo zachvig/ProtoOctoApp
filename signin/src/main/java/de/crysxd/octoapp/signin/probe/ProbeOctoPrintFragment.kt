@@ -111,7 +111,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
     private fun continueToRequestApiKey(webUrl: String) = binding.octoView.doAfterAnimation {
         // Octo is now in a neutral position, we can animate states
         val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
-        val directions = ProbeOctoPrintFragmentDirections.requestAccess(webUrl)
+        val directions = ProbeOctoPrintFragmentDirections.requestAccess(UriLibrary.secureEncodeUrl(webUrl))
         findNavController().navigate(directions, extras)
     }
 

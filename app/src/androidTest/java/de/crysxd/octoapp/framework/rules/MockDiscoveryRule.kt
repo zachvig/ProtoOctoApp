@@ -1,9 +1,11 @@
 package de.crysxd.octoapp.framework.rules
 
+import android.net.Uri
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.reset
 import com.nhaarman.mockitokotlin2.whenever
 import de.crysxd.octoapp.base.di.BaseComponent
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
@@ -35,6 +37,27 @@ class MockDiscoveryRule : AbstractUseCaseMockRule() {
                         baseOption.copy(label = "Beagle"),
                         baseOption.copy(label = "Dachshund"),
                     )
+                )
+            )
+        )
+    }
+
+    fun mockForTestEnvironment(vararg envs: OctoPrintInstanceInformationV2) = runBlocking {
+        reset(discoverUseCase)
+        whenever(discoverUseCase.execute(Unit)).thenReturn(
+            flowOf(
+                DiscoverOctoPrintUseCase.Result(
+                    envs.map {
+                        DiscoverOctoPrintUseCase.DiscoveredOctoPrint(
+                            label = it.label,
+                            detailLabel = "Discovered via mock",
+                            host = InetAddress.getByName(Uri.parse(it.webUrl).host),
+                            quality = 100,
+                            method = DiscoverOctoPrintUseCase.DiscoveryMethod.DnsSd,
+                            port = Uri.parse(it.webUrl).port,
+                            webUrl = it.webUrl
+                        )
+                    }
                 )
             )
         )

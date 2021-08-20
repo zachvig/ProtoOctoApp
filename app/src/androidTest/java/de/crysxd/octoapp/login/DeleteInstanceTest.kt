@@ -62,7 +62,7 @@ class DeleteInstanceTest {
     }
 
 
-    @Test
+    @Test(timeout = 30_000L)
     fun WHEN_a_instance_is_deleted_and_options_are_discovered_THEN_it_is_removed() {
         discoveryRule.mockForRandomFound()
 
@@ -74,7 +74,7 @@ class DeleteInstanceTest {
         onView(withText(R.string.sign_in___discovery___options_title)).check(matches(isDisplayed()))
     }
 
-    @Test
+    @Test(timeout = 30_000L)
     fun WHEN_a_instance_is_deleted_and_nothing_is_discovered_THEN_it_is_removed() {
         discoveryRule.mockForNothingFound()
 

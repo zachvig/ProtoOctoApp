@@ -1,24 +1,20 @@
 package de.crysxd.octoapp.login
 
 import android.content.Intent
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.matcher.RootMatchers.isDialog
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
+import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import de.crysxd.octoapp.MainActivity
-import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.framework.SignInUtils
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
 import de.crysxd.octoapp.framework.rules.LazyActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
-import de.crysxd.octoapp.framework.waitForDialog
+import de.crysxd.octoapp.framework.rules.MockTestFullNetworkStackRule
 import org.junit.Rule
 import org.junit.Test
 
-class ApiKeyTest {
+class AutomatedLoginTest {
 
     private val testEnv = TestEnvironmentLibrary.Terrier
 
@@ -31,23 +27,22 @@ class ApiKeyTest {
     val discoveryRule = MockDiscoveryRule()
 
     @get:Rule
-    val acceptAccessRequestRule = AcceptAllAccessRequestRule(testEnv).also {
-        it.instanceInformation = testEnv
-    }
+    val acceptAccessRequestRule = AcceptAllAccessRequestRule(testEnv)
 
+    @get:Rule
+    val mockTestFullNetworkStackRule = MockTestFullNetworkStackRule()
 
-    @Test(timeout = 30_000)
-    fun WHEN_api_key_become_invalid_THEN_new_api_key_is_requested() {
-        // GIVEN
-        Injector.get().octorPrintRepository().setActive(testEnv.copy(apiKey = "wrong"))
+    @Test(timeout = 30_000L)
+    fun WHEN_connecting_to_a_discovered_instance_THEN_we_can_sign_in() {
+        discoveryRule.mockForTestEnvironment(testEnv)
         activityRule.launch()
 
-        // Wait for error
-        waitForDialog(withText(R.string.sign_in___broken_setup___api_key_revoked))
-        onView(withText(R.string.sign_in___continue)).inRoot(isDialog()).perform(click())
-
-        // Wait test, access request, success, connected
-        SignInUtils.waitForChecks()
+        SignInUtils.waitForWelcomeTitleToBeShown()
+        SignInUtils.waitForDiscoveryOptionsToBeShown()
+        SignInUtils.selectDiscoveryOptionWithText(testEnv.label)
         SignInUtils.waitForSignInToBeCompleted()
+
+        // Auto discover should continue without any checks
+        verifyZeroInteractions(Injector.get().testFullNetworkStackUseCase())
     }
 }
