@@ -117,36 +117,28 @@ object SignInRobot {
         onView(withId(R.id.scrollView)).perform(swipeDown())
     }
 
-    fun waitForSignInToBeCompleted(skipAccess: Boolean = false) {
+    fun waitForSignInToBeCompleted() {
         // Wait for access screen
-        if (!skipAccess) {
-            waitFor(
-                timeout = 5000,
-                viewMatcher = allOf(
-                    withId(R.id.title),
-                    isDisplayed(),
-                    withText(R.string.sign_in___access___confirm_in_web_interface)
-                )
-            )
-
-            // Wait for success and continue
-            waitFor(
-                viewMatcher = allOf(
-                    withId(R.id.title),
-                    isDisplayed(),
-                    withText(R.string.sign_in___success___title)
-                )
-            )
-            continueButton.perform(ViewActions.click())
-        }
-
-        // Wait for connected screen
         waitFor(
-            timeout = 10_000,
+            timeout = 5000,
             viewMatcher = allOf(
+                withId(R.id.title),
                 isDisplayed(),
-                withText(R.string.widget_temperature)
+                withText(R.string.sign_in___access___confirm_in_web_interface)
             )
         )
+
+        // Wait for success and continue
+        waitFor(
+            viewMatcher = allOf(
+                withId(R.id.title),
+                isDisplayed(),
+                withText(R.string.sign_in___success___title)
+            )
+        )
+        continueButton.perform(ViewActions.click())
+
+        // Wait for connected screen
+        WorkspaceRobot.waitForPrepareWorkspace()
     }
 }

@@ -13,6 +13,7 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
+import de.crysxd.octoapp.framework.WorkspaceRobot
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
@@ -83,7 +84,7 @@ class ReusePreviousInstanceTest {
         SignInRobot.waitForDiscoveryOptionsToBeShown()
         SignInRobot.scrollDown()
         SignInRobot.selectDiscoveryOptionWithText(testEnv.label)
-        SignInRobot.waitForSignInToBeCompleted(skipAccess = true)
+        WorkspaceRobot.waitForPrepareWorkspace()
 
         assertThat(Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl).isEqualTo(testEnv.webUrl)
         verifyZeroInteractions(Injector.get().testFullNetworkStackUseCase())

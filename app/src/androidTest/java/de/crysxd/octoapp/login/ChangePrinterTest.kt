@@ -8,6 +8,7 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.framework.MenuRobot
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
+import de.crysxd.octoapp.framework.WorkspaceRobot
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
@@ -52,7 +53,7 @@ class ChangePrinterTest {
         activityRule.launch()
 
         // Wait for ready
-        SignInRobot.waitForSignInToBeCompleted(skipAccess = true)
+        WorkspaceRobot.waitForPrepareWorkspace()
 
         // Open menu and navigate
         MenuRobot.openMenuWithMoreButton()
@@ -63,7 +64,7 @@ class ChangePrinterTest {
         MenuRobot.clickMenuButton(context.getString(R.string.main_menu___switch_to_octoprint, testEnv2.label))
 
         // Wait for switch completed
-        SignInRobot.waitForSignInToBeCompleted(skipAccess = true)
+        WorkspaceRobot.waitForPrepareWorkspace()
         assertThat(Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl).isEqualTo(testEnv2.webUrl)
     }
 
@@ -74,7 +75,7 @@ class ChangePrinterTest {
         activityRule.launch()
 
         // Wait for ready
-        SignInRobot.waitForSignInToBeCompleted(skipAccess = true)
+        WorkspaceRobot.waitForPrepareWorkspace()
 
         // Open menu and navigate
         MenuRobot.openMenuWithMoreButton()

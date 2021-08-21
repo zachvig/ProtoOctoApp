@@ -75,8 +75,10 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
                 Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
                 // Make sure we are navigated to the print space automatically
                 (host?.getMenuActivity() as? OctoActivity)?.enforceAllowAutomaticNavigationFromCurrentDestination()
+                host?.closeMenu()
+            } ?: let {
+                host?.reloadMenu()
             }
-            host?.reloadMenu()
         }
     }
 
@@ -97,8 +99,10 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
                 Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
                 // Make sure we are navigated to the print space automatically
                 (host?.getMenuActivity() as? OctoActivity)?.enforceAllowAutomaticNavigationFromCurrentDestination()
+                host?.closeMenu()
+            } ?: let {
+                host?.reloadMenu()
             }
-            host?.reloadMenu()
         }
     }
 }

@@ -7,8 +7,8 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
+import de.crysxd.octoapp.framework.WorkspaceRobot
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.waitForNot
@@ -32,13 +32,13 @@ class ShowFilesTest {
         Injector.get().octorPrintRepository().setActive(testEnv)
     }
 
-    @Test
+    @Test(timeout = 60_000)
     fun WHEN_files_are_opened_THEN_files_are_listed() {
         // GIVEN
         activityRule.launch()
 
         // Open files
-        SignInRobot.waitForSignInToBeCompleted(skipAccess = true)
+        WorkspaceRobot.waitForPrepareWorkspace()
         onView(withText(R.string.start_printing)).perform(click())
 
         // Check slicer hint is shown and can be dismissed
