@@ -7,7 +7,6 @@ import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
-import com.google.common.truth.Truth.assertThat
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.framework.MenuRobot
@@ -17,7 +16,6 @@ import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.waitFor
 import de.crysxd.octoapp.framework.waitForDialog
-import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
@@ -51,13 +49,10 @@ class StartPrintTest {
         onView(withText(R.string.pause_print_confirmation_action)).inRoot(isDialog()).perform(click())
         waitFor(allOf(withText(R.string.pausing), isDisplayed()))
         waitFor(allOf(withText(R.string.resume), isDisplayed()), timeout = 30_000)
-        assertThat(getFlags()?.paused).isTrue()
         onView(withText(R.string.resume)).perform(click())
         waitForDialog(withText(R.string.resume_print_confirmation_message))
         onView(withText(R.string.resume_print_confirmation_action)).inRoot(isDialog()).perform(click())
         waitFor(allOf(withText(R.string.pause), isDisplayed()), timeout = 10_000)
-        assertThat(getFlags()?.paused).isFalse()
-        assertThat(getFlags()?.printing).isTrue()
 
         // Cancel print
         MenuRobot.openMenuWithMoreButton()
@@ -107,7 +102,6 @@ class StartPrintTest {
     private fun verifyPrinting() {
         // Wait for print workspace
         WorkspaceRobot.waitForPrintWorkspace()
-        assertThat(getFlags()?.printing).isTrue()
 
         // Wait for print data to show up
         waitFor(allOf(withText(R.string.less_than_a_minute), isDisplayed()))
@@ -123,9 +117,5 @@ class StartPrintTest {
         onView(withText("SM Spaghetti")).inRoot(isDialog()).check(matches(isDisplayed()))
         onView(withText("SM Spätzle")).inRoot(isDialog()).check(matches(isDisplayed()))
         onView(withText("Print without selection")).inRoot(isDialog()).check(matches(isDisplayed()))
-    }
 
-    private fun getFlags() = runBlocking {
-        Injector.get().octoPrintProvider().createAdHocOctoPrint(testEnvVanilla).createPrinterApi().getPrinterState().state?.flags
-    }
 }
