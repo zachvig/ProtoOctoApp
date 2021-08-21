@@ -31,7 +31,7 @@ class StartPrintTest {
     @get:Rule
     val idleRule = IdleTestEnvironmentRule(testEnvSpoolManager, testEnvVanilla)
 
-    @Test(timeout = 90_000)
+    @Test(timeout = 120_000)
     fun WHEN_a_print_is_started_THEN_the_app_shows_printing() {
         // GIVEN
         Injector.get().octorPrintRepository().setActive(testEnvVanilla)
@@ -48,7 +48,7 @@ class StartPrintTest {
         waitForDialog(withText(R.string.pause_print_confirmation_message))
         onView(withText(R.string.pause_print_confirmation_action)).inRoot(isDialog()).perform(click())
         waitFor(allOf(withText(R.string.pausing), isDisplayed()))
-        waitFor(allOf(withText(R.string.resume), isDisplayed()), timeout = 30_000)
+        waitFor(allOf(withText(R.string.resume), isDisplayed()), timeout = 45_000)
         onView(withText(R.string.resume)).perform(click())
         waitForDialog(withText(R.string.resume_print_confirmation_message))
         onView(withText(R.string.resume_print_confirmation_action)).inRoot(isDialog()).perform(click())
