@@ -117,5 +117,5 @@ class StartPrintTest {
         onView(withText("SM Spaghetti")).inRoot(isDialog()).check(matches(isDisplayed()))
         onView(withText("SM Spätzle")).inRoot(isDialog()).check(matches(isDisplayed()))
         onView(withText("Print without selection")).inRoot(isDialog()).check(matches(isDisplayed()))
-
+    }
 }
