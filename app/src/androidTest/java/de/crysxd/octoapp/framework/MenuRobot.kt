@@ -33,4 +33,8 @@ object MenuRobot {
     fun assertMenuTitle(title: Int) {
         onView(withText(title)).inRoot(isDialog()).check(matches(isDisplayed()))
     }
+
+    fun waitForMenuToBeClosed() {
+        waitTime(3000)
+    }
 }
