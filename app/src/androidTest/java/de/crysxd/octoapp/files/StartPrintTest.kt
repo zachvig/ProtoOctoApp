@@ -15,6 +15,7 @@ import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.waitFor
 import de.crysxd.octoapp.framework.waitForDialog
+import de.crysxd.octoapp.framework.waitTime
 import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
@@ -80,12 +81,12 @@ class StartPrintTest {
 
     private fun verifyPrinting() {
         // Wait for print workspace
+        waitTime(2000)
         WorkspaceRobot.waitForPrintWorkspace()
 
         // Wait for print data to show up
         waitFor(allOf(withText(R.string.less_than_a_minute), isDisplayed()))
         onView(withText("layers.gcode")).check(matches(isDisplayed()))
-        onView(withText("0 %")).check(matches(isDisplayed()))
     }
 
     private fun verifyMaterialSelection() {
