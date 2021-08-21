@@ -15,7 +15,13 @@ import de.crysxd.octoapp.octoprint.interceptors.GenerateExceptionInterceptor
 import de.crysxd.octoapp.octoprint.logging.LoggingInterceptorLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.retryWhen
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -181,7 +187,7 @@ class MjpegConnection2(
     }
 
     private class ByteCache {
-        private val maxSize = 1024 * 1024 * 5L
+        private val maxSize = 1024 * 1024 * 10L
         private val array = ByteArrayOutputStream()
         private var bitmaps = emptyList<Bitmap>()
         private var lastBitmapUsed = 0
