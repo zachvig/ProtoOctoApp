@@ -35,6 +35,6 @@ object MenuRobot {
     }
 
     fun waitForMenuToBeClosed() {
-        waitTime(4000)
+        waitTime(2000)
     }
 }
