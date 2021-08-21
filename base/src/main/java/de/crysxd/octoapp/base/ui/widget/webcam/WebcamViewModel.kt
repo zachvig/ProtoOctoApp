@@ -106,7 +106,7 @@ class WebcamViewModel(
                                 emit(
                                     UiState.HlsStreamReady(
                                         uri = Uri.parse(streamUrl),
-                                        aspectRation = webcamSettings.streamRatio,
+                                        aspectRation = webcamSettings.saveStreamRatio,
                                         canSwitchWebcam = canSwitchWebcam,
                                         authHeader = authHeader
                                     )
@@ -129,7 +129,7 @@ class WebcamViewModel(
                                             } else {
                                                 "${it.frame.width}:${it.frame.height}"
                                             }
-                                            else -> webcamSettings.streamRatio
+                                            else -> webcamSettings.saveStreamRatio
                                         },
                                         canSwitchWebcam = canSwitchWebcam,
                                         flipV = webcamSettings.flipV,
