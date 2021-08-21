@@ -45,7 +45,7 @@ class ControlTemperatureWidgetViewModel(
     }.let {
         // Slow down update rate for test
         if (AnimationTestUtils.animationsDisabled) {
-            it.rateLimit(1000)
+            it.rateLimit(3000)
         } else {
             it
         }
