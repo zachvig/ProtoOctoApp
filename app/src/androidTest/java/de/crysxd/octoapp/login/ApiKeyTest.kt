@@ -8,6 +8,7 @@ import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
+import de.crysxd.octoapp.framework.WorkspaceRobot
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
@@ -47,5 +48,6 @@ class ApiKeyTest {
         // Wait test, access request, success, connected
         SignInRobot.waitForChecks()
         SignInRobot.waitForSignInToBeCompleted()
+        WorkspaceRobot.waitForPrintWorkspace()
     }
 }
