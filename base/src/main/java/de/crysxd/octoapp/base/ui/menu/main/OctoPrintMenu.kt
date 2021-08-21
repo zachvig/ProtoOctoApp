@@ -6,7 +6,11 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.ui.menu.*
+import de.crysxd.octoapp.base.ui.menu.ConfirmedMenuItem
+import de.crysxd.octoapp.base.ui.menu.Menu
+import de.crysxd.octoapp.base.ui.menu.MenuHost
+import de.crysxd.octoapp.base.ui.menu.MenuItem
+import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
 import de.crysxd.octoapp.base.usecase.OpenOctoprintWebUseCase
 import kotlinx.parcelize.Parcelize
 
@@ -23,7 +27,7 @@ class OctoPrintMenu : Menu {
                 ShowFilesMenuItem(),
             ),
             sysCommands?.map {
-                ExecuteSystemCommandMenuItem(source = it.source, action = it.action)
+                ExecuteSystemCommandMenuItem(source = it.source ?: "Unknown", action = it.action ?: "Unknown")
             }
         ).flatten()
 
