@@ -48,19 +48,19 @@ data class Settings(
     ) : PluginSettings
 
     data class TradfriSettings(
-        @SerializedName("selected_devices") val devices: List<TradfriPowerDevice>
+        @SerializedName("selected_devices") val devices: List<TradfriPowerDevice>?
     ) : PluginSettings
 
     data class TuyaSettings(
-        @SerializedName("arrSmartplugs") val devices: List<TuyaPowerDevice>
+        @SerializedName("arrSmartplugs") val devices: List<TuyaPowerDevice>?
     ) : PluginSettings
 
     data class TpLinkSmartPlugSettings(
-        @SerializedName("arrSmartplugs") val devices: List<TpLinkSmartPlugPowerDevice>
+        @SerializedName("arrSmartplugs") val devices: List<TpLinkSmartPlugPowerDevice>?
     ) : PluginSettings
 
     data class TasmotaSettings(
-        @SerializedName("arrSmartplugs") val devices: List<TasmotaPowerDevice>
+        @SerializedName("arrSmartplugs") val devices: List<TasmotaPowerDevice>?
     ) : PluginSettings
 
     data class GpioControlSettings(
@@ -77,7 +77,7 @@ data class Settings(
     class MyStromSettings : PluginSettings
 
     data class MultiCamSettings(
-        @SerializedName("multicam_profiles") val profiles: List<WebcamSettings>
+        @SerializedName("multicam_profiles") val profiles: List<WebcamSettings>?
     ) : PluginSettings
 
     data class Discovery(
