@@ -5,7 +5,7 @@ import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 
 data class TradfriPowerDevice(
     // The plugin gives back a Int or a String as id depending on its mood...we get it as any and clean it up below
-    @SerializedName("id") val idAny: Any,
+    @SerializedName("id") val idAny: Any?,
     @Transient val plugin: TradfriPowerPlugin?,
     @SerializedName("name") override val displayName: String,
 ) : PowerDevice() {
@@ -16,6 +16,7 @@ data class TradfriPowerDevice(
         get() = when (idAny) {
             is Number -> idAny.toInt().toString()
             is String -> idAny
+            null -> "null"
             else -> throw java.lang.IllegalStateException("idAny is $idAny")
         }
 
