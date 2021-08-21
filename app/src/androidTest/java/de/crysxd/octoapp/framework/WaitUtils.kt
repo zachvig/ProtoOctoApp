@@ -1,12 +1,12 @@
 package de.crysxd.octoapp.framework
 
 import android.view.View
-import androidx.test.espresso.Espresso
+import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.RootMatchers.isDialog
-import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.util.HumanReadables
 import androidx.test.espresso.util.TreeIterables
 import org.hamcrest.Matcher
@@ -18,19 +18,18 @@ private fun waitForAction(
     timeout: Long = 3000L
 ): ViewAction {
     return object : ViewAction {
-        override fun getConstraints(): Matcher<View> {
-            return ViewMatchers.isRoot()
-        }
+        override fun getConstraints() = isRoot()
 
         override fun getDescription(): String {
             return "wait for a specific view with $matcher during $timeout millis."
         }
 
         override fun perform(uiController: UiController, view: View) {
-            uiController.loopMainThreadUntilIdle()
             val startTime = System.currentTimeMillis()
             val endTime = startTime + timeout
             do {
+                uiController.loopMainThreadUntilIdle()
+
                 val match = TreeIterables.breadthFirstViewTraversal(view).any {
                     matcher?.matches(it) ?: false
                 }
@@ -62,7 +61,7 @@ fun waitFor(
     viewMatcher: Matcher<View>,
     timeout: Long = 3000L
 ) {
-    Espresso.onView(ViewMatchers.isRoot()).perform(waitForAction(viewMatcher, false, timeout))
+    onView(isRoot()).perform(waitForAction(viewMatcher, false, timeout))
 }
 
 /**
@@ -74,11 +73,11 @@ fun waitForDialog(
     viewMatcher: Matcher<View>,
     timeout: Long = 3000L
 ) {
-    Espresso.onView(ViewMatchers.isRoot()).inRoot(isDialog()).perform(waitForAction(viewMatcher, false, timeout))
+    onView(isRoot()).inRoot(isDialog()).perform(waitForAction(viewMatcher, false, timeout))
 }
 
 fun waitTime(time: Long) {
-    Espresso.onView(ViewMatchers.isRoot()).perform(waitForAction(null, false, time))
+    onView(isRoot()).perform(waitForAction(null, false, time))
 }
 
 /**
@@ -90,5 +89,5 @@ fun waitForNot(
     viewMatcher: Matcher<View>,
     timeout: Long = 3000L
 ) {
-    Espresso.onView(ViewMatchers.isRoot()).perform(waitForAction(viewMatcher, true, timeout))
+    onView(isRoot()).perform(waitForAction(viewMatcher, true, timeout))
 }

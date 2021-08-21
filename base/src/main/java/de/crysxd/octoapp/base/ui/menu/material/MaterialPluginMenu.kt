@@ -74,8 +74,8 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
             startPrintAfterSelection?.let {
                 Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
                 // Make sure we are navigated to the print space automatically
-                (host?.getMenuActivity() as? OctoActivity)?.enforceAllowAutomaticNavigationFromCurrentDestination()
                 host?.closeMenu()
+                (host?.getMenuActivity() as? OctoActivity)?.enforceAllowAutomaticNavigationFromCurrentDestination()
             } ?: let {
                 host?.reloadMenu()
             }
@@ -98,8 +98,8 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
             startPrintAfterSelection?.let {
                 Injector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))
                 // Make sure we are navigated to the print space automatically
-                (host?.getMenuActivity() as? OctoActivity)?.enforceAllowAutomaticNavigationFromCurrentDestination()
                 host?.closeMenu()
+                (host?.getMenuActivity() as? OctoActivity)?.enforceAllowAutomaticNavigationFromCurrentDestination()
             } ?: let {
                 host?.reloadMenu()
             }

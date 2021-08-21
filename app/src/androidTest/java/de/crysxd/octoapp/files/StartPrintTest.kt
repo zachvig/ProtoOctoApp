@@ -81,10 +81,10 @@ class StartPrintTest {
     private fun verifyPrinting() {
         // Wait for print workspace
         WorkspaceRobot.waitForPrintWorkspace()
-        onView(withText("layers.gcode")).check(matches(isDisplayed()))
 
         // Wait for print data to show up
         waitFor(allOf(withText(R.string.less_than_a_minute), isDisplayed()))
+        onView(withText("layers.gcode")).check(matches(isDisplayed()))
         onView(withText("0 %")).check(matches(isDisplayed()))
     }
 
