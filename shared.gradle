@@ -37,6 +37,12 @@ android {
         } else {
             buildConfigField "String", "TEST_ENV_DOMAIN", "\"192.168.1.31\""
         }
+
+        if (project.hasProperty("failedTScreenshotDir")) {
+            buildConfigField "String", "FAILED_TEST_SCREENSHOT_DIR", "\"${project.property("failedTScreenshotDir")}\""
+        } else {
+            buildConfigField "String", "FAILED_TEST_SCREENSHOT_DIR", "\"/storage/emulated/0/Download/screenshot-test-failures/\""
+        }
     }
 
     buildTypes {
