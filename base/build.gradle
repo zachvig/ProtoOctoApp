@@ -37,7 +37,7 @@ dependencies {
      * Local backup DNS
      */
     implementation 'com.qiniu:happy-dns:0.2.18'
-    implementation 'com.github.andriydruk:dnssd:0.9.15'
+    implementation 'com.github.andriydruk:dnssd:0.9.16'
 
     /*
      * Extra transitions
