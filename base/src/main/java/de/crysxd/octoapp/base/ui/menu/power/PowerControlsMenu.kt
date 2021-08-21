@@ -9,8 +9,18 @@ import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.ext.urlDecode
 import de.crysxd.octoapp.base.ext.urlEncode
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
-import de.crysxd.octoapp.base.ui.menu.*
-import de.crysxd.octoapp.base.ui.menu.main.*
+import de.crysxd.octoapp.base.ui.menu.ConfirmedMenuItem
+import de.crysxd.octoapp.base.ui.menu.Menu
+import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
+import de.crysxd.octoapp.base.ui.menu.MenuHost
+import de.crysxd.octoapp.base.ui.menu.MenuItem
+import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
+import de.crysxd.octoapp.base.ui.menu.SubMenuItem
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_POWER_DEVICE_CYCLE
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_POWER_DEVICE_OFF
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_POWER_DEVICE_ON
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_POWER_DEVICE_TOGGLE
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SHOW_POWER_DEVICE_ACTIONS
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import kotlinx.coroutines.delay
@@ -109,7 +119,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
     companion object {
         private suspend fun MenuHost.handleAction(action: Action, deviceType: DeviceType, device: PowerDevice) {
             val fragment = this as? MenuBottomSheetFragment ?: return Timber.e("NOT A BOTTOMSHEET!")
-            (fragment as? PowerControlsCallback)?.onPowerActionCompleted(action, device)
+            (fragment.parentFragment as? PowerControlsCallback)?.onPowerActionCompleted(action, device)
             if (isCheckBoxChecked()) {
                 Injector.get().octorPrintRepository().updateAppSettingsForActive {
                     it.copy(

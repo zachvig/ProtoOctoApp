@@ -1,7 +1,12 @@
 package de.crysxd.octoapp.connect_printer.ui
 
 import android.widget.Toast
-import androidx.lifecycle.*
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -20,6 +25,7 @@ import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintBootingException
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionResponse.ConnectionState.MAYBE_ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT
+import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -54,8 +60,13 @@ class ConnectPrinterViewModel(
     private var manualTrigger = MutableLiveData(Unit)
     val uiState = uiStateMediator.map { it }.distinctUntilChanged()
     private val psuPollingLiveData = PollingLiveData(5000) {
-        // Check if the default device is turned on or off
-        octoPrintRepository.getActiveInstanceSnapshot()?.appSettings?.defaultPowerDevices?.get(PowerControlsMenu.DeviceType.PrinterPsu.prefKey)?.let {
+        // Check if the default device (or only power device) is turned on or off
+        val default = octoPrintRepository.getActiveInstanceSnapshot()?.appSettings?.defaultPowerDevices?.get(PowerControlsMenu.DeviceType.PrinterPsu.prefKey)
+        val all = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(queryState = false))
+            .filter { it.first.capabilities.contains(PowerDevice.Capability.ControlPrinterPower) }
+        val only = all.firstOrNull().takeIf { all.size == 1 }?.first?.uniqueId
+        Timber.i("Polling PSU: default=$default only=$only")
+        (default ?: only)?.let {
             val state = getPowerDevicesUseCase.execute(GetPowerDevicesUseCase.Params(queryState = true, onlyGetDeviceWithUniqueId = it)).firstOrNull()
             Timber.i("PSU state: $state")
             manualPsuState.postValue(state?.second == GetPowerDevicesUseCase.PowerState.On)

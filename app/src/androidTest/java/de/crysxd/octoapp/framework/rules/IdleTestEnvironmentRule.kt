@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.test.platform.app.InstrumentationRegistry
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.framework.VirtualPrinterUtils.setVirtualPrinterEnabled
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionCommand
 import kotlinx.coroutines.runBlocking
 import org.junit.rules.TestRule
@@ -34,6 +35,10 @@ class IdleTestEnvironmentRule(private vararg val envs: OctoPrintInstanceInformat
                             idle = it.createConnectionApi().getConnection().current.port == null
                         } while (!idle && System.currentTimeMillis() < end)
                         Timber.i("${it.webUrl} is idle")
+                    }
+                    envs.forEach {
+                        Timber.i("Turning virtual printer on for ${it.webUrl}")
+                        it.setVirtualPrinterEnabled(true)
                     }
 
                     if (System.currentTimeMillis() > end) {
