@@ -31,7 +31,7 @@ open class LazyActivityScenarioRule<A : Activity>(private val launchActivity: Bo
         }
 
         Handler(Looper.getMainLooper()).post {
-            Toast.makeText(InstrumentationRegistry.getInstrumentation().targetContext, description.displayName, Toast.LENGTH_SHORT).show()
+            Toast.makeText(InstrumentationRegistry.getInstrumentation().targetContext, description.testName, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -74,5 +74,5 @@ open class LazyActivityScenarioRule<A : Activity>(private val launchActivity: Bo
         return File(dir, filename)
     }
 
-    private val Description.testName get() = "${className.split(".").last()}_${methodName}_$id"
+    private val Description.testName get() = "${className.split(".").last()}___${methodName}___$id"
 }

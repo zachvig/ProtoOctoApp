@@ -27,7 +27,7 @@ class AcceptAllAccessRequestRule(var instanceInformation: OctoPrintInstanceInfor
                     flow {
                         repeat(5) {
                             emit(RequestApiAccessUseCase.State.Pending)
-                            delay(200)
+                            delay(400)
                         }
                         emit(RequestApiAccessUseCase.State.AccessGranted(apiKey = instanceInformation.apiKey))
                     }
