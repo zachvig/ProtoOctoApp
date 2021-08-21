@@ -65,7 +65,7 @@ test_release:
     - ./gradlew testRelease
     - ./gradlew assembleAndroidTest
     - ~/ci-scripts/start-emulator.sh
-    - ./gradlew connectedAndroidTest || (~/ci-scripts/stop-emulator.sh && exit 1)
+    - ./gradlew connectedAndroidTest || 1
     - ~/ci-scripts/stop-emulator.sh
   after_script:
     # Ensure emulator is stopped
