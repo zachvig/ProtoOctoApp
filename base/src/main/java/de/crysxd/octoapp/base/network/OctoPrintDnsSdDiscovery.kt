@@ -1,8 +1,11 @@
 package de.crysxd.octoapp.base.network
 
 import android.content.Context
-import android.net.wifi.WifiManager
-import com.github.druk.dnssd.*
+import com.github.druk.dnssd.BrowseListener
+import com.github.druk.dnssd.DNSSDBindable
+import com.github.druk.dnssd.DNSSDService
+import com.github.druk.dnssd.QueryListener
+import com.github.druk.dnssd.ResolveListener
 import de.crysxd.octoapp.base.di.Injector
 import kotlinx.coroutines.job
 import timber.log.Timber
@@ -13,22 +16,17 @@ import kotlin.coroutines.CoroutineContext
 class OctoPrintDnsSdDiscovery(
     private val context: Context,
 ) {
-    private val wifi = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
     private val dnssd = DNSSDBindable(context)
 
     fun discover(coroutineContext: CoroutineContext, callback: (Service) -> Unit) {
-        val lock = wifi.createMulticastLock("OctoPrintUpnpDiscovery")
 
         // Sometimes the internal Dnssd service is not running...we can start it with this:
         context.applicationContext.getSystemService(Context.NSD_SERVICE)
 
         try {
-            lock.acquire()
             discoverWithMulticastLock(coroutineContext, callback)
         } catch (e: Exception) {
             Timber.e(e)
-        } finally {
-            lock.release()
         }
     }
 

@@ -147,7 +147,7 @@ class LocalDnsResolver(private val context: Context) : Dns {
                         }
 
                         override fun queryAnswered(
-                            query: DNSSDService,
+                            query: DNSSDService?,
                             flags: Int,
                             ifIndex: Int,
                             fullName: String,
@@ -181,6 +181,7 @@ class LocalDnsResolver(private val context: Context) : Dns {
             } finally {
                 // Ensure job gets cancelled
                 job.cancel()
+                lock.release()
             }
         } ?: throw UnknownHostException(hostname)
     }
