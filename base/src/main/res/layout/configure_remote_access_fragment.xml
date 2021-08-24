@@ -67,7 +67,8 @@
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                tools:visibility="gone">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -94,12 +95,12 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/disconnectOctoEverywhere"
+                    style="@style/OctoTheme.Widget.Button.Secondary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/OctoTheme.Widget.Button.Secondary"
                     android:layout_margin="@dimen/margin_2"
-                    android:visibility="gone"
-                    android:text="@string/configure_remote_acces___octoeverywhere___disconnect_button" />
+                    android:text="@string/configure_remote_acces___octoeverywhere___disconnect_button"
+                    android:visibility="gone" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/connectOctoEverywhere"
@@ -128,7 +129,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -144,9 +146,32 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin_2"
-                    app:example="https://mydomain.com:5000"
+                    android:inputType="textUri"
+                    app:example="e.g. https://mydomain.com:5000"
                     app:label="@string/sign_in___discover___web_url_hint"
                     app:labelActive="@string/sign_in___discover___web_url_hint_active" />
+
+                <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
+                    android:id="@+id/basicUserInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_2"
+                    android:layout_marginTop="@dimen/margin_1"
+                    android:autofillHints="username"
+                    android:inputType="textNoSuggestions"
+                    app:label="@string/configure_remote_access___manual___username_hint"
+                    app:labelActive="@string/configure_remote_access___manual___username_hint_active" />
+
+                <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
+                    android:id="@+id/basicPasswordInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_2"
+                    android:layout_marginTop="@dimen/margin_1"
+                    android:autofillHints="password"
+                    android:inputType="textNoSuggestions"
+                    app:label="@string/configure_remote_access___manual___password_hint"
+                    app:labelActive="@string/configure_remote_access___manual___password_hint_active" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/saveUrl"

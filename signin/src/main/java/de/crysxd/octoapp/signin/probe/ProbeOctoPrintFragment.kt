@@ -15,7 +15,7 @@ import androidx.navigation.fragment.navArgs
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ext.urlEncode
+import de.crysxd.octoapp.base.ext.basicAuthCredentials
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
@@ -131,7 +131,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
 
             // Clearing and setting the instance will ensure we reset the navigation
             Injector.get().octorPrintRepository().clearActive()
-            Injector.get().octorPrintRepository().setActive(instance)
+            Injector.get().octorPrintRepository().setActive(instance.copy(issue = null))
         }
     }
 
@@ -214,13 +214,11 @@ class ProbeOctoPrintFragment : BaseFragment() {
         is TestFullNetworkStackUseCase.Finding.BasicAuthRequired -> {
             val user = findingBinding?.usernameInput?.editText?.text?.toString() ?: ""
             val password = findingBinding?.passwordInput?.editText?.text?.toString() ?: ""
-            val uri = Uri.parse(finding.webUrl)
-            val credentials = when {
-                user.isNotBlank() && password.isNotBlank() -> "${user.urlEncode()}:${password.urlEncode()}@"
-                user.isNotBlank() -> "${user.urlEncode()}@"
-                else -> ""
-            }
-            val webUrl = uri.buildUpon().encodedAuthority("$credentials${uri.host}").build().toString()
+            val webUrl = Uri.parse(finding.webUrl)
+                .buildUpon()
+                .basicAuthCredentials(username = user, password = password)
+                .build()
+                .toString()
             Injector.get().sensitiveDataMask().registerWebUrl(webUrl, "octoprint")
             viewModel.probe(webUrl)
         }

@@ -58,7 +58,12 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         binding.description.text = getString(R.string.configure_remote_acces___description).toHtml()
         binding.description.movementMethod = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(requireOctoActivity()))
         binding.saveUrl.setOnClickListener {
-            viewModel.setRemoteUrl(binding.webUrlInput.editText.text.toString(), false)
+            viewModel.setRemoteUrl(
+                url = binding.webUrlInput.editText.text.toString(),
+                username = binding.basicUserInput.editText.text.toString(),
+                password = binding.basicPasswordInput.editText.text.toString(),
+                bypassChecks = false
+            )
         }
 
         binding.connectOctoEverywhere.setOnClickListener {
@@ -66,10 +71,13 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         }
 
         binding.disconnectOctoEverywhere.setOnClickListener {
-            viewModel.setRemoteUrl("", false)
+            viewModel.setRemoteUrl("", "", "", false)
         }
 
-        binding.webUrlInput.backgroundTint = ContextCompat.getColor(requireContext(), R.color.input_background_alternative)
+        val inputTint = ContextCompat.getColor(requireContext(), R.color.input_background_alternative)
+        binding.webUrlInput.backgroundTint = inputTint
+        binding.basicPasswordInput.backgroundTint = inputTint
+        binding.basicUserInput.backgroundTint = inputTint
 
         viewModel.viewState.observe(viewLifecycleOwner) {
             binding.saveUrl.isEnabled = it !is ConfigureRemoteAccessViewModel.ViewState.Loading

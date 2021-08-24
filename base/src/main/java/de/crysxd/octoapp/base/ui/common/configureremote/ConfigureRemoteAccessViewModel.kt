@@ -1,13 +1,16 @@
 package de.crysxd.octoapp.base.ui.common.configureremote
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.models.OctoEverywhereConnection
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.GetConnectOctoEverywhereUrlUseCase
 import de.crysxd.octoapp.base.usecase.SetAlternativeWebUrlUseCase
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 
 class ConfigureRemoteAccessViewModel(
@@ -56,16 +59,22 @@ class ConfigureRemoteAccessViewModel(
         mutableViewState.postValue(ViewState.Idle)
     }
 
-    fun setRemoteUrl(url: String, bypassChecks: Boolean) {
+    fun setRemoteUrl(url: String, username: String, password: String, bypassChecks: Boolean) {
         viewModelScope.launch(coroutineExceptionHandler) {
             mutableViewState.postValue(ViewState.Loading)
-            val event = when (val result = setAlternativeWebUrlUseCase.execute(SetAlternativeWebUrlUseCase.Params(url, bypassChecks))) {
+            val params = SetAlternativeWebUrlUseCase.Params(
+                webUrl = url,
+                password = password,
+                username = username,
+                bypassChecks = bypassChecks
+            )
+            val event = when (val result = setAlternativeWebUrlUseCase.execute(params)) {
                 SetAlternativeWebUrlUseCase.Result.Success -> ViewEvent.Success()
                 is SetAlternativeWebUrlUseCase.Result.Failure -> ViewEvent.ShowError(
                     message = result.errorMessage,
                     exception = result.exception,
                     ignoreAction = if (result.allowToProceed) {
-                        { setRemoteUrl(url, true) }
+                        { setRemoteUrl(url = url, username = username, password = password, bypassChecks = true) }
                     } else {
                         null
                     }
