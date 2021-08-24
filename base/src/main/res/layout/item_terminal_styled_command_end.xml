@@ -7,5 +7,6 @@
     android:layout_marginBottom="@dimen/margin_1"
     android:background="@drawable/styled_terminal_end_background"
     android:gravity="center_vertical"
+    android:textIsSelectable="true"
     android:importantForAccessibility="no"
     tools:text="TextView" />
