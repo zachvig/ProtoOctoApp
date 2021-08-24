@@ -542,7 +542,12 @@ class MainActivity : OctoActivity() {
                 viewModel.lastSuccessfulCapabilitiesUpdate = 0
                 if (escalateError) {
                     Timber.e(e)
-                    showDialog(getString(R.string.capabilities_validation_error))
+                    showSnackbar(
+                        Message.SnackbarMessage(
+                            text = { getString(R.string.capabilities_validation_error) },
+                            type = Message.SnackbarMessage.Type.Negative
+                        )
+                    )
                 }
             }
         }
