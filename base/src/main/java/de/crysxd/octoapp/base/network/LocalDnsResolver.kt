@@ -133,55 +133,53 @@ class LocalDnsResolver(private val context: Context) : Dns {
         withTimeoutOrNull(TimeUnit.SECONDS.toMillis(RESOLVE_TIMEOUT)) {
             val channel = Channel<Any>()
             val lock = wifi.createMulticastLock("mDnsResolution")
-            lock.acquire()
+            var job: Job? = null
             var service: DNSSDService? = null
-
-            // Switch to a new thread so we can kill it on timeout without having issues with blocking IO operations
-            val job = GlobalScope.launch {
-                try {
-                    service = dnssd.queryRecord(0, 0, hostname, 1 /* IPv4 */, 1, object : QueryListener {
-                        override fun operationFailed(service: DNSSDService?, errorCode: Int) {
-                            val e = Exception("Unable to query $hostname (errorCode=$errorCode)")
-                            Timber.e(e)
-                            channel.offer(e)
-                        }
-
-                        override fun queryAnswered(
-                            query: DNSSDService?,
-                            flags: Int,
-                            ifIndex: Int,
-                            fullName: String,
-                            rrtype: Int,
-                            rrclass: Int,
-                            rdata: ByteArray,
-                            ttl: Int
-                        ) {
-                            Timber.v("Query answered: $hostname")
-                            channel.offer(InetAddress.getByAddress(hostname, rdata))
-                        }
-                    })
-                } catch (e: Exception) {
-                    Timber.e(e)
-                    channel.offer(e)
-                }
-            }
-
             try {
+                lock.acquire()
+
+                // Switch to a new thread so we can kill it on timeout without having issues with blocking IO operations
+                job = GlobalScope.launch {
+                    try {
+                        service = dnssd.queryRecord(0, 0, hostname, 1 /* IPv4 */, 1, object : QueryListener {
+                            override fun operationFailed(service: DNSSDService?, errorCode: Int) {
+                                val e = Exception("Unable to query $hostname (errorCode=$errorCode)")
+                                Timber.e(e)
+                                channel.offer(e)
+                            }
+
+                            override fun queryAnswered(
+                                query: DNSSDService?,
+                                flags: Int,
+                                ifIndex: Int,
+                                fullName: String,
+                                rrtype: Int,
+                                rrclass: Int,
+                                rdata: ByteArray,
+                                ttl: Int
+                            ) {
+                                Timber.v("Query answered: $hostname")
+                                channel.offer(InetAddress.getByAddress(hostname, rdata))
+                            }
+                        })
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                        channel.offer(e)
+                    }
+                }
+
                 val address = when (val res = channel.receive()) {
                     is Throwable -> throw res
                     is InetAddress -> res
                     else -> throw Exception("Unexpected result $res")
                 }
-                job.invokeOnCompletion {
-                    lock.release()
-                    service?.stop()
-                }
                 OctoAnalytics.logEvent(OctoAnalytics.Event.MDnsResolveSuccess)
                 listOf(address)
             } finally {
                 // Ensure job gets cancelled
-                job.cancel()
+                job?.cancel()
                 lock.release()
+                service?.stop()
             }
         } ?: throw UnknownHostException(hostname)
     }
