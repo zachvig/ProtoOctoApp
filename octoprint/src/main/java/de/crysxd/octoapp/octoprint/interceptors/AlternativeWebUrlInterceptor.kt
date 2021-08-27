@@ -29,7 +29,15 @@ class AlternativeWebUrlInterceptor(
             val upgradedRequest = if (alternativeWebUrl != null && !isPrimaryUsed) {
                 val url = request.url.toString()
                 usingPrimary = false
-                request.newBuilder().url(url.replace(webUrl, alternativeWebUrl)).build()
+                // TODO Default ports are deleted by OkHttp so we now have to do the same
+                // This is a super ugly fix
+                // Issue: OkHttp gives http://something.local/... but our webUrl is http://somthing.local:80/ so it doesn't replace
+                request.newBuilder().url(
+                    url.replace(
+                        webUrl.replace(":80", "").replace(":443", ""),
+                        alternativeWebUrl
+                    )
+                ).build()
             } else {
                 usingPrimary = true
                 request
