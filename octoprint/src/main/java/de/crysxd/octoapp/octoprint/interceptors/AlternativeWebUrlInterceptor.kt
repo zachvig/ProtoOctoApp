@@ -23,8 +23,9 @@ class AlternativeWebUrlInterceptor(
 
     private fun doIntercept(chain: Interceptor.Chain, attempt: Int): Response {
         var usingPrimary = isPrimaryUsed
+        val request = chain.request()
+
         try {
-            val request = chain.request()
             val upgradedRequest = if (alternativeWebUrl != null && !isPrimaryUsed) {
                 val url = request.url.toString()
                 usingPrimary = false
@@ -38,7 +39,11 @@ class AlternativeWebUrlInterceptor(
         } catch (e: IOException) {
             if (attempt < 1 && canSolveExceptionBySwitchingUrl(e)) {
                 isPrimaryUsed = !usingPrimary
-                logger.log(Level.WARNING, "Caught exception, switching web url to ${if (isPrimaryUsed) "primary" else "alternative"}")
+                logger.log(
+                    Level.WARNING,
+                    "Caught exception in ${request.url}, switching web url to ${if (isPrimaryUsed) "primary" else "alternative"} (${e::class.java.simpleName}: ${e.message})"
+                )
+                logger.log(Level.INFO, "webUrl=$webUrl alternativeWebUrl=$alternativeWebUrl")
                 return doIntercept(chain, 1)
             } else {
                 throw e
