@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.network
 
 import de.crysxd.octoapp.base.models.ActiveInstanceIssue
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.octoprint.exceptions.AlternativeWebUrlException
 import de.crysxd.octoapp.octoprint.exceptions.BasicAuthRequiredException
 import de.crysxd.octoapp.octoprint.exceptions.InvalidApiKeyException
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintHttpsException

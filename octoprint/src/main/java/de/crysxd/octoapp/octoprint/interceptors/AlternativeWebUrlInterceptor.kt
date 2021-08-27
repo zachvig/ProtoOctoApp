@@ -1,10 +1,12 @@
 package de.crysxd.octoapp.octoprint.interceptors
 
+import de.crysxd.octoapp.octoprint.exceptions.AlternativeWebUrlException
 import de.crysxd.octoapp.octoprint.isOctoEverywhereUrl
 import de.crysxd.octoapp.octoprint.models.ConnectionType
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
+import java.lang.IllegalStateException
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -32,12 +34,16 @@ class AlternativeWebUrlInterceptor(
                 // TODO Default ports are deleted by OkHttp so we now have to do the same
                 // This is a super ugly fix
                 // Issue: OkHttp gives http://something.local/... but our webUrl is http://somthing.local:80/ so it doesn't replace
-                request.newBuilder().url(
-                    url.replace(
-                        webUrl.replace(":80", "").replace(":443", ""),
-                        alternativeWebUrl
-                    )
-                ).build()
+                val upgradedUrl = url.replace(
+                    webUrl.replace(":80", "").replace(":443", ""),
+                    alternativeWebUrl
+                )
+
+                if (upgradedUrl == url && webUrl != alternativeWebUrl) {
+                    throw AlternativeWebUrlException("Alternative URL and primary URL are the same: $url <--> $upgradedUrl", url)
+                }
+
+                request.newBuilder().url(upgradedUrl).build()
             } else {
                 usingPrimary = true
                 request
