@@ -119,6 +119,19 @@ class HttpUrlExtTest {
     }
 
     @Test
+    fun `WHEN checking if based on and one has basic auth THEN true returned`() {
+        // GIVEN
+        val url1 = "http://octopi.local:80/path".toHttpUrl()
+        val url2 = "http://user:password@octopi.local:80/path/with/more".toHttpUrl()
+
+        // WHEN
+        val result = url2.isBasedOn(url1)
+
+        // THEN
+        assertThat(result).isTrue()
+    }
+
+    @Test
     fun `WHEN checking if based on and scheme is different THEN false returned`() {
         // GIVEN
         val url1 = "http://octopi.local:80/path".toHttpUrl()

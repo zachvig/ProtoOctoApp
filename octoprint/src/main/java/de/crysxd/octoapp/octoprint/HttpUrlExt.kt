@@ -62,8 +62,8 @@ fun HttpUrl.extractAndRemoveBasicAuth(): Pair<HttpUrl, String?> {
     return withoutBasicAuth() to header
 }
 
-fun HttpUrl.isBasedOn(baseUrl: HttpUrl) = toString().addTrailingSlash()
-    .startsWith(baseUrl.toString().addTrailingSlash())
+fun HttpUrl.isBasedOn(baseUrl: HttpUrl) = withoutBasicAuth().toString().addTrailingSlash()
+    .startsWith(baseUrl.withoutBasicAuth().toString().addTrailingSlash())
 
 private fun String.addTrailingSlash() = removeSuffix("/") + "/"
 

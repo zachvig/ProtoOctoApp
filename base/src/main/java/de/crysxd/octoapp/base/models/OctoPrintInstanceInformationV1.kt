@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.models
 
 import de.crysxd.octoapp.octoprint.UPNP_ADDRESS_PREFIX
+import de.crysxd.octoapp.octoprint.isBasedOn
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.system.SystemCommand
@@ -55,8 +56,7 @@ data class OctoPrintInstanceInformationV2(
             }
         }
 
-    // The URL contains the Basic Auth, if the user changes the basic auth the url does not exactly match but it references the same instance
-    fun isForWebUrl(webUrl: String) = this.webUrl.toHttpUrl().withoutBasicAuth().toString() == webUrl.toHttpUrl().withoutBasicAuth().toString()
+    fun isForWebUrl(webUrl: String) = webUrl.toHttpUrl().isBasedOn(this.webUrl.toHttpUrl())
 
     // We do not want to log the M115 response all over the place. It clutters the logs.
     override fun toString(): String = if (m115Response != null && m115Response != M115_MASK) {
