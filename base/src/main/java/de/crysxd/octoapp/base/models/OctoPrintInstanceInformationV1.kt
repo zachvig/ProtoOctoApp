@@ -1,10 +1,11 @@
 package de.crysxd.octoapp.base.models
 
 import de.crysxd.octoapp.base.network.OctoPrintUpnpDiscovery.Companion.UPNP_ADDRESS_PREFIX
-import de.crysxd.octoapp.octoprint.extractAndRemoveUserInfo
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.system.SystemCommand
+import de.crysxd.octoapp.octoprint.withoutBasicAuth
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import kotlin.math.max
 
 private const val M115_MASK = "{m115 response}"
@@ -55,8 +56,7 @@ data class OctoPrintInstanceInformationV2(
         }
 
     // The URL contains the Basic Auth, if the user changes the basic auth the url does not exactly match but it references the same instance
-    fun isSameInstanceAs(other: OctoPrintInstanceInformationV2) = webUrl.extractAndRemoveUserInfo().first == other.webUrl.extractAndRemoveUserInfo().first
-    fun isForWebUrl(webUrl: String) = this.webUrl.extractAndRemoveUserInfo().first == webUrl.extractAndRemoveUserInfo().first
+    fun isForWebUrl(webUrl: String) = this.webUrl.toHttpUrl().withoutBasicAuth().toString() == webUrl.toHttpUrl().withoutBasicAuth().toString()
 
     // We do not want to log the M115 response all over the place. It clutters the logs.
     override fun toString(): String = if (m115Response != null && m115Response != M115_MASK) {

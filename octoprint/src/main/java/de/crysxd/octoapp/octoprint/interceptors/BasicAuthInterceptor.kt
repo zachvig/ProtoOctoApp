@@ -1,16 +1,17 @@
 package de.crysxd.octoapp.octoprint.interceptors
 
-import de.crysxd.octoapp.octoprint.UrlString
-import de.crysxd.octoapp.octoprint.extractAndRemoveUserInfo
+import de.crysxd.octoapp.octoprint.extractAndRemoveBasicAuth
+import de.crysxd.octoapp.octoprint.isBasedOn
+import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.util.logging.Level
 import java.util.logging.Logger
 
-class BasicAuthInterceptor(private val logger: Logger, vararg baseUrls: UrlString?) : Interceptor {
+class BasicAuthInterceptor(private val logger: Logger, vararg baseUrls: HttpUrl?) : Interceptor {
     private val credentials = baseUrls
         .filterNotNull()
-        .map { it.extractAndRemoveUserInfo() }
+        .map { it.extractAndRemoveBasicAuth() }
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
@@ -18,7 +19,7 @@ class BasicAuthInterceptor(private val logger: Logger, vararg baseUrls: UrlStrin
 
         // Do we have credentials for this URL? If so, add them
         val upgradedRequest = credentials.firstOrNull {
-            url.toString().startsWith(it.first, ignoreCase = true)
+            url.isBasedOn(it.first)
         }?.second?.let {
             logger.log(Level.FINEST, "Adding authorization for $url")
             request.newBuilder()

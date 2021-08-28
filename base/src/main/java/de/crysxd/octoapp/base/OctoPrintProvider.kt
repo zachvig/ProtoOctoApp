@@ -5,6 +5,7 @@ import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.logging.TimberLogger
 import de.crysxd.octoapp.base.models.ActiveInstanceIssue
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
@@ -158,8 +160,8 @@ class OctoPrintProvider(
 
     fun createAdHocOctoPrint(it: OctoPrintInstanceInformationV2) =
         OctoPrint(
-            rawWebUrl = it.webUrl,
-            rawAlternativeWebUrl = it.alternativeWebUrl,
+            rawWebUrl = it.webUrl.toHttpUrl(),
+            rawAlternativeWebUrl = it.alternativeWebUrl?.toHttpUrl(),
             apiKey = it.apiKey,
             highLevelInterceptors = listOf(detectBrokenSetupInterceptor),
             customDns = localDnsResolver,

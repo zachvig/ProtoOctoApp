@@ -21,12 +21,12 @@ import de.crysxd.octoapp.octoprint.plugins.power.PowerPluginsCollection
 import de.crysxd.octoapp.octoprint.websocket.ContinuousOnlineCheck
 import de.crysxd.octoapp.octoprint.websocket.EventWebSocket
 import okhttp3.Dns
+import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.net.URI
 import java.security.KeyStore
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
@@ -35,8 +35,8 @@ import javax.net.ssl.*
 
 
 class OctoPrint(
-    rawWebUrl: UrlString,
-    rawAlternativeWebUrl: UrlString?,
+    rawWebUrl: HttpUrl,
+    rawAlternativeWebUrl: HttpUrl?,
     private val apiKey: String,
     private val highLevelInterceptors: List<Interceptor> = emptyList(),
     private val customDns: Dns? = null,
@@ -50,10 +50,10 @@ class OctoPrint(
     private val debug: Boolean,
 ) {
 
-    val fullWebUrl = rawWebUrl.sanitizeUrl()
-    val fullAlternativeWebUrl = rawAlternativeWebUrl?.sanitizeUrl()
-    val webUrl = rawWebUrl.removeUserInfo().sanitizeUrl()
-    private val alternativeWebUrl = rawAlternativeWebUrl?.removeUserInfo()?.sanitizeUrl()
+    val fullWebUrl = rawWebUrl
+    val fullAlternativeWebUrl = rawAlternativeWebUrl
+    val webUrl = rawWebUrl.withoutBasicAuth()
+    private val alternativeWebUrl = rawAlternativeWebUrl?.withoutBasicAuth()
     private val alternativeWebUrlInterceptor = AlternativeWebUrlInterceptor(createHttpLogger(), webUrl, alternativeWebUrl)
     private val continuousOnlineCheck = ContinuousOnlineCheck(
         url = webUrl,
@@ -152,7 +152,7 @@ class OctoPrint(
     }
 
     private fun createRetrofit(path: String = "api/", okHttpClient: OkHttpClient = this.okHttpClient) = Retrofit.Builder()
-        .baseUrl(URI.create(webUrl).resolve(path).toURL())
+        .baseUrl(webUrl.resolvePath(path))
         .addConverterFactory(GsonConverterFactory.create(createGsonWithTypeAdapters()))
         .client(okHttpClient)
         .build()

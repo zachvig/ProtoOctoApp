@@ -1,11 +1,12 @@
 package de.crysxd.octoapp.octoprint.interceptors
 
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintException
+import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.Response
 
 class CatchAllInterceptor(
-    val baseUrl: String,
+    val baseUrl: HttpUrl,
     val apiKey: String
 ) : Interceptor {
 

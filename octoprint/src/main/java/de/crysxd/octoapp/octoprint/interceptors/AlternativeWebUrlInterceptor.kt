@@ -3,6 +3,7 @@ package de.crysxd.octoapp.octoprint.interceptors
 import de.crysxd.octoapp.octoprint.exceptions.AlternativeWebUrlException
 import de.crysxd.octoapp.octoprint.isOctoEverywhereUrl
 import de.crysxd.octoapp.octoprint.models.ConnectionType
+import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
@@ -13,8 +14,8 @@ import java.util.logging.Logger
 
 class AlternativeWebUrlInterceptor(
     private val logger: Logger,
-    private val webUrl: String,
-    private val alternativeWebUrl: String?
+    private val webUrl: HttpUrl,
+    private val alternativeWebUrl: HttpUrl?
 ) : Interceptor {
 
     var isPrimaryUsed = true
@@ -31,7 +32,7 @@ class AlternativeWebUrlInterceptor(
             val upgradedRequest = if (alternativeWebUrl != null && !isPrimaryUsed) {
                 val url = request.url.toString()
                 usingPrimary = false
-                val upgradedUrl = url.replace(webUrl, alternativeWebUrl)
+                val upgradedUrl = url.replace(webUrl.toString(), alternativeWebUrl.toString())
 
                 if (upgradedUrl == url && webUrl != alternativeWebUrl) {
                     throw AlternativeWebUrlException("Alternative URL and primary URL are the same: $url <--> $upgradedUrl", url)
