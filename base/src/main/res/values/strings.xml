@@ -61,7 +61,7 @@
     <string name="configure_remote_acces___octoeverywhere___title">OctoEverywhere!</string>
     <string name="configure_remote_acces___remote_access_configured">Remote access configured</string>
     <string name="configure_remote_access___title">Configure Remote Access</string>
-    <string name="connect">Connect</string>
+    <string name="workspace___connect">Connect</string>
     <string name="connect_printer___action_change_octoprint">Switch OctoPrint</string>
     <string name="connect_printer___action_cycle_psu">Cycle PSU</string>
     <string name="connect_printer___action_retry">Retry connection</string>
@@ -328,8 +328,8 @@
     <string name="power_menu___turn_x_off">Turn %s off</string>
     <string name="power_menu___turn_x_on">Turn %s on</string>
     <string name="preheat">Preheat</string>
-    <string name="prepare">Prepare</string>
-    <string name="print">Print</string>
+    <string name="workspace___prepare">Prepare</string>
+    <string name="workspace___print">Print</string>
     <string name="print_info">Print info</string>
     <string name="print_name">Print name</string>
     <string name="print_notification___cancelling_title">Cancelling…</string>
@@ -509,4 +509,5 @@
     <string name="configure_remote_access___manual___username_hint_active">Username, optional</string>
     <string name="configure_remote_access___manual___password_hint">BasicAuth password, optional</string>
     <string name="configure_remote_access___manual___password_hint_active">Password, optional</string>
+    <string name="workspace___explainer"><![CDATA[OctoApp will <b>switch automatically</b> to the correct workspace.<br><br><b>Connect</b>: No printer is connected, but you have all tools to connect one.<br><br><b>Prepare</b>: A printer is connected but not printing. Get ready and start your next print!<br><br><b>Print</b>: Tune and control the active print!<br><br>Each workspace contains all controls you need in the current situation, helping the app to stay clean and simple!]]></string>
 </resources>

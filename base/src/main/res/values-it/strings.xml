@@ -53,7 +53,7 @@
     <string name="configure_remote_acces___octoeverywhere___title">OctoEverywhere!</string>
     <string name="configure_remote_acces___remote_access_configured">Accesso remoto configurato</string>
     <string name="configure_remote_access___title">Configurare l\'accesso remoto</string>
-    <string name="connect">Connettersi</string>
+    <string name="workspace___connect">Connettersi</string>
     <string name="connect_printer___action_change_octoprint">Interruttore OctoPrint</string>
     <string name="connect_printer___action_cycle_psu">Ciclo PSU</string>
     <string name="connect_printer___action_retry">Riprova la connessione</string>
@@ -318,8 +318,8 @@
     <string name="power_menu___turn_x_off">Spegnere %s</string>
     <string name="power_menu___turn_x_on">Accendere %s</string>
     <string name="preheat">Preriscaldare</string>
-    <string name="prepare">Preparare</string>
-    <string name="print">Stampare</string>
+    <string name="workspace___prepare">Preparare</string>
+    <string name="workspace___print">Stampare</string>
     <string name="print_info">Stampa info</string>
     <string name="print_name">Nome in stampa</string>
     <string name="print_notification___cancelling_title">Cancellare…</string>

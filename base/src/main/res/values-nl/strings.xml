@@ -53,7 +53,7 @@
     <string name="configure_remote_acces___octoeverywhere___title">OctoEverywhere!</string>
     <string name="configure_remote_acces___remote_access_configured">Toegang op afstand geconfigureerd</string>
     <string name="configure_remote_access___title">Toegang op afstand configureren</string>
-    <string name="connect">Verbind</string>
+    <string name="workspace___connect">Verbind</string>
     <string name="connect_printer___action_change_octoprint">Wissel OctoPrint</string>
     <string name="connect_printer___action_cycle_psu">PSU opnieuw opstarten</string>
     <string name="connect_printer___action_retry">Opnieuw proberen verbinding te maken</string>
@@ -327,8 +327,8 @@
     <string name="power_menu___turn_x_off">Zet %s uit</string>
     <string name="power_menu___turn_x_on">Zet %s aan</string>
     <string name="preheat">Voorverwarmen</string>
-    <string name="prepare">Voorbereiden</string>
-    <string name="print">Print</string>
+    <string name="workspace___prepare">Voorbereiden</string>
+    <string name="workspace___print">Print</string>
     <string name="print_info">Afdrukken</string>
     <string name="print_name">Naam</string>
     <string name="print_notification___cancelling_title">Annuleren…</string>

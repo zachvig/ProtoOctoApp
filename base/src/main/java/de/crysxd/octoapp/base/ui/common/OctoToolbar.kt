@@ -9,9 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.findFragment
 import androidx.transition.TransitionManager
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.databinding.OctoToolbarBinding
+import de.crysxd.octoapp.base.ui.base.OctoActivity
+import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.utils.ColorTheme
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
 
@@ -31,6 +35,12 @@ class OctoToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
             field = value
             bindState()
         }
+
+    init {
+        setOnClickListener {
+            OctoActivity.instance?.showDialog(message = context.getString(R.string.workspace___explainer))
+        }
+    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
