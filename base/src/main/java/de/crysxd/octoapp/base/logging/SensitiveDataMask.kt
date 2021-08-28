@@ -1,7 +1,7 @@
 package de.crysxd.octoapp.base.logging
 
 import android.net.Uri
-import de.crysxd.octoapp.base.network.OctoPrintUpnpDiscovery.Companion.UPNP_ADDRESS_PREFIX
+import de.crysxd.octoapp.octoprint.UPNP_ADDRESS_PREFIX
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.math.absoluteValue

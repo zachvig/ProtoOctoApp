@@ -9,8 +9,8 @@ import com.qiniu.android.dns.DnsManager
 import com.qiniu.android.dns.NetworkInfo
 import com.qiniu.android.dns.local.Resolver
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.network.OctoPrintUpnpDiscovery.Companion.UPNP_ADDRESS_PREFIX
 import de.crysxd.octoapp.base.utils.measureTime
+import de.crysxd.octoapp.octoprint.UPNP_ADDRESS_PREFIX
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import okhttp3.Dns

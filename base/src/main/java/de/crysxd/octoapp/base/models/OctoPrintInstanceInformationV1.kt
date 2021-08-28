@@ -1,6 +1,6 @@
 package de.crysxd.octoapp.base.models
 
-import de.crysxd.octoapp.base.network.OctoPrintUpnpDiscovery.Companion.UPNP_ADDRESS_PREFIX
+import de.crysxd.octoapp.octoprint.UPNP_ADDRESS_PREFIX
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.system.SystemCommand
