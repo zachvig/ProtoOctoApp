@@ -10,8 +10,10 @@ fun HttpUrl.withoutBasicAuth() = newBuilder()
     .password("")
     .build()
 
-fun HttpUrl.resolvePath(path: String?) = path?.let {  newBuilder(path)?.build() } ?: this
-    ?: throw IllegalStateException("Builder was null")
+fun HttpUrl.resolvePath(path: String?) = path?.let {
+    newBuilder(path)?.build() ?: throw IllegalStateException("Builder was null")
+} ?: this
+
 
 fun HttpUrl.extractAndRemoveBasicAuth(): Pair<HttpUrl, String?> {
     val header = if (username.isNotBlank()) {
