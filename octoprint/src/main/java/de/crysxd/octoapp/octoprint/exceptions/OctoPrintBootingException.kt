@@ -1,3 +1,5 @@
 package de.crysxd.octoapp.octoprint.exceptions
 
-class OctoPrintBootingException() : OctoPrintException(webUrl = null)
+import okhttp3.HttpUrl
+
+class OctoPrintBootingException(webUrl: HttpUrl) : OctoPrintException(webUrl = webUrl, userFacingMessage = "OctoPrint is still starting up")

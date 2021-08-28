@@ -23,9 +23,9 @@ class CatchAllInterceptor(
             // Let's wrap in OctoprintException (extends IOException)
             throw OctoPrintException(
                 originalCause = e,
+                userFacingMessage = "An unexpected issue occurred while requesting $url",
                 technicalMessage = "Uncaught exception while requesting: $url",
-                apiKey = apiKey,
-                webUrl = url
+                webUrl = baseUrl
             )
         }
     }

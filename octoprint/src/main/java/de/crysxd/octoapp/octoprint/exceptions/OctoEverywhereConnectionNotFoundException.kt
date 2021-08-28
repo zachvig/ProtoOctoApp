@@ -1,8 +1,9 @@
 package de.crysxd.octoapp.octoprint.exceptions
 
-class OctoEverywhereConnectionNotFoundException : OctoPrintException(
+import okhttp3.HttpUrl
+
+class OctoEverywhereConnectionNotFoundException(webUrl: HttpUrl) : OctoPrintException(
     userFacingMessage = "The connection with OctoEverywhere was revoked, please connect OctoEverywhere again.",
     technicalMessage = "OctoEverywhere reported conenction as deleted",
-    webUrl = null,
-    apiKey = null
+    webUrl = webUrl,
 )

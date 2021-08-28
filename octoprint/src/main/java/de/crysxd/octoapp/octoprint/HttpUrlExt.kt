@@ -53,7 +53,7 @@ fun HttpUrl.extractAndRemoveBasicAuth(): Pair<HttpUrl, String?> {
         try {
             Credentials.basic(username, password)
         } catch (e: Exception) {
-            throw IllegalBasicAuthConfigurationException(this.toString())
+            throw IllegalBasicAuthConfigurationException(this)
         }
     } else {
         null

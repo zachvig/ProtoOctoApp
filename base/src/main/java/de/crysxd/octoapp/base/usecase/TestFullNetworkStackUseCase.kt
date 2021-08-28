@@ -262,7 +262,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
                     is WebSocketUpgradeFailedException -> Finding.WebSocketUpgradeFailed(
                         webUrl = webUrl,
                         host = host,
-                        webSocketUrl = (event.exception as WebSocketUpgradeFailedException).webSocketUrl,
+                        webSocketUrl = (event.exception as WebSocketUpgradeFailedException).webSocketUrl.toString(),
                         responseCode = (event.exception as WebSocketUpgradeFailedException).responseCode
                     )
                     else -> Finding.UnexpectedIssue(webUrl = webUrl, exception = event.exception ?: RuntimeException("Unknown issue"))

@@ -6,6 +6,7 @@ import de.crysxd.octoapp.octoprint.exceptions.ProxyException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import timber.log.Timber
 import java.io.BufferedInputStream
 import java.io.IOException
@@ -92,7 +93,7 @@ class MjpegConnection(private val streamUrl: String, private val authHeader: Str
                     }
                 }
             } catch (e: Exception) {
-                throw ProxyException.create(e, streamUrl)
+                throw ProxyException.create(e, streamUrl.toHttpUrl())
             }
         }.onCompletion {
             Timber.i("[$instanceId/$name] Stopped stream")

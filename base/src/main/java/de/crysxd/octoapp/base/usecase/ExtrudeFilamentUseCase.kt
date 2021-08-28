@@ -6,6 +6,7 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintException
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import de.crysxd.octoapp.octoprint.models.printer.ToolCommand
+import okhttp3.HttpUrl
 import timber.log.Timber
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -62,7 +63,8 @@ class ExtrudeFilamentUseCase @Inject constructor(
         if (minTemp != null && currentTemp != null && minTemp > currentTemp) {
             throw ColdExtrusionException(
                 minTemp = minTemp,
-                currentTemp = currentTemp
+                currentTemp = currentTemp,
+                octoPrintProvider.octoPrint().fullWebUrl,
             )
         }
 
@@ -76,6 +78,6 @@ class ExtrudeFilamentUseCase @Inject constructor(
         val extrudeLengthMm: Int
     )
 
-    class ColdExtrusionException(val minTemp: Int, val currentTemp: Int) :
-        OctoPrintException(webUrl = null, userFacingMessage = Injector.get().localizedContext().getString(R.string.error_cold_extrusion))
+    class ColdExtrusionException(val minTemp: Int, val currentTemp: Int, webUrl: HttpUrl) :
+        OctoPrintException(webUrl = webUrl, userFacingMessage = Injector.get().localizedContext().getString(R.string.error_cold_extrusion))
 }
