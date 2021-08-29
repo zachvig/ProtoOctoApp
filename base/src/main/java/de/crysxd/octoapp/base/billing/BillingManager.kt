@@ -253,8 +253,13 @@ object BillingManager {
             return
         }
 
+        if (billingResult.responseCode == 2) {
+            Timber.w("No internet connection, service unavailable")
+            return
+        }
+
         if (billingResult.responseCode == -1) {
-            Timber.w("Service was disconnectedT")
+            Timber.w("Service was disconnected")
             return
         }
 
