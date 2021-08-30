@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.network
 import android.content.Context
 import android.net.Uri
 import androidx.core.content.edit
+import okhttp3.HttpUrl
 import java.io.File
 import java.security.KeyStore
 import java.security.cert.Certificate
@@ -24,11 +25,11 @@ class SslKeyStoreHandler(private val context: Context) {
         }
     }
 
-    fun enforceWeakVerificationForHost(url: String) {
+    fun enforceWeakVerificationForHost(url: HttpUrl) {
         sharedPreferences.edit { putBoolean(url.host, true) }
     }
 
-    fun isWeakVerificationForHost(url: String) = sharedPreferences.getBoolean(url.host, false)
+    fun isWeakVerificationForHost(url: HttpUrl) = sharedPreferences.getBoolean(url.host, false)
 
     fun loadKeyStore() = if (keyStoreFile.exists()) {
         createKeyStore().also { ks ->
@@ -42,5 +43,4 @@ class SslKeyStoreHandler(private val context: Context) {
 
     private fun createKeyStore() = KeyStore.getInstance(KeyStore.getDefaultType())
 
-    private val String.host get() = Uri.parse(this).host
 }

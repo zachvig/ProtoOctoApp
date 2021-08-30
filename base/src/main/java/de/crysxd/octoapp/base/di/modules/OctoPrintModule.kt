@@ -12,6 +12,7 @@ import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.network.DetectBrokenSetupInterceptor
 import de.crysxd.octoapp.base.network.LocalDnsResolver
 import de.crysxd.octoapp.base.network.SslKeyStoreHandler
@@ -23,15 +24,13 @@ open class OctoPrintModule {
     @BaseScope
     @Provides
     open fun provideOctoPrintRepository(
-        legacyDataSource: DataSource<OctoPrintInstanceInformationV2>,
-        dataSource: DataSource<List<OctoPrintInstanceInformationV2>>,
+        dataSource: DataSource<List<OctoPrintInstanceInformationV3>>,
         octoPreferences: OctoPreferences,
         sensitiveDataMask: SensitiveDataMask
     ) = OctoPrintRepository(
-        legacyDataSource,
-        dataSource,
-        octoPreferences,
-        sensitiveDataMask,
+        dataSource = dataSource,
+        octoPreferences = octoPreferences,
+        sensitiveDataMask = sensitiveDataMask,
     )
 
     @BaseScope

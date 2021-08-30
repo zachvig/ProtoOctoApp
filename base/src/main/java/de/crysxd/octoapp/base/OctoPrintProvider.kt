@@ -10,6 +10,7 @@ import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.logging.TimberLogger
 import de.crysxd.octoapp.base.models.ActiveInstanceIssue
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.network.DetectBrokenSetupInterceptor
 import de.crysxd.octoapp.base.network.LocalDnsResolver
 import de.crysxd.octoapp.base.network.SslKeyStoreHandler
@@ -42,7 +43,7 @@ class OctoPrintProvider(
 ) {
 
     private val octoPrintMutex = Mutex()
-    private var octoPrintCache: Pair<OctoPrintInstanceInformationV2, OctoPrint>? = null
+    private var octoPrintCache: Pair<OctoPrintInstanceInformationV3, OctoPrint>? = null
     private val currentMessageChannel = ConflatedBroadcastChannel<Message.CurrentMessage?>()
     private val connectEventChannel = ConflatedBroadcastChannel<Event.Connected?>()
 
@@ -158,10 +159,10 @@ class OctoPrintProvider(
         }
     }
 
-    fun createAdHocOctoPrint(it: OctoPrintInstanceInformationV2) =
+    fun createAdHocOctoPrint(it: OctoPrintInstanceInformationV3) =
         OctoPrint(
-            rawWebUrl = it.webUrl.toHttpUrl(),
-            rawAlternativeWebUrl = it.alternativeWebUrl?.toHttpUrl(),
+            rawWebUrl = it.webUrl,
+            rawAlternativeWebUrl = it.alternativeWebUrl,
             apiKey = it.apiKey,
             highLevelInterceptors = listOf(detectBrokenSetupInterceptor),
             customDns = localDnsResolver,

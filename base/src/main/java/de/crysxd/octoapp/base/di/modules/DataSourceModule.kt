@@ -11,6 +11,7 @@ import de.crysxd.octoapp.base.datasource.*
 import de.crysxd.octoapp.base.di.BaseScope
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.octoprint.json.PluginSettingsDeserializer
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 
@@ -22,14 +23,7 @@ class DataSourceModule {
         .create()
 
     @Provides
-    fun provideLegacyOctoPrintInstanceInformationDataSource(sharedPreferences: SharedPreferences): DataSource<OctoPrintInstanceInformationV2> =
-        LocalLegacyOctoPrintInstanceInformationSource(
-            sharedPreferences,
-            createGson()
-        )
-
-    @Provides
-    fun provideOctoPrintInstanceInformationDataSource(sharedPreferences: SharedPreferences): DataSource<List<OctoPrintInstanceInformationV2>> =
+    fun provideOctoPrintInstanceInformationDataSource(sharedPreferences: SharedPreferences): DataSource<List<OctoPrintInstanceInformationV3>> =
         LocalOctoPrintInstanceInformationSource(
             sharedPreferences,
             createGson()

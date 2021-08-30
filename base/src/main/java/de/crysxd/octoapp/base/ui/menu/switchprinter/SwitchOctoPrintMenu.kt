@@ -20,6 +20,7 @@ import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ENABLE_QUICK_SWITCH
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SIGN_OUT
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SWITCH_INSTANCE
 import kotlinx.parcelize.Parcelize
+import okhttp3.HttpUrl
 
 private val isQuickSwitchEnabled get() = BillingManager.isFeatureEnabled(FEATURE_QUICK_SWITCH)
 private val isAnyActive get() = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl != null
@@ -55,15 +56,15 @@ class SwitchOctoPrintMenu : Menu {
     }
 }
 
-class SwitchInstanceMenuItem(private val webUrl: String, val showDelte: Boolean = false) : MenuItem {
+class SwitchInstanceMenuItem(private val instanceId: String, val showDelte: Boolean = false) : MenuItem {
     companion object {
         fun forItemId(itemId: String) = SwitchInstanceMenuItem(itemId.replace(MENU_ITEM_SWITCH_INSTANCE, ""))
     }
 
     private val instanceInfo
-        get() = Injector.get().octorPrintRepository().findOrNull(webUrl)
+        get() = Injector.get().octorPrintRepository().get(instanceId)
 
-    override val itemId = MENU_ITEM_SWITCH_INSTANCE + webUrl
+    override val itemId = MENU_ITEM_SWITCH_INSTANCE + instanceInfo?.webUrl.toString()
     override var groupId = ""
     override val order = 151
     override val showAsSubMenu = false
@@ -72,7 +73,7 @@ class SwitchInstanceMenuItem(private val webUrl: String, val showDelte: Boolean 
     override val icon = R.drawable.ic_round_swap_horiz_24
 
     override suspend fun isVisible(destinationId: Int) = instanceInfo != null && isQuickSwitchEnabled &&
-            Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl != webUrl
+            Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl != instanceInfo?.webUrl?.toString()
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___switch_to_octoprint, instanceInfo?.label ?: webUrl)
     override suspend fun onClicked(host: MenuHost?) {

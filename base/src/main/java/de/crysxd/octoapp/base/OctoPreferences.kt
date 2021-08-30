@@ -23,6 +23,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_ALLOW_NOTIFICATION_BATTERY_SAVER = "allow_notification_battery_saver"
         private const val KEY_HIDE_THUMBNAIL_HINT_UNTIL = "hide_thumbnail_hin_until"
         private const val KEY_ACTIVE_INSTANCE_WEB_URL = "active_instance_web_url"
+        private const val KEY_ACTIVE_INSTANCE_ID = "active_instance_id"
         private const val KEY_AUTO_CONNECT_PRINTER = "auto_connect_printer"
         private const val KEY_CRASH_REPORTING = "crash_reporting_enabled"
         private const val KEY_ANALYTICS = "analytics_enabled"
@@ -75,10 +76,17 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
             FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(value)
         }
 
+    @Deprecated("Use activeInstanceId instead")
     var activeInstanceWebUrl: String?
         get() = sharedPreferences.getString(KEY_ACTIVE_INSTANCE_WEB_URL, null)
         set(value) {
             edit { putString(KEY_ACTIVE_INSTANCE_WEB_URL, value) }
+        }
+
+    var activeInstanceId: String?
+        get() = sharedPreferences.getString(KEY_ACTIVE_INSTANCE_ID, null)
+        set(value) {
+            edit { putString(KEY_ACTIVE_INSTANCE_ID, value) }
         }
 
     var isKeepScreenOnDuringPrint

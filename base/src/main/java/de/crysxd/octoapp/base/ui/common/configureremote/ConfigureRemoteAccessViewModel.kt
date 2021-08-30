@@ -39,7 +39,7 @@ class ConfigureRemoteAccessViewModel(
             lastOctoEverywhereConnection = it?.octoEverywhereConnection
 
             ViewData(
-                remoteWebUrl = it?.alternativeWebUrl ?: "",
+                remoteWebUrl = it?.alternativeWebUrl?.toString() ?: "",
                 octoEverywhereConnection = it?.octoEverywhereConnection
             )
         }.asLiveData()

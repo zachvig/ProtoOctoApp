@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.logging
 
 import android.net.Uri
 import de.crysxd.octoapp.octoprint.UPNP_ADDRESS_PREFIX
+import okhttp3.HttpUrl
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.math.absoluteValue
@@ -34,6 +35,10 @@ class SensitiveDataMask {
         } catch (e: Exception) {
             registerSensitiveData(webUrl, "${maskPrefix}_host")
         }
+    }
+
+    fun registerWebUrl(webUrl: HttpUrl?, maskPrefix: String) {
+       TODO()
     }
 
     fun registerApiKey(apiKey: String) {
