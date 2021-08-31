@@ -20,7 +20,6 @@ import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ENABLE_QUICK_SWITCH
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SIGN_OUT
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SWITCH_INSTANCE
 import kotlinx.parcelize.Parcelize
-import okhttp3.HttpUrl
 
 private val isQuickSwitchEnabled get() = BillingManager.isFeatureEnabled(FEATURE_QUICK_SWITCH)
 private val isAnyActive get() = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl != null
@@ -40,7 +39,7 @@ class SwitchOctoPrintMenu : Menu {
 
     override suspend fun getMenuItem() = if (isQuickSwitchEnabled) {
         val items = Injector.get().octorPrintRepository().getAll().map {
-            SwitchInstanceMenuItem(webUrl = it.webUrl, showDelte = true)
+            SwitchInstanceMenuItem(instanceId = it.id, showDelte = true)
         }
 
         val static = listOf(
@@ -64,7 +63,7 @@ class SwitchInstanceMenuItem(private val instanceId: String, val showDelte: Bool
     private val instanceInfo
         get() = Injector.get().octorPrintRepository().get(instanceId)
 
-    override val itemId = MENU_ITEM_SWITCH_INSTANCE + instanceInfo?.webUrl.toString()
+    override val itemId = MENU_ITEM_SWITCH_INSTANCE + instanceInfo?.id
     override var groupId = ""
     override val order = 151
     override val showAsSubMenu = false
@@ -73,9 +72,9 @@ class SwitchInstanceMenuItem(private val instanceId: String, val showDelte: Bool
     override val icon = R.drawable.ic_round_swap_horiz_24
 
     override suspend fun isVisible(destinationId: Int) = instanceInfo != null && isQuickSwitchEnabled &&
-            Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl != instanceInfo?.webUrl?.toString()
+            Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.id != instanceId
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___switch_to_octoprint, instanceInfo?.label ?: webUrl)
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___switch_to_octoprint, instanceInfo?.label ?: "(deleted)")
     override suspend fun onClicked(host: MenuHost?) {
         val repo = Injector.get().octorPrintRepository()
         instanceInfo?.let { repo.setActive(it) }
@@ -83,10 +82,10 @@ class SwitchInstanceMenuItem(private val instanceId: String, val showDelte: Bool
 
     override suspend fun onSecondaryClicked(host: MenuHost?) {
         (host?.getMenuActivity() as? OctoActivity)?.showDialog(
-            message = host.requireContext().getString(R.string.main_menu___delete_octoprint_dialog_message, instanceInfo?.label ?: webUrl),
+            message = host.requireContext().getString(R.string.main_menu___delete_octoprint_dialog_message, instanceInfo?.label ?: "(deleted)"),
             positiveButton = host.requireContext().getString(R.string.main_menu___delete_octoprint_dialog_button),
             positiveAction = {
-                Injector.get().octorPrintRepository().remove(webUrl)
+                Injector.get().octorPrintRepository().remove(instanceId)
                 host.reloadMenu()
             },
             negativeAction = {},

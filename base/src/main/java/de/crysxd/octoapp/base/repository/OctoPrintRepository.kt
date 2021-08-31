@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import timber.log.Timber
-import java.lang.Exception
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class OctoPrintRepository(
@@ -101,7 +100,7 @@ class OctoPrintRepository(
 
     fun remove(id: String) {
         Timber.i("Removing $id")
-        val all = getAll().filter {it.id != id }
+        val all = getAll().filter { it.id != id }
         dataSource.store(all)
     }
 
@@ -116,7 +115,9 @@ class OctoPrintRepository(
 
     fun getAll() = dataSource.get() ?: emptyList()
 
-    fun findInstances(url: HttpUrl) = getAll().mapNotNull {
+    fun findInstances(url: HttpUrl?) = getAll().mapNotNull {
+        url ?: return@mapNotNull null
+
         val webUrl = it.webUrl
         val alternativeWebUrl = it.alternativeWebUrl
         when {
@@ -124,5 +125,9 @@ class OctoPrintRepository(
             url.isBasedOn(alternativeWebUrl) -> it to true
             else -> null
         }
+    }
+
+    fun findInstancesWithWebUrl(url: HttpUrl?) = getAll().firstOrNull {
+        url?.isBasedOn(it.webUrl) ?: false
     }
 }
