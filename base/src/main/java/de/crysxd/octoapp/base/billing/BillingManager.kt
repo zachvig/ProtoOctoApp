@@ -249,7 +249,7 @@ object BillingManager {
 
     private fun logError(description: String, billingResult: BillingResult?) {
         if (billingResult == null) {
-            Timber.v("Billing result is null, indicating billing connection was paused during an active process")
+            Timber.w("Billing result is null, indicating billing connection was paused during an active process")
             return
         }
 
