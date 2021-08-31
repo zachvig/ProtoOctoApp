@@ -12,7 +12,6 @@ import de.crysxd.octoapp.base.ext.asPrintTimeLeftImageResource
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
 import de.crysxd.octoapp.base.ext.toBitmapWithColor
 import de.crysxd.octoapp.base.ui.utils.ColorTheme
-import de.crysxd.octoapp.base.ui.utils.colorTheme
 import de.crysxd.octoapp.base.usecase.CreateProgressAppWidgetDataUseCase
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Message
@@ -104,10 +103,10 @@ class ProgressAppWidget : AppWidgetProvider() {
 
         private fun notifyWidgetDataChanged(data: CreateProgressAppWidgetDataUseCase.Result) {
             val context = Injector.get().localizedContext()
-            getAppWidgetIdsForWebUrl(data.webUrl)
+            getAppWidgetIdsForWebUrl(data.instanceId)
                 .filter { ensureWidgetExists(it) }
                 .forEach {
-                    updateAppWidget(context, it, data, data.webUrl)
+                    updateAppWidget(context, it, data, data.instanceId)
                 }
         }
 
@@ -216,13 +215,13 @@ class ProgressAppWidget : AppWidgetProvider() {
             views.setViewVisibility(R.id.buttonRefresh, isLargeSize(appWidgetId))
             views.setBoolean(R.id.buttonPause, "setEnabled", !data.isPaused && !data.isPausing)
             views.setBoolean(R.id.buttonCancel, "setEnabled", !data.isCancelling)
-            views.setOnClickPendingIntent(R.id.root, createLaunchAppIntent(context, data.webUrl))
+            views.setOnClickPendingIntent(R.id.root, createLaunchAppIntent(context, data.instanceId))
             views.setOnClickPendingIntent(R.id.buttonRefresh, createUpdateIntent(context, appWidgetId))
             views.setOnClickPendingIntent(R.id.buttonCancel, ExecuteWidgetActionActivity.createCancelTaskPendingIntent(context))
             views.setOnClickPendingIntent(R.id.buttonPause, ExecuteWidgetActionActivity.createPauseTaskPendingIntent(context))
             views.setOnClickPendingIntent(R.id.buttonResume, ExecuteWidgetActionActivity.createResumeTaskPendingIntent(context))
             views.setImageViewBitmap(R.id.etaIndicator, etaIndicator)
-            applyColorTheme(views, data.webUrl)
+            applyColorTheme(views, data.instanceId)
             applyDebugOptions(views, appWidgetId)
             applyScaling(appWidgetId, views)
             manager.updateAppWidget(appWidgetId, views)

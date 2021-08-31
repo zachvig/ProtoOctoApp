@@ -6,6 +6,7 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
@@ -136,7 +137,7 @@ class DiscoverViewModel(
     sealed class UiState {
         object Loading : UiState()
         data class Options(
-            val previouslyConnectedOptions: List<OctoPrintInstanceInformationV2>,
+            val previouslyConnectedOptions: List<OctoPrintInstanceInformationV3>,
             val discoveredOptions: List<DiscoverOctoPrintUseCase.DiscoveredOctoPrint>,
             val supportsQuickSwitch: Boolean,
         ) : UiState()

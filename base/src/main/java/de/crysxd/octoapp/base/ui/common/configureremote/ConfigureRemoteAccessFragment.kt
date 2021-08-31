@@ -24,6 +24,7 @@ import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.octoprint.extractAndRemoveBasicAuth
 
 class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
 
@@ -86,7 +87,9 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
 
         viewModel.viewData.observe(viewLifecycleOwner) {
             val oeConnected = it.remoteWebUrl == it.octoEverywhereConnection?.fullUrl
-            binding.webUrlInput.editText.setText(it.remoteWebUrl.takeIf { !oeConnected })
+            binding.webUrlInput.editText.setText(it.remoteWebUrl?.extractAndRemoveBasicAuth()?.first.takeIf { !oeConnected }?.toString())
+            binding.basicPasswordInput.editText.setText(it.remoteWebUrl?.password?.takeIf { !oeConnected }?.toString())
+            binding.basicUserInput.editText.setText(it.remoteWebUrl?.username?.takeIf { !oeConnected }?.toString())
             binding.octoEverywhereConnected.isVisible = oeConnected
             binding.disconnectOctoEverywhere.isVisible = oeConnected
             binding.connectOctoEverywhere.isVisible = !oeConnected

@@ -6,11 +6,9 @@ import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.billing.BillingManager
-import de.crysxd.octoapp.base.ext.isHlsStreamUrl
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.exceptions.MissingPermissionException
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
-import de.crysxd.octoapp.octoprint.models.settings.Settings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -96,22 +94,11 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                     OctoAnalytics.logEvent(OctoAnalytics.Event.PluginDetected(it))
                 }
 
-                OctoAnalytics.setUserProperty(
-                    OctoAnalytics.UserProperty.WebCamAvailable,
-                    isWebcamSupported(settings.await()) ?: "false"
-                )
-
                 timber.i("Updated capabilities: $updated")
                 updated
             }
         }
     }
-
-    private fun isWebcamSupported(settings: Settings) = when {
-        settings.webcam.streamUrl?.isHlsStreamUrl == true -> "hls"
-        settings.webcam.streamUrl != null -> "mjpeg"
-        else -> null
-    }.takeIf { settings.webcam.webcamEnabled != false }
 
     private suspend fun executeM115() = try {
         withTimeout(5000L) {

@@ -16,7 +16,7 @@ import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.basicAuthCredentials
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -31,6 +31,7 @@ import de.crysxd.octoapp.signin.ext.goBackToDiscover
 import de.crysxd.octoapp.signin.ext.setUpAsHelpButton
 import io.noties.markwon.Markwon
 import timber.log.Timber
+import java.util.UUID
 
 class ProbeOctoPrintFragment : BaseFragment() {
 
@@ -120,11 +121,12 @@ class ProbeOctoPrintFragment : BaseFragment() {
         // API key. Otherwise, the user is forced to reconnect OctoPrint. Reusing might be explicitly allowed, when this fragment is started to troubleshoot the connection.
         if (allowApiKeyReuse || BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH)) {
             val repo = Injector.get().octorPrintRepository()
-            val oldInstance = repo.findOrNull(finding.webUrl)
+            val oldInstance = repo.get(finding.webUrl)
             val instance = oldInstance?.copy(
                 webUrl = finding.webUrl,
                 apiKey = finding.apiKey
-            ) ?: OctoPrintInstanceInformationV2(
+            ) ?: OctoPrintInstanceInformationV3(
+                id = UUID.randomUUID().toString(),
                 webUrl = finding.webUrl,
                 apiKey = finding.apiKey
             )

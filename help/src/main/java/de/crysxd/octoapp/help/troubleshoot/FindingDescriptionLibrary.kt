@@ -1,7 +1,6 @@
 package de.crysxd.octoapp.help.troubleshoot
 
 import android.content.Context
-import android.net.Uri
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import de.crysxd.octoapp.help.R
 
@@ -32,9 +31,10 @@ class FindingDescriptionLibrary(private val context: Context) {
 
     fun getExplainerForFinding(finding: TestFullNetworkStackUseCase.Finding) = when (finding) {
         is TestFullNetworkStackUseCase.Finding.BasicAuthRequired -> {
-            val url = Uri.parse(finding.webUrl)
-            val authority = url.encodedUserInfo?.let { url.authority?.removePrefix(it) } ?: url.authority ?: ""
-            val withPlaceholder = url.buildUpon().encodedAuthority("**username:password@**$authority").build().toString()
+            val withPlaceholder = finding.webUrl.newBuilder()
+                .password("password")
+                .username("username")
+                .toString()
             context.getString(R.string.help___webcam_troubleshooting___explainer_basic_auth, withPlaceholder)
         }
         is TestFullNetworkStackUseCase.Finding.DnsFailure -> context.getString(

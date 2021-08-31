@@ -9,6 +9,7 @@ import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import de.crysxd.octoapp.base.utils.AnimationTestUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.HttpUrl
 
 class ProbeOctoPrintViewModel(
     private val useCase: TestFullNetworkStackUseCase,
@@ -26,7 +27,7 @@ class ProbeOctoPrintViewModel(
     private val mutableUiState = MutableLiveData<UiState>(UiState.Loading)
     val uiState = mutableUiState.map { it }
 
-    fun probe(webUrl: String) = viewModelScope.launch(coroutineExceptionHandler) {
+    fun probe(webUrl: HttpUrl?) = viewModelScope.launch(coroutineExceptionHandler) {
         // Don't allow consecutive probes
         if (probeIsActive) return@launch
 

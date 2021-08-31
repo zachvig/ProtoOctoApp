@@ -18,8 +18,15 @@ import de.crysxd.octoapp.signin.R
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
+import okhttp3.HttpUrl
 import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
@@ -36,7 +43,7 @@ class RequestAccessViewModel(
 
     private val appContext = context.applicationContext
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    private val webUrlChannel = ConflatedBroadcastChannel<String>()
+    private val webUrlChannel = ConflatedBroadcastChannel<HttpUrl>()
     private val mutableUiState = MutableLiveData<UiState>(UiState.PendingApproval)
     private var pollingJob: Job? = null
     private var cancelPollingJob: Job? = null
@@ -111,7 +118,7 @@ class RequestAccessViewModel(
         }
     }
 
-    fun useWebUrl(webUrl: String) = if (webUrlChannel.valueOrNull == null) {
+    fun useWebUrl(webUrl: HttpUrl) = if (webUrlChannel.valueOrNull == null) {
         webUrlChannel.offer(webUrl)
     } else {
         false

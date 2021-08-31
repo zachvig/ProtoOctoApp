@@ -12,8 +12,6 @@ import de.crysxd.octoapp.octoprint.models.job.ProgressInformation.Companion.ORIG
 import java.net.URLDecoder
 import java.net.URLEncoder
 
-val String.isHlsStreamUrl get() = endsWith(".m3u") || endsWith(".m3u8")
-
 fun String?.asPrintTimeLeftOriginColor() = when (this) {
     ORIGIN_LINEAR -> R.color.analysis_bad
     ORIGIN_ANALYSIS, ORIGIN_MIXED_ANALYSIS -> R.color.analysis_normal

@@ -201,7 +201,7 @@ class HttpUrlExtTest {
         val url = "http://10.0.1.1/path/".toHttpUrl()
 
         // WHEN
-        val result = url.forLogging()
+        val result = url.forLogging().toString()
 
         // THEN
         assertThat(result).isEqualTo("http://10.0.1.1/path/")
@@ -213,7 +213,7 @@ class HttpUrlExtTest {
         val url = "http://172.16.1.1/path/".toHttpUrl()
 
         // WHEN
-        val result = url.forLogging()
+        val result = url.forLogging().toString()
 
         // THEN
         assertThat(result).isEqualTo("http://172.16.1.1/path/")
@@ -225,7 +225,7 @@ class HttpUrlExtTest {
         val url = "http://192.168.1.1/path/".toHttpUrl()
 
         // WHEN
-        val result = url.forLogging()
+        val result = url.forLogging().toString()
 
         // THEN
         assertThat(result).isEqualTo("http://192.168.1.1/path/")
@@ -237,7 +237,7 @@ class HttpUrlExtTest {
         val url = "http://192.160.1.1/path/".toHttpUrl()
 
         // WHEN
-        val result = url.forLogging()
+        val result = url.forLogging().toString()
 
         // THEN
         assertThat(result).isEqualTo("http://redacted-host-2e53d0d/path/")
@@ -249,7 +249,7 @@ class HttpUrlExtTest {
         val url = "http://somedomain.com/path/".toHttpUrl()
 
         // WHEN
-        val result = url.forLogging()
+        val result = url.forLogging().toString()
 
         // THEN
         assertThat(result).isEqualTo("http://redacted-host-9c19914b/path/")
@@ -261,7 +261,7 @@ class HttpUrlExtTest {
         val url = "http://shared-1233.octoeverywhere.com/path/".toHttpUrl()
 
         // WHEN
-        val result = url.forLogging()
+        val result = url.forLogging().toString()
 
         // THEN
         assertThat(result).isEqualTo("http://redacted-d52ad9b3.octoeverywhere.com/path/")
@@ -273,7 +273,7 @@ class HttpUrlExtTest {
         val url = "http://some-tunnel.ngrok.com/path/".toHttpUrl()
 
         // WHEN
-        val result = url.forLogging()
+        val result = url.forLogging().toString()
 
         // THEN
         assertThat(result).isEqualTo("http://redacted-c780e73b.ngrok.com/path/")
@@ -285,7 +285,7 @@ class HttpUrlExtTest {
         val url = "http://$UPNP_ADDRESS_PREFIX-38298392/path/".toHttpUrl()
 
         // WHEN
-        val result = url.forLogging()
+        val result = url.forLogging().toString()
 
         // THEN
         assertThat(result).isEqualTo(url.toString())
@@ -297,7 +297,7 @@ class HttpUrlExtTest {
         val url = "http://octopi.local/path/".toHttpUrl()
 
         // WHEN
-        val result = url.forLogging()
+        val result = url.forLogging().toString()
 
         // THEN
         assertThat(result).isEqualTo(url.toString())
@@ -309,7 +309,7 @@ class HttpUrlExtTest {
         val url = "http://octopi.home/path/".toHttpUrl()
 
         // WHEN
-        val result = url.forLogging()
+        val result = url.forLogging().toString()
 
         // THEN
         assertThat(result).isEqualTo(url.toString())
@@ -352,5 +352,29 @@ class HttpUrlExtTest {
 
         // THEN
         assertThat(result).isEqualTo("This is a log with some \$basicAuthUser \$basicAuthsPassword \$basicAuthUser sensitive stuff")
+    }
+
+    @Test
+    fun `WHEN redacting basic auth THEN nothing is done`() {
+        // GIVEN
+        val url = "http://u%24er@192.168.1.1/path/".toHttpUrl()
+
+        // WHEN
+        val result = url.forLogging().toString()
+
+        // THEN
+        assertThat(result).isEqualTo("http://\$basicAuthUser@192.168.1.1/path/")
+    }
+
+    @Test
+    fun `WHEN redacting basic auth with password THEN nothing is done`() {
+        // GIVEN
+        val url = "http://u%24er:pa%%word@192.168.1.1/path/".toHttpUrl()
+
+        // WHEN
+        val result = url.forLogging().toString()
+
+        // THEN
+        assertThat(result).isEqualTo("http://\$basicAuthUser:\$basicAuthPassword@192.168.1.1/path/")
     }
 }
