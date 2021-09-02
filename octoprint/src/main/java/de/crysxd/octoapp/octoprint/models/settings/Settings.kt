@@ -74,6 +74,8 @@ data class Settings(
 
     class WS281xSettings : PluginSettings
 
+    class WledSettings : PluginSettings
+
     class MyStromSettings : PluginSettings
 
     data class MultiCamSettings(

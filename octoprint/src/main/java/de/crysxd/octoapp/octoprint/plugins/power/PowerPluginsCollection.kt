@@ -14,7 +14,13 @@ import de.crysxd.octoapp.octoprint.plugins.power.tasmota.TasmotaApi
 import de.crysxd.octoapp.octoprint.plugins.power.tasmota.TasmotaPowerPlugin
 import de.crysxd.octoapp.octoprint.plugins.power.tplinkplug.TpLinkSmartPlugApi
 import de.crysxd.octoapp.octoprint.plugins.power.tplinkplug.TpLinkSmartPlugPowerPlugin
-import de.crysxd.octoapp.octoprint.plugins.power.tradfri.*
+import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TradfriApi
+import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TradfriPowerDevice
+import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TradfriPowerPlugin
+import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TuyaApi
+import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TuyaPowerPlugin
+import de.crysxd.octoapp.octoprint.plugins.power.wled.WledApi
+import de.crysxd.octoapp.octoprint.plugins.power.wled.WledPowerPlugin
 import de.crysxd.octoapp.octoprint.plugins.power.ws281x.WS281xApi
 import de.crysxd.octoapp.octoprint.plugins.power.ws281x.WS281xPowerPlugin
 import kotlinx.coroutines.TimeoutCancellationException
@@ -32,7 +38,8 @@ class PowerPluginsCollection(retrofit: Retrofit) {
         WS281xPowerPlugin(retrofit.create(WS281xApi::class.java)),
         GpioControlPowerPlugin(retrofit.create(GpioCoontrolApi::class.java)),
         MyStromPowerPlugin(retrofit.create(MyStromApi::class.java)),
-        OctoRelayPowerPlugin(retrofit.create(OctoRelayApi::class.java))
+        OctoRelayPowerPlugin(retrofit.create(OctoRelayApi::class.java)),
+        WledPowerPlugin(retrofit.create(WledApi::class.java)),
     )
 
     fun getDevices(settings: Settings) = plugins.map {
