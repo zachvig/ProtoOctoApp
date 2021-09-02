@@ -51,7 +51,7 @@ class BasicAuthTest {
         SignInRobot.continueButton.perform(click())
 
         // Wait for basic auth form to be shown
-        waitFor(basicAuthFormMatcher, timeout = 5000)
+        waitFor(basicAuthFormMatcher, timeout = 10000)
 
         // Enter wrong credentials
         val wrongUser = "secretuser$@&323"
@@ -63,7 +63,7 @@ class BasicAuthTest {
 
         // Wait for shown again and verify prefilled
         SignInRobot.waitForChecks()
-        waitFor(basicAuthFormMatcher, timeout = 5000)
+        waitFor(basicAuthFormMatcher, timeout = 10000)
         userNameInput.check(matches(withText(wrongUser)))
         passwordInput.check(matches(withText(wrongPassword)))
 
@@ -75,7 +75,7 @@ class BasicAuthTest {
         SignInRobot.waitForChecks()
 
         // Check accepted (aka OctoPrint not found as we don't connect to a OctoPrint)
-        waitFor(withText(R.string.sign_in___probe_finding___title_octoprint_not_found), timeout = 5000)
+        waitFor(withText(R.string.sign_in___probe_finding___title_octoprint_not_found), timeout = 10000)
     }
 
     @Test(timeout = 60_000)

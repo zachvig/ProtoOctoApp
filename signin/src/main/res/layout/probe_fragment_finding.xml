@@ -57,7 +57,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_2"
-                android:autofillHints="user|username"
+                android:autofillHints="username"
                 app:example="admin"
                 app:label="@string/sign_in___probe___basic_username" />
 
@@ -68,7 +68,7 @@
                 android:layout_marginHorizontal="@dimen/margin_2"
                 android:layout_marginTop="@dimen/margin_1"
                 android:layout_marginBottom="@dimen/margin_2"
-                android:autofillHints="pw|password"
+                android:autofillHints="password"
                 app:example="secret"
                 app:forPassword="true"
                 app:label="@string/sign_in___probe___basic_password" />
