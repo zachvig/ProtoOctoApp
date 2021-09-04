@@ -2,11 +2,18 @@ package de.crysxd.octoapp.base.repository
 
 import de.crysxd.octoapp.base.datasource.LocalPinnedMenuItemsDataSource
 import de.crysxd.octoapp.base.models.MenuId
-import de.crysxd.octoapp.base.ui.menu.main.*
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.asFlow
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_CANCEL_PRINT
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_CONFIGURE_REMOTE_ACCESS
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_CUSTOMIZE_WIDGETS
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_EMERGENCY_STOP
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_HELP
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_OPEN_OCTOPRINT
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_OPEN_TERMINAL
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SHOW_FILES
+import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_TURN_PSU_OFF
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 class PinnedMenuItemRepository(
     private val dataSource: LocalPinnedMenuItemsDataSource
 ) {
@@ -40,7 +47,7 @@ class PinnedMenuItemRepository(
             MENU_ITEM_HELP
         )
     )
-    private val channels = mutableMapOf<MenuId, ConflatedBroadcastChannel<Set<String>>>()
+    private val flows = mutableMapOf<MenuId, MutableStateFlow<Set<String>>>()
 
     fun checkPinnedState(itemId: String) = MenuId.values().filter {
         // We can't store other
@@ -57,14 +64,14 @@ class PinnedMenuItemRepository(
             data.add(itemId)
         }
         dataSource.store(menuId, data.toSet())
-        getChannel(menuId).offer(getPinnedMenuItems(menuId))
+        getChannel(menuId).value = getPinnedMenuItems(menuId)
     }
 
     fun getPinnedMenuItems(menuId: MenuId) = dataSource.load(menuId) ?: defaults[menuId] ?: emptySet()
 
-    private fun getChannel(menuId: MenuId) = channels.getOrPut(menuId) {
-        ConflatedBroadcastChannel(getPinnedMenuItems(menuId))
+    private fun getChannel(menuId: MenuId) = flows.getOrPut(menuId) {
+        MutableStateFlow(getPinnedMenuItems(menuId))
     }
 
-    fun observePinnedMenuItems(menuId: MenuId) = getChannel(menuId).asFlow()
+    fun observePinnedMenuItems(menuId: MenuId) = getChannel(menuId).asStateFlow()
 }

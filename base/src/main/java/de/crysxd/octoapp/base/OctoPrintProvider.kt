@@ -5,11 +5,8 @@ import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ext.toHtml
-import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.logging.TimberLogger
 import de.crysxd.octoapp.base.models.ActiveInstanceIssue
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.network.DetectBrokenSetupInterceptor
 import de.crysxd.octoapp.base.network.LocalDnsResolver
@@ -23,18 +20,25 @@ import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class OctoPrintProvider(
-    private val timberHandler: TimberHandler,
     private val detectBrokenSetupInterceptor: DetectBrokenSetupInterceptor,
     private val octoPrintRepository: OctoPrintRepository,
     private val analytics: FirebaseAnalytics,
@@ -44,8 +48,8 @@ class OctoPrintProvider(
 
     private val octoPrintMutex = Mutex()
     private var octoPrintCache: Pair<OctoPrintInstanceInformationV3, OctoPrint>? = null
-    private val currentMessageChannel = ConflatedBroadcastChannel<Message.CurrentMessage?>()
-    private val connectEventChannel = ConflatedBroadcastChannel<Event.Connected?>()
+    private val currentMessageFlow = MutableStateFlow<Message.CurrentMessage?>(null)
+    private val connectEventFlow = MutableStateFlow<Event.Connected?>(null)
 
     init {
         // Passively collect data for the analytics profile
@@ -57,22 +61,22 @@ class OctoPrintProvider(
                     ((event as? Event.MessageReceived)?.message as? Message.CurrentMessage)?.let { message ->
                         // If the last message had data the new one is lacking, upgrade the new one so the cached message
                         // is always holding all information required
-                        val last = currentMessageChannel.valueOrNull
+                        val last = currentMessageFlow.value
                         val new = message.copy(
                             temps = message.temps.takeIf { it.isNotEmpty() } ?: last?.temps ?: emptyList(),
                             progress = message.progress ?: last?.progress,
                             state = message.state ?: last?.state,
                             job = message.job ?: last?.job,
                         )
-                        currentMessageChannel.offer(new)
+                        currentMessageFlow.value = new
                     }
 
                     ((event as? Event.Connected))?.let {
-                        connectEventChannel.offer(it)
+                        connectEventFlow.value = it
                     }
 
                     ((event as? Event.Disconnected))?.let {
-                        connectEventChannel.offer(null)
+                        connectEventFlow.value = null
                         if (it.exception is WebSocketUpgradeFailedException) {
                             octoPrintRepository.reportIssueWithActiveInstance(ActiveInstanceIssue.HTTP_ISSUE)
                         }
@@ -105,7 +109,7 @@ class OctoPrintProvider(
         octoPrintCache?.second ?: throw IllegalStateException("OctoPrint not available")
     }
 
-    fun passiveConnectionEventFlow(tag: String) = connectEventChannel.asFlow().filterNotNull()
+    fun passiveConnectionEventFlow(tag: String) = connectEventFlow.filterNotNull()
         .onStart { Timber.i("Started connection event flow for $tag") }
         .onCompletion { Timber.i("Completed connection event flow for $tag") }
 
@@ -117,7 +121,7 @@ class OctoPrintProvider(
             true
         }
 
-    fun passiveCurrentMessageFlow(tag: String) = currentMessageChannel.asFlow().filterNotNull()
+    fun passiveCurrentMessageFlow(tag: String) = currentMessageFlow.filterNotNull()
         .onStart { Timber.i("Started current message flow for $tag") }
         .onCompletion { Timber.i("Completed current message flow for $tag") }
 

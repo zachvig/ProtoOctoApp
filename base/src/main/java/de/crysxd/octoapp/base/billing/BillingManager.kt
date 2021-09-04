@@ -27,9 +27,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -48,8 +48,8 @@ object BillingManager {
     @VisibleForTesting
     var enabledForTest: Boolean? = null
 
-    private val billingEventChannel = ConflatedBroadcastChannel<BillingEvent>()
-    private val billingChannel = ConflatedBroadcastChannel(BillingData())
+    private val billingEventChannel = MutableStateFlow<BillingEvent?>(null)
+    private val billingChannel = MutableStateFlow(BillingData())
     private val purchasesUpdateListener = PurchasesUpdatedListener { billingResult, purchases ->
         Timber.i("On purchase updated: $billingResult $purchases")
         when (billingResult.responseCode) {
@@ -71,10 +71,9 @@ object BillingManager {
 
     private var billingClient: BillingClient? = null
 
-    private fun ConflatedBroadcastChannel<BillingData>.update(block: (BillingData) -> BillingData) {
-        val new = block(valueOrNull ?: BillingData())
-        offer(new)
-        Timber.v("Updated: $new")
+    private fun MutableStateFlow<BillingData>.update(block: (BillingData) -> BillingData) {
+        value = block(value)
+        Timber.v("Updated: $value")
     }
 
     fun initBilling(context: Context) = GlobalScope.launch(Dispatchers.IO) {
@@ -177,8 +176,8 @@ object BillingManager {
         }
     }
 
-    fun billingFlow() = billingChannel.asFlow().distinctUntilChanged()
-    fun billingEventFlow() = billingEventChannel.asFlow()
+    fun billingFlow() = billingChannel.asStateFlow()
+    fun billingEventFlow() = billingEventChannel.asStateFlow().filterNotNull()
 
     fun purchase(activity: Activity, skuDetails: SkuDetails): Boolean {
         val flowParams = BillingFlowParams.newBuilder()
@@ -225,7 +224,7 @@ object BillingManager {
                 if (!purchase.isAcknowledged) {
                     if (!purchaseEventSent) {
                         purchaseEventSent = true
-                        billingEventChannel.offer(BillingEvent.PurchaseCompleted)
+                        billingEventChannel.value = BillingEvent.PurchaseCompleted
                     }
 
                     val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
@@ -309,13 +308,13 @@ object BillingManager {
 
     fun isFeatureEnabled(feature: String): Boolean {
         val isPremiumFeature = Firebase.remoteConfig.getString("premium_features").split(",").map { it.trim() }.contains(feature)
-        val hasPremium = billingChannel.valueOrNull?.isPremiumActive == true
+        val hasPremium = billingChannel.value.isPremiumActive
         return enabledForTest ?: (!isPremiumFeature || hasPremium)
     }
 
-    fun shouldAdvertisePremium() = billingChannel.valueOrNull?.let {
+    fun shouldAdvertisePremium() = billingChannel.value.let {
         it.isBillingAvailable && !it.isPremiumActive && it.availableSku.isNotEmpty()
-    } ?: false
+    }
 
     fun onResume(context: Context) = GlobalScope.launch {
         Timber.i("Resuming billing")

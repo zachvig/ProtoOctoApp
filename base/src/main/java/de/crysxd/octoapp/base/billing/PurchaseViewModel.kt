@@ -5,7 +5,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.utils.LongDuration
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -16,8 +16,8 @@ import timber.log.Timber
 @Suppress("EXPERIMENTAL_API_USAGE")
 class PurchaseViewModel : BaseViewModel() {
 
-    private val viewStateChannel = ConflatedBroadcastChannel<ViewState>(ViewState.InitState)
-    val viewState = BillingManager.billingFlow().combine(viewStateChannel.asFlow()) { billingData, viewState ->
+    private val viewStateFlow = MutableStateFlow<ViewState>(ViewState.InitState)
+    val viewState = BillingManager.billingFlow().combine(viewStateFlow) { billingData, viewState ->
         when {
             !billingData.isBillingAvailable -> ViewState.Unsupported
             viewState is ViewState.SkuSelectionState -> viewState.copy(
@@ -53,11 +53,11 @@ class PurchaseViewModel : BaseViewModel() {
     }.distinctUntilChanged().asLiveData()
 
     fun moveToSkuListState() {
-        viewStateChannel.offer(ViewState.SkuSelectionState())
+        viewStateFlow.value = ViewState.SkuSelectionState()
     }
 
     fun moveToInitState() {
-        viewStateChannel.offer(ViewState.InitState)
+        viewStateFlow.value = ViewState.InitState
     }
 
     sealed class ViewState {

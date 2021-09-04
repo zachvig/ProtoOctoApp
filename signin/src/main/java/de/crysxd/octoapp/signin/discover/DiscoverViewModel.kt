@@ -11,9 +11,8 @@ import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
 import de.crysxd.octoapp.base.utils.AnimationTestUtils
 import de.crysxd.octoapp.signin.R
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
@@ -36,14 +35,14 @@ class DiscoverViewModel(
 
     private var manualFailureCounter = 0
     private val viewModelCreationTime = System.currentTimeMillis()
-    private val updatePreviouslyConnectedTrigger = ConflatedBroadcastChannel(Unit)
-    private val stateChannel = ConflatedBroadcastChannel<UiState>(UiState.Loading)
+    private val updatePreviouslyConnectedTrigger = MutableStateFlow(0)
+    private val stateFlow = MutableStateFlow<UiState>(UiState.Loading)
     private val options = flow {
         emit(DiscoverOctoPrintUseCase.Result(emptyList()))
         discoverOctoPrintUseCase.execute(Unit).collect {
             emit(it)
         }
-    }.combine(updatePreviouslyConnectedTrigger.asFlow()) { it, _ ->
+    }.combine(updatePreviouslyConnectedTrigger) { it, _ ->
         Timber.i("Discovered ${it.discovered.size} instances")
         UiState.Options(
             discoveredOptions = it.discovered,
@@ -59,7 +58,7 @@ class DiscoverViewModel(
         }
     }
 
-    val uiState = stateChannel.asFlow().combine(options) { state, options ->
+    val uiState = stateFlow.combine(options) { state, options ->
         when {
             state is UiState.Manual -> state
             options.previouslyConnectedOptions.isNotEmpty() || options.discoveredOptions.isNotEmpty() -> options
@@ -75,7 +74,7 @@ class DiscoverViewModel(
 
     fun deleteInstance(webUrl: String) {
         octoPrintRepository.remove(webUrl)
-        updatePreviouslyConnectedTrigger.trySend(Unit)
+        updatePreviouslyConnectedTrigger.value++
     }
 
     fun activatePreviouslyConnected(octoPrint: OctoPrintInstanceInformationV3) {
@@ -85,7 +84,7 @@ class DiscoverViewModel(
     }
 
     fun testWebUrl(webUrl: String) {
-        try {
+        stateFlow.value = try {
             val upgradedUrl = upgradeUrl(webUrl)
             sensitiveDataMask.registerWebUrl(upgradedUrl.toHttpUrlOrNull())
 
@@ -93,25 +92,23 @@ class DiscoverViewModel(
                 throw IllegalArgumentException("URL is empty")
             }
 
-            stateChannel.trySend(UiState.ManualSuccess(upgradedUrl))
+            UiState.ManualSuccess(upgradedUrl)
         } catch (e: Exception) {
             manualFailureCounter++
-            stateChannel.trySend(
-                UiState.ManualError(
-                    message = Injector.get().localizedContext().getString(R.string.sign_in___discovery___error_invalid_url),
-                    exception = e,
-                    errorCount = manualFailureCounter
-                )
+            UiState.ManualError(
+                message = Injector.get().localizedContext().getString(R.string.sign_in___discovery___error_invalid_url),
+                exception = e,
+                errorCount = manualFailureCounter
             )
         }
     }
 
     fun moveToManualState() {
-        stateChannel.trySend(UiState.ManualIdle)
+        stateFlow.value = UiState.ManualIdle
     }
 
     fun moveToOptionsState() {
-        stateChannel.trySend(UiState.Loading)
+        stateFlow.value = UiState.Loading
     }
 
     fun upgradeUrl(webUrl: String): String {

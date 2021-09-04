@@ -30,14 +30,12 @@ import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.common.OctoView
 import de.crysxd.octoapp.base.ui.widget.OctoWidgetRecycler
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filterNotNull
 import timber.log.Timber
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 abstract class OctoActivity : LocalizedActivity() {
 
     companion object {
@@ -53,7 +51,7 @@ abstract class OctoActivity : LocalizedActivity() {
     abstract val rootLayout: FrameLayout
     abstract val navController: NavController
     private val handler = Handler(Looper.getMainLooper())
-    private val snackbarMessageChannel = ConflatedBroadcastChannel<Message.SnackbarMessage?>()
+    private val snackbarMessageChannel = MutableStateFlow<Message.SnackbarMessage?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         instance = this
@@ -61,7 +59,7 @@ abstract class OctoActivity : LocalizedActivity() {
 
         // Debounce snackbars to prevent them from "flashing up"
         lifecycleScope.launchWhenCreated {
-            snackbarMessageChannel.asFlow()
+            snackbarMessageChannel
                 .debounce(1000)
                 .filterNotNull()
                 .collect(::doShowSnackbar)
@@ -95,14 +93,14 @@ abstract class OctoActivity : LocalizedActivity() {
 
     fun showSnackbar(message: Message.SnackbarMessage) {
         if (message.debounce) {
-            snackbarMessageChannel.offer(message)
+            snackbarMessageChannel.value = message
         } else {
             doShowSnackbar(message)
         }
     }
 
     private fun doShowSnackbar(message: Message.SnackbarMessage) = handler.post {
-        snackbarMessageChannel.offer(null)
+        snackbarMessageChannel.value = null
         Snackbar.make(rootLayout, message.text(this), message.duration).apply {
             message.actionText(this@OctoActivity)?.let {
                 setAction(it) { message.action(this@OctoActivity) }

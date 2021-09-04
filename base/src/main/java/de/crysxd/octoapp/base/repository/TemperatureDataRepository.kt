@@ -4,12 +4,10 @@ import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import de.crysxd.octoapp.octoprint.models.socket.HistoricTemperatureData
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 class TemperatureDataRepository(
     private val octoPrintProvider: OctoPrintProvider
 ) {
@@ -20,7 +18,7 @@ class TemperatureDataRepository(
     }
 
     private val data = mutableListOf<HistoricTemperatureData>()
-    private val channel = BroadcastChannel<List<TemperatureSnapshot>>(CHANNEL_BUFFER_SIZE)
+    private val flow = MutableSharedFlow<List<TemperatureSnapshot>>(CHANNEL_BUFFER_SIZE)
 
     init {
         GlobalScope.launch(Dispatchers.Default) {
@@ -56,7 +54,7 @@ class TemperatureDataRepository(
                             )
                         }
 
-                        channel.offer(snapshot)
+                        flow.tryEmit(snapshot)
                     }
                 }
                 .retry { Timber.e(it); delay(100); true }
@@ -67,7 +65,7 @@ class TemperatureDataRepository(
         }
     }
 
-    fun flow() = channel.asFlow()
+    fun flow() = flow.asSharedFlow()
 
     data class TemperatureSnapshot(
         val component: String,

@@ -3,27 +3,25 @@ package de.crysxd.octoapp.base.repository
 import de.crysxd.octoapp.base.datasource.DataSource
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 class GcodeHistoryRepository(
     private val dataSource: DataSource<List<GcodeHistoryItem>>
 ) {
 
     private val defaults = listOf("M500", "G28", "G29").map { GcodeHistoryItem(it) }
-    private val historyChannel = ConflatedBroadcastChannel(defaults)
-    val history get() = historyChannel.asFlow()
+    private val historyFlow = MutableStateFlow(defaults)
+    val history get() = historyFlow.asStateFlow()
 
     init {
         dataSource.store(dataSource.get() ?: defaults)
         pushUpdateToChannel()
-
     }
 
     private fun pushUpdateToChannel() {
-        historyChannel.offer(dataSource.get()?.sortedByDescending { it.lastUsed } ?: defaults)
+        historyFlow.value = dataSource.get()?.sortedByDescending { it.lastUsed } ?: defaults
     }
 
     private suspend fun updateHistoryForCommand(command: String, update: (GcodeHistoryItem) -> GcodeHistoryItem?) = withContext(Dispatchers.IO) {

@@ -17,10 +17,10 @@ import de.crysxd.octoapp.base.usecase.OpenOctoprintWebUseCase
 import de.crysxd.octoapp.base.usecase.RequestApiAccessUseCase
 import de.crysxd.octoapp.signin.R
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
@@ -31,7 +31,6 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import timber.log.Timber
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 class RequestAccessViewModel(
     private val requestApiAccessUseCase: RequestApiAccessUseCase,
     private val openOctoprintWebUseCase: OpenOctoprintWebUseCase,
@@ -43,7 +42,7 @@ class RequestAccessViewModel(
     }
 
     private val notificationManager = Injector.get().context().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    private val webUrlChannel = ConflatedBroadcastChannel<HttpUrl>()
+    private val webUrlChannel = MutableStateFlow<HttpUrl?>(null)
     private val mutableUiState = MutableLiveData<UiState>(UiState.PendingApproval)
     private var pollingJob: Job? = null
     private var cancelPollingJob: Job? = null
@@ -76,7 +75,7 @@ class RequestAccessViewModel(
         // gets cancelled after 3s, the user only has a total of 8s to accept the request before it's gone. By using the viewModelScope, we keep the requests alive
         Timber.i("Starting new polling job")
         pollingJob = viewModelScope.launch(coroutineExceptionHandler) {
-            webUrlChannel.asFlow().flatMapLatest {
+            webUrlChannel.filterNotNull().flatMapLatest {
                 requestApiAccessUseCase.execute(RequestApiAccessUseCase.Params(webUrl = it))
             }.map {
                 when (it) {
@@ -119,8 +118,8 @@ class RequestAccessViewModel(
     }
 
     fun useWebUrl(webUrl: String) = viewModelScope.launch(coroutineExceptionHandler) {
-        if (webUrlChannel.valueOrNull == null) {
-            webUrlChannel.trySend(webUrl.toHttpUrl())
+        if (webUrlChannel.value == null) {
+            webUrlChannel.value = webUrl.toHttpUrl()
         }
     }
 

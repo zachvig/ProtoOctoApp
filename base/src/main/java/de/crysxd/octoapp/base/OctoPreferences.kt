@@ -7,11 +7,11 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.di.Injector
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.asFlow
-import java.util.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import java.util.Date
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 class OctoPreferences(private val sharedPreferences: SharedPreferences) {
 
     companion object {
@@ -37,17 +37,16 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_WEBCAM_ASPECT_RATIO_SOURCE = "webcam_aspect_ratio_source"
         private const val KEY_SUPPRESS_M115 = "suppress_m115_request"
 
-
         const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT = "octprint"
         const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_IMAGE = "native_image"
     }
 
-    private val updatedChannel = ConflatedBroadcastChannel(Unit)
-    val updatedFlow get() = updatedChannel.asFlow()
+    private val updatedChannel = MutableStateFlow(0)
+    val updatedFlow get() = updatedChannel.asStateFlow().map { }
 
     private fun edit(block: SharedPreferences.Editor.() -> Unit) {
         sharedPreferences.edit(action = block)
-        updatedChannel.offer(Unit)
+        updatedChannel.value++
     }
 
     var wasPrintNotificationDisconnected: Boolean

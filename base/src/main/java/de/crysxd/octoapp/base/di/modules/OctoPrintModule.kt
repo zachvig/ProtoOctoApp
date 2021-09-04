@@ -13,7 +13,6 @@ import de.crysxd.octoapp.base.datasource.RemoteGcodeFileDataSource
 import de.crysxd.octoapp.base.datasource.WidgetPreferencesDataSource
 import de.crysxd.octoapp.base.di.BaseScope
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
-import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.network.DetectBrokenSetupInterceptor
@@ -45,13 +44,12 @@ open class OctoPrintModule {
     @BaseScope
     @Provides
     open fun provideOctoPrintProvider(
-        timberHandler: TimberHandler,
         detectBrokenSetupInterceptor: DetectBrokenSetupInterceptor,
         octoPrintRepository: OctoPrintRepository,
         analytics: FirebaseAnalytics,
         sslKeyStoreHandler: SslKeyStoreHandler,
         localDnsResolver: LocalDnsResolver
-    ) = OctoPrintProvider(timberHandler, detectBrokenSetupInterceptor, octoPrintRepository, analytics, sslKeyStoreHandler, localDnsResolver)
+    ) = OctoPrintProvider(detectBrokenSetupInterceptor, octoPrintRepository, analytics, sslKeyStoreHandler, localDnsResolver)
 
     @BaseScope
     @Provides

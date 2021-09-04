@@ -8,9 +8,9 @@ import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.octoprint.resolvePath
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import okhttp3.HttpUrl
@@ -18,7 +18,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
-import java.net.URI
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -49,7 +48,7 @@ class EventWebSocket(
     private var isConnected = AtomicBoolean(false)
     private var isOpen = false
     private var lastCurrentMessage: Message.CurrentMessage? = null
-    private val channel = BroadcastChannel<Event>(15)
+    private val eventFlow = MutableSharedFlow<Event>(15)
     private val subscriberCount = AtomicInteger(0)
     private val webSocketUrl = webUrl.resolvePath("sockjs/websocket")
 
@@ -87,24 +86,22 @@ class EventWebSocket(
         onStop()
     }
 
-    fun passiveEventFlow(): Flow<Event> = channel.asFlow()
+    fun passiveEventFlow(): Flow<Event> = eventFlow.asSharedFlow()
 
     fun eventFlow(tag: String): Flow<Event> {
-        return channel.asFlow()
-            .onStart {
-                logger.log(Level.INFO, "onStart for Flow (tag=$tag, webSocket=${this@EventWebSocket})")
-                subscriberCount.incrementAndGet()
-                start()
-            }
-            .onCompletion {
-                logger.log(Level.INFO, "onCompletion for Flow (tag=$tag, webSocket=${this@EventWebSocket})")
-                subscriberCount.decrementAndGet()
-                stop()
-            }
+        return eventFlow.onStart {
+            logger.log(Level.INFO, "onStart for Flow (tag=$tag, webSocket=${this@EventWebSocket})")
+            subscriberCount.incrementAndGet()
+            start()
+        }.onCompletion {
+            logger.log(Level.INFO, "onCompletion for Flow (tag=$tag, webSocket=${this@EventWebSocket})")
+            subscriberCount.decrementAndGet()
+            stop()
+        }
     }
 
     private fun dispatchEvent(event: Event) {
-        channel.offer(event)
+        eventFlow.tryEmit(event)
     }
 
     private fun handleClosure() {

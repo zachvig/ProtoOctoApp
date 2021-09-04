@@ -7,21 +7,19 @@ import de.crysxd.octoapp.base.models.ActiveInstanceIssue
 import de.crysxd.octoapp.base.models.AppSettings
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.octoprint.isBasedOn
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import timber.log.Timber
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 class OctoPrintRepository(
     private val dataSource: DataSource<List<OctoPrintInstanceInformationV3>>,
     private val octoPreferences: OctoPreferences,
     private val sensitiveDataMask: SensitiveDataMask,
 ) {
 
-    private val instanceInformationChannel = ConflatedBroadcastChannel<OctoPrintInstanceInformationV3?>(null)
+    private val instanceInformationChannel = MutableStateFlow<OctoPrintInstanceInformationV3?>(null)
 
     init {
         // Upgrade active
@@ -41,14 +39,14 @@ class OctoPrintRepository(
         postActiveInstance()
     }
 
-    fun instanceInformationFlow() = instanceInformationChannel.asFlow().distinctUntilChanged()
+    fun instanceInformationFlow() = instanceInformationChannel.asStateFlow()
 
-    fun getActiveInstanceSnapshot() = instanceInformationChannel.valueOrNull
+    fun getActiveInstanceSnapshot() = instanceInformationChannel.value
 
     private fun postActiveInstance() {
         val activeInstance = octoPreferences.activeInstanceId?.let(::get)
         activeInstance?.let { sensitiveDataMask.registerInstance(it) }
-        instanceInformationChannel.offer(activeInstance)
+        instanceInformationChannel.value = activeInstance
     }
 
     private fun storeOctoprintInstanceInformation(id: String, instance: OctoPrintInstanceInformationV3?) {
@@ -67,7 +65,7 @@ class OctoPrintRepository(
     }
 
     suspend fun updateActive(block: suspend (OctoPrintInstanceInformationV3) -> OctoPrintInstanceInformationV3?) {
-        instanceInformationChannel.valueOrNull?.let {
+        instanceInformationChannel.value?.let {
             storeOctoprintInstanceInformation(it.id, block(it))
         }
     }

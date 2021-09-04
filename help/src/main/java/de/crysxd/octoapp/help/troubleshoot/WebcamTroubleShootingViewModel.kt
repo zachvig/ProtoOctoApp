@@ -6,9 +6,8 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -27,9 +26,9 @@ class WebcamTroubleShootingViewModel(
         private const val MIN_LOADING_TIME = 2000
     }
 
-    private val retrySignalChannel = ConflatedBroadcastChannel(Unit)
+    private val retrySignalChannel = MutableStateFlow(0)
     val uiState = octoPrintProvider.octoPrintFlow()
-        .combine(retrySignalChannel.asFlow()) { _, _ ->
+        .combine(retrySignalChannel) { _, _ ->
             // No data returned, we only need a trigger :)
         }.flatMapLatest {
             flow {
@@ -50,7 +49,7 @@ class WebcamTroubleShootingViewModel(
             emit(UiState.Finding(TestFullNetworkStackUseCase.Finding.UnexpectedIssue(null, it)))
         }.asLiveData()
 
-    fun retry() = retrySignalChannel.offer(Unit)
+    fun retry() = retrySignalChannel.value++
 
     sealed class UiState {
         object Loading : UiState()

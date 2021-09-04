@@ -6,23 +6,27 @@ import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.*
+import java.util.Date
 
 const val MAX_COMMUNICATION_ENTRIES = 1000
-const val CHANNEL_BUFFER_SIZE = 10
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 class SerialCommunicationLogsRepository(
     private val octoPrintProvider: OctoPrintProvider
 ) {
 
     private val logs = mutableListOf<SerialCommunication>()
-    private val channel = BroadcastChannel<SerialCommunication>(CHANNEL_BUFFER_SIZE)
+    private val flow = MutableStateFlow<SerialCommunication?>(null)
 
     init {
         GlobalScope.launch(Dispatchers.Default) {
@@ -47,7 +51,7 @@ class SerialCommunicationLogsRepository(
 
                     logs.addAll(newLogs)
                     newLogs.forEach {
-                        channel.send(it)
+                        flow.value = it
                     }
 
                     if (logs.size > MAX_COMMUNICATION_ENTRIES) {
@@ -63,13 +67,11 @@ class SerialCommunicationLogsRepository(
     }
 
     fun addInternalLog(log: String, fromUser: Boolean) {
-        channel.offer(
-            SerialCommunication(
-                content = log,
-                serverDate = null,
-                date = Date(),
-                source = if (fromUser) SerialCommunication.Source.User else SerialCommunication.Source.OctoAppInternal
-            )
+        flow.value = SerialCommunication(
+            content = log,
+            serverDate = null,
+            date = Date(),
+            source = if (fromUser) SerialCommunication.Source.User else SerialCommunication.Source.OctoAppInternal
         )
     }
 
@@ -77,8 +79,8 @@ class SerialCommunicationLogsRepository(
         if (includeOld) {
             all().forEach { emit(it) }
         }
-        emitAll(channel.asFlow())
-    }
+        emitAll(flow)
+    }.filterNotNull()
 
     fun all() = logs.toList()
 

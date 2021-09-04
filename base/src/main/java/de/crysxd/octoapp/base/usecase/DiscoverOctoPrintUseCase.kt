@@ -5,7 +5,6 @@ import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.network.OctoPrintDnsSdDiscovery
 import de.crysxd.octoapp.base.network.OctoPrintUpnpDiscovery
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -15,7 +14,6 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 class DiscoverOctoPrintUseCase @Inject constructor(
     private val context: Context,
     private val sensitiveDataMask: SensitiveDataMask,
@@ -23,7 +21,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
 ) : UseCase<Unit, Flow<DiscoverOctoPrintUseCase.Result>>() {
 
     override suspend fun doExecute(param: Unit, timber: Timber.Tree): Flow<Result> = withContext(Dispatchers.IO) {
-        val channel = ConflatedBroadcastChannel(Result(emptyList()))
+        val flow = MutableStateFlow(Result(emptyList()))
         val discoveredInstances = mutableListOf<DiscoveredOctoPrint>()
         val submitResult: (DiscoveredOctoPrint) -> Unit = { discovered ->
             if (!discoveredInstances.any { it.webUrl == discovered.webUrl }) {
@@ -31,12 +29,12 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                 val uniqueDevices = discoveredInstances.groupBy { it.id }.values.mapNotNull {
                     it.maxByOrNull { i -> i.quality }
                 }.sortedBy { it.label }
-                channel.offer(Result(discovered = uniqueDevices))
+                flow.value = Result(discovered = uniqueDevices)
             }
         }
 
         // Start discovery and return results
-        return@withContext channel.asFlow().onStart {
+        return@withContext flow.onStart {
             timber.i("Starting OctoPrint discovery")
             discoverUsingDnsSd(timber, currentCoroutineContext(), submitResult)
             discoverUsingUpnp(timber, currentCoroutineContext(), submitResult)
