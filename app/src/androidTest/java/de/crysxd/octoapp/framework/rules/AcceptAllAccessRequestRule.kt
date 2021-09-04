@@ -5,13 +5,13 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import de.crysxd.octoapp.base.di.BaseComponent
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.usecase.RequestApiAccessUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 
-class AcceptAllAccessRequestRule(var instanceInformation: OctoPrintInstanceInformationV2) : AbstractUseCaseMockRule() {
+class AcceptAllAccessRequestRule(var instanceInformation: OctoPrintInstanceInformationV3) : AbstractUseCaseMockRule() {
 
     override fun createBaseComponent(base: BaseComponent) = MockBaseComponent(base)
 

@@ -15,7 +15,7 @@ import com.nhaarman.mockitokotlin2.verify
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
@@ -23,6 +23,7 @@ import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.SpyOctoPrintRepositoryRule
 import de.crysxd.octoapp.framework.waitFor
 import de.crysxd.octoapp.framework.waitForNot
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.junit.After
@@ -41,8 +42,9 @@ class DeleteInstanceTest {
     @get:Rule
     val spyOctoPrintRepositoryRule = SpyOctoPrintRepositoryRule()
 
-    private val instance = OctoPrintInstanceInformationV2(
-        webUrl = "http://test",
+    private val instance = OctoPrintInstanceInformationV3(
+        id = "random",
+        webUrl = "http://test".toHttpUrl(),
         apiKey = "none",
     )
 
@@ -124,7 +126,7 @@ class DeleteInstanceTest {
         onView(withText(R.string.sign_in___discovery___delete_printer_confirmation)).inRoot(isDialog()).perform(click())
 
         // Check gone
-        verify(repository).remove(instance.webUrl)
+        verify(repository).remove(instance.id)
         waitForNot(allOf(withText(instance.label), isDisplayed()))
     }
 }

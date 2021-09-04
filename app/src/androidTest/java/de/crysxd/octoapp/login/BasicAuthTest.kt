@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.login
 
-import android.net.Uri
 import android.widget.EditText
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -14,20 +13,20 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ext.urlEncode
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.waitFor
 import de.crysxd.octoapp.framework.waitForDialog
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
 
 class BasicAuthTest {
 
-    private val testUrl = "https://jigsaw.w3.org/HTTP/Basic/"
+    private val testUrl = "https://jigsaw.w3.org/HTTP/Basic/".toHttpUrl()
     private val username = "guest"
     private val password = "guest"
     private val basicAuthFormMatcher = allOf(withId(R.id.usernameInput), isDisplayed())
@@ -47,7 +46,7 @@ class BasicAuthTest {
 
         // Start sign in
         SignInRobot.waitForManualToBeShown()
-        SignInRobot.manualInput.perform(replaceText(testUrl))
+        SignInRobot.manualInput.perform(replaceText(testUrl.toString()))
         SignInRobot.continueButton.perform(click())
 
         // Wait for basic auth form to be shown
@@ -83,11 +82,14 @@ class BasicAuthTest {
         // GIVEN
         val wrongUser = "secretuser$@&323"
         val wrongPassword = "secretpass$@&/?=§:;323"
-        val uri = Uri.parse(testUrl)
-        val uriWithAuth = uri.buildUpon().encodedAuthority("${wrongUser.urlEncode()}:${wrongPassword.urlEncode()}@${uri.host}").build()
+        val urlWithAuth = testUrl.newBuilder()
+            .password(wrongPassword)
+            .username(wrongUser)
+            .build()
         Injector.get().octorPrintRepository().setActive(
-            OctoPrintInstanceInformationV2(
-                webUrl = uriWithAuth.toString(),
+            OctoPrintInstanceInformationV3(
+                id = "random",
+                webUrl = urlWithAuth,
                 apiKey = "random,not used"
             )
         )

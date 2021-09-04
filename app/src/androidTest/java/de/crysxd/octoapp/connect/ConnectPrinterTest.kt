@@ -9,7 +9,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.framework.MenuRobot
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
@@ -22,6 +22,7 @@ import de.crysxd.octoapp.framework.waitForDialog
 import de.crysxd.octoapp.framework.waitTime
 import de.crysxd.octoapp.octoprint.plugins.power.psucontrol.PsuControlPowerPlugin
 import kotlinx.coroutines.runBlocking
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
@@ -30,8 +31,9 @@ class ConnectPrinterTest {
 
     private val testEnv = TestEnvironmentLibrary.Terrier
     private val powerControlsTestEnv = TestEnvironmentLibrary.Dachshund
-    private val wrongEnv = OctoPrintInstanceInformationV2(
-        webUrl = "http://127.0.0.1:1",
+    private val wrongEnv = OctoPrintInstanceInformationV3(
+        id = "random",
+        webUrl = "http://127.0.0.1:100".toHttpUrl(),
         apiKey = "XXXXXXX"
     )
 

@@ -1,14 +1,14 @@
 package de.crysxd.octoapp.framework.rules
 
-import android.net.Uri
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.reset
 import com.nhaarman.mockitokotlin2.whenever
 import de.crysxd.octoapp.base.di.BaseComponent
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.net.InetAddress
 
 class MockDiscoveryRule : AbstractUseCaseMockRule() {
@@ -42,7 +42,7 @@ class MockDiscoveryRule : AbstractUseCaseMockRule() {
         )
     }
 
-    fun mockForTestEnvironment(vararg envs: OctoPrintInstanceInformationV2) = runBlocking {
+    fun mockForTestEnvironment(vararg envs: OctoPrintInstanceInformationV3) = runBlocking {
         reset(discoverUseCase)
         whenever(discoverUseCase.execute(Unit)).thenReturn(
             flowOf(
@@ -51,10 +51,10 @@ class MockDiscoveryRule : AbstractUseCaseMockRule() {
                         DiscoverOctoPrintUseCase.DiscoveredOctoPrint(
                             label = it.label,
                             detailLabel = "Discovered via mock",
-                            host = InetAddress.getByName(Uri.parse(it.webUrl).host),
+                            host = InetAddress.getByName(it.webUrl.host),
                             quality = 100,
                             method = DiscoverOctoPrintUseCase.DiscoveryMethod.DnsSd,
-                            port = Uri.parse(it.webUrl).port,
+                            port = it.webUrl.port,
                             webUrl = it.webUrl
                         )
                     }
@@ -70,7 +70,7 @@ class MockDiscoveryRule : AbstractUseCaseMockRule() {
         quality = 100,
         method = DiscoverOctoPrintUseCase.DiscoveryMethod.DnsSd,
         port = -1,
-        webUrl = "https://frenchie.com"
+        webUrl = "https://frenchie.com".toHttpUrl()
     )
 
     inner class MockBaseComponent(real: BaseComponent) : BaseComponent by real {

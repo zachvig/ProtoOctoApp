@@ -143,7 +143,7 @@ class ManualLoginTest {
         // Check text prefilled, correct and start again
         waitForManualToBeShown()
         manualInput.check(matches(withText("http://$domain")))
-        manualInput.perform(replaceText(testEnv.webUrl))
+        manualInput.perform(replaceText(testEnv.webUrl.toString()))
         mockTestFullNetworkStackRule.mockForInvalidApiKey()
         continueButton.perform(click())
 
