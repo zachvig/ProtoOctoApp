@@ -53,6 +53,7 @@ class CreateProgressAppWidgetDataUseCase @Inject constructor(
             printTimeLeft = job.progress?.printTimeLeft,
             printTimeLeftOrigin = job.progress?.printTimeLeftOrigin,
             instanceId = instance.id,
+            label = instance.label,
         )
     }
 
@@ -67,6 +68,7 @@ class CreateProgressAppWidgetDataUseCase @Inject constructor(
         printTimeLeft = currentMessage.progress?.printTimeLeft,
         printTimeLeftOrigin = currentMessage.progress?.printTimeLeftOrigin,
         instanceId = instanceId,
+        label = octoPrintRepository.get(instanceId)?.label ?: instanceId
     )
 
     data class Params(
@@ -86,6 +88,7 @@ class CreateProgressAppWidgetDataUseCase @Inject constructor(
         val printTimeLeft: Int?,
         val printTimeLeftOrigin: String?,
         val instanceId: String,
+        val label: String,
         val createdAt: Date = Date(),
     ) : Parcelable
 }

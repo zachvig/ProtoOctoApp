@@ -209,7 +209,7 @@ class ProgressAppWidget : AppWidgetProvider() {
                     data.isPaused -> context.getString(R.string.print_notification___paused_title)
                     data.isCancelling -> context.getString(R.string.print_notification___cancelling_title)
                     data.isPrinting -> context.getString(R.string.print_notification___printing_title)
-                    data.isPrinterConnected -> context.getString(R.string.app_widget___idle)
+                    data.isPrinterConnected -> context.getString(R.string.app_widget___idle, data.label)
                     else -> context.getString(R.string.app_widget___no_printer)
                 }
             )
