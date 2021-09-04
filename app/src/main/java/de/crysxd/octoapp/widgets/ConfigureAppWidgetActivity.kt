@@ -14,7 +14,7 @@ import androidx.annotation.RequiresApi
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
-import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_WEB_URL
+import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_ID
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
@@ -22,10 +22,10 @@ import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_INFINITE_WIDGETS
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.base.LocalizedActivity
 import de.crysxd.octoapp.base.ui.utils.colorTheme
-import de.crysxd.octoapp.widgets.AppWidgetPreferences.ACTIVE_WEB_URL_MARKER
+import de.crysxd.octoapp.widgets.AppWidgetPreferences.ACTIVE_INSTANCE_MARKER
 import de.crysxd.octoapp.widgets.quickaccess.QuickAccessAppWidget
 import timber.log.Timber
-import java.util.*
+import java.util.UUID
 
 
 class ConfigureAppWidgetActivity : LocalizedActivity() {
@@ -101,11 +101,10 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun configureShortcut() {
-        showSelectionDialog { webUrl ->
-            if (webUrl == null) return@showSelectionDialog null
+        showSelectionDialog { id ->
 
             ShortcutManager::class.java
-            val instance = Injector.get().octorPrintRepository().findOrNull(webUrl)
+            val instance = Injector.get().octorPrintRepository().get(id)
             val label = instance?.label ?: getString(R.string.app_name)
             val drawable = when (instance.colorTheme.colorRes) {
                 R.color.blue_color_scheme -> R.mipmap.ic_launcher_blue
@@ -123,7 +122,7 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
             val info = ShortcutInfo.Builder(this, UUID.randomUUID().toString())
                 .setIntent(Intent(this, MainActivity::class.java).also {
                     it.action = Intent.ACTION_VIEW
-                    it.putExtra(EXTRA_TARGET_OCTOPRINT_WEB_URL, webUrl)
+                    it.putExtra(EXTRA_TARGET_OCTOPRINT_ID, id)
                 })
                 .setShortLabel(label)
                 .setIcon(icon)
@@ -149,14 +148,14 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
         }
     }
 
-    private fun showSelectionDialog(result: (webUrl: String?) -> Intent?) {
+    private fun showSelectionDialog(result: (id: String) -> Intent?) {
         val instances = Injector.get().octorPrintRepository().getAll()
         val titles = instances.map { it.label }.map { getString(R.string.app_widget___link_widget__option_x, it) }
-        val webUrls = instances.map { it.webUrl }
+        val ids = instances.map { it.id }
 
-        if (webUrls.size <= 1) {
-            Timber.i("Only ${webUrls.size} options, auto picking sync option")
-            finishWithSuccess(result(ACTIVE_WEB_URL_MARKER))
+        if (ids.size <= 1) {
+            Timber.i("Only ${ids.size} options, auto picking sync option")
+            finishWithSuccess(result(ACTIVE_INSTANCE_MARKER))
             return
         }
 
@@ -167,27 +166,28 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
                 .setMessage(R.string.app_widget___information_always_synced)
                 .setPositiveButton(android.R.string.ok, null)
                 .setOnDismissListener {
-                    finishWithSuccess(result(ACTIVE_WEB_URL_MARKER))
+                    finishWithSuccess(result(ACTIVE_INSTANCE_MARKER))
                 }
                 .show()
             return
         }
 
         val allTitles = listOf(listOf(getString(R.string.app_widget___link_widget__option_synced)), titles).flatten()
-        val allWebUrls = listOf(listOf(ACTIVE_WEB_URL_MARKER), webUrls).flatten()
-        var selectedUrl: String? = null
+        val allIds = listOf(listOf(ACTIVE_INSTANCE_MARKER), ids).flatten()
+        var selectedId: String? = null
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.app_widget___link_widget_title)
             .setItems(allTitles.toTypedArray()) { _, selected ->
-                selectedUrl = allWebUrls[selected]
+                selectedId = allIds[selected]
 
             }
             .setOnDismissListener {
                 Handler(Looper.getMainLooper()).postDelayed({
-                    Timber.i("Closing ConfigureWidgetActivity, selected $selectedUrl")
+                    Timber.i("Closing ConfigureWidgetActivity, selected $selectedId")
 
-                    if (selectedUrl != null) {
-                        finishWithSuccess(result(selectedUrl))
+                    val id = selectedId
+                    if (id != null) {
+                        finishWithSuccess(result(id))
                     } else {
                         finishWithCancel(createAppWidgetResultIntent())
                     }

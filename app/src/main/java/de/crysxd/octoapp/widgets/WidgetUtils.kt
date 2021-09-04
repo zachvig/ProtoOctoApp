@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import de.crysxd.octoapp.BuildConfig
-import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_WEB_URL
+import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_ID
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
@@ -19,7 +19,7 @@ import de.crysxd.octoapp.widgets.webcam.BaseWebcamAppWidget
 import de.crysxd.octoapp.widgets.webcam.ControlsWebcamAppWidget
 import de.crysxd.octoapp.widgets.webcam.NoControlsWebcamAppWidget
 import timber.log.Timber
-import java.util.*
+import java.util.Date
 
 internal fun updateAppWidget(widgetId: Int) {
     val context = Injector.get().localizedContext()
@@ -44,12 +44,12 @@ internal fun cancelAllUpdates() {
     ProgressAppWidget.cancelAllUpdates()
 }
 
-internal fun createLaunchAppIntent(context: Context, webUrl: String?) = PendingIntent.getActivity(
+internal fun createLaunchAppIntent(context: Context, instanceId: String?) = PendingIntent.getActivity(
     context,
-    "launch_main_with_url_$webUrl".hashCode(),
+    "launch_main_with_instance_$instanceId".hashCode(),
     Intent(context, MainActivity::class.java).also {
         if (BillingManager.isFeatureEnabled(FEATURE_QUICK_SWITCH)) {
-            it.putExtra(EXTRA_TARGET_OCTOPRINT_WEB_URL, webUrl)
+            it.putExtra(EXTRA_TARGET_OCTOPRINT_ID, instanceId)
         }
     },
     PendingIntent.FLAG_UPDATE_CURRENT

@@ -5,25 +5,44 @@ import android.content.Context
 import android.os.Bundle
 import androidx.core.content.edit
 import de.crysxd.octoapp.base.di.Injector
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import timber.log.Timber
 
 object AppWidgetPreferences {
 
-    const val ACTIVE_WEB_URL_MARKER = "active"
+    const val ACTIVE_INSTANCE_MARKER = "active"
 
     private val sharedPreferences by lazy { Injector.get().context().getSharedPreferences("widget_preferences", Context.MODE_PRIVATE) }
 
-    fun setInstanceForWidgetId(widgetId: Int, webUrl: String?) = sharedPreferences.edit {
-        Timber.i("Configuring widget $widgetId for instance $webUrl")
-        putString("${widgetId}_webUrl", webUrl)
+    init {
+        // Upgrade from webUrl to instance id
+        sharedPreferences.edit {
+            sharedPreferences.all.keys.filter {
+                it.endsWith("_webUrl")
+            }.map {
+                // Try to get the istance id, fall back to active instance marker if not found
+                val webUrl = sharedPreferences.getString(it, null) ?: return@map it to ACTIVE_INSTANCE_MARKER
+                val instance = Injector.get().octorPrintRepository().findInstancesWithWebUrl(webUrl.toHttpUrlOrNull()) ?: return@map it to ACTIVE_INSTANCE_MARKER
+                it to instance.id
+            }.forEach {
+                // Remove web url field and store instanceId field
+                remove(it.first)
+                putString(it.first.replace("_webUrl", "_instanceId"), it.second)
+            }
+        }
     }
 
-    fun getInstanceForWidgetId(widgetId: Int) = sharedPreferences.getString("${widgetId}_webUrl", null).takeIf { it != ACTIVE_WEB_URL_MARKER }
+    fun setInstanceForWidgetId(widgetId: Int, instanceId: String = ACTIVE_INSTANCE_MARKER) = sharedPreferences.edit {
+        Timber.i("Configuring widget $widgetId for instance $instanceId")
+        putString("${widgetId}_instanceId", instanceId)
+    }
 
-    fun getWidgetIdsForInstance(webUrl: String?) = sharedPreferences.all.keys.filter {
-        it.endsWith("_webUrl") && sharedPreferences.getString(it, null) == webUrl
+    fun getInstanceForWidgetId(widgetId: Int) = sharedPreferences.getString("${widgetId}_instanceId", null).takeIf { it != ACTIVE_INSTANCE_MARKER }
+
+    fun getWidgetIdsForInstance(instanceId: String) = sharedPreferences.all.keys.filter {
+        it.endsWith("_instanceId") && sharedPreferences.getString(it, null) == instanceId
     }.map {
-        it.replace("_webUrl", "").toInt()
+        it.replace("_instanceId", "").toInt()
     }
 
     fun setImageDimensionsForWidgetId(widgetId: Int, width: Int, height: Int) = sharedPreferences.edit {

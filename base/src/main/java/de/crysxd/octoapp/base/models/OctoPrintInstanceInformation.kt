@@ -5,7 +5,6 @@ import de.crysxd.octoapp.octoprint.isBasedOn
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.system.SystemCommand
-import de.crysxd.octoapp.octoprint.withoutBasicAuth
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.util.UUID

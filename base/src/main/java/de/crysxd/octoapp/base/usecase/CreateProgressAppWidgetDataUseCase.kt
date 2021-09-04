@@ -23,8 +23,8 @@ class CreateProgressAppWidgetDataUseCase @Inject constructor(
     }
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) =
-        param.currentMessage?.let { fromCurrentMessage(it, param.webUrl) }
-            ?: fromNetworkRequest(param.webUrl)
+        param.currentMessage?.let { fromCurrentMessage(it, param.instanceId) }
+            ?: fromNetworkRequest(param.instanceId)
 
     private suspend fun fromNetworkRequest(instanceId: String): Result = withContext(Dispatchers.IO) {
         val instance = octoPrintRepository.get(instanceId) ?: throw IllegalStateException("Unable to locate instance for $instanceId")
@@ -71,7 +71,7 @@ class CreateProgressAppWidgetDataUseCase @Inject constructor(
 
     data class Params(
         val currentMessage: Message.CurrentMessage?,
-        val webUrl: String
+        val instanceId: String
     )
 
     @Parcelize

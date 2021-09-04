@@ -6,7 +6,7 @@ import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 
@@ -53,7 +53,7 @@ class ColorTheme(@ColorRes val colorRes: Int, @ColorRes val lightColorRes: Int) 
     }
 }
 
-val OctoPrintInstanceInformationV2?.colorTheme
+val OctoPrintInstanceInformationV3?.colorTheme
     get() = when (this?.settings?.appearance?.color) {
         "red" -> ColorTheme.red
         "orange" -> ColorTheme.orange
