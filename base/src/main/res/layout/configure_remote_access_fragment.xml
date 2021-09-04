@@ -170,6 +170,7 @@
                     android:layout_marginTop="@dimen/margin_1"
                     android:autofillHints="password"
                     android:inputType="textNoSuggestions"
+                    app:forPassword="true"
                     app:label="@string/configure_remote_access___manual___password_hint"
                     app:labelActive="@string/configure_remote_access___manual___password_hint_active" />
 
