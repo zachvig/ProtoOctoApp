@@ -1,68 +1,53 @@
 package de.crysxd.octoapp.base.logging
 
-import android.net.Uri
-import de.crysxd.octoapp.octoprint.UPNP_ADDRESS_PREFIX
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.octoprint.models.settings.Settings
+import de.crysxd.octoapp.octoprint.redactLoggingString
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
-import kotlin.math.absoluteValue
 
 class SensitiveDataMask {
 
     private val lock = ReentrantLock()
-    private var sensitiveData = mutableListOf<SensitiveData>()
+    private val masks = mutableMapOf<String, (String) -> String>()
 
-    fun registerWebUrl(webUrl: String?, maskPrefix: String) {
-        webUrl ?: return
-        try {
-            val uri = Uri.parse(webUrl)
-            when {
-                webUrl.startsWith("/") -> Unit
-                uri.host?.startsWith("192.168.") == true -> Unit
-                uri.host?.endsWith(".lan") == true -> Unit
-                uri.host?.endsWith(".local") == true -> Unit
-                uri.host?.endsWith(".home") == true -> Unit
-                uri.host?.startsWith(UPNP_ADDRESS_PREFIX) == true -> Unit
-                else -> {
-                    val value = uri.host ?: webUrl
-                    val hash = value.hashCode().absoluteValue.toString().take(4)
-                    registerSensitiveData(value, "${maskPrefix}_host_$hash")
-                }
-            }
-            uri.userInfo?.let {
-                registerSensitiveData(it, "${maskPrefix}_user_info")
-            }
-        } catch (e: Exception) {
-            registerSensitiveData(webUrl, "${maskPrefix}_host")
+    fun registerWebUrl(webUrl: HttpUrl?) = lock.withLock {
+        masks[webUrl.toString()] = {
+            webUrl?.redactLoggingString(it) ?: it
         }
     }
 
-    fun registerWebUrl(webUrl: HttpUrl?, maskPrefix: String) {
-       TODO()
-    }
-
-    fun registerApiKey(apiKey: String) {
+    fun registerApiKey(apiKey: String) = lock.withLock {
         if (apiKey.isNotBlank()) {
-            registerSensitiveData(apiKey, "api_key")
+            masks[apiKey] = {
+                redact(it, apiKey, "api_key")
+            }
         }
     }
 
-    private fun registerSensitiveData(data: String, replacement: String) = lock.withLock {
-        val d = SensitiveData(data, replacement)
-        if (!sensitiveData.contains(d) && data.length >= 4) {
-            sensitiveData.add(d)
+    fun registerInstance(instance: OctoPrintInstanceInformationV3) {
+        registerWebUrl(instance.webUrl)
+        registerWebUrl(instance.alternativeWebUrl)
+        registerWebUrl(instance.settings?.webcam?.streamUrl?.toHttpUrlOrNull())
+        registerApiKey(instance.apiKey)
+        instance.settings?.plugins?.values?.mapNotNull { it as? Settings.MultiCamSettings }?.firstOrNull()?.profiles?.forEachIndexed { i, webcam ->
+            registerWebUrl(webcam.streamUrl?.toHttpUrlOrNull())
         }
     }
 
     fun mask(input: String): String = lock.withLock {
         var output = input
 
-        sensitiveData.forEach {
-            output = output.replace(it.sensitiveData, "\${${it.replacement}}")
+        masks.forEach {
+            output = it.value(output)
         }
 
         return output
     }
+
+    private fun redact(input: String, sensitiveData: String, replacement: String): String = input.replace(sensitiveData, "\${${replacement}}")
 
     data class SensitiveData(
         val sensitiveData: String,

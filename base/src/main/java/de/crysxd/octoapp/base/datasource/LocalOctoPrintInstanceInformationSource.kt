@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV1
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
@@ -12,7 +13,8 @@ import timber.log.Timber
 
 class LocalOctoPrintInstanceInformationSource(
     private val sharedPreferences: SharedPreferences,
-    private val gson: Gson
+    private val gson: Gson,
+    private val sensitiveDataMask: SensitiveDataMask,
 ) : DataSource<List<OctoPrintInstanceInformationV3>> {
 
     companion object {
@@ -79,6 +81,7 @@ class LocalOctoPrintInstanceInformationSource(
 
         // Upgrade
         val v3 = OctoPrintInstanceInformationV3(OctoPrintInstanceInformationV2(v1))
+        sensitiveDataMask.registerInstance(v3)
         Timber.i("Upgrading from V0 -> V3 (v0=$v1, v3=$v3)")
         store(listOf(v3))
     } else {
@@ -91,6 +94,7 @@ class LocalOctoPrintInstanceInformationSource(
                 gson.fromJson(it, OctoPrintInstanceInformationV1::class.java)
             }?.let {
                 val v3 = OctoPrintInstanceInformationV3(OctoPrintInstanceInformationV2(it))
+                sensitiveDataMask.registerInstance(v3)
                 Timber.i("Upgrading from V1 -> V3 (v1=$it, v3=$v3)")
                 store(listOf(v3))
             }
@@ -104,6 +108,7 @@ class LocalOctoPrintInstanceInformationSource(
                 gson.fromJson(it, OctoPrintInstanceInformationV2::class.java)
             }?.let {
                 val v3 = OctoPrintInstanceInformationV3(it)
+                sensitiveDataMask.registerInstance(v3)
                 Timber.i("Upgrading from single V2 -> V3 (v2=$it, v3=$v3)")
                 store(listOf(v3))
             }
@@ -121,6 +126,7 @@ class LocalOctoPrintInstanceInformationSource(
             }.let {
                 // Store and delete
                 it.forEachIndexed { index, v3 ->
+                    sensitiveDataMask.registerInstance(v3)
                     Timber.i("Upgrading from V2 -> V3 (v2=${v2[index]}, v3=$v3)")
                 }
                 store(it)

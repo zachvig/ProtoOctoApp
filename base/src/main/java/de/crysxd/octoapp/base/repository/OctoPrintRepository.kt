@@ -7,7 +7,6 @@ import de.crysxd.octoapp.base.models.ActiveInstanceIssue
 import de.crysxd.octoapp.base.models.AppSettings
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.octoprint.isBasedOn
-import de.crysxd.octoapp.octoprint.models.settings.Settings
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -48,15 +47,7 @@ class OctoPrintRepository(
 
     private fun postActiveInstance() {
         val activeInstance = octoPreferences.activeInstanceId?.let(::get)
-        activeInstance?.let { instance ->
-            sensitiveDataMask.registerWebUrl(instance.webUrl, "octoprint")
-            sensitiveDataMask.registerWebUrl(instance.alternativeWebUrl, "alternative")
-            sensitiveDataMask.registerWebUrl(instance.settings?.webcam?.streamUrl, "webcam")
-            sensitiveDataMask.registerApiKey(instance.apiKey)
-            instance.settings?.plugins?.values?.mapNotNull { it as? Settings.MultiCamSettings }?.firstOrNull()?.profiles?.forEachIndexed { i, webcam ->
-                sensitiveDataMask.registerWebUrl(webcam.streamUrl, "webcam_$i")
-            }
-        }
+        activeInstance?.let { sensitiveDataMask.registerInstance(it) }
         instanceInformationChannel.offer(activeInstance)
     }
 
