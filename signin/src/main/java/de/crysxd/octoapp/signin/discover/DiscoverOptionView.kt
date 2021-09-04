@@ -7,12 +7,11 @@ import android.view.LayoutInflater
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
 import de.crysxd.octoapp.octoprint.withoutBasicAuth
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.databinding.DiscoverOptionBinding
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 class DiscoverOptionView @JvmOverloads constructor(
     context: Context,
@@ -48,19 +47,19 @@ class DiscoverOptionView @JvmOverloads constructor(
 
     fun isShowing(option: DiscoverOctoPrintUseCase.DiscoveredOctoPrint) = option.webUrl == optionId
 
-    fun show(option: OctoPrintInstanceInformationV2, enabled: Boolean) {
-        optionId = option.webUrl
+    fun show(option: OctoPrintInstanceInformationV3, enabled: Boolean) {
+        optionId = option.id
         alpha = if (enabled) 1f else 0.2f
         binding.shevron.isVisible = enabled
         binding.title.text = option.label
-        binding.subtitle.text = option.webUrl.toHttpUrlOrNull()?.withoutBasicAuth()?.toString()?.takeIf { option.label != option.webUrl }
+        binding.subtitle.text = option.webUrl.withoutBasicAuth().toString().takeIf { option.label != it }
         binding.subtitle.isVisible = binding.subtitle.text.isNotBlank()
         binding.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.menu_style_octoprint_background))
         binding.buttonDelete.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_octoprint_foreground))
         binding.shevron.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_octoprint_foreground))
     }
 
-    fun isShowing(option: OctoPrintInstanceInformationV2) = option.webUrl == optionId
+    fun isShowing(option: OctoPrintInstanceInformationV3) = option.id == optionId
 
     fun showManualConnect() {
         binding.title.text = context.getString(R.string.sign_in___discovery___connect_manually_title)

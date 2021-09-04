@@ -8,7 +8,11 @@ import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
@@ -43,7 +47,7 @@ class WebcamTroubleShootingViewModel(
             }
         }.catch {
             Timber.e(it)
-            emit(UiState.Finding(TestFullNetworkStackUseCase.Finding.UnexpectedIssue("", it)))
+            emit(UiState.Finding(TestFullNetworkStackUseCase.Finding.UnexpectedIssue(null, it)))
         }.asLiveData()
 
     fun retry() = retrySignalChannel.offer(Unit)

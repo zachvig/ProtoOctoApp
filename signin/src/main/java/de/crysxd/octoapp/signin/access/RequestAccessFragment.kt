@@ -33,7 +33,7 @@ class RequestAccessFragment : BaseFragment() {
     private val wifiViewModel by injectViewModel<NetworkStateViewModel>(Injector.get().viewModelFactory())
     private val mediaPlayer = MediaPlayer()
     private lateinit var contentBinding: ReqestAccessFragmentBinding
-    private val webUrl get() = UriLibrary.secureDecodeUrl(navArgs<RequestAccessFragmentArgs>().value.webUrl)
+    private val webUrl get() = UriLibrary.secureDecode(navArgs<RequestAccessFragmentArgs>().value.webUrl)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,7 +131,7 @@ class RequestAccessFragment : BaseFragment() {
 
     private fun continueWithApiKey(apiKey: String) {
         val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
-        val directions = RequestAccessFragmentDirections.actionSuccess(webUrl = webUrl, apiKey = apiKey)
+        val directions = RequestAccessFragmentDirections.actionSuccess(webUrl = UriLibrary.secureEncode(webUrl), apiKey = apiKey)
         findNavController().navigate(directions, extras)
     }
 

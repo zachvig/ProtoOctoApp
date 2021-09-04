@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.signin.di
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.Module
@@ -66,10 +65,8 @@ open class ViewModelModule {
     open fun provideRequestAccessViewModel(
         useCase: RequestApiAccessUseCase,
         openOctoprintWebUseCase: OpenOctoprintWebUseCase,
-        context: Context,
     ): ViewModel = RequestAccessViewModel(
         requestApiAccessUseCase = useCase,
         openOctoprintWebUseCase = openOctoprintWebUseCase,
-        context = context
     )
 }

@@ -25,7 +25,7 @@ import androidx.navigation.fragment.findNavController
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
@@ -212,7 +212,7 @@ class DiscoverFragment : BaseFragment() {
         binding.discoveredOptionsTitle.isVisible = binding.discoveredOptions.childCount > 0
     }
 
-    private fun createPreviouslyConnectedOptions(options: List<OctoPrintInstanceInformationV2>, quickSwitchEnabled: Boolean) = optionsBinding?.let { binding ->
+    private fun createPreviouslyConnectedOptions(options: List<OctoPrintInstanceInformationV3>, quickSwitchEnabled: Boolean) = optionsBinding?.let { binding ->
         // Delete all that are not longer shown
         binding.previousOptions.children.toList().forEach {
             if (it == binding.quickSwitchOption) return@forEach
@@ -264,11 +264,11 @@ class DiscoverFragment : BaseFragment() {
         )
 
         val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
-        val directions = DiscoverFragmentDirections.requestAccess(webUrl = UriLibrary.secureEncodeUrl(octoPrint.webUrl))
+        val directions = DiscoverFragmentDirections.requestAccess(webUrl = UriLibrary.secureEncode(octoPrint.webUrl))
         findNavController().navigate(directions, extras)
     }
 
-    private fun continueWithPreviouslyConnected(octoPrint: OctoPrintInstanceInformationV2) {
+    private fun continueWithPreviouslyConnected(octoPrint: OctoPrintInstanceInformationV3) {
         viewModel.activatePreviouslyConnected(octoPrint)
     }
 
@@ -305,18 +305,18 @@ class DiscoverFragment : BaseFragment() {
             // We do not allow the API key to be reused to prevent the user from bypassing quick switch.
             // If the user has BillingManager.FEATURE_QUICK_SWITCH, the fix flow will always allow API key reuse
             val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
-            val directions = DiscoverFragmentDirections.probeConnection(baseUrl = UriLibrary.secureEncodeUrl(webUrl), allowApiKeyReuse = false.toString())
+            val directions = DiscoverFragmentDirections.probeConnection(baseUrl = UriLibrary.secureEncode(webUrl), allowApiKeyReuse = false.toString())
             findNavController().navigate(directions, extras)
         }
     }
 
     private fun continueWithEnableQuickSwitch() = UriLibrary.getPurchaseUri().open(requireOctoActivity())
 
-    private fun deleteAfterConfirmation(option: OctoPrintInstanceInformationV2) {
+    private fun deleteAfterConfirmation(option: OctoPrintInstanceInformationV3) {
         requireOctoActivity().showDialog(
             message = getString(R.string.sign_in___discovery___delete_printer_message, option.label),
             positiveButton = getString(R.string.sign_in___discovery___delete_printer_confirmation),
-            positiveAction = { viewModel.deleteInstance(option.webUrl) },
+            positiveAction = { viewModel.deleteInstance(option.id) },
             neutralAction = {},
             neutralButton = getString(R.string.cancel)
         )

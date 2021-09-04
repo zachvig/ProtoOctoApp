@@ -16,13 +16,16 @@ import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.databinding.SignInSuccessFragmentBinding
 import de.crysxd.octoapp.signin.databinding.SignInSuccessFragmentContentBinding
 import de.crysxd.octoapp.signin.ext.goBackToDiscover
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import java.util.UUID
 
 class SignInSuccessFragment : Fragment(), InsetAwareScreen {
 
@@ -74,8 +77,9 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
             // This is important in case we got here after a API key was invalid
             Injector.get().octorPrintRepository().clearActive()
             Injector.get().octorPrintRepository().setActive(
-                OctoPrintInstanceInformationV2(
-                    webUrl = args.webUrl,
+                OctoPrintInstanceInformationV3(
+                    id = UUID.randomUUID().toString(),
+                    webUrl = UriLibrary.secureDecode(args.webUrl).toHttpUrl(),
                     apiKey = args.apiKey
                 )
             )

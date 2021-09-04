@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.connect_printer.ui
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -79,8 +78,8 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
             binding.buttonMore4.setOnClickListener { showMenu() }
             binding.buttonMore5.setOnClickListener { showMenu() }
             binding.buttonTroubleShoot.setOnClickListener {
-                viewModel.activeWebUrl?.let {
-                    UriLibrary.getFixOctoPrintConnectionUri(baseUrl = Uri.parse(it), allowApiKeyResuse = true).open(requireOctoActivity())
+                viewModel.activeInstance?.let {
+                    UriLibrary.getFixOctoPrintConnectionUri(baseUrl = it.webUrl, instanceId = it.id).open(requireOctoActivity())
                 }
             }
             binding.buttonBeginConnect.setOnClickListener {
