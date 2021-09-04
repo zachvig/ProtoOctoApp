@@ -26,6 +26,7 @@ object AppWidgetPreferences {
                 it to instance.id
             }.forEach {
                 // Remove web url field and store instanceId field
+                Timber.i("Upgrading from ${it.first} ot ${it.second}")
                 remove(it.first)
                 putString(it.first.replace("_webUrl", "_instanceId"), it.second)
             }
