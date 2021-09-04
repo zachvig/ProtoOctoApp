@@ -18,14 +18,17 @@ import de.crysxd.octoapp.base.di.BaseScope
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.octoprint.json.HttpUrlAdapter
 import de.crysxd.octoapp.octoprint.json.PluginSettingsDeserializer
 import de.crysxd.octoapp.octoprint.models.settings.Settings
+import okhttp3.HttpUrl
 
 @Module
 class DataSourceModule {
 
     private fun createGson() = GsonBuilder()
         .registerTypeAdapter(Settings.PluginSettingsGroup::class.java, PluginSettingsDeserializer())
+        .registerTypeAdapter(HttpUrl::class.java, HttpUrlAdapter())
         .create()
 
     @Provides

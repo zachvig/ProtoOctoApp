@@ -104,7 +104,7 @@ class LocalOctoPrintInstanceInformationSource(
                 gson.fromJson(it, OctoPrintInstanceInformationV2::class.java)
             }?.let {
                 val v3 = OctoPrintInstanceInformationV3(it)
-                Timber.i("Upgrading from V2 -> V3 (v2=$it, v3=$v3)")
+                Timber.i("Upgrading from single V2 -> V3 (v2=$it, v3=$v3)")
                 store(listOf(v3))
             }
         }
@@ -120,7 +120,7 @@ class LocalOctoPrintInstanceInformationSource(
                 OctoPrintInstanceInformationV3(it)
             }.let {
                 // Store and delete
-                Timber.i("Upgrading from V2 -> V3 (v0=$it, v2=$v2)")
+                Timber.i("Upgrading from list V2 -> V3 (v2=$v2, v3=$it)")
                 store(it)
             }
         }
