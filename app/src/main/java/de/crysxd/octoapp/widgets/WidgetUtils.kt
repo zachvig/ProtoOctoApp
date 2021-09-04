@@ -67,7 +67,7 @@ internal fun createUpdateFailedText(context: Context, appWidgetId: Int) = AppWid
 } ?: context.getString(R.string.app_widget___update_failed)
 
 internal fun applyDebugOptions(views: RemoteViews, appWidgetId: Int) {
-    views.setTextViewText(R.id.widgetId, "$appWidgetId")
+    views.setTextViewText(R.id.widgetId, "$appWidgetId/${AppWidgetPreferences.getInstanceForWidgetId(appWidgetId)}")
     views.setViewVisibility(R.id.widgetId, BuildConfig.DEBUG)
 }
 
