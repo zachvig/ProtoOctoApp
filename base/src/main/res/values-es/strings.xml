@@ -10,7 +10,7 @@
     <string name="app_name">OctoApp</string>
     <string name="app_widget___free_widgets_exceeded_action">@android:string/ok</string>
     <string name="app_widget___free_widgets_exceeded_message">Sólo puede tener %d widgets sin soportar OctoApp. Puede soportar OctoApp desde el menú principal de la aplicación.</string>
-    <string name="app_widget___idle">Listo</string>
+    <string name="app_widget___idle">%s listo</string>
     <string name="app_widget___link_widget__option_synced">Sincronización con la aplicación</string>
     <string name="app_widget___link_widget__option_x">Siempre „%s“</string>
     <string name="app_widget___link_widget_title">¿Qué OctoPrint debe utilizar este widget?</string>

@@ -1,6 +1,8 @@
 package de.crysxd.octoapp.octoprint.exceptions
 
-class IllegalBasicAuthConfigurationException(url: String) : OctoPrintException(
+import okhttp3.HttpUrl
+
+class IllegalBasicAuthConfigurationException(url: HttpUrl) : OctoPrintException(
     webUrl = url,
     technicalMessage = "Illegal basic auth setup in $url",
     userFacingMessage = "<b>$url</b>\n\ncontains a illegal Basic Auth setup. Please make sure to follow the scheme \n\nhttp(s)://<b>username:password</b>@host"

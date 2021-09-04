@@ -23,11 +23,11 @@ class CreateProgressAppWidgetDataUseCase @Inject constructor(
     }
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) =
-        param.currentMessage?.let { fromCurrentMessage(it, param.webUrl) }
-            ?: fromNetworkRequest(param.webUrl)
+        param.currentMessage?.let { fromCurrentMessage(it, param.instanceId) }
+            ?: fromNetworkRequest(param.instanceId)
 
-    private suspend fun fromNetworkRequest(webUrl: String): Result = withContext(Dispatchers.IO) {
-        val instance = octoPrintRepository.findOrNull(webUrl) ?: throw IllegalStateException("Unable to locate instance for $webUrl")
+    private suspend fun fromNetworkRequest(instanceId: String): Result = withContext(Dispatchers.IO) {
+        val instance = octoPrintRepository.get(instanceId) ?: throw IllegalStateException("Unable to locate instance for $instanceId")
         val octoPrint = octoPrintProvider.createAdHocOctoPrint(instance)
         val asyncJob = async { octoPrint.createJobApi().getJob() }
         val asyncState = async {
@@ -52,11 +52,12 @@ class CreateProgressAppWidgetDataUseCase @Inject constructor(
             printProgress = job.progress?.completion?.let { it / 100f },
             printTimeLeft = job.progress?.printTimeLeft,
             printTimeLeftOrigin = job.progress?.printTimeLeftOrigin,
-            webUrl = webUrl,
+            instanceId = instance.id,
+            label = instance.label,
         )
     }
 
-    private fun fromCurrentMessage(currentMessage: Message.CurrentMessage, webUrl: String) = Result(
+    private fun fromCurrentMessage(currentMessage: Message.CurrentMessage, instanceId: String) = Result(
         isPrinting = currentMessage.state?.flags?.printing == true,
         isPausing = currentMessage.state?.flags?.pausing == true,
         isCancelling = currentMessage.state?.flags?.cancelling == true,
@@ -66,12 +67,13 @@ class CreateProgressAppWidgetDataUseCase @Inject constructor(
         printProgress = currentMessage.progress?.completion?.let { it / 100f },
         printTimeLeft = currentMessage.progress?.printTimeLeft,
         printTimeLeftOrigin = currentMessage.progress?.printTimeLeftOrigin,
-        webUrl = webUrl,
+        instanceId = instanceId,
+        label = octoPrintRepository.get(instanceId)?.label ?: instanceId
     )
 
     data class Params(
         val currentMessage: Message.CurrentMessage?,
-        val webUrl: String
+        val instanceId: String
     )
 
     @Parcelize
@@ -85,7 +87,8 @@ class CreateProgressAppWidgetDataUseCase @Inject constructor(
         val printProgress: Float?,
         val printTimeLeft: Int?,
         val printTimeLeftOrigin: String?,
-        val webUrl: String,
+        val instanceId: String,
+        val label: String,
         val createdAt: Date = Date(),
     ) : Parcelable
 }

@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.octoprint.exceptions
 
 import kotlinx.coroutines.CancellationException
+import okhttp3.HttpUrl
 
 /*
  * ProxyException is a construct to ensure data privacy in logs and crash reports. ProxyExceptions is a replacement for the
@@ -10,12 +11,11 @@ import kotlinx.coroutines.CancellationException
  * Certain exceptions like CancelledException or InterruptedException are deemed save and are not proxied as they are essential for
  * the program flow.
  */
-class ProxyException private constructor(val original: Throwable, webUrl: String?, apiKey: String? = null) : OctoPrintException(
+class ProxyException private constructor(val original: Throwable, webUrl: HttpUrl) : OctoPrintException(
     originalCause = original.cause,
-    userFacingMessage = original.message,
-    technicalMessage = "Proxy for ${original::class.java.simpleName}: ${original.message} [url=$webUrl, apiKey=$apiKey]",
+    userFacingMessage = original.message ?: "No error message",
+    technicalMessage = "Proxy for ${original::class.java.simpleName}: ${original.message} [url=$webUrl]",
     webUrl = webUrl,
-    apiKey = apiKey
 ) {
     init {
         stackTrace = original.stackTrace
@@ -25,10 +25,10 @@ class ProxyException private constructor(val original: Throwable, webUrl: String
         private fun isAcceptedException(original: Throwable?) =
             original is CancellationException || original is InterruptedException
 
-        fun create(original: Throwable, webUrl: String?, apiKey: String? = null) = if (isAcceptedException(original)) {
+        fun create(original: Throwable, webUrl: HttpUrl) = if (isAcceptedException(original)) {
             original
         } else {
-            ProxyException(original, webUrl, apiKey)
+            ProxyException(original, webUrl)
         }
     }
 }

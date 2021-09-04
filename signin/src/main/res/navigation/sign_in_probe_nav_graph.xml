@@ -20,8 +20,10 @@
             app:argType="string" />
 
         <argument
-            android:name="allowApiKeyReuse"
-            app:argType="string" />
+            android:name="instanceId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
 
         <action
             android:id="@+id/request_access"

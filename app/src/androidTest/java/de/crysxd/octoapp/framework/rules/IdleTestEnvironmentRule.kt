@@ -3,7 +3,7 @@ package de.crysxd.octoapp.framework.rules
 import android.app.Application
 import androidx.test.platform.app.InstrumentationRegistry
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.framework.VirtualPrinterUtils.setVirtualPrinterEnabled
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionCommand
 import kotlinx.coroutines.runBlocking
@@ -14,7 +14,7 @@ import timber.log.Timber
 import java.util.Date
 import java.util.concurrent.TimeoutException
 
-class IdleTestEnvironmentRule(private vararg val envs: OctoPrintInstanceInformationV2) : TestRule {
+class IdleTestEnvironmentRule(private vararg val envs: OctoPrintInstanceInformationV3) : TestRule {
 
     override fun apply(base: Statement, description: Description) = object : Statement() {
         override fun evaluate() {

@@ -3,10 +3,11 @@ package de.crysxd.octoapp.base.usecase
 import android.content.Context
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.octoprint.plugins.applicationkeys.RequestStatus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import okhttp3.HttpUrl
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -21,7 +22,7 @@ class RequestApiAccessUseCase @Inject constructor(
     }
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree): Flow<State> {
-        val octoprint = octoPrintProvider.createAdHocOctoPrint(OctoPrintInstanceInformationV2(webUrl = param.webUrl, apiKey = ""))
+        val octoprint = octoPrintProvider.createAdHocOctoPrint(OctoPrintInstanceInformationV3(id = "adhoc", webUrl = param.webUrl, apiKey = ""))
         val api = octoprint.createApplicationKeysPluginApi()
 
         return flow {
@@ -72,7 +73,7 @@ class RequestApiAccessUseCase @Inject constructor(
     }
 
     data class Params(
-        val webUrl: String
+        val webUrl: HttpUrl
     )
 
     sealed class State {

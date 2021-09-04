@@ -1,6 +1,8 @@
 package de.crysxd.octoapp.octoprint.exceptions
 
-class AlternativeWebUrlException(message: String, webUrl: String) : OctoPrintException(
+import okhttp3.HttpUrl
+
+class AlternativeWebUrlException(message: String, webUrl: HttpUrl) : OctoPrintException(
     userFacingMessage = message,
     webUrl = webUrl
 )

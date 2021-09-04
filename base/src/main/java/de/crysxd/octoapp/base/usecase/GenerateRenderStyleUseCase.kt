@@ -7,12 +7,13 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.models.RenderStyle
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import timber.log.Timber
 import javax.inject.Inject
 
 class GenerateRenderStyleUseCase @Inject constructor(
     context: Context
-) : UseCase<OctoPrintInstanceInformationV2?, RenderStyle>() {
+) : UseCase<OctoPrintInstanceInformationV3?, RenderStyle>() {
 
     private val extrudePaint = Paint().apply {
         style = Paint.Style.STROKE
@@ -50,7 +51,7 @@ class GenerateRenderStyleUseCase @Inject constructor(
         background = R.drawable.print_bed_generic
     )
 
-    override suspend fun doExecute(param: OctoPrintInstanceInformationV2?, timber: Timber.Tree): RenderStyle = try {
+    override suspend fun doExecute(param: OctoPrintInstanceInformationV3?, timber: Timber.Tree): RenderStyle = try {
         // Combine info to one string
         val info = param?.m115Response ?: ""
 

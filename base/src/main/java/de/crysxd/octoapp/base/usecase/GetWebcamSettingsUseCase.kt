@@ -1,9 +1,10 @@
 package de.crysxd.octoapp.base.usecase
 
+import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
-import de.crysxd.octoapp.octoprint.extractAndRemoveBasicAuth
+import de.crysxd.octoapp.octoprint.isHlsStreamUrl
 import de.crysxd.octoapp.octoprint.models.ConnectionType
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
@@ -16,9 +17,9 @@ import javax.inject.Inject
 class GetWebcamSettingsUseCase @Inject constructor(
     private val octoPrintProvider: OctoPrintProvider,
     private val octoPrintRepository: OctoPrintRepository,
-) : UseCase<OctoPrintInstanceInformationV2?, List<WebcamSettings>?>() {
+) : UseCase<OctoPrintInstanceInformationV3?, List<WebcamSettings>?>() {
 
-    override suspend fun doExecute(param: OctoPrintInstanceInformationV2?, timber: Timber.Tree): List<WebcamSettings> {
+    override suspend fun doExecute(param: OctoPrintInstanceInformationV3?, timber: Timber.Tree): List<WebcamSettings> {
         // This is a little complicated on first glance, but not that bad
         //
         // Case A: A instance information is given via params (used for widgets) and we need to create an ad hoc instance
@@ -54,20 +55,31 @@ class GetWebcamSettingsUseCase @Inject constructor(
         val primaryUrl = octoPrint.fullWebUrl
         val alternativeUrl = octoPrint.fullAlternativeWebUrl
 
-        return webcamSettings.mapNotNull { ws ->
+        val newSettings = webcamSettings.mapNotNull { ws ->
             val streamUrl = ws.streamUrl ?: return@mapNotNull null
 
-            val (upgradedUrl, authHeader) = ws.streamUrl?.toHttpUrlOrNull()?.extractAndRemoveBasicAuth() ?: let {
+            val upgradedUrl = ws.streamUrl?.toHttpUrlOrNull() ?: let {
                 // Conversion to HTTP url failed, indicating this URL is not absolute. Resolve from base.
                 val base = alternativeUrl?.takeIf { useAlternative } ?: primaryUrl
-                base.resolvePath(streamUrl).extractAndRemoveBasicAuth()
+                base.resolvePath(streamUrl)
             }
 
             ws.copy(
-                authHeader = authHeader,
-                multiCamUrl = null,
-                standardStreamUrl = upgradedUrl.toString()
+                multiCamUrl = upgradedUrl.toString(),
+                absoluteStreamUrl = upgradedUrl,
+                standardStreamUrl = upgradedUrl.toString(),
             )
         }
+
+        OctoAnalytics.setUserProperty(
+            OctoAnalytics.UserProperty.WebCamAvailable,
+            when {
+                newSettings.any { it.absoluteStreamUrl?.isHlsStreamUrl() == true } -> "hls"
+                newSettings.any { it.absoluteStreamUrl != null } -> "mjpeg"
+                else -> "false"
+            }
+        )
+
+        return newSettings
     }
 }

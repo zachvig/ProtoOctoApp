@@ -4,7 +4,6 @@ import de.crysxd.octoapp.octoprint.exceptions.IllegalBasicAuthConfigurationExcep
 import okhttp3.Credentials
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import java.lang.IllegalStateException
 import java.util.regex.Pattern
 
 const val UPNP_ADDRESS_PREFIX = "octoprint-via-upnp---"
@@ -20,7 +19,11 @@ fun HttpUrl.resolvePath(path: String?) = path?.let {
     sanitized.newBuilder(it)?.build() ?: throw IllegalStateException("Builder was null")
 } ?: this
 
-fun HttpUrl.forLogging() = newBuilder().host(redactedHost).toString()
+fun HttpUrl.forLogging() = newBuilder()
+    .host(redactedHost)
+    .password(if (password.isNotEmpty()) "\$basicAuthPassword" else "")
+    .username(if (username.isNotEmpty()) "\$basicAuthUser" else "")
+    .build()
 
 fun HttpUrl.redactLoggingString(log: String) = log.replaceIfNotEmpty(host, redactedHost)
     .replaceIfNotEmpty(password, "\$basicAuthsPassword")
@@ -53,7 +56,7 @@ fun HttpUrl.extractAndRemoveBasicAuth(): Pair<HttpUrl, String?> {
         try {
             Credentials.basic(username, password)
         } catch (e: Exception) {
-            throw IllegalBasicAuthConfigurationException(this.toString())
+            throw IllegalBasicAuthConfigurationException(this)
         }
     } else {
         null
@@ -62,8 +65,8 @@ fun HttpUrl.extractAndRemoveBasicAuth(): Pair<HttpUrl, String?> {
     return withoutBasicAuth() to header
 }
 
-fun HttpUrl.isBasedOn(baseUrl: HttpUrl) = toString().addTrailingSlash()
-    .startsWith(baseUrl.toString().addTrailingSlash())
+fun HttpUrl.isBasedOn(baseUrl: HttpUrl?) = baseUrl != null &&
+        withoutBasicAuth().toString().addTrailingSlash().startsWith(baseUrl.withoutBasicAuth().toString().addTrailingSlash())
 
 private fun String.addTrailingSlash() = removeSuffix("/") + "/"
 
@@ -75,4 +78,8 @@ private fun String.replaceIfNotEmpty(needle: String, replacement: String) = if (
 
 fun HttpUrl.isOctoEverywhereUrl() = host.endsWith(".octoeverywhere.com")
 
+fun HttpUrl.isSharedOctoEverywhereUrl() = host.startsWith("shared-") && host.endsWith(".octoeverywhere.com")
+
 fun HttpUrl.isNgrokUrl() = host.endsWith(".ngrok.com")
+
+fun HttpUrl.isHlsStreamUrl() = pathSegments.lastOrNull()?.let { it.endsWith(".m3u") || it.endsWith(".m3u8") } ?: false

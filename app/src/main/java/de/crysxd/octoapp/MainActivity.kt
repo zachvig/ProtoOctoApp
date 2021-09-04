@@ -72,7 +72,7 @@ import de.crysxd.octoapp.octoprint.models.socket.Message as SocketMessage
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
 import de.crysxd.octoapp.signin.di.Injector as SignInInjector
 
-const val EXTRA_TARGET_OCTOPRINT_WEB_URL = "octoprint_web_url"
+const val EXTRA_TARGET_OCTOPRINT_ID = "octoprint_id"
 
 class MainActivity : OctoActivity() {
 
@@ -135,7 +135,7 @@ class MainActivity : OctoActivity() {
                         Timber.i("Instance information received without API key $this")
                         showDialog(
                             message = getString(instance.issue?.messageRes ?: R.string.sign_in___broken_setup___api_key_revoked),
-                            positiveAction = { UriLibrary.getFixOctoPrintConnectionUri(baseUrl = Uri.parse(instance.webUrl), allowApiKeyResuse = true).open(this) },
+                            positiveAction = { UriLibrary.getFixOctoPrintConnectionUri(baseUrl = instance.webUrl, instanceId = instance.id).open(this) },
                             positiveButton = getString(R.string.sign_in___continue),
                             highPriority = true
                         )
@@ -217,9 +217,9 @@ class MainActivity : OctoActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         if (BillingManager.isFeatureEnabled(FEATURE_QUICK_SWITCH)) {
-            intent?.getStringExtra(EXTRA_TARGET_OCTOPRINT_WEB_URL)?.let { webUrl ->
+            intent?.getStringExtra(EXTRA_TARGET_OCTOPRINT_ID)?.let { id ->
                 val repo = Injector.get().octorPrintRepository()
-                repo.findOrNull(webUrl)?.let {
+                repo.get(id)?.let {
                     repo.setActive(it)
                 }
             }

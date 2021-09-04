@@ -5,7 +5,7 @@ import androidx.lifecycle.asLiveData
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
@@ -74,11 +75,11 @@ class DiscoverViewModel(
 
     fun deleteInstance(webUrl: String) {
         octoPrintRepository.remove(webUrl)
-        updatePreviouslyConnectedTrigger.offer(Unit)
+        updatePreviouslyConnectedTrigger.trySend(Unit)
     }
 
-    fun activatePreviouslyConnected(octoPrint: OctoPrintInstanceInformationV2) {
-        octoPrintRepository.findOrNull(octoPrint.webUrl)?.let {
+    fun activatePreviouslyConnected(octoPrint: OctoPrintInstanceInformationV3) {
+        octoPrintRepository.get(octoPrint.id)?.let {
             octoPrintRepository.setActive(it)
         }
     }
@@ -86,16 +87,16 @@ class DiscoverViewModel(
     fun testWebUrl(webUrl: String) {
         try {
             val upgradedUrl = upgradeUrl(webUrl)
-            sensitiveDataMask.registerWebUrl(upgradedUrl, "octoprint")
+            sensitiveDataMask.registerWebUrl(upgradedUrl.toHttpUrlOrNull())
 
             if (webUrl.isBlank()) {
                 throw IllegalArgumentException("URL is empty")
             }
 
-            stateChannel.offer(UiState.ManualSuccess(upgradedUrl))
+            stateChannel.trySend(UiState.ManualSuccess(upgradedUrl))
         } catch (e: Exception) {
             manualFailureCounter++
-            stateChannel.offer(
+            stateChannel.trySend(
                 UiState.ManualError(
                     message = Injector.get().localizedContext().getString(R.string.sign_in___discovery___error_invalid_url),
                     exception = e,
@@ -106,11 +107,11 @@ class DiscoverViewModel(
     }
 
     fun moveToManualState() {
-        stateChannel.offer(UiState.ManualIdle)
+        stateChannel.trySend(UiState.ManualIdle)
     }
 
     fun moveToOptionsState() {
-        stateChannel.offer(UiState.Loading)
+        stateChannel.trySend(UiState.Loading)
     }
 
     fun upgradeUrl(webUrl: String): String {
@@ -136,7 +137,7 @@ class DiscoverViewModel(
     sealed class UiState {
         object Loading : UiState()
         data class Options(
-            val previouslyConnectedOptions: List<OctoPrintInstanceInformationV2>,
+            val previouslyConnectedOptions: List<OctoPrintInstanceInformationV3>,
             val discoveredOptions: List<DiscoverOctoPrintUseCase.DiscoveredOctoPrint>,
             val supportsQuickSwitch: Boolean,
         ) : UiState()

@@ -15,11 +15,15 @@ class ThemePlugin(private val context: Context) : AbstractMarkwonPlugin() {
         super.configureTheme(builder)
         val res = context.resources
         val attrs = arrayOf(R.attr.fontFamily).toIntArray()
-        val typeface = context.obtainStyledAttributes(
-            R.style.OctoTheme_TextAppearance_Title,
-            attrs
-        ).use {
-            ResourcesCompat.getFont(context, it.getResourceId(0, 0))
+        val typeface = try {
+            context.obtainStyledAttributes(
+                R.style.OctoTheme_TextAppearance_Title,
+                attrs
+            ).use {
+                ResourcesCompat.getFont(context, it.getResourceId(0, 0))
+            }
+        } catch (e: Exception) {
+            null
         } ?: Typeface.DEFAULT
 
         builder.linkColor(ContextCompat.getColor(context, R.color.accent))

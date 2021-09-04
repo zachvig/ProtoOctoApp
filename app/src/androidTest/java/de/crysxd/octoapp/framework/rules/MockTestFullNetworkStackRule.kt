@@ -8,6 +8,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import de.crysxd.octoapp.base.di.BaseComponent
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import kotlinx.coroutines.runBlocking
+import okhttp3.HttpUrl.Companion.toHttpUrl
 
 class MockTestFullNetworkStackRule : AbstractUseCaseMockRule() {
     private val mock: TestFullNetworkStackUseCase = mock()
@@ -23,7 +24,7 @@ class MockTestFullNetworkStackRule : AbstractUseCaseMockRule() {
             whenever(mock.execute(any())).thenAnswer {
                 val param = it.arguments[0] as TestFullNetworkStackUseCase.Target.OctoPrint
                 TestFullNetworkStackUseCase.Finding.InvalidApiKey(
-                    webUrl = param.webUrl,
+                    webUrl = param.webUrl.toHttpUrl(),
                     host = Uri.parse(param.webUrl).host!!
                 )
             }
@@ -35,7 +36,7 @@ class MockTestFullNetworkStackRule : AbstractUseCaseMockRule() {
             whenever(mock.execute(any())).thenAnswer {
                 val param = it.arguments[0] as TestFullNetworkStackUseCase.Target.OctoPrint
                 TestFullNetworkStackUseCase.Finding.LocalDnsFailure(
-                    webUrl = param.webUrl,
+                    webUrl = param.webUrl.toHttpUrl(),
                     host = Uri.parse(param.webUrl).host!!,
                 )
             }

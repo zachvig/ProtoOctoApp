@@ -35,7 +35,7 @@ class AlternativeWebUrlInterceptor(
                 val upgradedUrl = url.replace(webUrl.toString(), alternativeWebUrl.toString())
 
                 if (upgradedUrl == url && webUrl != alternativeWebUrl) {
-                    throw AlternativeWebUrlException("Alternative URL and primary URL are the same: $url <--> $upgradedUrl", url)
+                    throw AlternativeWebUrlException("Alternative URL and primary URL are the same: $url <--> $upgradedUrl", webUrl)
                 }
 
                 request.newBuilder().url(upgradedUrl).build()

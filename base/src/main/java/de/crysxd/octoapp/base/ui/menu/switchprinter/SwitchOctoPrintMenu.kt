@@ -39,7 +39,7 @@ class SwitchOctoPrintMenu : Menu {
 
     override suspend fun getMenuItem() = if (isQuickSwitchEnabled) {
         val items = Injector.get().octorPrintRepository().getAll().map {
-            SwitchInstanceMenuItem(webUrl = it.webUrl, showDelte = true)
+            SwitchInstanceMenuItem(instanceId = it.id, showDelte = true)
         }
 
         val static = listOf(
@@ -55,15 +55,15 @@ class SwitchOctoPrintMenu : Menu {
     }
 }
 
-class SwitchInstanceMenuItem(private val webUrl: String, val showDelte: Boolean = false) : MenuItem {
+class SwitchInstanceMenuItem(private val instanceId: String, val showDelte: Boolean = false) : MenuItem {
     companion object {
         fun forItemId(itemId: String) = SwitchInstanceMenuItem(itemId.replace(MENU_ITEM_SWITCH_INSTANCE, ""))
     }
 
     private val instanceInfo
-        get() = Injector.get().octorPrintRepository().findOrNull(webUrl)
+        get() = Injector.get().octorPrintRepository().get(instanceId)
 
-    override val itemId = MENU_ITEM_SWITCH_INSTANCE + webUrl
+    override val itemId = MENU_ITEM_SWITCH_INSTANCE + instanceInfo?.id
     override var groupId = ""
     override val order = 151
     override val showAsSubMenu = false
@@ -72,9 +72,9 @@ class SwitchInstanceMenuItem(private val webUrl: String, val showDelte: Boolean 
     override val icon = R.drawable.ic_round_swap_horiz_24
 
     override suspend fun isVisible(destinationId: Int) = instanceInfo != null && isQuickSwitchEnabled &&
-            Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl != webUrl
+            Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.id != instanceId
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___switch_to_octoprint, instanceInfo?.label ?: webUrl)
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___switch_to_octoprint, instanceInfo?.label ?: "(deleted)")
     override suspend fun onClicked(host: MenuHost?) {
         val repo = Injector.get().octorPrintRepository()
         instanceInfo?.let { repo.setActive(it) }
@@ -82,10 +82,10 @@ class SwitchInstanceMenuItem(private val webUrl: String, val showDelte: Boolean 
 
     override suspend fun onSecondaryClicked(host: MenuHost?) {
         (host?.getMenuActivity() as? OctoActivity)?.showDialog(
-            message = host.requireContext().getString(R.string.main_menu___delete_octoprint_dialog_message, instanceInfo?.label ?: webUrl),
+            message = host.requireContext().getString(R.string.main_menu___delete_octoprint_dialog_message, instanceInfo?.label ?: "(deleted)"),
             positiveButton = host.requireContext().getString(R.string.main_menu___delete_octoprint_dialog_button),
             positiveAction = {
-                Injector.get().octorPrintRepository().remove(webUrl)
+                Injector.get().octorPrintRepository().remove(instanceId)
                 host.reloadMenu()
             },
             negativeAction = {},

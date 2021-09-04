@@ -11,6 +11,7 @@ import de.crysxd.octoapp.base.logging.TimberLogger
 import de.crysxd.octoapp.octoprint.SubjectAlternativeNameCompatVerifier
 import de.crysxd.octoapp.octoprint.ext.withHostnameVerifier
 import de.crysxd.octoapp.octoprint.ext.withSslKeystore
+import de.crysxd.octoapp.octoprint.extractAndRemoveBasicAuth
 import de.crysxd.octoapp.octoprint.interceptors.GenerateExceptionInterceptor
 import de.crysxd.octoapp.octoprint.logging.LoggingInterceptorLogger
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.retryWhen
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -34,8 +36,7 @@ import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
 class MjpegConnection2(
-    private val streamUrl: String,
-    private val authHeader: String?,
+    private val streamUrl: HttpUrl,
     name: String,
     private val throwExceptions: Boolean = false
 ) {
@@ -136,13 +137,14 @@ class MjpegConnection2(
     }
 
     private fun connect(): Response {
+        val (url, authHeader) = streamUrl.extractAndRemoveBasicAuth()
         val sslKeystoreHandler = Injector.get().sslKeyStoreHandler()
         val logger = TimberLogger(Logger.getLogger("Mjpeg2Connection/HTTP")).logger
         val client = OkHttpClient.Builder()
             .dns(Injector.get().localDnsResolver())
             .addInterceptor(GenerateExceptionInterceptor(null, null))
             .addInterceptor(HttpLoggingInterceptor(LoggingInterceptorLogger(logger)).setLevel(HttpLoggingInterceptor.Level.HEADERS))
-            .withHostnameVerifier(SubjectAlternativeNameCompatVerifier().takeIf { sslKeystoreHandler.isWeakVerificationForHost(streamUrl) })
+            .withHostnameVerifier(SubjectAlternativeNameCompatVerifier().takeIf { sslKeystoreHandler.isWeakVerificationForHost(url) })
             .withSslKeystore(sslKeystoreHandler.loadKeyStore())
             .connectTimeout(5, TimeUnit.SECONDS)
             .readTimeout(5, TimeUnit.SECONDS)
@@ -150,10 +152,8 @@ class MjpegConnection2(
 
         val request = Request.Builder()
             .get()
-            .also { builder ->
-                authHeader?.let { builder.addHeader("Authorization", it) }
-            }
-            .url(streamUrl)
+            .also { builder -> authHeader?.let { builder.addHeader("Authorization", it) } }
+            .url(url)
             .build()
 
         return client.newCall(request).execute()

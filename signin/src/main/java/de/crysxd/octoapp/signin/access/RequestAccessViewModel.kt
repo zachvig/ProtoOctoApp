@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.usecase.OpenOctoprintWebUseCase
@@ -18,15 +19,22 @@ import de.crysxd.octoapp.signin.R
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class RequestAccessViewModel(
     private val requestApiAccessUseCase: RequestApiAccessUseCase,
     private val openOctoprintWebUseCase: OpenOctoprintWebUseCase,
-    context: Context
 ) : BaseViewModel() {
 
     companion object {
@@ -34,9 +42,8 @@ class RequestAccessViewModel(
         private const val NOTIFICATION_ID = 3432
     }
 
-    private val appContext = context.applicationContext
-    private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    private val webUrlChannel = ConflatedBroadcastChannel<String>()
+    private val notificationManager = Injector.get().context().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private val webUrlChannel = ConflatedBroadcastChannel<HttpUrl>()
     private val mutableUiState = MutableLiveData<UiState>(UiState.PendingApproval)
     private var pollingJob: Job? = null
     private var cancelPollingJob: Job? = null
@@ -98,27 +105,27 @@ class RequestAccessViewModel(
             }
             notificationManager.notify(
                 NOTIFICATION_ID,
-                NotificationCompat.Builder(appContext, channelId)
+                NotificationCompat.Builder(Injector.get().context(), channelId)
                     .setContentTitle("OctoApp is ready!")
                     .setContentText("Tap here to return")
                     .setAutoCancel(true)
                     .setColorized(true)
                     .setSmallIcon(R.drawable.ic_notification_default)
-                    .setContentIntent(PendingIntent.getActivity(appContext, 23, intent, PendingIntent.FLAG_UPDATE_CURRENT))
+                    .setContentIntent(PendingIntent.getActivity(Injector.get().context(), 23, intent, PendingIntent.FLAG_UPDATE_CURRENT))
                     .setPriority(NotificationCompat.PRIORITY_MAX)
                     .build()
             )
         }
     }
 
-    fun useWebUrl(webUrl: String) = if (webUrlChannel.valueOrNull == null) {
-        webUrlChannel.offer(webUrl)
-    } else {
-        false
+    fun useWebUrl(webUrl: String) = viewModelScope.launch(coroutineExceptionHandler) {
+        if (webUrlChannel.valueOrNull == null) {
+            webUrlChannel.trySend(webUrl.toHttpUrl())
+        }
     }
 
     fun openInWeb(url: String) = viewModelScope.launch(coroutineExceptionHandler) {
-        openOctoprintWebUseCase.execute(OpenOctoprintWebUseCase.Params(octoPrintWebUrl = url, context = appContext))
+        openOctoprintWebUseCase.execute(OpenOctoprintWebUseCase.Params(octoPrintWebUrl = url.toHttpUrl()))
     }
 
     sealed class UiState {

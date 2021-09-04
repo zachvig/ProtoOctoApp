@@ -35,16 +35,16 @@ class GenerateExceptionInterceptor(
                     // OctoPrint / Generic
                     101 -> response
                     in 200..204 -> response
-                    409 -> throw PrinterNotOperationalException(request.url)
+                    409 -> throw PrinterNotOperationalException(response.request.url)
                     401 -> throw generate401Exception(response)
                     403 -> throw generate403Exception(response)
                     413 -> throw generate413Exception(response)
-                    in 501..599 -> throw OctoPrintBootingException()
+                    in 501..599 -> throw OctoPrintBootingException(response.request.url)
 
                     // OctoEverywhere
-                    601 -> throw OctoEverywhereCantReachPrinterException()
-                    603, 604, 606 -> throw OctoEverywhereConnectionNotFoundException()
-                    605 -> throw OctoEverywhereSubscriptionMissingException()
+                    601 -> throw OctoEverywhereCantReachPrinterException(response.request.url)
+                    603, 604, 606 -> throw OctoEverywhereConnectionNotFoundException(response.request.url)
+                    605 -> throw OctoEverywhereSubscriptionMissingException(response.request.url)
                     607 -> throw generate413Exception(response)
 
                     else -> throw generateGenericException(response)
@@ -90,8 +90,7 @@ class GenerateExceptionInterceptor(
     private fun generate413Exception(response: Response) = OctoPrintException(
         userFacingMessage = "The server does not allow downloading this file because it is too large.",
         technicalMessage = "Received response code 413, indicating content is too large",
-        webUrl = response.request.url.toString(),
-        apiKey = null,
+        webUrl = response.request.url,
     )
 
     private fun generate401Exception(response: Response): IOException {
@@ -99,9 +98,9 @@ class GenerateExceptionInterceptor(
         return authHeader?.let {
             val realmMatcher = Pattern.compile("realm=\"([^\"]*)\"").matcher(it)
             if (realmMatcher.find()) {
-                BasicAuthRequiredException(realmMatcher.group(1))
+                BasicAuthRequiredException(realmMatcher.group(1), response.request.url)
             } else {
-                BasicAuthRequiredException("no message")
+                BasicAuthRequiredException("no message", response.request.url)
             }
         } ?: generateGenericException(response)
     }

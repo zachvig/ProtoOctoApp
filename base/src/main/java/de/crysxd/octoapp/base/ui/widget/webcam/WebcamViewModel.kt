@@ -7,11 +7,12 @@ import androidx.lifecycle.*
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_HLS_WEBCAM
-import de.crysxd.octoapp.base.ext.isHlsStreamUrl
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.base.usecase.HandleAutomaticLightEventUseCase
+import de.crysxd.octoapp.octoprint.extractAndRemoveBasicAuth
+import de.crysxd.octoapp.octoprint.isHlsStreamUrl
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -86,38 +87,37 @@ class WebcamViewModel(
                         val combinedSettings = getWebcamSettings()
                         connectedWebcamSettingsHash = combinedSettings.hashCode()
                         val (webcamSettings, webcamCount) = combinedSettings
-                        val streamUrl = webcamSettings?.streamUrl
-                        val authHeader = webcamSettings?.authHeader
+                        val streamUrl = webcamSettings?.absoluteStreamUrl
                         val canSwitchWebcam = webcamCount > 1
                         Timber.tag(tag).i("Refresh with streamUrl: $streamUrl")
                         Timber.tag(tag).i("Webcam count: $webcamCount")
                         emit(UiState.Loading(canSwitchWebcam))
 
                         // Check if webcam is configured
-                        if (webcamSettings?.webcamEnabled == false || streamUrl.isNullOrBlank()) {
+                        if (webcamSettings?.webcamEnabled == false || streamUrl == null) {
                             return@flow emit(UiState.WebcamNotConfigured)
                         }
 
                         // Open stream
-                        if (streamUrl.isHlsStreamUrl) {
+                        if (streamUrl.isHlsStreamUrl()) {
                             if (!BillingManager.isFeatureEnabled(FEATURE_HLS_WEBCAM)) {
                                 emit(UiState.HlsStreamDisabled(canSwitchWebcam = canSwitchWebcam))
                             } else {
                                 emit(
                                     UiState.HlsStreamReady(
-                                        uri = Uri.parse(streamUrl),
+                                        uri = Uri.parse(streamUrl.toString()),
                                         aspectRation = webcamSettings.saveStreamRatio,
                                         canSwitchWebcam = canSwitchWebcam,
-                                        authHeader = authHeader
+                                        authHeader = streamUrl.extractAndRemoveBasicAuth().second
                                     )
                                 )
                             }
                         } else {
                             delay(100)
                             if (octoPreferences.experimentalWebcam) {
-                                MjpegConnection2(streamUrl = streamUrl, authHeader = authHeader, name = tag).load()
+                                MjpegConnection2(streamUrl = streamUrl, name = tag).load()
                             } else {
-                                MjpegConnection(streamUrl = streamUrl, authHeader = authHeader, name = tag).load()
+                                MjpegConnection(streamUrl = streamUrl.toString(), authHeader = streamUrl.extractAndRemoveBasicAuth().second, name = tag).load()
                             }.map {
                                 when (it) {
                                     is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading(canSwitchWebcam)

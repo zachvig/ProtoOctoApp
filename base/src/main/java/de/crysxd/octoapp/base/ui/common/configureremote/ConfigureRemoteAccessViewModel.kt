@@ -12,6 +12,7 @@ import de.crysxd.octoapp.base.usecase.GetConnectOctoEverywhereUrlUseCase
 import de.crysxd.octoapp.base.usecase.SetAlternativeWebUrlUseCase
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import okhttp3.HttpUrl
 
 class ConfigureRemoteAccessViewModel(
     octoPrintRepository: OctoPrintRepository,
@@ -39,7 +40,7 @@ class ConfigureRemoteAccessViewModel(
             lastOctoEverywhereConnection = it?.octoEverywhereConnection
 
             ViewData(
-                remoteWebUrl = it?.alternativeWebUrl ?: "",
+                remoteWebUrl = it?.alternativeWebUrl,
                 octoEverywhereConnection = it?.octoEverywhereConnection
             )
         }.asLiveData()
@@ -104,6 +105,6 @@ class ConfigureRemoteAccessViewModel(
         object Loading : ViewState()
     }
 
-    data class ViewData(val remoteWebUrl: String, val octoEverywhereConnection: OctoEverywhereConnection?)
+    data class ViewData(val remoteWebUrl: HttpUrl?, val octoEverywhereConnection: OctoEverywhereConnection?)
 
 }

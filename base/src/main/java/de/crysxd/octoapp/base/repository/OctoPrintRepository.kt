@@ -5,28 +5,37 @@ import de.crysxd.octoapp.base.datasource.DataSource
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.models.ActiveInstanceIssue
 import de.crysxd.octoapp.base.models.AppSettings
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
-import de.crysxd.octoapp.octoprint.models.settings.Settings
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.octoprint.isBasedOn
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class OctoPrintRepository(
-    private val legacyDataSource: DataSource<OctoPrintInstanceInformationV2>,
-    private val dataSource: DataSource<List<OctoPrintInstanceInformationV2>>,
+    private val dataSource: DataSource<List<OctoPrintInstanceInformationV3>>,
     private val octoPreferences: OctoPreferences,
     private val sensitiveDataMask: SensitiveDataMask,
 ) {
 
-    private val instanceInformationChannel = ConflatedBroadcastChannel<OctoPrintInstanceInformationV2?>(null)
+    private val instanceInformationChannel = ConflatedBroadcastChannel<OctoPrintInstanceInformationV3?>(null)
 
     init {
-        // Upgrade from legacy to new data source
-        legacyDataSource.get()?.let {
-            setActive(it)
-            legacyDataSource.store(null)
+        // Upgrade active
+        @Suppress("Deprecation")
+        try {
+            octoPreferences.activeInstanceWebUrl?.let { url ->
+                val instance = getAll().first { it.isForWebUrl(url.toHttpUrl()) }
+                octoPreferences.activeInstanceId = instance.id
+                Timber.i("Upgrade active instance from $url to ${instance.id}")
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        } finally {
+            octoPreferences.activeInstanceWebUrl = null
         }
 
         postActiveInstance()
@@ -37,51 +46,35 @@ class OctoPrintRepository(
     fun getActiveInstanceSnapshot() = instanceInformationChannel.valueOrNull
 
     private fun postActiveInstance() {
-        val activeWebUrl = octoPreferences.activeInstanceWebUrl
-        val activeInstance = findOrNull(activeWebUrl)
-        activeInstance?.let { instance ->
-            sensitiveDataMask.registerWebUrl(instance.webUrl, "octoprint")
-            sensitiveDataMask.registerWebUrl(instance.alternativeWebUrl, "alternative")
-            sensitiveDataMask.registerWebUrl(instance.settings?.webcam?.streamUrl, "webcam")
-            sensitiveDataMask.registerApiKey(instance.apiKey)
-            instance.settings?.plugins?.values?.mapNotNull { it as? Settings.MultiCamSettings }?.firstOrNull()?.profiles?.forEachIndexed { i, webcam ->
-                sensitiveDataMask.registerWebUrl(webcam.streamUrl, "webcam_$i")
-            }
-        }
+        val activeInstance = octoPreferences.activeInstanceId?.let(::get)
+        activeInstance?.let { sensitiveDataMask.registerInstance(it) }
         instanceInformationChannel.offer(activeInstance)
     }
 
-    private fun storeOctoprintInstanceInformation(webUrl: String, instance: OctoPrintInstanceInformationV2?) {
-        Timber.i("Updating $instance")
-        val checked = if (instance == null || instance.webUrl.isBlank()) {
-            null
-        } else {
-            instance
-        }
-
-        val updated = getAll().mapNotNull {
-            if (it.isForWebUrl(webUrl)) {
-                null
-            } else {
-                it
-            }
-        }.toMutableList()
-
-        checked?.let { updated.add(it) }
+    private fun storeOctoprintInstanceInformation(id: String, instance: OctoPrintInstanceInformationV3?) {
+        Timber.i("Updating $id to $instance")
+        val updated = getAll().filter { it.id != id }.toMutableList()
+        instance?.let { updated.add(it) }
         dataSource.store(updated)
         postActiveInstance()
     }
 
-    fun setActive(instance: OctoPrintInstanceInformationV2) {
-        storeOctoprintInstanceInformation(instance.webUrl, instance)
-        octoPreferences.activeInstanceWebUrl = instance.webUrl
+    fun setActive(instance: OctoPrintInstanceInformationV3) {
+        storeOctoprintInstanceInformation(instance.id, instance)
+        octoPreferences.activeInstanceId = instance.id
         Timber.i("Setting as active: ${instance.webUrl}")
         postActiveInstance()
     }
 
-    suspend fun updateActive(block: suspend (OctoPrintInstanceInformationV2) -> OctoPrintInstanceInformationV2?) {
+    suspend fun updateActive(block: suspend (OctoPrintInstanceInformationV3) -> OctoPrintInstanceInformationV3?) {
         instanceInformationChannel.valueOrNull?.let {
-            storeOctoprintInstanceInformation(it.webUrl, block(it))
+            storeOctoprintInstanceInformation(it.id, block(it))
+        }
+    }
+
+    fun update(id: String, block: (OctoPrintInstanceInformationV3) -> OctoPrintInstanceInformationV3?) {
+        get(id)?.let {
+            storeOctoprintInstanceInformation(it.id, block(it))
         }
     }
 
@@ -93,13 +86,13 @@ class OctoPrintRepository(
 
     fun clearActive() {
         Timber.i("Clearing active")
-        octoPreferences.activeInstanceWebUrl = null
+        octoPreferences.activeInstanceId = null
         postActiveInstance()
     }
 
-    fun remove(webUrl: String) {
-        Timber.i("Removing $webUrl")
-        val all = getAll().filter { !it.isForWebUrl(webUrl) }
+    fun remove(id: String) {
+        Timber.i("Removing $id")
+        val all = getAll().filter { it.id != id }
         dataSource.store(all)
     }
 
@@ -110,9 +103,23 @@ class OctoPrintRepository(
         }
     }
 
+    fun get(id: String) = dataSource.get()?.firstOrNull { it.id == id }
+
     fun getAll() = dataSource.get() ?: emptyList()
 
-    fun findOrNull(webUrl: String?) = webUrl?.let {
-        getAll().firstOrNull { it.isForWebUrl(webUrl) }
+    fun findInstances(url: HttpUrl?) = getAll().mapNotNull {
+        url ?: return@mapNotNull null
+
+        val webUrl = it.webUrl
+        val alternativeWebUrl = it.alternativeWebUrl
+        when {
+            url.isBasedOn(webUrl) -> it to false
+            url.isBasedOn(alternativeWebUrl) -> it to true
+            else -> null
+        }
+    }
+
+    fun findInstancesWithWebUrl(url: HttpUrl?) = getAll().firstOrNull {
+        url?.isBasedOn(it.webUrl) ?: false
     }
 }

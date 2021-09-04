@@ -9,6 +9,8 @@ import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import de.crysxd.octoapp.base.utils.AnimationTestUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 class ProbeOctoPrintViewModel(
     private val useCase: TestFullNetworkStackUseCase,
@@ -20,7 +22,7 @@ class ProbeOctoPrintViewModel(
         private const val MIN_TEST_PROBE_DURATION = 1000L
     }
 
-    var lastWebUrl: String? = null
+    var lastWebUrl: HttpUrl? = null
         private set
     var probeIsActive: Boolean = false
     private val mutableUiState = MutableLiveData<UiState>(UiState.Loading)
@@ -34,7 +36,7 @@ class ProbeOctoPrintViewModel(
             probeIsActive = true
             val start = System.currentTimeMillis()
             mutableUiState.postValue(UiState.Loading)
-            val apiKey = octoPrintRepository.findOrNull(webUrl)?.apiKey ?: ""
+            val apiKey = octoPrintRepository.findInstances(webUrl.toHttpUrlOrNull()).firstOrNull()?.first?.apiKey ?: ""
             val target = TestFullNetworkStackUseCase.Target.OctoPrint(webUrl = webUrl, apiKey = apiKey)
             val finding = useCase.execute(target)
             val delay = if (AnimationTestUtils.animationsDisabled) MIN_TEST_PROBE_DURATION else MIN_PROBE_DURATION

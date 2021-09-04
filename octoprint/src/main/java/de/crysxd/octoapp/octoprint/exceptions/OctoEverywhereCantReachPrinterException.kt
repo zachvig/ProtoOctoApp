@@ -1,10 +1,9 @@
 package de.crysxd.octoapp.octoprint.exceptions
 
-import java.io.IOException
+import okhttp3.HttpUrl
 
-class OctoEverywhereCantReachPrinterException : OctoPrintException(
+class OctoEverywhereCantReachPrinterException(webUrl: HttpUrl) : OctoPrintException(
     userFacingMessage = "OctoEverywhere can't reach your OctoPrint at the moment",
     technicalMessage = "Received error code 601 from OctoEverywhere",
-    webUrl = null,
-    apiKey = null
+    webUrl = webUrl,
 )

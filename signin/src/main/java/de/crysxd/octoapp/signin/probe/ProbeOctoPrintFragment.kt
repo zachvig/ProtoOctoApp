@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.signin.probe
 
-import android.net.Uri
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.transition.TransitionManager
@@ -15,8 +14,7 @@ import androidx.navigation.fragment.navArgs
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ext.basicAuthCredentials
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
@@ -30,7 +28,9 @@ import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.ext.goBackToDiscover
 import de.crysxd.octoapp.signin.ext.setUpAsHelpButton
 import io.noties.markwon.Markwon
+import okhttp3.HttpUrl
 import timber.log.Timber
+import java.util.UUID
 
 class ProbeOctoPrintFragment : BaseFragment() {
 
@@ -41,10 +41,10 @@ class ProbeOctoPrintFragment : BaseFragment() {
     private var findingBinding: ProbeFragmentFindingBinding? = null
     private val findingDescriptionLibrary by lazy { FindingDescriptionLibrary(requireContext()) }
     private val initialWebUrl by lazy {
-        UriLibrary.secureDecodeUrl(navArgs<ProbeOctoPrintFragmentArgs>().value.baseUrl)
+        UriLibrary.secureDecode(navArgs<ProbeOctoPrintFragmentArgs>().value.baseUrl)
     }
-    private val allowApiKeyReuse by lazy {
-        navArgs<ProbeOctoPrintFragmentArgs>().value.allowApiKeyReuse == true.toString()
+    private val instanceId by lazy {
+        navArgs<ProbeOctoPrintFragmentArgs>().value.instanceId
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +81,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
                             // This checks makes sure we are never reusing a old result to navigate away and instead restarting the probe if the screen
                             // gets shown again
                             if (it.handled) {
-                                viewModel.probe(viewModel.lastWebUrl ?: initialWebUrl)
+                                viewModel.probe(viewModel.lastWebUrl?.toString() ?: initialWebUrl)
                                 return@observe
                             }
 
@@ -108,23 +108,24 @@ class ProbeOctoPrintFragment : BaseFragment() {
 
     private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(binding.root)
 
-    private fun continueToRequestApiKey(webUrl: String) = binding.octoView.doAfterAnimation {
+    private fun continueToRequestApiKey(webUrl: HttpUrl) = binding.octoView.doAfterAnimation {
         // Octo is now in a neutral position, we can animate states
         val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
-        val directions = ProbeOctoPrintFragmentDirections.requestAccess(UriLibrary.secureEncodeUrl(webUrl))
+        val directions = ProbeOctoPrintFragmentDirections.requestAccess(UriLibrary.secureEncode(webUrl.toString()))
         findNavController().navigate(directions, extras)
     }
 
     private fun continueWithPresentApiKey(finding: TestFullNetworkStackUseCase.Finding.OctoPrintReady) {
-        // If the "thing" which started this screen allowed us to reuse an existing API key OR the user has the quick switch feature, we can continue with the existing
+        // If the "thing" which started this screen gave us a instance id of an existing instance OR the user has the quick switch feature, we can continue with the existing
         // API key. Otherwise, the user is forced to reconnect OctoPrint. Reusing might be explicitly allowed, when this fragment is started to troubleshoot the connection.
-        if (allowApiKeyReuse || BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH)) {
+        if (instanceId != null || BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH)) {
             val repo = Injector.get().octorPrintRepository()
-            val oldInstance = repo.findOrNull(finding.webUrl)
+            val oldInstance = instanceId?.let { repo.get(it) }
             val instance = oldInstance?.copy(
                 webUrl = finding.webUrl,
                 apiKey = finding.apiKey
-            ) ?: OctoPrintInstanceInformationV2(
+            ) ?: OctoPrintInstanceInformationV3(
+                id = UUID.randomUUID().toString(),
                 webUrl = finding.webUrl,
                 apiKey = finding.apiKey
             )
@@ -209,21 +210,18 @@ class ProbeOctoPrintFragment : BaseFragment() {
             }
 
             // Start again
-            viewModel.probe(finding.webUrl)
+            viewModel.probe(finding.webUrl.toString())
         }
         is TestFullNetworkStackUseCase.Finding.BasicAuthRequired -> {
-            val user = findingBinding?.usernameInput?.editText?.text?.toString() ?: ""
-            val password = findingBinding?.passwordInput?.editText?.text?.toString() ?: ""
-            val webUrl = Uri.parse(finding.webUrl)
-                .buildUpon()
-                .basicAuthCredentials(username = user, password = password)
+            val webUrl = finding.webUrl.newBuilder()
+                .username(findingBinding?.usernameInput?.editText?.text?.toString() ?: "")
+                .password(findingBinding?.passwordInput?.editText?.text?.toString() ?: "")
                 .build()
-                .toString()
-            Injector.get().sensitiveDataMask().registerWebUrl(webUrl, "octoprint")
-            viewModel.probe(webUrl)
+            Injector.get().sensitiveDataMask().registerWebUrl(webUrl)
+            viewModel.probe(webUrl.toString())
         }
 
-        else -> viewModel.probe(finding.webUrl)
+        else -> viewModel.probe(finding.webUrl.toString())
     }
 
     override fun onStart() {

@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Base64
 import androidx.annotation.StringRes
 import de.crysxd.octoapp.base.di.Injector
+import okhttp3.HttpUrl
 
 object UriLibrary {
     private fun getUri(@StringRes string: Int, vararg placeholder: String) =
@@ -30,13 +31,13 @@ object UriLibrary {
     fun getWebcamUri(): Uri =
         getUri(R.string.uri___webcam)
 
-    fun getFixOctoPrintConnectionUri(baseUrl: Uri, allowApiKeyResuse: Boolean): Uri =
+    fun getFixOctoPrintConnectionUri(baseUrl: HttpUrl, instanceId: String): Uri =
         getUri(
             R.string.uri___fix_octoprint_connection,
             "{baseUrl}",
-            secureEncodeUrl(baseUrl.toString()),
-            "{allowApiKeyReuse}",
-            allowApiKeyResuse.toString()
+            secureEncode(baseUrl.toString()),
+            "{instanceId}",
+            instanceId
         )
 
     fun getFaqUri(faqId: String) =
@@ -52,6 +53,6 @@ object UriLibrary {
 
     // When passing URLs as query params, weird shit is happening where Android would "double decode" URLs in params causing
     // problems if the original URL contains encoded parts. To circumvent this we encode as Base64
-    fun secureEncodeUrl(url: String): String = Base64.encodeToString(url.toByteArray(), Base64.NO_WRAP)
-    fun secureDecodeUrl(url: String) = String(Base64.decode(url, Base64.NO_WRAP))
+    fun secureEncode(value: String): String = Base64.encodeToString(value.toByteArray(), Base64.NO_WRAP)
+    fun secureDecode(value: String) = String(Base64.decode(value, Base64.NO_WRAP))
 }

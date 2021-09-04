@@ -4,6 +4,7 @@ import okhttp3.HttpUrl
 
 class OctoPrintUnavailableException(e: Throwable? = null, webUrl: HttpUrl) : OctoPrintException(
     originalCause = e,
-    webUrl = webUrl.toString(),
+    webUrl = webUrl,
+    userFacingMessage = "OctoPrint is not available, check your network connection.",
     technicalMessage = "${e?.message} $webUrl",
 )

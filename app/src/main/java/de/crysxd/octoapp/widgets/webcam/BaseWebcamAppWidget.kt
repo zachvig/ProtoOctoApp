@@ -11,7 +11,7 @@ import android.util.TypedValue
 import android.widget.RemoteViews
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.usecase.GetWebcamSnapshotUseCase
 import de.crysxd.octoapp.widgets.*
 import kotlinx.coroutines.*
@@ -89,7 +89,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             AppWidgetManager.getInstance(context).partiallyUpdateAppWidget(appWidgetId, views)
         }
 
-        private fun showFailed(context: Context, appWidgetId: Int, webUrl: String?) {
+        private fun showFailed(context: Context, appWidgetId: Int, instanceId: String?) {
             Timber.i("Applying failed state to $appWidgetId")
             val views = RemoteViews(context.packageName, R.layout.app_widget_webcam)
             views.setViewVisibility(R.id.updatedAt, true)
@@ -97,7 +97,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             views.setImageViewBitmap(R.id.webcamContentPlaceholder, generateImagePlaceHolder(appWidgetId))
             views.setTextViewText(R.id.updatedAt, createUpdateFailedText(context, appWidgetId))
             views.setOnClickPendingIntent(R.id.buttonRefresh, createUpdateIntent(context, appWidgetId))
-            views.setOnClickPendingIntent(R.id.root, createLaunchAppIntent(context, webUrl))
+            views.setOnClickPendingIntent(R.id.root, createLaunchAppIntent(context, instanceId))
             AppWidgetManager.getInstance(context).partiallyUpdateAppWidget(appWidgetId, views)
         }
 
@@ -109,16 +109,16 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                 val context = Injector.get().localizedContext()
                 val appWidgetManager = AppWidgetManager.getInstance(context)
                 val hasControls = appWidgetManager.getAppWidgetInfo(appWidgetId).provider.className == ControlsWebcamAppWidget::class.java.name
-                val webUrl = AppWidgetPreferences.getInstanceForWidgetId(appWidgetId)
+                val instanceId = AppWidgetPreferences.getInstanceForWidgetId(appWidgetId) ?: "noid"
 
                 // Load frame or do live stream
                 try {
                     val octoPrintInfo = Injector.get().octorPrintRepository().let { repo ->
-                        repo.findOrNull(webUrl)
+                        repo.get(instanceId)
                             ?: repo.getActiveInstanceSnapshot()
                             ?: let {
-                                Timber.v("Unable to find configuration for $webUrl, cancelling")
-                                showFailed(context, appWidgetId, webUrl)
+                                Timber.v("Unable to find configuration for $instanceId, cancelling")
+                                showFailed(context, appWidgetId, instanceId)
                                 return@launch
                             }
                     }
@@ -128,7 +128,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
 
                     val frame = withContext(Dispatchers.IO) {
                         if (playLive) withTimeoutOrNull(LIVE_FOR_MS) {
-                            doLiveStream(context, octoPrintInfo, webUrl, appWidgetManager, appWidgetId)
+                            doLiveStream(context, octoPrintInfo, instanceId, appWidgetManager, appWidgetId)
                         } else withTimeout(FETCH_TIMEOUT_MS) {
                             val illuminate = isManualRefresh || Injector.get().octoPreferences().automaticLightsForWidgetRefresh
                             createBitmapFlow(octoPrintInfo, appWidgetId, context, illuminate).first()
@@ -139,7 +139,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                     val views = createViews(
                         context = context,
                         widgetId = appWidgetId,
-                        webUrl = webUrl,
+                        instanceId = instanceId,
                         updatedAtText = (if (frame == null) createUpdateFailedText(context, appWidgetId) else createUpdatedNowText()).takeIf { hasControls },
                         live = false,
                         frame = frame
@@ -159,18 +159,18 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
 
                 } catch (e: CancellationException) {
                     Timber.i("Update cancelled")
-                    showFailed(context, appWidgetId, webUrl)
+                    showFailed(context, appWidgetId = appWidgetId, instanceId = instanceId)
                 } catch (e: Exception) {
                     Timber.e(e)
-                    showFailed(context, appWidgetId, webUrl)
+                    showFailed(context, appWidgetId = appWidgetId, instanceId = instanceId)
                 }
             })
         }
 
         private suspend fun doLiveStream(
             context: Context,
-            octoPrintInfo: OctoPrintInstanceInformationV2?,
-            webUrl: String?,
+            octoPrintInfo: OctoPrintInstanceInformationV3?,
+            instanceId: String?,
             appWidgetManager: AppWidgetManager,
             appWidgetId: Int
         ): Bitmap? = withContext(Dispatchers.IO) {
@@ -199,7 +199,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                     val views = createViews(
                         context = context,
                         widgetId = appWidgetId,
-                        webUrl = webUrl,
+                        instanceId = instanceId,
                         updatedAtText = createLiveForText(context, secsLeft.toInt()),
                         live = true,
                         frame = savedFrame
@@ -215,7 +215,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
         }
 
         private suspend fun createBitmapFlow(
-            octoPrintInfo: OctoPrintInstanceInformationV2?,
+            octoPrintInfo: OctoPrintInstanceInformationV3?,
             appWidgetId: Int,
             context: Context,
             illuminateIfPossible: Boolean,
@@ -256,7 +256,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
         private fun createViews(
             context: Context,
             widgetId: Int,
-            webUrl: String?,
+            instanceId: String?,
             updatedAtText: String?,
             live: Boolean,
             frame: Bitmap?
@@ -278,7 +278,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             views.setViewVisibility(R.id.buttonLive, false)
             views.setViewVisibility(R.id.updatedAt, !updatedAtText.isNullOrBlank())
             views.setViewVisibility(R.id.noImageCont, frame == null)
-            views.setOnClickPendingIntent(R.id.root, createLaunchAppIntent(context, webUrl))
+            views.setOnClickPendingIntent(R.id.root, createLaunchAppIntent(context, instanceId))
             applyDebugOptions(views, widgetId)
             return views
         }
