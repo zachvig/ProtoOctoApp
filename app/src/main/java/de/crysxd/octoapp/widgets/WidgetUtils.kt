@@ -19,7 +19,7 @@ import de.crysxd.octoapp.widgets.webcam.BaseWebcamAppWidget
 import de.crysxd.octoapp.widgets.webcam.ControlsWebcamAppWidget
 import de.crysxd.octoapp.widgets.webcam.NoControlsWebcamAppWidget
 import timber.log.Timber
-import java.util.*
+import java.util.Date
 
 internal fun updateAppWidget(widgetId: Int) {
     val context = Injector.get().localizedContext()
@@ -67,7 +67,7 @@ internal fun createUpdateFailedText(context: Context, appWidgetId: Int) = AppWid
 } ?: context.getString(R.string.app_widget___update_failed)
 
 internal fun applyDebugOptions(views: RemoteViews, appWidgetId: Int) {
-    views.setTextViewText(R.id.widgetId, "$appWidgetId")
+    views.setTextViewText(R.id.widgetId, "$appWidgetId/${AppWidgetPreferences.getInstanceForWidgetId(appWidgetId)}")
     views.setViewVisibility(R.id.widgetId, BuildConfig.DEBUG)
 }
 
