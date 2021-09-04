@@ -2,8 +2,8 @@ package de.crysxd.octoapp.base.logging
 
 import android.util.Log
 import androidx.annotation.VisibleForTesting
+import de.crysxd.octoapp.base.utils.AppScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -31,7 +31,7 @@ class TimberCacheTree(
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         if (priority > Log.VERBOSE || collectVerbose) {
-            GlobalScope.launch(Dispatchers.IO) {
+            AppScope.launch(Dispatchers.IO) {
                 lock.withLock {
                     val prefix = "${getTime()} ${getLevel(priority)}/${tag ?: "???"}: "
                     cache.append(prefix)

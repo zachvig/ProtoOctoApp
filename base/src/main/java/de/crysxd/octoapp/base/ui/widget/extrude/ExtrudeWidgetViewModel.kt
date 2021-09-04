@@ -13,8 +13,8 @@ import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.utils.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.ExtrudeFilamentUseCase
 import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
+import de.crysxd.octoapp.base.utils.AppScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -66,7 +66,7 @@ class ExtrudeWidgetViewModel(
         }
     }
 
-    private fun extrude(mm: Int) = GlobalScope.launch(coroutineExceptionHandler) {
+    private fun extrude(mm: Int) = AppScope.launch(coroutineExceptionHandler) {
         try {
             postMessage(OctoActivity.Message.SnackbarMessage { it.getString(R.string.extruding_x_mm, mm) })
             extrudeFilamentUseCase.execute(ExtrudeFilamentUseCase.Param(mm))
@@ -76,7 +76,7 @@ class ExtrudeWidgetViewModel(
                     text = { it.getString(R.string.error_cold_extrusion, e.minTemp, e.currentTemp) },
                     neutralButton = { it.getString(R.string.heat_hotend) },
                     neutralAction = {
-                        GlobalScope.launch(coroutineExceptionHandler) {
+                        AppScope.launch(coroutineExceptionHandler) {
                             Timber.i("Heating to ${e.minTemp} before extrusion")
                             setTargetTemperatureUseCase.execute(
                                 SetTargetTemperaturesUseCase.Params(

@@ -10,9 +10,9 @@ import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.utils.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.HomePrintHeadUseCase
 import de.crysxd.octoapp.base.usecase.JogPrintHeadUseCase
+import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.pre_print_controls.R
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -27,15 +27,15 @@ class MoveToolWidgetViewModel(
 
     var jogResolution: Float = -1f
 
-    fun homeXYAxis() = GlobalScope.launch(coroutineExceptionHandler) {
+    fun homeXYAxis() = AppScope.launch(coroutineExceptionHandler) {
         homePrintHeadUseCase.execute(HomePrintHeadUseCase.Axis.XY)
     }
 
-    fun homeZAxis() = GlobalScope.launch(coroutineExceptionHandler) {
+    fun homeZAxis() = AppScope.launch(coroutineExceptionHandler) {
         homePrintHeadUseCase.execute(HomePrintHeadUseCase.Axis.Z)
     }
 
-    fun jog(x: Direction = Direction.None, y: Direction = Direction.None, z: Direction = Direction.None) = GlobalScope.launch(coroutineExceptionHandler) {
+    fun jog(x: Direction = Direction.None, y: Direction = Direction.None, z: Direction = Direction.None) = AppScope.launch(coroutineExceptionHandler) {
         jogPrintHeadUseCase.execute(
             JogPrintHeadUseCase.Param(
                 x.applyToDistance(jogResolution),

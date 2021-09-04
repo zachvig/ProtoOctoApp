@@ -13,6 +13,7 @@ import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.usecase.GetWebcamSnapshotUseCase
+import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.widgets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
@@ -103,7 +104,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
 
         internal fun updateAppWidget(appWidgetId: Int, playLive: Boolean = false, isManualRefresh: Boolean = false) {
             lastUpdateJobs[appWidgetId]?.get()?.cancel()
-            lastUpdateJobs[appWidgetId] = WeakReference(GlobalScope.launch {
+            lastUpdateJobs[appWidgetId] = WeakReference(AppScope.launch {
                 Timber.i("Updating webcam widget $appWidgetId")
 
                 val context = Injector.get().localizedContext()

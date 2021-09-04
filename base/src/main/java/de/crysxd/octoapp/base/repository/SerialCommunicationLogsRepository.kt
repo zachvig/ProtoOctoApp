@@ -2,10 +2,10 @@ package de.crysxd.octoapp.base.repository
 
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.models.SerialCommunication
+import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
@@ -29,7 +29,7 @@ class SerialCommunicationLogsRepository(
     private val flow = MutableStateFlow<SerialCommunication?>(null)
 
     init {
-        GlobalScope.launch(Dispatchers.Default) {
+        AppScope.launch(Dispatchers.Default) {
             Timber.i("Collecting serial communication")
             octoPrintProvider.passiveEventFlow()
                 .mapNotNull { it as? Event.MessageReceived }

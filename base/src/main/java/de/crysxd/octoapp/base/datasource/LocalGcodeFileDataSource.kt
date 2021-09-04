@@ -10,16 +10,20 @@ import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.parse.models.Layer
 import de.crysxd.octoapp.base.gcode.parse.models.LayerInfo
 import de.crysxd.octoapp.base.gcode.parse.models.Move
+import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import org.nustaq.serialization.FSTConfiguration
 import timber.log.Timber
-import java.io.*
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.IOException
+import java.io.RandomAccessFile
 import kotlin.math.absoluteValue
 
 
@@ -40,7 +44,7 @@ class LocalGcodeFileDataSource(
         File(File(context.cacheDir.parentFile, "shared_prefs"), "gcode_cache_index_2"),
     )
     private lateinit var fstConfig: FSTConfiguration
-    private val initJob = GlobalScope.launch(Dispatchers.IO) {
+    private val initJob = AppScope.launch(Dispatchers.IO) {
         fstConfig = FSTConfiguration.createAndroidDefaultConfiguration()
         fstConfig.registerClass(Gcode::class.java)
         fstConfig.registerClass(LayerInfo::class.java)

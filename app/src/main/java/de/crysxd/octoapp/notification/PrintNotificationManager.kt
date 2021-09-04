@@ -4,10 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.di.Injector
-import kotlinx.coroutines.GlobalScope
+import de.crysxd.octoapp.base.utils.AppScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -37,7 +35,7 @@ object PrintNotificationManager {
         }
     }
 
-    fun stop(context: Context) = GlobalScope.launch {
+    fun stop(context: Context) = AppScope.launch {
         if (isNotificationShowing) {
             // We have issues with starting the service and then stopping it right after. After we started it as a foreground service,
             // we need to give it time to start and call startForeground(). Without this call being done, the app will crash, even if the service is already stopped

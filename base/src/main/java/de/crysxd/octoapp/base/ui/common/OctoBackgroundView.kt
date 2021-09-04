@@ -14,8 +14,8 @@ import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.utils.AnimationTestUtils
+import de.crysxd.octoapp.base.utils.AppScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -62,7 +62,7 @@ class OctoBackgroundView @JvmOverloads constructor(context: Context, attrs: Attr
         bubblesAnimation?.start()
     }
 
-    private fun ImageView.setImageResourceAsync(@DrawableRes d: Int) = GlobalScope.launch {
+    private fun ImageView.setImageResourceAsync(@DrawableRes d: Int) = AppScope.launch {
         val drawable = ContextCompat.getDrawable(context, d)
         withContext(Dispatchers.Main) {
             setImageDrawable(drawable)

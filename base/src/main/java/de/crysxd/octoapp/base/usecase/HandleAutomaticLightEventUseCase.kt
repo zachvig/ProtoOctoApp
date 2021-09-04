@@ -2,6 +2,7 @@ package de.crysxd.octoapp.base.usecase
 
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.utils.AppScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
@@ -55,7 +56,7 @@ class HandleAutomaticLightEventUseCase @Inject constructor(
             // Push new state
             if (newState != null) {
                 lastJob?.cancelAndJoin()
-                lastJob = GlobalScope.launch {
+                lastJob = AppScope.launch {
                     try {
                         if (param.delayAction) {
                             delay(5000)

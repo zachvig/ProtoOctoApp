@@ -19,10 +19,10 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.models.MenuId
+import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.notification.PrintNotificationSupportBroadcastReceiver
 import de.crysxd.octoapp.widgets.AppWidgetSupportBroadcastReceiver
 import de.crysxd.octoapp.widgets.quickaccess.QuickAccessAppWidget
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -69,7 +69,7 @@ class OctoApp : Application() {
         Timber.plant(BaseInjector.get().timberCacheTree())
         Timber.plant(BaseInjector.get().firebaseTree())
 
-        GlobalScope.launch {
+        AppScope.launch {
             // Setup SerialCommunicationLogsRepository (jsut create the instance)
             BaseInjector.get().serialCommunicationLogsRepository()
 
@@ -146,7 +146,7 @@ class OctoApp : Application() {
         ResourcesCompat.getFont(this@OctoApp, R.font.roboto_regular, callback, handler)
 
         // Push widget updates
-        GlobalScope.launch {
+        AppScope.launch {
             BaseInjector.get().pinnedMenuItemsRepository().observePinnedMenuItems(MenuId.Widget).collect {
                 Timber.i("Refreshing widget, repository changed")
                 QuickAccessAppWidget.notifyWidgetDataChanged()
@@ -154,7 +154,7 @@ class OctoApp : Application() {
         }
 
         // Update app language property
-        GlobalScope.launch {
+        AppScope.launch {
             val appLanguage = BaseInjector.get().getAppLanguageUseCase().execute(Unit).appLanguageLocale?.language ?: "en"
             OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.AppLanguage, appLanguage)
         }

@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.repository
 
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.octoprint.models.printer.PrinterState
 import de.crysxd.octoapp.octoprint.models.socket.HistoricTemperatureData
 import kotlinx.coroutines.*
@@ -21,7 +22,7 @@ class TemperatureDataRepository(
     private val flow = MutableSharedFlow<List<TemperatureSnapshot>>(CHANNEL_BUFFER_SIZE)
 
     init {
-        GlobalScope.launch(Dispatchers.Default) {
+        AppScope.launch(Dispatchers.Default) {
             Timber.i("Collecting temperatures")
             octoPrintProvider.passiveCurrentMessageFlow("temperature-repository")
                 .onEach {

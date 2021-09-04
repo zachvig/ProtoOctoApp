@@ -4,9 +4,9 @@ import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigClientException
 import de.crysxd.octoapp.base.usecase.GetConnectOctoEverywhereUrlUseCase
+import de.crysxd.octoapp.base.utils.AppScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -23,7 +23,7 @@ class FirebaseTree(
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         if (priority >= Log.INFO) {
-            GlobalScope.launch(Dispatchers.IO) {
+            AppScope.launch(Dispatchers.IO) {
                 lock.withLock {
 
                     FirebaseCrashlytics.getInstance().log("$tag | ${mask.mask(message)}")

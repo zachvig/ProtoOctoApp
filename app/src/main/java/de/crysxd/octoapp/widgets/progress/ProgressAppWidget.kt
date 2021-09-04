@@ -15,6 +15,7 @@ import de.crysxd.octoapp.base.ui.utils.ColorTheme
 import de.crysxd.octoapp.base.ui.utils.colorTheme
 import de.crysxd.octoapp.base.usecase.CreateProgressAppWidgetDataUseCase
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
+import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.widgets.*
 import de.crysxd.octoapp.widgets.AppWidgetPreferences.ACTIVE_INSTANCE_MARKER
@@ -60,7 +61,7 @@ class ProgressAppWidget : AppWidgetProvider() {
         internal fun notifyWidgetDataChanged(currentMessage: Message.CurrentMessage) {
             // Cancel last update job and start new one
             Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.let {
-                GlobalScope.launch {
+                AppScope.launch {
                     try {
                         val data = Injector.get().createProgressAppWidgetDataUseCase()
                             .execute(CreateProgressAppWidgetDataUseCase.Params(currentMessage = currentMessage, instanceId = it.id))
@@ -84,7 +85,7 @@ class ProgressAppWidget : AppWidgetProvider() {
             }.forEach {
                 // Cancel old update, launch update
                 lastUpdateJobs[it.id]?.get()?.cancel()
-                val job = GlobalScope.launch {
+                val job = AppScope.launch {
                     try {
                         notifyWidgetLoading(it.id)
                         val data = Injector.get().createProgressAppWidgetDataUseCase()

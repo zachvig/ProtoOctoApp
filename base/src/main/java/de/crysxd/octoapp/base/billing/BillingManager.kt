@@ -23,8 +23,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.utils.AppScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,7 +55,7 @@ object BillingManager {
         when (billingResult.responseCode) {
             BillingClient.BillingResponseCode.OK -> {
                 OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseFlowCompleted, bundleOf("sku" to purchases?.map { it.skus }?.joinToString(",")))
-                GlobalScope.launch {
+                AppScope.launch {
                     purchases?.let { handlePurchases(it) }
                 }
             }
@@ -76,7 +76,7 @@ object BillingManager {
         Timber.v("Updated: $value")
     }
 
-    fun initBilling(context: Context) = GlobalScope.launch(Dispatchers.IO) {
+    fun initBilling(context: Context) = AppScope.launch(Dispatchers.IO) {
         try {
             OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.BillingStatus, "unknown")
             fetchRemoteConfig()
@@ -125,7 +125,7 @@ object BillingManager {
         }
     }
 
-    private fun updateSku() = GlobalScope.launch(Dispatchers.IO) {
+    private fun updateSku() = AppScope.launch(Dispatchers.IO) {
         try {
             fetchRemoteConfig()
             Timber.i("Updating SKU")
@@ -278,7 +278,7 @@ object BillingManager {
         }
     }
 
-    private fun queryPurchases() = GlobalScope.launch(Dispatchers.IO) {
+    private fun queryPurchases() = AppScope.launch(Dispatchers.IO) {
         suspend fun queryPurchases(@BillingClient.SkuType type: String): List<Purchase> {
             val purchaseResult = billingClient?.queryPurchasesAsync(type)
             return if (purchaseResult?.billingResult?.responseCode != BillingClient.BillingResponseCode.OK) {
@@ -316,7 +316,7 @@ object BillingManager {
         it.isBillingAvailable && !it.isPremiumActive && it.availableSku.isNotEmpty()
     }
 
-    fun onResume(context: Context) = GlobalScope.launch {
+    fun onResume(context: Context) = AppScope.launch {
         Timber.i("Resuming billing")
         initBilling(context)
     }

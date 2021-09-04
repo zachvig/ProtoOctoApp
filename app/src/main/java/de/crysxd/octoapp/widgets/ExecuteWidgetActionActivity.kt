@@ -24,12 +24,12 @@ import de.crysxd.octoapp.base.ui.menu.MenuItem
 import de.crysxd.octoapp.base.ui.menu.main.MenuItemLibrary
 import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
+import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
 import de.crysxd.octoapp.widgets.webcam.BaseWebcamAppWidget
 import de.crysxd.octoapp.widgets.webcam.ControlsWebcamAppWidget
 import de.crysxd.octoapp.widgets.webcam.NoControlsWebcamAppWidget
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -148,7 +148,7 @@ class ExecuteWidgetActionActivity : LocalizedActivity(), MenuHost {
             .setPositiveButton(action) { _, _ ->
                 Timber.i("Task $task confirmed")
                 // Activity will be finished in a millisecond, so we use Global to trigger the action
-                GlobalScope.launch(Dispatchers.Main) {
+                AppScope.launch(Dispatchers.Main) {
                     try {
                         when (task) {
                             TASK_CANCEL -> Injector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(false))

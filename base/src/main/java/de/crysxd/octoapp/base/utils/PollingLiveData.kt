@@ -28,7 +28,7 @@ class PollingLiveData<T>(
         handler.removeCallbacks(runnable)
     }
 
-    private fun poll(): Job = GlobalScope.launch(job + Dispatchers.IO) {
+    private fun poll(): Job = AppScope.launch(job + Dispatchers.IO) {
         try {
             postValue(Result.Success(action()))
         } catch (e: Exception) {

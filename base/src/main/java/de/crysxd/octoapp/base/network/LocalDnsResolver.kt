@@ -9,10 +9,13 @@ import com.qiniu.android.dns.DnsManager
 import com.qiniu.android.dns.NetworkInfo
 import com.qiniu.android.dns.local.Resolver
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.base.utils.measureTime
 import de.crysxd.octoapp.octoprint.UPNP_ADDRESS_PREFIX
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import okhttp3.Dns
 import timber.log.Timber
 import java.net.InetAddress
@@ -92,24 +95,24 @@ class LocalDnsResolver(private val context: Context) : Dns {
     private fun doUpnpLookup(upnpHostname: String): List<InetAddress> = runBlocking {
         Timber.i("Resolving via UPnP: $upnpHostname")
         withTimeoutOrNull(TimeUnit.SECONDS.toMillis(RESOLVE_TIMEOUT)) {
-            val channel = Channel<Any>()
+            val channel = MutableStateFlow<Any?>(null)
 
             // Switch to a new thread so we can kill it on timeout without having issues with blocking IO operations
-            val job = GlobalScope.launch {
+            val job = AppScope.launch {
                 try {
                     OctoPrintUpnpDiscovery(context).discover {
                         if (it.upnpHostname == upnpHostname) {
-                            channel.offer(it.address)
+                            channel.value = it.address
                         }
                     }
                 } catch (e: Exception) {
                     Timber.e(e)
-                    channel.offer(e)
+                    channel.value = e
                 }
             }
 
             try {
-                val address = when (val res = withTimeout(TimeUnit.SECONDS.toMillis(RESOLVE_TIMEOUT)) { channel.receive() }) {
+                val address = when (val res = withTimeout(TimeUnit.SECONDS.toMillis(RESOLVE_TIMEOUT)) { channel.filterNotNull().first() }) {
                     is Throwable -> throw res
                     is InetAddress -> res
                     else -> throw Exception("Unexpected result $res")
@@ -131,7 +134,7 @@ class LocalDnsResolver(private val context: Context) : Dns {
         context.applicationContext.getSystemService(Context.NSD_SERVICE)
 
         withTimeoutOrNull(TimeUnit.SECONDS.toMillis(RESOLVE_TIMEOUT)) {
-            val channel = Channel<Any>()
+            val channel = MutableStateFlow<Any?>(null)
             val lock = wifi.createMulticastLock("mDnsResolution")
             var job: Job? = null
             var service: DNSSDService? = null
@@ -139,13 +142,13 @@ class LocalDnsResolver(private val context: Context) : Dns {
                 lock.acquire()
 
                 // Switch to a new thread so we can kill it on timeout without having issues with blocking IO operations
-                job = GlobalScope.launch {
+                job = AppScope.launch {
                     try {
                         service = dnssd.queryRecord(0, 0, hostname, 1 /* IPv4 */, 1, object : QueryListener {
                             override fun operationFailed(service: DNSSDService?, errorCode: Int) {
                                 val e = Exception("Unable to query $hostname (errorCode=$errorCode)")
                                 Timber.e(e)
-                                channel.offer(e)
+                                channel.value = e
                             }
 
                             override fun queryAnswered(
@@ -159,16 +162,16 @@ class LocalDnsResolver(private val context: Context) : Dns {
                                 ttl: Int
                             ) {
                                 Timber.v("Query answered: $hostname")
-                                channel.offer(InetAddress.getByAddress(hostname, rdata))
+                                channel.value = InetAddress.getByAddress(hostname, rdata)
                             }
                         })
                     } catch (e: Exception) {
                         Timber.e(e)
-                        channel.offer(e)
+                        channel.value = e
                     }
                 }
 
-                val address = when (val res = channel.receive()) {
+                val address = when (val res = channel.filterNotNull().first()) {
                     is Throwable -> throw res
                     is InetAddress -> res
                     else -> throw Exception("Unexpected result $res")

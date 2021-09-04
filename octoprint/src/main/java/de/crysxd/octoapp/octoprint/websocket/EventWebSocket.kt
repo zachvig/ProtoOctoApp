@@ -26,7 +26,6 @@ import java.util.logging.Logger
 
 const val RECONNECT_DELAY_MS = 1000L
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 class EventWebSocket(
     private val httpClient: OkHttpClient,
     private val webUrl: HttpUrl,
@@ -42,7 +41,6 @@ class EventWebSocket(
 
     private val reconnectTimeout = connectionTimeoutMs + RECONNECT_DELAY_MS
 
-    private var reconnectJob: Job? = null
     private var reportDisconnectedJob: Job? = null
     private var webSocket: WebSocket? = null
     private var isConnected = AtomicBoolean(false)
@@ -51,9 +49,17 @@ class EventWebSocket(
     private val eventFlow = MutableSharedFlow<Event>(15)
     private val subscriberCount = AtomicInteger(0)
     private val webSocketUrl = webUrl.resolvePath("sockjs/websocket")
+    private var job = SupervisorJob()
+    private val coroutineScope
+        get() = CoroutineScope(job + Dispatchers.Main.immediate) + CoroutineExceptionHandler { _, throwable ->
+            logger.log(Level.SEVERE, "NON-CONTAINED exception in coroutineScope", throwable)
+        }
 
     fun start() {
         if (subscriberCount.get() > 0 && isConnected.compareAndSet(false, true)) {
+            job.cancel()
+            job = SupervisorJob()
+
             val request = Request.Builder()
                 .url(webSocketUrl)
                 .build()
@@ -79,7 +85,7 @@ class EventWebSocket(
     private fun doStop() {
         webSocket?.close(1000, "User exited app")
         webSocket?.cancel()
-        reconnectJob?.cancel()
+        job.cancel()
         reportDisconnectedJob?.cancel()
         logger.log(Level.INFO, "Closing web socket")
         handleClosure()
@@ -198,7 +204,7 @@ class EventWebSocket(
         private fun reconnect(t: Throwable? = null, reportImmediately: Boolean = false, reconnectDelay: Long = RECONNECT_DELAY_MS) {
             isConnected.set(false)
 
-            reconnectJob = GlobalScope.launch {
+            coroutineScope.launch {
                 delay(reconnectDelay)
                 start()
             }
@@ -211,7 +217,7 @@ class EventWebSocket(
 
         private fun reportDisconnectedAfterDelay(throwable: Throwable?, delay: Long = reconnectTimeout) {
             reportDisconnectedJob?.cancel()
-            reportDisconnectedJob = GlobalScope.launch {
+            reportDisconnectedJob = coroutineScope.launch {
                 delay(delay)
                 logger.log(Level.SEVERE, "Reporting disconnect", throwable)
                 dispatchEvent(Event.Disconnected(throwable))

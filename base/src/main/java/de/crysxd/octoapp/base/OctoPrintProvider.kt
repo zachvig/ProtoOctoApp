@@ -12,6 +12,7 @@ import de.crysxd.octoapp.base.network.DetectBrokenSetupInterceptor
 import de.crysxd.octoapp.base.network.LocalDnsResolver
 import de.crysxd.octoapp.base.network.SslKeyStoreHandler
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.SubjectAlternativeNameCompatVerifier
 import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereConnectionNotFoundException
@@ -19,7 +20,6 @@ import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereSubscriptionMissingE
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -54,7 +54,7 @@ class OctoPrintProvider(
     init {
         // Passively collect data for the analytics profile
         // The passive event flow does not actively open a connection but piggy-backs other Flows
-        GlobalScope.launch {
+        AppScope.launch {
             passiveEventFlow()
                 .onEach { event ->
                     updateAnalyticsProfileWithEvents(event)
@@ -151,7 +151,7 @@ class OctoPrintProvider(
         }
     }
 
-    private fun handleNetworkException(e: Exception) = GlobalScope.launch {
+    private fun handleNetworkException(e: Exception) = AppScope.launch {
         when (e) {
             // The OE connection is broken, remove. User will be informed by regular error dialog
             is OctoEverywhereConnectionNotFoundException, is OctoEverywhereSubscriptionMissingException -> {

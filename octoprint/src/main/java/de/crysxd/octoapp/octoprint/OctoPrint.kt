@@ -142,7 +142,7 @@ class OctoPrint(
 
     fun createOctoEverywhereApi() = createRetrofit().create(OctoEverywhereApi::class.java)
 
-    fun getLogger(): Logger = Logger.getLogger("OctoPrint")
+    fun getLogger(): Logger = OctoPrintLogger
 
     private fun createHttpLogger(): Logger {
         val logger = Logger.getLogger("OctoPrint/HTTP")

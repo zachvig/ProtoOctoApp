@@ -8,7 +8,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import de.crysxd.octoapp.base.di.Injector
-import kotlinx.coroutines.GlobalScope
+import de.crysxd.octoapp.base.utils.AppScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -31,7 +31,7 @@ class PrintNotificationSupportBroadcastReceiver(context: Context) : BroadcastRec
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        GlobalScope.launch {
+        AppScope.launch {
             try {
                 when (intent.action) {
                     WifiManager.NETWORK_STATE_CHANGED_ACTION -> handleConnectionChange(context)
@@ -47,7 +47,7 @@ class PrintNotificationSupportBroadcastReceiver(context: Context) : BroadcastRec
     private suspend fun handleScreenOff(context: Context) {
         if (Injector.get().octoPreferences().allowNotificationBatterySaver) {
             if (PrintNotificationManager.isNotificationShowing) {
-                pauseJob = GlobalScope.launch {
+                pauseJob = AppScope.launch {
                     val delaySecs = 60L
                     Timber.i("Screen off, pausing notification in ${delaySecs}s")
                     delay(TimeUnit.SECONDS.toMillis(delaySecs))

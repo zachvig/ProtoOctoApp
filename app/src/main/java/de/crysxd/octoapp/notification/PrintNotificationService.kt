@@ -10,13 +10,17 @@ import android.os.SystemClock
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
+import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -61,7 +65,7 @@ class PrintNotificationService : Service() {
             Timber.i("Creating notification service")
 
             // Check preconditions
-            GlobalScope.launch(coroutineJob) {
+            AppScope.launch(coroutineJob) {
                 if (!checkPreconditions()) {
                     Timber.i("Preconditions not met, stopping self")
                     stop()
@@ -71,7 +75,7 @@ class PrintNotificationService : Service() {
             }
 
             // Hook into event flow to receive updates
-            GlobalScope.launch(coroutineJob) {
+            AppScope.launch(coroutineJob) {
                 eventFlow.onEach {
                     onEventReceived(it)
                 }.retry(RETRY_COUNT) {
@@ -83,7 +87,7 @@ class PrintNotificationService : Service() {
             }
 
             // Observe changes in preferences
-            GlobalScope.launch(coroutineJob) {
+            AppScope.launch(coroutineJob) {
                 Injector.get().octoPreferences().updatedFlow.collectLatest {
                     if (!PrintNotificationManager.isNotificationEnabled) {
                         Timber.i("Service disabled, stopping self")
@@ -266,7 +270,7 @@ class PrintNotificationService : Service() {
 
     private fun markDisconnectedAfterDelay() {
         markDisconnectedJob?.cancel()
-        markDisconnectedJob = GlobalScope.launch(coroutineJob) {
+        markDisconnectedJob = AppScope.launch(coroutineJob) {
             delay(DISCONNECT_IF_NO_MESSAGE_FOR_MS)
             notificationManager.notify(NOTIFICATION_ID, notificationFactory.creareReconnectingNotification())
         }
