@@ -5,27 +5,32 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import com.adevinta.android.barista.rule.BaristaRule
+import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.WorkspaceRobot
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
-import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
+import de.crysxd.octoapp.framework.rules.ResetDaggerRule
+import de.crysxd.octoapp.framework.rules.TestDocumentationRule
 import de.crysxd.octoapp.framework.waitForNot
 import org.hamcrest.Matchers.allOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
 
 class ShowFilesTest {
 
     private val testEnv = TestEnvironmentLibrary.Terrier
+    private val baristaRule = BaristaRule.create(MainActivity::class.java)
 
     @get:Rule
-    val activityRule = LazyMainActivityScenarioRule()
-
-    @get:Rule
-    val idleRule = IdleTestEnvironmentRule(testEnv)
+    val chain = RuleChain.outerRule(baristaRule)
+        .around(IdleTestEnvironmentRule(testEnv))
+        .around(TestDocumentationRule())
+        .around(ResetDaggerRule())
 
     @Before
     fun setUp() {
@@ -35,7 +40,7 @@ class ShowFilesTest {
     @Test(timeout = 60_000)
     fun WHEN_files_are_opened_THEN_files_are_listed() {
         // GIVEN
-        activityRule.launch()
+        baristaRule.launchActivity()
 
         // Open files
         WorkspaceRobot.waitForPrepareWorkspace()

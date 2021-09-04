@@ -6,6 +6,8 @@ import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
+import com.adevinta.android.barista.rule.BaristaRule
+import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
@@ -15,8 +17,10 @@ import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.VirtualPrinterUtils.setVirtualPrinterEnabled
 import de.crysxd.octoapp.framework.WorkspaceRobot
+import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
-import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
+import de.crysxd.octoapp.framework.rules.ResetDaggerRule
+import de.crysxd.octoapp.framework.rules.TestDocumentationRule
 import de.crysxd.octoapp.framework.waitFor
 import de.crysxd.octoapp.framework.waitForDialog
 import de.crysxd.octoapp.framework.waitTime
@@ -26,6 +30,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
 
 class ConnectPrinterTest {
 
@@ -37,18 +42,21 @@ class ConnectPrinterTest {
         apiKey = "XXXXXXX"
     )
 
-    @get:Rule
-    val activityRule = LazyMainActivityScenarioRule()
+    private val baristaRule = BaristaRule.create(MainActivity::class.java)
 
     @get:Rule
-    val idleRule = IdleTestEnvironmentRule(testEnv, powerControlsTestEnv)
+    val chain = RuleChain.outerRule(baristaRule)
+        .around(IdleTestEnvironmentRule(testEnv, powerControlsTestEnv))
+        .around(TestDocumentationRule())
+        .around(ResetDaggerRule())
+        .around(AcceptAllAccessRequestRule(testEnv))
 
     @Test(timeout = 30_000)
     fun WHEN_auto_connect_is_disabled_THEN_connect_button_can_be_used() {
         // GIVEN
         Injector.get().octorPrintRepository().setActive(testEnv)
         Injector.get().octoPreferences().isAutoConnectPrinter = false
-        activityRule.launch()
+        baristaRule.launchActivity()
 
         // Wait for ready to connect
         WorkspaceRobot.waitForConnectWorkspace()
@@ -66,7 +74,7 @@ class ConnectPrinterTest {
         // GIVEN
         Injector.get().octorPrintRepository().setActive(wrongEnv)
         BillingManager.enabledForTest = false
-        activityRule.launch()
+        baristaRule.launchActivity()
 
         // Wait for ready to connect
         WorkspaceRobot.waitForConnectWorkspace()
@@ -84,7 +92,7 @@ class ConnectPrinterTest {
         Injector.get().octorPrintRepository().setActive(testEnv)
         Injector.get().octorPrintRepository().setActive(wrongEnv)
         BillingManager.enabledForTest = true
-        activityRule.launch()
+        baristaRule.launchActivity()
 
         // Wait for ready to connect
         WorkspaceRobot.waitForConnectWorkspace()
@@ -107,7 +115,7 @@ class ConnectPrinterTest {
         val settings = octoPrint.createSettingsApi().getSettings()
         octoPrint.createPowerPluginsCollection().plugins.first { it is PsuControlPowerPlugin }
             .getDevices(settings).first().turnOff()
-        activityRule.launch()
+        baristaRule.launchActivity()
 
         // Wait for ready and turn on PSU
         WorkspaceRobot.waitForConnectWorkspace()

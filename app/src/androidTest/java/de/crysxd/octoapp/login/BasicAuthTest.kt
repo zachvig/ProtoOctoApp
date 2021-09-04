@@ -11,18 +11,23 @@ import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import com.adevinta.android.barista.rule.BaristaRule
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
+import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.framework.SignInRobot
-import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
+import de.crysxd.octoapp.framework.rules.ResetDaggerRule
+import de.crysxd.octoapp.framework.rules.TestDocumentationRule
 import de.crysxd.octoapp.framework.waitFor
 import de.crysxd.octoapp.framework.waitForDialog
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
 
 class BasicAuthTest {
 
@@ -33,16 +38,20 @@ class BasicAuthTest {
     private val userNameInput = onView(allOf(isDescendantOfA(withId(R.id.usernameInput)), isAssignableFrom(EditText::class.java)))
     private val passwordInput = onView(allOf(isDescendantOfA(withId(R.id.passwordInput)), isAssignableFrom(EditText::class.java)))
 
-    @get:Rule
-    val activityRule = LazyMainActivityScenarioRule()
+    private val baristaRule = BaristaRule.create(MainActivity::class.java)
 
     @get:Rule
-    val discoveryRule = MockDiscoveryRule()
+    val chain = RuleChain.outerRule(baristaRule)
+        .around(TestDocumentationRule())
+        .around(ResetDaggerRule())
+        .around(MockDiscoveryRule())
+
 
     @Test(timeout = 60_000)
+    @AllowFlaky(attempts = 3)
     fun WHEN_signing_in_THEN_basic_auth_credentials_are_asked() {
         // GIVEN
-        activityRule.launch()
+        baristaRule.launchActivity()
 
         // Start sign in
         SignInRobot.waitForManualToBeShown()
@@ -78,6 +87,7 @@ class BasicAuthTest {
     }
 
     @Test(timeout = 60_000)
+    @AllowFlaky(attempts = 3)
     fun WHEN_credentials_become_invalid_THEN_basic_auth_credentials_are_asked() {
         // GIVEN
         val wrongUser = "secretuser$@&323"
@@ -93,7 +103,7 @@ class BasicAuthTest {
                 apiKey = "random,not used"
             )
         )
-        activityRule.launch()
+        baristaRule.launchActivity()
 
         // Wait for error
         waitForDialog(withText(R.string.sign_in___broken_setup___basic_auth_required))

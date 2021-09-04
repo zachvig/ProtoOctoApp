@@ -7,35 +7,40 @@ import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
+import com.adevinta.android.barista.rule.BaristaRule
+import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.framework.MenuRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.WorkspaceRobot
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
-import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
+import de.crysxd.octoapp.framework.rules.ResetDaggerRule
+import de.crysxd.octoapp.framework.rules.TestDocumentationRule
 import de.crysxd.octoapp.framework.waitFor
 import de.crysxd.octoapp.framework.waitForDialog
 import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
 
 class StartPrintTest {
 
     private val testEnvVanilla = TestEnvironmentLibrary.Terrier
     private val testEnvSpoolManager = TestEnvironmentLibrary.Frenchie
+    private val baristaRule = BaristaRule.create(MainActivity::class.java)
 
     @get:Rule
-    val activityRule = LazyMainActivityScenarioRule()
-
-    @get:Rule
-    val idleRule = IdleTestEnvironmentRule(testEnvSpoolManager, testEnvVanilla)
+    val chain = RuleChain.outerRule(baristaRule)
+        .around(IdleTestEnvironmentRule(testEnvSpoolManager, testEnvVanilla))
+        .around(TestDocumentationRule())
+        .around(ResetDaggerRule())
 
     @Test(timeout = 120_000)
     fun WHEN_a_print_is_started_THEN_the_app_shows_printing() {
         // GIVEN
         Injector.get().octorPrintRepository().setActive(testEnvVanilla)
-        activityRule.launch()
+        baristaRule.launchActivity()
 
         // Open file and start print
         triggerPrint()
@@ -78,7 +83,7 @@ class StartPrintTest {
     private fun runMaterialTest(selection: String) {
         // GIVEN
         Injector.get().octorPrintRepository().setActive(testEnvSpoolManager)
-        activityRule.launch()
+        baristaRule.launchActivity()
 
         // Open file and start print
         triggerPrint()

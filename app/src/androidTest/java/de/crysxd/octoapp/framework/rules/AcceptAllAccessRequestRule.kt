@@ -11,7 +11,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 
-class AcceptAllAccessRequestRule(var instanceInformation: OctoPrintInstanceInformationV3) : AbstractUseCaseMockRule() {
+class AcceptAllAccessRequestRule(val instanceInformation: OctoPrintInstanceInformationV3) : AbstractUseCaseMockRule() {
 
     override fun createBaseComponent(base: BaseComponent) = MockBaseComponent(base)
 
