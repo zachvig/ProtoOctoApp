@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.test.platform.app.InstrumentationRegistry
 import de.crysxd.octoapp.base.di.BaseComponent
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.initializeDagger
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
@@ -18,11 +19,12 @@ abstract class AbstractUseCaseMockRule : TestRule {
                 val b = Injector.get()
                 val mockBase = createBaseComponent(b)
                 Injector.set(mockBase)
-                de.crysxd.octoapp.signin.di.Injector.init(mockBase)
+                initializeDagger()
                 base.evaluate()
             } finally {
                 Injector.init(InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as Application)
                 de.crysxd.octoapp.signin.di.Injector.init(Injector.get())
+                initializeDagger()
             }
         }
     }

@@ -11,16 +11,20 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
+import com.adevinta.android.barista.rule.BaristaRule
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import com.nhaarman.mockitokotlin2.verify
+import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
 import de.crysxd.octoapp.framework.SignInRobot
-import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
+import de.crysxd.octoapp.framework.rules.ResetDaggerRule
 import de.crysxd.octoapp.framework.rules.SpyOctoPrintRepositoryRule
+import de.crysxd.octoapp.framework.rules.TestDocumentationRule
 import de.crysxd.octoapp.framework.waitFor
 import de.crysxd.octoapp.framework.waitForNot
 import org.hamcrest.Matchers.allOf
@@ -29,17 +33,20 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
 
 class DeleteInstanceTest {
 
-    @get:Rule
-    val activityRule = LazyMainActivityScenarioRule()
+    private val spyOctoPrintRepositoryRule = SpyOctoPrintRepositoryRule()
+    private val baristaRule = BaristaRule.create(MainActivity::class.java)
+    private val discoveryRule = MockDiscoveryRule()
 
     @get:Rule
-    val discoveryRule = MockDiscoveryRule()
-
-    @get:Rule
-    val spyOctoPrintRepositoryRule = SpyOctoPrintRepositoryRule()
+    val chain = RuleChain.outerRule(baristaRule)
+        .around(TestDocumentationRule())
+        .around(ResetDaggerRule())
+        .around(discoveryRule)
+        .around(spyOctoPrintRepositoryRule)
 
     private val instance = OctoPrintInstanceInformationV2(
         webUrl = "http://test",
@@ -58,6 +65,7 @@ class DeleteInstanceTest {
 
 
     @Test(timeout = 30_000L)
+    @AllowFlaky(attempts = 3)
     fun WHEN_a_instance_is_deleted_and_options_are_discovered_THEN_it_is_removed() {
         discoveryRule.mockForRandomFound()
 
@@ -70,6 +78,7 @@ class DeleteInstanceTest {
     }
 
     @Test(timeout = 30_000L)
+    @AllowFlaky(attempts = 3)
     fun WHEN_a_instance_is_deleted_and_nothing_is_discovered_THEN_it_is_removed() {
         discoveryRule.mockForNothingFound()
 
@@ -81,6 +90,7 @@ class DeleteInstanceTest {
     }
 
     @Test(timeout = 30_000L)
+    @AllowFlaky(attempts = 3)
     fun WHEN_a_instance_is_deleted_and_quick_switch_disabled_THEN_it_is_removed() {
         BillingManager.enabledForTest = false
         discoveryRule.mockForNothingFound()
@@ -96,7 +106,7 @@ class DeleteInstanceTest {
         val repository = Injector.get().octorPrintRepository()
         repository.setActive(instance)
         repository.clearActive()
-        activityRule.launch()
+        baristaRule.launchActivity()
 
         // Wait for loading done and show options
         waitFor(

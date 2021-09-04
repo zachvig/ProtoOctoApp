@@ -13,6 +13,9 @@ import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.filters.LargeTest
+import com.adevinta.android.barista.rule.BaristaRule
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
+import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.SignInRobot.continueButton
@@ -24,9 +27,10 @@ import de.crysxd.octoapp.framework.SignInRobot.waitForWelcomeTitleToBeShown
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
-import de.crysxd.octoapp.framework.rules.LazyMainActivityScenarioRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.MockTestFullNetworkStackRule
+import de.crysxd.octoapp.framework.rules.ResetDaggerRule
+import de.crysxd.octoapp.framework.rules.TestDocumentationRule
 import de.crysxd.octoapp.framework.waitFor
 import de.crysxd.octoapp.framework.waitForDialog
 import de.crysxd.octoapp.framework.waitTime
@@ -34,32 +38,31 @@ import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
 
 @LargeTest
 class ManualLoginTest {
 
     private val testEnv = TestEnvironmentLibrary.Terrier
+    private val baristaRule = BaristaRule.create(MainActivity::class.java)
+    private val discoveryRule = MockDiscoveryRule()
+    private val mockTestFullNetworkStackRule = MockTestFullNetworkStackRule()
 
     @get:Rule
-    val activityRule = LazyMainActivityScenarioRule()
-
-    @get:Rule
-    val discoveryRule = MockDiscoveryRule()
-
-    @get:Rule
-    val acceptAccessRequestRule = AcceptAllAccessRequestRule(testEnv)
-
-    @get:Rule
-    val mockTestFullNetworkStackRule = MockTestFullNetworkStackRule()
-
-    @get:Rule
-    val idleRule = IdleTestEnvironmentRule(testEnv)
+    val chain = RuleChain.outerRule(baristaRule)
+        .around(IdleTestEnvironmentRule(testEnv))
+        .around(TestDocumentationRule())
+        .around(ResetDaggerRule())
+        .around(discoveryRule)
+        .around(mockTestFullNetworkStackRule)
+        .around(AcceptAllAccessRequestRule(testEnv))
 
     @Test(timeout = 60_000L)
+    @AllowFlaky(attempts = 3)
     fun WHEN_no_instances_are_found_THEN_we_directly_move_to_manual_and_can_sign_in() = runBlocking {
         // GIVEN
         discoveryRule.mockForNothingFound()
-        activityRule.launch()
+        baristaRule.launchActivity()
 
         // Check loading
         waitForWelcomeTitleToBeShown()
@@ -78,10 +81,11 @@ class ManualLoginTest {
     }
 
     @Test(timeout = 120_000L)
+    @AllowFlaky(attempts = 3)
     fun WHEN_some_instances_are_found_THEN_we_can_still_move_to_manual() = runBlocking {
         // GIVEN
         discoveryRule.mockForRandomFound()
-        activityRule.launch()
+        baristaRule.launchActivity()
 
         // Check loading and loaded
         waitForWelcomeTitleToBeShown()
