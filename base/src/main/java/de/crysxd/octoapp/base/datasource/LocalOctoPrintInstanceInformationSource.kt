@@ -56,7 +56,7 @@ class LocalOctoPrintInstanceInformationSource(
         // Load
         gson.fromJson(
             sharedPreferences.getString(KEY_INSTANCE_INFORMATION_V3, "[]"),
-            object : TypeToken<List<OctoPrintInstanceInformationV2>>() {}.type
+            object : TypeToken<List<OctoPrintInstanceInformationV3>>() {}.type
         )
     } catch (e: Exception) {
         Timber.e(e)

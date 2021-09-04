@@ -31,6 +31,7 @@ class OctoPrintRepository(
             octoPreferences.activeInstanceWebUrl?.let { url ->
                 val instance = getAll().first { it.isForWebUrl(url.toHttpUrl()) }
                 octoPreferences.activeInstanceId = instance.id
+                Timber.i("Upgrade active instance from $url to ${instance.id}")
             }
         } catch (e: Exception) {
             Timber.e(e)
