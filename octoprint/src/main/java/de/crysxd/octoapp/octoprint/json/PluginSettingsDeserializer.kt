@@ -35,6 +35,7 @@ class PluginSettingsDeserializer : JsonDeserializer<Settings.PluginSettingsGroup
         "tuyasmartplug" -> context.deserialize<Settings.TuyaSettings>(element, Settings.TuyaSettings::class.java)
         "multicam" -> context.deserialize<Settings.MultiCamSettings>(element, Settings.MultiCamSettings::class.java)
         "ws281x_led_status" -> context.deserialize<Settings.WS281xSettings>(element, Settings.WS281xSettings::class.java)
+        "wled" -> context.deserialize<Settings.WledSettings>(element, Settings.WledSettings::class.java)
         "mystromswitch" -> context.deserialize<Settings.MyStromSettings>(element, Settings.MyStromSettings::class.java)
         "discovery" -> context.deserialize<Settings.Discovery>(element, Settings.Discovery::class.java)
         "octoeverywhere" -> context.deserialize<Settings.OctoEverywhere>(element, Settings.OctoEverywhere::class.java)

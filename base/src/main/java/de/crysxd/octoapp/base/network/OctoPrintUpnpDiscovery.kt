@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.network
 import android.content.Context
 import android.net.wifi.WifiManager
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.octoprint.UPNP_ADDRESS_PREFIX
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
@@ -18,7 +19,6 @@ class OctoPrintUpnpDiscovery(
     context: Context,
 ) {
     companion object {
-        const val UPNP_ADDRESS_PREFIX = "octoprint-via-upnp---"
         private const val DISCOVER_TIMEOUT = 3000
         private const val SOCKET_TIMEOUT = 500
         private const val PORT = 1900

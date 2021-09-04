@@ -6,12 +6,14 @@ import de.crysxd.octoapp.octoprint.exceptions.*
 import de.crysxd.octoapp.octoprint.models.ConnectionType
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
+import de.crysxd.octoapp.octoprint.resolvePath
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -28,7 +30,7 @@ const val RECONNECT_DELAY_MS = 1000L
 @Suppress("EXPERIMENTAL_API_USAGE")
 class EventWebSocket(
     private val httpClient: OkHttpClient,
-    private val webUrl: String,
+    private val webUrl: HttpUrl,
     private val getCurrentConnectionType: () -> ConnectionType,
     private val loginApi: LoginApi,
     private val gson: Gson,
@@ -49,7 +51,7 @@ class EventWebSocket(
     private var lastCurrentMessage: Message.CurrentMessage? = null
     private val channel = BroadcastChannel<Event>(15)
     private val subscriberCount = AtomicInteger(0)
-    private val webSocketUrl = URI.create(webUrl).resolve("sockjs/websocket").toURL()
+    private val webSocketUrl = webUrl.resolvePath("sockjs/websocket")
 
     fun start() {
         if (subscriberCount.get() > 0 && isConnected.compareAndSet(false, true)) {

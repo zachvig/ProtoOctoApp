@@ -14,7 +14,8 @@ class OctoAppLabMenu : Menu {
     override suspend fun getMenuItem() = listOf(
         RotationMenuItem(),
         NotificationBatterySaver(),
-        ExperimentalWebcam()
+        ExperimentalWebcam(),
+        SuppressM115Request(),
     )
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.lab_menu___title)
@@ -65,6 +66,22 @@ class OctoAppLabMenu : Menu {
         override suspend fun getDescription(context: Context) = context.getString(R.string.lab_menu___experimental_webcam_description)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             Injector.get().octoPreferences().experimentalWebcam = enabled
+        }
+    }
+
+    class SuppressM115Request : ToggleMenuItem() {
+        override val isEnabled get() = Injector.get().octoPreferences().suppressM115Request
+        override val itemId = "suppress_m115"
+        override var groupId = ""
+        override val canBePinned = false
+        override val order = 163
+        override val style = MenuItemStyle.Settings
+        override val icon = R.drawable.ic_round_block_24
+
+        override suspend fun getTitle(context: Context) = context.getString(R.string.lab_menu___suppress_m115_request_title)
+        override suspend fun getDescription(context: Context) = context.getString(R.string.lab_menu___suppress_m115_request_description)
+        override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
+            Injector.get().octoPreferences().suppressM115Request = enabled
         }
     }
 }

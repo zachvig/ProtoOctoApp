@@ -10,5 +10,6 @@
     android:paddingStart="@dimen/margin_2"
     android:paddingTop="@dimen/margin_0"
     android:paddingEnd="@dimen/margin_2"
+    android:textIsSelectable="true"
     android:paddingBottom="@dimen/margin_0"
     tools:text="TextView" />

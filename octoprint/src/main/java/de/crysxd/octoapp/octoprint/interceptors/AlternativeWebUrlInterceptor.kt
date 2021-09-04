@@ -1,18 +1,21 @@
 package de.crysxd.octoapp.octoprint.interceptors
 
+import de.crysxd.octoapp.octoprint.exceptions.AlternativeWebUrlException
 import de.crysxd.octoapp.octoprint.isOctoEverywhereUrl
 import de.crysxd.octoapp.octoprint.models.ConnectionType
+import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
+import java.lang.IllegalStateException
 import java.util.logging.Level
 import java.util.logging.Logger
 
 
 class AlternativeWebUrlInterceptor(
     private val logger: Logger,
-    private val webUrl: String,
-    private val alternativeWebUrl: String?
+    private val webUrl: HttpUrl,
+    private val alternativeWebUrl: HttpUrl?
 ) : Interceptor {
 
     var isPrimaryUsed = true
@@ -23,12 +26,19 @@ class AlternativeWebUrlInterceptor(
 
     private fun doIntercept(chain: Interceptor.Chain, attempt: Int): Response {
         var usingPrimary = isPrimaryUsed
+        val request = chain.request()
+
         try {
-            val request = chain.request()
             val upgradedRequest = if (alternativeWebUrl != null && !isPrimaryUsed) {
                 val url = request.url.toString()
                 usingPrimary = false
-                request.newBuilder().url(url.replace(webUrl, alternativeWebUrl)).build()
+                val upgradedUrl = url.replace(webUrl.toString(), alternativeWebUrl.toString())
+
+                if (upgradedUrl == url && webUrl != alternativeWebUrl) {
+                    throw AlternativeWebUrlException("Alternative URL and primary URL are the same: $url <--> $upgradedUrl", url)
+                }
+
+                request.newBuilder().url(upgradedUrl).build()
             } else {
                 usingPrimary = true
                 request
@@ -38,7 +48,11 @@ class AlternativeWebUrlInterceptor(
         } catch (e: IOException) {
             if (attempt < 1 && canSolveExceptionBySwitchingUrl(e)) {
                 isPrimaryUsed = !usingPrimary
-                logger.log(Level.WARNING, "Caught exception, switching web url to ${if (isPrimaryUsed) "primary" else "alternative"}")
+                logger.log(
+                    Level.WARNING,
+                    "Caught exception in ${request.url}, switching web url to ${if (isPrimaryUsed) "primary" else "alternative"} (${e::class.java.simpleName}: ${e.message})"
+                )
+                logger.log(Level.INFO, "webUrl=$webUrl alternativeWebUrl=$alternativeWebUrl")
                 return doIntercept(chain, 1)
             } else {
                 throw e

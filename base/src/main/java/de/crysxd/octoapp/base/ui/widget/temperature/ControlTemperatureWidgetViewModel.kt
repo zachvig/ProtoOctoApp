@@ -6,12 +6,14 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.ext.rateLimit
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.TemperatureDataRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.octoapp.base.ui.utils.NavigationResultMediator
 import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
+import de.crysxd.octoapp.base.utils.AnimationTestUtils
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -39,6 +41,13 @@ class ControlTemperatureWidgetViewModel(
             val isTool = it.component.startsWith("tool") && (!profile.extruder.sharedNozzle || it.component == "tool0")
             val isOther = it.component != "chamber" && it.component != "bed" && !it.component.startsWith("tool")
             isOther || isTool || isChamber || isBed
+        }
+    }.let {
+        // Slow down update rate for test
+        if (AnimationTestUtils.animationsDisabled) {
+            it.rateLimit(10000)
+        } else {
+            it
         }
     }.retry {
         Timber.e(it)

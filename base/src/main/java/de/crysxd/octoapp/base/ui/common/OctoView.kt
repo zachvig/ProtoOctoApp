@@ -15,6 +15,7 @@ import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ui.utils.ColorTheme
+import de.crysxd.octoapp.base.utils.AnimationTestUtils
 import timber.log.Timber
 import java.lang.Math.random
 
@@ -165,7 +166,11 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         (idleDrawable as? AnimatedVectorDrawableCompat)?.stop()
         swimming = drawable == swimDrawable
         currentDrawable = drawable
-        (drawable as? AnimatedVectorDrawableCompat)?.start()
+
+        // Only start if we did not disbale animations
+        if (!AnimationTestUtils.animationsDisabled) {
+            (drawable as? AnimatedVectorDrawableCompat)?.start()
+        }
     }
 
     private fun getLoopDelay(d: Drawable?) = when (d) {

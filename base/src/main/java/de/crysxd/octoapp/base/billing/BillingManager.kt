@@ -2,8 +2,20 @@ package de.crysxd.octoapp.base.billing
 
 import android.app.Activity
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.core.os.bundleOf
-import com.android.billingclient.api.*
+import com.android.billingclient.api.AcknowledgePurchaseParams
+import com.android.billingclient.api.BillingClient
+import com.android.billingclient.api.BillingClientStateListener
+import com.android.billingclient.api.BillingFlowParams
+import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.PurchasesUpdatedListener
+import com.android.billingclient.api.SkuDetails
+import com.android.billingclient.api.SkuDetailsParams
+import com.android.billingclient.api.acknowledgePurchase
+import com.android.billingclient.api.queryPurchasesAsync
+import com.android.billingclient.api.querySkuDetails
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.Tasks
@@ -11,10 +23,15 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.di.Injector
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 
@@ -27,6 +44,9 @@ object BillingManager {
     const val FEATURE_HLS_WEBCAM = "hls_webcam"
     const val FEATURE_INFINITE_WIDGETS = "infinite_app_widgets"
     const val FEATURE_FULL_WEBCAM_RESOLUTION = "full_webcam_resolution"
+
+    @VisibleForTesting
+    var enabledForTest: Boolean? = null
 
     private val billingEventChannel = ConflatedBroadcastChannel<BillingEvent>()
     private val billingChannel = ConflatedBroadcastChannel(BillingData())
@@ -229,7 +249,7 @@ object BillingManager {
 
     private fun logError(description: String, billingResult: BillingResult?) {
         if (billingResult == null) {
-            Timber.v("Billing result is null, indicating billing connection was paused during an active process")
+            Timber.w("Billing result is null, indicating billing connection was paused during an active process")
             return
         }
 
@@ -285,7 +305,7 @@ object BillingManager {
     fun isFeatureEnabled(feature: String): Boolean {
         val isPremiumFeature = Firebase.remoteConfig.getString("premium_features").split(",").map { it.trim() }.contains(feature)
         val hasPremium = billingChannel.valueOrNull?.isPremiumActive == true
-        return !isPremiumFeature || hasPremium
+        return enabledForTest ?: (!isPremiumFeature || hasPremium)
     }
 
     fun shouldAdvertisePremium() = billingChannel.valueOrNull?.let {

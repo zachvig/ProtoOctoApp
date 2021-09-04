@@ -34,6 +34,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_AUTO_LIGHTS_FOR_WIDGET_REFRESH = "auto_lights_for_widget_refresh"
         private const val KEY_SHOW_WEBCAM_RESOLUTION = "show_webcam_resolution"
         private const val KEY_WEBCAM_ASPECT_RATIO_SOURCE = "webcam_aspect_ratio_source"
+        private const val KEY_SUPPRESS_M115 = "suppress_m115_request"
 
 
         const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT = "octprint"
@@ -163,5 +164,11 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         get() = sharedPreferences.getString(KEY_WEBCAM_ASPECT_RATIO_SOURCE, VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT) ?: VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT
         set(value) {
             edit { putString(KEY_WEBCAM_ASPECT_RATIO_SOURCE, value) }
+        }
+
+    var suppressM115Request
+        get() = sharedPreferences.getBoolean(KEY_SUPPRESS_M115, false)
+        set(value) {
+            edit { putBoolean(KEY_SUPPRESS_M115, value) }
         }
 }

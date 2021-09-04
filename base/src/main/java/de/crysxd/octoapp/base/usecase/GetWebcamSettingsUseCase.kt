@@ -1,20 +1,16 @@
 package de.crysxd.octoapp.base.usecase
 
-import android.net.Uri
 import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.ext.resolve
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
-import de.crysxd.octoapp.octoprint.UrlString
-import de.crysxd.octoapp.octoprint.extractAndRemoveUserInfo
-import de.crysxd.octoapp.octoprint.isFullUrl
+import de.crysxd.octoapp.octoprint.extractAndRemoveBasicAuth
 import de.crysxd.octoapp.octoprint.models.ConnectionType
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
+import de.crysxd.octoapp.octoprint.resolvePath
 import kotlinx.coroutines.flow.firstOrNull
-import okhttp3.Credentials
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import timber.log.Timber
-import java.net.URL
 import javax.inject.Inject
 
 class GetWebcamSettingsUseCase @Inject constructor(
@@ -58,27 +54,19 @@ class GetWebcamSettingsUseCase @Inject constructor(
         val primaryUrl = octoPrint.fullWebUrl
         val alternativeUrl = octoPrint.fullAlternativeWebUrl
 
-        return webcamSettings.map { ws ->
-            // We remove the primary URL in case the user configured the webcam as absolute URL to his local machine
-            val fixedUrl = ws.streamUrl?.removePrefix(primaryUrl)
-            val pair = if (!fixedUrl.isFullUrl()) {
-                // The URL is not absolute, add a host
-                Uri.parse(alternativeUrl?.takeIf { useAlternative } ?: primaryUrl)
-                    .buildUpon()
-                    .resolve(fixedUrl)
-                    .build()
-                    .toString().also {
-                        timber.i("Upgrading streamUrl from $fixedUrl -> $it")
-                    }
-            } else {
-                // The URL is a absolute URL not pointing to the OctoPrint machine, leave as is
-                ws.streamUrl
-            }?.extractAndRemoveUserInfo()
+        return webcamSettings.mapNotNull { ws ->
+            val streamUrl = ws.streamUrl ?: return@mapNotNull null
+
+            val (upgradedUrl, authHeader) = ws.streamUrl?.toHttpUrlOrNull()?.extractAndRemoveBasicAuth() ?: let {
+                // Conversion to HTTP url failed, indicating this URL is not absolute. Resolve from base.
+                val base = alternativeUrl?.takeIf { useAlternative } ?: primaryUrl
+                base.resolvePath(streamUrl).extractAndRemoveBasicAuth()
+            }
 
             ws.copy(
-                authHeader = pair?.second,
+                authHeader = authHeader,
                 multiCamUrl = null,
-                standardStreamUrl = pair?.first
+                standardStreamUrl = upgradedUrl.toString()
             )
         }
     }

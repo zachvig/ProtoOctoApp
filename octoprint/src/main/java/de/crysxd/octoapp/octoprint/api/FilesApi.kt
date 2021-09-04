@@ -4,6 +4,8 @@ import de.crysxd.octoapp.octoprint.models.files.FileCommand
 import de.crysxd.octoapp.octoprint.models.files.FileList
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
+import de.crysxd.octoapp.octoprint.resolvePath
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Response
@@ -30,14 +32,14 @@ interface FilesApi {
     suspend fun executeFileCommand(@Path("origin") origin: String, @Path("path") path: String, @Body command: Any): Response<Unit>
 
     class Wrapper(
-        private val webUrl: String,
+        private val webUrl: HttpUrl,
         private val okHttpClient: OkHttpClient,
         private val wrapped: FilesApi
     ) {
         fun downloadFile(file: FileObject.File): InputStream? {
             val request = Request.Builder()
                 .get()
-                .url(URI.create(webUrl).resolve("downloads/files/${file.origin}/${file.path}").toURL())
+                .url(webUrl.resolvePath("downloads/files/${file.origin}/${file.path}"))
                 .build()
 
             // Use a extended read timeout. This is a fix for OctoEverywhere where it can take a minute before

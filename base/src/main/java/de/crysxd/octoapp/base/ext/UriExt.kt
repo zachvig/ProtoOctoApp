@@ -59,3 +59,12 @@ fun Uri.open(octoActivity: Activity, allowCustomTabs: Boolean = true) {
         (octoActivity as? OctoActivity)?.showDialog(message) ?: Toast.makeText(octoActivity, message, Toast.LENGTH_SHORT).show()
     }
 }
+
+fun Uri.Builder.basicAuthCredentials(username: String, password: String): Uri.Builder {
+    val credentials = when {
+        username.isNotBlank() && password.isNotBlank() -> "${username.urlEncode()}:${password.urlEncode()}@"
+        username.isNotBlank() -> "${username.urlEncode()}@"
+        else -> ""
+    }
+    return encodedAuthority("$credentials${build().host}")
+}

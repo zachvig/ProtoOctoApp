@@ -9,9 +9,10 @@ data class WebcamSettings(
     val flipV: Boolean,
     val rotate90: Boolean,
     val webcamEnabled: Boolean?,
-    val streamRatio: String,
+    val streamRatio: String?,
     val authHeader: String?,
 ) {
 
+    val saveStreamRatio get() = streamRatio ?: "16:9"
     val streamUrl get() = standardStreamUrl ?: multiCamUrl
 }

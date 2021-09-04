@@ -53,7 +53,7 @@
     <string name="configure_remote_acces___octoeverywhere___title">OctoEverywhere!</string>
     <string name="configure_remote_acces___remote_access_configured">Acceso remoto configurado</string>
     <string name="configure_remote_access___title">Configurar el acceso remoto</string>
-    <string name="connect">Conecta</string>
+    <string name="workspace___connect">Conecta</string>
     <string name="connect_printer___action_change_octoprint">Cambiar OctoPrint</string>
     <string name="connect_printer___action_cycle_psu">Ciclo de la PSU</string>
     <string name="connect_printer___action_retry">Reintentar la conexión</string>
@@ -330,8 +330,8 @@
     <string name="power_menu___turn_x_off">Apagar %s</string>
     <string name="power_menu___turn_x_on">Encender %s</string>
     <string name="preheat">Precalentar</string>
-    <string name="prepare">Prepara</string>
-    <string name="print">Imprimir</string>
+    <string name="workspace___prepare">Prepara</string>
+    <string name="workspace___print">Imprimir</string>
     <string name="print_info">Imprimir información</string>
     <string name="print_name">Nombre en letra de molde</string>
     <string name="print_notification___cancelling_title">Cancelar…</string>
@@ -376,7 +376,7 @@
     <string name="show_details">Mostrar detalles</string>
     <string name="show_logs">Mostrar los registros</string>
     <string name="sign_in___access___confirm_in_web_interface">Abrir la interfaz web y permitir el acceso</string>
-    <string name="sign_in___access___explainer">Abra OctoPrint y confirme que OctoApp tiene permiso para acceder:</string>
+    <string name="sign_in___access___explainer">Abra OctoPrint en su teléfono u ordenador y confirme que OctoApp tiene permiso para acceder:</string>
     <string name="sign_in___access___open_web">Permitir el acceso</string>
     <string name="sign_in___access___use_api_key">…o introducir una clave API</string>
     <string name="sign_in___broken_setup___api_key_revoked">La clave API OctoApp ya no es válida, por favor conecte OctoPrint de nuevo</string>

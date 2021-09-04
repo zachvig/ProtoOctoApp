@@ -61,7 +61,7 @@
     <string name="configure_remote_acces___octoeverywhere___title">OctoEverywhere!</string>
     <string name="configure_remote_acces___remote_access_configured">Remote access configured</string>
     <string name="configure_remote_access___title">Configure Remote Access</string>
-    <string name="connect">Connect</string>
+    <string name="workspace___connect">Connect</string>
     <string name="connect_printer___action_change_octoprint">Switch OctoPrint</string>
     <string name="connect_printer___action_cycle_psu">Cycle PSU</string>
     <string name="connect_printer___action_retry">Retry connection</string>
@@ -328,8 +328,8 @@
     <string name="power_menu___turn_x_off">Turn %s off</string>
     <string name="power_menu___turn_x_on">Turn %s on</string>
     <string name="preheat">Preheat</string>
-    <string name="prepare">Prepare</string>
-    <string name="print">Print</string>
+    <string name="workspace___prepare">Prepare</string>
+    <string name="workspace___print">Print</string>
     <string name="print_info">Print info</string>
     <string name="print_name">Print name</string>
     <string name="print_notification___cancelling_title">Cancelling…</string>
@@ -374,7 +374,7 @@
     <string name="show_details">Show Details</string>
     <string name="show_logs">Show logs</string>
     <string name="sign_in___access___confirm_in_web_interface">Open the web interface and allow access</string>
-    <string name="sign_in___access___explainer">Open OctoPrint and confirm that OctoApp is allowed to access:</string>
+    <string name="sign_in___access___explainer">Open OctoPrint on your phone or computer and confirm that OctoApp is allowed to access:</string>
     <string name="sign_in___access___open_web">Allow access</string>
     <string name="sign_in___access___use_api_key">…or enter an API key</string>
     <string name="sign_in___broken_setup___api_key_revoked">The API key OctoApp is no longer valid, please connect OctoPrint again</string>
@@ -385,6 +385,7 @@
     <string name="sign_in___cancel_and_use_other_information_title">Connect to other</string>
     <string name="sign_in___connect_to_other_octoprint">Connect to an other OctoPrint</string>
     <string name="sign_in___continue">Continue</string>
+    <string name="sign_in___discovery___error_invalid_url">Please provide a valid URL</string>
     <string name="sign_in___discover___web_url_hint">OctoPrint URL</string>
     <string name="sign_in___discover___web_url_hint_active">OctoPrint URL – Copy this from your browser!</string>
     <string name="sign_in___discovery___connect_manually_subtitle">It\'s easy!</string>
@@ -503,4 +504,10 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">You can change this limit in OctoPrint settings</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Z feedrate (mm/min)</string>
+    <string name="main_menu___item_show_octoprint">OctoPrint</string>
+    <string name="configure_remote_access___manual___username_hint">BasicAuth user, optional</string>
+    <string name="configure_remote_access___manual___username_hint_active">Username, optional</string>
+    <string name="configure_remote_access___manual___password_hint">BasicAuth password, optional</string>
+    <string name="configure_remote_access___manual___password_hint_active">Password, optional</string>
+    <string name="workspace___explainer"><![CDATA[OctoApp will <b>switch automatically</b> to the correct workspace.<br><br><b>Connect</b>: No printer is connected, but you have all tools to connect one.<br><br><b>Prepare</b>: A printer is connected but not printing. Get ready and start your next print!<br><br><b>Print</b>: Tune and control the active print!<br><br>Each workspace contains all controls you need in the current situation, helping the app to stay clean and simple!]]></string>
 </resources>

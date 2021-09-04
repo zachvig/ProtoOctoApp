@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.logging
 
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -10,7 +11,8 @@ import timber.log.Timber
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class TimberCacheTree(
     private val mask: SensitiveDataMask,
@@ -22,10 +24,13 @@ class TimberCacheTree(
     private val cache = StringBuilder()
     private val lock = Mutex()
 
+    @VisibleForTesting
+    var collectVerbose = false
+
     val logs get() = cache.toString()
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        if (priority > Log.VERBOSE) {
+        if (priority > Log.VERBOSE || collectVerbose) {
             GlobalScope.launch(Dispatchers.IO) {
                 lock.withLock {
                     val prefix = "${getTime()} ${getLevel(priority)}/${tag ?: "???"}: "
@@ -52,6 +57,9 @@ class TimberCacheTree(
             }
         }
     }
+
+    @VisibleForTesting
+    fun clear() = cache.clear()
 
     private fun getTime() = dateFormat.format(Date())
 

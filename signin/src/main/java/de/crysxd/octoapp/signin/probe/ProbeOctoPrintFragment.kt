@@ -12,8 +12,10 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.basicAuthCredentials
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
@@ -31,6 +33,7 @@ import io.noties.markwon.Markwon
 import timber.log.Timber
 
 class ProbeOctoPrintFragment : BaseFragment() {
+
     override val viewModel by injectViewModel<ProbeOctoPrintViewModel>()
     private lateinit var binding: BaseSigninFragmentBinding
     private val wifiViewModel by injectViewModel<NetworkStateViewModel>(Injector.get().viewModelFactory())
@@ -38,7 +41,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
     private var findingBinding: ProbeFragmentFindingBinding? = null
     private val findingDescriptionLibrary by lazy { FindingDescriptionLibrary(requireContext()) }
     private val initialWebUrl by lazy {
-        navArgs<ProbeOctoPrintFragmentArgs>().value.baseUrl
+        UriLibrary.secureDecodeUrl(navArgs<ProbeOctoPrintFragmentArgs>().value.baseUrl)
     }
     private val allowApiKeyReuse by lazy {
         navArgs<ProbeOctoPrintFragmentArgs>().value.allowApiKeyReuse == true.toString()
@@ -108,7 +111,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
     private fun continueToRequestApiKey(webUrl: String) = binding.octoView.doAfterAnimation {
         // Octo is now in a neutral position, we can animate states
         val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
-        val directions = ProbeOctoPrintFragmentDirections.requestAccess(webUrl)
+        val directions = ProbeOctoPrintFragmentDirections.requestAccess(UriLibrary.secureEncodeUrl(webUrl))
         findNavController().navigate(directions, extras)
     }
 
@@ -128,7 +131,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
 
             // Clearing and setting the instance will ensure we reset the navigation
             Injector.get().octorPrintRepository().clearActive()
-            Injector.get().octorPrintRepository().setActive(instance)
+            Injector.get().octorPrintRepository().setActive(instance.copy(issue = null))
         }
     }
 
@@ -211,13 +214,11 @@ class ProbeOctoPrintFragment : BaseFragment() {
         is TestFullNetworkStackUseCase.Finding.BasicAuthRequired -> {
             val user = findingBinding?.usernameInput?.editText?.text?.toString() ?: ""
             val password = findingBinding?.passwordInput?.editText?.text?.toString() ?: ""
-            val uri = Uri.parse(finding.webUrl)
-            val credentials = when {
-                user.isNotBlank() && password.isNotBlank() -> "$user:$password@"
-                user.isNotBlank() -> "$user@"
-                else -> ""
-            }
-            val webUrl = uri.buildUpon().encodedAuthority("$credentials${uri.host}").build().toString()
+            val webUrl = Uri.parse(finding.webUrl)
+                .buildUpon()
+                .basicAuthCredentials(username = user, password = password)
+                .build()
+                .toString()
             Injector.get().sensitiveDataMask().registerWebUrl(webUrl, "octoprint")
             viewModel.probe(webUrl)
         }

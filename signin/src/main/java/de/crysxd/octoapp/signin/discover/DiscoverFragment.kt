@@ -32,6 +32,7 @@ import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requestFocusAndOpenSoftKeyboard
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
+import de.crysxd.octoapp.base.utils.AnimationTestUtils
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.databinding.BaseSigninFragmentBinding
 import de.crysxd.octoapp.signin.databinding.DiscoverFragmentContentManualBinding
@@ -155,6 +156,10 @@ class DiscoverFragment : BaseFragment() {
             binding.octoBackground.alpha = 0f
             binding.loading.title.setText(R.string.sign_in___discovery___welcome_title)
             binding.loading.subtitle.setText(R.string.sign_in___discovery___welcome_subtitle_searching)
+
+            // Cancel here if we don't want animations
+            if (AnimationTestUtils.animationsDisabled) return@launchWhenCreated
+
             binding.loading.title.alpha = 0f
             binding.loading.subtitle.alpha = 0f
             binding.loading.progress.alpha = 0f
@@ -239,7 +244,7 @@ class DiscoverFragment : BaseFragment() {
         // Update title visibility
         binding.previousOptionsTitle.isVisible = binding.previousOptions.childCount > 1
         binding.quickSwitchOption.isVisible = !quickSwitchEnabled && binding.previousOptionsTitle.isVisible
-        binding.buttonDelete.isVisible = binding.buttonDelete.isVisible && binding.previousOptionsTitle.isVisible
+        binding.buttonShowDelete.isVisible = binding.buttonShowDelete.isVisible && binding.previousOptionsTitle.isVisible
         binding.quickSwitchOption.setOnClickListener { continueWithPurchase() }
     }
 
@@ -259,7 +264,7 @@ class DiscoverFragment : BaseFragment() {
         )
 
         val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
-        val directions = DiscoverFragmentDirections.requestAccess(webUrl = octoPrint.webUrl)
+        val directions = DiscoverFragmentDirections.requestAccess(webUrl = UriLibrary.secureEncodeUrl(octoPrint.webUrl))
         findNavController().navigate(directions, extras)
     }
 
@@ -300,7 +305,7 @@ class DiscoverFragment : BaseFragment() {
             // We do not allow the API key to be reused to prevent the user from bypassing quick switch.
             // If the user has BillingManager.FEATURE_QUICK_SWITCH, the fix flow will always allow API key reuse
             val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
-            val directions = DiscoverFragmentDirections.probeConnection(baseUrl = webUrl, allowApiKeyReuse = false.toString())
+            val directions = DiscoverFragmentDirections.probeConnection(baseUrl = UriLibrary.secureEncodeUrl(webUrl), allowApiKeyReuse = false.toString())
             findNavController().navigate(directions, extras)
         }
     }
@@ -348,9 +353,9 @@ class DiscoverFragment : BaseFragment() {
         localOptionsBinding.quickSwitchOption.setOnClickListener {
             continueWithEnableQuickSwitch()
         }
-        localOptionsBinding.buttonDelete.setOnClickListener {
+        localOptionsBinding.buttonShowDelete.setOnClickListener {
             beginDelayedTransition()
-            localOptionsBinding.buttonDelete.isVisible = false
+            localOptionsBinding.buttonShowDelete.isVisible = false
             localOptionsBinding.previousOptions.forEach {
                 if (it != localOptionsBinding.quickSwitchOption) {
                     (it as? DiscoverOptionView)?.showDelete()

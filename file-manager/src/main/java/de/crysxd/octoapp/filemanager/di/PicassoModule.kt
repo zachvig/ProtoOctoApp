@@ -12,6 +12,7 @@ import dagger.Module
 import dagger.Provides
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.ext.resolve
+import de.crysxd.octoapp.octoprint.resolvePath
 import timber.log.Timber
 
 @Module
@@ -27,16 +28,16 @@ class PicassoModule {
                     .memoryCache(LruCache(context))
                     .requestTransformer { request ->
                         request.uri?.let { uri ->
-                            val newUri = Uri.parse(octoPrint.webUrl)
-                                .buildUpon()
-                                .resolve(uri.path)
+                            val newUri = octoPrint.webUrl
+                                .resolvePath(uri.path)
+                                .newBuilder()
                                 .query(uri.query)
                                 .build()
 
                             Timber.d("Mapping $uri -> $newUri")
 
                             request.buildUpon()
-                                .setUri(newUri)
+                                .setUri(Uri.parse(newUri.toString()))
                                 .build()
                         } ?: request
                     }

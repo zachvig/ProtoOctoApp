@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
-import java.util.*
+import java.util.Locale
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import javax.inject.Inject
@@ -181,7 +181,7 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor(
             fileCount++
         }
 
-        BillingManager.billingFlow().firstOrNull()?.copy(availableSku = emptyList())?.let {
+        BillingManager.billingFlow().firstOrNull()?.let {
             zipStream.putNextEntry(ZipEntry("billing.json"))
             zipStream.writer().apply {
                 write(gson.toJson(it))

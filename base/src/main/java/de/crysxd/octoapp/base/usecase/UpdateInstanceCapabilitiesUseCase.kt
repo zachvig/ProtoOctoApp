@@ -3,7 +3,9 @@ package de.crysxd.octoapp.base.usecase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.ext.isHlsStreamUrl
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.exceptions.MissingPermissionException
@@ -19,6 +21,7 @@ import javax.inject.Inject
 class UpdateInstanceCapabilitiesUseCase @Inject constructor(
     private val octoPrintProvider: OctoPrintProvider,
     private val octoPrintRepository: OctoPrintRepository,
+    private val octoPreferences: OctoPreferences,
     private val executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase,
     private val getCurrentPrinterProfileUseCase: GetCurrentPrinterProfileUseCase,
 ) : UseCase<UpdateInstanceCapabilitiesUseCase.Params, Unit>() {
@@ -62,9 +65,11 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             }
             val m115 = async {
                 try {
-                    if (param.updateM115) {
+                    // Don't execute M115 if we suppress it manually (might cause issues on some machines) or if we don't use the Gcode preview (as this is where we use it)
+                    if (param.updateM115 && BillingManager.isFeatureEnabled(BillingManager.FEATURE_GCODE_PREVIEW) && !octoPreferences.suppressM115Request) {
                         executeM115()
                     } else {
+                        Timber.i("Skipping M115")
                         null
                     }
                 } catch (e: Exception) {

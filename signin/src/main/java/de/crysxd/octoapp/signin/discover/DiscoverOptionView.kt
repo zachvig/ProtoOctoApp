@@ -9,9 +9,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
-import de.crysxd.octoapp.octoprint.extractAndRemoveUserInfo
+import de.crysxd.octoapp.octoprint.withoutBasicAuth
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.databinding.DiscoverOptionBinding
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 class DiscoverOptionView @JvmOverloads constructor(
     context: Context,
@@ -21,11 +22,6 @@ class DiscoverOptionView @JvmOverloads constructor(
     context, attrs, defStyleRes
 ) {
     private val binding = DiscoverOptionBinding.inflate(LayoutInflater.from(context), this)
-    var isDeleteVisible: Boolean
-        get() = binding.buttonDelete.isVisible
-        set(value) {
-            binding.buttonDelete.isVisible = value
-        }
     var onDelete: () -> Unit = {}
         set(value) {
             field = value
@@ -57,7 +53,7 @@ class DiscoverOptionView @JvmOverloads constructor(
         alpha = if (enabled) 1f else 0.2f
         binding.shevron.isVisible = enabled
         binding.title.text = option.label
-        binding.subtitle.text = option.webUrl.extractAndRemoveUserInfo().first.takeIf { option.label != option.webUrl }
+        binding.subtitle.text = option.webUrl.toHttpUrlOrNull()?.withoutBasicAuth()?.toString()?.takeIf { option.label != option.webUrl }
         binding.subtitle.isVisible = binding.subtitle.text.isNotBlank()
         binding.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.menu_style_octoprint_background))
         binding.buttonDelete.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_octoprint_foreground))

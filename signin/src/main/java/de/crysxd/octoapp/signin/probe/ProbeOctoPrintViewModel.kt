@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
+import de.crysxd.octoapp.base.utils.AnimationTestUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -15,7 +16,8 @@ class ProbeOctoPrintViewModel(
 ) : BaseViewModel() {
 
     companion object {
-        private const val MIN_PROBE_DURATION = 2000
+        private const val MIN_PROBE_DURATION = 2000L
+        private const val MIN_TEST_PROBE_DURATION = 1000L
     }
 
     var lastWebUrl: String? = null
@@ -35,7 +37,8 @@ class ProbeOctoPrintViewModel(
             val apiKey = octoPrintRepository.findOrNull(webUrl)?.apiKey ?: ""
             val target = TestFullNetworkStackUseCase.Target.OctoPrint(webUrl = webUrl, apiKey = apiKey)
             val finding = useCase.execute(target)
-            (MIN_PROBE_DURATION - (System.currentTimeMillis() - start)).takeIf { it > 0 }?.let { delay(it) }
+            val delay = if (AnimationTestUtils.animationsDisabled) MIN_TEST_PROBE_DURATION else MIN_PROBE_DURATION
+            (delay - (System.currentTimeMillis() - start)).takeIf { it > 0 }?.let { delay(it) }
             lastWebUrl = finding.webUrl
             mutableUiState.postValue(UiState.FindingsReady(finding))
         } finally {
