@@ -15,6 +15,7 @@ import de.crysxd.octoapp.base.datasource.LocalPinnedMenuItemsDataSource
 import de.crysxd.octoapp.base.datasource.RemoteGcodeFileDataSource
 import de.crysxd.octoapp.base.datasource.WidgetPreferencesDataSource
 import de.crysxd.octoapp.base.di.BaseScope
+import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
@@ -32,11 +33,14 @@ class DataSourceModule {
         .create()
 
     @Provides
-    fun provideOctoPrintInstanceInformationDataSource(sharedPreferences: SharedPreferences): DataSource<List<OctoPrintInstanceInformationV3>> =
-        LocalOctoPrintInstanceInformationSource(
-            sharedPreferences,
-            createGson()
-        )
+    fun provideOctoPrintInstanceInformationDataSource(
+        sharedPreferences: SharedPreferences,
+        sensitiveDataMask: SensitiveDataMask,
+    ): DataSource<List<OctoPrintInstanceInformationV3>> = LocalOctoPrintInstanceInformationSource(
+        sharedPreferences,
+        createGson(),
+        sensitiveDataMask
+    )
 
     @Provides
     fun provideGcodeHistoryDataSource(sharedPreferences: SharedPreferences): DataSource<List<GcodeHistoryItem>> =

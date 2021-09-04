@@ -37,7 +37,7 @@ class DiscoverOptionView @JvmOverloads constructor(
     }
 
     fun show(option: DiscoverOctoPrintUseCase.DiscoveredOctoPrint) {
-        optionId = option.webUrl
+        optionId = option.webUrl.toString()
         binding.title.text = option.label
         binding.subtitle.text = option.detailLabel
         binding.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.menu_style_printer_background))
@@ -45,7 +45,7 @@ class DiscoverOptionView @JvmOverloads constructor(
         binding.shevron.setColorFilter(ContextCompat.getColor(context, R.color.menu_style_printer_foreground))
     }
 
-    fun isShowing(option: DiscoverOctoPrintUseCase.DiscoveredOctoPrint) = option.webUrl == optionId
+    fun isShowing(option: DiscoverOctoPrintUseCase.DiscoveredOctoPrint) = option.webUrl.toString() == optionId
 
     fun show(option: OctoPrintInstanceInformationV3, enabled: Boolean) {
         optionId = option.id

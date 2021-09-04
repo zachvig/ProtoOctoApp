@@ -7,6 +7,8 @@ import de.crysxd.octoapp.base.network.OctoPrintUpnpDiscovery
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import timber.log.Timber
 import java.net.InetAddress
 import java.util.*
@@ -55,7 +57,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                 instance = DiscoveredOctoPrint(
                     label = it.label,
                     detailLabel = it.hostname,
-                    webUrl = it.webUrl,
+                    webUrl = it.webUrl.toHttpUrl(),
                     host = it.host,
                     method = DiscoveryMethod.DnsSd,
                     quality = 100,
@@ -84,7 +86,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
                     instance = DiscoveredOctoPrint(
                         label = "OctoPrint via UPnP",
                         detailLabel = it.address.hostAddress,
-                        webUrl = "http://${it.upnpHostname}:80/",
+                        webUrl = "http://${it.upnpHostname}:80/".toHttpUrl(),
                         port = 80,
                         host = it.address,
                         method = DiscoveryMethod.Upnp,
@@ -97,12 +99,12 @@ class DiscoverOctoPrintUseCase @Inject constructor(
     }
 
     private suspend fun testDiscoveredInstanceAndPublishResult(timber: Timber.Tree, instance: DiscoveredOctoPrint, submitResult: (DiscoveredOctoPrint) -> Unit) {
-        sensitiveDataMask.registerWebUrl(instance.webUrl, "octoprint_from_${instance.method::class.java.simpleName.lowercase()}")
+        sensitiveDataMask.registerWebUrl(instance.webUrl)
         timber.i("Probing for '${instance.label}' at ${instance.webUrl} using ${instance.method} (${instance.id})")
         try {
             val result = testFullNetworkStackUseCase.execute(
                 TestFullNetworkStackUseCase.Target.OctoPrint(
-                    webUrl = instance.webUrl,
+                    webUrl = instance.webUrl.toString(),
                     apiKey = ""
                 )
             )
@@ -127,7 +129,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
     data class DiscoveredOctoPrint(
         val label: String,
         val detailLabel: String,
-        val webUrl: String,
+        val webUrl: HttpUrl,
         val port: Int,
         val host: InetAddress,
         val method: DiscoveryMethod,

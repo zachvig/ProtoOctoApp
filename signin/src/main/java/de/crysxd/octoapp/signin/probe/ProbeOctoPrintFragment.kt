@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.signin.probe
 
-import android.net.Uri
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.transition.TransitionManager
@@ -15,7 +14,6 @@ import androidx.navigation.fragment.navArgs
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ext.basicAuthCredentials
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
@@ -215,15 +213,12 @@ class ProbeOctoPrintFragment : BaseFragment() {
             viewModel.probe(finding.webUrl.toString())
         }
         is TestFullNetworkStackUseCase.Finding.BasicAuthRequired -> {
-            val user = findingBinding?.usernameInput?.editText?.text?.toString() ?: ""
-            val password = findingBinding?.passwordInput?.editText?.text?.toString() ?: ""
-            val webUrl = Uri.parse(finding.webUrl.toString())
-                .buildUpon()
-                .basicAuthCredentials(username = user, password = password)
+            val webUrl = finding.webUrl.newBuilder()
+                .username(findingBinding?.usernameInput?.editText?.text?.toString() ?: "")
+                .password(findingBinding?.passwordInput?.editText?.text?.toString() ?: "")
                 .build()
-                .toString()
-            Injector.get().sensitiveDataMask().registerWebUrl(webUrl, "octoprint")
-            viewModel.probe(webUrl)
+            Injector.get().sensitiveDataMask().registerWebUrl(webUrl)
+            viewModel.probe(webUrl.toString())
         }
 
         else -> viewModel.probe(finding.webUrl.toString())

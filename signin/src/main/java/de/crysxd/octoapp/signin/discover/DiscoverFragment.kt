@@ -264,7 +264,7 @@ class DiscoverFragment : BaseFragment() {
         )
 
         val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
-        val directions = DiscoverFragmentDirections.requestAccess(webUrl = UriLibrary.secureEncode(octoPrint.webUrl))
+        val directions = DiscoverFragmentDirections.requestAccess(webUrl = UriLibrary.secureEncode(octoPrint.webUrl.toString()))
         findNavController().navigate(directions, extras)
     }
 

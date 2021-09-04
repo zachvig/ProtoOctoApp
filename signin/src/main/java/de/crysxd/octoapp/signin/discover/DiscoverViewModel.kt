@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import timber.log.Timber
 
 @Suppress("EXPERIMENTAL_API_USAGE")
@@ -86,7 +87,7 @@ class DiscoverViewModel(
     fun testWebUrl(webUrl: String) {
         try {
             val upgradedUrl = upgradeUrl(webUrl)
-            sensitiveDataMask.registerWebUrl(upgradedUrl, "octoprint")
+            sensitiveDataMask.registerWebUrl(upgradedUrl.toHttpUrlOrNull())
 
             if (webUrl.isBlank()) {
                 throw IllegalArgumentException("URL is empty")
