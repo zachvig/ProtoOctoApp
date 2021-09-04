@@ -120,7 +120,9 @@ class LocalOctoPrintInstanceInformationSource(
                 OctoPrintInstanceInformationV3(it)
             }.let {
                 // Store and delete
-                Timber.i("Upgrading from list V2 -> V3 (v2=$v2, v3=$it)")
+                it.forEachIndexed { index, v3 ->
+                    Timber.i("Upgrading from V2 -> V3 (v2=${v2[index]}, v3=$v3)")
+                }
                 store(it)
             }
         }
