@@ -39,7 +39,7 @@ test_debug:
     - tags
     - /^release\/.*$/
   script:
-    - ./gradlew test
+    - ./gradlew testDebug
     - ./gradlew assembleDebugAndroidTest
     - ~/ci-scripts/start-emulator.sh
     - ./gradlew connectedDebugAndroidTest || (~/ci-scripts/stop-emulator.sh && exit 1)
