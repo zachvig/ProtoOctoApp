@@ -179,9 +179,9 @@
     <string name="main_menu___about_text">
         <![CDATA[Version <font color="%1$06x"><b>%2$s</b></font> was<br/>made <font color="%1$06x"><b>for you</b></font> with love in Europe ]]>
                                 &#127466;&#127482;
-        
-        
-        
+
+
+
         <![CDATA[<br><a href="privacy">Data privacy</a>]]>
     </string>
     <string name="main_menu___button_enable_automatic_lights">Enable</string>
@@ -510,4 +510,5 @@
     <string name="configure_remote_access___manual___password_hint">BasicAuth password, optional</string>
     <string name="configure_remote_access___manual___password_hint_active">Password, optional</string>
     <string name="workspace___explainer"><![CDATA[OctoApp will <b>switch automatically</b> to the correct workspace.<br><br><b>Connect</b>: No printer is connected, but you have all tools to connect one.<br><br><b>Prepare</b>: A printer is connected but not printing. Get ready and start your next print!<br><br><b>Print</b>: Tune and control the active print!<br><br>Each workspace contains all controls you need in the current situation, helping the app to stay clean and simple!]]></string>
+    <string name="main_menu___warning_automatic_lights"><![CDATA[<small>⚠️ Important notice:<br>Some plugins (e.g. TPLink) can <b>disconnect your printer when OctoApp turns the lights off</b> when you close the app! You can disable this behaviour in the plugin settings in the webinterface</small>]]></string>
 </resources>
