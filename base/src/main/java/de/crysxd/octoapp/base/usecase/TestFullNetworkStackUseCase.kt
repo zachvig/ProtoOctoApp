@@ -57,19 +57,18 @@ class TestFullNetworkStackUseCase @Inject constructor(
 
             // Test reachability
             timber.i("Testing reachability")
-            testReachability(host = host, ip = ip, webUrl = baseUrl, timber = timber)?.let { return@withContext it }
-            timber.i("Passed")
+            val reachable = testReachability(host = host, ip = ip, webUrl = baseUrl, timber = timber)
+            timber.i(if (reachable == null) "Passed" else "Failed")
 
             // Test port open
             timber.i("Testing port access")
-            val port = when {
-                baseUrl.port > 0 -> baseUrl.port
-                baseUrl.scheme == "http" -> 80
-                baseUrl.scheme == "https" -> 443
-                else -> 80
-            }
-            testPortOpen(host = host, ip = ip, port = port, webUrl = baseUrl, timber = timber)?.let { return@withContext it }
-            timber.i("Passed")
+            val portOpen = testPortOpen(host = host, ip = ip, webUrl = baseUrl, timber = timber)
+            timber.i(if (portOpen == null) "Passed" else "Failed")
+
+            // Return reachability issue or port open issue if reachable
+            // This setup will ignore reachability issues in case the port is open
+            // Some servers can't be pinged, this solves the issue
+            portOpen?.let { return@withContext reachable ?: portOpen }
 
             when (param) {
                 is Target.OctoPrint -> testOctoPrint(timber, baseUrl, param, host)
@@ -165,11 +164,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
     }
 
     private fun testReachability(host: String, ip: String, webUrl: HttpUrl, timber: Timber.Tree): Finding? = try {
-        if (host.endsWith("octoeverywhere.com")) {
-            timber.i("Can't ping octoeverywhere.com, skipping test")
-        } else {
-            require(InetAddress.getByName(ip).isReachable(PING_TIMEOUT)) { IOException("Unable to reach $host") }
-        }
+        require(InetAddress.getByName(ip).isReachable(PING_TIMEOUT)) { IOException("Unable to reach $host") }
         null
     } catch (e: Exception) {
         timber.w(e)
@@ -181,8 +176,8 @@ class TestFullNetworkStackUseCase @Inject constructor(
         )
     }
 
-    private fun testPortOpen(host: String, ip: String, port: Int, webUrl: HttpUrl, timber: Timber.Tree): Finding? = try {
-        val socket = Socket(ip, port)
+    private fun testPortOpen(host: String, ip: String, webUrl: HttpUrl, timber: Timber.Tree): Finding? = try {
+        val socket = Socket(ip, webUrl.port)
         socket.soTimeout = SOCKET_TIMEOUT
         socket.getOutputStream()
         null
@@ -190,7 +185,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
         timber.w(e)
         Finding.PortClosed(
             host = host,
-            port = port,
+            port = webUrl.port,
             webUrl = webUrl
         )
     }
