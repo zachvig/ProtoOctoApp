@@ -37,7 +37,6 @@ class WebcamViewModel(
     private val uiStateMediator = MediatorLiveData<UiState>()
     private var connectedWebcamSettingsHash: Int = INITIAL_WEBCAM_HASH
     val uiState = uiStateMediator.map { it }
-    val connectionCache: Pair<Int, MjpegConnection>? = null
     private val settingsLiveData = octoPreferences.updatedFlow.asLiveData()
     private val octoPrintLiveData = octoPrintRepository.instanceInformationFlow()
         .filter {
@@ -114,14 +113,10 @@ class WebcamViewModel(
                             }
                         } else {
                             delay(100)
-                            if (octoPreferences.experimentalWebcam) {
-                                MjpegConnection2(streamUrl = streamUrl, name = tag).load()
-                            } else {
-                                MjpegConnection(streamUrl = streamUrl.toString(), authHeader = streamUrl.extractAndRemoveBasicAuth().second, name = tag).load()
-                            }.map {
+                            MjpegConnection2(streamUrl = streamUrl, name = tag).load().map {
                                 when (it) {
-                                    is MjpegConnection.MjpegSnapshot.Loading -> UiState.Loading(canSwitchWebcam)
-                                    is MjpegConnection.MjpegSnapshot.Frame -> UiState.FrameReady(
+                                    is MjpegConnection2.MjpegSnapshot.Loading -> UiState.Loading(canSwitchWebcam)
+                                    is MjpegConnection2.MjpegSnapshot.Frame -> UiState.FrameReady(
                                         frame = it.frame,
                                         aspectRation = when (octoPreferences.webcamAspectRatioSource) {
                                             OctoPreferences.VALUE_WEBCAM_ASPECT_RATIO_SOURCE_IMAGE -> if (webcamSettings.rotate90) {

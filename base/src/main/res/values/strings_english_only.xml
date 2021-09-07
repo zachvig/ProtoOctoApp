@@ -94,8 +94,6 @@
     <string name="lab_menu___allow_battery_saver_description" translatable="false">With version 1.8, I introduced a battery saving mechanic for the print notification as it was consuming a lot of power on some devices. You can disable it to return to the old behaviour. This might resolve issues with missing filament change notifications.</string>
     <string name="lab_menu___allow_to_rotate_title" translatable="false">Allow OctoApp to rotate</string>
     <string name="lab_menu___allow_to_rotate_description" translatable="false">OctoApp can rotate into landscape mode. The UI is not optimized and rotating might cause issues on some screens. Will take affect after restart.</string>
-    <string name="lab_menu___experimental_webcam_title" translatable="false">New webcam stack</string>
-    <string name="lab_menu___experimental_webcam_description" translatable="false">Completely new webcam implementation introduced with version 1.9.0. The new webcam stack is using less resources and has a lower latency. Will take affect after a restart.</string>
     <string name="lab_menu___suppress_m115_request_title" translatable="false">Suppress M115 request</string>
     <string name="lab_menu___suppress_m115_request_description" translatable="false">By default OctoApp requests M115 when a printer is connected or the app is opened with a connected printer. This is used to style the Gcode preview for your printer. Suppressing the M115 will result in a generic print bed to be used.</string>
 

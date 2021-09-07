@@ -9,11 +9,15 @@ import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.ui.menu.*
+import de.crysxd.octoapp.base.ui.menu.Menu
+import de.crysxd.octoapp.base.ui.menu.MenuHost
+import de.crysxd.octoapp.base.ui.menu.MenuItem
+import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
+import de.crysxd.octoapp.base.ui.menu.RevolvingOptionsMenuItem
+import de.crysxd.octoapp.base.ui.menu.ToggleMenuItem
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_ENABLE_FULL_WEBCAM_RESOLUTION
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_SHOW_WEBCAM_RESOLUTION
 import de.crysxd.octoapp.base.ui.menu.main.MENU_ITEM_WEBCAM_ASPECT_RATIO_SOURCE
-import de.crysxd.octoapp.base.ui.menu.main.OctoAppLabMenu
 import kotlinx.parcelize.Parcelize
 import kotlin.math.roundToInt
 
@@ -23,7 +27,6 @@ class WebcamSettingsMenu : Menu {
         ShowResolutionMenuItem(),
         EnableFullResolutionMenuItem(),
         AspectRatioMenuItem(Injector.get().localizedContext()),
-        OctoAppLabMenu.ExperimentalWebcam()
     )
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.webcam_settings___title)

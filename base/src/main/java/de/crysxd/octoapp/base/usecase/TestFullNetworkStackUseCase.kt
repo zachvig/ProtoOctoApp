@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.network.LocalDnsResolver
-import de.crysxd.octoapp.base.ui.widget.webcam.MjpegConnection
 import de.crysxd.octoapp.base.ui.widget.webcam.MjpegConnection2
 import de.crysxd.octoapp.octoprint.exceptions.*
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
@@ -112,7 +111,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
                 streamUrl = webcamUrl,
                 name = "test",
                 throwExceptions = true
-            ).load().mapNotNull { it as? MjpegConnection.MjpegSnapshot.Frame }.onEach {
+            ).load().mapNotNull { it as? MjpegConnection2.MjpegSnapshot.Frame }.onEach {
                 startTime = startTime ?: System.currentTimeMillis()
             }.take(frames).toList().last()
             val endTime = System.currentTimeMillis()

@@ -160,8 +160,4 @@
         <key>advertise_octoeverywhere</key>
         <value>false</value>
     </entry>
-    <entry>
-        <key>experimental_webcam</key>
-        <value>true</value>
-    </entry>
 </defaultsMap>

@@ -8,7 +8,6 @@ import android.graphics.RectF
 import androidx.core.graphics.applyCanvas
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.ui.widget.webcam.MjpegConnection
 import de.crysxd.octoapp.base.ui.widget.webcam.MjpegConnection2
 import de.crysxd.octoapp.base.utils.measureTime
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +43,7 @@ class GetWebcamSnapshotUseCase @Inject constructor(
 
             // Load single frame
             val mjpegConnection = MjpegConnection2(webcamSettings?.streamUrl?.toHttpUrlOrNull() ?: throw IllegalStateException("No stream URL"), "widget")
-            mjpegConnection.load().mapNotNull { it as? MjpegConnection.MjpegSnapshot.Frame }.map {
+            mjpegConnection.load().mapNotNull { it as? MjpegConnection2.MjpegSnapshot.Frame }.map {
                 measureTime("transform_frame_for_widget") {
                     val transformed = applyWebcamTransformationsUseCase.execute(ApplyWebcamTransformationsUseCase.Params(it.frame, settings = webcamSettings))
                     val width = transformed.width.coerceAtMost(param.maxWidthPx)

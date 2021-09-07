@@ -53,13 +53,13 @@ class MjpegConnection2(
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    fun load(): Flow<MjpegConnection.MjpegSnapshot> {
+    fun load(): Flow<MjpegSnapshot> {
         var hasBeenConnected = false
         var lastImageTime = System.currentTimeMillis()
         var imageTimes = 0L
         var imageCounter = 0
         return flow {
-            emit(MjpegConnection.MjpegSnapshot.Loading)
+            emit(MjpegSnapshot.Loading)
 
             Timber.tag(tag).i("Connecting")
             val response = connect()
@@ -72,7 +72,7 @@ class MjpegConnection2(
             val inputStream = response.body!!.byteStream().buffered(bufferSize * 4)
             while (true) {
                 emit(
-                    MjpegConnection.MjpegSnapshot.Frame(
+                    MjpegSnapshot.Frame(
                         readNextImage(cache, boundary, inputStream)
                     )
                 )
@@ -97,7 +97,7 @@ class MjpegConnection2(
                 hasBeenConnected -> {
                     val backoff = 2000 * (attempt + 1)
                     Timber.tag(tag).i("Connection broke down, scheduling reconnect (attempt=$attempt, backoff=${backoff}ms)")
-                    emit(MjpegConnection.MjpegSnapshot.Loading)
+                    emit(MjpegSnapshot.Loading)
                     delay(backoff)
                     Timber.tag(tag).i("Reconnecting...")
                     true
@@ -310,5 +310,11 @@ class MjpegConnection2(
             if (endIndex < 0) return null to null
             return startIndex to endIndex
         }
+    }
+
+
+    sealed class MjpegSnapshot {
+        object Loading : MjpegSnapshot()
+        data class Frame(val frame: Bitmap) : MjpegSnapshot()
     }
 }
