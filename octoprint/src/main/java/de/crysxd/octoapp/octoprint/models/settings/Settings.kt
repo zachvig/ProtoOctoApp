@@ -76,6 +76,8 @@ data class Settings(
 
     class WledSettings : PluginSettings
 
+    class OctoCamSettings : PluginSettings
+
     class MyStromSettings : PluginSettings
 
     data class MultiCamSettings(

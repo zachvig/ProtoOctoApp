@@ -6,6 +6,7 @@ import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_AUTOMATIC_LIGHTS
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.ui.menu.Menu
 import de.crysxd.octoapp.base.ui.menu.MenuHost
 import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
@@ -42,6 +43,8 @@ class AutomaticLightsSettingsMenu : Menu {
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___title_automatic_lights)
 
     override suspend fun getSubtitle(context: Context) = context.getString(R.string.main_menu___subtitle_automatic_lights)
+
+    override fun getBottomText(context: Context) = context.getString(R.string.main_menu___warning_automatic_lights).toHtml()
 
     override fun getEmptyStateIcon() = R.drawable.octo_power_devices
 

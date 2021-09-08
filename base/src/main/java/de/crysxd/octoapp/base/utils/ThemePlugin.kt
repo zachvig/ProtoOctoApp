@@ -14,17 +14,20 @@ class ThemePlugin(private val context: Context) : AbstractMarkwonPlugin() {
     override fun configureTheme(builder: MarkwonTheme.Builder) {
         super.configureTheme(builder)
         val res = context.resources
-        val attrs = arrayOf(R.attr.fontFamily).toIntArray()
-        val typeface = try {
+
+        try {
+            val attrs = arrayOf(R.attr.fontFamily).toIntArray()
             context.obtainStyledAttributes(
                 R.style.OctoTheme_TextAppearance_Title,
                 attrs
             ).use {
                 ResourcesCompat.getFont(context, it.getResourceId(0, 0))
-            }
+            } ?: Typeface.DEFAULT
         } catch (e: Exception) {
             null
-        } ?: Typeface.DEFAULT
+        }?.let {
+            builder.headingTypeface(it)
+        }
 
         builder.linkColor(ContextCompat.getColor(context, R.color.accent))
         builder.headingBreakHeight(0)
@@ -38,7 +41,6 @@ class ThemePlugin(private val context: Context) : AbstractMarkwonPlugin() {
                 1f, // H6
             ).toFloatArray()
         )
-        builder.headingTypeface(typeface)
         builder.bulletWidth(res.getDimension(R.dimen.margin_0_1).toInt())
         builder.bulletListItemStrokeWidth(res.getDimension(R.dimen.margin_2).toInt())
     }

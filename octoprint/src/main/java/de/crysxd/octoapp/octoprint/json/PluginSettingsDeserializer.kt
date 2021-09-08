@@ -39,6 +39,7 @@ class PluginSettingsDeserializer : JsonDeserializer<Settings.PluginSettingsGroup
         "mystromswitch" -> context.deserialize<Settings.MyStromSettings>(element, Settings.MyStromSettings::class.java)
         "discovery" -> context.deserialize<Settings.Discovery>(element, Settings.Discovery::class.java)
         "octoeverywhere" -> context.deserialize<Settings.OctoEverywhere>(element, Settings.OctoEverywhere::class.java)
+        "octocam" -> context.deserialize<Settings.OctoCamSettings>(element, Settings.OctoCamSettings::class.java)
         else -> Unknown
     }
 
