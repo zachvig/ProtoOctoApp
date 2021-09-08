@@ -9,8 +9,8 @@ import com.github.triplet.gradle.androidpublisher.*
 android {
     defaultConfig{
         applicationId "de.crysxd.octoapp"
-        versionCode 1_10_23
-        versionName "1.10.13"
+        versionCode 1_10_24
+        versionName "1.10.14"
     }
 }
 
