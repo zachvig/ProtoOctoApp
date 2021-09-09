@@ -23,6 +23,7 @@ import de.crysxd.octoapp.base.models.OctoEverywhereConnection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import timber.log.Timber
 import java.io.File
 import java.util.Locale
@@ -145,8 +146,8 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor(
                 val json = Gson().toJsonTree(
                     info?.copy(
                         apiKey = "***",
-                        webUrl = "***",
-                        alternativeWebUrl = "***".takeIf { info.alternativeWebUrl != null },
+                        webUrl = info.webUrl.toHttpUrlOrNull()?.redact() ?: "null",
+                        alternativeWebUrl = info.alternativeWebUrl?.toHttpUrlOrNull()?.redact(),
                         octoEverywhereConnection = OctoEverywhereConnection(
                             connectionId = "***",
                             apiToken = "***",
