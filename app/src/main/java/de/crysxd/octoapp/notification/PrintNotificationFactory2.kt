@@ -76,14 +76,22 @@ class PrintNotificationFactory2(
         // Create service channel
         createNotificationChannel(
             id = SERVICE_CHANNEL_ID,
+            importance = NotificationManager.IMPORTANCE_MIN,
             name = "Live update service"
         )
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel(name: String, id: String, groupId: String? = null, soundUri: Uri? = null, audioAttributes: AudioAttributes? = null) {
+    private fun createNotificationChannel(
+        name: String,
+        id: String,
+        groupId: String? = null,
+        soundUri: Uri? = null,
+        audioAttributes: AudioAttributes? = null,
+        importance: Int = NotificationManager.IMPORTANCE_HIGH
+    ) {
         notificationManager.createNotificationChannel(
-            NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH).also {
+            NotificationChannel(id, name, importance).also {
                 audioAttributes?.let { attrs ->
                     soundUri?.let { uri ->
                         it.setSound(uri, attrs)
@@ -97,7 +105,9 @@ class PrintNotificationFactory2(
     fun createServiceNotification(statusText: String) = createNotificationBuilder(
         instanceInformation = null,
         notificationChannelId = SERVICE_CHANNEL_ID
-    ).setContentTitle(statusText).setSilent(true).build()
+    ).setContentTitle(statusText)
+        .setSilent(true)
+        .build()
 
     suspend fun createStatusNotification(
         instanceId: String,
@@ -108,7 +118,7 @@ class PrintNotificationFactory2(
             notificationChannelId = it.channelId
         ).setContentTitle(print.notificationTitle)
             .setContentText(print.notificationText())
-            .setProgress(MAX_PROGRESS, (MAX_PROGRESS * print.progress).toInt(), false)
+            .setProgress(MAX_PROGRESS, (MAX_PROGRESS * (print.progress / 100f)).toInt(), false)
             .setOngoing(true)
             .addCloseAction()
             .setSilent(true)
@@ -172,15 +182,17 @@ class PrintNotificationFactory2(
 
     private suspend fun Print.notificationText() = String.format(
         Locale.getDefault(),
-        "%.1d completed, %s",
-        progress * 100,
-        formatEtaUseCase.execute(
-            FormatEtaUseCase.Params(
-                secsLeft = secsLeft,
-                showLabel = true,
-                allowRelative = false
+        "%.1f%% completed, %s",
+        progress,
+        eta?.let {
+            formatEtaUseCase.execute(
+                FormatEtaUseCase.Params(
+                    secsLeft = it.time - System.currentTimeMillis(),
+                    showLabel = true,
+                    allowRelative = false
+                )
             )
-        )
+        } ?: "unknown"
     )
 
     private val OctoPrintInstanceInformationV3.channelId get() = "$OCTOPRINT_CHANNEL_PREFIX${id}"

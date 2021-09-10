@@ -10,7 +10,7 @@ data class Print(
     val progress: Float,
     val sourceTime: Date,
     val appTime: Date,
-    val secsLeft: Long,
+    val eta: Date?,
 ) {
     enum class State {
         Printing,

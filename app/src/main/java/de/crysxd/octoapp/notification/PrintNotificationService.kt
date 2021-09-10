@@ -7,9 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.os.SystemClock
-import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
@@ -23,6 +21,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 const val ACTION_STOP = "stop"
@@ -30,7 +29,6 @@ const val DISCONNECT_IF_NO_MESSAGE_FOR_MS = 60_000L
 const val RETRY_DELAY = 1_000L
 const val RETRY_COUNT = 3L
 const val MAX_PROGRESS = 100
-const val FILAMENT_CHANGE_NOTIFICATION_ID = 3100
 const val NOTIFICATION_ID = 2999
 
 class PrintNotificationService : Service() {
@@ -38,12 +36,10 @@ class PrintNotificationService : Service() {
     private val coroutineJob = Job()
     private var markDisconnectedJob: Job? = null
     private val eventFlow = Injector.get().octoPrintProvider().eventFlow("notification-service")
-    private val notificationFactory by lazy { PrintNotificationFactory(this) }
+    private val notificationController by lazy { PrintNotificationController.instance }
     private val notificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
-    private val formatEtaUseCase = Injector.get().formatEtaUseCase()
+    private val octoPrintRepository by lazy { Injector.get().octorPrintRepository() }
     private var didSeePrintBeingActive = false
-    private var didSeeFilamentChangeAt = 0L
-    private var pausedBecauseOfFilamentChange = false
     private var notPrintingCounter = 0
     private var lastMessageReceivedAt: Long? = null
     private var reconnectionAttempts = 0
@@ -55,11 +51,8 @@ class PrintNotificationService : Service() {
         Injector.get().octoPreferences().wasPrintNotificationDisconnected = false
         Injector.get().octoPreferences().wasPrintNotificationPaused = false
 
-        // Register notification channel
-        notificationFactory.createNotificationChannels()
-
         // Start notification
-        startForeground(NOTIFICATION_ID, notificationFactory.createInitialNotification())
+        startForeground(NOTIFICATION_ID, notificationController.createServiceNotification("Checking print status..."))
 
         if (PrintNotificationManager.isNotificationEnabled) {
             Timber.i("Creating notification service")
@@ -115,15 +108,7 @@ class PrintNotificationService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        val paused = Injector.get().octoPreferences().wasPrintNotificationPaused
-        val disconnected = Injector.get().octoPreferences().wasPrintNotificationDisconnected
-        Timber.i("Destroying notification service (was disconnected=$disconnected paused=$paused)")
-        stopForeground(false)
-        when {
-            disconnected -> notificationManager.notify(NOTIFICATION_ID, notificationFactory.createDisconnectedNotification())
-            paused -> notificationManager.notify(NOTIFICATION_ID, notificationFactory.creareReconnectingNotification())
-            else -> notificationManager.cancel(NOTIFICATION_ID)
-        }
+        stopForeground(true)
         coroutineJob.cancel()
         PrintNotificationManager.startTime = 0
         ProgressAppWidget.notifyWidgetDataChanged()
@@ -158,13 +143,13 @@ class PrintNotificationService : Service() {
                             Timber.i("No connection since $minSinceLastMessage min and after $reconnectionAttempts attempts, stopping self with disconnect message")
                             Injector.get().octoPreferences().wasPrintNotificationDisconnected = true
                             stop()
-                            notificationFactory.createDisconnectedNotification()
+                            notificationController.createServiceNotification("Live notification disconnected")
                         }
 
                         else -> {
                             Timber.i("No connection since $minSinceLastMessage min, attempting to reconnect")
                             reconnectionAttempts++
-                            notificationFactory.creareReconnectingNotification()
+                            notificationController.createServiceNotification("Reconnecting live notification...")
                         }
                     }
                 }
@@ -172,14 +157,14 @@ class PrintNotificationService : Service() {
                 is Event.Connected -> {
                     Timber.i("Connected")
                     reconnectionAttempts = 0
-                    notificationFactory.createInitialNotification()
+                    notificationController.createServiceNotification("Observing your print...")
                 }
 
                 is Event.MessageReceived -> {
                     (event.message as? Message.CurrentMessage)?.let { message ->
                         lastMessageReceivedAt = SystemClock.uptimeMillis()
                         ProgressAppWidget.notifyWidgetDataChanged(message)
-                        updateFilamentChangeNotification(message)
+//                        updateFilamentChangeNotification(message)
                         updatePrintNotification(message)
                     }
                 }
@@ -193,16 +178,18 @@ class PrintNotificationService : Service() {
         }
     }
 
-    private fun updateFilamentChangeNotification(message: Message.CurrentMessage) {
-        if (message.logs.any { it.contains("M600") }) {
-            didSeeFilamentChangeAt = SystemClock.uptimeMillis()
-            notificationManager.notify(FILAMENT_CHANGE_NOTIFICATION_ID, notificationFactory.createFilamentChangeNotification())
-        }
-    }
+//    private fun updateFilamentChangeNotification(message: Message.CurrentMessage) {
+//        if (message.logs.any { it.contains("M600") }) {
+//            didSeeFilamentChangeAt = SystemClock.uptimeMillis()
+//            notificationController.notifyFilamentRequired()
+//            notificationController.notify(FILAMENT_CHANGE_NOTIFICATION_ID, notificationFactory.createFilamentChangeNotification())
+//        }
+//    }
 
     private suspend fun updatePrintNotification(message: Message.CurrentMessage): Notification? {
         // Schedule transition into disconnected state if no message was received for a set timeout
         markDisconnectedAfterDelay()
+        val instanceId = octoPrintRepository.getActiveInstanceSnapshot()?.id ?: return null
 
         // Check if still printing
         val flags = message.state?.flags
@@ -216,8 +203,7 @@ class PrintNotificationService : Service() {
                 if (printDone && didSeePrintBeingActive) {
                     didSeePrintBeingActive = false
                     Timber.i("Print done, showing notification")
-                    val name = message.job?.file?.display
-                    notificationManager.notify((3000..3500).random(), notificationFactory.createCompletedNotification(name))
+                    notificationController.notifyCompleted(instanceId, message.toPrint())
                 }
 
                 Timber.i("Not printing, stopping self")
@@ -231,38 +217,8 @@ class PrintNotificationService : Service() {
         // Update notification
         didSeePrintBeingActive = true
         message.progress?.let {
-            val leftSecs = it.printTimeLeft.toLong()
-            val progress = it.completion.toInt()
-            val smartEta = formatEtaUseCase.execute(FormatEtaUseCase.Params(leftSecs, allowRelative = true))
-            notificationFactory.lastEta = formatEtaUseCase.execute(FormatEtaUseCase.Params(leftSecs, allowRelative = false))
-
-            val detail = getString(R.string.print_notification___printing_message, progress, smartEta)
-            val title = getString(
-                when {
-                    flags.pausing -> R.string.print_notification___pausing_title
-                    flags.paused -> {
-                        // If we are paused and we saw a filament change command just before,
-                        // we assume we where paused because of the filament change
-                        if ((SystemClock.uptimeMillis() - didSeeFilamentChangeAt) < 10000) {
-                            pausedBecauseOfFilamentChange = true
-                        }
-
-                        if (pausedBecauseOfFilamentChange) {
-                            R.string.print_notification___paused_filamet_change_title
-                        } else {
-                            R.string.print_notification___paused_title
-                        }
-                    }
-                    flags.cancelling -> R.string.print_notification___cancelling_title
-                    else -> {
-                        pausedBecauseOfFilamentChange = false
-                        notificationManager.cancel(FILAMENT_CHANGE_NOTIFICATION_ID)
-                        R.string.print_notification___printing_title
-                    }
-                }
-            )
-
-            return notificationFactory.createProgressNotification(progress, title, detail)
+            notificationController.update(instanceId, message.toPrint())
+            return null
         }
 
         return null
@@ -272,7 +228,25 @@ class PrintNotificationService : Service() {
         markDisconnectedJob?.cancel()
         markDisconnectedJob = AppScope.launch(coroutineJob) {
             delay(DISCONNECT_IF_NO_MESSAGE_FOR_MS)
-            notificationManager.notify(NOTIFICATION_ID, notificationFactory.creareReconnectingNotification())
+            notificationManager.notify(NOTIFICATION_ID, notificationController.createServiceNotification("Reconnecting..."))
         }
     }
+
+    private fun Message.CurrentMessage.toPrint() = Print(
+        objectId = job?.file?.let { "${it.date}+${it.name}" } ?: "unknown",
+        fileName = job?.file?.name ?: "unknown",
+        source = Print.Source.Live,
+        state = state?.flags?.let {
+            when {
+                it.cancelling -> Print.State.Cancelling
+                it.pausing -> Print.State.Pausing
+                it.paused -> Print.State.Pausing
+                else -> null
+            }
+        } ?: Print.State.Printing,
+        sourceTime = Date(),
+        appTime = Date(),
+        eta = progress?.printTimeLeft?.let { Date(System.currentTimeMillis() + it * 1000) },
+        progress = progress?.completion ?: 0f,
+    )
 }
