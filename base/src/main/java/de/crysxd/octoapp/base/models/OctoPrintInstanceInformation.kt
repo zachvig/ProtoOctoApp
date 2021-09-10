@@ -65,6 +65,7 @@ data class OctoPrintInstanceInformationV2(
 
 data class OctoPrintInstanceInformationV3(
     val id: String,
+    val notificationId: Int? = null,
     val webUrl: HttpUrl,
     val alternativeWebUrl: HttpUrl? = null,
     val apiKey: String,
@@ -79,6 +80,7 @@ data class OctoPrintInstanceInformationV3(
     constructor(legacy: OctoPrintInstanceInformationV2) : this(
         id = UUID.randomUUID().toString(),
         webUrl = legacy.webUrl.toHttpUrl(),
+        notificationId = null,
         alternativeWebUrl = legacy.alternativeWebUrl?.toHttpUrl(),
         apiKey = legacy.apiKey,
         issue = legacy.issue,
