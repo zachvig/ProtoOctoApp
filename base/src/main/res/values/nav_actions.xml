@@ -3,8 +3,8 @@
     <item name="action_enter_value" type="id" />
     <item name="action_open_terminal" type="id" />
 
-    <item name="enterAnim" type="anim">@anim/fragment_open_enter</item>
-    <item name="exitAnim" type="anim">@anim/fragment_close_exit</item>
-    <item name="popEnterAnim" type="anim">@anim/fragment_open_enter</item>
-    <item name="popExitAnim" type="anim">@anim/fragment_close_exit</item>
+    <item name="enterAnim" type="anim">@anim/screen_enter_anim</item>
+    <item name="exitAnim" type="anim">@anim/screen_exit_anim</item>
+    <item name="popEnterAnim" type="anim">@anim/screen_pop_enter_anim</item>
+    <item name="popExitAnim" type="anim">@anim/screen_pop_exit_anim</item>
 </resources>

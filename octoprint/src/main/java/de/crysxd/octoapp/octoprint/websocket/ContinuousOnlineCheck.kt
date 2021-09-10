@@ -18,12 +18,13 @@ class ContinuousOnlineCheck(
     private val logger: Logger,
     private val onOnline: () -> Unit,
     private val connectionTimeoutMs: Int = 3_000,
-    private val intervalMs: Long = 5_000L,
+    private val intervalMs: Long = 15_000L,
     private val localDns: Dns? = null,
 ) {
     private var checkJob: Job? = null
 
     fun start() {
+        stop()
         checkJob = GlobalScope.launch(Dispatchers.IO) {
             while (true) {
                 delay(intervalMs)
