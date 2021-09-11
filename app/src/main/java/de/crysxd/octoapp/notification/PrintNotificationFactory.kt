@@ -1,6 +1,5 @@
 package de.crysxd.octoapp.notification
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationChannelGroup
 import android.app.NotificationManager
@@ -13,7 +12,6 @@ import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
@@ -32,7 +30,6 @@ class PrintNotificationFactory(
         private const val OCTOPRINT_CHANNEL_PREFIX = "octoprint_"
         private const val OCTOPRINT_CHANNEL_GROUP_ID = "octoprint"
         private const val FILAMENT_CHANGE_CHANNEL_ID = "filament_change"
-        private const val SERVICE_CHANNEL_ID = "service"
         private const val MAX_PROGRESS = 1000
         private const val OPEN_APP_REQUEST_CODE = 3249
     }
@@ -66,18 +63,6 @@ class PrintNotificationFactory(
         createNotificationChannel(
             id = FILAMENT_CHANGE_CHANNEL_ID,
             name = getString(R.string.notification_channel_filament_change),
-            soundUri = Uri.parse("android.resource://${packageName}/${R.raw.notification_filament_change}"),
-            audioAttributes = AudioAttributes.Builder()
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                .build()
-        )
-
-        // Create service channel
-        createNotificationChannel(
-            id = SERVICE_CHANNEL_ID,
-            importance = NotificationManager.IMPORTANCE_MIN,
-            name = "Live update service"
         )
     }
 
@@ -86,25 +71,29 @@ class PrintNotificationFactory(
         name: String,
         id: String,
         groupId: String? = null,
-        soundUri: Uri? = null,
-        audioAttributes: AudioAttributes? = null,
-        importance: Int = NotificationManager.IMPORTANCE_HIGH
-    ) {
-        notificationManager.createNotificationChannel(
-            NotificationChannel(id, name, importance).also {
+        soundUri: Uri? = Uri.parse("android.resource://${packageName}/${R.raw.notification_filament_change}"),
+        audioAttributes: AudioAttributes? = AudioAttributes.Builder()
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+            .build(),
+        importance: Int = NotificationManager.IMPORTANCE_HIGH,
+    ) = notificationManager.createNotificationChannel(
+        NotificationChannel(id, name, importance).also { nc ->
+            nc.group = groupId
+            soundUri?.let { uri ->
                 audioAttributes?.let { attrs ->
-                    soundUri?.let { uri ->
-                        it.setSound(uri, attrs)
-                        it.group = groupId
-                    }
+                    nc.setSound(uri, attrs)
                 }
             }
-        )
-    }
+        }
+    )
 
-    fun createServiceNotification(statusText: String) = createNotificationBuilder(
-        instanceInformation = null,
-        notificationChannelId = SERVICE_CHANNEL_ID
+    fun createServiceNotification(
+        instanceInformation: OctoPrintInstanceInformationV3,
+        statusText: String
+    ) = createNotificationBuilder(
+        instanceInformation = instanceInformation,
+        notificationChannelId = instanceInformation.channelId
     ).setContentTitle(statusText)
         .setSilent(true)
         .build()
@@ -130,10 +119,9 @@ class PrintNotificationFactory(
         createNotificationBuilder(
             instanceInformation = it,
             notificationChannelId = FILAMENT_CHANGE_CHANNEL_ID
-        ).setContentTitle(getString(R.string.print_notification___filament_change_required))
-            .setContentText(it.label)
-            .setDefaults(Notification.DEFAULT_VIBRATE)
-            .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
+        ).setContentTitle("${it.label} needs filament")
+            .setContentText("Print was paused")
+            .setAutoCancel(true)
             .build()
     }
 
@@ -141,13 +129,10 @@ class PrintNotificationFactory(
         instanceId: String,
         print: Print
     ) = octoPrintRepository.get(instanceId)?.let {
-        createNotificationBuilder(
-            instanceInformation = it,
-            notificationChannelId = it.channelId
-        ).setContentTitle(getString(R.string.print_notification___print_done_title))
+        createNotificationBuilder(instanceInformation = it, notificationChannelId = it.channelId)
+            .setContentTitle("${it.label} completed print")
             .setContentText(print.fileName)
-            .setDefaults(Notification.DEFAULT_SOUND)
-            .setDefaults(Notification.DEFAULT_VIBRATE)
+            .setAutoCancel(true)
             .build()
     }
 

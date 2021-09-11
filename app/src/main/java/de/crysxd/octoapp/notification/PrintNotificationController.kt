@@ -8,6 +8,7 @@ import android.os.Build
 import androidx.core.content.edit
 import com.google.gson.Gson
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import timber.log.Timber
 import java.util.Date
@@ -46,10 +47,10 @@ class PrintNotificationController(
         }
     }
 
-    suspend fun createServiceNotification(instanceId: String, statusText: String, doNotify: Boolean = false): Pair<Notification, Int> {
-        val notification = getLast(instanceId)?.let { notificationFactory.createStatusNotification(instanceId, it) }
-            ?: notificationFactory.createServiceNotification(statusText)
-        val id = getNotificationId(instanceId)
+    suspend fun createServiceNotification(instance: OctoPrintInstanceInformationV3, statusText: String, doNotify: Boolean = false): Pair<Notification, Int> {
+        val notification = getLast(instance.id)?.let { notificationFactory.createStatusNotification(instance.id, it) }
+            ?: notificationFactory.createServiceNotification(instance, statusText)
+        val id = getNotificationId(instance.id)
 
         if (doNotify) {
             notificationManager.notify(id, notification)
@@ -95,6 +96,7 @@ class PrintNotificationController(
         print = print
     )?.let {
         val notificationId = nextEventNotificationId()
+        clearLast(instanceId)
         Timber.i("Showing completed notification: instanceId=$instanceId notificationId=$notificationId")
         notificationManager.notify(notificationId, it)
     } ?: Timber.e(IllegalStateException("Received completed event for instance $instanceId but instance was not found"))
@@ -107,7 +109,9 @@ class PrintNotificationController(
         notificationManager.notify(nextEventNotificationId(), it)
     } ?: Timber.e(IllegalStateException("Received filament event for instance $instanceId but instance was not found"))
 
-    private fun getLast(instanceId: String) = sharedPreferences.getString("$KEY_LAST_PRINT_PREFIX$instanceId", null)?.let { gson.fromJson(it, Print::class.java) }
+    fun clearLast(instanceId: String) = sharedPreferences.edit { remove("$KEY_LAST_PRINT_PREFIX$instanceId") }
+
+    fun getLast(instanceId: String) = sharedPreferences.getString("$KEY_LAST_PRINT_PREFIX$instanceId", null)?.let { gson.fromJson(it, Print::class.java) }
 
     private fun setLast(instanceId: String, print: Print) = sharedPreferences.edit {
         putString("$KEY_LAST_PRINT_PREFIX$instanceId", gson.toJson(print.copy(source = print.source.asCached)))

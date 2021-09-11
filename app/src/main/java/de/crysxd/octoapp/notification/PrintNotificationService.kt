@@ -52,9 +52,9 @@ class PrintNotificationService : Service() {
         Injector.get().octoPreferences().wasPrintNotificationPaused = false
 
         // Start notification
-        val instanceId = octoPrintRepository.getActiveInstanceSnapshot()?.id ?: return stop()
+        val instance = octoPrintRepository.getActiveInstanceSnapshot() ?: return stop()
         val (notification, notificationId) = runBlocking {
-            notificationController.createServiceNotification(instanceId, "Checking live status...")
+            notificationController.createServiceNotification(instance, "Checking live status...")
         }
         startForeground(notificationId, notification)
 
@@ -204,6 +204,16 @@ class PrintNotificationService : Service() {
             if (notPrintingCounter++ >= 3) {
                 PrintNotificationManager.stop(this)
             }
+
+            // If the print is done and we saw the print printing in the last state, notify
+            notificationController.getLast(instanceId)?.let { last ->
+                val current = message.toPrint()
+                if (last.objectId == current.objectId) {
+                    notificationController.notifyCompleted(instanceId, current)
+                }
+            }
+
+            notificationController.clearLast(instanceId)
         }
     }
 
