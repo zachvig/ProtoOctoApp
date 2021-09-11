@@ -85,7 +85,7 @@ class PrintNotificationController(
             setLast(instanceId, it)
             val notificationId = getNotificationId(instanceId)
             notificationFactory.createStatusNotification(instanceId, it)?.let {
-                Timber.i("Showing print notification: instanceId=$instanceId notificationId=$notificationId")
+                Timber.v("Showing print notification: instanceId=$instanceId notificationId=$notificationId")
                 notificationManager.notify(notificationId, it)
             } ?: Timber.e(IllegalStateException("Received update event for instance $instanceId but instance was not found"))
         }

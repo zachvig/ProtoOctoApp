@@ -48,6 +48,14 @@ object PrintNotificationManager {
         }
     }
 
+    fun restart(context: Context) {
+        if (isNotificationShowing) {
+            Injector.get().octoPreferences().wasPrintNotificationPaused = true
+            stop(context)
+            resume(context)
+        }
+    }
+
     fun pause(context: Context) {
         val isPausingEnabled = Injector.get().octoPreferences().allowNotificationBatterySaver
         val wasDisconnected = Injector.get().octoPreferences().wasPrintNotificationDisconnected

@@ -68,7 +68,7 @@ class PrintNotificationSupportBroadcastReceiver(context: Context) : BroadcastRec
                 it.cancel()
             }
             PrintNotificationManager.resume(context)
-        }else {
+        } else {
             Timber.d("Battery saver disabled, no action on screen on")
         }
     }

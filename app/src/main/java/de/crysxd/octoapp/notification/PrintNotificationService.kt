@@ -33,7 +33,10 @@ class PrintNotificationService : Service() {
 
     private val notificationController by lazy { PrintNotificationController.instance }
     private val octoPreferences by lazy { Injector.get().octoPreferences() }
-    private val octoPrintRepository by lazy { Injector.get().octorPrintRepository() }
+    private val instance by lazy {
+        // Instance is fixed for this service. When the active instance is changed the service restarts due to settings change
+        Injector.get().octorPrintRepository().getActiveInstanceSnapshot()
+    }
     private val eventFlow = Injector.get().octoPrintProvider().eventFlow("notification-service")
 
     private val coroutineJob = SupervisorJob()
@@ -52,7 +55,10 @@ class PrintNotificationService : Service() {
         Injector.get().octoPreferences().wasPrintNotificationPaused = false
 
         // Start notification
-        val instance = octoPrintRepository.getActiveInstanceSnapshot() ?: return stop()
+        val instance = instance ?: return let {
+            Timber.w("Active instance is null, stopping")
+            stop()
+        }
         val (notification, notificationId) = runBlocking {
             notificationController.createServiceNotification(instance, "Checking live status...")
         }
@@ -65,6 +71,7 @@ class PrintNotificationService : Service() {
                 // Check preconditions
                 if (!checkPreconditions()) {
                     Timber.i("Preconditions not met, stopping self")
+                    notificationController.clearLast(instance.id)
                     stop()
                 } else {
                     Timber.i("Preconditions, allowing connection")
@@ -84,9 +91,9 @@ class PrintNotificationService : Service() {
             // Observe changes in preferences
             coroutineScope.launch {
                 octoPreferences.updatedFlow.collectLatest {
-                    if (!PrintNotificationManager.isNotificationEnabled) {
-                        Timber.i("Service disabled, stopping self")
-                        stop()
+                    if (!octoPreferences.isPrintNotificationEnabled || octoPreferences.activeInstanceId != instance.id) {
+                        Timber.i("Settings changed, restarting")
+                        PrintNotificationManager.restart(this@PrintNotificationService)
                     }
                 }
             }
@@ -115,9 +122,7 @@ class PrintNotificationService : Service() {
             // Cancel the notification or update it in case we are disconnected or paused (e.g. screen off)
             stopForeground(octoPreferences.wasPrintNotificationDisconnected)
             if (octoPreferences.wasPrintNotificationDisconnected || octoPreferences.wasPrintNotificationPaused) {
-                octoPrintRepository.getActiveInstanceSnapshot()?.id?.let {
-                    notificationController.update(it, null)
-                }
+                instance?.id?.let { notificationController.update(it, null) }
             }
 
             PrintNotificationManager.startTime = 0
@@ -136,9 +141,7 @@ class PrintNotificationService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun stop() {
-        PrintNotificationManager.stop(this)
-    }
+    private fun stop() = PrintNotificationManager.stop(this)
 
     private suspend fun onEventReceived(event: Event) {
         try {
@@ -180,7 +183,7 @@ class PrintNotificationService : Service() {
         reconnectionAttempts = 0
     }
 
-    private suspend fun handleCurrentMessage(message: Message.CurrentMessage) = octoPrintRepository.getActiveInstanceSnapshot()?.id?.let { instanceId ->
+    private suspend fun handleCurrentMessage(message: Message.CurrentMessage) = instance?.id?.let { instanceId ->
         lastMessageReceivedAt = SystemClock.uptimeMillis()
         ProgressAppWidget.notifyWidgetDataChanged(message)
 

@@ -12,12 +12,13 @@ import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.utils.colorTheme
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
+import de.crysxd.octoapp.widgets.createLaunchAppIntent
 import java.util.Locale
 
 class PrintNotificationFactory(
@@ -106,9 +107,9 @@ class PrintNotificationFactory(
             instanceInformation = it,
             notificationChannelId = it.channelId
         ).setContentTitle(print.notificationTitle)
-            .setContentText(print.notificationText())
+            .setContentText(print.notificationText(it))
             .setProgress(MAX_PROGRESS, (MAX_PROGRESS * (print.progress / 100f)).toInt(), false)
-            .addCloseAction()
+            .addStopLiveAction(print)
             .setSilent(true)
             .build()
     }
@@ -141,20 +142,13 @@ class PrintNotificationFactory(
         notificationChannelId: String
     ) = NotificationCompat.Builder(this, notificationChannelId)
         .setSmallIcon(R.drawable.ic_notification_default)
-        .setContentIntent(createStartAppPendingIntent())
+        .setContentIntent(createLaunchAppIntent(this, instanceInformation?.id))
         .also {
-            instanceInformation?.colorTheme?.light?.let { color ->
+            instanceInformation?.colorTheme?.dark?.let { color ->
                 it.setColorized(true)
                 it.color = color
             }
         }
-
-    private fun createStartAppPendingIntent() = PendingIntent.getActivity(
-        this,
-        OPEN_APP_REQUEST_CODE,
-        Intent(this, MainActivity::class.java),
-        PendingIntent.FLAG_UPDATE_CURRENT
-    )
 
     private val Print.notificationTitle
         get() = when (state) {
@@ -164,8 +158,10 @@ class PrintNotificationFactory(
             Print.State.Cancelling -> "Cancelling"
         }
 
-    private suspend fun Print.notificationText() = listOfNotNull(
-        "Live".takeIf { source == Print.Source.Live },
+    private suspend fun Print.notificationText(instanceInformation: OctoPrintInstanceInformationV3) = listOfNotNull(
+        "Live".takeIf { source == Print.Source.Live && !BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
+        "Live on ${instanceInformation.label}".takeIf { source == Print.Source.Live && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
+        instanceInformation.label.takeIf { source != Print.Source.Live && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
         eta?.let {
             formatEtaUseCase.execute(
                 FormatEtaUseCase.Params(
@@ -179,19 +175,24 @@ class PrintNotificationFactory(
 
     private val OctoPrintInstanceInformationV3.channelId get() = "$OCTOPRINT_CHANNEL_PREFIX${id}"
 
-    private fun NotificationCompat.Builder.addCloseAction() = addAction(
-        NotificationCompat.Action.Builder(
-            null,
-            getString(R.string.print_notification___close),
-            PendingIntent.getService(
-                this@PrintNotificationFactory,
-                0,
-                Intent(
+    private fun NotificationCompat.Builder.addStopLiveAction(print: Print) = if (print.source != Print.Source.Live) {
+        // Cancel if this is not a live notification
+        this
+    } else {
+        addAction(
+            NotificationCompat.Action.Builder(
+                null,
+                "Pause live updates",
+                PendingIntent.getService(
                     this@PrintNotificationFactory,
-                    PrintNotificationService::class.java
-                ).setAction(ACTION_STOP),
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        ).build()
-    )
+                    0,
+                    Intent(
+                        this@PrintNotificationFactory,
+                        PrintNotificationService::class.java
+                    ).setAction(ACTION_STOP),
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
+            ).build()
+        )
+    }
 }
