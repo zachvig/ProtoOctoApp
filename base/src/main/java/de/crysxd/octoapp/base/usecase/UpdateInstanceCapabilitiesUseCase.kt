@@ -26,6 +26,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) {
         withContext(Dispatchers.IO) {
+            val activeInstance = octoPrintRepository.getActiveInstanceSnapshot() ?: return@withContext
             val octoPrint = try {
                 octoPrintProvider.octoPrint()
             } catch (e: IllegalStateException) {
@@ -35,7 +36,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
 
             // Perform online check. This will trigger switching to the primary web url
             // if we currently use a cloud/backup connection
-            if (octoPrintRepository.getActiveInstanceSnapshot()?.alternativeWebUrl != null) {
+            if (activeInstance.alternativeWebUrl != null) {
                 timber.i("Checking for primary web url being online")
                 octoPrint.performOnlineCheck()
             }
@@ -82,7 +83,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             val profileResult = profile.await()
 
             // Only start update after all network requests are done to prevent race conditions
-            octoPrintRepository.updateActive { current ->
+            octoPrintRepository.update(activeInstance.id) { current ->
                 val updated = current.copy(
                     m115Response = m115Result ?: current.m115Response,
                     settings = settingsResult,

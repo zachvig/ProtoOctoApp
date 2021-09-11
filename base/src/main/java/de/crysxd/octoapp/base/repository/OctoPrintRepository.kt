@@ -70,7 +70,7 @@ class OctoPrintRepository(
         }
     }
 
-    fun update(id: String, block: (OctoPrintInstanceInformationV3) -> OctoPrintInstanceInformationV3?) {
+    suspend fun update(id: String, block: suspend (OctoPrintInstanceInformationV3) -> OctoPrintInstanceInformationV3?) {
         get(id)?.let {
             storeOctoprintInstanceInformation(it.id, block(it))
         }
