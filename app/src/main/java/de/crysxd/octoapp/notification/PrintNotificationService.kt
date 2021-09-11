@@ -215,7 +215,7 @@ class PrintNotificationService : Service() {
             // If the print is done and we saw the print printing in the last state, notify
             notificationController.getLast(instanceId)?.let { last ->
                 val current = message.toPrint()
-                if (last.objectId == current.objectId) {
+                if (last.objectId == current.objectId && current.progress >= 100) {
                     notificationController.notifyCompleted(instanceId, current)
                 }
             }
