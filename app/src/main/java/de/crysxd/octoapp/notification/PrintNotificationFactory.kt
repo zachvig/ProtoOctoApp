@@ -56,13 +56,19 @@ class PrintNotificationFactory(
         // Create missing notification channels
         octoPrintRepository.getAll().forEach {
             if (!notificationManager.notificationChannels.any { c -> c.id == it.channelId }) {
-                createNotificationChannel(name = it.label, id = it.channelId, groupId = OCTOPRINT_CHANNEL_GROUP_ID)
+                createNotificationChannel(
+                    name = it.label,
+                    id = it.channelId,
+                    groupId = OCTOPRINT_CHANNEL_GROUP_ID,
+                    soundUri = Uri.parse("android.resource://${packageName}/${R.raw.notification_print_done}"),
+                )
             }
         }
 
         // Create filament change channel
         createNotificationChannel(
             id = FILAMENT_CHANGE_CHANNEL_ID,
+            soundUri = Uri.parse("android.resource://${packageName}/${R.raw.notification_filament_change}"),
             name = getString(R.string.notification_channel_filament_change),
         )
     }
@@ -72,7 +78,7 @@ class PrintNotificationFactory(
         name: String,
         id: String,
         groupId: String? = null,
-        soundUri: Uri? = Uri.parse("android.resource://${packageName}/${R.raw.notification_filament_change}"),
+        soundUri: Uri? = null,
         audioAttributes: AudioAttributes? = AudioAttributes.Builder()
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .setUsage(AudioAttributes.USAGE_NOTIFICATION)
