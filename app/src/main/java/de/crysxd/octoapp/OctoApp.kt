@@ -64,7 +64,7 @@ class OctoApp : Application() {
 
             // BroadcastReceiver to support widgets and print notification (will register itself)
             AppWidgetSupportBroadcastReceiver(this@OctoApp)
-            PrintNotificationSupportBroadcastReceiver(this@OctoApp)
+            PrintNotificationSupportBroadcastReceiver().install(this@OctoApp)
 
             // Setup RemoteConfig
             Firebase.remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)

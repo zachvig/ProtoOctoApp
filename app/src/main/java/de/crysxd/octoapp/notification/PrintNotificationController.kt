@@ -11,6 +11,7 @@ import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.repository.NotificationIdRepository
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import timber.log.Timber
 import java.util.Date
 
@@ -18,6 +19,7 @@ class PrintNotificationController(
     private val notificationFactory: PrintNotificationFactory,
     private val printNotificationIdRepository: NotificationIdRepository,
     private val octoPreferences: OctoPreferences,
+    private val octoPrintRepository: OctoPrintRepository,
     context: Context
 ) : ContextWrapper(context) {
 
@@ -30,7 +32,8 @@ class PrintNotificationController(
                 context = context,
                 notificationFactory = PrintNotificationFactory(context, repository, Injector.get().formatEtaUseCase()),
                 octoPreferences = Injector.get().octoPreferences(),
-                printNotificationIdRepository = Injector.get().notificationIdRepository()
+                printNotificationIdRepository = Injector.get().notificationIdRepository(),
+                octoPrintRepository = Injector.get().octorPrintRepository()
             )
         }
     }
@@ -150,6 +153,12 @@ class PrintNotificationController(
 
     private fun setLast(instanceId: String, printState: PrintState) = sharedPreferences.edit {
         putString("$KEY_LAST_PRINT_PREFIX$instanceId", gson.toJson(printState.copy(source = printState.source.asCached)))
+    }
+
+    fun cancelUpdateNotifications() {
+        octoPrintRepository.getAll().forEach {
+            notificationManager.cancel(printNotificationIdRepository.getPrintStatusNotificationId(it.id))
+        }
     }
 
     private val liveThreshold get() = Date(System.currentTimeMillis() - 10_000)

@@ -115,7 +115,7 @@ class PrintNotificationFactory(
         ).setContentTitle(printState.notificationTitle)
             .setContentText(printState.notificationText(it))
             .setProgress(MAX_PROGRESS, (MAX_PROGRESS * (printState.progress / 100f)).toInt(), false)
-            .addStopLiveAction(printState)
+            .addStopLiveAction()
             .setSilent(true)
             .build()
     }
@@ -172,7 +172,7 @@ class PrintNotificationFactory(
         eta?.let {
             formatEtaUseCase.execute(
                 FormatEtaUseCase.Params(
-                    secsLeft = it.time - System.currentTimeMillis(),
+                    secsLeft = (it.time - System.currentTimeMillis()) / 1000,
                     showLabel = true,
                     allowRelative = false
                 )
@@ -182,24 +182,21 @@ class PrintNotificationFactory(
 
     private val OctoPrintInstanceInformationV3.channelId get() = "$OCTOPRINT_CHANNEL_PREFIX${id}"
 
-    private fun NotificationCompat.Builder.addStopLiveAction(printState: PrintState) = if (printState.source != PrintState.Source.Live) {
-        // Cancel if this is not a live notification
-        this
-    } else {
-        addAction(
-            NotificationCompat.Action.Builder(
-                null,
-                "Pause live updates",
-                PendingIntent.getService(
+    private fun NotificationCompat.Builder.addStopLiveAction() = addAction(
+        NotificationCompat.Action.Builder(
+            null,
+            "Pause live updates",
+            PendingIntent.getBroadcast(
+                this@PrintNotificationFactory,
+                0,
+                Intent(
                     this@PrintNotificationFactory,
-                    0,
-                    Intent(
-                        this@PrintNotificationFactory,
-                        PrintNotificationService::class.java
-                    ).setAction(ACTION_STOP),
-                    PendingIntent.FLAG_UPDATE_CURRENT
-                )
-            ).build()
-        )
-    }
+                    PrintNotificationSupportBroadcastReceiver::class.java
+                ).setAction(
+                    PrintNotificationSupportBroadcastReceiver.ACTION_DISABLE_PRINT_NOTIFICATION_UNTIL_NEXT_LAUNCH
+                ),
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        ).build()
+    )
 }

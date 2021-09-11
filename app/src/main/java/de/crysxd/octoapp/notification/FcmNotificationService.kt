@@ -36,7 +36,11 @@ class FcmNotificationService : FirebaseMessagingService() {
 
         Timber.i("Received message")
         message.data["raw"]?.let {
-            handleRawDataEvent(it, Date(message.sentTime))
+            handleRawDataEvent(
+                instanceId = message.data["instanceId"] ?: throw IllegalArgumentException("Not instance id"),
+                raw = it,
+                sentTime = Date(message.sentTime),
+            )
         }
 
         message.notification?.let {
@@ -58,41 +62,34 @@ class FcmNotificationService : FirebaseMessagingService() {
         manager.notify(Injector.get().notificationIdRepository().nextUpdateNotificationId(), notificationBuilder.build())
     }
 
-    private fun handleRawDataEvent(raw: String, sentTime: Date) = AppScope.launch(exceptionHandler) {
-        Timber.i("Received message with raw data: $raw")
+    private fun handleRawDataEvent(instanceId: String, raw: String, sentTime: Date) = AppScope.launch(exceptionHandler) {
+        Timber.i("Received message with raw data: $raw $instanceId")
         val data = Gson().fromJson(raw, FcmPrintEvent::class.java)
-
-        if (sentTime.before(calcMaxAge())) {
-            Timber.w("Message was sent at $sentTime, exceeding max age. Message is dropped")
-            return@launch
-        }
 
         when (data.type) {
             FcmPrintEvent.Type.Completed -> notificationController.notifyCompleted(
-                instanceId = data.instanceId,
+                instanceId = instanceId,
                 printState = data.toPrintState(sentTime)
             )
 
             FcmPrintEvent.Type.FilamentRequired -> notificationController.notifyFilamentRequired(
-                instanceId = data.instanceId,
+                instanceId = instanceId,
                 printState = data.toPrintState(sentTime)
             )
 
             FcmPrintEvent.Type.Idle -> notificationController.notifyIdle(
-                instanceId = data.instanceId
+                instanceId = instanceId
             )
 
             FcmPrintEvent.Type.Paused,
             FcmPrintEvent.Type.Printing -> {
                 notificationController.update(
-                    instanceId = data.instanceId,
+                    instanceId = instanceId,
                     printState = data.toPrintState(sentTime)
                 )
             }
         }
     }
-
-    private fun calcMaxAge() = Date(System.currentTimeMillis() - 60_000L)
 
     private fun FcmPrintEvent.toPrintState(sentTime: Date) = PrintState(
         source = PrintState.Source.Remote,

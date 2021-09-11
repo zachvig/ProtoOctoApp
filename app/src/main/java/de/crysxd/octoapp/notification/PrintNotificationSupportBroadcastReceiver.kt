@@ -16,32 +16,43 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 
-class PrintNotificationSupportBroadcastReceiver(context: Context) : BroadcastReceiver() {
+class PrintNotificationSupportBroadcastReceiver() : BroadcastReceiver() {
 
     companion object {
         private var pauseJob: Job? = null
+        const val ACTION_DISABLE_PRINT_NOTIFICATION_UNTIL_NEXT_LAUNCH = "de.crysxd.octoapp.ACTION_DISABLE_PRINT_NOTIFICATION_UNTIL_NEXT_LAUNCH"
     }
 
-    init {
+    fun install(context: Context) {
         val intentFilter = IntentFilter()
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION)
         intentFilter.addAction(Intent.ACTION_SCREEN_ON)
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF)
+        intentFilter.addAction(ACTION_DISABLE_PRINT_NOTIFICATION_UNTIL_NEXT_LAUNCH)
         context.registerReceiver(this, intentFilter)
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         AppScope.launch {
+            Timber.v("Handling ${intent.action}")
             try {
                 when (intent.action) {
                     WifiManager.NETWORK_STATE_CHANGED_ACTION -> handleConnectionChange(context)
                     Intent.ACTION_SCREEN_OFF -> handleScreenOff(context)
                     Intent.ACTION_SCREEN_ON -> handleScreenOn(context)
+                    ACTION_DISABLE_PRINT_NOTIFICATION_UNTIL_NEXT_LAUNCH -> handleDisablePrintNotificationUntilNextLaunch(context)
                 }
             } catch (e: Exception) {
                 Timber.e(e)
             }
         }
+    }
+
+    private fun handleDisablePrintNotificationUntilNextLaunch(context: Context) {
+        Timber.i("Stopping notification until next launch")
+        Injector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch = true
+        PrintNotificationManager.stop(context)
+        PrintNotificationController.instance.cancelUpdateNotifications()
     }
 
     private suspend fun handleScreenOff(context: Context) {

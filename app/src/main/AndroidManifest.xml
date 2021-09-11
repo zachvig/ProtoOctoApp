@@ -124,6 +124,10 @@
             </intent-filter>
         </service>
 
+        <receiver
+            android:name=".notification.PrintNotificationSupportBroadcastReceiver"
+            android:exported="false" />
+
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="${firebaseRemoteServicesEnabled}" />

@@ -7,7 +7,6 @@ data class FcmPrintEvent(
     val fileName: String?,
     val progress: Float?,
     val type: Type,
-    val instanceId: String = "",
     val timeLeft: Long?,
 ) {
     enum class Type {
