@@ -11,7 +11,7 @@ import java.util.Date
 import java.util.Locale
 
 private const val dateFlags =
-    DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_ABBREV_ALL or DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_NUMERIC_DATE or DateUtils.FORMAT_NO_YEAR
+    DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_ABBREV_ALL or DateUtils.FORMAT_SHOW_TIME
 
 // We can't use Locale.getDefault() because we overwrite the app language but we _always_ want to use the user's local preferences for time
 private fun getDeviceLocale() = try {

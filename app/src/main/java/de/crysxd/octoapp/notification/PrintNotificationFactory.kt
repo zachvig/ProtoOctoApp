@@ -173,7 +173,7 @@ class PrintNotificationFactory(
 
     private val Print.notificationTitle
         get() = when (state) {
-            Print.State.Printing -> String.format(Locale.getDefault(), "Printing: %.1f%%", progress)
+            Print.State.Printing -> String.format(Locale.getDefault(), "Printing: %.0f%%", progress)
             Print.State.Pausing -> "Pausing"
             Print.State.Paused -> "Paused"
             Print.State.Cancelling -> "Cancelling"
