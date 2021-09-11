@@ -1,8 +1,6 @@
 package de.crysxd.octoapp.notification
 
-import android.app.NotificationManager
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.os.SystemClock
@@ -33,7 +31,6 @@ const val RETRY_COUNT = 3L
 
 class PrintNotificationService : Service() {
 
-    private val notificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
     private val notificationController by lazy { PrintNotificationController.instance }
     private val octoPreferences by lazy { Injector.get().octoPreferences() }
     private val octoPrintRepository by lazy { Injector.get().octorPrintRepository() }
@@ -41,12 +38,11 @@ class PrintNotificationService : Service() {
 
     private val coroutineJob = SupervisorJob()
     private val coroutineScope = CoroutineScope(coroutineJob + Dispatchers.Main.immediate)
-
     private var markDisconnectedJob: Job? = null
-    private var didSeePrintBeingActive = false
-    private var notPrintingCounter = 0
     private var lastMessageReceivedAt: Long? = null
+
     private var reconnectionAttempts = 0
+    private var notPrintingCounter = 0
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -184,7 +180,7 @@ class PrintNotificationService : Service() {
         reconnectionAttempts = 0
     }
 
-    private suspend fun handleCurrentMessage(message: Message.CurrentMessage) {
+    private suspend fun handleCurrentMessage(message: Message.CurrentMessage) = octoPrintRepository.getActiveInstanceSnapshot()?.id?.let { instanceId ->
         lastMessageReceivedAt = SystemClock.uptimeMillis()
         ProgressAppWidget.notifyWidgetDataChanged(message)
 
@@ -197,9 +193,17 @@ class PrintNotificationService : Service() {
         }
 
         // Update notification
-        val print = message.toPrint()
-        octoPrintRepository.getActiveInstanceSnapshot()?.id?.let {
-            notificationController.update(it, print)
+        if (message.state?.flags?.isPrinting() == true) {
+            notPrintingCounter = 0
+            // We are printing, update notification
+            val print = message.toPrint()
+            notificationController.update(instanceId, print)
+        } else {
+            // We are no longer printing.
+            // We need to count the not printing messages because OctoPrint says "not printing" for a short period of time when resuming a print
+            if (notPrintingCounter++ >= 3) {
+                PrintNotificationManager.stop(this)
+            }
         }
     }
 
