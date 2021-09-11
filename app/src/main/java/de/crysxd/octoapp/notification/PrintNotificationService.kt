@@ -215,7 +215,7 @@ class PrintNotificationService : Service() {
             when {
                 it.cancelling -> Print.State.Cancelling
                 it.pausing -> Print.State.Pausing
-                it.paused -> Print.State.Pausing
+                it.paused -> Print.State.Paused
                 else -> null
             }
         } ?: Print.State.Printing,
