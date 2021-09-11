@@ -62,6 +62,11 @@ class FcmNotificationService : FirebaseMessagingService() {
         Timber.i("Received message with raw data: $raw")
         val data = Gson().fromJson(raw, FcmPrintEvent::class.java)
 
+        if (sentTime.before(calcMaxAge())) {
+            Timber.w("Message was sent at $sentTime, exceeding max age. Message is dropped")
+            return@launch
+        }
+
         when (data.type) {
             FcmPrintEvent.Type.Completed -> notificationController.notifyCompleted(
                 instanceId = data.instanceId,
@@ -86,6 +91,8 @@ class FcmNotificationService : FirebaseMessagingService() {
             }
         }
     }
+
+    private fun calcMaxAge() = Date(System.currentTimeMillis() - 60_000L)
 
     private fun FcmPrintEvent.toPrintState(sentTime: Date) = PrintState(
         source = PrintState.Source.Remote,
