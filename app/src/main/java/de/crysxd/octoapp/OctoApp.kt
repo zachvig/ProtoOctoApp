@@ -79,6 +79,7 @@ class OctoApp : Application() {
             // Register default notification channel
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                manager.deleteNotificationChannel("alerts") // Legacy channel, to be deleted
                 manager.createNotificationChannel(
                     NotificationChannel(
                         getString(R.string.updates_notification_channel),

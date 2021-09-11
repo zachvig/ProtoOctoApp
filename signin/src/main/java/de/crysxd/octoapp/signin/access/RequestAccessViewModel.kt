@@ -1,10 +1,8 @@
 package de.crysxd.octoapp.signin.access
 
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow
@@ -98,10 +96,8 @@ class RequestAccessViewModel(
         // Attempt to bring activity to front if the user has left the app to grant access
         if (uiState is UiState.AccessGranted && cancelPollingJob?.isActive == true) OctoActivity.instance?.intent?.let { intent ->
             Timber.i("Access granted, but app in background")
-            val channelId = "alerts"
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                notificationManager.createNotificationChannel(NotificationChannel(channelId, "Alerts", NotificationManager.IMPORTANCE_HIGH))
-            }
+            val context = Injector.get().localizedContext()
+            val channelId = context.getString(R.string.updates_notification_channel)
             notificationManager.notify(
                 NOTIFICATION_ID,
                 NotificationCompat.Builder(Injector.get().context(), channelId)
