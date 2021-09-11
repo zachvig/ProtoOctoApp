@@ -46,7 +46,6 @@
         app:layout_constraintEnd_toEndOf="@+id/progressBarBackground"
         app:layout_constraintStart_toEndOf="@+id/progressBar"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="20%"
         tools:visibility="visible" />
 
     <TextView
@@ -113,6 +112,7 @@
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginEnd="@dimen/margin_2"
         android:maxLines="1"
+        android:minWidth="60dp"
         android:textAppearance="@style/OctoTheme.TextAppearance.Data"
         android:visibility="invisible"
         app:layout_constraintEnd_toStartOf="@id/textViewTimeSpent"
@@ -131,6 +131,7 @@
         android:ellipsize="middle"
         android:textAppearance="@style/OctoTheme.TextAppearance.Data"
         android:visibility="invisible"
+        android:minWidth="60dp"
         app:layout_constraintEnd_toStartOf="@+id/textViewTimeLeft"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/textVieEta"
@@ -145,6 +146,7 @@
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginEnd="@dimen/margin_2"
         android:ellipsize="middle"
+        android:minWidth="60dp"
         android:textAppearance="@style/OctoTheme.TextAppearance.Data"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"

@@ -67,7 +67,7 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
         parent.lifecycleScope.launchWhenStarted {
             val progressPercent = message.progress?.completion ?: 0f
             val progress = progressPercent.toInt() / 100f
-            val printTimeLeft = message.progress?.printTimeLeft?.takeIf { it != 0 }?.toLong()
+            val printTimeLeft = message.progress?.printTimeLeft?.toLong()
             val printTimeSpent = message.progress?.printTime?.takeIf { it != 0 }?.toLong()
             val loading = progressPercent == 0f && printTimeLeft == null && printTimeSpent == null
             val formattedSpent = (printTimeSpent ?: 0L).takeIf { printTimeLeft != null }?.let { formatDuration(it) }
