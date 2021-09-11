@@ -20,6 +20,7 @@ import de.crysxd.octoapp.base.network.LocalDnsResolver
 import de.crysxd.octoapp.base.network.SslKeyStoreHandler
 import de.crysxd.octoapp.base.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
+import de.crysxd.octoapp.base.repository.NotificationIdRepository
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.PinnedMenuItemRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
@@ -93,6 +94,16 @@ open class OctoPrintModule {
     open fun provideTemperatureDataRepository(
         octoPrintProvider: OctoPrintProvider
     ) = TemperatureDataRepository(octoPrintProvider)
+
+    @BaseScope
+    @Provides
+    open fun provideNotificationIdRepository(
+        octoPrintRepository: OctoPrintRepository,
+        context: Context,
+    ) = NotificationIdRepository(
+        octoPrintRepository = octoPrintRepository,
+        sharedPreferences = context.getSharedPreferences("notification_id_cache", Context.MODE_PRIVATE)
+    )
 
     @BaseScope
     @Provides

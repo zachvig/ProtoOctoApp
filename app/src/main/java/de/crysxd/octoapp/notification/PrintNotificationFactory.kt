@@ -101,15 +101,15 @@ class PrintNotificationFactory(
 
     suspend fun createStatusNotification(
         instanceId: String,
-        print: Print,
+        printState: PrintState,
     ) = octoPrintRepository.get(instanceId)?.let {
         createNotificationBuilder(
             instanceInformation = it,
             notificationChannelId = it.channelId
-        ).setContentTitle(print.notificationTitle)
-            .setContentText(print.notificationText(it))
-            .setProgress(MAX_PROGRESS, (MAX_PROGRESS * (print.progress / 100f)).toInt(), false)
-            .addStopLiveAction(print)
+        ).setContentTitle(printState.notificationTitle)
+            .setContentText(printState.notificationText(it))
+            .setProgress(MAX_PROGRESS, (MAX_PROGRESS * (printState.progress / 100f)).toInt(), false)
+            .addStopLiveAction(printState)
             .setSilent(true)
             .build()
     }
@@ -128,11 +128,11 @@ class PrintNotificationFactory(
 
     fun createPrintCompletedNotification(
         instanceId: String,
-        print: Print
+        printState: PrintState
     ) = octoPrintRepository.get(instanceId)?.let {
         createNotificationBuilder(instanceInformation = it, notificationChannelId = it.channelId)
             .setContentTitle("${it.label} completed print")
-            .setContentText(print.fileName)
+            .setContentText(printState.fileName)
             .setAutoCancel(true)
             .build()
     }
@@ -150,18 +150,19 @@ class PrintNotificationFactory(
             }
         }
 
-    private val Print.notificationTitle
+    private val PrintState.notificationTitle
         get() = when (state) {
-            Print.State.Printing -> String.format(Locale.getDefault(), "Printing: %.0f%%", progress)
-            Print.State.Pausing -> "Pausing"
-            Print.State.Paused -> "Paused"
-            Print.State.Cancelling -> "Cancelling"
+            PrintState.State.Printing -> String.format(Locale.getDefault(), "Printing: %.0f%%", progress)
+            PrintState.State.Pausing -> "Pausing"
+            PrintState.State.Paused -> "Paused"
+            PrintState.State.Cancelling -> "Cancelling"
+            PrintState.State.Idle -> "Idle"
         }
 
-    private suspend fun Print.notificationText(instanceInformation: OctoPrintInstanceInformationV3) = listOfNotNull(
-        "Live".takeIf { source == Print.Source.Live && !BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
-        "Live on ${instanceInformation.label}".takeIf { source == Print.Source.Live && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
-        instanceInformation.label.takeIf { source != Print.Source.Live && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
+    private suspend fun PrintState.notificationText(instanceInformation: OctoPrintInstanceInformationV3) = listOfNotNull(
+        "Live".takeIf { source == PrintState.Source.Live && !BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
+        "Live on ${instanceInformation.label}".takeIf { source == PrintState.Source.Live && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
+        instanceInformation.label.takeIf { source != PrintState.Source.Live && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
         eta?.let {
             formatEtaUseCase.execute(
                 FormatEtaUseCase.Params(
@@ -175,7 +176,7 @@ class PrintNotificationFactory(
 
     private val OctoPrintInstanceInformationV3.channelId get() = "$OCTOPRINT_CHANNEL_PREFIX${id}"
 
-    private fun NotificationCompat.Builder.addStopLiveAction(print: Print) = if (print.source != Print.Source.Live) {
+    private fun NotificationCompat.Builder.addStopLiveAction(printState: PrintState) = if (printState.source != PrintState.Source.Live) {
         // Cancel if this is not a live notification
         this
     } else {

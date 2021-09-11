@@ -307,6 +307,7 @@ class MainActivity : OctoActivity() {
 
     override fun onResume() {
         super.onResume()
+        Injector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch = false
         BillingManager.onResume(this)
         lifecycleScope.launchWhenResumed {
             BillingManager.billingEventFlow().collectLatest {

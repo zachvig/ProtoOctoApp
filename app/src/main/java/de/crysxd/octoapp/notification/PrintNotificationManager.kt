@@ -11,7 +11,9 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 object PrintNotificationManager {
-    val isNotificationEnabled get() = Injector.get().octoPreferences().isPrintNotificationEnabled
+    val isNotificationEnabled
+        get() = Injector.get().octoPreferences().isPrintNotificationEnabled &&
+                !Injector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch
     val isNotificationShowing get() = startTime > 0
     internal var startTime = 0L
 

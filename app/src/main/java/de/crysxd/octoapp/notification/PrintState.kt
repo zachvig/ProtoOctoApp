@@ -2,8 +2,8 @@ package de.crysxd.octoapp.notification
 
 import java.util.Date
 
-data class Print(
-    val objectId: String,
+data class PrintState(
+    val fileDate: Long,
     val fileName: String,
     val source: Source,
     val state: State,
@@ -12,10 +12,20 @@ data class Print(
     val appTime: Date,
     val eta: Date?,
 ) {
+
+    companion object {
+        const val DEFAULT_FILE_TIME = 0L
+        const val DEFAULT_FILE_NAME = "unknown"
+        const val DEFAULT_PROGRESS = 0f
+    }
+
+    val objectId get() = "$fileDate$fileName"
+
     enum class State {
         Printing,
         Pausing,
         Paused,
+        Idle,
         Cancelling,
     }
 

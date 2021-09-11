@@ -9,6 +9,7 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.repository.NotificationIdRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.usecase.OpenOctoprintWebUseCase
@@ -32,11 +33,11 @@ import timber.log.Timber
 class RequestAccessViewModel(
     private val requestApiAccessUseCase: RequestApiAccessUseCase,
     private val openOctoprintWebUseCase: OpenOctoprintWebUseCase,
+    private val notificationIdRepository: NotificationIdRepository,
 ) : BaseViewModel() {
 
     companion object {
         private const val REQUEST_GRACE_PERIOD_MS = 90_000L
-        private const val NOTIFICATION_ID = 3432
     }
 
     private val notificationManager = Injector.get().context().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -47,7 +48,7 @@ class RequestAccessViewModel(
     val uiState = mutableUiState.asFlow()
         .onStart {
             startPollingJob()
-            notificationManager.cancel(NOTIFICATION_ID)
+            notificationManager.cancel(notificationIdRepository.requestAccessCompletedNotificationId)
         }.onCompletion {
             scheduleCancelPollingJob()
         }.asLiveData()
@@ -99,7 +100,7 @@ class RequestAccessViewModel(
             val context = Injector.get().localizedContext()
             val channelId = context.getString(R.string.updates_notification_channel)
             notificationManager.notify(
-                NOTIFICATION_ID,
+                notificationIdRepository.requestAccessCompletedNotificationId,
                 NotificationCompat.Builder(Injector.get().context(), channelId)
                     .setContentTitle("OctoApp is ready!")
                     .setContentText("Tap here to return")

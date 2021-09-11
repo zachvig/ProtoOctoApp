@@ -21,6 +21,7 @@ import de.crysxd.octoapp.base.network.LocalDnsResolver
 import de.crysxd.octoapp.base.network.SslKeyStoreHandler
 import de.crysxd.octoapp.base.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
+import de.crysxd.octoapp.base.repository.NotificationIdRepository
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.repository.PinnedMenuItemRepository
 import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
@@ -105,6 +106,7 @@ interface BaseComponent {
     fun gcodeHistoryRepository(): GcodeHistoryRepository
     fun widgetPreferencesRepository(): WidgetPreferencesRepository
     fun localDnsResolver(): LocalDnsResolver
+    fun notificationIdRepository(): NotificationIdRepository
 
     // UseCaseModule
     fun setTargetTemperatureUseCase(): SetTargetTemperaturesUseCase

@@ -5,6 +5,9 @@ import android.content.Intent
 import android.os.IBinder
 import android.os.SystemClock
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_FILE_NAME
+import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_FILE_TIME
+import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_PROGRESS
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
@@ -135,6 +138,7 @@ class PrintNotificationService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) {
+            octoPreferences.wasPrintNotificationDisabledUntilNextLaunch = true
             stop()
         }
 
@@ -220,21 +224,21 @@ class PrintNotificationService : Service() {
         }
     }
 
-    private fun Message.CurrentMessage.toPrint() = Print(
-        objectId = job?.file?.let { "${it.date}+${it.name}" } ?: "unknown",
-        fileName = job?.file?.name ?: "unknown",
-        source = Print.Source.Live,
+    private fun Message.CurrentMessage.toPrint() = PrintState(
+        fileDate = job?.file?.date ?: DEFAULT_FILE_TIME,
+        fileName = job?.file?.name ?: DEFAULT_FILE_NAME,
+        source = PrintState.Source.Live,
         state = state?.flags?.let {
             when {
-                it.cancelling -> Print.State.Cancelling
-                it.pausing -> Print.State.Pausing
-                it.paused -> Print.State.Paused
+                it.cancelling -> PrintState.State.Cancelling
+                it.pausing -> PrintState.State.Pausing
+                it.paused -> PrintState.State.Paused
                 else -> null
             }
-        } ?: Print.State.Printing,
+        } ?: PrintState.State.Printing,
         sourceTime = Date(),
         appTime = Date(),
         eta = progress?.printTimeLeft?.let { Date(System.currentTimeMillis() + it * 1000) },
-        progress = progress?.completion ?: 0f,
+        progress = progress?.completion ?: DEFAULT_PROGRESS,
     )
 }

@@ -7,32 +7,30 @@ import android.content.ContextWrapper
 import android.os.Build
 import androidx.core.content.edit
 import com.google.gson.Gson
+import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.repository.NotificationIdRepository
 import timber.log.Timber
 import java.util.Date
 
 class PrintNotificationController(
     private val notificationFactory: PrintNotificationFactory,
-    private val octoPrintRepository: OctoPrintRepository,
+    private val printNotificationIdRepository: NotificationIdRepository,
+    private val octoPreferences: OctoPreferences,
     context: Context
 ) : ContextWrapper(context) {
 
     companion object {
-        private const val KEY_LAST_EVENT_NOTIFICATION_ID = "last-event-notification-id"
         private const val KEY_LAST_PRINT_PREFIX = "last-"
-        private const val KEY_PRINT_NOTIFICATION_PREFIX = "notification-id-"
-        private val PRINT_STATUS_NOTIFICATION_ID_RANGE = 15_000..15_099
-        private val PRINT_EVENT_NOTIFICATION_ID_RANGE = 15_100..15_199
-
         internal val instance by lazy {
             val context = Injector.get().localizedContext()
             val repository = Injector.get().octorPrintRepository()
             PrintNotificationController(
                 context = context,
                 notificationFactory = PrintNotificationFactory(context, repository, Injector.get().formatEtaUseCase()),
-                octoPrintRepository = repository
+                octoPreferences = Injector.get().octoPreferences(),
+                printNotificationIdRepository = Injector.get().notificationIdRepository()
             )
         }
     }
@@ -50,7 +48,7 @@ class PrintNotificationController(
     suspend fun createServiceNotification(instance: OctoPrintInstanceInformationV3, statusText: String, doNotify: Boolean = false): Pair<Notification, Int> {
         val notification = getLast(instance.id)?.let { notificationFactory.createStatusNotification(instance.id, it) }
             ?: notificationFactory.createServiceNotification(instance, statusText)
-        val id = getNotificationId(instance.id)
+        val id = printNotificationIdRepository.getPrintStatusNotificationId(instance.id)
 
         if (doNotify) {
             notificationManager.notify(id, notification)
@@ -59,31 +57,55 @@ class PrintNotificationController(
         return notification to id
     }
 
-    suspend fun update(instanceId: String, print: Print?) {
+    suspend fun update(instanceId: String, printState: PrintState?) {
         val last = getLast(instanceId)
         val proceed = when {
+            // Notifications disabled? Drop
+            octoPreferences.wasPrintNotificationDisabledUntilNextLaunch || !octoPreferences.isPrintNotificationEnabled -> {
+                Timber.v("Dropping update, notifications disabled")
+                false
+            }
+
             // No last or posting last? Proceed
-            last == null -> true
+            last == null -> {
+                Timber.v("Proceeding with update, no last found")
+                true
+            }
 
             // New live events always proceed
-            print?.source == Print.Source.Live -> true
+            printState?.source == PrintState.Source.Live -> {
+                Timber.v("Proceeding with update, is live")
+                true
+            }
 
             // If the last was from remote and this is from remote (implied) and the source time progressed, then we proceed
-            last.source == Print.Source.CachedRemote && print != null && print.sourceTime > last.sourceTime -> true
+            last.source == PrintState.Source.CachedRemote && printState != null && printState.sourceTime > last.sourceTime -> {
+                Timber.v("Proceeding with update, new and last is remote and time progressed")
+                true
+            }
 
             // If the last was live but is outdated, then we proceed
-            last.source == Print.Source.CachedLive && last.sourceTime.before(liveThreshold) -> true
+            last.source == PrintState.Source.CachedLive && last.sourceTime.before(liveThreshold) -> {
+                Timber.v("Proceeding with update, last is outdated live event")
+                true
+            }
 
             // Reposting? Proceed
-            last == print || print == null -> true
+            last == printState || printState == null -> {
+                Timber.v("Proceeding with update, repost")
+                true
+            }
 
             // Else: we drop
-            else -> false
+            else -> {
+                Timber.v("Dropping update, default")
+                false
+            }
         }
 
-        if (proceed) (print ?: last)?.let {
+        if (proceed) (printState ?: last)?.let {
             setLast(instanceId, it)
-            val notificationId = getNotificationId(instanceId)
+            val notificationId = printNotificationIdRepository.getPrintStatusNotificationId(instanceId)
             notificationFactory.createStatusNotification(instanceId, it)?.let {
                 Timber.v("Showing print notification: instanceId=$instanceId notificationId=$notificationId")
                 notificationManager.notify(notificationId, it)
@@ -91,71 +113,45 @@ class PrintNotificationController(
         }
     }
 
-    fun notifyCompleted(instanceId: String, print: Print) = notificationFactory.createPrintCompletedNotification(
+    fun notifyCompleted(instanceId: String, printState: PrintState) = notificationFactory.createPrintCompletedNotification(
         instanceId = instanceId,
-        print = print
+        printState = printState
     )?.let {
-        val notificationId = nextEventNotificationId()
-        clearLast(instanceId)
+        val notificationId = printNotificationIdRepository.nextPrintEventNotificationId()
         Timber.i("Showing completed notification: instanceId=$instanceId notificationId=$notificationId")
         notificationManager.notify(notificationId, it)
+        notifyIdle(instanceId)
     } ?: Timber.e(IllegalStateException("Received completed event for instance $instanceId but instance was not found"))
 
-    fun notifyFilamentRequired(instanceId: String, print: Print) = notificationFactory.createFilamentChangeNotification(
+    suspend fun notifyFilamentRequired(instanceId: String, printState: PrintState) = notificationFactory.createFilamentChangeNotification(
         instanceId = instanceId,
     )?.let {
-        val notificationId = nextEventNotificationId()
+        val notificationId = printNotificationIdRepository.nextPrintEventNotificationId()
         Timber.i("Showing filament notification: instanceId=$instanceId notificationId=$notificationId")
-        notificationManager.notify(nextEventNotificationId(), it)
+        update(instanceId, printState)
+        notificationManager.notify(notificationId, it)
     } ?: Timber.e(IllegalStateException("Received filament event for instance $instanceId but instance was not found"))
+
+    fun notifyIdle(instanceId: String) {
+        val notificationId = printNotificationIdRepository.getPrintStatusNotificationId(instanceId)
+        Timber.v("Cancelling print notification: instanceId=$instanceId notificationId=$notificationId")
+        clearLast(instanceId)
+        notificationManager.cancel(notificationId)
+    }
 
     fun clearLast(instanceId: String) = sharedPreferences.edit { remove("$KEY_LAST_PRINT_PREFIX$instanceId") }
 
-    fun getLast(instanceId: String) = sharedPreferences.getString("$KEY_LAST_PRINT_PREFIX$instanceId", null)?.let { gson.fromJson(it, Print::class.java) }
-
-    private fun setLast(instanceId: String, print: Print) = sharedPreferences.edit {
-        putString("$KEY_LAST_PRINT_PREFIX$instanceId", gson.toJson(print.copy(source = print.source.asCached)))
+    fun getLast(instanceId: String) = try {
+        sharedPreferences.getString("$KEY_LAST_PRINT_PREFIX$instanceId", null)?.let { gson.fromJson(it, PrintState::class.java) }
+    } catch (e: Exception) {
+        Timber.e(e)
+        null
     }
 
-    private val liveThreshold get() = Date(System.currentTimeMillis() - 30_000)
-
-    private fun getNotificationId(instanceId: String): Int {
-        val key = "$KEY_PRINT_NOTIFICATION_PREFIX$instanceId"
-
-        // Clean up
-        val notificationIdKeys = sharedPreferences.all.keys.filter { it.startsWith(KEY_PRINT_NOTIFICATION_PREFIX) }
-        val toDelete = notificationIdKeys.filter {
-            val id = it.removePrefix(KEY_PRINT_NOTIFICATION_PREFIX)
-            octoPrintRepository.getAll().none { it.id == id }
-        }
-        sharedPreferences.edit {
-            toDelete.forEach { remove(it) }
-        }
-
-        // Find allocated or create new
-        return sharedPreferences.getInt(key, -1).takeIf { it >= 0 } ?: let {
-            // Nothing allocated yet...allocate a new notification id for this instance
-            // Find min free
-            val notificationIds = sharedPreferences.all.filter { it.key.startsWith(KEY_PRINT_NOTIFICATION_PREFIX) }.mapNotNull { it.value as? Int }
-            val notificationId = PRINT_STATUS_NOTIFICATION_ID_RANGE.firstOrNull {
-                !notificationIds.contains(it)
-            } ?: notificationIds.maxOf { it } + 1
-
-            // Store and return
-            sharedPreferences.edit { putInt(key, notificationId) }
-            notificationId
-        }
+    private fun setLast(instanceId: String, printState: PrintState) = sharedPreferences.edit {
+        putString("$KEY_LAST_PRINT_PREFIX$instanceId", gson.toJson(printState.copy(source = printState.source.asCached)))
     }
 
-    private fun nextEventNotificationId(): Int {
-        val last = sharedPreferences.getInt(KEY_LAST_EVENT_NOTIFICATION_ID, 0)
-        val next = PRINT_EVENT_NOTIFICATION_ID_RANGE.nextAfter(last)
+    private val liveThreshold get() = Date(System.currentTimeMillis() - 10_000)
 
-        sharedPreferences.edit {
-            putInt(KEY_LAST_EVENT_NOTIFICATION_ID, next)
-        }
-        return next
-    }
-
-    private fun IntRange.nextAfter(i: Int) = ((i + step) % PRINT_EVENT_NOTIFICATION_ID_RANGE.last).coerceAtLeast(PRINT_EVENT_NOTIFICATION_ID_RANGE.first)
 }
