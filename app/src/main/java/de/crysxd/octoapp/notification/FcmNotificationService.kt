@@ -3,6 +3,7 @@ package de.crysxd.octoapp.notification
 import android.app.NotificationManager
 import android.content.Context
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
@@ -51,6 +52,8 @@ class FcmNotificationService : FirebaseMessagingService() {
             .setContentTitle(notification.title)
             .setSmallIcon(R.drawable.ic_notification_default)
             .setAutoCancel(true)
+            .setColorized(true)
+            .setColor(ContextCompat.getColor(this, R.color.primary_dark))
             .setContentIntent(createLaunchAppIntent(this, null))
         manager.notify(Injector.get().notificationIdRepository().nextUpdateNotificationId(), notificationBuilder.build())
     }
