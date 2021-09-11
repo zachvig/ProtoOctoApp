@@ -21,6 +21,14 @@ data class Print(
 
     enum class Source {
         Live,
+        CachedLive,
         Remote,
+        CachedRemote;
+
+        val asCached
+            get() = when (this) {
+                Live, CachedLive -> CachedLive
+                Remote, CachedRemote -> CachedRemote
+            }
     }
 }

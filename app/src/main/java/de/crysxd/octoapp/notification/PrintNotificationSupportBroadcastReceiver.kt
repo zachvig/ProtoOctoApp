@@ -48,7 +48,7 @@ class PrintNotificationSupportBroadcastReceiver(context: Context) : BroadcastRec
         if (Injector.get().octoPreferences().allowNotificationBatterySaver) {
             if (PrintNotificationManager.isNotificationShowing) {
                 pauseJob = AppScope.launch {
-                    val delaySecs = 60L
+                    val delaySecs = 10L
                     Timber.i("Screen off, pausing notification in ${delaySecs}s")
                     delay(TimeUnit.SECONDS.toMillis(delaySecs))
                     Timber.i("Pausing notification")

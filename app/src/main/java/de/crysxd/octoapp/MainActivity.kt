@@ -1,7 +1,6 @@
 package de.crysxd.octoapp
 
 import android.annotation.SuppressLint
-import android.app.NotificationManager
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
@@ -53,7 +52,6 @@ import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.base.usecase.OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH
 import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
 import de.crysxd.octoapp.databinding.MainActivityBinding
-import de.crysxd.octoapp.notification.NOTIFICATION_ID
 import de.crysxd.octoapp.notification.PrintNotificationManager
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
@@ -155,7 +153,6 @@ class MainActivity : OctoActivity() {
                         Timber.i("No instance active $this")
                         navigate(R.id.action_sign_in_required)
                         PrintNotificationManager.stop(this)
-                        (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).cancel(NOTIFICATION_ID)
                     }
                 }
             }
