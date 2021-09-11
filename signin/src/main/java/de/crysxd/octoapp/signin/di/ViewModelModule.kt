@@ -8,6 +8,7 @@ import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.di.ViewModelFactory
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
+import de.crysxd.octoapp.base.repository.NotificationIdRepository
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
 import de.crysxd.octoapp.base.usecase.OpenOctoprintWebUseCase
@@ -65,8 +66,10 @@ open class ViewModelModule {
     open fun provideRequestAccessViewModel(
         useCase: RequestApiAccessUseCase,
         openOctoprintWebUseCase: OpenOctoprintWebUseCase,
+        notificationIdRepository: NotificationIdRepository,
     ): ViewModel = RequestAccessViewModel(
         requestApiAccessUseCase = useCase,
         openOctoprintWebUseCase = openOctoprintWebUseCase,
+        notificationIdRepository = notificationIdRepository
     )
 }
