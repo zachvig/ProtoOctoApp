@@ -80,6 +80,8 @@ data class Settings(
 
     class MyStromSettings : PluginSettings
 
+    class OctoAppCompanionSettings : PluginSettings
+
     data class MultiCamSettings(
         @SerializedName("multicam_profiles") val profiles: List<WebcamSettings>?
     ) : PluginSettings
