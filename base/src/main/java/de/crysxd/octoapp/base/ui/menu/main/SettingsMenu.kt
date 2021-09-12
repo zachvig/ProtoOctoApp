@@ -8,14 +8,17 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
-import de.crysxd.octoapp.base.ui.menu.*
+import de.crysxd.octoapp.base.ui.menu.Menu
+import de.crysxd.octoapp.base.ui.menu.MenuHost
+import de.crysxd.octoapp.base.ui.menu.MenuItem
+import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
+import de.crysxd.octoapp.base.ui.menu.SubMenuItem
+import de.crysxd.octoapp.base.ui.menu.ToggleMenuItem
 import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
 import kotlinx.parcelize.Parcelize
-import timber.log.Timber
 
 @Parcelize
 class SettingsMenu : Menu {
@@ -125,35 +128,11 @@ class NightThemeMenuItem : ToggleMenuItem() {
     }
 }
 
-class PrintNotificationMenuItem : ToggleMenuItem() {
-    override val isEnabled get() = Injector.get().octoPreferences().isPrintNotificationEnabled
-    override val itemId = MENU_ITEM_PRINT_NOTIFICATION
-    override var groupId = ""
-    override val order = 105
-    override val enforceSingleLine = false
-    override val style = MenuItemStyle.Settings
-    override val icon = R.drawable.ic_round_notifications_active_24
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_turn_print_notification_on)
-
-    override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
-        Injector.get().octoPreferences().isPrintNotificationEnabled = enabled
-
-        try {
-            if (enabled) {
-                Timber.i("Service enabled, starting service")
-                (host.getMenuActivity() as? OctoActivity)?.startPrintNotificationService()
-            }
-        } catch (e: IllegalStateException) {
-            // User might have closed app just in time so we can't start the service
-        }
-    }
-}
-
 class KeepScreenOnDuringPrintMenuItem : ToggleMenuItem() {
     override val isEnabled get() = Injector.get().octoPreferences().isKeepScreenOnDuringPrint
     override val itemId = MENU_ITEM_SCREEN_ON_DURING_PRINT
     override var groupId = ""
-    override val order = 106
+    override val order = 105
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_brightness_high_24
 
@@ -167,7 +146,7 @@ class AutoConnectPrinterMenuItem : ToggleMenuItem() {
     override val isEnabled get() = Injector.get().octoPreferences().isAutoConnectPrinter
     override val itemId = MENU_ITEM_AUTO_CONNECT_PRINTER
     override var groupId = ""
-    override val order = 107
+    override val order = 106
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_hdr_auto_24px
 
@@ -175,6 +154,17 @@ class AutoConnectPrinterMenuItem : ToggleMenuItem() {
     override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
         Injector.get().octoPreferences().isAutoConnectPrinter = enabled
     }
+}
+
+class PrintNotificationMenuItem : SubMenuItem() {
+    override val subMenu: Menu get() = PrintNotificationsMenu()
+    override val itemId = MENU_ITEM_LIVE_NOTIFICATION
+    override var groupId = ""
+    override val order = 107
+    override val enforceSingleLine = false
+    override val style = MenuItemStyle.Settings
+    override val icon = R.drawable.ic_round_notifications_active_24
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_print_notifications)
 }
 
 class AutomaticLightsSettingsMenuItem : SubMenuItem() {

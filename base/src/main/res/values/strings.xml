@@ -218,7 +218,8 @@
     <string name="main_menu___item_sign_out">Permanently sign out</string>
     <string name="main_menu___item_support_octoapp">Support OctoApp</string>
     <string name="main_menu___item_temperature_presets">Temperature presets</string>
-    <string name="main_menu___item_turn_print_notification_on">Print notifications</string>
+    <string name="print_notifications_menu___item_live_notification_on">Live notifications</string>
+    <string name="main_menu___item_print_notifications">Print notifications</string>
     <string name="main_menu___item_turn_psu_off">Turn printer off</string>
     <string name="main_menu___item_use_dark_mode">Use dark mode</string>
     <string name="main_menu___menu_printer_title">Printer</string>
@@ -335,7 +336,7 @@
     <string name="print_notification___cancelling_title">Cancelling…</string>
     <string name="print_notification___close">Pause notifications</string>
     <string name="print_notification___filament_change_required_title">%s needs filament</string>
-    <string name="print_notification___filament_change_required_mesage">Print was paused</string>
+    <string name="print_notification___filament_change_required_message">Print was paused</string>
     <string name="print_notification___paused_title">Paused</string>
     <string name="print_notification___pausing_title">Pausing…</string>
     <string name="print_notification___print_done_title">%s completed print</string>
@@ -514,4 +515,9 @@
     <string name="print_notification___live">Live</string>
     <string name="print_notification___live_on_x">Live on %s</string>
     <string name="print_notification___connecting">Checking live status…</string>
+    <string name="print_notifications_menu___item_system_settings">Android notification settings</string>
+    <string name="print_notifications_menu___item_system_settings_description"><![CDATA[You can turn off remote notifications here and also <b>customize sounds and other behaviour!</b>]]></string>
+    <string name="print_notifications_menu___item_live_notification_on_description">Live notifications are preferred over remote notifications and are not shown on Wear OS watches.</string>
+    <string name="print_notifications_menu___subtitle"><![CDATA[OctoApp supports two types of print notifications: App generated <font<b>live notifications</b> and <b>remote notifications</b> sent by the OctoApp companion plugin.]]></string>
+    <string name="print_notifications_menu___bottom"><![CDATA[Learn more about live and remote notifications <a href="%s">here</a>.]]></string>
 </resources>

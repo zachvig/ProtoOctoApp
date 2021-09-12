@@ -212,7 +212,6 @@
     <string name="main_menu___item_sign_out">Permanent uittekenen</string>
     <string name="main_menu___item_support_octoapp">Ondersteuning van OctoApp</string>
     <string name="main_menu___item_temperature_presets">Temperatuur Voorinstellingen</string>
-    <string name="main_menu___item_turn_print_notification_on">Printmeldingen</string>
     <string name="main_menu___item_turn_psu_off">Zet de printer uit</string>
     <string name="main_menu___item_use_dark_mode">Donkere modus</string>
     <string name="main_menu___menu_printer_title">Printer</string>

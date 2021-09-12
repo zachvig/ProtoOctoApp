@@ -225,7 +225,6 @@
     <string name="main_menu___item_sign_out">Se déconnecter</string>
     <string name="main_menu___item_support_octoapp">Supporter OctoApp</string>
     <string name="main_menu___item_temperature_presets">Préréglages de température</string>
-    <string name="main_menu___item_turn_print_notification_on">Notifications de l\'imprimante</string>
     <string name="main_menu___item_turn_psu_off">Éteindre l\'imprimante</string>
     <string name="main_menu___item_use_dark_mode">Thème sombre</string>
     <string name="main_menu___menu_printer_title">Imprimante</string>

@@ -51,19 +51,19 @@ class PrintNotificationSupportBroadcastReceiver() : BroadcastReceiver() {
     private fun handleDisablePrintNotificationUntilNextLaunch(context: Context) {
         Timber.i("Stopping notification until next launch")
         Injector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch = true
-        PrintNotificationManager.stop(context)
+        LivePrintNotificationManager.stop(context)
         PrintNotificationController.instance.cancelUpdateNotifications()
     }
 
     private suspend fun handleScreenOff(context: Context) {
         if (Injector.get().octoPreferences().allowNotificationBatterySaver) {
-            if (PrintNotificationManager.isNotificationShowing) {
+            if (LivePrintNotificationManager.isNotificationShowing) {
                 pauseJob = AppScope.launch {
                     val delaySecs = 30L
                     Timber.i("Screen off, pausing notification in ${delaySecs}s")
                     delay(TimeUnit.SECONDS.toMillis(delaySecs))
                     Timber.i("Pausing notification")
-                    PrintNotificationManager.pause(context)
+                    LivePrintNotificationManager.pause(context)
                 }
             }
         } else {
@@ -78,7 +78,7 @@ class PrintNotificationSupportBroadcastReceiver() : BroadcastReceiver() {
                 Timber.i("Cancelling notification pause")
                 it.cancel()
             }
-            PrintNotificationManager.resume(context)
+            LivePrintNotificationManager.resume(context)
         } else {
             Timber.d("Battery saver disabled, no action on screen on")
         }
@@ -95,7 +95,7 @@ class PrintNotificationSupportBroadcastReceiver() : BroadcastReceiver() {
 
             // Delay for 5s to get the network settled and then connect
             delay(5000)
-            PrintNotificationManager.start(context)
+            LivePrintNotificationManager.start(context)
 
             // If WiFi got reconnected, the local URL could also be reachable again. Perform online check.
             Injector.get().octoPrintProvider().octoPrint().performOnlineCheck()

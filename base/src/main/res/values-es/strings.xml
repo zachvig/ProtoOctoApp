@@ -222,7 +222,6 @@
     <string name="main_menu___item_sign_out">Firme permanentemente la salida</string>
     <string name="main_menu___item_support_octoapp">Apoyar OctoApp</string>
     <string name="main_menu___item_temperature_presets">Preselecciones de temperatura</string>
-    <string name="main_menu___item_turn_print_notification_on">Notificaciones de impresión</string>
     <string name="main_menu___item_turn_psu_off">Apaga la impresora</string>
     <string name="main_menu___item_use_dark_mode">Modo oscuro</string>
     <string name="main_menu___menu_printer_title">Impresora</string>

@@ -29,7 +29,9 @@ const val MENU_ITEM_AUTOMATIC_LIGHTS = "settings___automatic_lights"
 const val MENU_ITEM_CONFIRM_POWER_OFF = "settings___confirm_power_off"
 const val MENU_ITEM_SHOW_OCTOAPP_LAB = "settings___open_octoapp_lab"
 const val MENU_ITEM_CUSTOMIZE_WIDGETS = "settings___customize_widgets"
-const val MENU_ITEM_PRINT_NOTIFICATION = "settings___print_notification"
+const val MENU_ITEM_PRINT_NOTIFICATION_SETTINGS = "settings___print_notification_settings"
+const val MENU_ITEM_LIVE_NOTIFICATION = "settings___print_notification"
+const val MENU_ITEM_SYSTEM_NOTIFICATION_SETTINGS = "settings___system_notifications"
 const val MENU_ITEM_SCREEN_ON_DURING_PRINT = "settings___keep_screen_on_during__print"
 const val MENU_ITEM_AUTO_CONNECT_PRINTER = "settings___auto_connect_printer"
 const val MENU_ITEM_CANCEL_PRINT = "printer___cancel_print"
@@ -73,7 +75,9 @@ class MenuItemLibrary {
         MENU_ITEM_TURN_PSU_OFF to TurnPsuOffMenuItem::class,
         MENU_ITEM_POWER_CONTROLS to OpenPowerControlsMenuItem::class,
         MENU_ITEM_NIGHT_THEME to NightThemeMenuItem::class,
-        MENU_ITEM_PRINT_NOTIFICATION to PrintNotificationMenuItem::class,
+        MENU_ITEM_PRINT_NOTIFICATION_SETTINGS to PrintNotificationMenuItem::class,
+        MENU_ITEM_LIVE_NOTIFICATION to PrintNotificationsMenu.LiveNotificationMenuItem::class,
+        MENU_ITEM_SYSTEM_NOTIFICATION_SETTINGS to PrintNotificationsMenu.SystemNotificationSettings::class,
         MENU_ITEM_SCREEN_ON_DURING_PRINT to KeepScreenOnDuringPrintMenuItem::class,
         MENU_ITEM_ADD_INSTANCE to AddInstanceMenuItem::class,
         MENU_ITEM_SHOW_WEBCAM to ShowWebcamMenuItem::class,

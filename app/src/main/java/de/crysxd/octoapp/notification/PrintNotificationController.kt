@@ -64,7 +64,7 @@ class PrintNotificationController(
         val last = getLast(instanceId)
         val proceed = when {
             // Notifications disabled? Drop
-            octoPreferences.wasPrintNotificationDisabledUntilNextLaunch || !octoPreferences.isPrintNotificationEnabled -> {
+            octoPreferences.wasPrintNotificationDisabledUntilNextLaunch -> {
                 Timber.v("Dropping update, notifications disabled")
                 false
             }

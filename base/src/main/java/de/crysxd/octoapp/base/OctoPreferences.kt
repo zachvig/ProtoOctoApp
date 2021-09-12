@@ -106,7 +106,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
             edit { putBoolean(KEY_AUTO_CONNECT_PRINTER, value) }
         }
 
-    var isPrintNotificationEnabled
+    var isLivePrintNotificationsEnabled
         get() = sharedPreferences.getBoolean(KEY_PRINT_NOTIFICATION_ENABLED, true)
         set(value) {
             edit { putBoolean(KEY_PRINT_NOTIFICATION_ENABLED, value) }

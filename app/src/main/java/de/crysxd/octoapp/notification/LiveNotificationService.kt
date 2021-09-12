@@ -69,7 +69,7 @@ class PrintNotificationService : Service() {
         }
         startForeground(notificationId, notification)
 
-        if (PrintNotificationManager.isNotificationEnabled) {
+        if (LivePrintNotificationManager.isNotificationEnabled) {
             Timber.i("Creating notification service")
 
             coroutineScope.launch {
@@ -96,9 +96,9 @@ class PrintNotificationService : Service() {
             // Observe changes in preferences
             coroutineScope.launch {
                 octoPreferences.updatedFlow.collectLatest {
-                    if (!octoPreferences.isPrintNotificationEnabled || octoPreferences.activeInstanceId != instance.id) {
+                    if (!octoPreferences.isLivePrintNotificationsEnabled || octoPreferences.activeInstanceId != instance.id) {
                         Timber.i("Settings changed, restarting")
-                        PrintNotificationManager.restart(this@PrintNotificationService)
+                        LivePrintNotificationManager.restart(this@PrintNotificationService)
                     }
                 }
             }
@@ -109,7 +109,7 @@ class PrintNotificationService : Service() {
     }
 
     private suspend fun checkPreconditions(): Boolean = try {
-        if (!PrintNotificationManager.isNotificationEnabled) {
+        if (!LivePrintNotificationManager.isNotificationEnabled) {
             false
         } else {
             val flags = Injector.get().octoPrintProvider().octoPrint().createPrinterApi().getPrinterState().state?.flags
@@ -130,7 +130,7 @@ class PrintNotificationService : Service() {
                 instance?.id?.let { notificationController.update(it, null) }
             }
 
-            PrintNotificationManager.startTime = 0
+            LivePrintNotificationManager.startTime = 0
             ProgressAppWidget.notifyWidgetDataChanged()
 
             // Last
@@ -147,7 +147,7 @@ class PrintNotificationService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun stop() = PrintNotificationManager.stop(this)
+    private fun stop() = LivePrintNotificationManager.stop(this)
 
     private suspend fun onEventReceived(event: Event) {
         try {
@@ -211,7 +211,7 @@ class PrintNotificationService : Service() {
             // We are no longer printing.
             // We need to count the not printing messages because OctoPrint says "not printing" for a short period of time when resuming a print
             if (notPrintingCounter++ >= 3) {
-                PrintNotificationManager.stop(this)
+                LivePrintNotificationManager.stop(this)
             }
 
             // If the print is done and we saw the print printing in the last state, notify

@@ -210,7 +210,6 @@
     <string name="main_menu___item_sign_out">Esci definitivamente</string>
     <string name="main_menu___item_support_octoapp">Supporto OctoApp</string>
     <string name="main_menu___item_temperature_presets">Preset di temperatura</string>
-    <string name="main_menu___item_turn_print_notification_on">Notifiche di stampe</string>
     <string name="main_menu___item_turn_psu_off">Spegnere la stampante</string>
     <string name="main_menu___item_use_dark_mode">Modalità oscura</string>
     <string name="main_menu___menu_printer_title">Stampa</string>

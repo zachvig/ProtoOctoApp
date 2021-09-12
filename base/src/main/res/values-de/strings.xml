@@ -210,7 +210,6 @@
     <string name="main_menu___item_sign_out">Dauerhaft abmelden</string>
     <string name="main_menu___item_support_octoapp">OctoApp unterstūtzen</string>
     <string name="main_menu___item_temperature_presets">Temperatur-Voreinstellungen</string>
-    <string name="main_menu___item_turn_print_notification_on">Druck-Notifications</string>
     <string name="main_menu___item_turn_psu_off">Drucker ausschalten</string>
     <string name="main_menu___item_use_dark_mode">Dark-Mode</string>
     <string name="main_menu___menu_printer_title">Drucker</string>
