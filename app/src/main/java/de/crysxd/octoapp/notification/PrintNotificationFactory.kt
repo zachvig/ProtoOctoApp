@@ -28,7 +28,7 @@ class PrintNotificationFactory(
 ) : ContextWrapper(context) {
 
     companion object {
-        private const val OCTOPRINT_CHANNEL_PREFIX = "octoprint_"
+        private const val OCTOPRINT_CHANNEL_PREFIX = "octoprint2_"
         private const val OCTOPRINT_CHANNEL_GROUP_ID = "octoprint"
         private const val FILAMENT_CHANGE_CHANNEL_ID = "filament_change"
         private const val MAX_PROGRESS = 1000
@@ -58,6 +58,7 @@ class PrintNotificationFactory(
             if (!notificationManager.notificationChannels.any { c -> c.id == it.channelId }) {
                 createNotificationChannel(
                     name = it.label,
+                    vibrationPattern = arrayOf(0L), // Needed for Wear OS. Otherwise every percent change vibrates.
                     id = it.channelId,
                     groupId = OCTOPRINT_CHANNEL_GROUP_ID,
                     soundUri = Uri.parse("android.resource://${packageName}/${R.raw.notification_print_done}"),
@@ -79,6 +80,7 @@ class PrintNotificationFactory(
         id: String,
         groupId: String? = null,
         soundUri: Uri? = null,
+        vibrationPattern: Array<Long>? = null,
         audioAttributes: AudioAttributes? = AudioAttributes.Builder()
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .setUsage(AudioAttributes.USAGE_NOTIFICATION)
@@ -87,6 +89,9 @@ class PrintNotificationFactory(
     ) = notificationManager.createNotificationChannel(
         NotificationChannel(id, name, importance).also { nc ->
             nc.group = groupId
+            vibrationPattern?.let {
+                nc.vibrationPattern = it.toLongArray()
+            }
             soundUri?.let { uri ->
                 audioAttributes?.let { attrs ->
                     nc.setSound(uri, attrs)
@@ -117,6 +122,7 @@ class PrintNotificationFactory(
             .setProgress(MAX_PROGRESS, (MAX_PROGRESS * (printState.progress / 100f)).toInt(), false)
             .addStopLiveAction()
             .setSilent(true)
+            .setVibrate(arrayOf(0L).toLongArray())
             .build()
     }
 
