@@ -69,7 +69,7 @@ class FcmNotificationService : FirebaseMessagingService() {
     }
 
     private fun handleRawDataEvent(instanceId: String, raw: String, sentTime: Date) = AppScope.launch(exceptionHandler) {
-        Timber.i("Received message with raw data: $raw $instanceId")
+        Timber.i("Received message with raw data for instance: $instanceId")
 
         // Decrypt and decode data
         val key = Injector.get().octorPrintRepository().get(instanceId)?.settings?.plugins?.values?.mapNotNull {
