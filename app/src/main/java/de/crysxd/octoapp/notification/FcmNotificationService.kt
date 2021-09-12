@@ -2,6 +2,7 @@ package de.crysxd.octoapp.notification
 
 import android.app.NotificationManager
 import android.content.Context
+import android.util.Base64
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -13,11 +14,16 @@ import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_FILE_NAME
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_FILE_TIME
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_PROGRESS
+import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.widgets.createLaunchAppIntent
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.security.MessageDigest
 import java.util.Date
+import javax.crypto.Cipher
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
 
 class FcmNotificationService : FirebaseMessagingService() {
 
@@ -64,8 +70,15 @@ class FcmNotificationService : FirebaseMessagingService() {
 
     private fun handleRawDataEvent(instanceId: String, raw: String, sentTime: Date) = AppScope.launch(exceptionHandler) {
         Timber.i("Received message with raw data: $raw $instanceId")
-        val data = Gson().fromJson(raw, FcmPrintEvent::class.java)
 
+        // Decrypt and decode data
+        val key = Injector.get().octorPrintRepository().get(instanceId)?.settings?.plugins?.values?.mapNotNull {
+            it as? Settings.OctoAppCompanionSettings
+        }?.firstOrNull()?.encryptionKey ?: throw IllegalStateException("No encryption key present")
+        val decrypted = AESCipher(key).decrypt(raw)
+        val data = Gson().fromJson(String(decrypted), FcmPrintEvent::class.java)
+
+        // Handle event
         when (data.type) {
             FcmPrintEvent.Type.Completed -> notificationController.notifyCompleted(
                 instanceId = instanceId,
@@ -107,4 +120,28 @@ class FcmNotificationService : FirebaseMessagingService() {
             FcmPrintEvent.Type.Idle -> PrintState.State.Idle
         }
     )
+
+    private class AESCipher(private val key: String) {
+
+        private fun createCipher(mode: Int, ivBytes: ByteArray): Cipher {
+            val c = Cipher.getInstance("AES/CBC/PKCS7Padding")
+            val sk = SecretKeySpec(key.getSha256(), "AES")
+            val iv = IvParameterSpec(ivBytes)
+            c.init(Cipher.DECRYPT_MODE, sk, iv)
+            return c
+        }
+
+        fun decrypt(data: String): ByteArray {
+            val bytes = Base64.decode(data, Base64.DEFAULT)
+            val ivBytes = bytes.take(16).toByteArray()
+            val rawDataBytes = bytes.drop(16).toByteArray()
+            val cipher = createCipher(Cipher.DECRYPT_MODE, ivBytes)
+            return cipher.doFinal(rawDataBytes)
+        }
+
+        private fun String.getSha256(): ByteArray {
+            val digest = MessageDigest.getInstance("SHA-256").also { it.reset() }
+            return digest.digest(this.toByteArray())
+        }
+    }
 }
