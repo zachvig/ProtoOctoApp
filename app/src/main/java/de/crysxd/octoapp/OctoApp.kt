@@ -83,7 +83,7 @@ class OctoApp : Application() {
                 manager.createNotificationChannel(
                     NotificationChannel(
                         getString(R.string.updates_notification_channel),
-                        getString(R.string.updates_notification_channel_name),
+                        getString(R.string.updates_notification_channel___updates),
                         NotificationManager.IMPORTANCE_HIGH
                     )
                 )

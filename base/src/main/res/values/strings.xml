@@ -277,7 +277,7 @@
     <string name="no_value_placeholder">--</string>
     <string name="no_wifi_warning_long">Your phone is not connected to WiFi. In many cases, OctoPrint is only available over WiFi.</string>
     <string name="notification_channel___print_progress">Print progress</string>
-    <string name="notification_channel_filament_change">Filament change</string>
+    <string name="notification_channel___filament_change">Filament change</string>
     <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">OctoPrint can\'t query fan speed and rates. Values can only be shown if changes are witnessed.</string>
     <string name="one_gcode_per_line">One Gcode command per line</string>
     <string name="open_email">Open Email</string>
@@ -333,16 +333,13 @@
     <string name="print_info">Print info</string>
     <string name="print_name">Print name</string>
     <string name="print_notification___cancelling_title">Cancelling…</string>
-    <string name="print_notification___close">Close</string>
-    <string name="print_notification___disconnected_message">Last %s, open app to reconnect</string>
-    <string name="print_notification___disconnected_title">Lost connection</string>
-    <string name="print_notification___filament_change_required">Filament change required</string>
-    <string name="print_notification___paused_filamet_change_title">Paused, filament empty</string>
+    <string name="print_notification___close">Pause notifications</string>
+    <string name="print_notification___filament_change_required_title">%s needs filament</string>
+    <string name="print_notification___filament_change_required_mesage">Print was paused</string>
     <string name="print_notification___paused_title">Paused</string>
     <string name="print_notification___pausing_title">Pausing…</string>
-    <string name="print_notification___print_done_title">Print completed</string>
-    <string name="print_notification___printing_message">%1$d%% completed, %2$s</string>
-    <string name="print_notification___printing_title">Printing…</string>
+    <string name="print_notification___print_done_title">%s completed print</string>
+    <string name="print_notification___printing_title">Printing %0.f%%</string>
     <string name="print_notification___reconnecting_title">Reconnecting…</string>
     <string name="print_time">Print time</string>
     <string name="progress">Progress</string>
@@ -450,7 +447,7 @@
     <string name="understood">Understood</string>
     <string name="unknown">Unknown</string>
     <string name="update_settings">Update settings</string>
-    <string name="updates_notification_channel_name">Updates</string>
+    <string name="updates_notification_channel___updates">Updates</string>
     <string name="uploaded">Uploaded</string>
     <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_detail">Install a plugin to get thumbnail previews!</string>
     <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_title">Using Cura or Prusa Slicer?</string>
@@ -511,4 +508,10 @@
     <string name="configure_remote_access___manual___password_hint_active">Password, optional</string>
     <string name="workspace___explainer"><![CDATA[OctoApp will <b>switch automatically</b> to the correct workspace.<br><br><b>Connect</b>: No printer is connected, but you have all tools to connect one.<br><br><b>Prepare</b>: A printer is connected but not printing. Get ready and start your next print!<br><br><b>Print</b>: Tune and control the active print!<br><br>Each workspace contains all controls you need in the current situation, helping the app to stay clean and simple!]]></string>
     <string name="main_menu___warning_automatic_lights"><![CDATA[<small>⚠️ Important notice:<br>Some plugins (e.g. TPLink) can <b>disconnect your printer when OctoApp turns the lights off</b> when you close the app! You can disable this behaviour in the plugin settings in the webinterface</small>]]></string>
+    <string name="app_widget___quick_access_empty">Get started by long-pressing menu items in the app and pin them to this widget</string>
+    <string name="app_widget___click_menu_item_confirmation_message">Execute „%s“?</string>
+    <string name="app_widget___click_menu_item_confirmation_action">Execute</string>
+    <string name="print_notification___live">Live</string>
+    <string name="print_notification___live_on_x">Live on %s</string>
+    <string name="print_notification___connecting">Checking live status…</string>
 </resources>

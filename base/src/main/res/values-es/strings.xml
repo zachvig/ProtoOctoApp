@@ -279,7 +279,7 @@
     <string name="no_value_placeholder">--</string>
     <string name="no_wifi_warning_long">En muchos casos, OctoPrint sólo está disponible a través de WiFi.</string>
     <string name="notification_channel___print_progress">La impresión…</string>
-    <string name="notification_channel_filament_change">Cambio de filamento</string>
+    <string name="notification_channel___filament_change">Cambio de filamento</string>
     <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">OctoPrint no puede consultar la velocidad del ventilador y las tasas. Los valores sólo se pueden mostrar si se observan cambios.</string>
     <string name="one_gcode_per_line">Un comando Gcode por línea</string>
     <string name="open_email">Abrir el correo electrónico</string>
@@ -335,16 +335,8 @@
     <string name="print_info">Imprimir información</string>
     <string name="print_name">Nombre en letra de molde</string>
     <string name="print_notification___cancelling_title">Cancelar…</string>
-    <string name="print_notification___close">Cerrar</string>
-    <string name="print_notification___disconnected_message">Último %s, abre la aplicación para volver a conectarte</string>
-    <string name="print_notification___disconnected_title">Se ha perdido la conexión</string>
-    <string name="print_notification___filament_change_required">Es necesario cambiar el filamento</string>
-    <string name="print_notification___paused_filamet_change_title">Pausado, filamento vacío</string>
     <string name="print_notification___paused_title">Pausado</string>
     <string name="print_notification___pausing_title">Pausa…</string>
-    <string name="print_notification___print_done_title">Impresión completada</string>
-    <string name="print_notification___printing_message">%1$d%% completado, %2$s</string>
-    <string name="print_notification___printing_title">La impresión…</string>
     <string name="print_notification___reconnecting_title">Reconectando…</string>
     <string name="print_time">Tiempo de impresión</string>
     <string name="progress">Progreso</string>
@@ -451,7 +443,7 @@
     <string name="understood">Entendido</string>
     <string name="unknown">Desconocido</string>
     <string name="update_settings">Actualizar la configuración</string>
-    <string name="updates_notification_channel_name">Actualizaciones</string>
+    <string name="updates_notification_channel___updates">Actualizaciones</string>
     <string name="uploaded">Cargado</string>
     <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_detail">¡Instale un plugin para obtener vistas previas de las miniaturas!</string>
     <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_title">¿Usando Cura o Prusa Slicer?</string>

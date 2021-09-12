@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_widget___quick_access_empty">Get started by long-pressing menu items in the app and pin them to this widget</string>
-    <string name="app_widget___click_menu_item_confirmation_message">Execute „%s“?</string>
-    <string name="app_widget___click_menu_item_confirmation_action">Execute</string>
+
 </resources>

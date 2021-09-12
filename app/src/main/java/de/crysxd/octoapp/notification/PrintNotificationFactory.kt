@@ -19,7 +19,6 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.utils.colorTheme
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.widgets.createLaunchAppIntent
-import java.util.Locale
 
 class PrintNotificationFactory(
     context: Context,
@@ -50,7 +49,7 @@ class PrintNotificationFactory(
 
         // Create OctoPrint group
         notificationManager.createNotificationChannelGroup(
-            NotificationChannelGroup(OCTOPRINT_CHANNEL_GROUP_ID, "Print progress")
+            NotificationChannelGroup(OCTOPRINT_CHANNEL_GROUP_ID, getString(R.string.notification_channel___print_progress))
         )
 
         // Create missing notification channels
@@ -70,7 +69,7 @@ class PrintNotificationFactory(
         createNotificationChannel(
             id = FILAMENT_CHANGE_CHANNEL_ID,
             soundUri = Uri.parse("android.resource://${packageName}/${R.raw.notification_filament_change}"),
-            name = getString(R.string.notification_channel_filament_change),
+            name = getString(R.string.notification_channel___filament_change),
         )
     }
 
@@ -132,8 +131,8 @@ class PrintNotificationFactory(
         createNotificationBuilder(
             instanceInformation = it,
             notificationChannelId = FILAMENT_CHANGE_CHANNEL_ID
-        ).setContentTitle("${it.label} needs filament")
-            .setContentText("Print was paused")
+        ).setContentTitle(getString(R.string.print_notification___filament_change_required_title, it.label))
+            .setContentText(getString(R.string.print_notification___filament_change_required_message))
             .setAutoCancel(true)
             .build()
     }
@@ -143,7 +142,7 @@ class PrintNotificationFactory(
         printState: PrintState
     ) = octoPrintRepository.get(instanceId)?.let {
         createNotificationBuilder(instanceInformation = it, notificationChannelId = it.channelId)
-            .setContentTitle("${it.label} completed print")
+            .setContentTitle(getString(R.string.print_notification___print_done_title, it.label))
             .setContentText(printState.fileName)
             .setAutoCancel(true)
             .build()
@@ -164,17 +163,20 @@ class PrintNotificationFactory(
 
     private val PrintState.notificationTitle
         get() = when (state) {
-            PrintState.State.Printing -> String.format(Locale.getDefault(), "Printing: %.0f%%", progress)
-            PrintState.State.Pausing -> "Pausing"
-            PrintState.State.Paused -> "Paused"
-            PrintState.State.Cancelling -> "Cancelling"
-            PrintState.State.Idle -> "Idle"
+            PrintState.State.Printing -> getString(R.string.print_notification___printing_title, progress)
+            PrintState.State.Pausing -> getString(R.string.print_notification___pausing_title)
+            PrintState.State.Paused -> getString(R.string.print_notification___paused_title)
+            PrintState.State.Cancelling -> getString(R.string.print_notification___cancelling_title)
+            PrintState.State.Idle -> ""
         }
 
     private suspend fun PrintState.notificationText(instanceInformation: OctoPrintInstanceInformationV3) = listOfNotNull(
-        "Live".takeIf { source == PrintState.Source.Live && !BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
-        "Live on ${instanceInformation.label}".takeIf { source == PrintState.Source.Live && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
-        instanceInformation.label.takeIf { source != PrintState.Source.Live && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
+        getString(R.string.print_notification___live)
+            .takeIf { source == PrintState.Source.Live && !BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
+        getString(R.string.print_notification___live_on_x, instanceInformation.label)
+            .takeIf { source == PrintState.Source.Live && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
+        instanceInformation.label
+            .takeIf { source != PrintState.Source.Live && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
         eta?.let {
             formatEtaUseCase.execute(
                 FormatEtaUseCase.Params(
@@ -191,7 +193,7 @@ class PrintNotificationFactory(
     private fun NotificationCompat.Builder.addStopLiveAction() = addAction(
         NotificationCompat.Action.Builder(
             null,
-            "Pause live updates",
+            getString(R.string.print_notification___close),
             PendingIntent.getBroadcast(
                 this@PrintNotificationFactory,
                 0,

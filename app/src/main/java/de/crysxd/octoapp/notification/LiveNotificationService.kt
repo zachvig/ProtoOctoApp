@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.os.SystemClock
+import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_FILE_NAME
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_FILE_TIME
@@ -64,7 +65,7 @@ class PrintNotificationService : Service() {
             stop()
         }
         val (notification, notificationId) = runBlocking {
-            notificationController.createServiceNotification(instance, "Checking live status...")
+            notificationController.createServiceNotification(instance, getString(R.string.print_notification___connecting))
         }
         startForeground(notificationId, notification)
 
