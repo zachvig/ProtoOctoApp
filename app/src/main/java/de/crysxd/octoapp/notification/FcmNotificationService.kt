@@ -9,6 +9,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import de.crysxd.octoapp.R
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_FILE_NAME
@@ -70,6 +71,13 @@ class FcmNotificationService : FirebaseMessagingService() {
 
     private fun handleRawDataEvent(instanceId: String, raw: String, sentTime: Date) = AppScope.launch(exceptionHandler) {
         Timber.i("Received message with raw data for instance: $instanceId")
+
+        // Check if for active instance or feature enabled
+        val isForActive = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.id == instanceId
+        if (!isForActive && !BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH)) {
+            Timber.i("Dropping message for $instanceId as it's not the active instance and quick switch is disabled")
+            return@launch
+        }
 
         // Decrypt and decode data
         val key = Injector.get().octorPrintRepository().get(instanceId)?.settings?.plugins?.values?.mapNotNull {
