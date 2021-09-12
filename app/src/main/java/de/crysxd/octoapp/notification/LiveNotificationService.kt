@@ -169,7 +169,7 @@ class PrintNotificationService : Service() {
                 stop()
             }
 
-            minSinceLastMessage >= 0 && reconnectionAttempts >= 3 -> {
+            minSinceLastMessage >= 1 && reconnectionAttempts >= 3 -> {
                 Timber.i("No connection since $minSinceLastMessage min and after $reconnectionAttempts attempts, stopping self with disconnect message")
                 Injector.get().octoPreferences().wasPrintNotificationDisconnected = true
                 stop()
