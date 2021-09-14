@@ -65,6 +65,7 @@ import de.crysxd.octoapp.widgets.updateAllWidgets
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 import de.crysxd.octoapp.octoprint.models.socket.Message as SocketMessage
 import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
@@ -158,9 +159,18 @@ class MainActivity : OctoActivity() {
             }
 
         SignInInjector.get().octoprintRepository().instanceInformationFlow()
+            .onEach {
+                Timber.i("DEBUG 1: ${it?.label} -> ${it?.settings?.appearance?.color}")
+            }
             .distinctUntilChangedBy { it?.settings?.appearance?.color }
+            .onEach {
+                Timber.i("DEBUG 2: ${it?.label} -> ${it?.settings?.appearance?.color}")
+            }
             .asLiveData()
-            .observe(this) { ColorTheme.applyColorTheme(it.colorTheme) }
+            .observe(this) {
+                Timber.i("DEBUG 3: ${it?.label} -> ${it?.settings?.appearance?.color}")
+                ColorTheme.applyColorTheme(it.colorTheme)
+            }
 
         lifecycleScope.launchWhenResumed {
             val navHost = supportFragmentManager.findFragmentById(R.id.mainNavController) as NavHostFragment

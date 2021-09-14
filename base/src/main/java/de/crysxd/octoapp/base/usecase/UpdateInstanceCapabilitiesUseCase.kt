@@ -45,6 +45,8 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                 return@withContext
             }
 
+            require(activeInstance.isForWebUrl(octoPrint.webUrl)) { "OctoPrint does not match instance!" }
+
             // Perform online check. This will trigger switching to the primary web url
             // if we currently use a cloud/backup connection
             if (activeInstance.alternativeWebUrl != null) {
@@ -71,10 +73,8 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             }
             val profile = async {
                 try {
-                    getCurrentPrinterProfileUseCase.execute(Unit)
-                } catch (e: MissingPermissionException) {
-                    Timber.w("Missing SYSTEM permission")
-                    null
+                    val profiles = octoPrint.createPrinterProfileApi().getPrinterProfiles().profiles.values
+                    profiles.firstOrNull { it.current } ?: profiles.firstOrNull { it.default }
                 } catch (e: Exception) {
                     Timber.e(e)
                     null
@@ -83,6 +83,9 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             val systemInfo = async {
                 try {
                     octoPrint.createSystemApi().getSystemInfo()
+                } catch (e: MissingPermissionException) {
+                    Timber.w("Missing SYSTEM permission")
+                    null
                 } catch (e: java.lang.Exception) {
                     Timber.e(e)
                     null
