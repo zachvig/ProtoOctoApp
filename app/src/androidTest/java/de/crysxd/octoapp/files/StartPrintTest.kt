@@ -2,12 +2,14 @@ package de.crysxd.octoapp.files
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import com.adevinta.android.barista.rule.BaristaRule
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
@@ -37,6 +39,7 @@ class StartPrintTest {
         .around(ResetDaggerRule())
 
     @Test(timeout = 120_000)
+    @AllowFlaky(attempts = 3)
     fun WHEN_a_print_is_started_THEN_the_app_shows_printing() {
         // GIVEN
         Injector.get().octorPrintRepository().setActive(testEnvVanilla)
@@ -69,14 +72,17 @@ class StartPrintTest {
     }
 
     @Test(timeout = 60_000)
+    @AllowFlaky(attempts = 3)
     fun WHEN_a_print_is_started_and_a_spool_is_selected_with_SpoolManager_THEN_the_app_shows_printing() =
         runMaterialTest("SM Spätzle")
 
     @Test(timeout = 60_000)
+    @AllowFlaky(attempts = 3)
     fun WHEN_a_print_is_started_and_a_spool_is_selected_with_Filament_Manager_THEN_the_app_shows_printing() =
         runMaterialTest("FM Fusili (ABS)")
 
     @Test(timeout = 60_000)
+    @AllowFlaky(attempts = 3)
     fun WHEN_a_print_is_started_and_no_spool_is_selected_THEN_the_app_shows_printing() =
         runMaterialTest(InstrumentationRegistry.getInstrumentation().targetContext.getString(R.string.material_menu___print_without_selection))
 
@@ -121,6 +127,9 @@ class StartPrintTest {
         onView(withText("SM Ramen (PLA, Japan, 4)")).inRoot(isDialog()).check(matches(isDisplayed()))
         onView(withText("SM Spaghetti")).inRoot(isDialog()).check(matches(isDisplayed()))
         onView(withText("SM Spätzle")).inRoot(isDialog()).check(matches(isDisplayed()))
-        onView(withText("Print without selection")).inRoot(isDialog()).check(matches(isDisplayed()))
+        onView(withText("Template")).inRoot(isDialog()).check(doesNotExist())
+        onView(withText("Not Active")).inRoot(isDialog()).check(doesNotExist())
+        onView(withText("Empty")).inRoot(isDialog()).check(doesNotExist())
+        onView(withText(R.string.material_menu___print_without_selection)).inRoot(isDialog()).check(matches(isDisplayed()))
     }
 }

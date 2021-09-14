@@ -8,7 +8,13 @@ class SpoolManagerPlugin(private val spoolManagerApi: SpoolManagerApi) : Materia
 
     override suspend fun getMaterials(): List<Material> {
         val response = spoolManagerApi.listSpools()
-        return response.allSpools.map {
+        return response.allSpools.filter {
+            // Hide spools that
+            // - Are templates
+            // - Are not active
+            // - Are empty
+            it.isActive != false && (it.remainingWeight ?: 1f) > 0 && it.isTemplate != true
+        }.map {
             Material(
                 id = it.databaseId,
                 displayName = it.displayName,

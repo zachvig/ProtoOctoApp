@@ -11,6 +11,8 @@ data class ListSpoolResponse(
         val vendor: String?,
         val material: String?,
         val displayName: String,
-        val isActive: Boolean,
+        val isActive: Boolean?,
+        val remainingWeight: Float?,
+        val isTemplate: Boolean?,
     )
 }
