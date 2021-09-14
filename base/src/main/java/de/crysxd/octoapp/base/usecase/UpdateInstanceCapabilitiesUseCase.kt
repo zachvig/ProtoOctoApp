@@ -11,6 +11,7 @@ import de.crysxd.octoapp.octoprint.exceptions.MissingPermissionException
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import timber.log.Timber
@@ -26,6 +27,8 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) {
         withContext(Dispatchers.IO) {
+            val activeInstance = octoPrintRepository.getActiveInstanceSnapshot() ?: return@withContext
+            val state = octoPrintProvider.passiveCurrentMessageFlow("UpdateInstanceCapabilitiesUseCase").firstOrNull()?.state
             val octoPrint = try {
                 octoPrintProvider.octoPrint()
             } catch (e: IllegalStateException) {
@@ -35,7 +38,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
 
             // Perform online check. This will trigger switching to the primary web url
             // if we currently use a cloud/backup connection
-            if (octoPrintRepository.getActiveInstanceSnapshot()?.alternativeWebUrl != null) {
+            if (activeInstance.alternativeWebUrl != null) {
                 timber.i("Checking for primary web url being online")
                 octoPrint.performOnlineCheck()
             }
@@ -56,18 +59,33 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             val profile = async {
                 try {
                     getCurrentPrinterProfileUseCase.execute(Unit)
+                } catch (e: MissingPermissionException) {
+                    Timber.w("Missing SYSTEM permission")
+                    null
                 } catch (e: Exception) {
+                    Timber.e(e)
+                    null
+                }
+            }
+            val systemInfo = async {
+                try {
+                    octoPrint.createSystemApi().getSystemInfo()
+                } catch (e: java.lang.Exception) {
                     Timber.e(e)
                     null
                 }
             }
             val m115 = async {
                 try {
+                    val isPrinting = state?.flags?.isPrinting() != false
+                    val isRequired = BillingManager.isFeatureEnabled(BillingManager.FEATURE_GCODE_PREVIEW)
+                    val isSuppressed = octoPreferences.suppressM115Request
+                    val isRequested = param.updateM115
                     // Don't execute M115 if we suppress it manually (might cause issues on some machines) or if we don't use the Gcode preview (as this is where we use it)
-                    if (param.updateM115 && BillingManager.isFeatureEnabled(BillingManager.FEATURE_GCODE_PREVIEW) && !octoPreferences.suppressM115Request) {
+                    if (isRequested && !isPrinting && isRequired && !isSuppressed) {
                         executeM115()
                     } else {
-                        Timber.i("Skipping M115")
+                        Timber.i("Skipping M115: isPrinting=$isPrinting isRequired=$isRequired isSuppressed=$isSuppressed isRequested=$isRequested")
                         null
                     }
                 } catch (e: Exception) {
@@ -80,17 +98,19 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             val settingsResult = settings.await()
             val commandsResult = commands.await()?.all
             val profileResult = profile.await()
+            val systemInfoResult = systemInfo.await()
 
             // Only start update after all network requests are done to prevent race conditions
-            octoPrintRepository.updateActive { current ->
+            octoPrintRepository.update(activeInstance.id) { current ->
                 val updated = current.copy(
                     m115Response = m115Result ?: current.m115Response,
                     settings = settingsResult,
+                    systemInfo = systemInfoResult ?: current.systemInfo,
                     activeProfile = profileResult ?: current.activeProfile,
                     systemCommands = commandsResult ?: current.systemCommands,
                 )
                 val standardPlugins = Firebase.remoteConfig.getString("default_plugins").split(",").map { it.trim() }
-                settings.await().plugins.keys.filter { !standardPlugins.contains(it) }.forEach {
+                settingsResult.plugins.keys.filter { !standardPlugins.contains(it) }.forEach {
                     OctoAnalytics.logEvent(OctoAnalytics.Event.PluginDetected(it))
                 }
 

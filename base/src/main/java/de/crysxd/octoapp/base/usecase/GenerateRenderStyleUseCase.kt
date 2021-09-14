@@ -6,7 +6,6 @@ import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.models.RenderStyle
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV2
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import timber.log.Timber
 import javax.inject.Inject
@@ -53,7 +52,13 @@ class GenerateRenderStyleUseCase @Inject constructor(
 
     override suspend fun doExecute(param: OctoPrintInstanceInformationV3?, timber: Timber.Tree): RenderStyle = try {
         // Combine info to one string
-        val info = param?.m115Response ?: ""
+        val m115 = param?.m115Response ?: ""
+        val profileName = param?.activeProfile?.name ?: ""
+        val profileModel = param?.activeProfile?.model ?: ""
+        val firmwareName = param?.systemInfo?.printerFirmware ?: ""
+
+        // Info in priority order (first = highest)
+        val info = listOf(firmwareName, profileName, profileModel, m115).joinToString()
 
         // Set background based on machine type (somewhere in info)
         val backgroundRes = when {
@@ -61,6 +66,9 @@ class GenerateRenderStyleUseCase @Inject constructor(
             info.contains("skr-mini-e3", ignoreCase = true) -> R.drawable.print_bed_ender
             info.contains("skr_mini_e3", ignoreCase = true) -> R.drawable.print_bed_ender
             info.contains("ender", ignoreCase = true) -> R.drawable.print_bed_ender
+            info.contains("e3-", ignoreCase = true) -> R.drawable.print_bed_ender
+            info.contains("e3v2-", ignoreCase = true) -> R.drawable.print_bed_ender
+            info.contains("e5-", ignoreCase = true) -> R.drawable.print_bed_ender
             info.contains("creality", ignoreCase = true) -> R.drawable.print_bed_creality
             info.contains("cr-", ignoreCase = true) -> R.drawable.print_bed_creality
             info.contains("prusa", ignoreCase = true) -> R.drawable.print_bed_prusa

@@ -6,6 +6,6 @@ import retrofit2.http.POST
 interface OctoCamApi {
 
     @POST("plugin/octocam")
-    suspend fun sendCommand(@Body command: OctoCamCommand?): OctoCamResponse
+    suspend fun sendCommand(@Body command: OctoCamCommand): OctoCamResponse
 
 }

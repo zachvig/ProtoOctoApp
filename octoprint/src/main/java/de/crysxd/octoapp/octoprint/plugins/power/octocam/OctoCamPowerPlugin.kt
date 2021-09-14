@@ -20,9 +20,11 @@ class OctoCamPowerPlugin(
     }
 
     internal suspend fun isOn() =
-        octoCamApi.sendCommand(null).torchOn == true
+        octoCamApi.sendCommand(OctoCamCommand.CheckStatus).torchOn == true
 
-    override fun getDevices(settings: Settings) = settings.plugins.filterValues { it is Settings.OctoCamSettings }.map {
+    override fun getDevices(settings: Settings) = settings.plugins.filterValues {
+        it is Settings.OctoCamSettings
+    }.map {
         OctoCamPowerDevice(this)
     }
 }

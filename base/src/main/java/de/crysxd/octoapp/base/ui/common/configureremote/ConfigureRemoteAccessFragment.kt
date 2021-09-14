@@ -86,7 +86,7 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         }
 
         viewModel.viewData.observe(viewLifecycleOwner) {
-            val oeConnected = it.remoteWebUrl == it.octoEverywhereConnection?.fullUrl
+            val oeConnected = it.remoteWebUrl != null && it.remoteWebUrl == it.octoEverywhereConnection?.fullUrl
             binding.webUrlInput.editText.setText(it.remoteWebUrl?.extractAndRemoveBasicAuth()?.first.takeIf { !oeConnected }?.toString())
             binding.basicPasswordInput.editText.setText(it.remoteWebUrl?.password?.takeIf { !oeConnected }?.toString())
             binding.basicUserInput.editText.setText(it.remoteWebUrl?.username?.takeIf { !oeConnected }?.toString())
