@@ -349,13 +349,14 @@ class MainActivity : OctoActivity() {
                 R.id.workspacePrint,
                 R.id.terminalFragment,
             ).contains(currentDestination)
+            val destinationName = currentDestination?.let(resources::getResourceEntryName)
 
             if (currentDestinationAllowsAutoNavigate || enforceAutoamticNavigationAllowed) {
+                Timber.v("Navigating to $destinationName (currentDestinationAllowsAutoNavigate=$currentDestinationAllowsAutoNavigate enforceAutoamticNavigationAllowed=$enforceAutoamticNavigationAllowed)")
                 enforceAutoamticNavigationAllowed = false
                 viewModel.lastNavigation = id
                 navController.navigate(id)
             } else {
-                val destinationName = currentDestination?.let(resources::getResourceEntryName)
                 Timber.v("Current destination $destinationName does not allow auto navigate, storing navigation action as pending")
                 viewModel.pendingNavigation = id
             }

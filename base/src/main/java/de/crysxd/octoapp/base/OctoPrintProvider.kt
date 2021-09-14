@@ -5,7 +5,6 @@ import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.logging.TimberLogger
 import de.crysxd.octoapp.base.models.ActiveInstanceIssue
@@ -24,7 +23,17 @@ import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -85,7 +94,12 @@ class OctoPrintProvider(
     fun octoPrintFlow() = octoPrintRepository.instanceInformationFlow().map {
         octoPrintMutex.withLock {
             when {
-                it == null -> null
+                it == null -> {
+                    Timber.d("Instance is null, clearing cached passive flows")
+                    currentMessageChannel.trySend(null)
+                    currentMessageChannel.trySend(null)
+                    null
+                }
                 octoPrintCache?.first != it -> {
                     val octoPrint = createAdHocOctoPrint(it)
                     Timber.d("Created new OctoPrint: $octoPrint")
