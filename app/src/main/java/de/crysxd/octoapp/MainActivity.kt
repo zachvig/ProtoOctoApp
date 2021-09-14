@@ -391,7 +391,8 @@ class MainActivity : OctoActivity() {
 
     private fun updateConnectionBanner(alreadyShrunken: Boolean) {
         when (viewModel.connectionType) {
-            ConnectionType.Primary -> setBannerVisible(false)
+            null, ConnectionType.Primary -> setBannerVisible(false)
+
             ConnectionType.Alternative -> showBanner(
                 R.string.main___banner_connected_via_alternative,
                 R.drawable.ic_round_cloud_queue_24,
@@ -399,6 +400,23 @@ class MainActivity : OctoActivity() {
                 showSpinner = false,
                 alreadyShrunken = alreadyShrunken
             )
+
+            ConnectionType.Tailscale -> showBanner(
+                R.string.main___banner_connected_via_tailscale,
+                R.drawable.ic_tailscale_24px,
+                R.color.tailscale,
+                showSpinner = false,
+                alreadyShrunken = alreadyShrunken
+            )
+
+            ConnectionType.Ngrok -> showBanner(
+                R.string.main___banner_connected_via_ngrok,
+                R.drawable.ic_ngrok_24px,
+                R.color.ngrok,
+                showSpinner = false,
+                alreadyShrunken = alreadyShrunken
+            )
+
             ConnectionType.OctoEverywhere -> showBanner(
                 R.string.main___banner_connected_via_octoeverywhere,
                 R.drawable.ic_octoeverywhere_24px,
@@ -406,7 +424,7 @@ class MainActivity : OctoActivity() {
                 showSpinner = false,
                 alreadyShrunken = alreadyShrunken
             )
-        }
+        }.hashCode()
     }
 
     private fun onMessageReceived(e: SocketMessage) = when (e) {

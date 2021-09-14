@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.octoprint
 
 import de.crysxd.octoapp.octoprint.exceptions.IllegalBasicAuthConfigurationException
+import de.crysxd.octoapp.octoprint.models.ConnectionType
 import okhttp3.Credentials
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -78,8 +79,17 @@ private fun String.replaceIfNotEmpty(needle: String, replacement: String) = if (
 
 fun HttpUrl.isOctoEverywhereUrl() = host.endsWith(".octoeverywhere.com")
 
+fun HttpUrl.getConnectionType(default: ConnectionType) = when {
+    isOctoEverywhereUrl() -> ConnectionType.OctoEverywhere
+    isNgrokUrl() -> ConnectionType.Ngrok
+    isTailscale() -> ConnectionType.Tailscale
+    else -> default
+}
+
 fun HttpUrl.isSharedOctoEverywhereUrl() = host.startsWith("shared-") && host.endsWith(".octoeverywhere.com")
 
 fun HttpUrl.isNgrokUrl() = host.endsWith(".ngrok.com")
+
+fun HttpUrl.isTailscale() = Pattern.compile("^100.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$").matcher(host).matches()
 
 fun HttpUrl.isHlsStreamUrl() = pathSegments.lastOrNull()?.let { it.endsWith(".m3u") || it.endsWith(".m3u8") } ?: false

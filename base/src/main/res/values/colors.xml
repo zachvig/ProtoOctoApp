@@ -70,6 +70,8 @@
     <color name="snackbar_negative">@color/red</color>
 
     <color name="octoeverywhere">#2a2c30</color>
+    <color name="ngrok">#201e37</color>
+    <color name="tailscale">#22252a</color>
 
     <color name="white">#fff</color>
     <color name="black">#000</color>

@@ -1,13 +1,12 @@
 package de.crysxd.octoapp.octoprint.interceptors
 
 import de.crysxd.octoapp.octoprint.exceptions.AlternativeWebUrlException
-import de.crysxd.octoapp.octoprint.isOctoEverywhereUrl
+import de.crysxd.octoapp.octoprint.getConnectionType
 import de.crysxd.octoapp.octoprint.models.ConnectionType
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
-import java.lang.IllegalStateException
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -60,11 +59,10 @@ class AlternativeWebUrlInterceptor(
         }
     }
 
-    fun getActiveConnectionType() = when {
-        isPrimaryUsed && webUrl.isOctoEverywhereUrl() -> ConnectionType.OctoEverywhere
-        isPrimaryUsed || alternativeWebUrl == null -> ConnectionType.Primary
-        alternativeWebUrl.isOctoEverywhereUrl() -> ConnectionType.OctoEverywhere
-        else -> ConnectionType.Alternative
+    fun getActiveConnectionType() = if (isPrimaryUsed) {
+        webUrl.getConnectionType(ConnectionType.Primary)
+    } else {
+        alternativeWebUrl?.getConnectionType(ConnectionType.Alternative) ?: ConnectionType.Primary
     }
 
     private fun canSolveExceptionBySwitchingUrl(e: Exception) = e is IOException
