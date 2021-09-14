@@ -5,6 +5,7 @@ import de.crysxd.octoapp.octoprint.isBasedOn
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.system.SystemCommand
+import de.crysxd.octoapp.octoprint.models.system.SystemInfo
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.util.UUID
@@ -71,6 +72,7 @@ data class OctoPrintInstanceInformationV3(
     val apiKey: String,
     val issue: ActiveInstanceIssue? = null,
     val m115Response: String? = null,
+    val systemInfo: SystemInfo.Info? = null,
     val settings: Settings? = null,
     val activeProfile: PrinterProfiles.Profile? = null,
     val systemCommands: List<SystemCommand>? = null,
