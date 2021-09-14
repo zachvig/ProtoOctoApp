@@ -340,7 +340,7 @@
     <string name="print_notification___paused_title">Paused</string>
     <string name="print_notification___pausing_title">Pausing…</string>
     <string name="print_notification___print_done_title">%s completed print</string>
-    <string name="print_notification___printing_title">Printing %0.f%%</string>
+    <string name="print_notification___printing_title">Printing %.0f%%</string>
     <string name="print_notification___reconnecting_title">Reconnecting…</string>
     <string name="print_time">Print time</string>
     <string name="progress">Progress</string>
