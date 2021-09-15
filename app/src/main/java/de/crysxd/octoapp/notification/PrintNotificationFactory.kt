@@ -18,6 +18,7 @@ import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.utils.colorTheme
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
+import de.crysxd.octoapp.base.utils.PendingIntentCompat
 import de.crysxd.octoapp.widgets.createLaunchAppIntent
 
 class PrintNotificationFactory(
@@ -203,7 +204,7 @@ class PrintNotificationFactory(
                 ).setAction(
                     PrintNotificationSupportBroadcastReceiver.ACTION_DISABLE_PRINT_NOTIFICATION_UNTIL_NEXT_LAUNCH
                 ),
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntentCompat.FLAG_UPDATE_CURRENT_IMMUTABLE
             )
         ).build()
     )
