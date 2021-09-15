@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="accent">@android:color/system_accent1_300</color>
+    <color name="window_background">@android:color/system_accent1_10</color>
+    <color name="input_background">@android:color/system_accent2_50</color>
+</resources>
