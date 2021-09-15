@@ -28,6 +28,10 @@ import javax.crypto.spec.SecretKeySpec
 
 class FcmNotificationService : FirebaseMessagingService() {
 
+    companion object {
+        private var lastUpdateServerTime: Long = 0L
+    }
+
     private val notificationController by lazy { PrintNotificationController.instance }
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Timber.e(throwable)
@@ -85,6 +89,11 @@ class FcmNotificationService : FirebaseMessagingService() {
         }?.firstOrNull()?.encryptionKey ?: throw IllegalStateException("No encryption key present")
         val decrypted = AESCipher(key).decrypt(raw)
         val data = Gson().fromJson(String(decrypted), FcmPrintEvent::class.java)
+        Timber.i("Data: $data")
+
+        val serverTime = data.serverTime ?: 0
+        val previousLastServerTime = lastUpdateServerTime
+        lastUpdateServerTime = serverTime
 
         // Handle event
         when (data.type) {
@@ -104,6 +113,10 @@ class FcmNotificationService : FirebaseMessagingService() {
 
             FcmPrintEvent.Type.Paused,
             FcmPrintEvent.Type.Printing -> {
+                if (previousLastServerTime > serverTime) {
+                    Timber.i("Skipping update, last server time was $lastUpdateServerTime which is after ${data.serverTime}")
+                }
+
                 notificationController.update(
                     instanceId = instanceId,
                     printState = data.toPrintState(sentTime)
@@ -118,7 +131,7 @@ class FcmNotificationService : FirebaseMessagingService() {
         appTime = Date(),
         sourceTime = sentTime,
         fileName = fileName ?: DEFAULT_FILE_NAME,
-        fileDate = fileDate ?: DEFAULT_FILE_TIME,
+        fileDate = DEFAULT_FILE_TIME,
         eta = timeLeft?.let { Date(sentTime.time + timeLeft * 1000) },
         state = when (type) {
             FcmPrintEvent.Type.Printing -> PrintState.State.Printing

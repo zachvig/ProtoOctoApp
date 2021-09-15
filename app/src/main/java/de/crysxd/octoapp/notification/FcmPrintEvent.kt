@@ -3,10 +3,10 @@ package de.crysxd.octoapp.notification
 import com.google.gson.annotations.SerializedName
 
 data class FcmPrintEvent(
-    val fileDate: Long?,
     val fileName: String?,
     val progress: Float?,
     val type: Type,
+    val serverTime: Long?,
     val timeLeft: Long?,
 ) {
     enum class Type {
