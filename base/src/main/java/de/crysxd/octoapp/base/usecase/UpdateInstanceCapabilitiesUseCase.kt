@@ -1,14 +1,22 @@
 package de.crysxd.octoapp.base.usecase
 
+import android.content.Context
+import android.os.Build
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.ext.suspendedAwait
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.exceptions.MissingPermissionException
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
+import de.crysxd.octoapp.octoprint.models.settings.Settings
+import de.crysxd.octoapp.octoprint.plugins.companion.AppRegistrationBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.firstOrNull
@@ -23,6 +31,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
     private val octoPreferences: OctoPreferences,
     private val executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase,
     private val getCurrentPrinterProfileUseCase: GetCurrentPrinterProfileUseCase,
+    private val context: Context,
 ) : UseCase<UpdateInstanceCapabilitiesUseCase.Params, Unit>() {
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) {
@@ -36,6 +45,8 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                 return@withContext
             }
 
+            require(activeInstance.isForWebUrl(octoPrint.webUrl)) { "OctoPrint does not match instance!" }
+
             // Perform online check. This will trigger switching to the primary web url
             // if we currently use a cloud/backup connection
             if (activeInstance.alternativeWebUrl != null) {
@@ -44,7 +55,11 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             }
 
             // Gather all info in parallel
-            val settings = async { octoPrint.createSettingsApi().getSettings() }
+            val settings = async {
+                val settings = octoPrint.createSettingsApi().getSettings()
+                registerWithCompanionPlugin(timber, settings, activeInstance.id, octoPrint)
+                settings
+            }
             val commands = async {
                 try {
                     octoPrint.createSystemApi().getSystemCommands()
@@ -58,10 +73,8 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             }
             val profile = async {
                 try {
-                    getCurrentPrinterProfileUseCase.execute(Unit)
-                } catch (e: MissingPermissionException) {
-                    Timber.w("Missing SYSTEM permission")
-                    null
+                    val profiles = octoPrint.createPrinterProfileApi().getPrinterProfiles().profiles.values
+                    profiles.firstOrNull { it.current } ?: profiles.firstOrNull { it.default }
                 } catch (e: Exception) {
                     Timber.e(e)
                     null
@@ -70,6 +83,9 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             val systemInfo = async {
                 try {
                     octoPrint.createSystemApi().getSystemInfo()
+                } catch (e: MissingPermissionException) {
+                    Timber.w("Missing SYSTEM permission")
+                    null
                 } catch (e: java.lang.Exception) {
                     Timber.e(e)
                     null
@@ -117,6 +133,34 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                 timber.i("Updated capabilities: $updated")
                 updated
             }
+        }
+    }
+
+    private suspend fun registerWithCompanionPlugin(timber: Timber.Tree, settings: Settings, instanceId: String, octoPrint: OctoPrint) {
+        try {
+            if (settings.plugins.values.any { it is Settings.OctoAppCompanionSettings }) {
+                timber.i("Companion is installed, registering...")
+                val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                octoPrint.createOctoAppCompanionApi().registerApp(
+                    AppRegistrationBody(
+                        fcmToken = FirebaseMessaging.getInstance().token.suspendedAwait(),
+                        displayName = "${Build.BRAND.replaceFirstChar { it.uppercase() }} ${Build.MODEL.replaceFirstChar { it.uppercase() }}",
+                        model = Build.MODEL,
+                        instanceId = instanceId,
+                        appVersion = packageInfo.versionName,
+                        appLanguage = Injector.get().getAppLanguageUseCase().execute().appLanguageLocale?.language ?: "en",
+                        appBuild = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            packageInfo.longVersionCode
+                        } else {
+                            packageInfo.versionCode.toLong()
+                        }
+                    )
+                )
+            } else {
+                timber.i("Companion is not installed")
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
         }
     }
 

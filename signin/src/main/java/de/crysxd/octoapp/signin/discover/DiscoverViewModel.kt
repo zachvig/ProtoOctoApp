@@ -29,7 +29,7 @@ class DiscoverViewModel(
 ) : BaseViewModel() {
 
     companion object {
-        const val INITIAL_DELAY_TIME = 3000L
+        const val INITIAL_DELAY_TIME = 5000L
         const val TEST_DELAY = 2000L
     }
 

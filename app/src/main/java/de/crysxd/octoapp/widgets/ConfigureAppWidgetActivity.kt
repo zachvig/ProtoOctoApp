@@ -159,8 +159,7 @@ class ConfigureAppWidgetActivity : LocalizedActivity() {
             return
         }
 
-        val c = AppWidgetManager.getInstance(this).getAppWidgetInfo(appWidgetId).provider.className
-        if (c == QuickAccessAppWidget::class.java.name) {
+        if (AppWidgetManager.getInstance(this).getAppWidgetInfo(appWidgetId)?.provider?.className == QuickAccessAppWidget::class.java.name) {
             MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.app_widget___information_title)
                 .setMessage(R.string.app_widget___information_always_synced)

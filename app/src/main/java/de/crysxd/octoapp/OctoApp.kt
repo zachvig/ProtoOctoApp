@@ -64,7 +64,7 @@ class OctoApp : Application() {
 
             // BroadcastReceiver to support widgets and print notification (will register itself)
             AppWidgetSupportBroadcastReceiver(this@OctoApp)
-            PrintNotificationSupportBroadcastReceiver(this@OctoApp)
+            PrintNotificationSupportBroadcastReceiver().install(this@OctoApp)
 
             // Setup RemoteConfig
             Firebase.remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
@@ -79,10 +79,11 @@ class OctoApp : Application() {
             // Register default notification channel
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                manager.deleteNotificationChannel("alerts") // Legacy channel, to be deleted
                 manager.createNotificationChannel(
                     NotificationChannel(
                         getString(R.string.updates_notification_channel),
-                        getString(R.string.updates_notification_channel_name),
+                        getString(R.string.updates_notification_channel___updates),
                         NotificationManager.IMPORTANCE_HIGH
                     )
                 )

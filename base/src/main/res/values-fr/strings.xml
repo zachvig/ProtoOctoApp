@@ -225,7 +225,6 @@
     <string name="main_menu___item_sign_out">Se déconnecter</string>
     <string name="main_menu___item_support_octoapp">Supporter OctoApp</string>
     <string name="main_menu___item_temperature_presets">Préréglages de température</string>
-    <string name="main_menu___item_turn_print_notification_on">Notifications de l\'imprimante</string>
     <string name="main_menu___item_turn_psu_off">Éteindre l\'imprimante</string>
     <string name="main_menu___item_use_dark_mode">Thème sombre</string>
     <string name="main_menu___menu_printer_title">Imprimante</string>
@@ -282,7 +281,7 @@
     <string name="no_value_placeholder">--</string>
     <string name="no_wifi_warning_long">Votre téléphone n\'est pas connecté au WiFi. La plupart du temps, OctoPrint n\'est disponible que en WiFi.</string>
     <string name="notification_channel___print_progress">Impression en cours…</string>
-    <string name="notification_channel_filament_change">Changement de filament…</string>
+    <string name="notification_channel___filament_change">Changement de filament…</string>
     <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">OctoPrint ne peut pas afficher la vitesse des ventilateurs et de l\'extrudeur tout le temps. Les valeurs ne peuvent être affichées que si des changements sont constatés.</string>
     <string name="one_gcode_per_line">Une seule commande Gcode par ligne</string>
     <string name="open_email">Envoyer l\' email</string>
@@ -338,16 +337,8 @@
     <string name="print_info">Informations sur l\'impression</string>
     <string name="print_name">Nom de l\'impression</string>
     <string name="print_notification___cancelling_title">Annulation…</string>
-    <string name="print_notification___close">Fermer</string>
-    <string name="print_notification___disconnected_message">Dernier %s, ouvrez l\'application pour se reconnecter</string>
-    <string name="print_notification___disconnected_title">Perte de la connexion</string>
-    <string name="print_notification___filament_change_required">Changement de filament nécessaire</string>
-    <string name="print_notification___paused_filamet_change_title">Pause, filament vide</string>
     <string name="print_notification___paused_title">En pause</string>
     <string name="print_notification___pausing_title">Mise en pause…</string>
-    <string name="print_notification___print_done_title">Impression terminée</string>
-    <string name="print_notification___printing_message">%1$d%% achevés, %2$s</string>
-    <string name="print_notification___printing_title">Impression…</string>
     <string name="print_notification___reconnecting_title">Reconnexion…</string>
     <string name="print_time">Temps d\'impression</string>
     <string name="progress">Progression</string>
@@ -455,7 +446,7 @@
     <string name="understood">Compris</string>
     <string name="unknown">Inconnu</string>
     <string name="update_settings">Mettre à jour les paramètres</string>
-    <string name="updates_notification_channel_name">Mises à jour</string>
+    <string name="updates_notification_channel___updates">Mises à jour</string>
     <string name="uploaded">Téléchargé</string>
     <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_detail">Installez un plugin pour obtenir des aperçus en miniature !</string>
     <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_title">Vous utilisez Cura ou Prusa Slicer ?</string>

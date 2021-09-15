@@ -212,7 +212,6 @@
     <string name="main_menu___item_sign_out">Permanent uittekenen</string>
     <string name="main_menu___item_support_octoapp">Ondersteuning van OctoApp</string>
     <string name="main_menu___item_temperature_presets">Temperatuur Voorinstellingen</string>
-    <string name="main_menu___item_turn_print_notification_on">Printmeldingen</string>
     <string name="main_menu___item_turn_psu_off">Zet de printer uit</string>
     <string name="main_menu___item_use_dark_mode">Donkere modus</string>
     <string name="main_menu___menu_printer_title">Printer</string>
@@ -269,7 +268,7 @@
     <string name="no_value_placeholder">--</string>
     <string name="no_wifi_warning_long">Je telefoon is niet verbonden met WiFi. In veel gevallen is OctoPrint alleen beschikbaar via WiFi.</string>
     <string name="notification_channel___print_progress">Afdrukken…</string>
-    <string name="notification_channel_filament_change">Verandering van filament</string>
+    <string name="notification_channel___filament_change">Verandering van filament</string>
     <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">OctoPrint kan de snelheid en de waarden van de ventilatoren niet opvragen. Waarden kunnen alleen worden getoond als er veranderingen worden waargenomen.</string>
     <string name="one_gcode_per_line">Een Gcode commando per regel</string>
     <string name="open_email">Open Email</string>
@@ -332,16 +331,8 @@
     <string name="print_info">Afdrukken</string>
     <string name="print_name">Naam</string>
     <string name="print_notification___cancelling_title">Annuleren…</string>
-    <string name="print_notification___close">Sluit</string>
-    <string name="print_notification___disconnected_message">Laatste %s, open app om opnieuw te verbinden</string>
-    <string name="print_notification___disconnected_title">Verloor de verbinding</string>
-    <string name="print_notification___filament_change_required">Vervanging van filament vereist</string>
-    <string name="print_notification___paused_filamet_change_title">Pauze, filament leeg</string>
     <string name="print_notification___paused_title">Gepauzeerd</string>
     <string name="print_notification___pausing_title">Pauzeren…</string>
-    <string name="print_notification___print_done_title">Afdrukken voltooid</string>
-    <string name="print_notification___printing_message">%1$d%% voltooid, %2$s</string>
-    <string name="print_notification___printing_title">Afdrukken…</string>
     <string name="print_notification___reconnecting_title">Opnieuw verbinden…</string>
     <string name="print_time">Afdruktijd</string>
     <string name="progress">Voortgang</string>
@@ -448,7 +439,7 @@
     <string name="understood">Understood</string>
     <string name="unknown">Onbekend</string>
     <string name="update_settings">Instellingen bijwerken</string>
-    <string name="updates_notification_channel_name">Updates</string>
+    <string name="updates_notification_channel___updates">Updates</string>
     <string name="uploaded">Geüpload</string>
     <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_detail">Installeer een plugin voor het verkrijgen van miniatuurvoorvertoningen!</string>
     <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_title">Gebruikt u Cura of Prusa Slicer?</string>

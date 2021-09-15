@@ -16,27 +16,31 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 
-class PrintNotificationSupportBroadcastReceiver(context: Context) : BroadcastReceiver() {
+class PrintNotificationSupportBroadcastReceiver() : BroadcastReceiver() {
 
     companion object {
         private var pauseJob: Job? = null
+        const val ACTION_DISABLE_PRINT_NOTIFICATION_UNTIL_NEXT_LAUNCH = "de.crysxd.octoapp.ACTION_DISABLE_PRINT_NOTIFICATION_UNTIL_NEXT_LAUNCH"
     }
 
-    init {
+    fun install(context: Context) {
         val intentFilter = IntentFilter()
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION)
         intentFilter.addAction(Intent.ACTION_SCREEN_ON)
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF)
+        intentFilter.addAction(ACTION_DISABLE_PRINT_NOTIFICATION_UNTIL_NEXT_LAUNCH)
         context.registerReceiver(this, intentFilter)
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         AppScope.launch {
+            Timber.v("Handling ${intent.action}")
             try {
                 when (intent.action) {
                     WifiManager.NETWORK_STATE_CHANGED_ACTION -> handleConnectionChange(context)
                     Intent.ACTION_SCREEN_OFF -> handleScreenOff(context)
                     Intent.ACTION_SCREEN_ON -> handleScreenOn(context)
+                    ACTION_DISABLE_PRINT_NOTIFICATION_UNTIL_NEXT_LAUNCH -> handleDisablePrintNotificationUntilNextLaunch(context)
                 }
             } catch (e: Exception) {
                 Timber.e(e)
@@ -44,15 +48,22 @@ class PrintNotificationSupportBroadcastReceiver(context: Context) : BroadcastRec
         }
     }
 
+    private fun handleDisablePrintNotificationUntilNextLaunch(context: Context) {
+        Timber.i("Stopping notification until next launch")
+        Injector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch = true
+        LivePrintNotificationManager.stop(context)
+        PrintNotificationController.instance.cancelUpdateNotifications()
+    }
+
     private suspend fun handleScreenOff(context: Context) {
         if (Injector.get().octoPreferences().allowNotificationBatterySaver) {
-            if (PrintNotificationManager.isNotificationShowing) {
+            if (LivePrintNotificationManager.isNotificationShowing) {
                 pauseJob = AppScope.launch {
-                    val delaySecs = 60L
+                    val delaySecs = 30L
                     Timber.i("Screen off, pausing notification in ${delaySecs}s")
                     delay(TimeUnit.SECONDS.toMillis(delaySecs))
                     Timber.i("Pausing notification")
-                    PrintNotificationManager.pause(context)
+                    LivePrintNotificationManager.pause(context)
                 }
             }
         } else {
@@ -67,8 +78,8 @@ class PrintNotificationSupportBroadcastReceiver(context: Context) : BroadcastRec
                 Timber.i("Cancelling notification pause")
                 it.cancel()
             }
-            PrintNotificationManager.resume(context)
-        }else {
+            LivePrintNotificationManager.resume(context)
+        } else {
             Timber.d("Battery saver disabled, no action on screen on")
         }
     }
@@ -84,7 +95,7 @@ class PrintNotificationSupportBroadcastReceiver(context: Context) : BroadcastRec
 
             // Delay for 5s to get the network settled and then connect
             delay(5000)
-            PrintNotificationManager.start(context)
+            LivePrintNotificationManager.start(context)
 
             // If WiFi got reconnected, the local URL could also be reachable again. Perform online check.
             Injector.get().octoPrintProvider().octoPrint().performOnlineCheck()

@@ -36,6 +36,9 @@ class LocalOctoPrintInstanceInformationSource(
 
         // V3 model
         private const val KEY_INSTANCE_INFORMATION_V3 = "octorpint_instance_information_v4"
+
+        // Notification id range
+        private val NOTIFICATION_ID_RANGE = 15_000..15_999
     }
 
     override fun store(t: List<OctoPrintInstanceInformationV3>?) = if (t == null) {
@@ -49,6 +52,7 @@ class LocalOctoPrintInstanceInformationSource(
             upgradeV0ToV3()
             upgradeV1ToV3()
             upgradeV2ToV3()
+            upgradeWithNotificationId()
         } catch (e: Exception) {
             Timber.e(e)
         } finally {
@@ -132,6 +136,28 @@ class LocalOctoPrintInstanceInformationSource(
                 store(it)
             }
         }
+    }
+
+    private fun upgradeWithNotificationId() {
+        // Load
+        val instances = gson.fromJson<List<OctoPrintInstanceInformationV3>>(
+            sharedPreferences.getString(KEY_INSTANCE_INFORMATION_V3, "[]"),
+            object : TypeToken<List<OctoPrintInstanceInformationV3>>() {}.type
+        ).map { it.id to it }.toMap().toMutableMap()
+
+        // Generate unique notification ids
+        instances.values.forEach {
+            if (it.notificationId == null) {
+                // New id: max + 1
+                val id = NOTIFICATION_ID_RANGE.first + ((instances.maxOf {
+                    it.value.notificationId ?: NOTIFICATION_ID_RANGE.first
+                } + 1) % NOTIFICATION_ID_RANGE.last)
+                instances[it.id] = it.copy(notificationId = id)
+            }
+        }
+
+        // Store
+        store(instances.values.toList())
     }
 
     private fun clearAllLegacy() {

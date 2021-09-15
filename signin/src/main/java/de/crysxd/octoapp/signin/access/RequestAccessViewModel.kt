@@ -1,16 +1,15 @@
 package de.crysxd.octoapp.signin.access
 
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.repository.NotificationIdRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.usecase.OpenOctoprintWebUseCase
@@ -34,11 +33,11 @@ import timber.log.Timber
 class RequestAccessViewModel(
     private val requestApiAccessUseCase: RequestApiAccessUseCase,
     private val openOctoprintWebUseCase: OpenOctoprintWebUseCase,
+    private val notificationIdRepository: NotificationIdRepository,
 ) : BaseViewModel() {
 
     companion object {
         private const val REQUEST_GRACE_PERIOD_MS = 90_000L
-        private const val NOTIFICATION_ID = 3432
     }
 
     private val notificationManager = Injector.get().context().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -49,7 +48,7 @@ class RequestAccessViewModel(
     val uiState = mutableUiState.asFlow()
         .onStart {
             startPollingJob()
-            notificationManager.cancel(NOTIFICATION_ID)
+            notificationManager.cancel(notificationIdRepository.requestAccessCompletedNotificationId)
         }.onCompletion {
             scheduleCancelPollingJob()
         }.asLiveData()
@@ -98,12 +97,10 @@ class RequestAccessViewModel(
         // Attempt to bring activity to front if the user has left the app to grant access
         if (uiState is UiState.AccessGranted && cancelPollingJob?.isActive == true) OctoActivity.instance?.intent?.let { intent ->
             Timber.i("Access granted, but app in background")
-            val channelId = "alerts"
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                notificationManager.createNotificationChannel(NotificationChannel(channelId, "Alerts", NotificationManager.IMPORTANCE_HIGH))
-            }
+            val context = Injector.get().localizedContext()
+            val channelId = context.getString(R.string.updates_notification_channel)
             notificationManager.notify(
-                NOTIFICATION_ID,
+                notificationIdRepository.requestAccessCompletedNotificationId,
                 NotificationCompat.Builder(Injector.get().context(), channelId)
                     .setContentTitle("OctoApp is ready!")
                     .setContentText("Tap here to return")

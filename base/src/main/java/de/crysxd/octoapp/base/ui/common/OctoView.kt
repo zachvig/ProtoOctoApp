@@ -58,6 +58,7 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         ColorTheme.notifyAboutColorChangesUntilDetachedFromWindow(this) {
             (swimDrawable as? AnimatedVectorDrawableCompat)?.clearAnimationCallbacks()
             (idleDrawable as? AnimatedVectorDrawableCompat)?.clearAnimationCallbacks()
+            (partyDrawable as? AnimatedVectorDrawableCompat)?.clearAnimationCallbacks()
 
             swimDrawable = loadAnimatedDrawable(
                 when (it.colorRes) {
@@ -91,10 +92,11 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
             (idleDrawable as? AnimatedVectorDrawableCompat)?.registerAnimationCallback(loopCallback)
             (partyDrawable as? AnimatedVectorDrawableCompat)?.registerAnimationCallback(loopCallback)
 
+            currentDrawable = null
             if (swimming) {
-                swim()
+                setImageDrawable(swimDrawable)
             } else {
-                idle()
+                setImageDrawable(idleDrawable)
             }
         }
 
@@ -134,24 +136,22 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     }
 
     fun swim() {
-        scheduleRunnable?.let(animationHandler::removeCallbacks)
         Timber.v("Swim")
         setImageDrawable(swimDrawable)
     }
 
     fun party() {
-        scheduleRunnable?.let(animationHandler::removeCallbacks)
         Timber.v("Party")
         setImageDrawable(partyDrawable)
     }
 
     fun idle() {
-        scheduleRunnable?.let(animationHandler::removeCallbacks)
         Timber.v("Idle")
         setImageDrawable(idleDrawable)
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
+        scheduleRunnable?.let(animationHandler::removeCallbacks)
         // Currently animating? Let animation finish and then swap
         if ((currentDrawable as? AnimatedVectorDrawableCompat)?.isRunning == true) {
             Timber.v("Animation active, delaying new animation")

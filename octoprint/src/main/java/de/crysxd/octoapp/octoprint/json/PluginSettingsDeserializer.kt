@@ -40,6 +40,7 @@ class PluginSettingsDeserializer : JsonDeserializer<Settings.PluginSettingsGroup
         "discovery" -> context.deserialize<Settings.Discovery>(element, Settings.Discovery::class.java)
         "octoeverywhere" -> context.deserialize<Settings.OctoEverywhere>(element, Settings.OctoEverywhere::class.java)
         "octocam" -> context.deserialize<Settings.OctoCamSettings>(element, Settings.OctoCamSettings::class.java)
+        "octoapp" -> context.deserialize<Settings.OctoAppCompanionSettings>(element, Settings.OctoAppCompanionSettings::class.java)
         else -> Unknown
     }
 
