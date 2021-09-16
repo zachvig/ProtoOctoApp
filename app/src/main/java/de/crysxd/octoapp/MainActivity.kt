@@ -52,7 +52,7 @@ import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.base.usecase.OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH
 import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
 import de.crysxd.octoapp.databinding.MainActivityBinding
-import de.crysxd.octoapp.notification.LivePrintNotificationManager
+import de.crysxd.octoapp.notification.LiveNotificationManager
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.ConnectionType
@@ -153,7 +153,7 @@ class MainActivity : OctoActivity() {
                     else -> {
                         Timber.i("No instance active $this")
                         navigate(R.id.action_sign_in_required)
-                        LivePrintNotificationManager.stop(this)
+                        LiveNotificationManager.stop(this)
                     }
                 }
             }
@@ -470,14 +470,14 @@ class MainActivity : OctoActivity() {
             when {
                 // We encountered an error, try reconnecting
                 flags == null || flags.isError() -> {
-                    LivePrintNotificationManager.stop(this)
+                    LiveNotificationManager.stop(this)
                     R.id.action_connect_printer
                 }
 
                 // We are printing
                 flags.isPrinting() -> {
                     try {
-                        LivePrintNotificationManager.start(this)
+                        LiveNotificationManager.start(this)
                     } catch (e: IllegalStateException) {
                         // User might have closed app just in time so we can't start the service
                     }
@@ -486,12 +486,12 @@ class MainActivity : OctoActivity() {
 
                 // We are connected
                 flags.isOperational() -> {
-                    LivePrintNotificationManager.stop(this)
+                    LiveNotificationManager.stop(this)
                     R.id.action_printer_connected
                 }
 
                 !flags.isOperational() && !flags.isPrinting() -> {
-                    LivePrintNotificationManager.stop(this)
+                    LiveNotificationManager.stop(this)
                     R.id.action_connect_printer
                 }
 
@@ -581,6 +581,6 @@ class MainActivity : OctoActivity() {
     }
 
     override fun startPrintNotificationService() {
-        LivePrintNotificationManager.start(this)
+        LiveNotificationManager.start(this)
     }
 }

@@ -21,7 +21,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -29,12 +31,16 @@ import timber.log.Timber
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
-const val ACTION_STOP = "stop"
-const val DISCONNECT_IF_NO_MESSAGE_FOR_MS = 60_000L
-const val RETRY_DELAY = 1_000L
-const val RETRY_COUNT = 3L
+class LiveNotificationService : Service() {
 
-class PrintNotificationService : Service() {
+    companion object {
+        const val ACTION_HIBERNATE = "de.crysxd.octoapp.notification.PrintNotificationService.HIBERNATE"
+        const val ACTION_WAKE_UP = "de.crysxd.octoapp.notification.PrintNotificationService.WAKE_UP"
+        const val DISCONNECT_IF_NO_MESSAGE_FOR_MS = 60_000L
+        const val RETRY_DELAY = 2_000L
+        const val CHECK_PRINT_ENDED_DELAY = 1_000L
+        const val RETRY_COUNT = 3L
+    }
 
     private val notificationController by lazy { PrintNotificationController.instance }
     private val octoPreferences by lazy { Injector.get().octoPreferences() }
@@ -48,16 +54,16 @@ class PrintNotificationService : Service() {
     private val coroutineScope = CoroutineScope(coroutineJob + Dispatchers.Main.immediate)
     private var markDisconnectedJob: Job? = null
     private var lastMessageReceivedAt: Long? = null
+    private var eventFlowJob: Job? = null
+    private var checkPrintEndedJob: Job? = null
 
     private var reconnectionAttempts = 0
-    private var notPrintingCounter = 0
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
         Injector.get().octoPreferences().wasPrintNotificationDisconnected = false
-        Injector.get().octoPreferences().wasPrintNotificationPaused = false
 
         // Start notification
         val instance = instance ?: return let {
@@ -69,7 +75,7 @@ class PrintNotificationService : Service() {
         }
         startForeground(notificationId, notification)
 
-        if (LivePrintNotificationManager.isNotificationEnabled) {
+        if (LiveNotificationManager.isNotificationEnabled) {
             Timber.i("Creating notification service")
 
             coroutineScope.launch {
@@ -82,15 +88,7 @@ class PrintNotificationService : Service() {
                     Timber.i("Preconditions, allowing connection")
                 }
 
-                // Hook into event flow to receive updates
-                eventFlow.onEach {
-                    onEventReceived(it)
-                }.retry(RETRY_COUNT) {
-                    delay(RETRY_DELAY)
-                    true
-                }.catch {
-                    Timber.e(it)
-                }.collect()
+                listenOnEventFlow()
             }
 
             // Observe changes in preferences
@@ -98,7 +96,7 @@ class PrintNotificationService : Service() {
                 octoPreferences.updatedFlow.collectLatest {
                     if (!octoPreferences.isLivePrintNotificationsEnabled || octoPreferences.activeInstanceId != instance.id) {
                         Timber.i("Settings changed, restarting")
-                        LivePrintNotificationManager.restart(this@PrintNotificationService)
+                        LiveNotificationManager.restart(this@LiveNotificationService)
                     }
                 }
             }
@@ -109,7 +107,7 @@ class PrintNotificationService : Service() {
     }
 
     private suspend fun checkPreconditions(): Boolean = try {
-        if (!LivePrintNotificationManager.isNotificationEnabled) {
+        if (!LiveNotificationManager.isNotificationEnabled) {
             false
         } else {
             val flags = Injector.get().octoPrintProvider().octoPrint().createPrinterApi().getPrinterState().state?.flags
@@ -120,17 +118,44 @@ class PrintNotificationService : Service() {
         false
     }
 
+    private fun listenOnEventFlow() {
+        // Hook into event flow to receive updates
+        eventFlowJob?.cancel()
+        reconnectionAttempts = 0
+        lastMessageReceivedAt = null
+        eventFlowJob = coroutineScope.launch {
+            eventFlow.onStart {
+                Timber.i("Event flow connected")
+            }.onCompletion {
+                Timber.i("Event flow disconnected")
+            }.onEach {
+                onEventReceived(it)
+            }.retry(RETRY_COUNT) {
+                Timber.e(it, "Fault in event flow. Retrying after ${RETRY_DELAY}ms")
+                delay(RETRY_DELAY)
+                true
+            }.catch {
+                Timber.e(it, "Event flow died. Moving into hibernation")
+                octoPreferences.wasPrintNotificationDisconnected = true
+                hibernate()
+            }.collect()
+        }
+    }
+
     override fun onDestroy() {
+        Timber.i("Service is being destroyed")
         coroutineScope.launch {
             super.onDestroy()
 
             // Cancel the notification or update it in case we are disconnected or paused (e.g. screen off)
             stopForeground(octoPreferences.wasPrintNotificationDisconnected)
-            if (octoPreferences.wasPrintNotificationDisconnected || octoPreferences.wasPrintNotificationPaused) {
-                instance?.id?.let { notificationController.update(it, null) }
+            if (octoPreferences.wasPrintNotificationDisconnected) {
+                instance?.id?.let {
+                    notificationController.update(instanceId = it, printState = null, stateText = "Disconnected**")
+                }
             }
 
-            LivePrintNotificationManager.startTime = 0
+            LiveNotificationManager.startTime = 0
             ProgressAppWidget.notifyWidgetDataChanged()
 
             // Last
@@ -139,15 +164,29 @@ class PrintNotificationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent?.action == ACTION_STOP) {
-            octoPreferences.wasPrintNotificationDisabledUntilNextLaunch = true
-            stop()
+        when (intent?.action) {
+            ACTION_HIBERNATE -> {
+                eventFlowJob?.cancel()
+                Timber.i("Hibernating now")
+            }
+            ACTION_WAKE_UP -> {
+                listenOnEventFlow()
+                Timber.i("Woken up")
+            }
         }
 
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun stop() = LivePrintNotificationManager.stop(this)
+    private fun stop() {
+        Timber.i("Stopping self")
+        LiveNotificationManager.stop(this)
+    }
+
+    private fun hibernate() {
+        Timber.i("Triggering hibernation")
+        LiveNotificationManager.hibernate(this)
+    }
 
     private suspend fun onEventReceived(event: Event) {
         try {
@@ -158,27 +197,28 @@ class PrintNotificationService : Service() {
             }
         } catch (e: Exception) {
             Timber.e(e)
-            stop()
         }
     }
 
     private fun handleDisconnectedEvent(event: Event.Disconnected) {
         ProgressAppWidget.notifyWidgetOffline()
-        val minSinceLastMessage = TimeUnit.MILLISECONDS.toMinutes(SystemClock.uptimeMillis() - (lastMessageReceivedAt ?: 0))
+        lastMessageReceivedAt = lastMessageReceivedAt ?: SystemClock.uptimeMillis()
+        val secsSinceLastMessage = TimeUnit.MILLISECONDS.toSeconds(SystemClock.uptimeMillis() - (lastMessageReceivedAt ?: 0))
         when {
-            lastMessageReceivedAt == null && reconnectionAttempts >= 2 -> {
-                Timber.w(event.exception, "Unable to connect, stopping self")
-                stop()
+            lastMessageReceivedAt == null && secsSinceLastMessage >= 10 && reconnectionAttempts >= 3 -> {
+                Timber.w(event.exception, "Unable to connect within ${secsSinceLastMessage}s and after $reconnectionAttempts attempts, going into hibernation")
+                Injector.get().octoPreferences().wasPrintNotificationDisconnected = true
+                hibernate()
             }
 
-            minSinceLastMessage >= 1 && reconnectionAttempts >= 3 -> {
-                Timber.i("No connection since $minSinceLastMessage min and after $reconnectionAttempts attempts, stopping self with disconnect message")
+            secsSinceLastMessage >= 60 && reconnectionAttempts >= 3 -> {
+                Timber.i("No connection since ${secsSinceLastMessage}s and after $reconnectionAttempts attempts, going into hibernation")
                 Injector.get().octoPreferences().wasPrintNotificationDisconnected = true
-                stop()
+                hibernate()
             }
 
             else -> {
-                Timber.i("No connection since $minSinceLastMessage min, attempting to reconnect")
+                Timber.i("No connection since ${secsSinceLastMessage}s, attempting to reconnect")
                 reconnectionAttempts++
             }
         }
@@ -197,38 +237,50 @@ class PrintNotificationService : Service() {
         markDisconnectedJob?.cancel()
         markDisconnectedJob = coroutineScope.launch {
             delay(DISCONNECT_IF_NO_MESSAGE_FOR_MS)
-            octoPreferences.wasPrintNotificationDisconnected = true
-            stop()
+            Timber.i("No updates for ${DISCONNECT_IF_NO_MESSAGE_FOR_MS}ms, moving notification to disconnected state")
+            notificationController.update(instanceId = instanceId, printState = null, stateText = "Disconnected**")
         }
 
         // Update notification
         if (message.state?.flags?.isPrinting() == true) {
-            notPrintingCounter = 0
+            checkPrintEndedJob?.cancel()
+            checkPrintEndedJob = null
             // We are printing, update notification
             val print = message.toPrint()
             notificationController.update(instanceId, print)
-        } else {
+        } else if (checkPrintEndedJob == null) {
             // We are no longer printing.
-            // We need to count the not printing messages because OctoPrint says "not printing" for a short period of time when resuming a print
-            if (notPrintingCounter++ >= 3) {
-                LivePrintNotificationManager.stop(this)
-            }
+            // We need double check because OctoPrint says "not printing" for a short period of time when resuming a print
+            Timber.i("Print no longer active, checking status in ${CHECK_PRINT_ENDED_DELAY}ms")
+            checkPrintEndedJob = coroutineScope.launch {
+                try {
+                    delay(CHECK_PRINT_ENDED_DELAY)
+                    if (checkPreconditions()) {
+                        Timber.i("Print still active, resuming")
+                    } else {
+                        Timber.i("Print ended, winding down")
 
-            // If the print is done and we saw the print printing in the last state, notify
-            // We don't check for print done events if OctoApp plugin is installed
-            val hasCompanion = instance?.settings?.plugins?.any { it.value is Settings.OctoAppCompanionSettings } == true
-            if (hasCompanion) {
-                Timber.i("Skipping print completed check, companion configured")
-            } else {
-                notificationController.getLast(instanceId)?.let { last ->
-                    val current = message.toPrint()
-                    if (last.objectId == current.objectId && current.progress >= 100) {
-                        notificationController.notifyCompleted(instanceId, current)
+                        // If the print is done and we saw the print printing in the last state, notify
+                        // We don't check for print done events if OctoApp plugin is installed
+                        val hasCompanion = instance?.settings?.plugins?.any { it.value is Settings.OctoAppCompanionSettings } == true
+                        if (hasCompanion) {
+                            Timber.i("Skipping print completed check, companion configured")
+                        } else {
+                            notificationController.getLast(instanceId)?.let { last ->
+                                val current = message.toPrint()
+                                if (last.objectId == current.objectId && current.progress >= 100) {
+                                    notificationController.notifyCompleted(instanceId, current)
+                                }
+                            }
+                        }
+
+                        notificationController.clearLast(instanceId)
+                        stop()
                     }
+                } finally {
+                    checkPrintEndedJob = null
                 }
             }
-
-            notificationController.clearLast(instanceId)
         }
     }
 

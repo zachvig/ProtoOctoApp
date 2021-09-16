@@ -16,7 +16,7 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 
-class PrintNotificationSupportBroadcastReceiver() : BroadcastReceiver() {
+class PrintNotificationSupportBroadcastReceiver : BroadcastReceiver() {
 
     companion object {
         private var pauseJob: Job? = null
@@ -51,19 +51,19 @@ class PrintNotificationSupportBroadcastReceiver() : BroadcastReceiver() {
     private fun handleDisablePrintNotificationUntilNextLaunch(context: Context) {
         Timber.i("Stopping notification until next launch")
         Injector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch = true
-        LivePrintNotificationManager.stop(context)
+        LiveNotificationManager.stop(context)
         PrintNotificationController.instance.cancelUpdateNotifications()
     }
 
     private suspend fun handleScreenOff(context: Context) {
         if (Injector.get().octoPreferences().allowNotificationBatterySaver) {
-            if (LivePrintNotificationManager.isNotificationShowing) {
+            if (LiveNotificationManager.isNotificationShowing) {
                 pauseJob = AppScope.launch {
-                    val delaySecs = 30L
-                    Timber.i("Screen off, pausing notification in ${delaySecs}s")
+                    val delaySecs = 5L
+                    Timber.i("Screen off, sending live notification into hibernation in ${delaySecs}s")
                     delay(TimeUnit.SECONDS.toMillis(delaySecs))
-                    Timber.i("Pausing notification")
-                    LivePrintNotificationManager.pause(context)
+                    Timber.i("Sending live notification into hibernation")
+                    LiveNotificationManager.hibernate(context)
                 }
             }
         } else {
@@ -75,10 +75,10 @@ class PrintNotificationSupportBroadcastReceiver() : BroadcastReceiver() {
         if (Injector.get().octoPreferences().allowNotificationBatterySaver) {
             pauseJob?.let {
                 pauseJob = null
-                Timber.i("Cancelling notification pause")
+                Timber.i("Cancelling notification hibernation")
                 it.cancel()
             }
-            LivePrintNotificationManager.resume(context)
+            LiveNotificationManager.wakeUp(context)
         } else {
             Timber.d("Battery saver disabled, no action on screen on")
         }
@@ -88,14 +88,15 @@ class PrintNotificationSupportBroadcastReceiver() : BroadcastReceiver() {
         val wasDisconnected = Injector.get().octoPreferences().wasPrintNotificationDisconnected
         val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val hasWifi = manager.allNetworks.map { manager.getNetworkCapabilities(it) }.any { it?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true }
+        val connectDelayMs = 5000L
 
         if (wasDisconnected && hasWifi) {
             Injector.get().octoPreferences().wasPrintNotificationDisconnected = false
-            Timber.i("Wifi now connected. Print notification was disconnected before, attempting to reconnect in 5s")
+            Timber.i("Network changed. Print notification was disconnected before, attempting to reconnect in ${connectDelayMs / 1000}s")
 
             // Delay for 5s to get the network settled and then connect
-            delay(5000)
-            LivePrintNotificationManager.start(context)
+            delay(connectDelayMs)
+            LiveNotificationManager.start(context)
 
             // If WiFi got reconnected, the local URL could also be reachable again. Perform online check.
             Injector.get().octoPrintProvider().octoPrint().performOnlineCheck()

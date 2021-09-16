@@ -124,7 +124,7 @@
 
         </activity>
 
-        <service android:name=".notification.PrintNotificationService" />
+        <service android:name=".notification.LiveNotificationService" />
 
         <service
             android:name=".notification.FcmNotificationService"

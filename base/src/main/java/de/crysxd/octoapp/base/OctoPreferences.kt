@@ -28,7 +28,6 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_CRASH_REPORTING = "crash_reporting_enabled"
         private const val KEY_ANALYTICS = "analytics_enabled"
         private const val KEY_PRINT_NOTIFICATION_WAS_DISCONNECTED = "print_notification_was_disconnected"
-        private const val KEY_PRINT_NOTIFICATION_WAS_PAUSED = "print_notification_was_paused"
         private const val KEY_PRINT_NOTIFICATION_WAS_DISABLED_UNTIL_NEXT_LAUNCH = "print_notification_was_disabled_until_next_launch"
         private const val KEY_AUTO_LIGHTS = "auto_lights"
         private const val KEY_CONFIRM_POWER_OFF_DEVICES = "confirm_power_off_devices"
@@ -44,6 +43,13 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
     private val updatedChannel = MutableStateFlow(0)
     val updatedFlow get() = updatedChannel.asStateFlow().map { }
 
+    init {
+        // Delete legacy
+        sharedPreferences.edit {
+            remove("print_notification_was_paused")
+        }
+    }
+
     private fun edit(block: SharedPreferences.Editor.() -> Unit) {
         sharedPreferences.edit(action = block)
         updatedChannel.value++
@@ -53,12 +59,6 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         get() = sharedPreferences.getBoolean(KEY_PRINT_NOTIFICATION_WAS_DISCONNECTED, false)
         set(value) {
             edit { putBoolean(KEY_PRINT_NOTIFICATION_WAS_DISCONNECTED, value) }
-        }
-
-    var wasPrintNotificationPaused: Boolean
-        get() = sharedPreferences.getBoolean(KEY_PRINT_NOTIFICATION_WAS_PAUSED, false)
-        set(value) {
-            edit { putBoolean(KEY_PRINT_NOTIFICATION_WAS_PAUSED, value) }
         }
 
     var wasPrintNotificationDisabledUntilNextLaunch: Boolean
