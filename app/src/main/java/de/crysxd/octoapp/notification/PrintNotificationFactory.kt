@@ -18,6 +18,7 @@ import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ui.utils.colorTheme
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
+import de.crysxd.octoapp.base.utils.PendingIntentCompat
 import de.crysxd.octoapp.widgets.createLaunchAppIntent
 
 class PrintNotificationFactory(
@@ -27,7 +28,7 @@ class PrintNotificationFactory(
 ) : ContextWrapper(context) {
 
     companion object {
-        private const val OCTOPRINT_CHANNEL_PREFIX = "octoprint2_"
+        private const val OCTOPRINT_CHANNEL_PREFIX = "octoprint_"
         private const val OCTOPRINT_CHANNEL_GROUP_ID = "octoprint"
         private const val FILAMENT_CHANGE_CHANNEL_ID = "filament_change"
         private const val MAX_PROGRESS = 1000
@@ -112,11 +113,12 @@ class PrintNotificationFactory(
     suspend fun createStatusNotification(
         instanceId: String,
         printState: PrintState,
+        stateText: String?,
     ) = octoPrintRepository.get(instanceId)?.let {
         createNotificationBuilder(
             instanceInformation = it,
             notificationChannelId = it.channelId
-        ).setContentTitle(printState.notificationTitle)
+        ).setContentTitle(printState.notificationTitle(stateText))
             .setContentText(printState.notificationText(it))
             .setProgress(MAX_PROGRESS, (MAX_PROGRESS * (printState.progress / 100f)).toInt(), false)
             .addStopLiveAction()
@@ -161,14 +163,19 @@ class PrintNotificationFactory(
             }
         }
 
-    private val PrintState.notificationTitle
-        get() = when (state) {
+    private fun PrintState.notificationTitle(stateText: String?): String {
+        val title = when (state) {
             PrintState.State.Printing -> getString(R.string.print_notification___printing_title, progress)
             PrintState.State.Pausing -> getString(R.string.print_notification___pausing_title)
             PrintState.State.Paused -> getString(R.string.print_notification___paused_title)
             PrintState.State.Cancelling -> getString(R.string.print_notification___cancelling_title)
             PrintState.State.Idle -> ""
         }
+
+        return stateText?.let {
+            "$title ($stateText)"
+        } ?: title
+    }
 
     private suspend fun PrintState.notificationText(instanceInformation: OctoPrintInstanceInformationV3) = listOfNotNull(
         getString(R.string.print_notification___live)
@@ -203,7 +210,7 @@ class PrintNotificationFactory(
                 ).setAction(
                     PrintNotificationSupportBroadcastReceiver.ACTION_DISABLE_PRINT_NOTIFICATION_UNTIL_NEXT_LAUNCH
                 ),
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntentCompat.FLAG_UPDATE_CURRENT_IMMUTABLE
             )
         ).build()
     )

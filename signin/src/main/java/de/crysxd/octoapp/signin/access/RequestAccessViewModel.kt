@@ -14,6 +14,7 @@ import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.usecase.OpenOctoprintWebUseCase
 import de.crysxd.octoapp.base.usecase.RequestApiAccessUseCase
+import de.crysxd.octoapp.base.utils.PendingIntentCompat
 import de.crysxd.octoapp.signin.R
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -107,7 +108,7 @@ class RequestAccessViewModel(
                     .setAutoCancel(true)
                     .setColorized(true)
                     .setSmallIcon(R.drawable.ic_notification_default)
-                    .setContentIntent(PendingIntent.getActivity(Injector.get().context(), 23, intent, PendingIntent.FLAG_UPDATE_CURRENT))
+                    .setContentIntent(PendingIntent.getActivity(Injector.get().context(), 23, intent, PendingIntentCompat.FLAG_UPDATE_CURRENT_IMMUTABLE))
                     .setPriority(NotificationCompat.PRIORITY_MAX)
                     .build()
             )

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primary_dark">#106101</color>
+    <color name="accent">#2F6895</color>
 
     <color name="window_background">@color/dark_grey</color>
     <color name="input_background">@color/dark_grey_2</color>
@@ -11,7 +12,6 @@
     <color name="inverse_text">@color/black</color>
     <color name="color_error">@color/red</color>
     <color name="secondary_button_text">@color/white_translucent</color>
-    <color name="primary_button_background">#2F6895</color>
     <color name="button_more_foreground">@color/white_translucent</color>
     <color name="button_disabled">#393939</color>
     <color name="menu_pin_foreground">@color/white_translucent</color>

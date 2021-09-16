@@ -25,6 +25,7 @@ import de.crysxd.octoapp.base.ui.menu.main.MenuItemLibrary
 import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.base.utils.AppScope
+import de.crysxd.octoapp.base.utils.PendingIntentCompat
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
 import de.crysxd.octoapp.widgets.webcam.BaseWebcamAppWidget
 import de.crysxd.octoapp.widgets.webcam.ControlsWebcamAppWidget
@@ -74,7 +75,7 @@ class ExecuteWidgetActionActivity : LocalizedActivity(), MenuHost {
                     it.putExtra(EXTRA_TASK, task)
                     intentUpdate(it)
                 },
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntentCompat.FLAG_UPDATE_CURRENT_IMMUTABLE
             )
     }
 

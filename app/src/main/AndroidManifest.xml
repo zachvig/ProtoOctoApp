@@ -21,7 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/OctoTheme"
         tools:targetApi="n">
-        <receiver android:name=".widgets.webcam.ControlsWebcamAppWidget">
+        <receiver
+            android:name=".widgets.webcam.ControlsWebcamAppWidget"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -31,7 +33,9 @@
                 android:resource="@xml/webcam_widget_info" />
         </receiver>
 
-        <receiver android:name=".widgets.webcam.NoControlsWebcamAppWidget">
+        <receiver
+            android:name=".widgets.webcam.NoControlsWebcamAppWidget"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -41,7 +45,9 @@
                 android:resource="@xml/webcam_widget_no_controls_info" />
         </receiver>
 
-        <receiver android:name=".widgets.progress.ProgressAppWidget">
+        <receiver
+            android:name=".widgets.progress.ProgressAppWidget"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -51,7 +57,9 @@
                 android:resource="@xml/progress_widget_info" />
         </receiver>
 
-        <receiver android:name=".widgets.quickaccess.QuickAccessAppWidget">
+        <receiver
+            android:name=".widgets.quickaccess.QuickAccessAppWidget"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -62,6 +70,7 @@
         </receiver>
 
         <activity
+            android:exported="false"
             android:name=".widgets.ConfigureAppWidgetActivity"
             android:theme="@style/OctoTheme.Transparent">
             <intent-filter>
@@ -77,6 +86,7 @@
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <activity
+            android:exported="false"
             android:name=".widgets.ExecuteWidgetActionActivity"
             android:theme="@style/OctoTheme.Transparent" />
 
@@ -114,7 +124,7 @@
 
         </activity>
 
-        <service android:name=".notification.PrintNotificationService" />
+        <service android:name=".notification.LiveNotificationService" />
 
         <service
             android:name=".notification.FcmNotificationService"

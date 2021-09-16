@@ -10,26 +10,34 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-object LivePrintNotificationManager {
+object LiveNotificationManager {
     val isNotificationEnabled
         get() = Injector.get().octoPreferences().isLivePrintNotificationsEnabled &&
                 !Injector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch
     val isNotificationShowing get() = startTime > 0
     internal var startTime = 0L
+        set(value) {
+            if (value == 0L) isHibernating = false
+            field = value
+        }
+    private var isHibernating = false
+
 
     fun start(context: Context) {
         if (isNotificationEnabled) {
             // Already running?
-            if (isNotificationShowing) return
-
-            startTime = System.currentTimeMillis()
-            val intent = Intent(context, PrintNotificationService::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && context !is Activity) {
-                Timber.i("Starting notification service as foreground")
-                context.startForegroundService(intent)
-            } else {
-                Timber.i("Starting notification service")
-                context.startService(intent)
+            if (isHibernating) {
+                wakeUp(context)
+            } else if (!isNotificationShowing) {
+                startTime = System.currentTimeMillis()
+                val intent = Intent(context, LiveNotificationService::class.java)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && context !is Activity) {
+                    Timber.i("Starting notification service as foreground")
+                    context.startForegroundService(intent)
+                } else {
+                    Timber.i("Starting notification service")
+                    context.startService(intent)
+                }
             }
         } else {
             Timber.i("Skipping notification service start, disabled")
@@ -44,7 +52,7 @@ object LivePrintNotificationManager {
             val delay = 500 - (System.currentTimeMillis() - startTime).coerceAtMost(500)
             Timber.i("Stopping notification service after delay of ${delay}ms")
             delay(delay)
-            val intent = Intent(context, PrintNotificationService::class.java)
+            val intent = Intent(context, LiveNotificationService::class.java)
             context.stopService(intent)
             startTime = 0
         }
@@ -52,26 +60,28 @@ object LivePrintNotificationManager {
 
     fun restart(context: Context) {
         if (isNotificationShowing) {
-            Injector.get().octoPreferences().wasPrintNotificationPaused = true
             stop(context)
-            resume(context)
-        }
-    }
-
-    fun pause(context: Context) {
-        val isPausingEnabled = Injector.get().octoPreferences().allowNotificationBatterySaver
-        val wasDisconnected = Injector.get().octoPreferences().wasPrintNotificationDisconnected
-        if (isPausingEnabled && (wasDisconnected || isNotificationShowing)) {
-            Timber.i("Pausing service")
-            Injector.get().octoPreferences().wasPrintNotificationPaused = true
-            stop(context)
-        }
-    }
-
-    fun resume(context: Context) {
-        if (Injector.get().octoPreferences().wasPrintNotificationPaused) {
-            Timber.i("Resuming service")
             start(context)
+        }
+    }
+
+    fun hibernate(context: Context) {
+        val isHibernationEnabled = Injector.get().octoPreferences().allowNotificationBatterySaver
+        if (isHibernationEnabled && isNotificationShowing) {
+            Timber.i("Sending service into hibernation")
+            isHibernating = true
+            val intent = Intent(context, LiveNotificationService::class.java)
+            intent.action = LiveNotificationService.ACTION_HIBERNATE
+            context.startService(intent)
+        }
+    }
+
+    fun wakeUp(context: Context) {
+        if (isHibernating) {
+            Timber.i("Resuming service")
+            val intent = Intent(context, LiveNotificationService::class.java)
+            intent.action = LiveNotificationService.ACTION_WAKE_UP
+            context.startService(intent)
         }
     }
 }

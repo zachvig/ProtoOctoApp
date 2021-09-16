@@ -49,7 +49,7 @@ class PrintNotificationController(
     }
 
     suspend fun createServiceNotification(instance: OctoPrintInstanceInformationV3, statusText: String, doNotify: Boolean = false): Pair<Notification, Int> {
-        val notification = getLast(instance.id)?.let { notificationFactory.createStatusNotification(instance.id, it) }
+        val notification = getLast(instance.id)?.let { notificationFactory.createStatusNotification(instance.id, it, "Connecting*") }
             ?: notificationFactory.createServiceNotification(instance, statusText)
         val id = printNotificationIdRepository.getPrintStatusNotificationId(instance.id)
 
@@ -60,7 +60,7 @@ class PrintNotificationController(
         return notification to id
     }
 
-    suspend fun update(instanceId: String, printState: PrintState?) {
+    suspend fun update(instanceId: String, printState: PrintState?, stateText: String? = null) {
         val last = getLast(instanceId)
         val proceed = when {
             // Notifications disabled? Drop
@@ -109,7 +109,7 @@ class PrintNotificationController(
         if (proceed) (printState ?: last)?.let {
             setLast(instanceId, it)
             val notificationId = printNotificationIdRepository.getPrintStatusNotificationId(instanceId)
-            notificationFactory.createStatusNotification(instanceId, it)?.let {
+            notificationFactory.createStatusNotification(instanceId, it, stateText)?.let {
                 Timber.v("Showing print notification: instanceId=$instanceId notificationId=$notificationId")
                 notificationManager.notify(notificationId, it)
             } ?: Timber.e(IllegalStateException("Received update event for instance $instanceId but instance was not found"))

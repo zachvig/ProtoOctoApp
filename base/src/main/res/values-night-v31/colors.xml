@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="accent">@android:color/system_accent1_500</color>
+    <color name="window_background">@android:color/system_neutral1_900</color>
+    <color name="input_background">@android:color/system_neutral2_800</color>
+    <color name="default_color_scheme">@android:color/system_accent3_700</color>
+    <color name="default_color_scheme_light">@android:color/system_accent3_500</color>
+    <color name="green_color_scheme">#106101</color>
+    <color name="green_color_scheme_light">#6A9C63</color>
+</resources>

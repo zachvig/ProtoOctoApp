@@ -13,6 +13,7 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_QUICK_SWITCH
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.format
+import de.crysxd.octoapp.base.utils.PendingIntentCompat
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
 import de.crysxd.octoapp.widgets.quickaccess.QuickAccessAppWidget
 import de.crysxd.octoapp.widgets.webcam.BaseWebcamAppWidget
@@ -52,7 +53,7 @@ internal fun createLaunchAppIntent(context: Context, instanceId: String?) = Pend
             it.putExtra(EXTRA_TARGET_OCTOPRINT_ID, instanceId)
         }
     },
-    PendingIntent.FLAG_UPDATE_CURRENT
+    PendingIntentCompat.FLAG_UPDATE_CURRENT_IMMUTABLE
 )
 
 internal fun createUpdateIntent(context: Context, widgetId: Int, playLive: Boolean = false) =
