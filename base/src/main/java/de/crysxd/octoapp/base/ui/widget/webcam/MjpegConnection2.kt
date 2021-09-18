@@ -2,7 +2,9 @@ package de.crysxd.octoapp.base.ui.widget.webcam
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_FULL_WEBCAM_RESOLUTION
 import de.crysxd.octoapp.base.di.Injector
@@ -30,6 +32,7 @@ import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
@@ -45,6 +48,7 @@ class MjpegConnection2(
     private val bufferSize = 16_384
     private val tempCache = ByteArray(bufferSize)
     private val cache = ByteCache()
+    private val timeoutMs = Firebase.remoteConfig.getLong("webcam_timeout_ms")
 
     companion object {
         private var instanceCounter = 0
@@ -65,8 +69,8 @@ class MjpegConnection2(
             val response = connect()
             hasBeenConnected = true
             Timber.tag(tag).i("Connected, getting boundary")
-            val boundary = extractBoundary(response) ?: DEFAULT_HEADER_BOUNDARY
-            Timber.tag(tag).i("Boundary extracted, starting to load images")
+            val boundary = extractBoundary(response)
+            Timber.tag(tag).i("Boundary extracted, starting to load images ($boundary)")
 
             cache.reset()
             val inputStream = response.body!!.byteStream().buffered(bufferSize * 4)
@@ -146,8 +150,9 @@ class MjpegConnection2(
             .addInterceptor(HttpLoggingInterceptor(LoggingInterceptorLogger(logger)).setLevel(HttpLoggingInterceptor.Level.HEADERS))
             .withHostnameVerifier(SubjectAlternativeNameCompatVerifier().takeIf { sslKeystoreHandler.isWeakVerificationForHost(url) })
             .withSslKeystore(sslKeystoreHandler.loadKeyStore())
-            .connectTimeout(5, TimeUnit.SECONDS)
-            .readTimeout(5, TimeUnit.SECONDS)
+            .connectTimeout(timeoutMs, TimeUnit.MILLISECONDS)
+            .readTimeout(timeoutMs, TimeUnit.MILLISECONDS)
+            .connectTimeout(timeoutMs, TimeUnit.MILLISECONDS)
             .build()
 
         val request = Request.Builder()
@@ -159,31 +164,29 @@ class MjpegConnection2(
         return client.newCall(request).execute()
     }
 
-    private fun extractBoundary(response: Response): String? = try {
+    private fun extractBoundary(response: Response): String {
         // Try to extract a boundary from HTTP header first.
         // If the information is not presented, throw an exception and use default value instead.
         val contentType: String = response.header("Content-Type") ?: throw Exception("Unable to get content type")
         val types = contentType.split(";".toRegex()).toTypedArray()
-        if (types.isEmpty()) {
-            throw Exception("Content type was empty")
+        if (types.none { it.startsWith("multipart/") }) {
+            throw IllegalStateException("No image resource: $contentType")
         }
+
         var extractedBoundary: String? = null
         for (ct in types) {
             val trimmedCt = ct.trim { it <= ' ' }
             if (trimmedCt.startsWith("boundary=")) {
-                extractedBoundary = trimmedCt.substring(9) // Content after 'boundary='
+                extractedBoundary = trimmedCt.removePrefix("boundary=").removePrefix("--") // Content after 'boundary='
             }
         }
-        if (extractedBoundary == null) {
-            throw Exception("Unable to find mjpeg boundary")
+        return if (extractedBoundary == null) {
+            throw Exception("Unable to find mjpeg boundary from $types")
         } else if (extractedBoundary.first() == '"' && extractedBoundary.last() == '"') {
             "--" + extractedBoundary.removePrefix("\"").removeSuffix("\"")
         } else {
             "--$extractedBoundary"
         }
-    } catch (e: Exception) {
-        Timber.w("Unable to extract header boundary")
-        null
     }
 
     private class ByteCache {
@@ -201,7 +204,13 @@ class MjpegConnection2(
         }
 
         fun push(bytes: ByteArray, length: Int) {
-            require((array.size() + length) < maxSize) { "Byte cached overflow: ${maxSize.asStyleFileSize()}" }
+            require((array.size() + length) < maxSize) {
+                val file = File("/storage/emulated/0/Download/webcam.bin")
+                val out = file.outputStream()
+                array.writeTo(out)
+                out.close()
+                "Byte cached overflow: ${maxSize.asStyleFileSize()}"
+            }
             array.write(bytes, 0, length)
         }
 
