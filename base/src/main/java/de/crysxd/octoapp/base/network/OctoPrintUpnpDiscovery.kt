@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.wifi.WifiManager
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.octoprint.UPNP_ADDRESS_PREFIX
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
@@ -94,6 +95,8 @@ class OctoPrintUpnpDiscovery(
                 callback(device)
             }
         } catch (e: SocketTimeoutException) {
+            // Expected
+        } catch (e: CancellationException) {
             // Expected
         } catch (e: Exception) {
             Timber.e(e)

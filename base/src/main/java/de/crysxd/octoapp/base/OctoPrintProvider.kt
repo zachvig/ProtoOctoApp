@@ -5,7 +5,6 @@ import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.logging.TimberHandler
 import de.crysxd.octoapp.base.logging.TimberLogger
 import de.crysxd.octoapp.base.models.ActiveInstanceIssue
 import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
@@ -22,20 +21,10 @@ import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -99,12 +88,14 @@ class OctoPrintProvider(
         }
     }
 
-    fun octoPrintFlow() = octoPrintRepository.instanceInformationFlow().map {
+    fun octoPrintFlow() = octoPrintRepository.instanceInformationFlow().distinctUntilChangedBy {
+        it?.apiKey + it?.webUrl + it?.alternativeWebUrl
+    }.map {
         octoPrintMutex.withLock {
             when {
                 it == null -> {
                     Timber.d("Instance is null, clearing cached passive flows")
-                    connectEventFlow.tryEmit(null)
+                    currentMessageFlow.tryEmit(null)
                     connectEventFlow.tryEmit(null)
                     null
                 }

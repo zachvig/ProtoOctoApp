@@ -88,7 +88,7 @@ fun HttpUrl.getConnectionType(default: ConnectionType) = when {
 
 fun HttpUrl.isSharedOctoEverywhereUrl() = host.startsWith("shared-") && host.endsWith(".octoeverywhere.com")
 
-fun HttpUrl.isNgrokUrl() = host.endsWith(".ngrok.com")
+fun HttpUrl.isNgrokUrl() = host.endsWith(".ngrok.io")
 
 fun HttpUrl.isTailscale() = Pattern.compile("^100.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$").matcher(host).matches()
 

@@ -40,7 +40,9 @@ class DetectBrokenSetupInterceptor(
         AppScope.launch {
             octoPrintRepository.findInstances(url).forEach { res ->
                 octoPrintRepository.update(res.first.id) {
-                    it.copy(issue = if (res.second) alternativeWebUrlIssue else webUrlIssue)
+                    val issue = if (res.second) alternativeWebUrlIssue else webUrlIssue
+                    Timber.w("Reporting $issue")
+                    it.copy(issue = issue)
                 }
             }
         }
