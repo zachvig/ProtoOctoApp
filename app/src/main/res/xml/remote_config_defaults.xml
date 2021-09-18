@@ -95,8 +95,8 @@
         <value>5000</value>
     </entry>
     <entry>
-        <key>tested_octoprint_version</key>
-        <value>1.6.1</value>
+        <key>webcam_timeout_ms</key>
+        <value>15000</value>
     </entry>
     <entry>
         <key>default_plugins</key>

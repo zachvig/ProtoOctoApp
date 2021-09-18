@@ -38,9 +38,9 @@ class ContinuousOnlineCheck(
     fun checkNow() = try {
         // Try to ping
         val url = url.toUrl()
-        val address = (localDns?.lookup(url.host)?.firstOrNull() ?: InetAddress.getByName(url.host))
+        val address = localDns?.lookup(url.host)?.firstOrNull() ?: InetAddress.getByName(url.host)
         address.isReachable(connectionTimeoutMs)
-        val resolvedUrl = URL(url.protocol, address.hostAddress, url.port, url.file)
+        val resolvedUrl = URL(url.protocol, address.hostName, url.port, url.file)
 
         // Try to connect
         val connection = resolvedUrl.openConnection() as HttpURLConnection
