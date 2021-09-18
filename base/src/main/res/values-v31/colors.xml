@@ -3,8 +3,7 @@
     <color name="accent">@android:color/system_accent1_300</color>
     <color name="window_background">@android:color/system_neutral1_10</color>
     <color name="input_background">@android:color/system_neutral2_50</color>
-    <color name="default_color_scheme">@android:color/system_accent3_400</color>
-    <color name="default_color_scheme_light">@android:color/system_accent3_50</color>
-    <color name="green_color_scheme">@color/green</color>
-    <color name="green_color_scheme_light">#D0F3CC</color>
+
+    <color name="color_hot">#FA4444</color>
+    <color name="color_cold">@android:color/system_neutral1_100</color>
 </resources>

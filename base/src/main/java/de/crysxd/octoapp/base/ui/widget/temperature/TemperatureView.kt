@@ -2,13 +2,19 @@ package de.crysxd.octoapp.base.ui.widget.temperature
 
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.LinearGradient
+import android.graphics.Paint
+import android.graphics.Shader
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.get
 import com.jjoe64.graphview.GridLabelRenderer
 import com.jjoe64.graphview.series.DataPoint
@@ -21,7 +27,7 @@ import timber.log.Timber
 class TemperatureView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : FrameLayout(context, attrs) {
 
     private val binding = ViewTemperatureBinding.inflate(LayoutInflater.from(context), this, true)
-    private val temperatureGradient = (ContextCompat.getDrawable(context, R.drawable.temp_grandient) as BitmapDrawable).bitmap
+    private val temperatureGradient: Bitmap
     var maxTemp = 250
         set(value) {
             field = value
@@ -31,6 +37,27 @@ class TemperatureView @JvmOverloads constructor(context: Context, attrs: Attribu
     private var currentBackground = Color.TRANSPARENT
 
     init {
+        if (Build.VERSION.SDK_INT >= 31) {
+            temperatureGradient = Bitmap.createBitmap(10, 512, Bitmap.Config.ARGB_8888)
+            val colors = arrayOf(
+                ContextCompat.getColor(context, R.color.color_hot),
+                ContextCompat.getColor(context, R.color.color_cold)
+            ).toIntArray()
+            val positions = arrayOf(
+                0.3f,
+                1f
+            ).toFloatArray()
+            val paint = Paint().also {
+                it.style = Paint.Style.FILL
+                it.shader = LinearGradient(0f, 0f, 0f, temperatureGradient.height.toFloat(), colors, positions, Shader.TileMode.CLAMP)
+            }
+            temperatureGradient.applyCanvas {
+                drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+            }
+        } else {
+            temperatureGradient = (ContextCompat.getDrawable(context, R.drawable.temp_grandient) as BitmapDrawable).bitmap
+        }
+
         setTemperature(null)
         binding.chart.alpha = 0.2f
         binding.chart.scaleX = 1.1f

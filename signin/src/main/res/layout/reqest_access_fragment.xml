@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_3"
         android:layout_marginBottom="@dimen/margin_3"
-        app:cardBackgroundColor="@color/menu_style_printer_background"
+        app:cardBackgroundColor="@color/input_background"
         app:cardCornerRadius="@dimen/common_corner_radius"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toTopOf="@id/openWeb"
