@@ -103,7 +103,7 @@ data class OctoPrintInstanceInformationV3(
             it.isNotBlank()
         } ?: webUrl.let { url ->
             val host = url.host
-            val port = ":${url.port}".takeIf { HttpUrl.defaultPort(url.scheme) != url.port }
+            val port = ":${url.port}".takeIf { HttpUrl.defaultPort(url.scheme) != url.port } ?: ""
             if (host.startsWith(UPNP_ADDRESS_PREFIX)) {
                 val id = String.format("%x", host.hashCode()).take(3).uppercase()
                 String.format("OctoPrint via UPnP ($id)")
