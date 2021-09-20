@@ -25,18 +25,22 @@ class SetAlternativeWebUrlUseCase @Inject constructor(
             ?: throw IllegalStateException("No active instance")
         val octoPrint = octoPrintProvider.octoPrint()
 
-        val url = try {
-            param.webUrl.toHttpUrl().newBuilder()
-                .password(param.password)
-                .username(param.username)
-                .build()
-        } catch (e: Exception) {
-            Timber.e(e)
-            OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigManuallySetFailed)
-            return Result.Failure(context.getString(R.string.configure_remote_acces___manual___error_invalid_url), e)
+        val url = if (param.webUrl.isNotEmpty()) {
+            try {
+                param.webUrl.toHttpUrl().newBuilder()
+                    .password(param.password)
+                    .username(param.username)
+                    .build()
+            } catch (e: Exception) {
+                Timber.e(e)
+                OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigManuallySetFailed)
+                return Result.Failure(context.getString(R.string.configure_remote_acces___manual___error_invalid_url), e)
+            }
+        } else {
+            null
         }
 
-        if (!param.bypassChecks && param.webUrl.isNotEmpty()) {
+        if (!param.bypassChecks && url != null) {
             val isOe = url.isOctoEverywhereUrl()
             val isShared = url.isSharedOctoEverywhereUrl()
             when {
