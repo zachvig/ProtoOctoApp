@@ -40,24 +40,28 @@ class OctoToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
         }
     }
 
+    init {
+        setOnClickListener {
+            OctoActivity.instance?.showDialog(message = context.getString(R.string.workspace___explainer))
+        }
+    }
+
     private fun bindState() {
         val lightColor = if (isInEditMode) Color.MAGENTA else ColorTheme.activeColorTheme.light
         val darkColor = if (isInEditMode) Color.MAGENTA else ColorTheme.activeColorTheme.dark
 
         if (state == State.Hidden) {
-            setOnClickListener(null)
-            animate().alpha(0f).start()
+            animate().alpha(0f).withEndAction {
+                isVisible = false
+            }.start()
             return
-        } else {
-            setOnClickListener {
-                OctoActivity.instance?.showDialog(message = context.getString(R.string.workspace___explainer))
-            }
         }
 
         if (alpha > 0) {
             TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
         }
 
+        isVisible = true
         animate().alpha(1f).start()
         binding.chips.textViewStep1Label.isVisible = false
         binding.chips.textViewStep1Label.background?.setTint(lightColor)
