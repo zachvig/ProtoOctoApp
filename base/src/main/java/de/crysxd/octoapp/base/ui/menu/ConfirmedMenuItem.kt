@@ -37,6 +37,8 @@ abstract class ConfirmedMenuItem : MenuItem {
         // Run action
         if (confirmed) {
             onConfirmed(host)
+        } else {
+            host.suppressSuccessAnimationForNextAction()
         }
     }
 }

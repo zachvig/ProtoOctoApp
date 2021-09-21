@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -22,7 +23,6 @@ import de.crysxd.octoapp.base.ui.menu.Menu
 import de.crysxd.octoapp.base.ui.menu.MenuHost
 import de.crysxd.octoapp.base.ui.menu.MenuItem
 import de.crysxd.octoapp.base.ui.menu.main.MenuItemLibrary
-import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
 import de.crysxd.octoapp.widgets.webcam.BaseWebcamAppWidget
@@ -79,6 +79,7 @@ class ExecuteWidgetActionActivity : LocalizedActivity(), MenuHost {
     }
 
     private val task get() = intent.getStringExtra(EXTRA_TASK)
+    private var suppressSuccessAniamtion = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -180,11 +181,13 @@ class ExecuteWidgetActionActivity : LocalizedActivity(), MenuHost {
             } else {
                 menuItem.onClicked(this)
             }
-            Toast.makeText(
-                this,
-                getString(R.string.menu___completed_command, menuItem.getTitle(this)),
-                Toast.LENGTH_SHORT
-            ).show()
+            if (!consumeSuccessAnimationForNextActionSuppressed()) {
+                Toast.makeText(
+                    this,
+                    getString(R.string.menu___completed_command, menuItem.getTitle(this)),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         } catch (e: Exception) {
             Timber.e(e)
             Toast.makeText(
@@ -207,9 +210,19 @@ class ExecuteWidgetActionActivity : LocalizedActivity(), MenuHost {
 
     override fun getMenuFragmentManager(): FragmentManager? = null
 
-    override fun getWidgetHostFragment(): WidgetHostFragment? = null
+    override fun getHostFragment(): Fragment? = null
 
     override fun reloadMenu() = Unit
 
     override fun isCheckBoxChecked() = false
+
+    override fun suppressSuccessAnimationForNextAction() {
+        suppressSuccessAniamtion = true
+    }
+
+    override fun consumeSuccessAnimationForNextActionSuppressed(): Boolean {
+        val value = suppressSuccessAniamtion
+        suppressSuccessAniamtion = false
+        return value
+    }
 }

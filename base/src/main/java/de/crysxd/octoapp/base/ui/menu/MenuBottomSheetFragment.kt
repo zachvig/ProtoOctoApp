@@ -8,6 +8,7 @@ import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -24,7 +25,6 @@ import de.crysxd.octoapp.base.ui.ext.optionallyRequestOctoActivity
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ui.menu.main.MainMenu
 import de.crysxd.octoapp.base.ui.utils.InstantAutoTransition
-import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -43,6 +43,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
         viewBinding.loadingOverlay.animate().alpha(if (isLoading) 1f else 0f).withEndAction { viewBinding.loadingOverlay.isVisible = isLoading }.start()
     }
     private var lastClickedMenuItem: MenuItem? = null
+    private var suppressSuccessAnimation = false
     private var isLoading = false
         set(value) {
             field = value
@@ -105,7 +106,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
     
     override fun getMenuFragmentManager() = childFragmentManager
 
-    override fun getWidgetHostFragment() = parentFragment as? WidgetHostFragment
+    override fun getHostFragment(): Fragment? = parentFragment
 
     private fun showMenu(settingsMenu: Menu, smallChange: Boolean = false) {
         val internal = suspend {
@@ -169,7 +170,9 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
                     forceResizeBottomSheet()
                 } else {
                     abortShowMenu(false)
-                    lastClickedMenuItem?.let { adapter.playSuccessAnimationForItem(it) }
+                    if (!consumeSuccessAnimationForNextActionSuppressed()) {
+                        lastClickedMenuItem?.let { adapter.playSuccessAnimationForItem(it) }
+                    }
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error while inflating menu")
@@ -245,6 +248,16 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
     }
 
     override fun isCheckBoxChecked() = viewBinding.checkbox.isChecked
+
+    override fun suppressSuccessAnimationForNextAction() {
+        suppressSuccessAnimation = true
+    }
+
+    override fun consumeSuccessAnimationForNextActionSuppressed(): Boolean {
+        val value = suppressSuccessAnimation
+        suppressSuccessAnimation = false
+        return value
+    }
 
     private fun executeLongClick(item: MenuItem, anchor: View) = PinControlsPopupMenu(requireContext(), MenuId.MainMenu).show(item.itemId, anchor) {
         // We need to reload the main menu if a favorite was changed in case it was removed

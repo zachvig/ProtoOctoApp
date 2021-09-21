@@ -504,6 +504,9 @@
     <string name="you_can_change_this_limit_in_octoprint_settings">You can change this limit in OctoPrint settings</string>
     <string name="z">Z</string>
     <string name="z_feedrate_mm_min">Z feedrate (mm/min)</string>
+    <string name="file_actions_menu___delete">Delete</string>
+    <string name="file_actions_menu___delete_confirmation_message">Do you wan to delete „%s“?</string>
+    <string name="file_action_menu___delete_confirmation_action">Delete</string>
     <string name="main_menu___item_show_octoprint">OctoPrint</string>
     <string name="configure_remote_access___manual___username_hint">BasicAuth user, optional</string>
     <string name="configure_remote_access___manual___username_hint_active">Username, optional</string>

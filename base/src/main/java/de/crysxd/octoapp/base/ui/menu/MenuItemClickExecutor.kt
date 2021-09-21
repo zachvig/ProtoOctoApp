@@ -34,7 +34,7 @@ class MenuItemClickExecutor(
 
             else -> {
                 item.onClicked(this)
-                if (!wasNewMenuPushed) {
+                if (!wasNewMenuPushed && !host.consumeSuccessAnimationForNextActionSuppressed()) {
                     delay(100)
                     adapter.playSuccessAnimationForItem(item)
                 }

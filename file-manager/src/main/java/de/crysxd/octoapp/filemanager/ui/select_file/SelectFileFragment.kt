@@ -12,9 +12,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.octoapp.base.ui.base.BaseFragment
 import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.filemanager.R
 import de.crysxd.octoapp.filemanager.databinding.SelectFileFragmentBinding
 import de.crysxd.octoapp.filemanager.di.injectViewModel
+import de.crysxd.octoapp.filemanager.menu.FileActionsMenu
 import kotlinx.coroutines.delay
 import timber.log.Timber
 
@@ -22,7 +24,7 @@ import timber.log.Timber
 // loader would just flash up for a split second which doesn't look nice
 const val LOADER_DELAY = 400L
 
-class SelectFileFragment : BaseFragment() {
+class SelectFileFragment : BaseFragment(), FileActionsMenu.Callback {
 
     private lateinit var binding: SelectFileFragmentBinding
     override val viewModel: SelectFileViewModel by injectViewModel()
@@ -38,6 +40,9 @@ class SelectFileFragment : BaseFragment() {
         val adapter = SelectFileAdapter(
             onFileSelected = {
                 viewModel.selectFile(it)
+            },
+            onFileMenuOpened = {
+                MenuBottomSheetFragment.createForMenu(FileActionsMenu(it)).show(childFragmentManager)
             },
             onHideThumbnailHint = {
                 viewModel.hideThumbnailHint()
@@ -103,5 +108,11 @@ class SelectFileFragment : BaseFragment() {
         } catch (e: Exception) {
             Timber.e(e)
         }
+    }
+
+    override fun refreshFiles() {
+        Timber.i("Menu closed, triggering refresh")
+        viewModel.reload()
+        binding.swipeRefreshLayout.isRefreshing = true
     }
 }

@@ -10,8 +10,14 @@ import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ui.base.OctoActivity
 import de.crysxd.octoapp.base.ui.common.LinkClickMovementMethod
-import de.crysxd.octoapp.base.ui.menu.*
+import de.crysxd.octoapp.base.ui.menu.Menu
+import de.crysxd.octoapp.base.ui.menu.MenuHost
+import de.crysxd.octoapp.base.ui.menu.MenuItem
+import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
+import de.crysxd.octoapp.base.ui.menu.SubMenuItem
+import de.crysxd.octoapp.base.ui.menu.ToggleMenuItem
 import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchOctoPrintMenu
+import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
 import kotlinx.parcelize.Parcelize
@@ -104,7 +110,7 @@ class CustomizeWidgetsMenuItem : MenuItem {
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint || destinationId == R.id.workspacePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_customize_widgets)
     override suspend fun onClicked(host: MenuHost?) {
-        host?.getWidgetHostFragment()?.startEdit()
+        (host?.getHostFragment() as? WidgetHostFragment)?.startEdit()
         host?.closeMenu()
     }
 }

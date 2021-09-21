@@ -20,12 +20,19 @@ import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.ext.format
 import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
 import de.crysxd.octoapp.filemanager.R
-import de.crysxd.octoapp.filemanager.databinding.*
+import de.crysxd.octoapp.filemanager.databinding.ListItemErrorBinding
+import de.crysxd.octoapp.filemanager.databinding.ListItemFileBinding
+import de.crysxd.octoapp.filemanager.databinding.ListItemLoadingBinding
+import de.crysxd.octoapp.filemanager.databinding.ListItemMarginBinding
+import de.crysxd.octoapp.filemanager.databinding.ListItemNoFilesBinding
+import de.crysxd.octoapp.filemanager.databinding.ListItemThumbnailHintBinding
+import de.crysxd.octoapp.filemanager.databinding.ListItemTitleBinding
 import de.crysxd.octoapp.octoprint.models.files.FileObject
-import java.util.*
+import java.util.Date
 
 class SelectFileAdapter(
     private val onFileSelected: (FileObject) -> Unit,
+    private val onFileMenuOpened: (FileObject) -> Unit,
     private val onHideThumbnailHint: (SelectFileAdapter) -> Unit,
     private val onShowThumbnailInfo: (SelectFileAdapter) -> Unit,
     private val onRetry: (SelectFileAdapter) -> Unit
@@ -188,6 +195,10 @@ class SelectFileAdapter(
 
             holder.itemView.setOnClickListener {
                 onFileSelected(file)
+            }
+            holder.itemView.setOnLongClickListener {
+                onFileMenuOpened(file)
+                true
             }
         }
 
