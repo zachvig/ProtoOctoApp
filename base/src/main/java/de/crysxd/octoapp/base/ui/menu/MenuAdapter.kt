@@ -142,6 +142,14 @@ class MenuAdapter(
         holder.binding.icon.setImageResource(iconStart)
         holder.binding.icon.isVisible = iconStart != 0
 
+        // Badge
+        holder.binding.badge.isVisible = preparedItem.badgeCount > 0
+        holder.binding.badge.text = when (preparedItem.badgeCount) {
+            0 -> ""
+            in 1..9 -> preparedItem.badgeCount.toString()
+            else -> "9+"
+        }
+
         // Margins
         val nextItem = menuItems.getOrNull(position + 1)?.menuItem
         val groupChanged = nextItem != null && nextItem.groupId != item.groupId
@@ -169,12 +177,12 @@ class MenuAdapter(
         val transparent = ColorStateList.valueOf(Color.TRANSPARENT)
         holder.binding.secondaryButton.backgroundTintList = background
         holder.binding.secondaryButton.setColorFilter(foreground.defaultColor)
-        holder.binding.button.backgroundTintList = if (item.showAsHalfWidth) transparent else background
+        holder.binding.button.backgroundTintList = if (item.showAsOutlined) transparent else background
         TextViewCompat.setCompoundDrawableTintList(holder.binding.button, foreground)
         TextViewCompat.setCompoundDrawableTintList(holder.binding.text, foreground)
         holder.binding.icon.setColorFilter(foreground.defaultColor)
-        holder.binding.button.strokeColor = if (item.showAsHalfWidth) foreground else transparent
-        holder.binding.button.rippleColor = if (item.showAsHalfWidth) foreground else background
+        holder.binding.button.strokeColor = if (item.showAsOutlined) foreground else transparent
+        holder.binding.button.rippleColor = if (item.showAsOutlined) foreground else background
     }
 }
 
@@ -194,5 +202,6 @@ data class PreparedMenuItem(
     val title: CharSequence,
     val right: CharSequence?,
     val description: CharSequence?,
-    val isVisible: Boolean
+    val isVisible: Boolean,
+    val badgeCount: Int,
 )

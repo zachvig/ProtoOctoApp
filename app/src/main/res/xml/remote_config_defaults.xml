@@ -158,6 +158,10 @@
     </entry>
     <entry>
         <key>advertise_octoeverywhere</key>
-        <value>false</value>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>advertise_companion</key>
+        <value>true</value>
     </entry>
 </defaultsMap>

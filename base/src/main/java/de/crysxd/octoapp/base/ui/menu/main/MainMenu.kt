@@ -1,8 +1,6 @@
 package de.crysxd.octoapp.base.ui.menu.main
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.annotation.IdRes
 import androidx.core.os.bundleOf
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -25,10 +23,10 @@ class MainMenu : Menu {
     override suspend fun getMenuItem(): List<MenuItem> {
         val base = listOf(
             SupportOctoAppMenuItem(),
-            ShowSettingsMenuItem(),
             ShowPrinterMenuItem(),
+            ShowSettingsMenuItem(),
             ShowOctoPrintMenuItem(),
-            ShowNewsMenuItem()
+            ShowTutorialsMenuItem()
         )
 
         val library = MenuItemLibrary()
@@ -88,7 +86,6 @@ class ShowPrinterMenuItem : SubMenuItem() {
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_printer)
 }
 
-
 class ShowOctoPrintMenuItem : MenuItem {
     override val itemId = MENU_ITEM_OCTOPRINT
     override var groupId = "main_menu"
@@ -99,26 +96,28 @@ class ShowOctoPrintMenuItem : MenuItem {
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_octoprint_24px
 
+    override suspend fun getBadgeCount() = if (OctoPrintMenu.hasAnnouncement()) 1 else 0
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_octoprint)
     override suspend fun onClicked(host: MenuHost?) {
         host?.pushMenu(OctoPrintMenu())
     }
 }
 
-class ShowNewsMenuItem : MenuItem {
-    override val itemId = MENU_ITEM_NEWS
+class ShowTutorialsMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_TUTORIALS
     override var groupId = "main_menu"
     override val order = 20
     override val style = MenuItemStyle.Neutral
     override val showAsSubMenu = true
     override val canBePinned = false
     override val showAsHalfWidth = true
-    override val icon = R.drawable.ic_twitter_24px
+    override val icon = R.drawable.ic_round_school_24
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_news)
+    override suspend fun getBadgeCount() = 3
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_tutorials)
     override suspend fun onClicked(host: MenuHost?) {
-        val i = Intent(Intent.ACTION_VIEW)
-        i.data = Uri.parse("https://twitter.com/realoctoapp")
-        host?.getMenuActivity()?.startActivity(i)
+        host?.getMenuActivity()?.let {
+            UriLibrary.getHelpUri().open(it)
+        }
     }
 }

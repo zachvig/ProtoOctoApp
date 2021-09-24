@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -21,6 +22,7 @@
             android:textAppearance="@style/OctoTheme.TextAppearance.Title"
             android:textColor="@color/dark_text"
             android:visibility="gone"
+            tools:text="Title"
             tools:visibility="visible" />
 
         <TextView
@@ -34,7 +36,81 @@
             android:textColor="@color/light_text"
             android:textColorLink="@color/normal_text"
             android:visibility="gone"
+            tools:text="Subtitle"
             tools:visibility="visible" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/announcement"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_3"
+            android:layout_marginBottom="@dimen/margin_2"
+            android:background="@color/input_background">
+
+            <TextView
+                android:id="@+id/announcementTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_2"
+                android:layout_marginTop="@dimen/margin_2"
+                android:layout_marginEnd="@dimen/margin_2"
+                android:drawablePadding="@dimen/margin_2"
+                android:gravity="center"
+                android:text="Announcement Title"
+                android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+                android:textColor="@color/dark_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/announcementSubtitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_2"
+                android:layout_marginTop="@dimen/margin_0"
+                android:layout_marginEnd="@dimen/margin_2"
+                android:drawablePadding="@dimen/margin_2"
+                android:gravity="center"
+                android:text="Announcement subtitle"
+                android:textAppearance="@style/OctoTheme.TextAppearance"
+                android:textColor="@color/light_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/announcementTitle" />
+
+            <Button
+                android:id="@+id/buttonHideAnnouncement"
+                style="@style/OctoTheme.Widget.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_1"
+                android:layout_marginBottom="@dimen/margin_0_1"
+                android:text="@string/hide"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/buttonAnnouncementLearnMore"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/announcementSubtitle" />
+
+            <Button
+                android:id="@+id/buttonAnnouncementLearnMore"
+                style="@style/OctoTheme.Widget.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_1"
+                android:layout_marginBottom="@dimen/margin_0_1"
+                android:text="@string/learn_more"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/buttonHideAnnouncement"
+                app:layout_constraintTop_toBottomOf="@+id/announcementSubtitle" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -78,7 +154,6 @@
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_gravity="center_horizontal"
             android:layout_marginHorizontal="@dimen/margin_2"
             android:layout_marginBottom="@dimen/margin_1"

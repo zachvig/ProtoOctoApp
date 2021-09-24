@@ -41,7 +41,8 @@ class QuickAccessRemoteViewsFactory(private val context: Context) : RemoteViewsF
                 right = null,
                 description = null,
                 menuItem = item,
-                isVisible = item.isVisible(0)
+                isVisible = item.isVisible(0),
+                badgeCount = item.getBadgeCount(),
             )
         }
 

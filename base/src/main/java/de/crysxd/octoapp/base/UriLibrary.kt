@@ -46,6 +46,8 @@ object UriLibrary {
     fun getPurchaseUri(): Uri =
         getUri(R.string.uri___purchase)
 
+    fun getCompanionPluginUri(): Uri = Uri.parse("https://plugins.octoprint.org")
+
     fun isActiveInstanceRequired(uri: Uri) = when (uri.path) {
         getConfigureRemoteAccessUri().path -> true
         else -> false

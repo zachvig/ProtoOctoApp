@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.ui.menu
 
 import android.content.Context
+import android.net.Uri
 import android.os.Parcelable
 import android.text.method.MovementMethod
 
@@ -17,4 +18,15 @@ interface Menu : Parcelable {
     fun getCheckBoxText(context: Context): CharSequence? = null
     fun getBottomText(context: Context): CharSequence? = null
     fun getBottomMovementMethod(host: MenuHost): MovementMethod? = null
+
+    suspend fun getAnnouncement(context: Context): Announcement? = null
+    fun onAnnouncementHidden() = Unit
+
+    data class Announcement(
+        val title: String,
+        val subtitle: String,
+        val hideButton: String,
+        val learnMoreButton: String,
+        val learnMoreUri: Uri,
+    )
 }

@@ -6,10 +6,10 @@ import android.os.IBinder
 import android.os.SystemClock
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.models.hasCompanionPlugin
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_FILE_NAME
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_FILE_TIME
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_PROGRESS
-import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
@@ -256,8 +256,7 @@ class LiveNotificationService : Service() {
 
                         // If the print is done and we saw the print printing in the last state, notify
                         // We don't check for print done events if OctoApp plugin is installed
-                        val hasCompanion = instance?.settings?.plugins?.any { it.value is Settings.OctoAppCompanionSettings } == true
-                        if (hasCompanion) {
+                        if (instance.hasCompanionPlugin) {
                             Timber.i("Skipping print completed check, companion configured")
                         } else {
                             notificationController.getLast(instanceId)?.let { last ->

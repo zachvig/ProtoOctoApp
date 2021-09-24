@@ -12,6 +12,7 @@ interface MenuItem {
     val style: MenuItemStyle
     val showAsSubMenu: Boolean get() = false
     val showAsHalfWidth: Boolean get() = false
+    val showAsOutlined: Boolean get() = showAsHalfWidth
     val canBePinned: Boolean get() = true
     val enforceSingleLine: Boolean get() = true
     val secondaryButtonIcon: Int? get() = null
@@ -27,4 +28,5 @@ interface MenuItem {
     suspend fun isVisible(@IdRes destinationId: Int) = true
     suspend fun onClicked(host: MenuHost?)
     suspend fun onSecondaryClicked(host: MenuHost?) = Unit
+    suspend fun getBadgeCount() = 0
 }

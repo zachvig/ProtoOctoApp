@@ -121,3 +121,6 @@ data class OctoPrintInstanceInformationV3(
         super.toString()
     }
 }
+
+val OctoPrintInstanceInformationV3?.hasCompanionPlugin
+    get() = this?.settings?.plugins?.any { it.value is Settings.OctoAppCompanionSettings } == true

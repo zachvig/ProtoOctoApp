@@ -35,6 +35,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_SHOW_WEBCAM_RESOLUTION = "show_webcam_resolution"
         private const val KEY_WEBCAM_ASPECT_RATIO_SOURCE = "webcam_aspect_ratio_source"
         private const val KEY_SUPPRESS_M115 = "suppress_m115_request"
+        private const val KEY_COMPANION_ANNOUNCEMENT_HIDDEN_AT = "companion_announcemenyt_hidden_at"
 
         const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT = "octprint"
         const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_IMAGE = "native_image"
@@ -92,6 +93,12 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         get() = sharedPreferences.getString(KEY_ACTIVE_INSTANCE_ID, null)
         set(value) {
             edit { putString(KEY_ACTIVE_INSTANCE_ID, value) }
+        }
+
+    var companionAnnouncementHiddenAt: Date?
+        get() = sharedPreferences.getLong(KEY_COMPANION_ANNOUNCEMENT_HIDDEN_AT, 0).takeIf { it > 0 }?.let { Date(it) }
+        set(value) {
+            edit { putLong(KEY_COMPANION_ANNOUNCEMENT_HIDDEN_AT, value?.time ?: 0) }
         }
 
     var isKeepScreenOnDuringPrint

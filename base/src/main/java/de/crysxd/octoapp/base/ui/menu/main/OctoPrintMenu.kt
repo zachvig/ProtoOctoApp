@@ -2,10 +2,13 @@ package de.crysxd.octoapp.base.ui.menu.main
 
 import android.content.Context
 import androidx.core.text.HtmlCompat
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.models.hasCompanionPlugin
 import de.crysxd.octoapp.base.ui.menu.ConfirmedMenuItem
 import de.crysxd.octoapp.base.ui.menu.Menu
 import de.crysxd.octoapp.base.ui.menu.MenuHost
@@ -13,12 +16,31 @@ import de.crysxd.octoapp.base.ui.menu.MenuItem
 import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
 import de.crysxd.octoapp.base.usecase.OpenOctoprintWebUseCase
 import kotlinx.parcelize.Parcelize
+import java.util.Date
+import java.util.concurrent.TimeUnit
 
 
 private val sysCommands get() = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.systemCommands
 
 @Parcelize
 class OctoPrintMenu : Menu {
+
+    companion object {
+        private const val HIDE_ANNOUNCEMENT_FOR_DAYS = 28L
+
+        fun hasAnnouncement(): Boolean {
+            val installed = Injector.get().octorPrintRepository().getActiveInstanceSnapshot().hasCompanionPlugin
+            val hiddenAt = Injector.get().octoPreferences().companionAnnouncementHiddenAt ?: Date(0)
+            val showNext = Date(hiddenAt.time + TimeUnit.DAYS.toMillis(HIDE_ANNOUNCEMENT_FOR_DAYS))
+            val shouldShow = Firebase.remoteConfig.getBoolean("advertise_companion")
+            return !installed && Date() > showNext && shouldShow
+        }
+
+        fun hideAnnouncement() {
+            Injector.get().octoPreferences().companionAnnouncementHiddenAt = Date()
+        }
+    }
+
     override suspend fun getMenuItem() =
         listOfNotNull(
             listOf(
@@ -40,6 +62,19 @@ class OctoPrintMenu : Menu {
         )
     } else {
         ""
+    }
+
+    override suspend fun getAnnouncement(context: Context) = Menu.Announcement(
+        title = "Install the companion plugin",
+        subtitle = "The OctoApp companion plugin allows push notifications over the internet with better reliability",
+        learnMoreButton = "Install the plugin",
+        hideButton = "Hide",
+        learnMoreUri = UriLibrary.getCompanionPluginUri(),
+    ).takeIf { hasAnnouncement() }
+
+    override fun onAnnouncementHidden() {
+        super.onAnnouncementHidden()
+        hideAnnouncement()
     }
 }
 

@@ -157,7 +157,8 @@ class HelpFragment : Fragment() {
             right = it.getRightDetail(requireContext()),
             description = it.getDescription(requireContext()),
             menuItem = it,
-            isVisible = it.isVisible(findNavController().currentDestination?.id ?: 0)
+            isVisible = it.isVisible(findNavController().currentDestination?.id ?: 0),
+            badgeCount = it.getBadgeCount()
         )
     }
 

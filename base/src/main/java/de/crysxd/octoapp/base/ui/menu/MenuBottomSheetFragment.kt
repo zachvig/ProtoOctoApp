@@ -123,7 +123,8 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
                                 title = it.getTitle(context),
                                 right = it.getRightDetail(context),
                                 description = it.getDescription(context),
-                                isVisible = it.isVisible(currentDestination)
+                                isVisible = it.isVisible(currentDestination),
+                                badgeCount = it.getBadgeCount()
                             )
                         }.filter {
                             it.isVisible
@@ -140,6 +141,20 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
                         if (isAdded) {
                             viewBinding.bottom.movementMethod = settingsMenu.getBottomMovementMethod(this@MenuBottomSheetFragment)
                         }
+                    }
+
+                    // Tutorial
+                    val announcement = settingsMenu.getAnnouncement(context)
+                    viewBinding.announcement.isVisible = announcement != null
+                    viewBinding.announcementTitle.text = announcement?.title
+                    viewBinding.announcementSubtitle.text = announcement?.subtitle
+                    viewBinding.buttonAnnouncementLearnMore.text = announcement?.learnMoreButton
+                    viewBinding.buttonAnnouncementLearnMore.setOnClickListener {
+                        announcement?.learnMoreUri?.open(requireActivity())
+                    }
+                    viewBinding.buttonHideAnnouncement.setOnClickListener {
+                        settingsMenu.onAnnouncementHidden()
+                        reloadMenu()
                     }
 
                     // Show menu

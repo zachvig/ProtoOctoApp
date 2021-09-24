@@ -13,8 +13,8 @@ import timber.log.Timber
 const val MENU_ITEM_SUPPORT_OCTOAPP = "main___support_octoapp"
 const val MENU_ITEM_SETTINGS_MENU = "main___settings_menu"
 const val MENU_ITEM_PRINTER_MENU = "main___printer_menu"
-const val MENU_ITEM_NEWS = "main___news"
 const val MENU_ITEM_OCTOPRINT = "main___octoprint"
+const val MENU_ITEM_TUTORIALS = "main___tutorials"
 const val MENU_ITEM_HELP = "settings___help"
 const val MENU_ITEM_CRASH_REPORTING = "privacy___crash_reporting"
 const val MENU_ITEM_ANALYTICS = "privacy___analytics"
@@ -66,7 +66,7 @@ class MenuItemLibrary {
         MENU_ITEM_SUPPORT_OCTOAPP to SupportOctoAppMenuItem::class,
         MENU_ITEM_SETTINGS_MENU to ShowSettingsMenuItem::class,
         MENU_ITEM_PRINTER_MENU to ShowPrinterMenuItem::class,
-        MENU_ITEM_NEWS to ShowNewsMenuItem::class,
+        MENU_ITEM_TUTORIALS to ShowTutorialsMenuItem::class,
         MENU_ITEM_CHANGE_LANGUAGE to ChangeLanguageMenuItem::class,
         MENU_ITEM_OPEN_OCTOPRINT to OpenOctoPrintMenuItem::class,
         MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE to ChangeOctoPrintInstanceMenuItem::class,
