@@ -7,10 +7,12 @@ import com.github.druk.dnssd.DNSSDService
 import com.github.druk.dnssd.QueryListener
 import com.github.druk.dnssd.ResolveListener
 import de.crysxd.octoapp.base.di.Injector
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.net.InetAddress
-import kotlin.coroutines.CoroutineContext
 
 
 class OctoPrintDnsSdDiscovery(
@@ -18,19 +20,19 @@ class OctoPrintDnsSdDiscovery(
 ) {
     private val dnssd = DNSSDBindable(context)
 
-    fun discover(coroutineContext: CoroutineContext, callback: (Service) -> Unit) {
+    fun discover(scope: CoroutineScope, callback: (Service) -> Unit) {
 
         // Sometimes the internal Dnssd service is not running...we can start it with this:
         context.applicationContext.getSystemService(Context.NSD_SERVICE)
 
         try {
-            discoverWithMulticastLock(coroutineContext, callback)
+            discoverWithMulticastLock(scope, callback)
         } catch (e: Exception) {
             Timber.e(e)
         }
     }
 
-    private fun discoverWithMulticastLock(coroutineContext: CoroutineContext, callback: (Service) -> Unit) {
+    private fun discoverWithMulticastLock(scope: CoroutineScope, callback: (Service) -> Unit) = scope.launch(Dispatchers.IO) {
         val service = dnssd.browse("_octoprint._tcp", object : BrowseListener {
             override fun operationFailed(service: DNSSDService?, errorCode: Int) {
                 Timber.e("mDNS browse failed (errorCode=$errorCode)")
