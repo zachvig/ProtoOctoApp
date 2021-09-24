@@ -103,21 +103,22 @@ class ShowOctoPrintMenuItem : MenuItem {
     }
 }
 
-class ShowTutorialsMenuItem : MenuItem {
+class ShowTutorialsMenuItem(
+    override val showAsHalfWidth: Boolean = true,
+    override val style: MenuItemStyle = MenuItemStyle.Neutral
+) : MenuItem {
     override val itemId = MENU_ITEM_TUTORIALS
     override var groupId = "main_menu"
     override val order = 20
-    override val style = MenuItemStyle.Neutral
     override val showAsSubMenu = true
     override val canBePinned = false
-    override val showAsHalfWidth = true
     override val icon = R.drawable.ic_round_school_24
 
     override suspend fun getBadgeCount() = 3
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_tutorials)
     override suspend fun onClicked(host: MenuHost?) {
         host?.getMenuActivity()?.let {
-            UriLibrary.getHelpUri().open(it)
+            UriLibrary.getTutorialsUri().open(it)
         }
     }
 }

@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ext.suspendedAwait
 import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
@@ -21,6 +22,7 @@ import de.crysxd.octoapp.base.ui.menu.MenuAdapter
 import de.crysxd.octoapp.base.ui.menu.MenuItem
 import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
 import de.crysxd.octoapp.base.ui.menu.PreparedMenuItem
+import de.crysxd.octoapp.base.ui.menu.main.ShowTutorialsMenuItem
 import de.crysxd.octoapp.help.R
 import de.crysxd.octoapp.help.databinding.HelpFragmentBinding
 import kotlinx.coroutines.delay
@@ -69,6 +71,10 @@ class HelpFragment : Fragment() {
                 false
             }
 
+            val tutorial = listOf(
+                ShowTutorialsMenuItem(showAsHalfWidth = false, style = MenuItemStyle.RedNeutral)
+            ).prepare()
+
             val faq = try {
                 createFaqItems().prepare()
             } catch (e: Exception) {
@@ -85,6 +91,13 @@ class HelpFragment : Fragment() {
 
             if (delayed) {
                 TransitionManager.beginDelayedTransition(binding.root)
+            }
+
+            // Show Tutorial
+            binding.tutorial.adapter = MenuAdapter(
+                onClick = ::handleTutorialClick,
+            ).also {
+                it.menuItems = tutorial
             }
 
             // Show FAQ
@@ -111,6 +124,10 @@ class HelpFragment : Fragment() {
         lifecycleScope.launchWhenCreated {
             item.onClicked(null)
         }
+    }
+
+    private fun handleTutorialClick(item: MenuItem) {
+        UriLibrary.getTutorialsUri().open(requireOctoActivity())
     }
 
     private fun createContactOptions(): List<HelpMenuItem> {
