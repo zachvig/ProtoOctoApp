@@ -79,6 +79,7 @@ object LiveNotificationManager {
     fun wakeUp(context: Context) {
         if (isHibernating) {
             Timber.i("Resuming service")
+            isHibernating = false
             val intent = Intent(context, LiveNotificationService::class.java)
             intent.action = LiveNotificationService.ACTION_WAKE_UP
             context.startService(intent)

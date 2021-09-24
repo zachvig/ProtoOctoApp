@@ -12,7 +12,7 @@ class ProgressWidgetViewModel(
 
     val printState = octoPrintProvider.passiveCurrentMessageFlow("progress_widget")
         .filter { it.progress != null }
-        .rateLimit(5000)
+        .rateLimit(2000)
         .asLiveData()
 
 }

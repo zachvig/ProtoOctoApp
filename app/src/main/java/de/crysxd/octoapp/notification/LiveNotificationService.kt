@@ -114,7 +114,7 @@ class LiveNotificationService : Service() {
             flags?.isPrinting() == true
         }
     } catch (e: Exception) {
-        Timber.e(e)
+        Timber.e(e, "Failed to check preconditions")
         false
     }
 
@@ -188,16 +188,10 @@ class LiveNotificationService : Service() {
         LiveNotificationManager.hibernate(this)
     }
 
-    private suspend fun onEventReceived(event: Event) {
-        try {
-            when (event) {
-                is Event.Disconnected -> handleDisconnectedEvent(event)
-                is Event.Connected -> handleConnectedEvent()
-                is Event.MessageReceived -> (event.message as? Message.CurrentMessage)?.let { handleCurrentMessage(it) }
-            }
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
+    private suspend fun onEventReceived(event: Event) = when (event) {
+        is Event.Disconnected -> handleDisconnectedEvent(event)
+        is Event.Connected -> handleConnectedEvent()
+        is Event.MessageReceived -> (event.message as? Message.CurrentMessage)?.let { handleCurrentMessage(it) }
     }
 
     private fun handleDisconnectedEvent(event: Event.Disconnected) {
