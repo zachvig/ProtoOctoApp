@@ -5,7 +5,6 @@ import android.content.Context.CLIPBOARD_SERVICE
 import android.net.Uri
 import android.os.Bundle
 import android.transition.AutoTransition
-import android.transition.TransitionInflater
 import android.transition.TransitionManager
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -13,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.view.ViewPropertyAnimator
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.Toast
@@ -54,6 +54,7 @@ class DiscoverFragment : BaseFragment() {
     private var manualBinding: DiscoverFragmentContentManualBinding? = null
     private var loadingAnimationJob: Job? = null
     private var backgroundAlpha = 1f
+    private var loadingAnimations: ViewPropertyAnimator? = null
     private val moveBackToOptionsBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             viewModel.moveToOptionsState()
@@ -62,8 +63,8 @@ class DiscoverFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
-        sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
+//        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
+//        sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -167,6 +168,8 @@ class DiscoverFragment : BaseFragment() {
             delay(duration)
             binding.octoBackground.animate().alpha(backgroundAlpha).setDuration(duration).withEndAction {
                 binding.octoView.swim()
+            }.also {
+                loadingAnimations = it
             }.start()
             delay(150)
             binding.loading.title.animate().alpha(1f).setDuration(duration).start()
@@ -324,7 +327,11 @@ class DiscoverFragment : BaseFragment() {
 
     private fun moveToOptionsLayout() {
         beginDelayedTransition()
+
+        // Cancel loading animations
         loadingAnimationJob?.cancel()
+        loadingAnimations?.cancel()
+
         binding.octoView.idle()
         moveBackToOptionsBackPressedCallback.isEnabled = false
         binding.octoView.isVisible = true
@@ -366,6 +373,7 @@ class DiscoverFragment : BaseFragment() {
 
     private fun moveToManualLayout(webUrl: String, openSoftKeyboard: Boolean) {
         loadingAnimationJob?.cancel()
+        loadingAnimations?.cancel()
         binding.octoBackground.clearAnimation()
         binding.octoBackground.alpha = backgroundAlpha
         beginDelayedTransition()

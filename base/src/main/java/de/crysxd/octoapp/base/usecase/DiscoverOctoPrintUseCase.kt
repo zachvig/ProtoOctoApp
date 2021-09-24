@@ -12,7 +12,6 @@ import timber.log.Timber
 import java.net.InetAddress
 import java.util.*
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 class DiscoverOctoPrintUseCase @Inject constructor(
     private val context: Context,
@@ -34,21 +33,25 @@ class DiscoverOctoPrintUseCase @Inject constructor(
         }
 
         // Start discovery and return results
+        val coroutineJob = SupervisorJob()
+        val coroutineScope = CoroutineScope(coroutineJob + Dispatchers.Main.immediate + CoroutineExceptionHandler { _, t -> timber.e(t) })
         return@withContext flow.onStart {
             timber.i("Starting OctoPrint discovery")
-            discoverUsingDnsSd(timber, currentCoroutineContext(), submitResult)
-            discoverUsingUpnp(timber, currentCoroutineContext(), submitResult)
+            discoverUsingDnsSd(timber, coroutineScope, submitResult)
+            discoverUsingUpnp(timber, coroutineScope, submitResult)
         }.onCompletion {
             timber.i("Finishing OctoPrint discovery")
+            coroutineJob.cancel()
+            coroutineScope.cancel()
         }
     }
 
     private suspend fun discoverUsingDnsSd(
         timber: Timber.Tree,
-        coroutineContext: CoroutineContext,
+        scope: CoroutineScope,
         submitResult: (DiscoveredOctoPrint) -> Unit
-    ) = OctoPrintDnsSdDiscovery(context).discover(coroutineContext) {
-        GlobalScope.launch(coroutineContext) {
+    ) = OctoPrintDnsSdDiscovery(context).discover(scope) {
+        scope.launch {
             timber.i("Testing $it")
             testDiscoveredInstanceAndPublishResult(
                 timber = timber,
@@ -68,16 +71,16 @@ class DiscoverOctoPrintUseCase @Inject constructor(
 
     private suspend fun discoverUsingUpnp(
         timber: Timber.Tree,
-        coroutineContext: CoroutineContext,
+        scope: CoroutineScope,
         submitResult: (DiscoveredOctoPrint) -> Unit
-    ) = GlobalScope.launch(coroutineContext) {
+    ) = scope.launch {
         val cache = mutableSetOf<String>()
         OctoPrintUpnpDiscovery(context).discover {
             // Gate to eliminate duplicates
             if (cache.contains(it.upnpId)) return@discover
             cache.add(it.upnpId)
 
-            GlobalScope.launch(coroutineContext) {
+            scope.launch {
                 timber.i("Testing $it")
                 testDiscoveredInstanceAndPublishResult(
                     timber = timber,
