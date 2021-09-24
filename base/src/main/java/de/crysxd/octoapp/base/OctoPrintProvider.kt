@@ -56,40 +56,39 @@ class OctoPrintProvider(
         // Passively collect data for the analytics profile
         // The passive event flow does not actively open a connection but piggy-backs other Flows
         AppScope.launch {
-            passiveEventFlow()
-                .onEach { event ->
-                    updateAnalyticsProfileWithEvents(event)
-                    ((event as? Event.MessageReceived)?.message as? Message.CurrentMessage)?.let { message ->
-                        // If the last message had data the new one is lacking, upgrade the new one so the cached message
-                        // is always holding all information required
-                        val last = currentMessageFlow.value
-                        val new = message.copy(
-                            temps = message.temps.takeIf { it.isNotEmpty() } ?: last?.temps ?: emptyList(),
-                            progress = message.progress ?: last?.progress,
-                            state = message.state ?: last?.state,
-                            job = message.job ?: last?.job,
-                        )
-                        currentMessageFlow.value = new
-                    }
+            passiveEventFlow().onEach { event ->
+                updateAnalyticsProfileWithEvents(event)
+                ((event as? Event.MessageReceived)?.message as? Message.CurrentMessage)?.let { message ->
+                    // If the last message had data the new one is lacking, upgrade the new one so the cached message
+                    // is always holding all information required
+                    val last = currentMessageFlow.value
+                    val new = message.copy(
+                        temps = message.temps.takeIf { it.isNotEmpty() } ?: last?.temps ?: emptyList(),
+                        progress = message.progress ?: last?.progress,
+                        state = message.state ?: last?.state,
+                        job = message.job ?: last?.job,
+                    )
+                    currentMessageFlow.value = new
+                }
 
-                    ((event as? Event.Connected))?.let {
-                        connectEventFlow.value = it
-                    }
+                ((event as? Event.Connected))?.let {
+                    connectEventFlow.value = it
+                }
 
-                    ((event as? Event.Disconnected))?.let {
-                        connectEventFlow.value = null
-                        if (it.exception is WebSocketUpgradeFailedException) {
-                            octoPrintRepository.reportIssueWithActiveInstance(ActiveInstanceIssue.HTTP_ISSUE)
-                        }
+                ((event as? Event.Disconnected))?.let {
+                    connectEventFlow.value = null
+                    if (it.exception is WebSocketUpgradeFailedException) {
+                        octoPrintRepository.reportIssueWithActiveInstance(ActiveInstanceIssue.HTTP_ISSUE)
                     }
                 }
-                .retry { delay(1000); true }
-                .collect()
+            }.retry { delay(1000); true }.collect()
         }
     }
 
+    private val OctoPrintInstanceInformationV3?.cacheKey get() = this?.apiKey + this?.webUrl + this?.alternativeWebUrl
+
     fun octoPrintFlow() = octoPrintRepository.instanceInformationFlow().distinctUntilChangedBy {
-        it?.apiKey + it?.webUrl + it?.alternativeWebUrl
+        it.cacheKey
     }.map {
         octoPrintMutex.withLock {
             when {
@@ -99,7 +98,7 @@ class OctoPrintProvider(
                     connectEventFlow.tryEmit(null)
                     null
                 }
-                octoPrintCache?.first != it -> {
+                octoPrintCache?.first.cacheKey != it.cacheKey -> {
                     val octoPrint = createAdHocOctoPrint(it)
                     Timber.d("Created new OctoPrint: $octoPrint")
                     octoPrintCache = Pair(it, octoPrint)
@@ -136,7 +135,6 @@ class OctoPrintProvider(
     fun eventFlow(tag: String) = octoPrintFlow()
         .flatMapLatest { it?.getEventWebSocket()?.eventFlow(tag) ?: emptyFlow() }
         .catch { e -> Timber.e(e) }
-
 
     private fun updateAnalyticsProfileWithEvents(event: Event) {
         when {
