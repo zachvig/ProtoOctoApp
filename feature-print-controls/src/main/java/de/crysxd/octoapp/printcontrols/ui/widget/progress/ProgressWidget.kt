@@ -106,7 +106,7 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
 
             binding.progressBarFill.backgroundTintList = ColorStateList.valueOf(ColorTheme.activeColorTheme.dark)
             binding.textViewProgressPercent.text = progressText
-            binding.textViewPrintName.text = message.progress?.printTime?.toString()
+            binding.textViewPrintName.text = message.job?.file?.display
             binding.textViewTimeSpent.text = formattedSpent
             binding.textViewTimeLeft.text = formattedLeft
             binding.textVieEta.text = formattedEta
