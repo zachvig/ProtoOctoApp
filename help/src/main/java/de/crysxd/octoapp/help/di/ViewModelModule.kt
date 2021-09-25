@@ -12,6 +12,7 @@ import de.crysxd.octoapp.base.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import de.crysxd.octoapp.help.troubleshoot.WebcamTroubleShootingViewModel
+import de.crysxd.octoapp.help.tutorials.TutorialsViewModel
 import javax.inject.Provider
 
 @Module
@@ -24,7 +25,7 @@ open class ViewModelModule {
     @Provides
     @IntoMap
     @ViewModelKey(WebcamTroubleShootingViewModel::class)
-    open fun provideSelectFileViewModel(
+    open fun provideWebcamTroubleShootingViewModel(
         octoPrintProvider: OctoPrintProvider,
         octoPrintRepository: OctoPrintRepository,
         getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
@@ -35,4 +36,9 @@ open class ViewModelModule {
         getWebcamSettingsUseCase = getWebcamSettingsUseCase,
         testFullNetworkStackUseCase = testFullNetworkStackUseCase
     )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(TutorialsViewModel::class)
+    open fun provideTutorialsViewModel(): ViewModel = TutorialsViewModel()
 }

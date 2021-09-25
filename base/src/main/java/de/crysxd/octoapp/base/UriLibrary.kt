@@ -23,7 +23,7 @@ object UriLibrary {
         getUri(R.string.uri___help)
 
     fun getTutorialsUri(): Uri =
-        getUri(R.string.uri___help)
+        getUri(R.string.uri___tutorials)
 
     fun getWebcamTroubleshootingUri(): Uri =
         getUri(R.string.uri___webcam_troubleshooting)

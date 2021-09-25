@@ -524,4 +524,5 @@
     <string name="print_notifications_menu___bottom"><![CDATA[Learn more about live and remote notifications <a href="%s">here</a>.]]></string>
     <string name="main_menu___item_show_tutorials">Tutorials</string>
     <string name="retry_general">Retry</string>
+    <string name="tutorials___header">Tutorials</string>
 </resources>

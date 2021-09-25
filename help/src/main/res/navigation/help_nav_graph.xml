@@ -24,6 +24,17 @@
     </fragment>
 
     <fragment
+        android:id="@+id/tutorialsFragment"
+        android:name="de.crysxd.octoapp.help.tutorials.TutorialsFragment"
+        android:label="TutorialsFragment">
+
+        <deepLink
+            android:id="@+id/deepLink2"
+            app:uri="@string/uri___tutorials" />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/helpDetail"
         android:name="de.crysxd.octoapp.help.faq.HelpDetailFragment"
         android:label="FaqFragment">
