@@ -15,11 +15,11 @@ import androidx.annotation.RequiresApi
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
+import de.crysxd.baseui.InsetAwareScreen
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
-import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
+import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.databinding.SignInSuccessFragmentBinding
 import de.crysxd.octoapp.signin.databinding.SignInSuccessFragmentContentBinding
@@ -75,8 +75,8 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
 
             // Clearing and setting the active will enforce the navigation to be reset
             // This is important in case we got here after a API key was invalid
-            Injector.get().octorPrintRepository().clearActive()
-            Injector.get().octorPrintRepository().setActive(
+            BaseInjector.get().octorPrintRepository().clearActive()
+            BaseInjector.get().octorPrintRepository().setActive(
                 OctoPrintInstanceInformationV3(
                     id = UUID.randomUUID().toString(),
                     webUrl = UriLibrary.secureDecode(args.webUrl).toHttpUrl(),

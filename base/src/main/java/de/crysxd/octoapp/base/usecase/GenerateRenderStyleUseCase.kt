@@ -4,9 +4,9 @@ import android.content.Context
 import android.graphics.Paint
 import androidx.core.content.ContextCompat
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.models.RenderStyle
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import timber.log.Timber
 import javax.inject.Inject
 

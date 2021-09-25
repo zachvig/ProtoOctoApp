@@ -18,7 +18,8 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.models.MenuId
+import de.crysxd.octoapp.base.data.models.MenuId
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.notification.PrintNotificationSupportBroadcastReceiver
 import de.crysxd.octoapp.widgets.AppWidgetSupportBroadcastReceiver
@@ -26,7 +27,6 @@ import de.crysxd.octoapp.widgets.quickaccess.QuickAccessAppWidget
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import de.crysxd.octoapp.base.di.Injector as BaseInjector
 
 
 class OctoApp : Application() {
@@ -45,7 +45,7 @@ class OctoApp : Application() {
         }
 
         // Setup Dagger
-        de.crysxd.octoapp.base.di.Injector.init(this)
+        BaseInjector.init(this)
         initializeDagger()
 
         // Dark mode, must be done sync

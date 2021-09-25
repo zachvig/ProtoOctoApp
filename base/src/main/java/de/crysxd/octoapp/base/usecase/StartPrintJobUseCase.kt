@@ -1,8 +1,8 @@
 package de.crysxd.octoapp.base.usecase
 
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.network.OctoPrintProvider
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.models.files.FileCommand
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import timber.log.Timber

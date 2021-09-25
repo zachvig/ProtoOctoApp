@@ -1,8 +1,8 @@
 package de.crysxd.octoapp.base.usecase
 
-import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintException
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import de.crysxd.octoapp.octoprint.models.printer.ToolCommand
@@ -79,5 +79,5 @@ class ExtrudeFilamentUseCase @Inject constructor(
     )
 
     class ColdExtrusionException(val minTemp: Int, val currentTemp: Int, webUrl: HttpUrl) :
-        OctoPrintException(webUrl = webUrl, userFacingMessage = Injector.get().localizedContext().getString(R.string.error_cold_extrusion))
+        OctoPrintException(webUrl = webUrl, userFacingMessage = BaseInjector.get().localizedContext().getString(R.string.error_cold_extrusion))
 }

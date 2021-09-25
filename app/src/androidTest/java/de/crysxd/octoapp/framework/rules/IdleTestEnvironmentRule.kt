@@ -2,8 +2,8 @@ package de.crysxd.octoapp.framework.rules
 
 import android.app.Application
 import androidx.test.platform.app.InstrumentationRegistry
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.framework.VirtualPrinterUtils.setVirtualPrinterEnabled
 import de.crysxd.octoapp.octoprint.models.connection.ConnectionCommand
 import kotlinx.coroutines.runBlocking
@@ -23,7 +23,7 @@ class IdleTestEnvironmentRule(private vararg val envs: OctoPrintInstanceInformat
                 val start = System.currentTimeMillis()
                 val end = System.currentTimeMillis() + 15_000
                 runBlocking {
-                    val octoprints = envs.map { Injector.get().octoPrintProvider().createAdHocOctoPrint(it) }
+                    val octoprints = envs.map { BaseInjector.get().octoPrintProvider().createAdHocOctoPrint(it) }
                     octoprints.forEach {
                         Timber.i("Disconnecting printer from ${it.webUrl}")
                         it.createConnectionApi().executeConnectionCommand(ConnectionCommand.Disconnect)
@@ -47,8 +47,8 @@ class IdleTestEnvironmentRule(private vararg val envs: OctoPrintInstanceInformat
                 }
                 base.evaluate()
             } finally {
-                Injector.init(InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as Application)
-                de.crysxd.octoapp.signin.di.Injector.init(Injector.get())
+                BaseInjector.init(InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as Application)
+                de.crysxd.octoapp.signin.di.SignInInjector.init(BaseInjector.get())
             }
         }
     }

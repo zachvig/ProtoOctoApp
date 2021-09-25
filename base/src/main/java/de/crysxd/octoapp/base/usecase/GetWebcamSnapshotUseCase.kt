@@ -6,9 +6,9 @@ import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
 import androidx.core.graphics.applyCanvas
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.ui.widget.webcam.MjpegConnection2
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.network.MjpegConnection2
 import de.crysxd.octoapp.base.utils.measureTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

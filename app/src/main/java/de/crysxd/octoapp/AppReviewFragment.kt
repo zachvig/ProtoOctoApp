@@ -12,7 +12,7 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.gson.Gson
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -37,12 +37,12 @@ class AppReviewFragment : Fragment() {
         }
     }
 
-    private fun loadConditions() = Injector.get().sharedPreferences().getString(KEY_CONDITIONS, null)?.let {
+    private fun loadConditions() = BaseInjector.get().sharedPreferences().getString(KEY_CONDITIONS, null)?.let {
         Gson().fromJson(it, ReviewFlowConditions::class.java)
     } ?: ReviewFlowConditions()
 
     private fun storeConditions(conditions: ReviewFlowConditions) {
-        Injector.get().sharedPreferences().edit {
+        BaseInjector.get().sharedPreferences().edit {
             putString(KEY_CONDITIONS, Gson().toJson(conditions))
         }
 

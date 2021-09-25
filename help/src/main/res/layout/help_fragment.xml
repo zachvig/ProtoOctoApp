@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <de.crysxd.octoapp.base.ui.common.OctoScrollView
+    <de.crysxd.baseui.common.OctoScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -209,6 +209,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </de.crysxd.octoapp.base.ui.common.OctoScrollView>
+    </de.crysxd.baseui.common.OctoScrollView>
 
 </FrameLayout>

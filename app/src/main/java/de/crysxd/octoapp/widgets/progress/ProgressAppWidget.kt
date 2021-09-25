@@ -6,13 +6,13 @@ import android.content.Context
 import android.os.Bundle
 import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
+import de.crysxd.baseui.utils.ColorTheme
+import de.crysxd.baseui.utils.colorTheme
 import de.crysxd.octoapp.R
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftImageResource
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
 import de.crysxd.octoapp.base.ext.toBitmapWithColor
-import de.crysxd.octoapp.base.ui.utils.ColorTheme
-import de.crysxd.octoapp.base.ui.utils.colorTheme
 import de.crysxd.octoapp.base.usecase.CreateProgressAppWidgetDataUseCase
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.base.utils.AppScope
@@ -32,7 +32,7 @@ class ProgressAppWidget : AppWidgetProvider() {
     override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, newOptions: Bundle) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
         AppWidgetPreferences.setWidgetDimensionsForWidgetId(appWidgetId, newOptions)
-        updateLayout(appWidgetId, Injector.get().localizedContext(), appWidgetManager)
+        updateLayout(appWidgetId, BaseInjector.get().localizedContext(), appWidgetManager)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
@@ -46,7 +46,7 @@ class ProgressAppWidget : AppWidgetProvider() {
         private var lastUpdateJobs = mutableMapOf<String, WeakReference<Job>>()
 
         internal fun notifyWidgetOffline() {
-            Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.let {
+            BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()?.let {
                 notifyWidgetOffline(it.id)
             }
         }
@@ -60,10 +60,10 @@ class ProgressAppWidget : AppWidgetProvider() {
 
         internal fun notifyWidgetDataChanged(currentMessage: Message.CurrentMessage) {
             // Cancel last update job and start new one
-            Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.let {
+            BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()?.let {
                 AppScope.launch {
                     try {
-                        val data = Injector.get().createProgressAppWidgetDataUseCase()
+                        val data = BaseInjector.get().createProgressAppWidgetDataUseCase()
                             .execute(CreateProgressAppWidgetDataUseCase.Params(currentMessage = currentMessage, instanceId = it.id))
                         notifyWidgetDataChanged(data)
                     } catch (e: CancellationException) {
@@ -79,7 +79,7 @@ class ProgressAppWidget : AppWidgetProvider() {
 
         internal fun notifyWidgetDataChanged() {
             // General update, we update all instances for which there is at least one widget.
-            Injector.get().octorPrintRepository().getAll().filter {
+            BaseInjector.get().octorPrintRepository().getAll().filter {
                 // Do not update instances where we don't have any widgets
                 getAppWidgetIdsForOctoprint(it.id).isNotEmpty()
             }.forEach {
@@ -88,7 +88,7 @@ class ProgressAppWidget : AppWidgetProvider() {
                 val job = AppScope.launch {
                     try {
                         notifyWidgetLoading(it.id)
-                        val data = Injector.get().createProgressAppWidgetDataUseCase()
+                        val data = BaseInjector.get().createProgressAppWidgetDataUseCase()
                             .execute(CreateProgressAppWidgetDataUseCase.Params(currentMessage = null, instanceId = it.id))
                         notifyWidgetDataChanged(data)
                     } catch (e: CancellationException) {
@@ -104,7 +104,7 @@ class ProgressAppWidget : AppWidgetProvider() {
         }
 
         private fun notifyWidgetDataChanged(data: CreateProgressAppWidgetDataUseCase.Result) {
-            val context = Injector.get().localizedContext()
+            val context = BaseInjector.get().localizedContext()
             getAppWidgetIdsForOctoprint(data.instanceId)
                 .filter { ensureWidgetExists(it) }
                 .forEach {
@@ -114,7 +114,7 @@ class ProgressAppWidget : AppWidgetProvider() {
 
         private fun notifyWidgetOffline(instanceId: String) {
             Timber.i("Widgets for instance $instanceId are offline")
-            val context = Injector.get().localizedContext()
+            val context = BaseInjector.get().localizedContext()
             getAppWidgetIdsForOctoprint(instanceId)
                 .filter { ensureWidgetExists(it) }
                 .forEach {
@@ -124,7 +124,7 @@ class ProgressAppWidget : AppWidgetProvider() {
 
         private fun notifyWidgetLoading(instanceId: String) {
             Timber.i("Widgets for instance $instanceId are loading")
-            val context = Injector.get().localizedContext()
+            val context = BaseInjector.get().localizedContext()
             getAppWidgetIdsForOctoprint(instanceId)
                 .filter { ensureWidgetExists(it) }
                 .forEach {
@@ -133,8 +133,8 @@ class ProgressAppWidget : AppWidgetProvider() {
         }
 
         private fun getAppWidgetIdsForOctoprint(instanceId: String): List<Int> {
-            val manager = AppWidgetManager.getInstance(Injector.get().localizedContext())
-            val isActiveInstance = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.id == instanceId
+            val manager = AppWidgetManager.getInstance(BaseInjector.get().localizedContext())
+            val isActiveInstance = BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()?.id == instanceId
             val filter = { widgetId: Int -> manager.getAppWidgetInfo(widgetId)?.provider?.className == ProgressAppWidget::class.java.name }
             val fixed = AppWidgetPreferences.getWidgetIdsForInstance(instanceId).filter(filter)
             val dynamic = AppWidgetPreferences.getWidgetIdsForInstance(ACTIVE_INSTANCE_MARKER).filter(filter).takeIf { isActiveInstance }
@@ -193,7 +193,7 @@ class ProgressAppWidget : AppWidgetProvider() {
             val etaIndicator = ContextCompat.getDrawable(context, data.printTimeLeftOrigin.asPrintTimeLeftImageResource())
                 ?.toBitmapWithColor(context, data.printTimeLeftOrigin.asPrintTimeLeftOriginColor())
             val eta = runBlocking {
-                data.printTimeLeft?.let { Injector.get().formatEtaUseCase().execute(FormatEtaUseCase.Params(it.toLong(), true)) }
+                data.printTimeLeft?.let { BaseInjector.get().formatEtaUseCase().execute(FormatEtaUseCase.Params(it.toLong(), true)) }
             }
             val views = if (data.isPrinting || data.isCancelling || data.isPaused || data.isPausing) {
                 RemoteViews(context.packageName, R.layout.app_widget_pogress_active)
@@ -236,7 +236,7 @@ class ProgressAppWidget : AppWidgetProvider() {
         }
 
         private fun applyColorTheme(views: RemoteViews, instanceId: String) {
-            val colorTheme = Injector.get().octorPrintRepository().get(instanceId)?.colorTheme ?: ColorTheme.default
+            val colorTheme = BaseInjector.get().octorPrintRepository().get(instanceId)?.colorTheme ?: ColorTheme.default
             views.setInt(R.id.colorStrip, "setImageLevel", 2500)
             views.setViewVisibility(R.id.colorStrip, colorTheme != ColorTheme.default)
             views.setInt(R.id.colorStrip, "setColorFilter", colorTheme.dark)

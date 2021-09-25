@@ -3,9 +3,9 @@ package de.crysxd.octoapp.print_controls.ui.widget.tune
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
-import de.crysxd.octoapp.base.models.SerialCommunication
-import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
-import de.crysxd.octoapp.base.ui.base.BaseViewModel
+import de.crysxd.octoapp.base.data.models.SerialCommunication
+import de.crysxd.octoapp.base.data.repository.SerialCommunicationLogsRepository
+import de.crysxd.baseui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.utils.PollingLiveData
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand

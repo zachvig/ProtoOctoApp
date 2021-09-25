@@ -8,7 +8,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.OctoPreferences
-import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelFactory
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase

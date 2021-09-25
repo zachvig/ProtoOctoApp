@@ -5,28 +5,27 @@ import android.content.Context
 import android.content.SharedPreferences
 import dagger.Component
 import de.crysxd.octoapp.base.OctoPreferences
-import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.datasource.LocalGcodeFileDataSource
+import de.crysxd.octoapp.base.data.repository.GcodeFileRepository
+import de.crysxd.octoapp.base.data.repository.GcodeHistoryRepository
+import de.crysxd.octoapp.base.data.repository.NotificationIdRepository
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.data.repository.PinnedMenuItemRepository
+import de.crysxd.octoapp.base.data.repository.SerialCommunicationLogsRepository
+import de.crysxd.octoapp.base.data.repository.TemperatureDataRepository
+import de.crysxd.octoapp.base.data.repository.WidgetPreferencesRepository
+import de.crysxd.octoapp.base.data.source.LocalGcodeFileDataSource
 import de.crysxd.octoapp.base.di.modules.AndroidModule
 import de.crysxd.octoapp.base.di.modules.DataSourceModule
 import de.crysxd.octoapp.base.di.modules.FirebaseModule
 import de.crysxd.octoapp.base.di.modules.LoggingModule
 import de.crysxd.octoapp.base.di.modules.OctoPrintModule
 import de.crysxd.octoapp.base.di.modules.SslModule
-import de.crysxd.octoapp.base.di.modules.ViewModelModule
 import de.crysxd.octoapp.base.logging.FirebaseTree
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.logging.TimberCacheTree
 import de.crysxd.octoapp.base.network.LocalDnsResolver
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.network.SslKeyStoreHandler
-import de.crysxd.octoapp.base.repository.GcodeFileRepository
-import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
-import de.crysxd.octoapp.base.repository.NotificationIdRepository
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.repository.PinnedMenuItemRepository
-import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
-import de.crysxd.octoapp.base.repository.WidgetPreferencesRepository
-import de.crysxd.octoapp.base.ui.base.BaseViewModelFactory
 import de.crysxd.octoapp.base.usecase.ActivateMaterialUseCase
 import de.crysxd.octoapp.base.usecase.ApplyLegacyDarkMode
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
@@ -71,7 +70,6 @@ import javax.inject.Named
         LoggingModule::class,
         OctoPrintModule::class,
         DataSourceModule::class,
-        ViewModelModule::class,
         FirebaseModule::class,
         SslModule::class,
     ]
@@ -107,6 +105,7 @@ interface BaseComponent {
     fun widgetPreferencesRepository(): WidgetPreferencesRepository
     fun localDnsResolver(): LocalDnsResolver
     fun notificationIdRepository(): NotificationIdRepository
+    fun temperatureDataRepository(): TemperatureDataRepository
 
     // UseCaseModule
     fun setTargetTemperatureUseCase(): SetTargetTemperaturesUseCase
@@ -144,8 +143,5 @@ interface BaseComponent {
     fun discoverOctoPrintUseCase(): DiscoverOctoPrintUseCase
     fun requestApiAccessUseCase(): RequestApiAccessUseCase
     fun testFullNetworkStackUseCase(): TestFullNetworkStackUseCase
-
-    // ViewModelModule
-    fun viewModelFactory(): BaseViewModelFactory
 
 }

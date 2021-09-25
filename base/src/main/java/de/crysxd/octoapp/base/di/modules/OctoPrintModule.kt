@@ -5,27 +5,27 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
 import dagger.Provides
 import de.crysxd.octoapp.base.OctoPreferences
-import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.datasource.DataSource
-import de.crysxd.octoapp.base.datasource.LocalGcodeFileDataSource
-import de.crysxd.octoapp.base.datasource.LocalPinnedMenuItemsDataSource
-import de.crysxd.octoapp.base.datasource.RemoteGcodeFileDataSource
-import de.crysxd.octoapp.base.datasource.WidgetPreferencesDataSource
+import de.crysxd.octoapp.base.data.models.GcodeHistoryItem
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.repository.GcodeFileRepository
+import de.crysxd.octoapp.base.data.repository.GcodeHistoryRepository
+import de.crysxd.octoapp.base.data.repository.NotificationIdRepository
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.data.repository.PinnedMenuItemRepository
+import de.crysxd.octoapp.base.data.repository.SerialCommunicationLogsRepository
+import de.crysxd.octoapp.base.data.repository.TemperatureDataRepository
+import de.crysxd.octoapp.base.data.repository.WidgetPreferencesRepository
+import de.crysxd.octoapp.base.data.source.DataSource
+import de.crysxd.octoapp.base.data.source.LocalGcodeFileDataSource
+import de.crysxd.octoapp.base.data.source.LocalPinnedMenuItemsDataSource
+import de.crysxd.octoapp.base.data.source.RemoteGcodeFileDataSource
+import de.crysxd.octoapp.base.data.source.WidgetPreferencesDataSource
 import de.crysxd.octoapp.base.di.BaseScope
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
-import de.crysxd.octoapp.base.models.GcodeHistoryItem
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.network.DetectBrokenSetupInterceptor
 import de.crysxd.octoapp.base.network.LocalDnsResolver
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.network.SslKeyStoreHandler
-import de.crysxd.octoapp.base.repository.GcodeFileRepository
-import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
-import de.crysxd.octoapp.base.repository.NotificationIdRepository
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.repository.PinnedMenuItemRepository
-import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
-import de.crysxd.octoapp.base.repository.TemperatureDataRepository
-import de.crysxd.octoapp.base.repository.WidgetPreferencesRepository
 
 @Module
 open class OctoPrintModule {

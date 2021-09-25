@@ -22,17 +22,18 @@ import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.ext.format
 import de.crysxd.octoapp.filemanager.R
 import de.crysxd.octoapp.filemanager.databinding.InfoTabFragmentBinding
-import de.crysxd.octoapp.filemanager.di.Injector
+import de.crysxd.octoapp.filemanager.di.FileManagerInjector
 import de.crysxd.octoapp.filemanager.di.injectParentViewModel
 import de.crysxd.octoapp.filemanager.ui.CropAlphaTransformation
 import de.crysxd.octoapp.octoprint.models.files.FileObject
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import kotlin.math.roundToInt
 
 class InfoTabFragment : Fragment() {
 
     private val labels = mutableListOf<View>()
-    private val viewModel: FileDetailsViewModel by injectParentViewModel(Injector.get().viewModelFactory())
+    private val viewModel: FileDetailsViewModel by injectParentViewModel(FileManagerInjector.get().viewModelFactory())
     private val margin0 by lazy { requireContext().resources.getDimensionPixelSize(R.dimen.margin_0) }
     private val margin2 by lazy { requireContext().resources.getDimensionPixelSize(R.dimen.margin_2) }
     private val margin3 by lazy { requireContext().resources.getDimensionPixelSize(R.dimen.margin_3) }
@@ -46,12 +47,12 @@ class InfoTabFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             val file = viewModel.file
-            val formatDurationUseCase = de.crysxd.octoapp.base.di.Injector.get().formatDurationUseCase()
+            val formatDurationUseCase = de.crysxd.octoapp.base.di.BaseInjector.get().formatDurationUseCase()
 
             // Load preview image
             val start = System.currentTimeMillis()
             file.thumbnail?.let {
-                Injector.get().picasso().observe(viewLifecycleOwner) { picasso ->
+                FileManagerInjector.get().picasso().observe(viewLifecycleOwner) { picasso ->
                     picasso.load(it)
                         .noFade()
                         .transform(CropAlphaTransformation())

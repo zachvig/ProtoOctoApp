@@ -1,9 +1,9 @@
 package de.crysxd.octoapp.base.usecase
 
 import android.content.Context
-import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.plugins.applicationkeys.RequestStatus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*

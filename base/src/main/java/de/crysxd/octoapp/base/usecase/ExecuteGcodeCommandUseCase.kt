@@ -4,9 +4,9 @@ import androidx.core.os.bundleOf
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
-import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
+import de.crysxd.octoapp.base.data.repository.GcodeHistoryRepository
+import de.crysxd.octoapp.base.data.repository.SerialCommunicationLogsRepository
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

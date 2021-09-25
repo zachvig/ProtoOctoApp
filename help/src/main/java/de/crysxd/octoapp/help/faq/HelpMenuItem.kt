@@ -1,9 +1,9 @@
 package de.crysxd.octoapp.help.faq
 
 import android.content.Context
-import de.crysxd.octoapp.base.ui.menu.MenuHost
-import de.crysxd.octoapp.base.ui.menu.MenuItem
-import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
+import de.crysxd.baseui.menu.MenuHost
+import de.crysxd.baseui.menu.MenuItem
+import de.crysxd.baseui.menu.MenuItemStyle
 
 class HelpMenuItem(override val style: MenuItemStyle, private val title: CharSequence, private val onClick: () -> Unit) : MenuItem {
     override val itemId: String = ""

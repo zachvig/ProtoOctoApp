@@ -1,6 +1,6 @@
 package de.crysxd.octoapp.base.logging
 
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.redactLoggingString
 import okhttp3.HttpUrl

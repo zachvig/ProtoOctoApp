@@ -11,7 +11,7 @@ import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_QUICK_SWITCH
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.format
 import de.crysxd.octoapp.base.utils.PendingIntentCompat
 import de.crysxd.octoapp.widgets.progress.ProgressAppWidget
@@ -23,7 +23,7 @@ import timber.log.Timber
 import java.util.Date
 
 internal fun updateAppWidget(widgetId: Int) {
-    val context = Injector.get().localizedContext()
+    val context = BaseInjector.get().localizedContext()
     val manager = AppWidgetManager.getInstance(context)
     when (val name = manager.getAppWidgetInfo(widgetId).provider.className) {
         ControlsWebcamAppWidget::class.java.name, NoControlsWebcamAppWidget::class.java.name -> BaseWebcamAppWidget.updateAppWidget(widgetId)
@@ -32,7 +32,7 @@ internal fun updateAppWidget(widgetId: Int) {
     }
 }
 
-internal fun ensureWidgetExists(widgetId: Int) = AppWidgetManager.getInstance(Injector.get().context()).getAppWidgetInfo(widgetId) != null
+internal fun ensureWidgetExists(widgetId: Int) = AppWidgetManager.getInstance(BaseInjector.get().context()).getAppWidgetInfo(widgetId) != null
 
 internal fun updateAllWidgets() {
     BaseWebcamAppWidget.notifyWidgetDataChanged()

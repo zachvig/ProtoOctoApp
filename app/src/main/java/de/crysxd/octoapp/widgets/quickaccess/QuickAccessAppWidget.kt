@@ -8,9 +8,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.RemoteViews
 import de.crysxd.octoapp.R
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.MenuId
-import de.crysxd.octoapp.widgets.*
+import de.crysxd.octoapp.base.data.models.MenuId
+import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.widgets.AppWidgetPreferences
+import de.crysxd.octoapp.widgets.ExecuteWidgetActionActivity
+import de.crysxd.octoapp.widgets.createLaunchAppIntent
+import de.crysxd.octoapp.widgets.getWidgetHeight
+import de.crysxd.octoapp.widgets.setViewVisibility
 import timber.log.Timber
 
 
@@ -30,13 +34,13 @@ class QuickAccessAppWidget : AppWidgetProvider() {
     companion object {
         fun notifyWidgetDataChanged() {
             Timber.i("Updating QuickAccessAppWidget")
-            val context = Injector.get().localizedContext()
+            val context = BaseInjector.get().localizedContext()
             val manager = AppWidgetManager.getInstance(context)
             val widgetIds = manager.getAppWidgetIds(ComponentName(context, QuickAccessAppWidget::class.java))
-            val title = Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.label?.let {
+            val title = BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()?.label?.let {
                 context.getString(R.string.app_widget___controlling_x, it)
             }
-            val isEmpty = Injector.get().pinnedMenuItemsRepository().getPinnedMenuItems(MenuId.Widget).isEmpty()
+            val isEmpty = BaseInjector.get().pinnedMenuItemsRepository().getPinnedMenuItems(MenuId.Widget).isEmpty()
 
             widgetIds.forEach {
                 val isLarge = getWidgetHeight(it) > 120

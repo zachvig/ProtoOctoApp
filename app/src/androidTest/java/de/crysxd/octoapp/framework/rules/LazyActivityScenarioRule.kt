@@ -11,7 +11,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.screenshot.Screenshot
 import de.crysxd.octoapp.BuildConfig
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import timber.log.Timber
@@ -43,7 +43,7 @@ open class LazyActivityScenarioRule<A : Activity>(private val launchActivity: Bo
         bitmap.compress(Bitmap.CompressFormat.WEBP_LOSSY, 80, screenshotFile.outputStream())
         val logsFile = getFile(description, "log")
         Timber.i("Writing logs to ${logsFile.absolutePath}")
-        logsFile.writeText(Injector.get().timberCacheTree().logs)
+        logsFile.writeText(BaseInjector.get().timberCacheTree().logs)
 
         scenario?.close()
     }
@@ -54,7 +54,7 @@ open class LazyActivityScenarioRule<A : Activity>(private val launchActivity: Bo
     }
 
     fun launch(newIntent: Intent? = null) {
-        Injector.get().timberCacheTree().also {
+        BaseInjector.get().timberCacheTree().also {
             it.collectVerbose = true
             it.clear()
         }

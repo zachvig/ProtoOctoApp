@@ -8,7 +8,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.adevinta.android.barista.rule.BaristaRule
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.WorkspaceRobot
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
@@ -34,7 +34,7 @@ class ShowFilesTest {
 
     @Before
     fun setUp() {
-        Injector.get().octorPrintRepository().setActive(testEnv)
+        BaseInjector.get().octorPrintRepository().setActive(testEnv)
     }
 
     @Test(timeout = 60_000)

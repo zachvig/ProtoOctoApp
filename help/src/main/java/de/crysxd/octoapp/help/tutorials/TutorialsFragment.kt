@@ -6,10 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.baseui.BaseFragment
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.ui.base.BaseFragment
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.baseui.BaseViewModel
+import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.octoapp.help.databinding.TutorialFragmentBinding
 import de.crysxd.octoapp.help.di.injectViewModel
 import java.util.Date
@@ -55,6 +56,6 @@ class TutorialsFragment : BaseFragment() {
 
     override fun onStop() {
         super.onStop()
-        Injector.get().octoPreferences().tutorialsSeenAt = Date()
+        BaseInjector.get().octoPreferences().tutorialsSeenAt = Date()
     }
 }

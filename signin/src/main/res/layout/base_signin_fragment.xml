@@ -7,7 +7,7 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <de.crysxd.octoapp.base.ui.common.OctoScrollView
+    <de.crysxd.baseui.common.OctoScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -42,7 +42,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <de.crysxd.octoapp.base.ui.common.OctoView
+                <de.crysxd.baseui.common.OctoView
                     android:id="@+id/octoView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </FrameLayout>
-    </de.crysxd.octoapp.base.ui.common.OctoScrollView>
+    </de.crysxd.baseui.common.OctoScrollView>
 
     <TextView
         android:id="@+id/wifiWarning"

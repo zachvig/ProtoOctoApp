@@ -5,13 +5,11 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelFactory
 import de.crysxd.octoapp.base.di.ViewModelKey
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.usecase.*
 import de.crysxd.octoapp.pre_print_controls.ui.PrePrintControlsViewModel
-import de.crysxd.octoapp.base.ui.widget.extrude.ExtrudeWidgetViewModel
 import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidgetViewModel
 import javax.inject.Provider
 

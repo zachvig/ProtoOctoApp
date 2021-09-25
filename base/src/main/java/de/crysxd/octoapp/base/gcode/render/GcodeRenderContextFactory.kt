@@ -1,7 +1,7 @@
 package de.crysxd.octoapp.base.gcode.render
 
 import android.graphics.PointF
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.gcode.parse.models.Gcode
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.models.GcodePath
@@ -23,7 +23,7 @@ sealed class GcodeRenderContextFactory {
 
     data class ForFileLocation(val byte: Int) : GcodeRenderContextFactory() {
         override suspend fun extractMoves(gcode: Gcode): GcodeRenderContext = withContext(Dispatchers.IO) {
-            val ds = Injector.get().localGcodeFileDataSource()
+            val ds = BaseInjector.get().localGcodeFileDataSource()
             try {
                 val layerInfo = gcode.layers.last { it.positionInFile <= byte }
                 val layer = ds.loadLayer(gcode.cacheKey, layerInfo)
@@ -79,7 +79,7 @@ sealed class GcodeRenderContextFactory {
 
     data class ForLayerProgress(val layerNo: Int, val progress: Float) : GcodeRenderContextFactory() {
         override suspend fun extractMoves(gcode: Gcode): GcodeRenderContext = withContext(Dispatchers.IO) {
-            val ds = Injector.get().localGcodeFileDataSource()
+            val ds = BaseInjector.get().localGcodeFileDataSource()
             try {
                 val layerInfo = gcode.layers[layerNo]
                 val layer = ds.loadLayer(gcode.cacheKey, layerInfo)

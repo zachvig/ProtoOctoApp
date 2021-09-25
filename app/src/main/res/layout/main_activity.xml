@@ -18,14 +18,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <de.crysxd.octoapp.base.ui.common.OctoToolbar
+    <de.crysxd.baseui.common.OctoToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/margin_2"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <de.crysxd.octoapp.base.ui.common.OctoView
+    <de.crysxd.baseui.common.OctoView
         android:id="@+id/toolbarOctoView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

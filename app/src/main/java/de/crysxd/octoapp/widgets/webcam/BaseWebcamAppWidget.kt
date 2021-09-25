@@ -10,8 +10,8 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.widget.RemoteViews
 import de.crysxd.octoapp.R
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.usecase.GetWebcamSnapshotUseCase
 import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.widgets.*
@@ -27,7 +27,7 @@ import kotlin.math.max
 abstract class BaseWebcamAppWidget : AppWidgetProvider() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        super.onReceive(Injector.get().localizedContext(), intent)
+        super.onReceive(BaseInjector.get().localizedContext(), intent)
     }
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
@@ -38,7 +38,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
     override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, newOptions: Bundle) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
         AppWidgetPreferences.setWidgetDimensionsForWidgetId(appWidgetId, newOptions)
-        updateLayout(appWidgetId, Injector.get().localizedContext(), appWidgetManager)
+        updateLayout(appWidgetId, BaseInjector.get().localizedContext(), appWidgetManager)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
@@ -66,7 +66,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
         internal fun notifyWidgetDataChanged() {
             cancelAllUpdates()
 
-            val context = Injector.get().localizedContext()
+            val context = BaseInjector.get().localizedContext()
             val manager = AppWidgetManager.getInstance(context)
             manager.getAppWidgetIds(ComponentName(context, NoControlsWebcamAppWidget::class.java))
                 .filter { ensureWidgetExists(it) }
@@ -107,14 +107,14 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             lastUpdateJobs[appWidgetId] = WeakReference(AppScope.launch {
                 Timber.i("Updating webcam widget $appWidgetId")
 
-                val context = Injector.get().localizedContext()
+                val context = BaseInjector.get().localizedContext()
                 val appWidgetManager = AppWidgetManager.getInstance(context)
                 val hasControls = appWidgetManager.getAppWidgetInfo(appWidgetId).provider.className == ControlsWebcamAppWidget::class.java.name
                 val instanceId = AppWidgetPreferences.getInstanceForWidgetId(appWidgetId) ?: "noid"
 
                 // Load frame or do live stream
                 try {
-                    val octoPrintInfo = Injector.get().octorPrintRepository().let { repo ->
+                    val octoPrintInfo = BaseInjector.get().octorPrintRepository().let { repo ->
                         repo.get(instanceId)
                             ?: repo.getActiveInstanceSnapshot()
                             ?: let {
@@ -131,7 +131,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
                         if (playLive) withTimeoutOrNull(LIVE_FOR_MS) {
                             doLiveStream(context, octoPrintInfo, instanceId, appWidgetManager, appWidgetId)
                         } else withTimeout(FETCH_TIMEOUT_MS) {
-                            val illuminate = isManualRefresh || Injector.get().octoPreferences().automaticLightsForWidgetRefresh
+                            val illuminate = isManualRefresh || BaseInjector.get().octoPreferences().automaticLightsForWidgetRefresh
                             createBitmapFlow(octoPrintInfo, appWidgetId, context, illuminate).first()
                         }
                     }
@@ -222,7 +222,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             illuminateIfPossible: Boolean,
             sampleRateMs: Long = 1
         ) =
-            Injector.get().getWebcamSnapshotUseCase().execute(
+            BaseInjector.get().getWebcamSnapshotUseCase().execute(
                 GetWebcamSnapshotUseCase.Params(
                     instanceInfo = octoPrintInfo,
                     maxWidthPx = BITMAP_WIDTH,

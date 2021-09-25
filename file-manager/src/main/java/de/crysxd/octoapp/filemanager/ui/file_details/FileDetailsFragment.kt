@@ -12,22 +12,21 @@ import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
-import de.crysxd.octoapp.base.ui.base.BaseFragment
-import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
-import de.crysxd.octoapp.base.ui.common.OctoToolbar
-import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewFragment
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
-import de.crysxd.octoapp.base.ui.menu.material.MaterialPluginMenu
+import de.crysxd.baseui.BaseFragment
+import de.crysxd.baseui.InsetAwareScreen
+import de.crysxd.baseui.common.OctoToolbar
+import de.crysxd.baseui.common.gcode.GcodePreviewFragment
+import de.crysxd.baseui.ext.requireOctoActivity
+import de.crysxd.baseui.menu.MenuBottomSheetFragment
+import de.crysxd.baseui.menu.material.MaterialPluginMenu
 import de.crysxd.octoapp.filemanager.R
 import de.crysxd.octoapp.filemanager.databinding.FileDetailsFragmentBinding
-import de.crysxd.octoapp.filemanager.di.Injector
 import de.crysxd.octoapp.filemanager.di.injectViewModel
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 
 class FileDetailsFragment : BaseFragment(), InsetAwareScreen {
 
-    override val viewModel: FileDetailsViewModel by injectViewModel(Injector.get().viewModelFactory())
+    override val viewModel: FileDetailsViewModel by injectViewModel()
     private val args by navArgs<FileDetailsFragmentArgs>()
     private val originalOctoTranslationY by lazy { requireOctoActivity().octo.translationY }
     private lateinit var binding: FileDetailsFragmentBinding

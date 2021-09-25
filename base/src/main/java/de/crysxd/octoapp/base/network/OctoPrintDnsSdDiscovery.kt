@@ -6,7 +6,7 @@ import com.github.druk.dnssd.DNSSDBindable
 import com.github.druk.dnssd.DNSSDService
 import com.github.druk.dnssd.QueryListener
 import com.github.druk.dnssd.ResolveListener
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -131,7 +131,7 @@ class OctoPrintDnsSdDiscovery(
                     webUrl = "http://${credentials}${fixedHostname}:${port}$path",
                     host = InetAddress.getByAddress(hostName, rdata)
                 )
-                Injector.get().localDnsResolver().addMDnsDeviceToCache(device)
+                BaseInjector.get().localDnsResolver().addMDnsDeviceToCache(device)
                 callback(device)
             }
         })

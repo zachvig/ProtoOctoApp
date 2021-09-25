@@ -4,7 +4,7 @@ import com.adevinta.android.barista.rule.BaristaRule
 import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import de.crysxd.octoapp.MainActivity
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
@@ -44,6 +44,6 @@ class AutomatedLoginTest {
         SignInRobot.waitForSignInToBeCompleted()
 
         // Auto discover should continue without any checks
-        verifyZeroInteractions(Injector.get().testFullNetworkStackUseCase())
+        verifyZeroInteractions(BaseInjector.get().testFullNetworkStackUseCase())
     }
 }

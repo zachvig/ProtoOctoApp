@@ -15,8 +15,8 @@ import com.adevinta.android.barista.rule.BaristaRule
 import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.ResetDaggerRule
@@ -96,7 +96,7 @@ class BasicAuthTest {
             .password(wrongPassword)
             .username(wrongUser)
             .build()
-        Injector.get().octorPrintRepository().setActive(
+        BaseInjector.get().octorPrintRepository().setActive(
             OctoPrintInstanceInformationV3(
                 id = "random",
                 webUrl = urlWithAuth,

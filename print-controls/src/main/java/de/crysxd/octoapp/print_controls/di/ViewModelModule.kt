@@ -5,11 +5,11 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.di.ViewModelFactory
 import de.crysxd.octoapp.base.di.ViewModelKey
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.data.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.TogglePausePrintJobUseCase
 import de.crysxd.octoapp.base.usecase.TunePrintUseCase

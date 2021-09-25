@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import com.squareup.picasso.Picasso
 import dagger.Component
-import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.di.BaseComponent
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 
 @PrePrintControlsScope
 @Component(

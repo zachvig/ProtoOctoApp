@@ -7,7 +7,7 @@ import com.google.common.truth.Truth.assertThat
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.framework.MenuRobot
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
@@ -40,7 +40,7 @@ class ChangePrinterTest {
 
     @Before
     fun setUp() {
-        val repo = Injector.get().octorPrintRepository()
+        val repo = BaseInjector.get().octorPrintRepository()
         repo.setActive(testEnv2)
         repo.setActive(testEnv1)
         discoveryRule.mockForRandomFound()
@@ -71,7 +71,7 @@ class ChangePrinterTest {
 
         // Wait for switch completed
         WorkspaceRobot.waitForPrepareWorkspace()
-        assertThat(Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl).isEqualTo(testEnv2.webUrl)
+        assertThat(BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl).isEqualTo(testEnv2.webUrl)
     }
 
     @Test(timeout = 45_000)
@@ -94,6 +94,6 @@ class ChangePrinterTest {
 
         // Wait for sign out completed
         SignInRobot.waitForDiscoveryOptionsToBeShown()
-        assertThat(Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl).isNull()
+        assertThat(BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl).isNull()
     }
 }

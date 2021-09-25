@@ -1,26 +1,18 @@
 package de.crysxd.octoapp
 
 import android.content.Context
-import android.graphics.Rect
 import android.os.Build
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.WindowInsets
-import android.widget.FrameLayout
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
-import androidx.core.view.updatePadding
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
-import de.crysxd.octoapp.base.ui.common.OctoToolbar
 import de.crysxd.octoapp.databinding.ActivityBannerViewBinding
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

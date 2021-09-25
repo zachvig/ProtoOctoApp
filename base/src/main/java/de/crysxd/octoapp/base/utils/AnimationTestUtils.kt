@@ -1,13 +1,13 @@
 package de.crysxd.octoapp.base.utils
 
 import android.provider.Settings
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 
 object AnimationTestUtils {
 
     val globalAnimationScale
         get() = Settings.Global.getFloat(
-            Injector.get().context().contentResolver,
+            BaseInjector.get().context().contentResolver,
             Settings.Global.ANIMATOR_DURATION_SCALE,
             1.0f
         )

@@ -77,7 +77,7 @@
 
     <fragment
         android:id="@+id/gcodePreviewFragment"
-        android:name="de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewFragment"
+        android:name="de.crysxd.baseui.common.gcode.GcodePreviewFragment"
         android:label="GcodePreviewFragment"
         tools:layout="@layout/gcode_preview_fragment">
 

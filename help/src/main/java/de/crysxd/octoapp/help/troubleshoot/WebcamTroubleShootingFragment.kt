@@ -6,22 +6,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
+import de.crysxd.baseui.BaseFragment
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
-import de.crysxd.octoapp.base.ui.base.BaseFragment
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.baseui.common.feedback.SendFeedbackDialog
+import de.crysxd.baseui.BaseViewModel
+import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import de.crysxd.octoapp.base.utils.ThemePlugin
 import de.crysxd.octoapp.help.R
 import de.crysxd.octoapp.help.databinding.HelpWebcamTroubleshootingBinding
-import de.crysxd.octoapp.help.di.Injector
+import de.crysxd.octoapp.help.di.HelpInjector
 import de.crysxd.octoapp.help.di.injectViewModel
 import io.noties.markwon.Markwon
-import de.crysxd.octoapp.base.di.Injector as BaseInjector
+import de.crysxd.octoapp.base.di.BaseInjector as BaseInjector
 
 class WebcamTroubleShootingFragment : BaseFragment() {
-    override val viewModel: WebcamTroubleShootingViewModel by injectViewModel(Injector.get().viewModelFactory())
+    override val viewModel: WebcamTroubleShootingViewModel by injectViewModel()
     private lateinit var binding: HelpWebcamTroubleshootingBinding
     private val findingDescriptionLibrary by lazy { FindingDescriptionLibrary(requireContext()) }
 

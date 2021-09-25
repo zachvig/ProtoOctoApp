@@ -3,5 +3,6 @@ apply from: '../shared.gradle'
 
 dependencies {
     implementation project(':base')
+    implementation project(':base-ui')
     implementation 'me.dm7.barcodescanner:zxing:1.9'
 }

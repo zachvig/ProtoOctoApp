@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fullscreen_webcam_nav_graph"
+    app:startDestination="@id/webcamFragment">
+
+    <deepLink
+        android:id="@+id/deepLink2"
+        app:uri="@string/uri___webcam" />
+
+    <fragment
+        android:id="@+id/webcamFragment"
+        android:name="de.crysxd.baseui.widget.webcam.WebcamFragment"
+        android:label="WebcamFragment"
+        tools:layout="@layout/webcam_fragment">
+    </fragment>
+</navigation>

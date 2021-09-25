@@ -2,20 +2,14 @@ package de.crysxd.octoapp.pre_print_controls.ui
 
 import android.os.Bundle
 import android.view.View
+import de.crysxd.baseui.common.OctoToolbar
+import de.crysxd.baseui.ext.requireOctoActivity
+import de.crysxd.baseui.menu.MenuBottomSheetFragment
+import de.crysxd.baseui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.UriLibrary
+import de.crysxd.octoapp.base.data.models.WidgetType
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.ui.common.OctoToolbar
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
-import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
-import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
-import de.crysxd.octoapp.base.ui.widget.extrude.ExtrudeWidget
-import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
-import de.crysxd.octoapp.base.ui.widget.quickaccess.PrePrintQuickAccessWidget
-import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
-import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
-import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidget
 
 class PrePrintControlsFragment : WidgetHostFragment() {
 
@@ -34,16 +28,16 @@ class PrePrintControlsFragment : WidgetHostFragment() {
         super.reloadWidgets()
         val webcamSupported = viewModel.webCamSupported.value == true
         val widgets = mutableListOf(
-            AnnouncementWidget::class,
-            ControlTemperatureWidget::class,
-            MoveToolWidget::class,
-            WebcamWidget::class,
-            PrePrintQuickAccessWidget::class,
-            SendGcodeWidget::class,
-            ExtrudeWidget::class,
+            WidgetType.AnnouncementWidget,
+            WidgetType.ControlTemperatureWidget,
+            WidgetType.MoveToolWidget,
+            WidgetType.WebcamWidget,
+            WidgetType.PrePrintQuickAccessWidget,
+            WidgetType.SendGcodeWidget,
+            WidgetType.ExtrudeWidget,
         ).also {
             if (!webcamSupported) {
-                it.remove(WebcamWidget::class)
+                it.remove(WidgetType.WebcamWidget)
             }
         }
 

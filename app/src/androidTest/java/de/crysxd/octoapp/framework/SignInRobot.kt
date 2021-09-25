@@ -14,7 +14,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import de.crysxd.octoapp.R
-import de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
+import de.crysxd.baseui.common.OctoTextInputLayout
 import de.crysxd.octoapp.signin.discover.DiscoverOptionView
 import org.hamcrest.Matchers.allOf
 

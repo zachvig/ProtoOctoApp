@@ -1,7 +1,7 @@
 package de.crysxd.octoapp.base.usecase
 
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.models.job.JobCommand
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first

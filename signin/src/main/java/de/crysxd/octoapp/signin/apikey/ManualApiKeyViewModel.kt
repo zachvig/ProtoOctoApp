@@ -3,7 +3,7 @@ package de.crysxd.octoapp.signin.apikey
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import de.crysxd.octoapp.base.ui.base.BaseViewModel
+import de.crysxd.baseui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

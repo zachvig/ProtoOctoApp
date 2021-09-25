@@ -4,7 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.os.Bundle
 import androidx.core.content.edit
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import timber.log.Timber
 
@@ -12,7 +12,7 @@ object AppWidgetPreferences {
 
     const val ACTIVE_INSTANCE_MARKER = "active"
 
-    private val sharedPreferences by lazy { Injector.get().context().getSharedPreferences("widget_preferences", Context.MODE_PRIVATE) }
+    private val sharedPreferences by lazy { BaseInjector.get().context().getSharedPreferences("widget_preferences", Context.MODE_PRIVATE) }
 
     init {
         // Upgrade from webUrl to instance id
@@ -22,7 +22,7 @@ object AppWidgetPreferences {
             }.map {
                 // Try to get the istance id, fall back to active instance marker if not found
                 val webUrl = sharedPreferences.getString(it, null) ?: return@map it to ACTIVE_INSTANCE_MARKER
-                val instance = Injector.get().octorPrintRepository().findInstancesWithWebUrl(webUrl.toHttpUrlOrNull()) ?: return@map it to ACTIVE_INSTANCE_MARKER
+                val instance = BaseInjector.get().octorPrintRepository().findInstancesWithWebUrl(webUrl.toHttpUrlOrNull()) ?: return@map it to ACTIVE_INSTANCE_MARKER
                 it to instance.id
             }.forEach {
                 // Remove web url field and store instanceId field

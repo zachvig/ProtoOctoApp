@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <de.crysxd.octoapp.base.ui.common.OctoScrollView
+    <de.crysxd.baseui.common.OctoScrollView
         android:id="@+id/octoScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <de.crysxd.octoapp.base.ui.common.TutorialView
+            <de.crysxd.baseui.common.TutorialView
                 android:id="@+id/tutorial"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
                 app:hidePrefName="show_data_hint"
                 app:title="@string/why_are_the_values_not_always_shown" />
 
-            <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
+            <de.crysxd.baseui.common.OctoTextInputLayout
                 android:id="@+id/feedRateInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
                 app:labelActive="@string/feed_rate_label_active"
                 app:selectAllOnFocus="true" />
 
-            <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
+            <de.crysxd.baseui.common.OctoTextInputLayout
                 android:id="@+id/flowRateInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
                 app:labelActive="@string/flow_rate_label_active"
                 app:selectAllOnFocus="true" />
 
-            <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
+            <de.crysxd.baseui.common.OctoTextInputLayout
                 android:id="@+id/fanSpeedInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
 
         </LinearLayout>
 
-    </de.crysxd.octoapp.base.ui.common.OctoScrollView>
+    </de.crysxd.baseui.common.OctoScrollView>
 
     <FrameLayout
         android:id="@+id/buttonApplyContainer"

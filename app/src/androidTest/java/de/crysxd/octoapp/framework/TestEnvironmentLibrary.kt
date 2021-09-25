@@ -1,7 +1,7 @@
 package de.crysxd.octoapp.framework
 
 import de.crysxd.octoapp.BuildConfig
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 object TestEnvironmentLibrary {

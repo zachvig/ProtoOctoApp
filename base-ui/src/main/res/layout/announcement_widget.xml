@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:divider="@drawable/margin_2_divider"
+    app:showDividers="middle">
+
+    <de.crysxd.baseui.common.TutorialView
+        android:id="@+id/whatsNew"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:detail="@string/announcement___new_version_detail"
+        app:hideButton="@string/hide"
+        app:alwaysShow="true"
+        app:hidePrefName="@string/pref_key_version_announcement"
+        app:learnMoreButton="@string/announcement___new_version_learn_more"
+        app:noBottomMargin="true"
+        app:title="@string/announcement___new_version_title" />
+
+    <de.crysxd.baseui.common.TutorialView
+        android:id="@+id/octoEverywhere"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:alwaysShow="true"
+        app:hero="@drawable/octoeverywhere_hero"
+        app:detail="@string/announcement___octoeverywhere_detail"
+        app:hideButton="@string/hide"
+        app:hidePrefName="@string/pref_key_octoeverywhere_announcement"
+        app:learnMoreButton="@string/announcement___octoeverywhere_learn_more"
+        app:noBottomMargin="true"
+        app:title="@string/announcement___octoeverywhere_title" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -13,8 +13,8 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import de.crysxd.baseui.InsetAwareScreen
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.databinding.ReadQrCodeFragmentBinding
 

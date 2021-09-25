@@ -6,27 +6,20 @@ import android.view.WindowManager
 import androidx.annotation.StringRes
 import androidx.lifecycle.asLiveData
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ui.common.OctoToolbar
-import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
-import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
-import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
-import de.crysxd.octoapp.base.ui.widget.extrude.ExtrudeWidget
-import de.crysxd.octoapp.base.ui.widget.quickaccess.PrintQuickAccessWidget
-import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
-import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
+import de.crysxd.baseui.common.OctoToolbar
+import de.crysxd.baseui.menu.MenuBottomSheetFragment
+import de.crysxd.baseui.widget.WidgetHostFragment
+import de.crysxd.octoapp.base.data.models.WidgetType
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.di.injectViewModel
-import de.crysxd.octoapp.print_controls.ui.widget.gcode.GcodePreviewWidget
-import de.crysxd.octoapp.print_controls.ui.widget.progress.ProgressWidget
-import de.crysxd.octoapp.print_controls.ui.widget.tune.TuneWidget
 import timber.log.Timber
 
 class PrintControlsFragment : WidgetHostFragment() {
 
     override val viewModel: PrintControlsViewModel by injectViewModel()
     override val destinationId = "print"
-    private val isKeepScreenOn get() = Injector.get().octoPreferences().isKeepScreenOnDuringPrint
+    private val isKeepScreenOn get() = BaseInjector.get().octoPreferences().isKeepScreenOnDuringPrint
     override val toolbarState = OctoToolbar.State.Print
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -65,7 +58,7 @@ class PrintControlsFragment : WidgetHostFragment() {
             }
         }
 
-        Injector.get().octoPreferences().updatedFlow.asLiveData().observe(viewLifecycleOwner) {
+        BaseInjector.get().octoPreferences().updatedFlow.asLiveData().observe(viewLifecycleOwner) {
             updateKeepScreenOn()
         }
     }
@@ -74,17 +67,17 @@ class PrintControlsFragment : WidgetHostFragment() {
         super.reloadWidgets()
         val webcamSupported = viewModel.webCamSupported.value == true
         val widgets = mutableListOf(
-            AnnouncementWidget::class,
-            ProgressWidget::class,
-            ControlTemperatureWidget::class,
-            WebcamWidget::class,
-            PrintQuickAccessWidget::class,
-            GcodePreviewWidget::class,
-            TuneWidget::class,
-            ExtrudeWidget::class,
+            WidgetType.AnnouncementWidget,
+            WidgetType.ProgressWidget,
+            WidgetType.ControlTemperatureWidget,
+            WidgetType.WebcamWidget,
+            WidgetType.PrintQuickAccessWidget,
+            WidgetType.GcodePreviewWidget,
+            WidgetType.TuneWidget,
+            WidgetType.ExtrudeWidget,
         ).also {
             if (!webcamSupported) {
-                it.remove(WebcamWidget::class)
+                it.remove(WidgetType.WebcamWidget)
             }
         }
 

@@ -1,0 +1,117 @@
+package de.crysxd.baseui.widget.temperature
+
+import android.content.Context
+import android.text.InputType
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import de.crysxd.baseui.BaseViewModel
+import de.crysxd.baseui.R
+import de.crysxd.baseui.common.enter_value.EnterValueFragmentArgs
+import de.crysxd.baseui.utils.NavigationResultMediator
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.data.repository.TemperatureDataRepository
+import de.crysxd.octoapp.base.ext.rateLimit
+import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
+import de.crysxd.octoapp.base.utils.AnimationTestUtils
+import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.retry
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
+
+class ControlTemperatureWidgetViewModel(
+    temperatureDataRepository: TemperatureDataRepository,
+    private val octoPrintRepository: OctoPrintRepository,
+    private val setTargetTemperaturesUseCase: SetTargetTemperaturesUseCase,
+) : BaseViewModel() {
+
+    private val printerProfile = octoPrintRepository.instanceInformationFlow().map {
+        it?.activeProfile ?: PrinterProfiles.Profile()
+    }
+    val temperature = temperatureDataRepository.flow().combine(printerProfile) { temps, profile ->
+        temps.filter {
+            val isChamber = it.component == "chamber" && profile.heatedChamber
+            val isBed = it.component == "bed" && profile.heatedBed
+            val isTool = it.component.startsWith("tool") && (!profile.extruder.sharedNozzle || it.component == "tool0")
+            val isOther = it.component != "chamber" && it.component != "bed" && !it.component.startsWith("tool")
+            isOther || isTool || isChamber || isBed
+        }
+    }.let {
+        // Slow down update rate for test
+        if (AnimationTestUtils.animationsDisabled) {
+            it.rateLimit(10000)
+        } else {
+            it
+        }
+    }.retry {
+        Timber.e(it)
+        delay(1000)
+        true
+    }.asLiveData()
+
+    fun getInitialComponentCount() = octoPrintRepository.getActiveInstanceSnapshot()?.activeProfile?.let {
+        var counter = if (it.extruder.sharedNozzle) 1 else it.extruder.count
+        if (it.heatedBed) counter++
+        if (it.heatedChamber) counter++
+        Timber.i("Using $counter temperature controls for initial setup ($it)")
+        counter
+    } ?: 2
+
+    private suspend fun setTemperature(temp: Int, component: String) {
+        setTargetTemperaturesUseCase.execute(
+            SetTargetTemperaturesUseCase.Params(
+                SetTargetTemperaturesUseCase.Temperature(temperature = temp, component = component)
+            )
+        )
+    }
+
+    fun changeTemperature(context: Context, component: String) = viewModelScope.launch(coroutineExceptionHandler) {
+        val result = NavigationResultMediator.registerResultCallback<String?>()
+        val current = temperature.value?.firstOrNull { it.component == component }?.current?.actual?.toInt()?.toString()
+
+        navContoller.navigate(
+            R.id.action_enter_value,
+            EnterValueFragmentArgs(
+                title = context.getString(R.string.x_temperature, getComponentName(context, component)),
+                hint = context.getString(R.string.target_temperature),
+                action = context.getString(R.string.set_temperature),
+                resultId = result.first,
+                value = current,
+                inputType = InputType.TYPE_CLASS_NUMBER,
+                selectAll = true
+            ).toBundle()
+        )
+
+        withContext(Dispatchers.Default) {
+            result.second.asFlow().first()
+        }?.let { temp ->
+            setTemperature(temp.toInt(), component)
+        }
+    }
+
+    fun getComponentName(context: Context, component: String) = when (component) {
+        "tool0" -> context.getString(R.string.general___hotend)
+        "tool1" -> context.getString(R.string.general___hotend_2)
+        "tool3" -> context.getString(R.string.general___hotend_3)
+        "tool4" -> context.getString(R.string.general___hotend_4)
+        "bed" -> context.getString(R.string.general___bed)
+        "chamber" -> context.getString(R.string.general___chamber)
+        else -> component
+    }
+
+    fun getMaxTemp(component: String) = when (component) {
+        "tool0" -> 250
+        "tool1" -> 250
+        "tool3" -> 250
+        "tool4" -> 250
+        "bed" -> 100
+        "chamber" -> 100
+        else -> 100
+    }
+}

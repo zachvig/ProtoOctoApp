@@ -4,9 +4,9 @@ import android.app.NotificationManager
 import android.content.Context
 import androidx.core.app.NotificationCompat
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.repository.NotificationIdRepository
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.ui.base.OctoActivity
+import de.crysxd.octoapp.base.data.repository.NotificationIdRepository
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.utils.ExceptionReceivers
 import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereConnectionNotFoundException
 import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereSubscriptionMissingException
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintException
@@ -24,7 +24,9 @@ class HandleOctoEverywhereExceptionUseCase @Inject constructor(
             octoPrintRepository.updateActive {
                 it.copy(alternativeWebUrl = null, octoEverywhereConnection = null)
             }
-            OctoActivity.instance?.showDialog(param) ?: showErrorNotification(param as OctoPrintException)
+            if (!ExceptionReceivers.dispatchException(param)) {
+                showErrorNotification(param as OctoPrintException)
+            }
         }
     }
 

@@ -1,9 +1,9 @@
 package de.crysxd.octoapp.print_controls.ui.widget.progress
 
 import androidx.lifecycle.asLiveData
-import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.baseui.BaseViewModel
 import de.crysxd.octoapp.base.ext.rateLimit
-import de.crysxd.octoapp.base.ui.base.BaseViewModel
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import kotlinx.coroutines.flow.filter
 
 class ProgressWidgetViewModel(

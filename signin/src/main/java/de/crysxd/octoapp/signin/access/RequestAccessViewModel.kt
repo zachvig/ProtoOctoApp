@@ -8,10 +8,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.repository.NotificationIdRepository
-import de.crysxd.octoapp.base.ui.base.BaseViewModel
-import de.crysxd.octoapp.base.ui.base.OctoActivity
+import de.crysxd.baseui.BaseViewModel
+import de.crysxd.baseui.OctoActivity
+import de.crysxd.octoapp.base.data.repository.NotificationIdRepository
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.usecase.OpenOctoprintWebUseCase
 import de.crysxd.octoapp.base.usecase.RequestApiAccessUseCase
 import de.crysxd.octoapp.base.utils.PendingIntentCompat
@@ -41,7 +41,7 @@ class RequestAccessViewModel(
         private const val REQUEST_GRACE_PERIOD_MS = 90_000L
     }
 
-    private val notificationManager = Injector.get().context().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private val notificationManager = BaseInjector.get().context().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val webUrlChannel = MutableStateFlow<HttpUrl?>(null)
     private val mutableUiState = MutableLiveData<UiState>(UiState.PendingApproval)
     private var pollingJob: Job? = null
@@ -98,17 +98,17 @@ class RequestAccessViewModel(
         // Attempt to bring activity to front if the user has left the app to grant access
         if (uiState is UiState.AccessGranted && cancelPollingJob?.isActive == true) OctoActivity.instance?.intent?.let { intent ->
             Timber.i("Access granted, but app in background")
-            val context = Injector.get().localizedContext()
+            val context = BaseInjector.get().localizedContext()
             val channelId = context.getString(R.string.updates_notification_channel)
             notificationManager.notify(
                 notificationIdRepository.requestAccessCompletedNotificationId,
-                NotificationCompat.Builder(Injector.get().context(), channelId)
+                NotificationCompat.Builder(BaseInjector.get().context(), channelId)
                     .setContentTitle("OctoApp is ready!")
                     .setContentText("Tap here to return")
                     .setAutoCancel(true)
                     .setColorized(true)
                     .setSmallIcon(R.drawable.ic_notification_default)
-                    .setContentIntent(PendingIntent.getActivity(Injector.get().context(), 23, intent, PendingIntentCompat.FLAG_UPDATE_CURRENT_IMMUTABLE))
+                    .setContentIntent(PendingIntent.getActivity(BaseInjector.get().context(), 23, intent, PendingIntentCompat.FLAG_UPDATE_CURRENT_IMMUTABLE))
                     .setPriority(NotificationCompat.PRIORITY_MAX)
                     .build()
             )

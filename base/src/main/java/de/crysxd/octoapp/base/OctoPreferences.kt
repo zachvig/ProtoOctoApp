@@ -6,7 +6,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
@@ -137,7 +137,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         get() = sharedPreferences.getBoolean(KEY_MANUAL_DARK_MODE, false)
         set(value) {
             edit { putBoolean(KEY_MANUAL_DARK_MODE, value) }
-            Injector.get().applyLegacyDarkModeUseCase().executeBlocking(Unit)
+            BaseInjector.get().applyLegacyDarkModeUseCase().executeBlocking(Unit)
         }
 
     var appLanguage

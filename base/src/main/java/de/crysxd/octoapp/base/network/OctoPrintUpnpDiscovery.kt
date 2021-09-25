@@ -2,7 +2,7 @@ package de.crysxd.octoapp.base.network
 
 import android.content.Context
 import android.net.wifi.WifiManager
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.octoprint.UPNP_ADDRESS_PREFIX
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -91,7 +91,7 @@ class OctoPrintUpnpDiscovery(
                     upnpId = uuid
                 )
 
-                Injector.get().localDnsResolver().addUpnpDeviceToCache(device)
+                BaseInjector.get().localDnsResolver().addUpnpDeviceToCache(device)
                 callback(device)
             }
         } catch (e: SocketTimeoutException) {

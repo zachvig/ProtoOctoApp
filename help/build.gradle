@@ -3,4 +3,5 @@ apply from: '../shared.gradle'
 
 dependencies {
     implementation project(':base')
+    implementation project(':base-ui')
 }

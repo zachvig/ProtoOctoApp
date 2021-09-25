@@ -2,12 +2,12 @@ package de.crysxd.octoapp.signin.discover
 
 import android.net.Uri
 import androidx.lifecycle.asLiveData
+import de.crysxd.baseui.BaseViewModel
 import de.crysxd.octoapp.base.billing.BillingManager
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.ui.base.BaseViewModel
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
 import de.crysxd.octoapp.base.utils.AnimationTestUtils
 import de.crysxd.octoapp.signin.R
@@ -96,7 +96,7 @@ class DiscoverViewModel(
         } catch (e: Exception) {
             manualFailureCounter++
             UiState.ManualError(
-                message = Injector.get().localizedContext().getString(R.string.sign_in___discovery___error_invalid_url),
+                message = BaseInjector.get().localizedContext().getString(R.string.sign_in___discovery___error_invalid_url),
                 exception = e,
                 errorCount = manualFailureCounter
             )

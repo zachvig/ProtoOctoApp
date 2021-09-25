@@ -10,14 +10,15 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionManager
-import de.crysxd.octoapp.base.ui.base.BaseFragment
-import de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
-import de.crysxd.octoapp.base.ui.common.OctoToolbar
-import de.crysxd.octoapp.base.ui.ext.clearFocusAndHideSoftKeyboard
-import de.crysxd.octoapp.base.ui.ext.requestFocusAndOpenSoftKeyboard
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.baseui.BaseFragment
+import de.crysxd.baseui.BaseViewModel
+import de.crysxd.baseui.common.OctoTextInputLayout
+import de.crysxd.baseui.common.OctoToolbar
+import de.crysxd.baseui.ext.clearFocusAndHideSoftKeyboard
+import de.crysxd.baseui.ext.requestFocusAndOpenSoftKeyboard
+import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.octoapp.print_controls.databinding.TuneFragmentBinding
-import de.crysxd.octoapp.print_controls.di.Injector
+import de.crysxd.octoapp.print_controls.di.PrintControlsInjector
 import de.crysxd.octoapp.print_controls.di.injectViewModel
 import de.crysxd.octoapp.print_controls.ui.widget.TuneFragmentViewModel
 
@@ -25,7 +26,7 @@ const val ARG_NO_VALUE = -1
 
 class TuneFragment : BaseFragment() {
 
-    override val viewModel: TuneFragmentViewModel by injectViewModel(Injector.get().viewModelFactory())
+    override val viewModel: TuneFragmentViewModel by injectViewModel()
     private lateinit var binding: TuneFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =

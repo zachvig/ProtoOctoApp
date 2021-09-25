@@ -13,11 +13,12 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import de.crysxd.baseui.BaseFragment
+import de.crysxd.baseui.common.NetworkStateViewModel
+import de.crysxd.baseui.di.BaseUiInjector
+import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.UriLibrary
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.ui.base.BaseFragment
-import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.databinding.BaseSigninFragmentBinding
 import de.crysxd.octoapp.signin.databinding.ReqestAccessFragmentBinding
@@ -30,7 +31,7 @@ import timber.log.Timber
 class RequestAccessFragment : BaseFragment() {
     override val viewModel by injectViewModel<RequestAccessViewModel>()
     private lateinit var binding: BaseSigninFragmentBinding
-    private val wifiViewModel by injectViewModel<NetworkStateViewModel>(Injector.get().viewModelFactory())
+    private val wifiViewModel by injectViewModel<NetworkStateViewModel>(BaseUiInjector.get().viewModelFactory())
     private val mediaPlayer = MediaPlayer()
     private lateinit var contentBinding: ReqestAccessFragmentBinding
     private val webUrl get() = UriLibrary.secureDecode(navArgs<RequestAccessFragmentArgs>().value.webUrl)
@@ -77,7 +78,7 @@ class RequestAccessFragment : BaseFragment() {
 
         // Case A: We got here because a API key was invalid. In this case we allow the user to go back to discover to connect an other OctoPrint
         contentBinding.buttonConnectOther.setOnClickListener { goBackToDiscover() }
-        contentBinding.buttonConnectOther.isVisible = Injector.get().octorPrintRepository().getActiveInstanceSnapshot() != null
+        contentBinding.buttonConnectOther.isVisible = BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot() != null
     }
 
     override fun onResume() {

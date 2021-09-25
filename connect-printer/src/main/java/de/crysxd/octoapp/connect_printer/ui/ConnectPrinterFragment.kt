@@ -12,16 +12,16 @@ import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
 import com.transitionseverywhere.ChangeText
+import de.crysxd.baseui.BaseFragment
+import de.crysxd.baseui.common.NetworkStateViewModel
+import de.crysxd.baseui.common.OctoToolbar
+import de.crysxd.baseui.di.BaseUiInjector
+import de.crysxd.baseui.ext.requireOctoActivity
+import de.crysxd.baseui.menu.MenuBottomSheetFragment
+import de.crysxd.baseui.menu.power.PowerControlsMenu
+import de.crysxd.baseui.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.octoapp.base.UriLibrary
-import de.crysxd.octoapp.base.di.Injector
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.ui.base.BaseFragment
-import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
-import de.crysxd.octoapp.base.ui.common.OctoToolbar
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import de.crysxd.octoapp.base.ui.menu.MenuBottomSheetFragment
-import de.crysxd.octoapp.base.ui.menu.power.PowerControlsMenu
-import de.crysxd.octoapp.base.ui.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.octoapp.connect_printer.R
 import de.crysxd.octoapp.connect_printer.databinding.ConnectPrinterFragmentBinding
 import de.crysxd.octoapp.connect_printer.di.injectViewModel
@@ -32,7 +32,7 @@ import timber.log.Timber
 
 class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCallback {
 
-    private val networkViewModel: NetworkStateViewModel by injectViewModel(Injector.get().viewModelFactory())
+    private val networkViewModel: NetworkStateViewModel by injectViewModel(BaseUiInjector.get().viewModelFactory())
     override val viewModel: ConnectPrinterViewModel by injectViewModel()
     private lateinit var binding: ConnectPrinterFragmentBinding
     private var setDelayedStatusJob: Job? = null

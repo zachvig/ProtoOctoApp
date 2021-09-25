@@ -30,25 +30,27 @@ import androidx.transition.Explode
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
 import com.google.firebase.analytics.FirebaseAnalytics
+import de.crysxd.baseui.InsetAwareScreen
+import de.crysxd.baseui.OctoActivity
+import de.crysxd.baseui.common.OctoToolbar
+import de.crysxd.baseui.common.OctoView
+import de.crysxd.baseui.utils.ColorTheme
+import de.crysxd.baseui.utils.colorTheme
+import de.crysxd.baseui.widget.announcement.AnnouncementWidget
+import de.crysxd.baseui.widget.extrude.ExtrudeWidget
+import de.crysxd.baseui.widget.gcode.SendGcodeWidget
+import de.crysxd.baseui.widget.quickaccess.PrePrintQuickAccessWidget
+import de.crysxd.baseui.widget.quickaccess.PrintQuickAccessWidget
+import de.crysxd.baseui.widget.temperature.ControlTemperatureWidget
+import de.crysxd.baseui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingEvent
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_QUICK_SWITCH
-import de.crysxd.octoapp.base.billing.PurchaseConfirmationDialog
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.data.models.WidgetType
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
-import de.crysxd.octoapp.base.ui.base.OctoActivity
-import de.crysxd.octoapp.base.ui.common.OctoToolbar
-import de.crysxd.octoapp.base.ui.common.OctoView
-import de.crysxd.octoapp.base.ui.utils.ColorTheme
-import de.crysxd.octoapp.base.ui.utils.colorTheme
-import de.crysxd.octoapp.base.ui.widget.announcement.AnnouncementWidget
-import de.crysxd.octoapp.base.ui.widget.extrude.ExtrudeWidget
-import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidget
-import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidget
-import de.crysxd.octoapp.base.ui.widget.webcam.WebcamWidget
 import de.crysxd.octoapp.base.usecase.OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH
 import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
 import de.crysxd.octoapp.databinding.MainActivityBinding
@@ -61,6 +63,7 @@ import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidget
 import de.crysxd.octoapp.print_controls.ui.widget.gcode.GcodePreviewWidget
 import de.crysxd.octoapp.print_controls.ui.widget.progress.ProgressWidget
 import de.crysxd.octoapp.print_controls.ui.widget.tune.TuneWidget
+import de.crysxd.octoapp.signin.di.SignInInjector
 import de.crysxd.octoapp.widgets.updateAllWidgets
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -68,8 +71,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 import de.crysxd.octoapp.octoprint.models.socket.Message as SocketMessage
-import de.crysxd.octoapp.pre_print_controls.di.Injector as ConnectPrinterInjector
-import de.crysxd.octoapp.signin.di.Injector as SignInInjector
+import de.crysxd.octoapp.pre_print_controls.di.PrePrintControlsInjector as ConnectPrinterInjector
 
 const val EXTRA_TARGET_OCTOPRINT_ID = "octoprint_id"
 
@@ -109,15 +111,22 @@ class MainActivity : OctoActivity() {
             .observe(this, ::onCurrentMessageReceived)
 
         // Inflate widgets
-        octoWidgetRecycler.preInflateWidget(this) { AnnouncementWidget(this@MainActivity) }
-        octoWidgetRecycler.preInflateWidget(this) { MoveToolWidget(this@MainActivity) }
-        octoWidgetRecycler.preInflateWidget(this) { ExtrudeWidget(this@MainActivity) }
-        octoWidgetRecycler.preInflateWidget(this) { ControlTemperatureWidget(this@MainActivity) }
-        octoWidgetRecycler.preInflateWidget(this) { SendGcodeWidget(this@MainActivity) }
-        octoWidgetRecycler.preInflateWidget(this) { WebcamWidget(this@MainActivity) }
-        octoWidgetRecycler.preInflateWidget(this) { GcodePreviewWidget(this@MainActivity) }
-        octoWidgetRecycler.preInflateWidget(this) { ProgressWidget(this@MainActivity) }
-        octoWidgetRecycler.preInflateWidget(this) { TuneWidget(this@MainActivity) }
+        octoWidgetRecycler.setWidgetFactory(this) {
+            when (it) {
+                WidgetType.AnnouncementWidget -> AnnouncementWidget(this@MainActivity)
+                WidgetType.ControlTemperatureWidget -> ControlTemperatureWidget(this@MainActivity)
+                WidgetType.ExtrudeWidget -> ExtrudeWidget(this@MainActivity)
+                WidgetType.GcodePreviewWidget -> GcodePreviewWidget(this@MainActivity)
+                WidgetType.MoveToolWidget -> MoveToolWidget(this@MainActivity)
+                WidgetType.PrePrintQuickAccessWidget -> PrePrintQuickAccessWidget(this@MainActivity)
+                WidgetType.PrintQuickAccessWidget -> PrintQuickAccessWidget(this@MainActivity)
+                WidgetType.ProgressWidget -> ProgressWidget(this@MainActivity)
+                WidgetType.QuickAccessWidget -> throw IllegalStateException("Can't create abstract class")
+                WidgetType.SendGcodeWidget -> SendGcodeWidget(this@MainActivity)
+                WidgetType.TuneWidget -> TuneWidget(this@MainActivity)
+                WidgetType.WebcamWidget -> WebcamWidget(this@MainActivity)
+            }
+        }
 
         SignInInjector.get().octoprintRepository().instanceInformationFlow()
             .filter {
@@ -215,7 +224,7 @@ class MainActivity : OctoActivity() {
             }
         }
 
-        if (!isTablet() && !Injector.get().octoPreferences().allowAppRotation) {
+        if (!isTablet() && !BaseInjector.get().octoPreferences().allowAppRotation) {
             // Stop screen rotation on phones
             @SuppressLint("SourceLockedOrientationActivity")
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -225,7 +234,7 @@ class MainActivity : OctoActivity() {
     override fun onNewIntent(intent: Intent?) {
         if (BillingManager.isFeatureEnabled(FEATURE_QUICK_SWITCH)) {
             intent?.getStringExtra(EXTRA_TARGET_OCTOPRINT_ID)?.let { id ->
-                val repo = Injector.get().octorPrintRepository()
+                val repo = BaseInjector.get().octorPrintRepository()
                 repo.get(id)?.let {
                     repo.setActive(it)
                 }
@@ -247,7 +256,7 @@ class MainActivity : OctoActivity() {
 
     private fun handleDeepLink(uri: Uri) {
         Handler(Looper.getMainLooper()).post {
-            if (UriLibrary.isActiveInstanceRequired(uri) && Injector.get().octorPrintRepository().getActiveInstanceSnapshot() == null) {
+            if (UriLibrary.isActiveInstanceRequired(uri) && BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot() == null) {
                 Timber.i("Uri requires active instance, delaying")
                 viewModel.pendingUri = uri
             } else {
@@ -256,7 +265,7 @@ class MainActivity : OctoActivity() {
                     lifecycleScope.launchWhenCreated {
                         try {
                             Timber.i("Handling OctoEverywhere connection")
-                            Injector.get().handleOctoEverywhereAppPortalSuccessUseCase().execute(uri)
+                            BaseInjector.get().handleOctoEverywhereAppPortalSuccessUseCase().execute(uri)
                         } catch (e: Exception) {
                             showDialog(e)
                         }
@@ -317,13 +326,13 @@ class MainActivity : OctoActivity() {
 
     override fun onResume() {
         super.onResume()
-        Injector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch = false
+        BaseInjector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch = false
         BillingManager.onResume(this)
         lifecycleScope.launchWhenResumed {
             BillingManager.billingEventFlow().collectLatest {
                 it.consume { event ->
                     when (event) {
-                        BillingEvent.PurchaseCompleted -> PurchaseConfirmationDialog().show(supportFragmentManager, "purchase-confirmation")
+                        BillingEvent.PurchaseCompleted -> de.crysxd.baseui.purchase.PurchaseConfirmationDialog().show(supportFragmentManager, "purchase-confirmation")
                     }
                 }
             }
@@ -563,7 +572,7 @@ class MainActivity : OctoActivity() {
         lifecycleScope.launchWhenCreated {
             try {
                 viewModel.lastSuccessfulCapabilitiesUpdate = System.currentTimeMillis()
-                Injector.get().updateInstanceCapabilitiesUseCase().execute(UpdateInstanceCapabilitiesUseCase.Params(updateM115 = updateM115))
+                BaseInjector.get().updateInstanceCapabilitiesUseCase().execute(UpdateInstanceCapabilitiesUseCase.Params(updateM115 = updateM115))
                 updateAllWidgets()
             } catch (e: Exception) {
                 viewModel.lastSuccessfulCapabilitiesUpdate = 0

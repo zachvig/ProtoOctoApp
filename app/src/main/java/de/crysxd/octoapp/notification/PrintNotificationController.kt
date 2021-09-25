@@ -8,10 +8,10 @@ import android.os.Build
 import androidx.core.content.edit
 import com.google.gson.Gson
 import de.crysxd.octoapp.base.OctoPreferences
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
-import de.crysxd.octoapp.base.repository.NotificationIdRepository
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.repository.NotificationIdRepository
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.di.BaseInjector
 import timber.log.Timber
 import java.util.Date
 
@@ -26,14 +26,14 @@ class PrintNotificationController(
     companion object {
         private const val KEY_LAST_PRINT_PREFIX = "last-"
         internal val instance by lazy {
-            val context = Injector.get().localizedContext()
-            val repository = Injector.get().octorPrintRepository()
+            val context = BaseInjector.get().localizedContext()
+            val repository = BaseInjector.get().octorPrintRepository()
             PrintNotificationController(
                 context = context,
-                notificationFactory = PrintNotificationFactory(context, repository, Injector.get().formatEtaUseCase()),
-                octoPreferences = Injector.get().octoPreferences(),
-                printNotificationIdRepository = Injector.get().notificationIdRepository(),
-                octoPrintRepository = Injector.get().octorPrintRepository()
+                notificationFactory = PrintNotificationFactory(context, repository, BaseInjector.get().formatEtaUseCase()),
+                octoPreferences = BaseInjector.get().octoPreferences(),
+                printNotificationIdRepository = BaseInjector.get().notificationIdRepository(),
+                octoPrintRepository = BaseInjector.get().octorPrintRepository()
             )
         }
     }

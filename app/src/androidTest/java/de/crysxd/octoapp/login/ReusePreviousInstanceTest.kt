@@ -13,7 +13,7 @@ import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.WorkspaceRobot
@@ -49,7 +49,7 @@ class ReusePreviousInstanceTest {
 
     @Before
     fun setUp() {
-        val repo = Injector.get().octorPrintRepository()
+        val repo = BaseInjector.get().octorPrintRepository()
         repo.setActive(testEnv)
         repo.clearActive()
         discoveryRule.mockForRandomFound()
@@ -94,7 +94,7 @@ class ReusePreviousInstanceTest {
         SignInRobot.selectDiscoveryOptionWithText(testEnv.label)
         WorkspaceRobot.waitForPrepareWorkspace()
 
-        assertThat(Injector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl).isEqualTo(testEnv.webUrl)
-        verifyZeroInteractions(Injector.get().testFullNetworkStackUseCase())
+        assertThat(BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()?.webUrl).isEqualTo(testEnv.webUrl)
+        verifyZeroInteractions(BaseInjector.get().testFullNetworkStackUseCase())
     }
 }

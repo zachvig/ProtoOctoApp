@@ -10,15 +10,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import de.crysxd.baseui.BaseFragment
+import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.ui.base.BaseFragment
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.access.RequestAccessFragmentDirections
 import de.crysxd.octoapp.signin.apikey.ReadQrCodeFragment.Companion.RESULT_API_KEY
 import de.crysxd.octoapp.signin.databinding.BaseSigninFragmentBinding
 import de.crysxd.octoapp.signin.databinding.DiscoverFragmentContentManualBinding
-import de.crysxd.octoapp.signin.di.Injector
 import de.crysxd.octoapp.signin.di.injectViewModel
 import de.crysxd.octoapp.signin.ext.setUpAsHelpButton
 import kotlinx.coroutines.delay
@@ -26,9 +25,7 @@ import kotlinx.coroutines.delay
 class ManualApiKeyFragment : BaseFragment() {
     private lateinit var binding: BaseSigninFragmentBinding
     private lateinit var contentBinding: DiscoverFragmentContentManualBinding
-    override val viewModel: ManualApiKeyViewModel by injectViewModel(
-        Injector.get().viewModelFactory()
-    )
+    override val viewModel: ManualApiKeyViewModel by injectViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

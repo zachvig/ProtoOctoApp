@@ -22,7 +22,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.utils.AppScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -264,7 +264,7 @@ object BillingManager {
 
         val playServicesAvailable = try {
             val googleApiAvailability = GoogleApiAvailability.getInstance()
-            val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(Injector.get().context())
+            val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(BaseInjector.get().context())
             resultCode == ConnectionResult.SUCCESS
         } catch (e: java.lang.Exception) {
             Timber.e(e)

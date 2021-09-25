@@ -11,13 +11,14 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import de.crysxd.baseui.BaseFragment
+import de.crysxd.baseui.common.NetworkStateViewModel
+import de.crysxd.baseui.di.BaseUiInjector
+import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
-import de.crysxd.octoapp.base.ui.base.BaseFragment
-import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import de.crysxd.octoapp.base.utils.ThemePlugin
 import de.crysxd.octoapp.signin.R
@@ -36,7 +37,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
 
     override val viewModel by injectViewModel<ProbeOctoPrintViewModel>()
     private lateinit var binding: BaseSigninFragmentBinding
-    private val wifiViewModel by injectViewModel<NetworkStateViewModel>(Injector.get().viewModelFactory())
+    private val wifiViewModel by injectViewModel<NetworkStateViewModel>(BaseUiInjector.get().viewModelFactory())
     private var loadingBinding: ProbeFragmentInitialBinding? = null
     private var findingBinding: ProbeFragmentFindingBinding? = null
     private val findingDescriptionLibrary by lazy { FindingDescriptionLibrary(requireContext()) }
@@ -119,7 +120,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
         // If the "thing" which started this screen gave us a instance id of an existing instance OR the user has the quick switch feature, we can continue with the existing
         // API key. Otherwise, the user is forced to reconnect OctoPrint. Reusing might be explicitly allowed, when this fragment is started to troubleshoot the connection.
         if (instanceId != null || BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH)) {
-            val repo = Injector.get().octorPrintRepository()
+            val repo = BaseInjector.get().octorPrintRepository()
             val oldInstance = instanceId?.let { repo.get(it) }
             val instance = oldInstance?.copy(
                 webUrl = finding.webUrl,
@@ -131,8 +132,8 @@ class ProbeOctoPrintFragment : BaseFragment() {
             )
 
             // Clearing and setting the instance will ensure we reset the navigation
-            Injector.get().octorPrintRepository().clearActive()
-            Injector.get().octorPrintRepository().setActive(instance.copy(issue = null))
+            BaseInjector.get().octorPrintRepository().clearActive()
+            BaseInjector.get().octorPrintRepository().setActive(instance.copy(issue = null))
         }
     }
 
@@ -192,7 +193,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
         getString(R.string.sign_in___probe___edit_information)
     }
 
-    private fun isInTestOnlyMode() = Injector.get().octorPrintRepository().getActiveInstanceSnapshot() != null
+    private fun isInTestOnlyMode() = BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot() != null
 
     private fun getPrimaryActionText(finding: TestFullNetworkStackUseCase.Finding) = when (finding) {
         is TestFullNetworkStackUseCase.Finding.HttpsNotTrusted -> getString(R.string.sing_in___probe___trust_and_continue)
@@ -202,7 +203,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
 
     private fun performPrimaryAction(finding: TestFullNetworkStackUseCase.Finding) = when (finding) {
         is TestFullNetworkStackUseCase.Finding.HttpsNotTrusted -> {
-            Injector.get().sslKeyStoreHandler().also {
+            BaseInjector.get().sslKeyStoreHandler().also {
                 it.storeCertificates(finding.certificates)
                 if (finding.weakHostnameVerificationRequired) {
                     it.enforceWeakVerificationForHost(finding.webUrl)
@@ -217,7 +218,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
                 .username(findingBinding?.usernameInput?.editText?.text?.toString() ?: "")
                 .password(findingBinding?.passwordInput?.editText?.text?.toString() ?: "")
                 .build()
-            Injector.get().sensitiveDataMask().registerWebUrl(webUrl)
+            BaseInjector.get().sensitiveDataMask().registerWebUrl(webUrl)
             viewModel.probe(webUrl.toString())
         }
 

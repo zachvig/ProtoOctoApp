@@ -4,18 +4,18 @@ import android.content.Context
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService.RemoteViewsFactory
 import androidx.core.content.ContextCompat
+import de.crysxd.baseui.menu.MenuItemStyle
+import de.crysxd.baseui.menu.PreparedMenuItem
+import de.crysxd.baseui.menu.main.MenuItemLibrary
 import de.crysxd.octoapp.R
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.MenuId
-import de.crysxd.octoapp.base.ui.menu.MenuItemStyle
-import de.crysxd.octoapp.base.ui.menu.PreparedMenuItem
-import de.crysxd.octoapp.base.ui.menu.main.MenuItemLibrary
+import de.crysxd.octoapp.base.data.models.MenuId
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.widgets.ExecuteWidgetActionActivity
 import kotlinx.coroutines.runBlocking
 
 class QuickAccessRemoteViewsFactory(private val context: Context) : RemoteViewsFactory {
 
-    private val repository = Injector.get().pinnedMenuItemsRepository()
+    private val repository = BaseInjector.get().pinnedMenuItemsRepository()
     private val library = MenuItemLibrary()
     private val items
         get() = repository.getPinnedMenuItems(MenuId.Widget).toList().mapNotNull {

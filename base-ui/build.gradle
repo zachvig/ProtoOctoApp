@@ -1,0 +1,10 @@
+apply plugin: 'com.android.library'
+apply from: '../shared.gradle'
+
+dependencies {
+    implementation project(':base')
+    implementation "androidx.browser:browser:1.3.0"
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.14.1'
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.14.1'
+    implementation 'com.jjoe64:graphview:4.2.2'
+}

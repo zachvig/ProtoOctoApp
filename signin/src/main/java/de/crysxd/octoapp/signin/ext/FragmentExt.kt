@@ -7,9 +7,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
+import de.crysxd.baseui.common.feedback.SendFeedbackDialog
+import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.feedback.SendFeedbackDialog
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.signin.R
 
 fun Fragment.goBackToDiscover() {
@@ -17,7 +17,7 @@ fun Fragment.goBackToDiscover() {
         message = getString(R.string.sign_in___cancel_and_use_other_information_message),
         positiveButton = getString(R.string.sign_in___cancel_and_use_other_information_title),
         positiveAction = {
-            val repo = de.crysxd.octoapp.base.di.Injector.get().octorPrintRepository()
+            val repo = de.crysxd.octoapp.base.di.BaseInjector.get().octorPrintRepository()
             repo.getActiveInstanceSnapshot()?.let {
                 // Case A: we got here because an API key is invalid. In this case we need to clear the active instance
                 // and MainActivity will trigger the normal sign in flow

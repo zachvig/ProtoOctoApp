@@ -2,8 +2,8 @@ package de.crysxd.octoapp.base.usecase
 
 import android.net.Uri
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.models.OctoEverywhereConnection
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.data.models.OctoEverywhereConnection
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import timber.log.Timber
 import javax.inject.Inject

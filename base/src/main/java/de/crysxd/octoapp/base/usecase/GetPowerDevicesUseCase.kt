@@ -1,8 +1,8 @@
 package de.crysxd.octoapp.base.usecase
 
 import android.os.Parcelable
-import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber

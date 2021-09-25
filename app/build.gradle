@@ -27,6 +27,7 @@ play {
 
 dependencies {
     implementation project(':base')
+    implementation project(':base-ui')
     implementation project(':signin')
     implementation project(':connect-printer')
     implementation project(':print-controls')

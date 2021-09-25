@@ -3,12 +3,12 @@ package de.crysxd.octoapp.base
 import android.net.Uri
 import android.util.Base64
 import androidx.annotation.StringRes
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import okhttp3.HttpUrl
 
 object UriLibrary {
     private fun getUri(@StringRes string: Int, vararg placeholder: String) =
-        Uri.parse("http://" + Injector.get().context().getString(string).let {
+        Uri.parse("http://" + BaseInjector.get().context().getString(string).let {
             var out = it
             for (i in placeholder.indices step 2) {
                 out = out.replace(placeholder[i], placeholder[i + 1])

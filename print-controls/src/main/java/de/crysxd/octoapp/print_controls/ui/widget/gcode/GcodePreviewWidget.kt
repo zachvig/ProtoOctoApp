@@ -16,20 +16,22 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import de.crysxd.baseui.common.gcode.GcodePreviewFragmentArgs
+import de.crysxd.baseui.common.gcode.GcodePreviewViewModel
+import de.crysxd.baseui.di.BaseUiInjector
+import de.crysxd.baseui.ext.requireOctoActivity
+import de.crysxd.baseui.widget.BaseWidgetHostFragment
+import de.crysxd.baseui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_GCODE_PREVIEW
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.data.models.WidgetType
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
 import de.crysxd.octoapp.base.gcode.render.models.RenderStyle
-import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewFragmentArgs
-import de.crysxd.octoapp.base.ui.common.gcode.GcodePreviewViewModel
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
-import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
-import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.print_controls.R
@@ -46,16 +48,18 @@ private const val KEY_HIDDEN_AT = "gcode_preview_hidden_at"
 private val HIDDEN_FOR_MILLIS = TimeUnit.DAYS.toMillis(30L)
 
 class GcodePreviewWidget(context: Context) : RecyclableOctoWidget<GcodePreviewWidgetBinding, GcodePreviewViewModel>(context) {
+    override val type = WidgetType.GcodePreviewWidget
     private var hideLiveIndicatorJob: Job? = null
     private lateinit var file: FileObject.File
     override val binding = GcodePreviewWidgetBinding.inflate(LayoutInflater.from(context))
     private val fileObserver = Observer(::onActiveFileChanged)
     private val stateObserver = Observer(::updateViewState)
 
-    override fun createNewViewModel(parent: BaseWidgetHostFragment) = parent.injectActivityViewModel<GcodePreviewViewModel>(Injector.get().viewModelFactory()).value
+    override fun createNewViewModel(parent: BaseWidgetHostFragment) =
+        parent.injectActivityViewModel<GcodePreviewViewModel>(BaseUiInjector.get().viewModelFactory()).value
 
     override fun isVisible() = BillingManager.isFeatureEnabled(FEATURE_GCODE_PREVIEW) ||
-            (System.currentTimeMillis() - Injector.get().sharedPreferences().getLong(KEY_HIDDEN_AT, 0)) > HIDDEN_FOR_MILLIS
+            (System.currentTimeMillis() - BaseInjector.get().sharedPreferences().getLong(KEY_HIDDEN_AT, 0)) > HIDDEN_FOR_MILLIS
 
     override fun getTitle(context: Context) = context.getString(R.string.widget_gcode_preview)
 
@@ -185,7 +189,7 @@ class GcodePreviewWidget(context: Context) : RecyclableOctoWidget<GcodePreviewWi
 
         binding.buttonHide.setOnClickListener {
             OctoAnalytics.logEvent(OctoAnalytics.Event.DisabledFeatureHidden, bundleOf("feature" to "gcode_preview"))
-            Injector.get().sharedPreferences().edit { putLong(KEY_HIDDEN_AT, System.currentTimeMillis()) }
+            BaseInjector.get().sharedPreferences().edit { putLong(KEY_HIDDEN_AT, System.currentTimeMillis()) }
             parent.reloadWidgets()
         }
 

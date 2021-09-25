@@ -3,5 +3,6 @@ apply from: '../shared.gradle'
 
 dependencies {
     implementation project(':base')
+    implementation project(':base-ui')
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
 }

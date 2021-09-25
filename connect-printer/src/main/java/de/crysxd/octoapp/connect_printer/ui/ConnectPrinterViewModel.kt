@@ -9,12 +9,12 @@ import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
+import de.crysxd.baseui.BaseViewModel
+import de.crysxd.baseui.menu.power.PowerControlsMenu
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPreferences
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.ui.base.BaseViewModel
-import de.crysxd.octoapp.base.ui.menu.power.PowerControlsMenu
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase
 import de.crysxd.octoapp.base.usecase.AutoConnectPrinterUseCase.Params
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
@@ -83,7 +83,7 @@ class ConnectPrinterViewModel(
         uiStateMediator.addSource(manualTrigger) { updateUiState() }
         uiStateMediator.value = UiState.Initializing
 
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineExceptionHandler) {
             try {
                 isPsuSupported = getPowerDevicesUseCase.execute(
                     GetPowerDevicesUseCase.Params(
@@ -213,7 +213,7 @@ class ConnectPrinterViewModel(
             autoConnectPrinterUseCase.execute(
                 if (connectionResponse.current.state == MAYBE_ERROR_FAILED_TO_AUTODETECT_SERIAL_PORT) {
                     // TODO Ask user which port to select
-                    val app = Injector.get().app()
+                    val app = BaseInjector.get().app()
                     Toast.makeText(app, app.getString(R.string.connect_printer___auto_selection_failed), Toast.LENGTH_SHORT).show()
                     OctoAnalytics.logEvent(OctoAnalytics.Event.PrinterAutoConnectFailed)
                     Params(connectionResponse.options.ports.first())

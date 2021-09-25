@@ -5,7 +5,7 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.models.exceptions.UserMessageException
+import de.crysxd.octoapp.base.data.models.exceptions.UserMessageException
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintException
 import de.crysxd.octoapp.octoprint.exceptions.ProxyException
 

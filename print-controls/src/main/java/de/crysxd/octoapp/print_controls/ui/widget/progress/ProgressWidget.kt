@@ -13,12 +13,13 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.baseui.utils.ColorTheme
+import de.crysxd.baseui.widget.BaseWidgetHostFragment
+import de.crysxd.baseui.widget.RecyclableOctoWidget
+import de.crysxd.octoapp.base.data.models.WidgetType
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftImageResource
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
-import de.crysxd.octoapp.base.ui.utils.ColorTheme
-import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
-import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Message
@@ -28,9 +29,9 @@ import de.crysxd.octoapp.print_controls.di.injectViewModel
 import kotlin.math.roundToInt
 
 class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBinding, ProgressWidgetViewModel>(context) {
-
-    private val formatDurationUseCase: FormatDurationUseCase = Injector.get().formatDurationUseCase()
-    private val formatEtaUseCase = Injector.get().formatEtaUseCase()
+    override val type = WidgetType.ProgressWidget
+    private val formatDurationUseCase: FormatDurationUseCase = BaseInjector.get().formatDurationUseCase()
+    private val formatEtaUseCase = BaseInjector.get().formatEtaUseCase()
     private var lastProgress: Float? = null
     override val binding = ProgressWidgetBinding.inflate(LayoutInflater.from(context))
     private val observer = Observer(::updateView)

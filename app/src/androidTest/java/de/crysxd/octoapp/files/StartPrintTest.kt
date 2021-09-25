@@ -12,7 +12,7 @@ import com.adevinta.android.barista.rule.BaristaRule
 import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.framework.MenuRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.WorkspaceRobot
@@ -42,7 +42,7 @@ class StartPrintTest {
     @AllowFlaky(attempts = 3)
     fun WHEN_a_print_is_started_THEN_the_app_shows_printing() {
         // GIVEN
-        Injector.get().octorPrintRepository().setActive(testEnvVanilla)
+        BaseInjector.get().octorPrintRepository().setActive(testEnvVanilla)
         baristaRule.launchActivity()
 
         // Open file and start print
@@ -88,7 +88,7 @@ class StartPrintTest {
 
     private fun runMaterialTest(selection: String) {
         // GIVEN
-        Injector.get().octorPrintRepository().setActive(testEnvSpoolManager)
+        BaseInjector.get().octorPrintRepository().setActive(testEnvSpoolManager)
         baristaRule.launchActivity()
 
         // Open file and start print

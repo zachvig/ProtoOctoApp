@@ -1,10 +1,10 @@
 package de.crysxd.octoapp.base.usecase
 
 import android.graphics.Bitmap
-import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.network.LocalDnsResolver
-import de.crysxd.octoapp.base.ui.widget.webcam.MjpegConnection2
+import de.crysxd.octoapp.base.network.MjpegConnection2
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.exceptions.*
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import de.crysxd.octoapp.octoprint.models.socket.Event

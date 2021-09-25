@@ -3,9 +3,9 @@ package de.crysxd.octoapp.base.usecase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.R
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import timber.log.Timber
 import javax.inject.Inject
@@ -43,7 +43,7 @@ class GetConnectOctoEverywhereUrlUseCase @Inject constructor(
         )
     } catch (e: Exception) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.OctoEverywherePluginMissing)
-        Result.Error(Injector.get().localizedContext().getString(R.string.configure_remote_acces___octoeverywhere___error_install_plugin), e)
+        Result.Error(BaseInjector.get().localizedContext().getString(R.string.configure_remote_acces___octoeverywhere___error_install_plugin), e)
     }
 
     class OctoEverywhereNotInstalledException : IllegalStateException("OctoEverywhere not installed")

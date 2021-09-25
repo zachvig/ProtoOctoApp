@@ -15,15 +15,14 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
-import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.billing.BillingManager
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.forLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import timber.log.Timber
 import java.io.File
 import java.util.Locale
@@ -90,7 +89,7 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor(
         if (param.sendLogs) {
             zipStream.putNextEntry(ZipEntry("logs.log"))
             zipStream.writer().apply {
-                write(Injector.get().timberCacheTree().logs)
+                write(BaseInjector.get().timberCacheTree().logs)
                 flush()
             }
             zipStream.closeEntry()
@@ -142,7 +141,7 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor(
         if (param.sendOctoPrintInfo) {
             zipStream.putNextEntry(ZipEntry("octoprint_info.json"))
             zipStream.writer().apply {
-                val info = Injector.get().octorPrintRepository().instanceInformationFlow().firstOrNull()
+                val info = BaseInjector.get().octorPrintRepository().instanceInformationFlow().firstOrNull()
                 val json = Gson().toJsonTree(
                     info?.copy(
                         apiKey = "***",

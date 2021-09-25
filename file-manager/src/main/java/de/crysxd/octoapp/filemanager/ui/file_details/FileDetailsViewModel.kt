@@ -4,9 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.ui.base.BaseViewModel
-import de.crysxd.octoapp.base.ui.base.OctoActivity
+import de.crysxd.baseui.BaseViewModel
+import de.crysxd.baseui.OctoActivity
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import kotlinx.coroutines.flow.map

@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="de.crysxd.octoapp.base.ui.base.OctoActivity">
+    tools:context="de.crysxd.baseui.OctoActivity">
 
     <!--
     We use the scroll state to animate the button on the bottom.
     RecyclerView's estimation of the scroll position is to rough to do that, thus we wrap it
     -->
-    <de.crysxd.octoapp.base.ui.common.OctoScrollView
+    <de.crysxd.baseui.common.OctoScrollView
         android:id="@+id/widgetListScroller"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -23,13 +23,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <de.crysxd.octoapp.base.ui.widget.WidgetLayout
+        <de.crysxd.baseui.widget.WidgetLayout
             android:id="@+id/widgetList"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:nestedScrollingEnabled="false" />
 
-    </de.crysxd.octoapp.base.ui.common.OctoScrollView>
+    </de.crysxd.baseui.common.OctoScrollView>
 
     <LinearLayout
         android:id="@+id/bottomAction"

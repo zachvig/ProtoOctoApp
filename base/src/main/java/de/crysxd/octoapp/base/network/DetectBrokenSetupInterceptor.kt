@@ -1,12 +1,12 @@
 package de.crysxd.octoapp.base.network
 
-import de.crysxd.octoapp.base.models.ActiveInstanceIssue
-import de.crysxd.octoapp.base.models.ActiveInstanceIssue.BASIC_AUTH_REQUIRED
-import de.crysxd.octoapp.base.models.ActiveInstanceIssue.BASIC_AUTH_REQUIRED_FOR_ALTERNATIVE
-import de.crysxd.octoapp.base.models.ActiveInstanceIssue.HTTP_ISSUE
-import de.crysxd.octoapp.base.models.ActiveInstanceIssue.HTTP_ISSUE_FOR_ALTERNATIVE
-import de.crysxd.octoapp.base.models.ActiveInstanceIssue.INVALID_API_KEY
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue
+import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue.BASIC_AUTH_REQUIRED
+import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue.BASIC_AUTH_REQUIRED_FOR_ALTERNATIVE
+import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue.HTTP_ISSUE
+import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue.HTTP_ISSUE_FOR_ALTERNATIVE
+import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue.INVALID_API_KEY
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.octoprint.exceptions.BasicAuthRequiredException
 import de.crysxd.octoapp.octoprint.exceptions.InvalidApiKeyException

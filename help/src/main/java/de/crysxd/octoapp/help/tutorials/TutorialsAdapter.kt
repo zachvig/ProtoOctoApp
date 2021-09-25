@@ -9,7 +9,7 @@ import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import de.crysxd.octoapp.base.ui.common.ViewBindingHolder
+import de.crysxd.baseui.common.ViewBindingHolder
 import de.crysxd.octoapp.help.R
 import de.crysxd.octoapp.help.databinding.TutorialItemBinding
 import io.noties.markwon.SpannableBuilder

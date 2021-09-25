@@ -1,7 +1,7 @@
 package de.crysxd.octoapp.framework
 
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.octoprint.resolvePath
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
@@ -16,6 +16,6 @@ object VirtualPrinterUtils {
             .url(webUrl.resolvePath("api/settings"))
             .post("{  \"plugins\": {   \"virtual_printer\": {     \"enabled\": $enabled } }}".toRequestBody("application/json".toMediaType()))
             .build()
-        Injector.get().octoPrintProvider().createAdHocOctoPrint(this).createOkHttpClient().newCall(request).execute()
+        BaseInjector.get().octoPrintProvider().createAdHocOctoPrint(this).createOkHttpClient().newCall(request).execute()
     }
 }

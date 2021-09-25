@@ -10,8 +10,8 @@ import com.adevinta.android.barista.rule.BaristaRule
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.framework.MenuRobot
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
@@ -54,8 +54,8 @@ class ConnectPrinterTest {
     @Test(timeout = 30_000)
     fun WHEN_auto_connect_is_disabled_THEN_connect_button_can_be_used() {
         // GIVEN
-        Injector.get().octorPrintRepository().setActive(testEnv)
-        Injector.get().octoPreferences().isAutoConnectPrinter = false
+        BaseInjector.get().octorPrintRepository().setActive(testEnv)
+        BaseInjector.get().octoPreferences().isAutoConnectPrinter = false
         baristaRule.launchActivity()
 
         // Wait for ready to connect
@@ -72,7 +72,7 @@ class ConnectPrinterTest {
     @Test(timeout = 30_000)
     fun WHEN_OctoPrint_not_available_and_no_quick_switch_THEN_other_OctoPrint_can_be_connected() {
         // GIVEN
-        Injector.get().octorPrintRepository().setActive(wrongEnv)
+        BaseInjector.get().octorPrintRepository().setActive(wrongEnv)
         BillingManager.enabledForTest = false
         baristaRule.launchActivity()
 
@@ -89,8 +89,8 @@ class ConnectPrinterTest {
     @Test(timeout = 30_000)
     fun WHEN_OctoPrint_not_available_and_quick_switch_available_THEN_other_OctoPrint_can_be_connected() {
         // GIVEN
-        Injector.get().octorPrintRepository().setActive(testEnv)
-        Injector.get().octorPrintRepository().setActive(wrongEnv)
+        BaseInjector.get().octorPrintRepository().setActive(testEnv)
+        BaseInjector.get().octorPrintRepository().setActive(wrongEnv)
         BillingManager.enabledForTest = true
         baristaRule.launchActivity()
 
@@ -109,9 +109,9 @@ class ConnectPrinterTest {
         // GIVEN
         // We need a bit of wait before/after changing virtual printer, OctoPrint otherwise gets overloaded...
         // Also make sure PSU is turned off
-        Injector.get().octorPrintRepository().setActive(powerControlsTestEnv)
+        BaseInjector.get().octorPrintRepository().setActive(powerControlsTestEnv)
         powerControlsTestEnv.setVirtualPrinterEnabled(false)
-        val octoPrint = Injector.get().octoPrintProvider().createAdHocOctoPrint(powerControlsTestEnv)
+        val octoPrint = BaseInjector.get().octoPrintProvider().createAdHocOctoPrint(powerControlsTestEnv)
         val settings = octoPrint.createSettingsApi().getSettings()
         octoPrint.createPowerPluginsCollection().plugins.first { it is PsuControlPowerPlugin }
             .getDevices(settings).first().turnOff()

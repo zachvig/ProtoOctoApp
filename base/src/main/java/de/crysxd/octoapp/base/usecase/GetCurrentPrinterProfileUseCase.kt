@@ -1,6 +1,6 @@
 package de.crysxd.octoapp.base.usecase
 
-import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import timber.log.Timber
 import javax.inject.Inject

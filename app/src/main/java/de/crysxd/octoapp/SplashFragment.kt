@@ -2,7 +2,7 @@ package de.crysxd.octoapp
 
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.baseui.ext.requireOctoActivity
 
 class SplashFragment : Fragment(R.layout.splash_fragment) {
 

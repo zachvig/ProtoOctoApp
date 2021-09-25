@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<de.crysxd.octoapp.base.ui.common.OctoScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<de.crysxd.baseui.common.OctoScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView"
@@ -36,7 +36,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <de.crysxd.octoapp.base.ui.common.OctoView
+            <de.crysxd.baseui.common.OctoView
                 android:id="@+id/octoView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -164,4 +164,4 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
-</de.crysxd.octoapp.base.ui.common.OctoScrollView>
+</de.crysxd.baseui.common.OctoScrollView>

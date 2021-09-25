@@ -8,8 +8,9 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
-import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
-import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
+import de.crysxd.baseui.widget.BaseWidgetHostFragment
+import de.crysxd.baseui.widget.RecyclableOctoWidget
+import de.crysxd.octoapp.base.data.models.WidgetType
 import de.crysxd.octoapp.print_controls.R
 import de.crysxd.octoapp.print_controls.databinding.TuneWidgetBinding
 import de.crysxd.octoapp.print_controls.di.injectViewModel
@@ -17,7 +18,7 @@ import de.crysxd.octoapp.print_controls.ui.ARG_NO_VALUE
 import de.crysxd.octoapp.print_controls.ui.PrintControlsFragmentDirections
 
 class TuneWidget(context: Context) : RecyclableOctoWidget<TuneWidgetBinding, TuneWidgetViewModel>(context) {
-
+    override val type = WidgetType.TuneWidget
     private val observer = Observer(::updateViewState)
     override val binding = TuneWidgetBinding.inflate(LayoutInflater.from(context))
     override fun createNewViewModel(parent: BaseWidgetHostFragment) = parent.injectViewModel<TuneWidgetViewModel>().value

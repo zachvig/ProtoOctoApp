@@ -2,10 +2,10 @@ package de.crysxd.octoapp.base.usecase
 
 import android.content.Context
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.di.modules.AndroidModule
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.isOctoEverywhereUrl
 import de.crysxd.octoapp.octoprint.isSharedOctoEverywhereUrl
 import de.crysxd.octoapp.octoprint.models.settings.Settings

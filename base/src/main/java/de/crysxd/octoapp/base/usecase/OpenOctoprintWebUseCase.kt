@@ -3,8 +3,8 @@ package de.crysxd.octoapp.base.usecase
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.network.LocalDnsResolver
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.UPNP_ADDRESS_PREFIX
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

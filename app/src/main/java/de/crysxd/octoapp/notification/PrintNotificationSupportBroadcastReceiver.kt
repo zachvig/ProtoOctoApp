@@ -7,7 +7,7 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.utils.AppScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -50,13 +50,13 @@ class PrintNotificationSupportBroadcastReceiver : BroadcastReceiver() {
 
     private fun handleDisablePrintNotificationUntilNextLaunch(context: Context) {
         Timber.i("Stopping notification until next launch")
-        Injector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch = true
+        BaseInjector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch = true
         LiveNotificationManager.stop(context)
         PrintNotificationController.instance.cancelUpdateNotifications()
     }
 
     private suspend fun handleScreenOff(context: Context) {
-        if (Injector.get().octoPreferences().allowNotificationBatterySaver) {
+        if (BaseInjector.get().octoPreferences().allowNotificationBatterySaver) {
             if (LiveNotificationManager.isNotificationShowing) {
                 pauseJob = AppScope.launch {
                     val delaySecs = 5L
@@ -72,7 +72,7 @@ class PrintNotificationSupportBroadcastReceiver : BroadcastReceiver() {
     }
 
     private fun handleScreenOn(context: Context) {
-        if (Injector.get().octoPreferences().allowNotificationBatterySaver) {
+        if (BaseInjector.get().octoPreferences().allowNotificationBatterySaver) {
             pauseJob?.let {
                 pauseJob = null
                 Timber.i("Cancelling notification hibernation")
@@ -85,13 +85,13 @@ class PrintNotificationSupportBroadcastReceiver : BroadcastReceiver() {
     }
 
     private suspend fun handleConnectionChange(context: Context) {
-        val wasDisconnected = Injector.get().octoPreferences().wasPrintNotificationDisconnected
+        val wasDisconnected = BaseInjector.get().octoPreferences().wasPrintNotificationDisconnected
         val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val hasWifi = manager.allNetworks.map { manager.getNetworkCapabilities(it) }.any { it?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true }
         val connectDelayMs = 5000L
 
         if (wasDisconnected && hasWifi) {
-            Injector.get().octoPreferences().wasPrintNotificationDisconnected = false
+            BaseInjector.get().octoPreferences().wasPrintNotificationDisconnected = false
             Timber.i("Network changed. Print notification was disconnected before, attempting to reconnect in ${connectDelayMs / 1000}s")
 
             // Delay for 5s to get the network settled and then connect
@@ -99,7 +99,7 @@ class PrintNotificationSupportBroadcastReceiver : BroadcastReceiver() {
             LiveNotificationManager.start(context)
 
             // If WiFi got reconnected, the local URL could also be reachable again. Perform online check.
-            Injector.get().octoPrintProvider().octoPrint().performOnlineCheck()
+            BaseInjector.get().octoPrintProvider().octoPrint().performOnlineCheck()
         } else {
             Timber.v("Not starting service (wasDisconnected=$wasDisconnected, hasWifi=$hasWifi)")
         }

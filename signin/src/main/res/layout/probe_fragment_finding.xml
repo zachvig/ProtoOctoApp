@@ -52,7 +52,7 @@
                 android:textAppearance="@style/OctoTheme.TextAppearance"
                 android:textColor="@color/normal_text" />
 
-            <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
+            <de.crysxd.baseui.common.OctoTextInputLayout
                 android:id="@+id/usernameInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
                 app:example="admin"
                 app:label="@string/sign_in___probe___basic_username" />
 
-            <de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
+            <de.crysxd.baseui.common.OctoTextInputLayout
                 android:id="@+id/passwordInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

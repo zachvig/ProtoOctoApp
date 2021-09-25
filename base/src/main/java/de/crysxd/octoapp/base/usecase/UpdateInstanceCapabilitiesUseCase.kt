@@ -7,11 +7,11 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPreferences
-import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.billing.BillingManager
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.suspendedAwait
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.exceptions.MissingPermissionException
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
@@ -148,7 +148,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                         model = Build.MODEL,
                         instanceId = instanceId,
                         appVersion = packageInfo.versionName,
-                        appLanguage = Injector.get().getAppLanguageUseCase().execute().appLanguageLocale?.language ?: "en",
+                        appLanguage = BaseInjector.get().getAppLanguageUseCase().execute().appLanguageLocale?.language ?: "en",
                         appBuild = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                             packageInfo.longVersionCode
                         } else {

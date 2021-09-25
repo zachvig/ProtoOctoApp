@@ -11,18 +11,18 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import de.crysxd.baseui.LocalizedActivity
+import de.crysxd.baseui.menu.ConfirmedMenuItem
+import de.crysxd.baseui.menu.Menu
+import de.crysxd.baseui.menu.MenuHost
+import de.crysxd.baseui.menu.MenuItem
+import de.crysxd.baseui.menu.main.MenuItemLibrary
+import de.crysxd.baseui.widget.WidgetHostFragment
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.data.models.exceptions.UserMessageException
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.mainActivityClass
-import de.crysxd.octoapp.base.models.exceptions.UserMessageException
-import de.crysxd.octoapp.base.ui.base.LocalizedActivity
-import de.crysxd.octoapp.base.ui.menu.ConfirmedMenuItem
-import de.crysxd.octoapp.base.ui.menu.Menu
-import de.crysxd.octoapp.base.ui.menu.MenuHost
-import de.crysxd.octoapp.base.ui.menu.MenuItem
-import de.crysxd.octoapp.base.ui.menu.main.MenuItemLibrary
-import de.crysxd.octoapp.base.ui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.base.utils.PendingIntentCompat
@@ -152,14 +152,14 @@ class ExecuteWidgetActionActivity : LocalizedActivity(), MenuHost {
                 AppScope.launch(Dispatchers.Main) {
                     try {
                         when (task) {
-                            TASK_CANCEL -> Injector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(false))
-                            TASK_PAUSE, TASK_RESUME -> Injector.get().togglePausePrintJobUseCase().execute(Unit)
+                            TASK_CANCEL -> BaseInjector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(false))
+                            TASK_PAUSE, TASK_RESUME -> BaseInjector.get().togglePausePrintJobUseCase().execute(Unit)
                             TASK_CLICK_MENU_ITEM -> menuItem?.let { performMenuItemClick(it) }
                             else -> Unit
                         }
                     } catch (e: Exception) {
                         Timber.e(e)
-                        Toast.makeText(Injector.get().context(), "Failed to execute task", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(BaseInjector.get().context(), "Failed to execute task", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

@@ -9,9 +9,9 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import de.crysxd.octoapp.base.ui.base.BaseFragment
-import de.crysxd.octoapp.base.ui.common.OctoToolbar
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
+import de.crysxd.baseui.BaseFragment
+import de.crysxd.baseui.common.OctoToolbar
+import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.octoapp.filemanager.R
 import de.crysxd.octoapp.filemanager.databinding.SelectFileFragmentBinding
 import de.crysxd.octoapp.filemanager.di.injectViewModel

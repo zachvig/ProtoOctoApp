@@ -17,11 +17,11 @@ import androidx.navigation.fragment.navArgs
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.squareup.picasso.Picasso
+import de.crysxd.baseui.InsetAwareScreen
+import de.crysxd.baseui.common.OctoToolbar
+import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ext.suspendedAwait
-import de.crysxd.octoapp.base.ui.base.InsetAwareScreen
-import de.crysxd.octoapp.base.ui.common.OctoToolbar
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.utils.ThemePlugin
 import de.crysxd.octoapp.help.R
 import de.crysxd.octoapp.help.databinding.HelpDetailFragmentBinding

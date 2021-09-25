@@ -1,7 +1,7 @@
 package de.crysxd.octoapp.base.usecase
 
-import de.crysxd.octoapp.base.models.GcodeHistoryItem
-import de.crysxd.octoapp.base.repository.GcodeHistoryRepository
+import de.crysxd.octoapp.base.data.models.GcodeHistoryItem
+import de.crysxd.octoapp.base.data.repository.GcodeHistoryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import timber.log.Timber

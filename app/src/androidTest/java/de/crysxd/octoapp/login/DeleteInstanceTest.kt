@@ -14,12 +14,12 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.adevinta.android.barista.rule.BaristaRule
 import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import com.nhaarman.mockitokotlin2.verify
+import de.crysxd.baseui.common.OctoTextInputLayout
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
-import de.crysxd.octoapp.base.ui.common.OctoTextInputLayout
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.ResetDaggerRule
@@ -105,7 +105,7 @@ class DeleteInstanceTest {
     }
 
     private fun performDelete() {
-        val repository = Injector.get().octorPrintRepository()
+        val repository = BaseInjector.get().octorPrintRepository()
         repository.setActive(instance)
         repository.clearActive()
         baristaRule.launchActivity()

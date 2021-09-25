@@ -3,8 +3,8 @@ package de.crysxd.octoapp.signin.probe
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.ui.base.BaseViewModel
+import de.crysxd.baseui.BaseViewModel
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import de.crysxd.octoapp.base.utils.AnimationTestUtils
 import kotlinx.coroutines.delay

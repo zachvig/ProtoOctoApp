@@ -1,6 +1,6 @@
 package de.crysxd.octoapp.base.usecase
 
-import de.crysxd.octoapp.base.OctoPrintProvider
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.models.printer.BedCommand
 import de.crysxd.octoapp.octoprint.models.printer.ChamberCommand
 import de.crysxd.octoapp.octoprint.models.printer.ToolCommand

@@ -3,7 +3,7 @@ package de.crysxd.octoapp.base.ext
 import android.content.res.Resources
 import android.text.format.DateUtils
 import androidx.core.os.ConfigurationCompat
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import timber.log.Timber
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -25,8 +25,8 @@ private fun getDeviceLocale() = try {
 
 fun Date.format(forceShowDate: Boolean = false): String = when {
     isToday() && !forceShowDate -> DateFormat.getTimeInstance(DateFormat.SHORT, getDeviceLocale()).format(this)
-    isThisYear() -> DateUtils.formatDateTime(Injector.get().context(), time, dateFlags or DateUtils.FORMAT_NO_YEAR)
-    else -> DateUtils.formatDateTime(Injector.get().context(), time, dateFlags)
+    isThisYear() -> DateUtils.formatDateTime(BaseInjector.get().context(), time, dateFlags or DateUtils.FORMAT_NO_YEAR)
+    else -> DateUtils.formatDateTime(BaseInjector.get().context(), time, dateFlags)
 }
 
 fun Date.isToday(): Boolean {

@@ -8,7 +8,7 @@ import com.adevinta.android.barista.rule.BaristaRule
 import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
@@ -39,7 +39,7 @@ class ApiKeyTest {
     @AllowFlaky(attempts = 3)
     fun WHEN_api_key_become_invalid_THEN_new_api_key_is_requested() {
         // GIVEN
-        Injector.get().octorPrintRepository().setActive(testEnv.copy(apiKey = "wrong"))
+        BaseInjector.get().octorPrintRepository().setActive(testEnv.copy(apiKey = "wrong"))
         baristaRule.launchActivity()
 
         // Wait for error

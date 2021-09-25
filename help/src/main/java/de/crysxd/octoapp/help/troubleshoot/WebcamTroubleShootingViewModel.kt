@@ -1,9 +1,9 @@
 package de.crysxd.octoapp.help.troubleshoot
 
 import androidx.lifecycle.asLiveData
-import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.ui.base.BaseViewModel
+import de.crysxd.octoapp.base.network.OctoPrintProvider
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.baseui.BaseViewModel
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import kotlinx.coroutines.delay

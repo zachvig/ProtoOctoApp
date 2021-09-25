@@ -11,14 +11,15 @@ import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.applyCanvas
 import androidx.lifecycle.LifecycleOwner
-import de.crysxd.octoapp.base.ui.widget.BaseWidgetHostFragment
-import de.crysxd.octoapp.base.ui.widget.RecyclableOctoWidget
+import de.crysxd.baseui.widget.BaseWidgetHostFragment
+import de.crysxd.baseui.widget.RecyclableOctoWidget
+import de.crysxd.octoapp.base.data.models.WidgetType
 import de.crysxd.octoapp.pre_print_controls.R
 import de.crysxd.octoapp.pre_print_controls.databinding.MoveToolWidgetBinding
 import de.crysxd.octoapp.pre_print_controls.di.injectViewModel
 
 class MoveToolWidget(context: Context) : RecyclableOctoWidget<MoveToolWidgetBinding, MoveToolWidgetViewModel>(context) {
-
+    override val type = WidgetType.MoveToolWidget
     override val binding: MoveToolWidgetBinding = MoveToolWidgetBinding.inflate(LayoutInflater.from(context))
     private val jogResolutionButtons = listOf(
         binding.buttonJogResolution0025,

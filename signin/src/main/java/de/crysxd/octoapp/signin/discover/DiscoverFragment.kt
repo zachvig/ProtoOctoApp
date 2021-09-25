@@ -22,15 +22,16 @@ import androidx.core.view.*
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import de.crysxd.baseui.BaseFragment
+import de.crysxd.baseui.common.NetworkStateViewModel
+import de.crysxd.baseui.common.OctoToolbar
+import de.crysxd.baseui.di.BaseUiInjector
+import de.crysxd.baseui.ext.requestFocusAndOpenSoftKeyboard
+import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.models.OctoPrintInstanceInformationV3
-import de.crysxd.octoapp.base.ui.base.BaseFragment
-import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
-import de.crysxd.octoapp.base.ui.common.OctoToolbar
-import de.crysxd.octoapp.base.ui.ext.requestFocusAndOpenSoftKeyboard
-import de.crysxd.octoapp.base.ui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
 import de.crysxd.octoapp.base.utils.AnimationTestUtils
 import de.crysxd.octoapp.signin.R
@@ -43,12 +44,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import kotlin.math.roundToLong
-import de.crysxd.octoapp.base.di.Injector as BaseInjector
 
 
 class DiscoverFragment : BaseFragment() {
     override val viewModel by injectViewModel<DiscoverViewModel>()
-    private val wifiViewModel by injectViewModel<NetworkStateViewModel>(BaseInjector.get().viewModelFactory())
+    private val wifiViewModel by injectViewModel<NetworkStateViewModel>(BaseUiInjector.get().viewModelFactory())
     private lateinit var binding: BaseSigninFragmentBinding
     private var optionsBinding: DiscoverFragmentContentOptionsBinding? = null
     private var manualBinding: DiscoverFragmentContentManualBinding? = null

@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.IBinder
 import android.os.SystemClock
 import de.crysxd.octoapp.R
-import de.crysxd.octoapp.base.di.Injector
-import de.crysxd.octoapp.base.models.hasPlugin
+import de.crysxd.octoapp.base.data.models.hasPlugin
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_FILE_NAME
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_FILE_TIME
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_PROGRESS
@@ -44,12 +44,12 @@ class LiveNotificationService : Service() {
     }
 
     private val notificationController by lazy { PrintNotificationController.instance }
-    private val octoPreferences by lazy { Injector.get().octoPreferences() }
+    private val octoPreferences by lazy { BaseInjector.get().octoPreferences() }
     private val instance by lazy {
         // Instance is fixed for this service. When the active instance is changed the service restarts due to settings change
-        Injector.get().octorPrintRepository().getActiveInstanceSnapshot()
+        BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()
     }
-    private val eventFlow = Injector.get().octoPrintProvider().eventFlow("notification-service")
+    private val eventFlow = BaseInjector.get().octoPrintProvider().eventFlow("notification-service")
 
     private val coroutineJob = SupervisorJob()
     private val coroutineScope = CoroutineScope(coroutineJob + Dispatchers.Main.immediate)
@@ -64,7 +64,7 @@ class LiveNotificationService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        Injector.get().octoPreferences().wasPrintNotificationDisconnected = false
+        BaseInjector.get().octoPreferences().wasPrintNotificationDisconnected = false
 
         // Start notification
         val instance = instance ?: return let {
@@ -111,7 +111,7 @@ class LiveNotificationService : Service() {
         if (!LiveNotificationManager.isNotificationEnabled) {
             false
         } else {
-            val flags = Injector.get().octoPrintProvider().octoPrint().createPrinterApi().getPrinterState().state?.flags
+            val flags = BaseInjector.get().octoPrintProvider().octoPrint().createPrinterApi().getPrinterState().state?.flags
             flags?.isPrinting() == true
         }
     } catch (e: Exception) {
@@ -202,13 +202,13 @@ class LiveNotificationService : Service() {
         when {
             lastMessageReceivedAt == null && secsSinceLastMessage >= 10 && reconnectionAttempts >= 3 -> {
                 Timber.w(event.exception, "Unable to connect within ${secsSinceLastMessage}s and after $reconnectionAttempts attempts, going into hibernation")
-                Injector.get().octoPreferences().wasPrintNotificationDisconnected = true
+                BaseInjector.get().octoPreferences().wasPrintNotificationDisconnected = true
                 hibernate()
             }
 
             secsSinceLastMessage >= 60 && reconnectionAttempts >= 3 -> {
                 Timber.i("No connection since ${secsSinceLastMessage}s and after $reconnectionAttempts attempts, going into hibernation")
-                Injector.get().octoPreferences().wasPrintNotificationDisconnected = true
+                BaseInjector.get().octoPreferences().wasPrintNotificationDisconnected = true
                 hibernate()
             }
 

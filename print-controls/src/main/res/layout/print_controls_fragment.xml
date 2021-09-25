@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:theme="@style/OctoTheme">
 
-    <de.crysxd.octoapp.base.ui.common.OctoScrollView
+    <de.crysxd.baseui.common.OctoScrollView
         android:id="@+id/widgetListScroller"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -18,14 +18,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <de.crysxd.octoapp.base.ui.widget.WidgetLayout
+        <de.crysxd.baseui.widget.WidgetLayout
             android:id="@+id/widgetList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"
             app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager" />
 
-    </de.crysxd.octoapp.base.ui.common.OctoScrollView>
+    </de.crysxd.baseui.common.OctoScrollView>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/bottomAction"

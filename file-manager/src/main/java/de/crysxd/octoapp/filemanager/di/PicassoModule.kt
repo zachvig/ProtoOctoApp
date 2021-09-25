@@ -10,8 +10,7 @@ import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
-import de.crysxd.octoapp.base.OctoPrintProvider
-import de.crysxd.octoapp.base.ext.resolve
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.resolvePath
 import timber.log.Timber
 

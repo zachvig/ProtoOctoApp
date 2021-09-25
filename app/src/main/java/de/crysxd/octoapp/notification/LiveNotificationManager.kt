@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import de.crysxd.octoapp.base.di.Injector
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.utils.AppScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -12,8 +12,8 @@ import timber.log.Timber
 
 object LiveNotificationManager {
     val isNotificationEnabled
-        get() = Injector.get().octoPreferences().isLivePrintNotificationsEnabled &&
-                !Injector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch
+        get() = BaseInjector.get().octoPreferences().isLivePrintNotificationsEnabled &&
+                !BaseInjector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch
     val isNotificationShowing get() = startTime > 0
     internal var startTime = 0L
         set(value) {
@@ -66,7 +66,7 @@ object LiveNotificationManager {
     }
 
     fun hibernate(context: Context) {
-        val isHibernationEnabled = Injector.get().octoPreferences().allowNotificationBatterySaver
+        val isHibernationEnabled = BaseInjector.get().octoPreferences().allowNotificationBatterySaver
         if (isHibernationEnabled && isNotificationShowing) {
             Timber.i("Sending service into hibernation")
             isHibernating = true
