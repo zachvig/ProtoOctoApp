@@ -18,6 +18,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/mainNavController"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:layout_anchor="@+id/updateChecker"
+        app:layout_anchorGravity="center"
+        app:navGraph="@navigation/main_nav_graph" />
+
     <de.crysxd.baseui.common.OctoToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -33,16 +43,6 @@
         android:rotation="270"
         android:translationX="60dp"
         android:translationY="-20dp" />
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/mainNavController"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        app:layout_anchor="@+id/updateChecker"
-        app:layout_anchorGravity="center"
-        app:navGraph="@navigation/main_nav_graph" />
 
     <de.crysxd.octoapp.ActivityBannerView
         android:id="@+id/bannerView"

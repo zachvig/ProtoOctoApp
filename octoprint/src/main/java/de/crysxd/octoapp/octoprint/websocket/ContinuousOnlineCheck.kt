@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.octoprint.websocket
 
+import de.crysxd.octoapp.octoprint.UPNP_ADDRESS_PREFIX
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -38,9 +39,13 @@ class ContinuousOnlineCheck(
     fun checkNow() = try {
         // Try to ping
         val url = url.toUrl()
-        val address = localDns?.lookup(url.host)?.firstOrNull() ?: InetAddress.getByName(url.host)
-        address.isReachable(connectionTimeoutMs)
-        val resolvedUrl = URL(url.protocol, address.hostName, url.port, url.file)
+        val newHost = if (url.host.endsWith(".local") || url.host.startsWith(UPNP_ADDRESS_PREFIX)) {
+            localDns?.lookup(url.host)?.firstOrNull()?.hostAddress ?: InetAddress.getByName(url.host).hostName
+        } else {
+            url.host
+        }
+        InetAddress.getByName(newHost).isReachable(connectionTimeoutMs)
+        val resolvedUrl = URL(url.protocol, newHost, url.port, url.file)
 
         // Try to connect
         val connection = resolvedUrl.openConnection() as HttpURLConnection
@@ -62,6 +67,10 @@ class ContinuousOnlineCheck(
         // Well...too bad. Offline.
         false
     }
+
+    private fun String.isLocalAddress() = startsWith("192.168.") ||
+            startsWith("172.1") ||
+            startsWith("10.")
 
     fun stop() {
         checkJob?.cancel()

@@ -32,6 +32,7 @@ import java.util.Date
 
 class SelectFileAdapter(
     private val onFileSelected: (FileObject) -> Unit,
+    private val onFileMenuOpened: (FileObject) -> Unit,
     private val onHideThumbnailHint: (SelectFileAdapter) -> Unit,
     private val onShowThumbnailInfo: (SelectFileAdapter) -> Unit,
     private val onRetry: (SelectFileAdapter) -> Unit
@@ -194,6 +195,10 @@ class SelectFileAdapter(
 
             holder.itemView.setOnClickListener {
                 onFileSelected(file)
+            }
+            holder.itemView.setOnLongClickListener {
+                onFileMenuOpened(file)
+                true
             }
         }
 

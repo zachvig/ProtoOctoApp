@@ -6,7 +6,6 @@ import de.crysxd.baseui.R
 import de.crysxd.baseui.common.LinkClickMovementMethod
 import de.crysxd.baseui.menu.ConfirmedMenuItem
 import de.crysxd.baseui.menu.Menu
-import de.crysxd.baseui.menu.MenuBottomSheetFragment
 import de.crysxd.baseui.menu.MenuHost
 import de.crysxd.baseui.menu.MenuItem
 import de.crysxd.baseui.menu.MenuItemStyle
@@ -25,7 +24,6 @@ import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import kotlinx.coroutines.delay
 import kotlinx.parcelize.Parcelize
-import timber.log.Timber
 
 @Parcelize
 class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val action: Action = Action.Unspecified) : Menu {
@@ -118,8 +116,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
 
     companion object {
         private suspend fun MenuHost.handleAction(action: Action, deviceType: DeviceType, device: PowerDevice) {
-            val fragment = this as? MenuBottomSheetFragment ?: return Timber.e("NOT A BOTTOMSHEET!")
-            (fragment.parentFragment as? PowerControlsCallback)?.onPowerActionCompleted(action, device)
+            (getHostFragment() as? PowerControlsCallback)?.onPowerActionCompleted(action, device)
             if (isCheckBoxChecked()) {
                 BaseInjector.get().octorPrintRepository().updateAppSettingsForActive {
                     it.copy(

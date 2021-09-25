@@ -10,11 +10,11 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 import java.io.InputStream
-import java.net.URI
 import java.util.concurrent.TimeUnit
 
 interface FilesApi {
@@ -30,6 +30,9 @@ interface FilesApi {
 
     @POST("files/{origin}/{path}")
     suspend fun executeFileCommand(@Path("origin") origin: String, @Path("path") path: String, @Body command: Any): Response<Unit>
+
+    @DELETE("files/{origin}/{path}")
+    suspend fun deleteFile(@Path("origin") origin: String, @Path("path") path: String): Response<Unit>
 
     class Wrapper(
         private val webUrl: HttpUrl,
@@ -53,6 +56,10 @@ interface FilesApi {
         }
 
         suspend fun getAllFiles(origin: FileOrigin): FileList = wrapped.getAllFiles(origin)
+
+        suspend fun deleteFile(file: FileObject) {
+            wrapped.deleteFile(origin = file.origin, path = file.path)
+        }
 
         suspend fun getFiles(origin: FileOrigin, folder: FileObject.Folder?): FileList = if (folder != null) {
             FileList(files = wrapped.getSubFolder(origin, folder.path).children ?: emptyList())

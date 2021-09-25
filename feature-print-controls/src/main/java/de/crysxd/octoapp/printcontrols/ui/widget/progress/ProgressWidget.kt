@@ -26,6 +26,7 @@ import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.printcontrols.R
 import de.crysxd.octoapp.printcontrols.databinding.ProgressWidgetBinding
 import de.crysxd.octoapp.printcontrols.di.injectViewModel
+import timber.log.Timber
 import kotlin.math.roundToInt
 
 class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBinding, ProgressWidgetViewModel>(context) {
@@ -66,6 +67,7 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
 
     private fun updateView(message: Message.CurrentMessage) {
         parent.lifecycleScope.launchWhenStarted {
+            Timber.i("Received progress message ${message.copy(logs = emptyList(), temps = emptyList())}")
             val progressPercent = message.progress?.completion ?: 0f
             val progress = progressPercent.toInt() / 100f
             val printTimeLeft = message.progress?.printTimeLeft?.toLong()

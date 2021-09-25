@@ -17,7 +17,6 @@ import de.crysxd.baseui.menu.*
 import de.crysxd.baseui.menu.main.MenuItemLibrary
 import de.crysxd.baseui.widget.BaseWidgetHostFragment
 import de.crysxd.baseui.widget.RecyclableOctoWidget
-import de.crysxd.baseui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.data.models.MenuId
 import de.crysxd.octoapp.base.ext.open
 
@@ -27,6 +26,7 @@ abstract class QuickAccessWidget(
 
     abstract val menuId: MenuId
     abstract val currentNavDestination: Int
+    private var suppressSuccessAnimation = false
 
     override val binding = QuickAccessWidgetBinding.inflate(LayoutInflater.from(context))
     private val library = MenuItemLibrary()
@@ -103,7 +103,7 @@ abstract class QuickAccessWidget(
 
     override fun getMenuFragmentManager() = parent.childFragmentManager
 
-    override fun getWidgetHostFragment() = parent as? WidgetHostFragment
+    override fun getHostFragment() = parent
 
     override fun reloadMenu() {
         parent.requestTransition(quickTransition = true)
@@ -111,4 +111,14 @@ abstract class QuickAccessWidget(
     }
 
     override fun isCheckBoxChecked() = false
+
+    override fun consumeSuccessAnimationForNextActionSuppressed(): Boolean {
+        val value = suppressSuccessAnimation
+        suppressSuccessAnimation = false
+        return value
+    }
+
+    override fun suppressSuccessAnimationForNextAction() {
+        suppressSuccessAnimation = true
+    }
 }

@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.logging.Level
 import java.util.logging.Logger
+import java.util.regex.Pattern
 
 const val RECONNECT_DELAY_MS = 1000L
 
@@ -54,6 +55,9 @@ class EventWebSocket(
         get() = CoroutineScope(job + Dispatchers.Main.immediate) + CoroutineExceptionHandler { _, throwable ->
             logger.log(Level.SEVERE, "NON-CONTAINED exception in coroutineScope", throwable)
         }
+
+    private var currentMessageCounter = 0
+    private val logMaskPattern = Pattern.compile("\\[(.*?)]")
 
     fun start() {
         if (subscriberCount.get() > 0 && isConnected.compareAndSet(false, true)) {
@@ -162,6 +166,9 @@ class EventWebSocket(
                 val message = gson.fromJson(text, Message::class.java)
 
                 if (message is Message.CurrentMessage) {
+                    if (currentMessageCounter++ % 5 == 0) {
+                        logger.log(Level.INFO, "Current message received: ${logMaskPattern.matcher(text).replaceAll("[...]")} ")
+                    }
                     lastCurrentMessage = message
                 }
 

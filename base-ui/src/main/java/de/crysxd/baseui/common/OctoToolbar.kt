@@ -33,16 +33,16 @@ class OctoToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
             bindState()
         }
 
-    init {
-        setOnClickListener {
-            OctoActivity.instance?.showDialog(message = context.getString(R.string.workspace___explainer))
-        }
-    }
-
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         ColorTheme.notifyAboutColorChangesUntilDetachedFromWindow(this) {
             bindState()
+        }
+    }
+
+    init {
+        setOnClickListener {
+            OctoActivity.instance?.showDialog(message = context.getString(R.string.workspace___explainer))
         }
     }
 
@@ -51,7 +51,9 @@ class OctoToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
         val darkColor = if (isInEditMode) Color.MAGENTA else ColorTheme.activeColorTheme.dark
 
         if (state == State.Hidden) {
-            animate().alpha(0f).start()
+            animate().alpha(0f).withEndAction {
+                isVisible = false
+            }.start()
             return
         }
 
@@ -59,6 +61,7 @@ class OctoToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
             TransitionManager.beginDelayedTransition(this, InstantAutoTransition())
         }
 
+        isVisible = true
         animate().alpha(1f).start()
         binding.chips.textViewStep1Label.isVisible = false
         binding.chips.textViewStep1Label.background?.setTint(lightColor)

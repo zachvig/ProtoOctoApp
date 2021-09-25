@@ -15,6 +15,7 @@ import de.crysxd.baseui.menu.MenuItemStyle
 import de.crysxd.baseui.menu.SubMenuItem
 import de.crysxd.baseui.menu.ToggleMenuItem
 import de.crysxd.baseui.menu.switchprinter.SwitchOctoPrintMenu
+import de.crysxd.baseui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_AUTOMATIC_LIGHTS
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_AUTO_CONNECT_PRINTER
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_CHANGE_LANGUAGE
@@ -117,7 +118,7 @@ class CustomizeWidgetsMenuItem : MenuItem {
     override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint || destinationId == R.id.workspacePrint
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_customize_widgets)
     override suspend fun onClicked(host: MenuHost?) {
-        host?.getWidgetHostFragment()?.startEdit()
+        (host?.getHostFragment() as? WidgetHostFragment)?.startEdit()
         host?.closeMenu()
     }
 }

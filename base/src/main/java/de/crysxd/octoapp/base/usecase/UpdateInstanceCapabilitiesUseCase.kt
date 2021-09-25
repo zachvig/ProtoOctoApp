@@ -44,6 +44,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                 timber.w("Cancelling update, no OctoPrint available")
                 return@withContext
             }
+            val old = octoPrintRepository.getActiveInstanceSnapshot()
 
             require(activeInstance.isForWebUrl(octoPrint.webUrl)) { "OctoPrint does not match instance!" }
 
@@ -97,11 +98,12 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                     val isRequired = BillingManager.isFeatureEnabled(BillingManager.FEATURE_GCODE_PREVIEW)
                     val isSuppressed = octoPreferences.suppressM115Request
                     val isRequested = param.updateM115
+                    val isCached = activeInstance.m115Response != null
                     // Don't execute M115 if we suppress it manually (might cause issues on some machines) or if we don't use the Gcode preview (as this is where we use it)
-                    if (isRequested && !isPrinting && isRequired && !isSuppressed) {
+                    if (!isCached && isRequested && !isPrinting && isRequired && !isSuppressed) {
                         executeM115()
                     } else {
-                        Timber.i("Skipping M115: isPrinting=$isPrinting isRequired=$isRequired isSuppressed=$isSuppressed isRequested=$isRequested")
+                        Timber.i("Skipping M115: isCached=$isCached isPrinting=$isPrinting isRequired=$isRequired isSuppressed=$isSuppressed isRequested=$isRequested")
                         null
                     }
                 } catch (e: Exception) {

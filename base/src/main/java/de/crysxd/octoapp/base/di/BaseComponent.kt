@@ -32,6 +32,7 @@ import de.crysxd.octoapp.base.usecase.ApplyLegacyDarkMode
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.base.usecase.CreateProgressAppWidgetDataUseCase
 import de.crysxd.octoapp.base.usecase.CyclePsuUseCase
+import de.crysxd.octoapp.base.usecase.DeleteFileUseCase
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
 import de.crysxd.octoapp.base.usecase.EmergencyStopUseCase
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
@@ -145,5 +146,6 @@ interface BaseComponent {
     fun discoverOctoPrintUseCase(): DiscoverOctoPrintUseCase
     fun requestApiAccessUseCase(): RequestApiAccessUseCase
     fun testFullNetworkStackUseCase(): TestFullNetworkStackUseCase
+    fun deleteFileUseCase(): DeleteFileUseCase
 
 }
