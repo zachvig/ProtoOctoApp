@@ -19,7 +19,7 @@ object MenuRobot {
         onView(withText(R.string.main_menu___item_show_printer)).check(matches(isDisplayed()))
         onView(withText(R.string.main_menu___item_show_settings)).check(matches(isDisplayed()))
         onView(withText(R.string.main_menu___item_show_octoprint)).check(matches(isDisplayed()))
-        onView(withText(R.string.main_menu___item_news)).check(matches(isDisplayed()))
+        onView(withText(R.string.main_menu___item_show_tutorials)).check(matches(isDisplayed()))
     }
 
     fun clickMenuButton(label: Int) {
