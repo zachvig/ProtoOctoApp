@@ -143,6 +143,11 @@ class OctoApp : Application() {
             }
         }
 
+        // Prefetch tutorials
+        AppScope.launch {
+            BaseInjector.get().tutorialsRepository().getTutorials()
+        }
+
         // Update app language property
         AppScope.launch {
             val appLanguage = BaseInjector.get().getAppLanguageUseCase().execute(Unit).appLanguageLocale?.language ?: "en"

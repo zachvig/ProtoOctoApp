@@ -8,12 +8,9 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import de.crysxd.baseui.BaseFragment
 import de.crysxd.baseui.ext.requireOctoActivity
-import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.help.databinding.TutorialFragmentBinding
 import de.crysxd.octoapp.help.di.injectViewModel
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
 class TutorialsFragment : BaseFragment() {
 
@@ -40,10 +37,7 @@ class TutorialsFragment : BaseFragment() {
             binding.error.isVisible = it is TutorialsViewModel.ViewState.Error
 
             if (it is TutorialsViewModel.ViewState.Data) {
-                adapter.data = TutorialsAdapter.Data(
-                    lastOpened = Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30)),
-                    tutorials = it.videos
-                )
+                adapter.data = it
             }
         }
     }
@@ -51,10 +45,5 @@ class TutorialsFragment : BaseFragment() {
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octo.isVisible = false
-    }
-
-    override fun onStop() {
-        super.onStop()
-        BaseInjector.get().octoPreferences().tutorialsSeenAt = Date()
     }
 }

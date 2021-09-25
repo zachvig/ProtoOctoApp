@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.data.repository.TutorialsRepository
 import de.crysxd.octoapp.base.di.ViewModelFactory
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.network.OctoPrintProvider
@@ -40,5 +41,9 @@ open class ViewModelModule {
     @Provides
     @IntoMap
     @ViewModelKey(TutorialsViewModel::class)
-    open fun provideTutorialsViewModel(): ViewModel = TutorialsViewModel()
+    open fun provideTutorialsViewModel(
+        tutorialsRepository: TutorialsRepository,
+    ): ViewModel = TutorialsViewModel(
+        tutorialsRepository = tutorialsRepository,
+    )
 }

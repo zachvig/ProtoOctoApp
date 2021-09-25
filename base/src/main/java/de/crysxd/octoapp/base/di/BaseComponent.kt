@@ -12,6 +12,7 @@ import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.data.repository.PinnedMenuItemRepository
 import de.crysxd.octoapp.base.data.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.data.repository.TemperatureDataRepository
+import de.crysxd.octoapp.base.data.repository.TutorialsRepository
 import de.crysxd.octoapp.base.data.repository.WidgetPreferencesRepository
 import de.crysxd.octoapp.base.data.source.LocalGcodeFileDataSource
 import de.crysxd.octoapp.base.di.modules.AndroidModule
@@ -106,6 +107,7 @@ interface BaseComponent {
     fun localDnsResolver(): LocalDnsResolver
     fun notificationIdRepository(): NotificationIdRepository
     fun temperatureDataRepository(): TemperatureDataRepository
+    fun tutorialsRepository(): TutorialsRepository
 
     // UseCaseModule
     fun setTargetTemperatureUseCase(): SetTargetTemperaturesUseCase

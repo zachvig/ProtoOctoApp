@@ -14,11 +14,13 @@ import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.data.repository.PinnedMenuItemRepository
 import de.crysxd.octoapp.base.data.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.data.repository.TemperatureDataRepository
+import de.crysxd.octoapp.base.data.repository.TutorialsRepository
 import de.crysxd.octoapp.base.data.repository.WidgetPreferencesRepository
 import de.crysxd.octoapp.base.data.source.DataSource
 import de.crysxd.octoapp.base.data.source.LocalGcodeFileDataSource
 import de.crysxd.octoapp.base.data.source.LocalPinnedMenuItemsDataSource
 import de.crysxd.octoapp.base.data.source.RemoteGcodeFileDataSource
+import de.crysxd.octoapp.base.data.source.RemoteTutorialsDataSource
 import de.crysxd.octoapp.base.data.source.WidgetPreferencesDataSource
 import de.crysxd.octoapp.base.di.BaseScope
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
@@ -103,6 +105,14 @@ open class OctoPrintModule {
     ) = NotificationIdRepository(
         octoPrintRepository = octoPrintRepository,
         sharedPreferences = context.getSharedPreferences("notification_id_cache", Context.MODE_PRIVATE)
+    )
+
+    @BaseScope
+    @Provides
+    open fun provideTutorialsRepository(
+        tutorialsDataSource: RemoteTutorialsDataSource,
+    ) = TutorialsRepository(
+        dataSource = tutorialsDataSource,
     )
 
     @BaseScope

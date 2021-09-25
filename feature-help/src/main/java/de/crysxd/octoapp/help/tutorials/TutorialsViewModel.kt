@@ -5,18 +5,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import de.crysxd.baseui.BaseViewModel
+import de.crysxd.octoapp.base.data.models.YoutubePlaylist
+import de.crysxd.octoapp.base.data.repository.TutorialsRepository
+import de.crysxd.octoapp.base.data.repository.TutorialsRepository.Companion.PLAYLIST_ID
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import java.util.Date
 
-class TutorialsViewModel : BaseViewModel() {
-
-    companion object {
-        private const val PLAYLIST_ID = "PL1fjlNqlUKnUuWwB0Jb3wf70wBcF3u-wJ"
-    }
+class TutorialsViewModel(
+    private val tutorialsRepository: TutorialsRepository,
+) : BaseViewModel() {
 
     private val mutableViewState = MutableLiveData<ViewState>(ViewState.Loading)
     val viewState = mutableViewState.distinctUntilChanged()
@@ -28,34 +26,26 @@ class TutorialsViewModel : BaseViewModel() {
     fun reloadPlaylist() = viewModelScope.launch(coroutineExceptionHandler) {
         try {
             mutableViewState.postValue(ViewState.Loading)
-            val playlist = Retrofit.Builder()
-                .client(OkHttpClient.Builder().build())
-                .baseUrl("https://youtube.googleapis.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(YoutubeApi::class.java)
-                .getPlaylist(PLAYLIST_ID)
-            require(!playlist.items.isNullOrEmpty()) { "Playlist is empty" }
-            val items = playlist.items.sortedByDescending {
-                it.contentDetails?.videoPublishedAt ?: Date(0)
-            }.filter {
-                // Private videos have no publishing date
-                it.contentDetails?.videoPublishedAt != null
-            }
-            mutableViewState.postValue(ViewState.Data(items))
+            mutableViewState.postValue(
+                ViewState.Data(
+                    videos = tutorialsRepository.getTutorials(),
+                    seenUpUntil = tutorialsRepository.getTutorialsSeenUpUntil()
+                )
+            )
+            tutorialsRepository.markTutorialsSeen()
         } catch (e: Exception) {
             mutableViewState.postValue(ViewState.Error)
             Timber.e(e)
         }
     }
 
-    fun createUri(playlistItem: YoutubePlaylist.PlaylistItem) = Uri.parse(
+    fun createUri(playlistItem: YoutubePlaylist.PlaylistItem): Uri = Uri.parse(
         "https://www.youtube.com/watch?v=${playlistItem.contentDetails?.videoId}&list=$PLAYLIST_ID"
     )
 
     sealed class ViewState {
         object Loading : ViewState()
         object Error : ViewState()
-        data class Data(val videos: List<YoutubePlaylist.PlaylistItem>) : ViewState()
+        data class Data(val videos: List<YoutubePlaylist.PlaylistItem>, val seenUpUntil: Date) : ViewState()
     }
 }

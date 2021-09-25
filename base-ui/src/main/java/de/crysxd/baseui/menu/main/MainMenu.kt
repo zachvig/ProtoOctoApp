@@ -119,7 +119,7 @@ class ShowTutorialsMenuItem(
     override val canBePinned = false
     override val icon = R.drawable.ic_round_school_24
 
-    override suspend fun getBadgeCount() = 3
+    override suspend fun getBadgeCount() = BaseInjector.get().tutorialsRepository().getNewTutorialsCount()
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_tutorials)
     override suspend fun onClicked(host: MenuHost?) {
         host?.getMenuActivity()?.let {

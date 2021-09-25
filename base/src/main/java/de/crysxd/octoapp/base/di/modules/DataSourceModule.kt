@@ -15,6 +15,7 @@ import de.crysxd.octoapp.base.data.source.LocalGcodeHistoryDataSource
 import de.crysxd.octoapp.base.data.source.LocalOctoPrintInstanceInformationSource
 import de.crysxd.octoapp.base.data.source.LocalPinnedMenuItemsDataSource
 import de.crysxd.octoapp.base.data.source.RemoteGcodeFileDataSource
+import de.crysxd.octoapp.base.data.source.RemoteTutorialsDataSource
 import de.crysxd.octoapp.base.data.source.WidgetPreferencesDataSource
 import de.crysxd.octoapp.base.di.BaseScope
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
@@ -67,6 +68,10 @@ class DataSourceModule {
         octoPrintProvider: OctoPrintProvider,
         local: LocalGcodeFileDataSource
     ) = RemoteGcodeFileDataSource(octoPrintProvider, local)
+
+    @Provides
+    @BaseScope
+    fun provideRemoteTutorialsDataSource() = RemoteTutorialsDataSource()
 
     @Provides
     @BaseScope

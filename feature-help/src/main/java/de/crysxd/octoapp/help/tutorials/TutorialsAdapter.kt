@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import de.crysxd.baseui.common.ViewBindingHolder
+import de.crysxd.octoapp.base.data.models.YoutubePlaylist
 import de.crysxd.octoapp.help.R
 import de.crysxd.octoapp.help.databinding.TutorialItemBinding
 import io.noties.markwon.SpannableBuilder
@@ -23,7 +24,7 @@ class TutorialsAdapter(
 
     private val picasso = Picasso.Builder(context).build()
     private val newBadgeSpan = ImageSpan(context, R.drawable.ic_new)
-    var data: Data = Data(lastOpened = Date(0), tutorials = emptyList())
+    var data = TutorialsViewModel.ViewState.Data(videos = emptyList(), seenUpUntil = Date())
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -32,12 +33,11 @@ class TutorialsAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = TutorialAdapterViewHolder(parent)
 
     override fun onBindViewHolder(holder: TutorialAdapterViewHolder, position: Int) {
-        val item = data.tutorials[position]
-        val isNew = data.lastOpened < item.contentDetails?.videoPublishedAt ?: Date(0)
+        val item = data.videos[position]
         val doubleNewLineIndex = item.snippet?.description?.indexOf("\n\n")?.takeIf { it > 0 } ?: Int.MAX_VALUE
         holder.binding.header.isVisible = position == 0
         holder.binding.title.text = item.snippet?.title?.removePrefix("OctoApp Tutorials:")?.trim()?.let {
-            if (isNew) {
+            if (item.isNew(data.seenUpUntil)) {
                 SpannableBuilder("  $it").setSpan(newBadgeSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE).text()
             } else {
                 it
@@ -55,7 +55,7 @@ class TutorialsAdapter(
         }
     }
 
-    override fun getItemCount() = data.tutorials.size
+    override fun getItemCount() = data.videos.size
 
     data class Data(
         val lastOpened: Date,
