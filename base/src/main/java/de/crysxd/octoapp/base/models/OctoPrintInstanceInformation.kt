@@ -10,6 +10,7 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.util.UUID
 import kotlin.math.max
+import kotlin.reflect.KClass
 
 private const val M115_MASK = "{m115 response}"
 
@@ -122,5 +123,6 @@ data class OctoPrintInstanceInformationV3(
     }
 }
 
-val OctoPrintInstanceInformationV3?.hasCompanionPlugin
-    get() = this?.settings?.plugins?.any { it.value is Settings.OctoAppCompanionSettings } == true
+fun OctoPrintInstanceInformationV3?.hasPlugin(plugin: KClass<out Settings.PluginSettings>) =
+    this?.settings?.plugins?.any { it.value::class.java.isAssignableFrom(plugin.java) } == true
+

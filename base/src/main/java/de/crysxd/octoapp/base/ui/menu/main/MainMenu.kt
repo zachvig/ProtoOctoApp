@@ -96,7 +96,7 @@ class ShowOctoPrintMenuItem : MenuItem {
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_octoprint_24px
 
-    override suspend fun getBadgeCount() = if (OctoPrintMenu.hasAnnouncement()) 1 else 0
+    override suspend fun getBadgeCount() = OctoPrintMenu.getAnnouncementCounter()
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_octoprint)
     override suspend fun onClicked(host: MenuHost?) {
         host?.pushMenu(OctoPrintMenu())
