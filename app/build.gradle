@@ -28,12 +28,12 @@ play {
 dependencies {
     implementation project(':base')
     implementation project(':base-ui')
-    implementation project(':signin')
-    implementation project(':connect-printer')
-    implementation project(':print-controls')
-    implementation project(':pre-print-controls')
-    implementation project(':file-manager')
-    implementation project(':help')
+    implementation project(':feature-sign-in')
+    implementation project(':feature-connect-printer')
+    implementation project(':feature-print-controls')
+    implementation project(':feature-pre-print-controls')
+    implementation project(':feature-file-manager')
+    implementation project(':feature-help')
 
     /*
      * Google Play

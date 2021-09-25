@@ -59,10 +59,10 @@ import de.crysxd.octoapp.octoprint.exceptions.WebSocketMaybeBrokenException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.ConnectionType
 import de.crysxd.octoapp.octoprint.models.socket.Event
-import de.crysxd.octoapp.pre_print_controls.ui.widget.move.MoveToolWidget
-import de.crysxd.octoapp.print_controls.ui.widget.gcode.GcodePreviewWidget
-import de.crysxd.octoapp.print_controls.ui.widget.progress.ProgressWidget
-import de.crysxd.octoapp.print_controls.ui.widget.tune.TuneWidget
+import de.crysxd.octoapp.preprintcontrols.ui.widget.move.MoveToolWidget
+import de.crysxd.octoapp.printcontrols.ui.widget.gcode.GcodePreviewWidget
+import de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressWidget
+import de.crysxd.octoapp.printcontrols.ui.widget.tune.TuneWidget
 import de.crysxd.octoapp.signin.di.SignInInjector
 import de.crysxd.octoapp.widgets.updateAllWidgets
 import kotlinx.coroutines.flow.collectLatest
@@ -71,7 +71,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 import de.crysxd.octoapp.octoprint.models.socket.Message as SocketMessage
-import de.crysxd.octoapp.pre_print_controls.di.PrePrintControlsInjector as ConnectPrinterInjector
+import de.crysxd.octoapp.preprintcontrols.di.PrePrintControlsInjector as ConnectPrinterInjector
 
 const val EXTRA_TARGET_OCTOPRINT_ID = "octoprint_id"
 

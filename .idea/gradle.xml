@@ -15,13 +15,13 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/base" />
             <option value="$PROJECT_DIR$/base-ui" />
-            <option value="$PROJECT_DIR$/connect-printer" />
-            <option value="$PROJECT_DIR$/file-manager" />
-            <option value="$PROJECT_DIR$/help" />
+            <option value="$PROJECT_DIR$/feature-connect-printer" />
+            <option value="$PROJECT_DIR$/feature-file-manager" />
+            <option value="$PROJECT_DIR$/feature-help" />
+            <option value="$PROJECT_DIR$/feature-pre-print-controls" />
+            <option value="$PROJECT_DIR$/feature-print-controls" />
+            <option value="$PROJECT_DIR$/feature-sign-in" />
             <option value="$PROJECT_DIR$/octoprint" />
-            <option value="$PROJECT_DIR$/pre-print-controls" />
-            <option value="$PROJECT_DIR$/print-controls" />
-            <option value="$PROJECT_DIR$/signin" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

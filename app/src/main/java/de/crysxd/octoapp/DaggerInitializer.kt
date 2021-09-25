@@ -2,11 +2,11 @@ package de.crysxd.octoapp
 
 import de.crysxd.baseui.di.BaseUiInjector
 import de.crysxd.octoapp.base.di.BaseInjector
-import de.crysxd.octoapp.connect_printer.di.ConnectPrinterInjector
+import de.crysxd.octoapp.connectprinter.di.ConnectPrinterInjector
 import de.crysxd.octoapp.filemanager.di.FileManagerInjector
 import de.crysxd.octoapp.help.di.HelpInjector
-import de.crysxd.octoapp.pre_print_controls.di.PrePrintControlsInjector
-import de.crysxd.octoapp.print_controls.di.PrintControlsInjector
+import de.crysxd.octoapp.preprintcontrols.di.PrePrintControlsInjector
+import de.crysxd.octoapp.printcontrols.di.PrintControlsInjector
 import de.crysxd.octoapp.signin.di.SignInInjector
 
 fun initializeDagger() {

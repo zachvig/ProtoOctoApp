@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/connect_printer_nav_graph"
+    app:startDestination="@id/workspaceConnect">
+
+    <fragment
+        android:id="@id/workspaceConnect"
+        android:name="de.crysxd.octoapp.connectprinter.ui.ConnectPrinterFragment"
+        android:label="ConnectPrinterFragment"
+        tools:layout="@layout/connect_printer_fragment" />
+
+</navigation>
