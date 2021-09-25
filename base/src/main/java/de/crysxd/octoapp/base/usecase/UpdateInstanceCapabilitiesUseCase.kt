@@ -34,10 +34,11 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                 timber.w("Cancelling update, no OctoPrint available")
                 return@withContext
             }
+            val old = octoPrintRepository.getActiveInstanceSnapshot()
 
             // Perform online check. This will trigger switching to the primary web url
             // if we currently use a cloud/backup connection
-            if (octoPrintRepository.getActiveInstanceSnapshot()?.alternativeWebUrl != null) {
+            if (old?.alternativeWebUrl != null) {
                 timber.i("Checking for primary web url being online")
                 octoPrint.performOnlineCheck()
             }
@@ -66,7 +67,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             val m115 = async {
                 try {
                     // Don't execute M115 if we suppress it manually (might cause issues on some machines) or if we don't use the Gcode preview (as this is where we use it)
-                    if (param.updateM115 && BillingManager.isFeatureEnabled(BillingManager.FEATURE_GCODE_PREVIEW) && !octoPreferences.suppressM115Request) {
+                    if (old?.m115Response == null && param.updateM115 && BillingManager.isFeatureEnabled(BillingManager.FEATURE_GCODE_PREVIEW) && !octoPreferences.suppressM115Request) {
                         executeM115()
                     } else {
                         Timber.i("Skipping M115")

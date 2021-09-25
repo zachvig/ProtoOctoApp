@@ -437,7 +437,11 @@ class MainActivity : OctoActivity() {
         // only continue if last and current are the same
         // If we have closed or error, it's always instant
         if ((viewModel.sameFlagsCounter < 3 || lastFlags == null) && flags?.closedOrError != true) {
-            return Timber.tag("navigation").i("Skipping flag navigation, recently changed and waiting for confirmation")
+            return Timber.i("Skipping flag navigation, recently changed and waiting for confirmation")
+        }
+
+        if ((viewModel.sameFlagsCounter == 3 && lastFlags != null) && flags?.closedOrError != true) {
+            Timber.i("Performing flag navigation: $flags")
         }
 
         navigate(

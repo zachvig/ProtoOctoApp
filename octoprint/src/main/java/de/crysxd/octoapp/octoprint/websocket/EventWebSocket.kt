@@ -18,12 +18,12 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
-import java.net.URI
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.logging.Level
 import java.util.logging.Logger
+import java.util.regex.Pattern
 
 const val RECONNECT_DELAY_MS = 1000L
 
@@ -52,6 +52,9 @@ class EventWebSocket(
     private val channel = BroadcastChannel<Event>(15)
     private val subscriberCount = AtomicInteger(0)
     private val webSocketUrl = webUrl.resolvePath("sockjs/websocket")
+
+    private var currentMessageCounter = 0
+    private val logMaskPattern = Pattern.compile("\\[(.*?)]")
 
     fun start() {
         if (subscriberCount.get() > 0 && isConnected.compareAndSet(false, true)) {
@@ -159,6 +162,9 @@ class EventWebSocket(
                 val message = gson.fromJson(text, Message::class.java)
 
                 if (message is Message.CurrentMessage) {
+                    if (currentMessageCounter++ % 5 == 0) {
+                        logger.log(Level.INFO, "Current message received: ${logMaskPattern.matcher(text).replaceAll("[...]")} ")
+                    }
                     lastCurrentMessage = message
                 }
 
