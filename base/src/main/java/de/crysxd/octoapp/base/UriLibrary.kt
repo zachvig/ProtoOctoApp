@@ -49,7 +49,7 @@ object UriLibrary {
     fun getPurchaseUri(): Uri =
         getUri(R.string.uri___purchase)
 
-    fun getCompanionPluginUri(): Uri = Uri.parse("https://plugins.octoprint.org")
+    fun getCompanionPluginUri(): Uri = Uri.parse("https://github.com/crysxd/OctoApp-Plugin")
 
     fun isActiveInstanceRequired(uri: Uri) = when (uri.path) {
         getConfigureRemoteAccessUri().path -> true

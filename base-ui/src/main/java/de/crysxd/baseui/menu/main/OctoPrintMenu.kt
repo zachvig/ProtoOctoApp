@@ -93,10 +93,10 @@ class OctoPrintMenu : Menu {
     }
 
     override suspend fun getAnnouncement(context: Context) = Menu.Announcement(
-        title = "Install the companion plugin",
-        subtitle = "The OctoApp companion plugin allows push notifications over the internet with better reliability",
-        learnMoreButton = "Install the plugin",
-        hideButton = "Hide",
+        title = context.getString(R.string.main_menu___companion_plugin_announcement___title),
+        subtitle = context.getString(R.string.main_menu___companion_plugin_announcement___subtitle),
+        learnMoreButton = context.getString(R.string.main_menu___companion_plugin_announcement___install),
+        hideButton = context.getString(R.string.hide),
         learnMoreUri = UriLibrary.getCompanionPluginUri(),
     ).takeIf { shouldAnnounceCompanion() }
 
