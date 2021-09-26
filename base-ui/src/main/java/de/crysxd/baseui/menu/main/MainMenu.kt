@@ -1,6 +1,7 @@
 package de.crysxd.baseui.menu.main
 
 import android.content.Context
+import android.net.Uri
 import androidx.annotation.IdRes
 import androidx.core.os.bundleOf
 import de.crysxd.baseui.R
@@ -13,11 +14,13 @@ import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.data.models.MenuId
+import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_NEWS
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_OCTOPRINT
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_PRINTER_MENU
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_SETTINGS_MENU
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_SUPPORT_OCTOAPP
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_TUTORIALS
+import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_YOUTUBE
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
 import kotlinx.parcelize.Parcelize
@@ -110,11 +113,12 @@ class ShowOctoPrintMenuItem : MenuItem {
 
 class ShowTutorialsMenuItem(
     override val showAsHalfWidth: Boolean = true,
-    override val style: MenuItemStyle = MenuItemStyle.Neutral
 ) : MenuItem {
     override val itemId = MENU_ITEM_TUTORIALS
     override var groupId = "main_menu"
     override val order = 20
+    override val showAsOutlined = true
+    override val style = MenuItemStyle.Neutral
     override val showAsSubMenu = true
     override val canBePinned = false
     override val icon = R.drawable.ic_round_school_24
@@ -124,6 +128,44 @@ class ShowTutorialsMenuItem(
     override suspend fun onClicked(host: MenuHost?) {
         host?.getMenuActivity()?.let {
             UriLibrary.getTutorialsUri().open(it)
+        }
+    }
+}
+
+
+class ShowNewsMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_NEWS
+    override var groupId = "main_menu"
+    override val order = 21
+    override val showAsSubMenu = true
+    override val canBePinned = false
+    override val showAsOutlined = true
+    override val icon = R.drawable.ic_twitter_24px
+    override val style = MenuItemStyle.Neutral
+
+    override suspend fun getTitle(context: Context) = "Twitter"
+    override suspend fun onClicked(host: MenuHost?) {
+        host?.getMenuActivity()?.let {
+            Uri.parse("https://twitter.com/realoctoapp").open(it)
+        }
+    }
+}
+
+
+class ShowYoutubeMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_YOUTUBE
+    override var groupId = "main_menu"
+    override val order = 22
+    override val showAsSubMenu = true
+    override val showAsOutlined = true
+    override val canBePinned = false
+    override val icon = R.drawable.ic_youtube_24px
+    override val style = MenuItemStyle.Neutral
+
+    override suspend fun getTitle(context: Context) = "YouTube"
+    override suspend fun onClicked(host: MenuHost?) {
+        host?.getMenuActivity()?.let {
+            Uri.parse("https://www.youtube.com/channel/UCUFZW6bxLNYxl8uFp37IdPg").open(it)
         }
     }
 }

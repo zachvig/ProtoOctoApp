@@ -143,7 +143,13 @@ class MainActivity : OctoActivity() {
                         Timber.i("Instance information received without API key $this")
                         showDialog(
                             message = getString(instance.issue?.messageRes ?: R.string.sign_in___broken_setup___api_key_revoked),
-                            positiveAction = { UriLibrary.getFixOctoPrintConnectionUri(baseUrl = instance.webUrl, instanceId = instance.id).open(this) },
+                            positiveAction = {
+                                if (instance.issue?.isForAlternative != true) {
+                                    UriLibrary.getFixOctoPrintConnectionUri(baseUrl = instance.webUrl, instanceId = instance.id).open(this)
+                                } else {
+                                    Unit
+                                }
+                            },
                             positiveButton = getString(R.string.sign_in___continue),
                             highPriority = true
                         )

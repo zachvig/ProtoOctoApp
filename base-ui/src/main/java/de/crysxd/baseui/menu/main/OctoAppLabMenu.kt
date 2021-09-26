@@ -70,7 +70,7 @@ class OctoAppLabMenu : Menu {
     }
 
     class AllowTerminalDuringPrint : ToggleMenuItem() {
-        override val isEnabled get() = Injector.get().octoPreferences().allowTerminalDuringPrint
+        override val isEnabled get() = BaseInjector.get().octoPreferences().allowTerminalDuringPrint
         override val itemId = "allow_terminal_during_print"
         override var groupId = ""
         override val canBePinned = false
@@ -81,7 +81,7 @@ class OctoAppLabMenu : Menu {
         override suspend fun getTitle(context: Context) = context.getString(R.string.lab_menu___allow_terminal_during_print_title)
         override suspend fun getDescription(context: Context) = context.getString(R.string.lab_menu___allow_terminal_during_print_description)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
-            Injector.get().octoPreferences().allowTerminalDuringPrint = enabled
+            BaseInjector.get().octoPreferences().allowTerminalDuringPrint = enabled
         }
     }
 }

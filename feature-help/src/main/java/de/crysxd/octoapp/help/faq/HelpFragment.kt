@@ -15,12 +15,16 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.common.feedback.SendFeedbackDialog
 import de.crysxd.baseui.ext.requireOctoActivity
+import de.crysxd.baseui.menu.Menu
 import de.crysxd.baseui.menu.MenuAdapter
+import de.crysxd.baseui.menu.MenuHost
 import de.crysxd.baseui.menu.MenuItem
+import de.crysxd.baseui.menu.MenuItemClickExecutor
 import de.crysxd.baseui.menu.MenuItemStyle
 import de.crysxd.baseui.menu.PreparedMenuItem
+import de.crysxd.baseui.menu.main.ShowNewsMenuItem
 import de.crysxd.baseui.menu.main.ShowTutorialsMenuItem
-import de.crysxd.octoapp.base.UriLibrary
+import de.crysxd.baseui.menu.main.ShowYoutubeMenuItem
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ext.suspendedAwait
 import de.crysxd.octoapp.help.R
@@ -29,7 +33,7 @@ import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
-class HelpFragment : Fragment() {
+class HelpFragment : Fragment(), MenuHost {
 
     private lateinit var binding: HelpFragmentBinding
 
@@ -72,7 +76,9 @@ class HelpFragment : Fragment() {
             }
 
             val tutorial = listOf(
-                ShowTutorialsMenuItem(showAsHalfWidth = false, style = MenuItemStyle.RedNeutral)
+                ShowTutorialsMenuItem(showAsHalfWidth = false),
+                ShowNewsMenuItem(),
+                ShowYoutubeMenuItem()
             ).prepare()
 
             val faq = try {
@@ -127,7 +133,9 @@ class HelpFragment : Fragment() {
     }
 
     private fun handleTutorialClick(item: MenuItem) {
-        UriLibrary.getTutorialsUri().open(requireOctoActivity())
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            item.onClicked(MenuItemClickExecutor(this@HelpFragment, MenuAdapter({})))
+        }
     }
 
     private fun createContactOptions(): List<HelpMenuItem> {
@@ -185,4 +193,24 @@ class HelpFragment : Fragment() {
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
         binding.scrollView.setupWithToolbar(requireOctoActivity())
     }
+
+    override fun pushMenu(subMenu: Menu) = Unit
+
+    override fun closeMenu() = Unit
+
+    override fun getNavController() = findNavController()
+
+    override fun getMenuActivity() = requireActivity()
+
+    override fun getMenuFragmentManager() = childFragmentManager
+
+    override fun getHostFragment() = this
+
+    override fun reloadMenu() = Unit
+
+    override fun isCheckBoxChecked() = false
+
+    override fun suppressSuccessAnimationForNextAction() = Unit
+
+    override fun consumeSuccessAnimationForNextActionSuppressed() = false
 }

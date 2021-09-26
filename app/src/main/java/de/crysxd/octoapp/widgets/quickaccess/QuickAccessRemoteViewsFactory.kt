@@ -59,7 +59,6 @@ class QuickAccessRemoteViewsFactory(private val context: Context) : RemoteViewsF
         MenuItemStyle.Blue -> R.drawable.quick_access_item_background_printer
         MenuItemStyle.Green -> R.drawable.quick_access_item_background_octoprint
         MenuItemStyle.Neutral -> R.drawable.quick_access_item_background_neutral
-        MenuItemStyle.RedNeutral -> R.drawable.quick_access_item_background_support
         MenuItemStyle.OctoPrint -> R.drawable.quick_access_item_background_octoprint
         MenuItemStyle.Printer -> R.drawable.quick_access_item_background_printer
         MenuItemStyle.Red -> R.drawable.quick_access_item_background_support

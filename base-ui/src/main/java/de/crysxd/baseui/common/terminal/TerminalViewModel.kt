@@ -6,6 +6,7 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import de.crysxd.baseui.BaseViewModel
+import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.data.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.data.models.SerialCommunication
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository

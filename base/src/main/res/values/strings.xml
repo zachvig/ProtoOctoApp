@@ -522,8 +522,8 @@
     <string name="print_notification___connecting">Checking live status…</string>
     <string name="print_notifications_menu___item_system_settings">Android notification settings</string>
     <string name="print_notifications_menu___item_system_settings_description"><![CDATA[You can turn off remote notifications here and also <b>customize sounds and other behaviour!</b>]]></string>
-    <string name="print_notifications_menu___item_live_notification_on_description">Live notifications are preferred over remote notifications and are not shown on Wear OS watches.</string>
-    <string name="print_notifications_menu___subtitle"><![CDATA[OctoApp supports two types of print notifications: App generated <font<b>live notifications</b> and <b>remote notifications</b> sent by the OctoApp companion plugin.]]></string>
+    <string name="print_notifications_menu___item_live_notification_on_description">Live notifications are preferred over remote notifications but are not shown on Wear OS watches. The app keeps an active connection to OctoPrint during a print, potentially reducing battery life. The connection is paused whenever your screen is off.</string>
+    <string name="print_notifications_menu___subtitle"><![CDATA[OctoApp supports two types of print notifications: App-generated <b>live notifications</b> and <b>remote notifications</b> sent by the OctoApp companion plugin.]]></string>
     <string name="print_notifications_menu___bottom"><![CDATA[Learn more about live and remote notifications <a href="%s">here</a>.]]></string>
     <string name="main_menu___item_show_tutorials">Tutorials</string>
     <string name="retry_general">Retry</string>

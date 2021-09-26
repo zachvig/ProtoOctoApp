@@ -23,15 +23,15 @@ class DetectBrokenSetupInterceptor(
     override fun intercept(chain: Interceptor.Chain) = try {
         chain.proceed(chain.request())
     } catch (e: InvalidApiKeyException) {
-        Timber.w("Caught InvalidApiKeyException, setup broken (${e.webUrl})")
+        Timber.w(e, "Caught InvalidApiKeyException, setup broken (${e.webUrl})")
         reportIssue(e.webUrl, webUrlIssue = INVALID_API_KEY, alternativeWebUrlIssue = INVALID_API_KEY)
         throw e
     } catch (e: BasicAuthRequiredException) {
-        Timber.w("Caught BasicAuthRequiredException, setup broken (${e.webUrl})")
+        Timber.w(e, "Caught BasicAuthRequiredException, setup broken (${e.webUrl})")
         reportIssue(e.webUrl, webUrlIssue = BASIC_AUTH_REQUIRED, alternativeWebUrlIssue = BASIC_AUTH_REQUIRED_FOR_ALTERNATIVE)
         throw e
     } catch (e: OctoPrintHttpsException) {
-        Timber.w("Caught OctoPrintHttpsException, setup broken (${e.webUrl})")
+        Timber.w(e, "Caught OctoPrintHttpsException, setup broken (${e.webUrl})")
         reportIssue(e.webUrl, webUrlIssue = HTTP_ISSUE, alternativeWebUrlIssue = HTTP_ISSUE_FOR_ALTERNATIVE)
         throw e
     }

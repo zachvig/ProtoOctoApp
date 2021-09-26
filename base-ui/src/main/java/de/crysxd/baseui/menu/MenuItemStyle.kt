@@ -20,5 +20,4 @@ sealed class MenuItemStyle(
     object Printer : MenuItemStyle(R.color.menu_style_printer_background, R.color.menu_style_printer_foreground)
 
     object Neutral : MenuItemStyle(R.color.menu_style_neutral_background, R.color.menu_style_neutral_foreground)
-    object RedNeutral : MenuItemStyle(R.color.menu_style_support_background, R.color.menu_style_neutral_foreground)
 }
