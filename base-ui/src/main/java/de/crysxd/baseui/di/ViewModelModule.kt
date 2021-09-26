@@ -109,6 +109,7 @@ open class ViewModelModule {
         getTerminalFiltersUseCase: GetTerminalFiltersUseCase,
         octoPrintProvider: OctoPrintProvider,
         octoPrintRepository: OctoPrintRepository,
+        octoPreferences: OctoPreferences,
     ): ViewModel = TerminalViewModel(
         getGcodeShortcutsUseCase,
         executeGcodeCommandUseCase,
@@ -116,6 +117,7 @@ open class ViewModelModule {
         getTerminalFiltersUseCase,
         octoPrintProvider,
         octoPrintRepository,
+        octoPreferences,
     )
 
     @Provides

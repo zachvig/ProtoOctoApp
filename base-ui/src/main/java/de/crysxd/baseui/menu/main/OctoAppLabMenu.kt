@@ -15,6 +15,7 @@ class OctoAppLabMenu : Menu {
         RotationMenuItem(),
         NotificationBatterySaver(),
         SuppressM115Request(),
+        AllowTerminalDuringPrint(),
     )
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.lab_menu___title)
@@ -65,6 +66,22 @@ class OctoAppLabMenu : Menu {
         override suspend fun getDescription(context: Context) = context.getString(R.string.lab_menu___suppress_m115_request_description)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             BaseInjector.get().octoPreferences().suppressM115Request = enabled
+        }
+    }
+
+    class AllowTerminalDuringPrint : ToggleMenuItem() {
+        override val isEnabled get() = Injector.get().octoPreferences().allowTerminalDuringPrint
+        override val itemId = "allow_terminal_during_print"
+        override var groupId = ""
+        override val canBePinned = false
+        override val order = 164
+        override val style = MenuItemStyle.Settings
+        override val icon = R.drawable.ic_round_code_off_24
+
+        override suspend fun getTitle(context: Context) = context.getString(R.string.lab_menu___allow_terminal_during_print_title)
+        override suspend fun getDescription(context: Context) = context.getString(R.string.lab_menu___allow_terminal_during_print_description)
+        override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
+            Injector.get().octoPreferences().allowTerminalDuringPrint = enabled
         }
     }
 }

@@ -37,7 +37,8 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_SUPPRESS_M115 = "suppress_m115_request"
         private const val KEY_COMPANION_ANNOUNCEMENT_HIDDEN_AT = "companion_announcemenyt_hidden_at"
         private const val KEY_OCTOEVERYWHERE_ANNOUNCEMENT_HIDDEN_AT = "octoeverywhere_announcemenyt_hidden_at"
-        private const val KEY_TUTORIALS_SEEN_AT = "tutorials_seen_at_____"
+        private const val KEY_TUTORIALS_SEEN_AT = "tutorials_seen_at"
+        private const val KEY_ALLOW_TERMINAL_DURING_PRINT = "allow_terminal_during_print"
 
         const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT = "octprint"
         const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_IMAGE = "native_image"
@@ -198,5 +199,11 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         get() = sharedPreferences.getBoolean(KEY_SUPPRESS_M115, false)
         set(value) {
             edit { putBoolean(KEY_SUPPRESS_M115, value) }
+        }
+
+    var allowTerminalDuringPrint
+        get() = sharedPreferences.getBoolean(KEY_ALLOW_TERMINAL_DURING_PRINT, false)
+        set(value) {
+            edit { putBoolean(KEY_ALLOW_TERMINAL_DURING_PRINT, value) }
         }
 }

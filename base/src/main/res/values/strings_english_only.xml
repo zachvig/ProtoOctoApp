@@ -96,6 +96,8 @@
     <string name="lab_menu___allow_to_rotate_description" translatable="false">OctoApp can rotate into landscape mode. The UI is not optimized and rotating might cause issues on some screens. Will take affect after restart.</string>
     <string name="lab_menu___suppress_m115_request_title" translatable="false">Suppress M115 request</string>
     <string name="lab_menu___suppress_m115_request_description" translatable="false">By default OctoApp requests M115 when a printer is connected or the app is opened with a connected printer. This is used to style the Gcode preview for your printer. Suppressing the M115 will result in a generic print bed to be used.</string>
+    <string name="lab_menu___allow_terminal_during_print_title" translatable="false">Allow terminal during print</string>
+    <string name="lab_menu___allow_terminal_during_print_description" translatable="false">Usually OctoApp does not allow you to send Gcode commands from the terminal if a print is active. Enabling this setting bypasses the check. Be cautious.</string>
 
     <!-- Remote access -->
     <string name="configure_remote_acces___manual___error_normal_octoeverywhere_url" translatable="false">You can\'t use a normal OctoEverywhere URL. Please create a shared connection URL on octoeverywhere.com or directly sign in with OctoEverywhere (preferred)</string>

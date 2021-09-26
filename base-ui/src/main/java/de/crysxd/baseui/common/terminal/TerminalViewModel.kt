@@ -41,6 +41,7 @@ class TerminalViewModel(
     private val getTerminalFiltersUseCase: GetTerminalFiltersUseCase,
     octoPrintProvider: OctoPrintProvider,
     private val octoPrintRepository: OctoPrintRepository,
+    private val octoPreferences: OctoPreferences
 ) : BaseViewModel() {
 
     private val terminalFiltersMediator = MediatorLiveData<List<Settings.TerminalFilter>>()
@@ -61,7 +62,8 @@ class TerminalViewModel(
     }.flatMapLatest {
         it
     }.combine(printStateFlow) { gcodes, printing ->
-        UiState(printing, gcodes)
+        // Combine printing state with setting. If the setting is on, we never get a print state
+        UiState(printing && !octoPreferences.allowTerminalDuringPrint, gcodes)
     }.distinctUntilChanged().asLiveData()
 
     init {
