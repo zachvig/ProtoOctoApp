@@ -10,7 +10,11 @@ import de.crysxd.octoapp.base.OctoPrintProvider
 import de.crysxd.octoapp.base.billing.PurchaseViewModel
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.feedback.SendFeedbackViewModel
-import de.crysxd.octoapp.base.repository.*
+import de.crysxd.octoapp.base.repository.GcodeFileRepository
+import de.crysxd.octoapp.base.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.repository.PinnedMenuItemRepository
+import de.crysxd.octoapp.base.repository.SerialCommunicationLogsRepository
+import de.crysxd.octoapp.base.repository.TemperatureDataRepository
 import de.crysxd.octoapp.base.ui.base.BaseViewModelFactory
 import de.crysxd.octoapp.base.ui.common.NetworkStateViewModel
 import de.crysxd.octoapp.base.ui.common.configureremote.ConfigureRemoteAccessViewModel
@@ -24,7 +28,17 @@ import de.crysxd.octoapp.base.ui.widget.gcode.SendGcodeWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.quickaccess.QuickAccessWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.temperature.ControlTemperatureWidgetViewModel
 import de.crysxd.octoapp.base.ui.widget.webcam.WebcamViewModel
-import de.crysxd.octoapp.base.usecase.*
+import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
+import de.crysxd.octoapp.base.usecase.ExtrudeFilamentUseCase
+import de.crysxd.octoapp.base.usecase.GenerateRenderStyleUseCase
+import de.crysxd.octoapp.base.usecase.GetConnectOctoEverywhereUrlUseCase
+import de.crysxd.octoapp.base.usecase.GetGcodeShortcutsUseCase
+import de.crysxd.octoapp.base.usecase.GetTerminalFiltersUseCase
+import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
+import de.crysxd.octoapp.base.usecase.HandleAutomaticLightEventUseCase
+import de.crysxd.octoapp.base.usecase.OpenEmailClientForFeedbackUseCase
+import de.crysxd.octoapp.base.usecase.SetAlternativeWebUrlUseCase
+import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
 import javax.inject.Provider
 
 @Module
@@ -95,6 +109,7 @@ open class ViewModelModule {
         getTerminalFiltersUseCase: GetTerminalFiltersUseCase,
         octoPrintProvider: OctoPrintProvider,
         octoPrintRepository: OctoPrintRepository,
+        octoPreferences: OctoPreferences,
     ): ViewModel = TerminalViewModel(
         getGcodeShortcutsUseCase,
         executeGcodeCommandUseCase,
@@ -102,6 +117,7 @@ open class ViewModelModule {
         getTerminalFiltersUseCase,
         octoPrintProvider,
         octoPrintRepository,
+        octoPreferences,
     )
 
     @Provides
