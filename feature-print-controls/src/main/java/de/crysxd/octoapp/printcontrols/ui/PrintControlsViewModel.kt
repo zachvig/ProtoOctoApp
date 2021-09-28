@@ -26,7 +26,7 @@ class PrintControlsViewModel(
         .asLiveData()
 
     val webCamSupported = octoPrintRepository.instanceInformationFlow()
-        .map { it?.isWebcamSupported == true }
+        .map { it?.isWebcamSupported != false }
         .distinctUntilChanged()
         .asLiveData()
 

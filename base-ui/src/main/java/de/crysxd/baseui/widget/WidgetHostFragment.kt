@@ -1,6 +1,8 @@
 package de.crysxd.baseui.widget
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,11 +11,11 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
+import de.crysxd.baseui.R
 import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.databinding.WidgetHostFragmentBinding
 import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.utils.InstantAutoTransition
-import de.crysxd.baseui.R
 import de.crysxd.octoapp.base.data.models.WidgetPreferences
 import de.crysxd.octoapp.base.data.models.WidgetType
 import de.crysxd.octoapp.base.di.BaseInjector
@@ -27,6 +29,12 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
     abstract val destinationId: String
     abstract val toolbarState: OctoToolbar.State
     private var lastWidgetList: List<WidgetType> = emptyList()
+    private val handler = Handler(Looper.getMainLooper())
+    private val reloadRunnable = Runnable {
+        Timber.i("Reload widgets")
+        requestTransition()
+        doReloadWidgets()
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         WidgetHostFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
@@ -48,9 +56,12 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
 
     @CallSuper
     override fun reloadWidgets() {
-        Timber.i("Reload widgets")
-        requestTransition()
+        Timber.i("Schedule reload widgets")
+        handler.removeCallbacks(reloadRunnable)
+        handler.postDelayed(reloadRunnable, 50)
     }
+
+    abstract fun doReloadWidgets()
 
     override fun requestTransition(quickTransition: Boolean) {
         TransitionManager.beginDelayedTransition(

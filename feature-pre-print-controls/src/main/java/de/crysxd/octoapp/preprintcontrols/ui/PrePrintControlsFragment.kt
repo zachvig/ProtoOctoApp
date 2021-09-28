@@ -24,8 +24,7 @@ class PrePrintControlsFragment : WidgetHostFragment() {
         viewModel.webCamSupported.observe(viewLifecycleOwner) { reloadWidgets() }
     }
 
-    override fun reloadWidgets() {
-        super.reloadWidgets()
+    override fun doReloadWidgets() {
         val webcamSupported = viewModel.webCamSupported.value == true
         val widgets = mutableListOf(
             WidgetType.AnnouncementWidget,
