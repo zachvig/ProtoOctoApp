@@ -104,6 +104,7 @@ class OctoApp : Application() {
                     Timber.i("Signed in anonymously as ${it.user?.uid}")
                     OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.UserId, it.user?.uid)
                     FirebaseCrashlytics.getInstance().setCustomKey("User ID", Firebase.auth.currentUser?.uid ?: "???")
+                    FirebaseCrashlytics.getInstance().setUserId(Firebase.auth.currentUser?.uid ?: "???")
                 }.addOnFailureListener {
                     Timber.e("Failed to sign in: $it")
                 }
