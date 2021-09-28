@@ -1,496 +1,883 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="announcement___new_version_detail">"OctoApp kan nu werken met hostnamen zoals octopi.local en biedt nieuwe aanpassingsmogelijkheden! Bekijk de intro video voor meer informatie! "</string>
-    <string name="announcement___new_version_learn_more">Intro video</string>
-    <string name="announcement___new_version_title">Welkom in OctoApp 1.10!</string>
-    <string name="announcement___octoeverywhere_detail">U kunt nu uw OctoEverywhere abonnement aansluiten om OctoApp te gebruiken wanneer u niet thuis bent.</string>
-    <string name="announcement___octoeverywhere_learn_more">Nu verbinden</string>
-    <string name="announcement___octoeverywhere_title">Octo(App)Everywhere!</string>
-    <string name="app_logs">App logs</string>
-    <string name="app_name">OctoApp</string>
-    <string name="app_widget___free_widgets_exceeded_action">@android:string/ok</string>
-    <string name="app_widget___free_widgets_exceeded_message">U kunt slechts %d widgets hebben zonder OctoApp te ondersteunen. U kunt OctoApp ondersteunen vanuit het hoofdmenu van de app.</string>
-    <string name="app_widget___idle">%s klaar</string>
-    <string name="app_widget___link_widget__option_synced">Synchroniseren met app</string>
-    <string name="app_widget___link_widget__option_x">Altijd „%s“</string>
-    <string name="app_widget___link_widget_title">Welke OctoPrint moet deze widget gebruiken?</string>
-    <string name="app_widget___live">Live</string>
-    <string name="app_widget___live_for_x">Live voor %ds</string>
-    <string name="app_widget___no_data">Geen gegevens</string>
-    <string name="app_widget___no_image">Geen beeld</string>
-    <string name="app_widget___no_printer">Geen printer aangesloten</string>
-    <string name="app_widget___offline_since_x">Offline sinds %s</string>
-    <string name="app_widget___update_failed">Update mislukt</string>
-    <string name="app_widget___updating">Bijwerken…</string>
-    <string name="apply">Uitvoeren</string>
-    <string name="billing_unsupported_detail">Alleen apps die zijn gedownload via Google Play kunnen functies activeren. Ga naar hello@octoapp.eu!</string>
-    <string name="billing_unsupported_title">Alleen ondersteund voor apps van Google Play</string>
-    <string name="cancel">Annuleer</string>
-    <string name="cancel_print">Afdrukken annuleren</string>
-    <string name="cancel_print_confirmation_action">Afdrukken annuleren</string>
-    <string name="cancel_print_confirmation_message">Wil je de afdruk annuleren?</string>
-    <string name="cancelling">Annuleren…</string>
-    <string name="capabilities_validation_error">Kon je de mogelijkheden van je servers niet controleren. Sommige functies van de app werken misschien niet zoals verwacht.</string>
-    <string name="change_filament">Verander de filament</string>
-    <string name="change_filament_confirmation_action">Verander de filament</string>
-    <string name="change_filament_confirmation_message">Wil je de filament veranderen?</string>
-    <string name="clear_lebel">Duidelijk label</string>
-    <string name="command">Opdracht</string>
-    <string name="completed">Voltooid</string>
-    <string name="configure_remote_acces___description">
-        <![CDATA[Niet thuis? Op zichzelf kan OctoApp uw OctoPrint niet bereiken, omdat deze alleen beschikbaar is in uw thuisnetwerk. U moet OctoPrint beschikbaar maken via het internet, zodat OctoApp er toegang toe heeft, waar u ook bent. Meer informatie <a href="https://app.octoapp.eu/help/use_remotely">hier</a>.]]>
-    </string>
-    <string name="configure_remote_acces___ignore_issue">Negeer en ga verder</string>
-    <string name="configure_remote_acces___manual___button">URL op afstand opslaan</string>
-    <string name="configure_remote_acces___manual___description">Bent u een IT-expert en wilt u zelf toegang op afstand instellen? Voer de publieke web URL hieronder in. Wanneer de primaire web URL waarmee u zich heeft aangemeld niet bereikbaar is, zal OctoApp terugvallen op deze URL totdat u weer thuis bent.</string>
-    <string name="configure_remote_acces___manual___title">Handmatig</string>
-    <string name="configure_remote_acces___octoeverywhere___connect_button">Verbind OctoEverywhere!</string>
-    <string name="configure_remote_acces___octoeverywhere___connected">OctoEverywhere is aangesloten!</string>
-    <string name="configure_remote_acces___octoeverywhere___description_1">OctoEverywhere is een plugin voor OctoPrint die toegang op afstand voor OctoApp zeer eenvoudig maakt. Installeer gewoon de plugin, maak een account aan en log hieronder in.</string>
-    <string name="configure_remote_acces___octoeverywhere___description_2">Het gebruik van een 3rd party app zoals OctoApp vereist momenteel een betaald abonnement bij OctoEverywhere om de server kosten te dekken.\n\nZodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over naar de externe verbinding die OctoEverywhere biedt. Bent u thuis? OctoApp kan uw OctoPrint weer bereiken en schakelt weer terug naar de snellere directe verbinding.</string>
-    <string name="configure_remote_acces___octoeverywhere___disconnect_button">Ontkoppel OctoEverywhere!</string>
-    <string name="configure_remote_acces___octoeverywhere___error_install_plugin">Installeer de laatste versie van de OctoEverywhere plugin voordat je verder gaat.</string>
-    <string name="configure_remote_acces___octoeverywhere___title">OctoEverywhere!</string>
-    <string name="configure_remote_acces___remote_access_configured">Toegang op afstand geconfigureerd</string>
-    <string name="configure_remote_access___title">Toegang op afstand configureren</string>
-    <string name="workspace___connect">Verbind</string>
-    <string name="connect_printer___action_change_octoprint">Wissel OctoPrint</string>
-    <string name="connect_printer___action_cycle_psu">PSU opnieuw opstarten</string>
-    <string name="connect_printer___action_retry">Opnieuw proberen verbinding te maken</string>
-    <string name="connect_printer___action_troubleshooting">Probleemoplossing starten</string>
-    <string name="connect_printer___action_turn_psu_off">Zet de PSU uit</string>
-    <string name="connect_printer___action_turn_psu_on">Zet PSU aan</string>
-    <string name="connect_printer___auto_selection_failed">Niet in staat om de poort automatisch te detecteren, eerste wordt geselecteerd</string>
-    <string name="connect_printer___begin_connection">Printer aansluiten</string>
+
+    <!-- Auto filled -->
+    <string name="announcement___new_version_learn_more">"Intro video"</string>
+    <string name="announcement___new_version_title">"Welkom in OctoApp 1.10!"</string>
+
+    <!-- Auto filled -->
+    <string name="announcement___octoeverywhere_detail">"U kunt nu uw OctoEverywhere abonnement aansluiten om OctoApp te gebruiken wanneer u niet thuis bent."</string>
+
+    <!-- Auto filled -->
+    <string name="announcement___octoeverywhere_learn_more">"Nu verbinden"</string>
+
+    <!-- Auto filled -->
+    <string name="announcement___octoeverywhere_title">"Octo(App)Everywhere!"</string>
+    <string name="app_logs">"App logs"</string>
+    <string name="app_name">"OctoApp"</string>
+
+    <!-- Auto filled -->
+    <string name="app_widget___controlling_x">"Controle van %s"</string>
+
+    <!-- Auto filled -->
+    <string name="app_widget___edit_items_in_app">"Bewerk items in de app door er lang op te drukken"</string>
+    <string name="app_widget___free_widgets_exceeded_action">"@android:string/ok"</string>
+    <string name="app_widget___free_widgets_exceeded_message">"U kunt slechts %d widgets hebben zonder OctoApp te ondersteunen. U kunt OctoApp ondersteunen vanuit het hoofdmenu van de app."</string>
+    <string name="app_widget___idle">"%s klaar"</string>
+
+    <!-- Auto filled -->
+    <string name="app_widget___information_always_synced">"Deze widget is nog in BETA. Sommige menu items gedragen zich misschien niet correct, rapporteer een bug als je iets vindt!
+
+De widget zal altijd de OctoPrint instantie besturen die op dat moment actief is in de app"</string>
+
+    <!-- Auto filled -->
+    <string name="app_widget___information_title">"Informatie"</string>
+    <string name="app_widget___link_widget__option_synced">"Synchroniseren met app"</string>
+    <string name="app_widget___link_widget__option_x">"Altijd „%s“"</string>
+    <string name="app_widget___live">"Live"</string>
+    <string name="app_widget___live_for_x">"Live voor %ds"</string>
+    <string name="app_widget___no_data">"Geen gegevens"</string>
+    <string name="app_widget___no_image">"Geen beeld"</string>
+    <string name="app_widget___no_printer">"Geen printer aangesloten"</string>
+    <string name="app_widget___offline_since_x">"Offline sinds %s"</string>
+    <string name="app_widget___update_failed">"Update mislukt"</string>
+    <string name="app_widget___updating">"Bijwerken…"</string>
+    <string name="apply">"Uitvoeren"</string>
+    <string name="billing_unsupported_detail">"Alleen apps die zijn gedownload via Google Play kunnen functies activeren. Ga naar hello@octoapp.eu!"</string>
+    <string name="billing_unsupported_title">"Alleen ondersteund voor apps van Google Play"</string>
+    <string name="cancel">"Annuleer"</string>
+    <string name="cancel_print">"Afdrukken annuleren"</string>
+    <string name="cancel_print_confirmation_action">"Afdrukken annuleren"</string>
+    <string name="cancel_print_confirmation_message">"Wil je de afdruk annuleren?"</string>
+    <string name="cancelling">"Annuleren…"</string>
+    <string name="capabilities_validation_error">"Kon je de mogelijkheden van je servers niet controleren. Sommige functies van de app werken misschien niet zoals verwacht."</string>
+    <string name="change_filament">"Verander de filament"</string>
+    <string name="change_filament_confirmation_action">"Verander de filament"</string>
+    <string name="change_filament_confirmation_message">"Wil je de filament veranderen?"</string>
+    <string name="clear_lebel">"Duidelijk label"</string>
+    <string name="command">"Opdracht"</string>
+    <string name="completed">"Voltooid"</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_acces___description"><![CDATA[Niet thuis? Op zichzelf kan OctoApp uw OctoPrint niet bereiken, omdat deze alleen beschikbaar is in uw thuisnetwerk. U moet OctoPrint beschikbaar maken via het internet, zodat OctoApp er toegang toe heeft, waar u ook bent. Meer informatie <a href="https://app.octoapp.eu/help/use_remotely">hier</a>.]]></string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_acces___ignore_issue">"Negeer en ga verder"</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_acces___manual___button">"URL op afstand opslaan"</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_acces___manual___description">"Bent u een IT-expert en wilt u zelf toegang op afstand instellen? Voer de publieke web URL hieronder in. Wanneer de primaire web URL waarmee u zich heeft aangemeld niet bereikbaar is, zal OctoApp terugvallen op deze URL totdat u weer thuis bent."</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_acces___manual___title">"Handmatig"</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_acces___octoeverywhere___connect_button">"Verbind OctoEverywhere!"</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_acces___octoeverywhere___connected">"OctoEverywhere is aangesloten!"</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_acces___octoeverywhere___description_1">"OctoEverywhere is een plugin voor OctoPrint die toegang op afstand voor OctoApp zeer eenvoudig maakt. Installeer gewoon de plugin, maak een account aan en log hieronder in."</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_acces___octoeverywhere___description_2">"Het gebruik van een 3rd party app zoals OctoApp vereist momenteel een betaald abonnement bij OctoEverywhere om de server kosten te dekken.
+
+Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over naar de externe verbinding die OctoEverywhere biedt. Bent u thuis? OctoApp kan uw OctoPrint weer bereiken en schakelt weer terug naar de snellere directe verbinding."</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_acces___octoeverywhere___disconnect_button">"Ontkoppel OctoEverywhere!"</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_acces___octoeverywhere___error_install_plugin">"Installeer de laatste versie van de OctoEverywhere plugin voordat je verder gaat."</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_acces___octoeverywhere___title">"OctoEverywhere!"</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_acces___remote_access_configured">"Toegang op afstand geconfigureerd"</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_access___title">"Toegang op afstand configureren"</string>
+
+    <!-- Auto filled -->
+    <string name="workspace___connect">"Verbind"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___action_change_octoprint">"Wissel OctoPrint"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___action_cycle_psu">"PSU opnieuw opstarten"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___action_retry">"Opnieuw proberen verbinding te maken"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___action_troubleshooting">"Probleemoplossing starten"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___action_turn_psu_off">"Zet de PSU uit"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___action_turn_psu_on">"Zet PSU aan"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___auto_selection_failed">"Niet in staat om de poort automatisch te detecteren, eerste wordt geselecteerd"</string>
+    <string name="connect_printer___begin_connection">"Printer aansluiten"</string>
     <string name="connect_printer___begin_connection_cofirmation_negative">@string/cancel</string>
-    <string name="connect_printer___begin_connection_cofirmation_positive">Printer aansluiten</string>
-    <string name="connect_printer___begin_connection_confirmation_message">
-        <![CDATA[Start het aansluiten van de printer?<br><small>Dit zal lopende afdrukken van de SD-kaart onderbreken!</small>]]>
-    </string>
-    <string name="connect_printer___no_wifi_connection">Geen WiFi verbinding</string>
-    <string name="connect_printer___octoprint_not_available_detail">Controleer uw netwerkverbinding of het webadres van uw OctoPrint is gewijzigd</string>
-    <string name="connect_printer___octoprint_not_available_title">OctoPrint is niet beschikbaar</string>
-    <string name="connect_printer___octoprint_starting_title">OctoPrint start op</string>
-    <string name="connect_printer___printer_connected_detail_1">Klaar voor awesomeness…</string>
-    <string name="connect_printer___printer_connected_detail_2">Dit duurt langer als gewoonlijk. Ofwel is uw netwerk zwak, ofwel werkt de websocket niet correct. Als u hier vastloopt, gebruik dan de help sectie in het hoofdmenu.</string>
-    <string name="connect_printer___printer_connected_title">Printer aangesloten</string>
-    <string name="connect_printer___printer_is_connecting_title">Printer is aan het aansluiten</string>
-    <string name="connect_printer___printer_offline_detail">Zet de printer uit en weer aan om hem te resetten</string>
-    <string name="connect_printer___printer_offline_detail_with_psu">Start de PSU opnieuw op om de printer te resetten</string>
-    <string name="connect_printer___printer_offline_title">Printer is offline</string>
-    <string name="connect_printer___psu_cycling_title">PSU wordt gefietst</string>
-    <string name="connect_printer___psu_on_waiting_for_printer_title">PSU ingeschakeld, wachtend op het opstarten van de printer</string>
-    <string name="connect_printer___searching_for_octoprint_title">Zoeken naar Octoprint</string>
-    <string name="connect_printer___waiting_for_printer_detail">OctoApp maakt automatisch verbinding met de printer zodra deze beschikbaar is.</string>
-    <string name="connect_printer___waiting_for_printer_title">OctoPrint aangesloten, wacht op printer</string>
-    <string name="connect_printer___waiting_for_user_subtitle">U kunt auto-connect inschakelen in de instellingen</string>
-    <string name="connect_printer___waiting_for_user_title">Maak verbinding als je er klaar voor bent</string>
-    <string name="connection_failed">Verbinding mislukt</string>
-    <string name="cura_plugin">Plugin Heling</string>
-    <string name="distance_in_mm_negative_for_retract">Afstand in mm (negatief voor retract)</string>
-    <string name="done">Klaar</string>
-    <string name="download_x">Download %s</string>
-    <string name="emergency_stop">Noodstop</string>
-    <string name="emergency_stop_confirmation_action">Noodstop</string>
-    <string name="emergency_stop_confirmation_message">
-        <![CDATA[Wilt u een noodstop maken met de printer? <br><br><small>Dit activeert een M112 commando met uw printer. Zie dit als een \"onmiddellijke annulering\" waarbij de printer stopt zonder de wachtrij af te werken.<br><br>Belangrijk: De printer moet opnieuw worden gestart na een noodstop!</small>]]>
-    </string>
-    <string name="empty">Leeg</string>
-    <string name="enable">Schakel in</string>
-    <string name="enable_gcode_preview">Schakel Gcode Preview in</string>
-    <string name="enter_label">Etiket invoeren</string>
-    <string name="error_certificate_not_trusted_and_weak_hostname_required">Android vertrouwt het door deze server geleverde certificaat niet. Dit is meestal het geval voor zelfondertekende certificaten.  Verder bevat het certificaat geen\"subject alternative name\" (SAN) veld, wat vereist is vanaf Android 9. OctoApp moet een zwakke hostnaamcontrole gebruiken om dit probleem te omzeilen. Dit zal de veiligheid van uw verbinding verminderen.  Wilt u deze server vertrouwen en een zwakkere hostnaam verificatie gebruiken?</string>
-    <string name="error_cold_extrusion">De hotend is onder de minimum temperatuur</string>
-    <string name="error_general">Er is iets misgegaan, probeer het alsjeblieft nog eens.</string>
-    <string name="error_general_with_details">
-        <![CDATA[Er is iets misgegaan, probeer het alsjeblieft opnieuw.<br/><br/><small><font color="#%1$06X">%2$s</font></small>]]>
-    </string>
-    <string name="error_invalid_octoprint_instance_information">OctoPrint heeft de API-sleutel afgewezen</string>
-    <string name="error_no_printer_connected">Er is geen printer aangesloten op OctoPrint</string>
-    <string name="error_please_enter_a_message">Gelieve een bericht in te voeren</string>
-    <string name="error_please_enter_a_value">Voer een waarde in</string>
-    <string name="error_unable_to_load_gcode">Er is iets misgegaan, waardoor Gcode niet kon worden geladen</string>
-    <string name="error_video_playback">Niet in staat om %1$s te spelen (%2$s)</string>
-    <string name="estimation">Schatting</string>
-    <string name="eta">ETA</string>
-    <string name="eta_x">ETA: %s</string>
-    <string name="extrude">Extrudeer</string>
-    <string name="extrude_retract">Extruderen / Terugtrekken</string>
-    <string name="extruding_x_mm">Extruderen %d mm</string>
-    <string name="failures">Mislukkingen</string>
-    <string name="fan_speed_label">Ventilatorsnelheid (%)</string>
-    <string name="fan_speed_label_active">Ventilatorsnelheid van 0 tot 100</string>
-    <string name="feed_rate_label">Voedingssnelheid (%)</string>
-    <string name="feed_rate_label_active">Aanvoersnelheid als getal (100 is standaard)</string>
-    <string name="filament_use">Gebruik van de filterelementen</string>
-    <string name="file">Bestand</string>
-    <string name="file_details_tab_info">Info</string>
-    <string name="file_details_tab_preview">Voorbeeld</string>
-    <string name="file_location_local">Lokaal</string>
-    <string name="file_location_sd_card">SD-kaart</string>
-    <string name="file_location_unknown">Onbekend</string>
-    <string name="flow_rate_label">Stroomsnelheid (%)</string>
-    <string name="flow_rate_label_active">Doorstroomsnelheid als getal (100 is standaard)</string>
-    <string name="free_trial_x">Gratis proefversie: %s</string>
-    <string name="fullscreen">Volledig scherm</string>
-    <string name="gcode_one_command_per_line">G-code (een commando per regel)</string>
-    <string name="gcode_preview">Gcode Voorbeeld</string>
-    <string name="gcode_preview_description">Met deze functie kun je een voorbeeld van Gcode bekijken voordat je begint met printen en de voortgang tijdens het printen live observeren.</string>
-    <string name="gcode_preview_live">Live Gcode Preview</string>
-    <string name="general___bed">Bed</string>
-    <string name="general___chamber">Chamber</string>
-    <string name="general___hotend">Hotend</string>
-    <string name="general___hotend_2">Hotend 2</string>
-    <string name="general___hotend_3">Hotend 3</string>
-    <string name="general___hotend_4">Hotend 4</string>
-    <string name="get_support">Ondersteuning krijgen</string>
-    <string name="give_feedback">Feedback geven</string>
-    <string name="heat_hotend">Warmtebron</string>
-    <string name="heating_hotend">Verwarmingswarmte tot %d℃</string>
-    <string name="help___content_not_available">Dieser Inhalt ist derzeit nicht verfügbar. Versuche es später noch einmal!</string>
-    <string name="hide">Verberg</string>
-    <string name="history">Geschiedenis</string>
-    <string name="hls_stream_disabled_title">HLS webcam</string>
-    <string name="hls_stream_disbaled_description">HLS webcams zijn uitgeschakeld, laat ze nu uw webcambeeld zien.</string>
-    <string name="information_about_your_octoprint">Informatie over je OctoPrint</string>
-    <string name="information_about_your_phone">Informatie over je telefoon</string>
-    <string name="insert">Voeg  in.</string>
-    <string name="label_for_x">Label voor %s</string>
-    <string name="last_print">Laatste druk</string>
-    <string name="last_print_at_x_failure">%s (mislukking)</string>
-    <string name="last_print_at_x_success">%s (succes)</string>
-    <string name="layer">Laag</string>
-    <string name="layer_progress">Lagenvoortgang</string>
-    <string name="learn_more">Meer informatie</string>
-    <string name="less_than_a_minute">&lt; 1 min</string>
-    <string name="loading">Laden…</string>
-    <string name="location">Locatie</string>
-    <string name="main___banner_connected_via_alternative">Verbonden via internet</string>
-    <string name="main___banner_connected_via_octoeverywhere">Verbonden via OctoEverywhere!</string>
-    <string name="main___banner_connection_lost_reconnecting">Verbinding verbroken, opnieuw verbonden…</string>
-    <string name="main_menu___about_text">
-        <![CDATA[Versie <font color="%1$06x"><b>%2$s</b></font> was <br/>gemaakt <font color="%1$06x"><b>voor u</b></font> met liefde in Europa ]]>
-                                                &#127466;&#127482;
-        
-        
-        
-        
-        
-        <![CDATA[<br><a href="privacy">Data privacy</a>]]>
-    </string>
-    <string name="main_menu___button_enable_automatic_lights">Activeer</string>
-    <string name="main_menu___configure_remote_access">Toegang op afstand configureren</string>
-    <string name="main_menu___delete_octoprint_dialog_button">Verwijder</string>
-    <string name="main_menu___delete_octoprint_dialog_message">%s definitief verwijderen van OctoApp?</string>
-    <string name="main_menu___empty_state_subtitle_automatic_lights">Nadat u lichten hebt ingesteld met een ondersteunde OctoPrint plugin, kunt u hier configureren welke lichten worden gebruikt om de afdruk automatisch te verlichten wanneer uw webcam actief is. Dit is handig om uw afdruk automatisch te verlichten wanneer u \'s nachts naar uw webcam kijkt.</string>
-    <string name="main_menu___empty_state_subtitle_automatic_lights_disabled">Schakel deze functie in om automatisch verlichting aan te zetten met een ondersteunde OctoPrint-plugin wanneer u naar de webcam kijkt. Dit is handig om uw afdruk automatisch te verlichten wanneer u \'s nachts naar uw webcam kijkt.</string>
-    <string name="main_menu___enable_quick_switch">Snelwissel inschakelen</string>
-    <string name="main_menu___hint_name_and_colorscheme">
-        <![CDATA[<small>Heb je een paar OctoPrint? Stel <b>naam en kleurenschema</b> in in OctoPrint\'s verschijningsinstellingen!</small>]]>
-    </string>
-    <string name="main_menu___item_add_instance">Nieuwe OctoPrint toevoegen</string>
-    <string name="main_menu___item_add_octoprint_instance">Tweede OctoPrint toevoegen</string>
-    <string name="main_menu___item_auto_connect_printer">Printer automatisch aansluiten</string>
-    <string name="main_menu___item_automatic_lights">Automatisch licht</string>
-    <string name="main_menu___item_cancel_print">Afdrukken annuleren</string>
-    <string name="main_menu___item_cancel_print_keep_temp">Afdrukken annuleren (temp. vasthouden)</string>
-    <string name="main_menu___item_change_octoprint_instance">Wissel OctoPrint</string>
-    <string name="main_menu___item_confirm_power_off">Bevestig uitschakeling</string>
-    <string name="main_menu___item_customize_widgets">Bedieningselementen aanpassen</string>
-    <string name="main_menu___item_emergency_stop">Noodstop</string>
-    <string name="main_menu___item_help_faq_and_feedback">FAQ, hulp en feedback</string>
-    <string name="main_menu___item_keep_screen_on_during_pinrt_on">Scherm aan tijdens printen</string>
-    <string name="main_menu___item_lights_for_widget">Lichten voor widget</string>
-    <string name="main_menu___item_lights_for_widget_description">Schakelt de verlichting aan wanneer de widgets op je startscherm op de achtergrond ververst worden. Dit zorgt ervoor dat de verlichting van je printer \"willekeurig\" aangaat, maar dat de voorbeeldafbeelding in de widget altijd goed verlicht is.</string>
-    <string name="main_menu___item_materials">Materialen</string>
-    <string name="main_menu___item_news">Nieuws</string>
-    <string name="main_menu___item_open_octoprint">Open OctoPrint</string>
-    <string name="main_menu___item_open_power_controls">Power controls</string>
-    <string name="main_menu___item_open_terminal">Open Terminal</string>
-    <string name="main_menu___item_show_printer">Printer</string>
-    <string name="main_menu___item_show_settings">Opties</string>
-    <string name="main_menu___item_sign_out">Permanent uittekenen</string>
-    <string name="main_menu___item_support_octoapp">Ondersteuning van OctoApp</string>
-    <string name="main_menu___item_temperature_presets">Temperatuur Voorinstellingen</string>
-    <string name="main_menu___item_turn_psu_off">Zet de printer uit</string>
-    <string name="main_menu___item_use_dark_mode">Donkere modus</string>
-    <string name="main_menu___menu_printer_title">Printer</string>
-    <string name="main_menu___menu_settings_title">Opties</string>
-    <string name="main_menu___show_files">Bestanden tonen</string>
-    <string name="main_menu___show_octoapp_lab">OctoApp Lab</string>
-    <string name="main_menu___show_webcam">Toon webcam</string>
-    <string name="main_menu___submenu_subtitle">Druk op een item om het vast te zetten</string>
-    <string name="main_menu___subtitle_automatic_lights">Selecteer verlichting die wordt ingeschakeld wanneer uw webcam actief is. Dit is handig om uw afdruk automatisch te verlichten wanneer u \'s nachts naar uw webcam kijkt.</string>
-    <string name="main_menu___subtitle_confirm_power_off">Selecteer welke apparaten pas na bevestiging kunnen worden uitgeschakeld. U kunt dit bijvoorbeeld gebruiken om te voorkomen dat u per ongeluk uw printer uitschakelt</string>
-    <string name="main_menu___subtitle_quick_switch_disabled">Met de Snelwissel kunt u naadloos wisselen tussen meerdere OctoPrint-instanties. Zonder deze functie moet u uw web-URL en API-sleutel opnieuw invoeren.</string>
-    <string name="main_menu___switch_to_octoprint">Activeer „%s“</string>
-    <string name="main_menu___system_command_executed">\"%s\" uitgevoerd</string>
-    <string name="main_menu___title_automatic_lights">Automatisch licht</string>
-    <string name="main_menu___title_confirm_power_off">Bevestig uitschakeling</string>
-    <string name="main_menu___title_quick_switch">Wissel OctoPrint</string>
-    <string name="main_menu___title_quick_switch_disabled">Snelwissel uitgeschakeld</string>
-    <string name="material_menu___bottom_text">
-        <![CDATA[<small>„A“  betekent geactiveerd. Materialen worden aangeleverd door <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> of <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> en kunnen worden bewerkt in de webinterface.</small>]]>
-    </string>
-    <string name="material_menu___empty_state">OctoApp integreert met de FilamentManager en de SpoolManager plugins, zodat u uw materialen kunt bijhouden. Eenmaal ingesteld, vindt u uw spoelen hier.</string>
-    <string name="material_menu___empty_state_action">Leer meer</string>
-    <string name="material_menu___print_with_material">Activeer „%s“</string>
-    <string name="material_menu___print_without_selection">Afdrukken zonder selectie</string>
-    <string name="material_menu___subtitle_neutral">U kunt deze materialen bewerken in de webinterface.</string>
-    <string name="material_menu___subtitle_select_material">Het geselecteerde materiaal wordt geactiveerd voor de afdruk.</string>
-    <string name="material_menu___title_neutral">Materialen</string>
-    <string name="material_menu___title_select_material">Kies materiaal</string>
-    <string name="menu___completed_command">Succes: „%s“</string>
-    <string name="menu___executing_command">Uitvoeren: „%s“</string>
-    <string name="menu_controls___main">hoofdmenu</string>
-    <string name="menu_controls___other">andere</string>
-    <string name="menu_controls___pin_to_x">Pin naar %1$s</string>
-    <string name="menu_controls___prepare_workspace">\"Voorbereiden\" (Snelle toegang)</string>
-    <string name="menu_controls___print_workspace">\"Print\" (Snelle toegang)</string>
-    <string name="menu_controls___unpin_from_x">Ontkoppel van %1$s</string>
-    <string name="menu_controls___widget">widget</string>
-    <string name="message">Bericht</string>
-    <string name="mm_0_025">0.025 mm</string>
-    <string name="mm_0_1">0,1 mm</string>
-    <string name="mm_1">1 mm</string>
-    <string name="mm_10">10 mm</string>
-    <string name="mm_100">100 mm</string>
-    <string name="model_size">Modelgrootte</string>
-    <string name="move">Verplaats</string>
-    <string name="move_settings">Bewegingsinstellingen</string>
-    <string name="never">Nooit</string>
-    <string name="no_files_on_octoprint_subtitle">
-        <![CDATA[Upload bestanden in de webinterface om te worden vermeld! <br><br><small>Kijk eens hoe <a href="https://www.youtube.com/watch?v=QB8MzoafnjY">Cura</a> en <a href="https://www.youtube.com/watch?v=V2PdG-Wx5Z0">Prusa Slicer</a> bestanden in OctoPrint automatisch kan opslaan.</small>]]>
-    </string>
-    <string name="no_files_on_octoprint_title">Geen bestanden op OctoPrint</string>
-    <string name="no_frames_since_xs">Geen frames sinds %ds</string>
-    <string name="no_preview_image_available">Geen voorbeeldafbeelding beschikbaar</string>
-    <string name="no_value_placeholder">--</string>
-    <string name="no_wifi_warning_long">Je telefoon is niet verbonden met WiFi. In veel gevallen is OctoPrint alleen beschikbaar via WiFi.</string>
-    <string name="notification_channel___print_progress">Afdrukken…</string>
-    <string name="notification_channel___filament_change">Verandering van filament</string>
-    <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">OctoPrint kan de snelheid en de waarden van de ventilatoren niet opvragen. Waarden kunnen alleen worden getoond als er veranderingen worden waargenomen.</string>
-    <string name="one_gcode_per_line">Een Gcode commando per regel</string>
-    <string name="open_email">Open Email</string>
-    <string name="open_octoprint">Open OctoPrint</string>
-    <string name="open_terminal">Open Terminal</string>
-    <string name="other">Andere</string>
-    <string name="path">Pad</string>
-    <string name="pause">Pauze</string>
-    <string name="pause_print_confirmation_action">Pauze-afdruk</string>
-    <string name="pause_print_confirmation_message">Wil je de afdruk pauzeren?</string>
-    <string name="pause_the_print_to_send_commands">Pauzeer de afdruk om commando\'s te versturen.</string>
-    <string name="pausing">Pauzeren…</string>
-    <string name="please_configure_your_webcam_in_octoprint">Configureer je webcam in Octoprint</string>
-    <string name="power_controls___always_use_this_device">Gebruik dit apparaat altijd voor deze actie</string>
-    <string name="power_controls___cycle">Herstarten</string>
-    <string name="power_controls___subtitle_specified">Een apparaat lang indrukken voor een andere actie</string>
-    <string name="power_controls___subtitle_unspecified">U kunt in de volgende stap kiezen wat u met het apparaat wilt doen</string>
-    <string name="power_controls___title_cycle">Selecteer een apparaat om opnieuw te starten</string>
-    <string name="power_controls___title_turn_off">Selecteer een apparaat dat u wilt uitschakelen</string>
-    <string name="power_controls___title_turn_on">Selecteer een apparaat dat u wilt inschakelen</string>
-    <string name="power_controls___title_unspecified">Selecteer een apparaat</string>
-    <string name="power_controls___turn_off">Uitschakelen</string>
-    <string name="power_controls___turn_on">Inschakelen</string>
-    <string name="power_controls___x_offline">%s (offline)</string>
-    <string name="power_menu___bottom_text">
-        <![CDATA[<small>Voedingsapparaten worden geleverd door een <a href="https://app.octoapp.eu/help/supported_plugin">ondersteunde plugin</a></small>]]>
-                                                        .
-    
-    
-    
-    
-    
-    
-    </string>
-    <string name="power_menu___checkbox_label">Gebruik dit apparaat altijd in de toekomst</string>
+    <string name="connect_printer___begin_connection_cofirmation_positive">"Printer aansluiten"</string>
+    <string name="connect_printer___begin_connection_confirmation_message"><![CDATA[Start het aansluiten van de printer?<br><small>Dit zal lopende afdrukken van de SD-kaart onderbreken!</small>]]></string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___no_wifi_connection">"Geen WiFi verbinding"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___octoprint_not_available_detail">"Controleer uw netwerkverbinding of het webadres van uw OctoPrint is gewijzigd"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___octoprint_not_available_title">"OctoPrint is niet beschikbaar"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___octoprint_starting_title">"OctoPrint start op"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___printer_connected_detail_1">"Klaar voor awesomeness…"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___printer_connected_detail_2">"Dit duurt langer als gewoonlijk. Ofwel is uw netwerk zwak, ofwel werkt de websocket niet correct. Als u hier vastloopt, gebruik dan de help sectie in het hoofdmenu."</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___printer_connected_title">"Printer aangesloten"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___printer_is_connecting_title">"Printer is aan het aansluiten"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___printer_offline_detail">"Zet de printer uit en weer aan om hem te resetten"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___printer_offline_detail_with_psu">"Start de PSU opnieuw op om de printer te resetten"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___printer_offline_title">"Printer is offline"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___psu_cycling_title">"PSU wordt gefietst"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___psu_on_waiting_for_printer_title">"PSU ingeschakeld, wachtend op het opstarten van de printer"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___searching_for_octoprint_title">"Zoeken naar Octoprint"</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___waiting_for_printer_detail">"OctoApp maakt automatisch verbinding met de printer zodra deze beschikbaar is."</string>
+
+    <!-- Auto filled -->
+    <string name="connect_printer___waiting_for_printer_title">"OctoPrint aangesloten, wacht op printer"</string>
+    <string name="connect_printer___waiting_for_user_subtitle">"U kunt auto-connect inschakelen in de instellingen"</string>
+    <string name="connect_printer___waiting_for_user_title">"Maak verbinding als je er klaar voor bent"</string>
+    <string name="connection_failed">"Verbinding mislukt"</string>
+    <string name="cura_plugin">"Plugin Heling"</string>
+    <string name="distance_in_mm_negative_for_retract">"Afstand in mm (negatief voor retract)"</string>
+    <string name="done">"Klaar"</string>
+    <string name="download_x">"Download %s"</string>
+    <string name="emergency_stop">"Noodstop"</string>
+    <string name="emergency_stop_confirmation_action">"Noodstop"</string>
+    <string name="emergency_stop_confirmation_message"><![CDATA[Wilt u een noodstop maken met de printer? <br><br><small>Dit activeert een M112 commando met uw printer. Zie dit als een \"onmiddellijke annulering\" waarbij de printer stopt zonder de wachtrij af te werken.<br><br>Belangrijk: De printer moet opnieuw worden gestart na een noodstop!</small>]]></string>
+    <string name="empty">"Leeg"</string>
+    <string name="enable">"Schakel in"</string>
+    <string name="enable_gcode_preview">"Schakel Gcode Preview in"</string>
+    <string name="enter_label">"Etiket invoeren"</string>
+
+    <!-- Auto filled -->
+    <string name="error_certificate_not_trusted_and_weak_hostname_required">"Android vertrouwt het door deze server geleverde certificaat niet. Dit is meestal het geval voor zelfondertekende certificaten. Verder bevat het certificaat geen\"subject alternative name\" (SAN) veld, wat vereist is vanaf Android 9. OctoApp moet een zwakke hostnaamcontrole gebruiken om dit probleem te omzeilen. Dit zal de veiligheid van uw verbinding verminderen. Wilt u deze server vertrouwen en een zwakkere hostnaam verificatie gebruiken?"</string>
+    <string name="error_cold_extrusion">"De hotend is onder de minimum temperatuur"</string>
+    <string name="error_general">"Er is iets misgegaan, probeer het alsjeblieft nog eens."</string>
+
+    <!-- Auto filled -->
+    <string name="error_general_with_details"><![CDATA[Er is iets misgegaan, probeer het alsjeblieft opnieuw.<br/><br/><small><font color="#%1$06X">%2$s</font></small>]]></string>
+    <string name="error_invalid_octoprint_instance_information">"OctoPrint heeft de API-sleutel afgewezen"</string>
+    <string name="error_no_printer_connected">"Er is geen printer aangesloten op OctoPrint"</string>
+    <string name="error_please_enter_a_message">"Gelieve een bericht in te voeren"</string>
+    <string name="error_please_enter_a_value">"Voer een waarde in"</string>
+    <string name="error_unable_to_load_gcode">"Er is iets misgegaan, waardoor Gcode niet kon worden geladen"</string>
+    <string name="error_video_playback">"Niet in staat om %1$s te spelen (%2$s)"</string>
+    <string name="estimation">"Schatting"</string>
+    <string name="eta">"ETA"</string>
+    <string name="eta_x">"ETA: %s"</string>
+    <string name="extrude">"Extrudeer"</string>
+    <string name="extrude_retract">"Extruderen / Terugtrekken"</string>
+    <string name="extruding_x_mm">"Extruderen %d mm"</string>
+    <string name="failures">"Mislukkingen"</string>
+    <string name="fan_speed_label">"Ventilatorsnelheid (%)"</string>
+    <string name="fan_speed_label_active">"Ventilatorsnelheid van 0 tot 100"</string>
+    <string name="feed_rate_label">"Voedingssnelheid (%)"</string>
+    <string name="feed_rate_label_active">"Aanvoersnelheid als getal (100 is standaard)"</string>
+    <string name="filament_use">"Gebruik van de filterelementen"</string>
+    <string name="file">"Bestand"</string>
+    <string name="file_details_tab_info">"Info"</string>
+    <string name="file_details_tab_preview">"Voorbeeld"</string>
+    <string name="file_location_local">"Lokaal"</string>
+    <string name="file_location_sd_card">"SD-kaart"</string>
+    <string name="file_location_unknown">"Onbekend"</string>
+    <string name="flow_rate_label">"Stroomsnelheid (%)"</string>
+    <string name="flow_rate_label_active">"Doorstroomsnelheid als getal (100 is standaard)"</string>
+    <string name="free_trial_x">"Gratis proefversie: %s"</string>
+    <string name="fullscreen">"Volledig scherm"</string>
+    <string name="gcode_one_command_per_line">"G-code (een commando per regel)"</string>
+    <string name="gcode_preview">"Gcode Voorbeeld"</string>
+    <string name="gcode_preview_description">"Met deze functie kun je een voorbeeld van Gcode bekijken voordat je begint met printen en de voortgang tijdens het printen live observeren."</string>
+    <string name="gcode_preview_live">"Live Gcode Preview"</string>
+
+    <!-- Auto filled -->
+    <string name="general___bed">"Bed"</string>
+
+    <!-- Auto filled -->
+    <string name="general___chamber">"Chamber"</string>
+
+    <!-- Auto filled -->
+    <string name="general___hotend">"Hotend"</string>
+
+    <!-- Auto filled -->
+    <string name="general___hotend_2">"Hotend 2"</string>
+
+    <!-- Auto filled -->
+    <string name="general___hotend_3">"Hotend 3"</string>
+
+    <!-- Auto filled -->
+    <string name="general___hotend_4">"Hotend 4"</string>
+    <string name="get_support">"Ondersteuning krijgen"</string>
+    <string name="give_feedback">"Feedback geven"</string>
+    <string name="heat_hotend">"Warmtebron"</string>
+    <string name="heating_hotend">"Verwarmingswarmte tot %d℃"</string>
+
+    <!-- Auto filled -->
+    <string name="help___content_not_available">"Dieser Inhalt ist derzeit nicht verfügbar. Versuche es später noch einmal!"</string>
+    <string name="hide">"Verberg"</string>
+    <string name="history">"Geschiedenis"</string>
+    <string name="hls_stream_disabled_title">"HLS webcam"</string>
+    <string name="hls_stream_disbaled_description">"HLS webcams zijn uitgeschakeld, laat ze nu uw webcambeeld zien."</string>
+    <string name="information_about_your_octoprint">"Informatie over je OctoPrint"</string>
+    <string name="information_about_your_phone">"Informatie over je telefoon"</string>
+    <string name="insert">"Voeg in."</string>
+    <string name="label_for_x">"Label voor %s"</string>
+    <string name="last_print">"Laatste druk"</string>
+    <string name="last_print_at_x_failure">"%s (mislukking)"</string>
+    <string name="last_print_at_x_success">"%s (succes)"</string>
+    <string name="layer">"Laag"</string>
+    <string name="layer_progress">"Lagenvoortgang"</string>
+    <string name="learn_more">"Meer informatie"</string>
+    <string name="less_than_a_minute">"&lt; 1 min"</string>
+    <string name="loading">"Laden…"</string>
+    <string name="location">"Locatie"</string>
+
+    <!-- Auto filled -->
+    <string name="main___banner_connected_via_alternative">"Verbonden via internet"</string>
+
+    <!-- Auto filled -->
+    <string name="main___banner_connected_via_octoeverywhere">"Verbonden via OctoEverywhere!"</string>
+
+    <!-- Auto filled -->
+    <string name="main___banner_connection_lost_reconnecting">"Verbinding verbroken, opnieuw verbonden…"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___about_text"><![CDATA[Versie <font color="%1$06x"><b>%2$s</b></font> was <br/>gemaakt <font color="%1$06x"><b>voor u</b></font> met liefde in Europa ]]> 🇪🇺 <![CDATA[<br><a href="privacy">Data privacy</a>]]></string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___button_enable_automatic_lights">"Activeer"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___configure_remote_access">"Toegang op afstand configureren"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___delete_octoprint_dialog_button">"Verwijder"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___delete_octoprint_dialog_message">"%s definitief verwijderen van OctoApp?"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___empty_state_subtitle_automatic_lights">"Nadat u lichten hebt ingesteld met een ondersteunde OctoPrint plugin, kunt u hier configureren welke lichten worden gebruikt om de afdruk automatisch te verlichten wanneer uw webcam actief is. Dit is handig om uw afdruk automatisch te verlichten wanneer u 's nachts naar uw webcam kijkt."</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___empty_state_subtitle_automatic_lights_disabled">"Schakel deze functie in om automatisch verlichting aan te zetten met een ondersteunde OctoPrint-plugin wanneer u naar de webcam kijkt. Dit is handig om uw afdruk automatisch te verlichten wanneer u 's nachts naar uw webcam kijkt."</string>
+    <string name="main_menu___enable_quick_switch">"Snelwissel inschakelen"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___hint_name_and_colorscheme"><![CDATA[<small>Heb je een paar OctoPrint? Stel <b>naam en kleurenschema</b> in in OctoPrint\'s verschijningsinstellingen!</small>]]></string>
+    <string name="main_menu___item_add_instance">"Nieuwe OctoPrint toevoegen"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___item_add_octoprint_instance">"Tweede OctoPrint toevoegen"</string>
+    <string name="main_menu___item_auto_connect_printer">"Printer automatisch aansluiten"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___item_automatic_lights">"Automatisch licht"</string>
+    <string name="main_menu___item_cancel_print">"Afdrukken annuleren"</string>
+    <string name="main_menu___item_cancel_print_keep_temp">"Afdrukken annuleren (temp. vasthouden)"</string>
+    <string name="main_menu___item_change_octoprint_instance">"Wissel OctoPrint"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___item_confirm_power_off">"Bevestig uitschakeling"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___item_customize_widgets">"Bedieningselementen aanpassen"</string>
+    <string name="main_menu___item_emergency_stop">"Noodstop"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___item_help_faq_and_feedback">"FAQ, hulp en feedback"</string>
+    <string name="main_menu___item_keep_screen_on_during_pinrt_on">"Scherm aan tijdens printen"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___item_lights_for_widget">"Lichten voor widget"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___item_lights_for_widget_description">"Schakelt de verlichting aan wanneer de widgets op je startscherm op de achtergrond ververst worden. Dit zorgt ervoor dat de verlichting van je printer \"willekeurig\" aangaat, maar dat de voorbeeldafbeelding in de widget altijd goed verlicht is."</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___item_materials">"Materialen"</string>
+    <string name="main_menu___item_news">"Nieuws"</string>
+    <string name="main_menu___item_open_octoprint">"Open OctoPrint"</string>
+    <string name="main_menu___item_open_power_controls">"Power controls"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___item_open_terminal">"Open Terminal"</string>
+    <string name="main_menu___item_show_printer">"Printer"</string>
+    <string name="main_menu___item_show_settings">"Opties"</string>
+    <string name="main_menu___item_sign_out">"Permanent uittekenen"</string>
+    <string name="main_menu___item_support_octoapp">"Ondersteuning van OctoApp"</string>
+    <string name="main_menu___item_temperature_presets">"Temperatuur Voorinstellingen"</string>
+    <string name="main_menu___item_turn_psu_off">"Zet de printer uit"</string>
+    <string name="main_menu___item_use_dark_mode">"Donkere modus"</string>
+    <string name="main_menu___menu_printer_title">"Printer"</string>
+    <string name="main_menu___menu_settings_title">"Opties"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___show_files">"Bestanden tonen"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___show_octoapp_lab">"OctoApp Lab"</string>
+    <string name="main_menu___show_webcam">"Toon webcam"</string>
+    <string name="main_menu___submenu_subtitle">"Druk op een item om het vast te zetten"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___subtitle_automatic_lights">"Selecteer verlichting die wordt ingeschakeld wanneer uw webcam actief is. Dit is handig om uw afdruk automatisch te verlichten wanneer u 's nachts naar uw webcam kijkt."</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___subtitle_confirm_power_off">"Selecteer welke apparaten pas na bevestiging kunnen worden uitgeschakeld. U kunt dit bijvoorbeeld gebruiken om te voorkomen dat u per ongeluk uw printer uitschakelt"</string>
+    <string name="main_menu___subtitle_quick_switch_disabled">"Met de Snelwissel kunt u naadloos wisselen tussen meerdere OctoPrint-instanties. Zonder deze functie moet u uw web-URL en API-sleutel opnieuw invoeren."</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___switch_to_octoprint">"Activeer „%s“"</string>
+    <string name="main_menu___system_command_executed">"\"%s\" uitgevoerd"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___title_automatic_lights">"Automatisch licht"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___title_confirm_power_off">"Bevestig uitschakeling"</string>
+    <string name="main_menu___title_quick_switch">"Wissel OctoPrint"</string>
+    <string name="main_menu___title_quick_switch_disabled">"Snelwissel uitgeschakeld"</string>
+
+    <!-- Auto filled -->
+    <string name="material_menu___bottom_text"><![CDATA[<small>„A“  betekent geactiveerd. Materialen worden aangeleverd door <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> of <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> en kunnen worden bewerkt in de webinterface.</small>]]></string>
+
+    <!-- Auto filled -->
+    <string name="material_menu___empty_state">"OctoApp integreert met de FilamentManager en de SpoolManager plugins, zodat u uw materialen kunt bijhouden. Eenmaal ingesteld, vindt u uw spoelen hier."</string>
+
+    <!-- Auto filled -->
+    <string name="material_menu___empty_state_action">"Leer meer"</string>
+
+    <!-- Auto filled -->
+    <string name="material_menu___print_with_material">"Activeer „%s“"</string>
+
+    <!-- Auto filled -->
+    <string name="material_menu___print_without_selection">"Afdrukken zonder selectie"</string>
+
+    <!-- Auto filled -->
+    <string name="material_menu___subtitle_neutral">"U kunt deze materialen bewerken in de webinterface."</string>
+
+    <!-- Auto filled -->
+    <string name="material_menu___subtitle_select_material">"Het geselecteerde materiaal wordt geactiveerd voor de afdruk."</string>
+
+    <!-- Auto filled -->
+    <string name="material_menu___title_neutral">"Materialen"</string>
+
+    <!-- Auto filled -->
+    <string name="material_menu___title_select_material">"Kies materiaal"</string>
+    <string name="menu___completed_command">"Succes: „%s“"</string>
+    <string name="menu___executing_command">"Uitvoeren: „%s“"</string>
+
+    <!-- Auto filled -->
+    <string name="menu_controls___main">"hoofdmenu"</string>
+
+    <!-- Auto filled -->
+    <string name="menu_controls___other">"andere"</string>
+
+    <!-- Auto filled -->
+    <string name="menu_controls___pin_to_x">"Pin naar %1$s"</string>
+
+    <!-- Auto filled -->
+    <string name="menu_controls___prepare_workspace">"\"Voorbereiden\" (Snelle toegang)"</string>
+
+    <!-- Auto filled -->
+    <string name="menu_controls___print_workspace">"\"Print\" (Snelle toegang)"</string>
+
+    <!-- Auto filled -->
+    <string name="menu_controls___unpin_from_x">"Ontkoppel van %1$s"</string>
+
+    <!-- Auto filled -->
+    <string name="menu_controls___widget">"widget"</string>
+    <string name="message">"Bericht"</string>
+    <string name="mm_0_025">"0.025 mm"</string>
+    <string name="mm_0_1">"0,1 mm"</string>
+    <string name="mm_1">"1 mm"</string>
+    <string name="mm_10">"10 mm"</string>
+    <string name="mm_100">"100 mm"</string>
+    <string name="model_size">"Modelgrootte"</string>
+    <string name="move">"Verplaats"</string>
+    <string name="move_settings">"Bewegingsinstellingen"</string>
+    <string name="never">"Nooit"</string>
+
+    <!-- Auto filled -->
+    <string name="no_files_on_octoprint_subtitle"><![CDATA[Upload bestanden in de webinterface om te worden vermeld! <br><br><small>Kijk eens hoe <a href="https://www.youtube.com/watch?v=QB8MzoafnjY">Cura</a> en <a href="https://www.youtube.com/watch?v=V2PdG-Wx5Z0">Prusa Slicer</a> bestanden in OctoPrint automatisch kan opslaan.</small>]]></string>
+    <string name="no_files_on_octoprint_title">"Geen bestanden op OctoPrint"</string>
+    <string name="no_frames_since_xs">"Geen frames sinds %ds"</string>
+    <string name="no_preview_image_available">"Geen voorbeeldafbeelding beschikbaar"</string>
+    <string name="no_value_placeholder">"--"</string>
+    <string name="no_wifi_warning_long">"Je telefoon is niet verbonden met WiFi. In veel gevallen is OctoPrint alleen beschikbaar via WiFi."</string>
+    <string name="notification_channel___print_progress">"Afdrukken…"</string>
+    <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">"OctoPrint kan de snelheid en de waarden van de ventilatoren niet opvragen. Waarden kunnen alleen worden getoond als er veranderingen worden waargenomen."</string>
+    <string name="one_gcode_per_line">"Een Gcode commando per regel"</string>
+    <string name="open_email">"Open Email"</string>
+    <string name="open_octoprint">"Open OctoPrint"</string>
+    <string name="open_terminal">"Open Terminal"</string>
+    <string name="other">"Andere"</string>
+    <string name="path">"Pad"</string>
+    <string name="pause">"Pauze"</string>
+    <string name="pause_print_confirmation_action">"Pauze-afdruk"</string>
+    <string name="pause_print_confirmation_message">"Wil je de afdruk pauzeren?"</string>
+    <string name="pause_the_print_to_send_commands">"Pauzeer de afdruk om commando's te versturen."</string>
+    <string name="pausing">"Pauzeren…"</string>
+    <string name="please_configure_your_webcam_in_octoprint">"Configureer je webcam in Octoprint"</string>
+    <string name="power_controls___always_use_this_device">"Gebruik dit apparaat altijd voor deze actie"</string>
+    <string name="power_controls___cycle">"Herstarten"</string>
+    <string name="power_controls___subtitle_specified">"Een apparaat lang indrukken voor een andere actie"</string>
+    <string name="power_controls___subtitle_unspecified">"U kunt in de volgende stap kiezen wat u met het apparaat wilt doen"</string>
+    <string name="power_controls___title_cycle">"Selecteer een apparaat om opnieuw te starten"</string>
+    <string name="power_controls___title_turn_off">"Selecteer een apparaat dat u wilt uitschakelen"</string>
+    <string name="power_controls___title_turn_on">"Selecteer een apparaat dat u wilt inschakelen"</string>
+    <string name="power_controls___title_unspecified">"Selecteer een apparaat"</string>
+    <string name="power_controls___turn_off">"Uitschakelen"</string>
+    <string name="power_controls___turn_on">"Inschakelen"</string>
+    <string name="power_controls___x_offline">"%s (offline)"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___bottom_text"><![CDATA[<small>Voedingsapparaten worden geleverd door een <a href="https://app.octoapp.eu/help/supported_plugin">ondersteunde plugin</a></small>]]>" ."</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___checkbox_label">"Gebruik dit apparaat altijd in de toekomst"</string>
+
+    <!-- Auto filled -->
     <string name="power_menu___confirm_cycle_x">" Wil je echt %s opnieuw opstarten?"</string>
-    <string name="power_menu___confirm_toggle_x">Wil je echt %s wisselen?</string>
-    <string name="power_menu___confirm_turn_x_off">Wil je %s echt uitzetten?</string>
-    <string name="power_menu___cycle">Herstarten</string>
-    <string name="power_menu___cycle_x">%s herstarten</string>
-    <string name="power_menu___device_is_off">Apparaat is uit</string>
-    <string name="power_menu___device_is_on">Apparaat is aan</string>
-    <string name="power_menu___device_provided_by_x">
-        <![CDATA[<small>Dit apparaat wordt geleverd door %s</small>]]>
-    </string>
-    <string name="power_menu___empty_state_action">Leer meer</string>
-    <string name="power_menu___empty_state_subtitle">OctoApp kan de stroomtoevoer van uw printer en andere apparaten met ondersteunde plugins besturen. Zodra ze zijn ingesteld, worden ze hier weergegeven!</string>
-    <string name="power_menu___title_lights">Lichten</string>
-    <string name="power_menu___title_neutral">Voedingsapparaten</string>
-    <string name="power_menu___title_select_device">Welk apparaat is de printer?</string>
-    <string name="power_menu___toggle">Knevel</string>
-    <string name="power_menu___toggle_x">Knevel %s</string>
-    <string name="power_menu___turn_off">Zet uit</string>
-    <string name="power_menu___turn_on">Zet aan</string>
-    <string name="power_menu___turn_x_off">Zet %s uit</string>
-    <string name="power_menu___turn_x_on">Zet %s aan</string>
-    <string name="preheat">Voorverwarmen</string>
-    <string name="workspace___prepare">Voorbereiden</string>
-    <string name="workspace___print">Print</string>
-    <string name="print_info">Afdrukken</string>
-    <string name="print_name">Naam</string>
-    <string name="print_notification___cancelling_title">Annuleren…</string>
-    <string name="print_notification___paused_title">Gepauzeerd</string>
-    <string name="print_notification___pausing_title">Pauzeren…</string>
-    <string name="print_notification___reconnecting_title">Opnieuw verbinden…</string>
-    <string name="print_time">Afdruktijd</string>
-    <string name="progress">Voortgang</string>
-    <string name="prusa_slicer_plugin">Pruisen Slicer Plugin</string>
-    <string name="purchase_dialog_button">Terug naar de app</string>
-    <string name="purchase_dialog_subtitle">Alle functies zijn ontgrendeld</string>
-    <string name="purchase_dialog_text">Dankzij jouw ondersteuning kan ik de ontwikkeling van OctoApp voortzetten! Als je suggesties, problemen of gedachten hebt, kun je te allen tijde contact opnemen met %s!</string>
-    <string name="purchase_dialog_title">Dank je wel!</string>
-    <string name="received_response_for_x">Ontvangen logs voor %s</string>
-    <string name="received_response_for_x_and_y_others">Ontvangen logs voor %1$s en %2$d anderen</string>
-    <string name="reconnect">Sluit  opnieuw aan.</string>
-    <string name="reconnecting">Opnieuw verbinden…</string>
-    <string name="remove_shortcut">Snelkoppeling verwijderen</string>
-    <string name="resume">Hervat</string>
-    <string name="resume_print_confirmation_action">Hervat afdrukken</string>
-    <string name="resume_print_confirmation_message">Wil je de afdruk hervatten?</string>
-    <string name="screenshot_of_current_screen">Screenshot van het huidige scherm</string>
-    <string name="select_file_to_print">Selecteer bestand om af te drukken</string>
-    <string name="send_feedback">Feedback sturen</string>
-    <string name="send_gcode">Stuur Gcode</string>
-    <string name="sent_x">Uitvoeren %s</string>
-    <string name="sent_x_and_y_others">Uitvoeren van %1$s en %2$d anderen</string>
-    <string name="set">Stel in</string>
-    <string name="set_lebel">Etiket instellen</string>
-    <string name="set_temperature">Stel de temperatuur in</string>
-    <string name="shortcut_tutorial_line1">Lange druk op de knop om meer opties te krijgen</string>
-    <string name="shortcut_tutorial_line2">Snelkoppelingen worden automatisch toegevoegd wanneer je commando\'s in de terminal verstuurt</string>
-    <string name="show_actions">Toon acties</string>
-    <string name="show_details">Toon details</string>
-    <string name="show_logs">Toon logboeken</string>
-    <string name="sign_in___access___confirm_in_web_interface">Open de webinterface en geef toegang</string>
-    <string name="sign_in___access___explainer">Open OctoPrint op uw telefoon of computer en bevestig dat OctoApp toegang heeft:</string>
-    <string name="sign_in___access___open_web">Toegang verlenen</string>
-    <string name="sign_in___access___use_api_key">…of voer een API sleutel in</string>
-    <string name="sign_in___broken_setup___api_key_revoked">De API sleutel OctoApp is niet langer geldig, gelieve OctoPrint opnieuw te verbinden</string>
-    <string name="sign_in___broken_setup___basic_auth_required">OctoApp vereist BasicAuth referenties voor toegang tot OctoPrint</string>
-    <string name="sign_in___broken_setup___https_issue">OctoApp kon geen verbinding maken via HTTPS vanwege een SSL-probleem, controleer uw instellingen</string>
-    <string name="sign_in___broken_setup___websocket_upgrade_failed">OctoApp kon geen verbinding maken met de websocket van uw OctoPrint vanwege een configuratieprobleem</string>
-    <string name="sign_in___cancel_and_use_other_information_message">Wilt u annuleren en verbinding maken met een andere OctoPrint?</string>
-    <string name="sign_in___cancel_and_use_other_information_title">Aansluiten op andere</string>
-    <string name="sign_in___connect_to_other_octoprint">Verbinding maken met een andere OctoPrint</string>
-    <string name="sign_in___continue">Ga door</string>
-    <string name="sign_in___discover___web_url_hint">OctoPrint URL</string>
-    <string name="sign_in___discover___web_url_hint_active">OctoPrint URL - Kopieer deze van uw browser!</string>
-    <string name="sign_in___discovery___connect_manually_subtitle">Het is simpel!</string>
-    <string name="sign_in___discovery___connect_manually_title">Voer de web URL van uw OctoPrint in</string>
-    <string name="sign_in___discovery___delete_printer_confirmation">OctoPrint verwijderen</string>
-    <string name="sign_in___discovery___delete_printer_message">%s en alle bijbehorende instellingen verwijderen?</string>
-    <string name="sign_in___discovery___discovered_devices">Ontdekt op uw netwerk</string>
-    <string name="sign_in___discovery___need_help">Heb je hulp nodig?</string>
-    <string name="sign_in___discovery___no_wifi_warning">Geen WiFi, OctoPrint is misschien niet beschikbaar</string>
-    <string name="sign_in___discovery___options_title">Welke OctoPrint wilt u aansluiten?</string>
-    <string name="sign_in___discovery___other_options">Niet wat je zocht?</string>
-    <string name="sign_in___discovery___previously_connected_devices">Eerder aangesloten</string>
-    <string name="sign_in___discovery___quick_switch_disabled_subtitle">Inschakelen om opnieuw aan te sluiten</string>
-    <string name="sign_in___discovery___quick_switch_disabled_title">Quick switch niet ingeschakeld</string>
-    <string name="sign_in___discovery___welcome_subtitle_searching">Op zoek naar uw OctoPrint…</string>
-    <string name="sign_in___discovery___welcome_title">Welkom bij OctoApp</string>
-    <string name="sign_in___manual_api_key___directions">Uw API sleutel staat in de OctoPrint instellingen of in de gebruikersinstellingen (web interface, klik op de gebruikersnaam in de rechterbovenhoek). Kopieer de sleutel naar de invoer hierboven of gebruik het QR code icoon om de QR code te scannen!</string>
-    <string name="sign_in___manual_api_key___error_invalid_api_key">De ingevoerde API-sleutel wordt niet geaccepteerd door OctoPrint</string>
-    <string name="sign_in___manual_api_key___error_other">Octoapp was niet in staat om de API-sleutel te testen, voer het oplossen van problemen uit om meer te leren</string>
-    <string name="sign_in___manual_api_key___hint">API-sleutel</string>
-    <string name="sign_in___manual_api_key___hint_active">API sleutel - van uw OctoPrint instellingen</string>
-    <string name="sign_in___manual_api_key___title">Voer uw OctoPrint\'s API sleutel in</string>
-    <string name="sign_in___manual_api_key___troubleshooting">Problemen oplossen</string>
-    <string name="sign_in___probe___basic_password">Wachtwoord</string>
-    <string name="sign_in___probe___basic_username">Gebruikersnaam</string>
-    <string name="sign_in___probe___edit_information">Informatie bewerken</string>
-    <string name="sign_in___probe___probing_active_title">De verbinding met OctoPrint testen…</string>
-    <string name="sign_in___qr_code___hint">Je kunt de API sleutel vinden in OctoPrint\'s instellingen onder API</string>
-    <string name="sign_in___qr_code___scan_the_qr_code">Scan de QR-code</string>
-    <string name="sign_in___success___subtile">Alles is klaar!</string>
-    <string name="sign_in___success___title">Veel plezier met de app &amp;\ngelukkig printen!</string>
-    <string name="sign_in___try_again">Probeer het opnieuw</string>
-    <string name="sign_out">Uitloggen</string>
-    <string name="sing_in___probe___trust_and_continue">Vertrouwen &amp; Ga door</string>
-    <string name="size">Grootte</string>
-    <string name="start_printing">Starten met printen</string>
-    <string name="stream_stalled">Stream is vastgelopen</string>
-    <string name="support_octoapp">Ondersteuning van OctoApp</string>
-    <string name="tap_temperature_to_edit">Tik op temperatuur om te bewerken</string>
-    <string name="target_off">Uit</string>
-    <string name="target_temperature">Gewenste temperatuur °C</string>
-    <string name="target_x">%1$s\u2009°C doel</string>
-    <string name="target_x_offset_y">%1$s\u2009°C (%2$s\u2009°C offset)</string>
-    <string name="temperature_menu___applied_confirmation">%s toegepast</string>
-    <string name="temperature_menu___applied_error">%s niet gevonden, kon niet worden toegepast</string>
-    <string name="temperature_menu___item_preheat">Verwarm %s</string>
-    <string name="temperature_menu___subtitle">U kunt deze voorinstellingen wijzigen in OctoPrint instellingen</string>
-    <string name="temperature_menu___title">Temperatuur Voorinstellingen</string>
-    <string name="temperature_x">%1$s\u2009°C</string>
-    <string name="thank_you_for_sending_feedback_please_select_what_should_be_included_in_your_message">Bedankt voor het sturen van feedback. Voer een bericht in en selecteer wat er bijgevoegd moet worden.</string>
-    <string name="this_file_exceeds_the_limit_for_mobile_downloads">Dit bestand overschrijdt de limiet voor app downloads</string>
-    <string name="this_folder_contains_no_files">Deze map bevat geen bestanden</string>
-    <string name="thumbnail_info_message">Installeer de onderstaande plugin voor je slicer om thumbnail previews van alle bestanden te krijgen!</string>
-    <string name="time_left">Overblijvend</string>
-    <string name="time_left_x">Resterende tijd: %s</string>
-    <string name="time_spent">Gebruikt</string>
-    <string name="toggle_favorite">Schakelaar vastgespeld</string>
-    <string name="trouble_shooting">Problemen oplossen</string>
-    <string name="try_again">Probeer het nog eens</string>
-    <string name="try_restrating_the_app_or_octoprint">Probeer de app of OctoPrint opnieuw te starten</string>
-    <string name="tune">Bijstellen</string>
-    <string name="understood">Understood</string>
-    <string name="unknown">Onbekend</string>
-    <string name="update_settings">Instellingen bijwerken</string>
-    <string name="updates_notification_channel___updates">Updates</string>
-    <string name="uploaded">Geüpload</string>
-    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_detail">Installeer een plugin voor het verkrijgen van miniatuurvoorvertoningen!</string>
-    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_title">Gebruikt u Cura of Prusa Slicer?</string>
-    <string name="webcam">Webcam</string>
-    <string name="webcam_settings___aspect_ratio_source">Beeldverhouding</string>
-    <string name="webcam_settings___aspect_ratio_source_image">van beeld</string>
-    <string name="webcam_settings___aspect_ratio_source_octoprint">van OctoPrint</string>
-    <string name="webcam_settings___enable_full_resolution">Volledige resolutie inschakelen</string>
-    <string name="webcam_settings___enable_full_resolution_explainer">De resolutie is momenteel beperkt tot %dp voor 16:9 streams, andere beeldverhoudingen kunnen andere limieten hebben. Activeer de volledige resolutie hierboven om de native resolutie van je webcam te gebruiken!</string>
-    <string name="webcam_settings___show_resolution">Toon resolutie</string>
-    <string name="webcam_settings___subtitle">Alle instellingen van de OctoPrint webinterface worden toegepast in OctoApp.</string>
-    <string name="webcam_settings___title">Webcam Instellingen</string>
-    <string name="why_are_the_values_not_always_shown">Waarom worden de waarden niet altijd getoond?</string>
-    <string name="widget_extrude">Extrudeer</string>
-    <string name="widget_gcode_preview">Gcode</string>
-    <string name="widget_gcode_send">Stuur Gcode</string>
-    <string name="widget_move">Verplaats</string>
-    <string name="widget_quick_access">Snelle toegang</string>
-    <string name="widget_quick_access___tutorial_detail">U kunt op elk menu-item lang drukken om het vast te maken aan Snelle toegang, het hoofdmenu of een widget op het beginscherm.</string>
-    <string name="widget_quick_access___tutorial_learn_more">Bekijk de handleiding</string>
-    <string name="widget_quick_access___tutorial_title">Maak OctoApp de jouwe!</string>
-    <string name="widget_temperature">Temperaturen</string>
-    <string name="x">X</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___confirm_toggle_x">"Wil je echt %s wisselen?"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___confirm_turn_x_off">"Wil je %s echt uitzetten?"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___cycle">"Herstarten"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___cycle_x">"%s herstarten"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___device_is_off">"Apparaat is uit"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___device_is_on">"Apparaat is aan"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___device_provided_by_x"><![CDATA[<small>Dit apparaat wordt geleverd door %s</small>]]></string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___empty_state_action">"Leer meer"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___empty_state_subtitle">"OctoApp kan de stroomtoevoer van uw printer en andere apparaten met ondersteunde plugins besturen. Zodra ze zijn ingesteld, worden ze hier weergegeven!"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___title_lights">"Lichten"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___title_neutral">"Voedingsapparaten"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___title_select_device">"Welk apparaat is de printer?"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___toggle">"Knevel"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___toggle_x">"Knevel %s"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___turn_off">"Zet uit"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___turn_on">"Zet aan"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___turn_x_off">"Zet %s uit"</string>
+
+    <!-- Auto filled -->
+    <string name="power_menu___turn_x_on">"Zet %s aan"</string>
+    <string name="preheat">"Voorverwarmen"</string>
+
+    <!-- Auto filled -->
+    <string name="workspace___prepare">"Voorbereiden"</string>
+
+    <!-- Auto filled -->
+    <string name="workspace___print">"Print"</string>
+    <string name="print_info">"Afdrukken"</string>
+    <string name="print_name">"Naam"</string>
+    <string name="print_notification___cancelling_title">"Annuleren…"</string>
+    <string name="print_notification___close">"Pauzeer meldingen"</string>
+    <string name="print_notification___paused_title">"Gepauzeerd"</string>
+    <string name="print_notification___pausing_title">"Pauzeren…"</string>
+    <string name="print_notification___print_done_title">"%s voltooid print"</string>
+    <string name="print_notification___printing_title">"Afdrukken %.0f%%"</string>
+
+    <!-- Auto filled -->
+    <string name="print_notification___reconnecting_title">"Opnieuw verbinden…"</string>
+    <string name="print_time">"Afdruktijd"</string>
+    <string name="progress">"Voortgang"</string>
+    <string name="prusa_slicer_plugin">"Pruisen Slicer Plugin"</string>
+    <string name="purchase_dialog_button">"Terug naar de app"</string>
+    <string name="purchase_dialog_subtitle">"Alle functies zijn ontgrendeld"</string>
+    <string name="purchase_dialog_text">"Dankzij jouw ondersteuning kan ik de ontwikkeling van OctoApp voortzetten! Als je suggesties, problemen of gedachten hebt, kun je te allen tijde contact opnemen met %s!"</string>
+    <string name="purchase_dialog_title">"Dank je wel!"</string>
+    <string name="received_response_for_x">"Ontvangen logs voor %s"</string>
+    <string name="received_response_for_x_and_y_others">"Ontvangen logs voor %1$s en %2$d anderen"</string>
+    <string name="reconnect">"Sluit opnieuw aan."</string>
+    <string name="reconnecting">"Opnieuw verbinden…"</string>
+    <string name="remove_shortcut">"Snelkoppeling verwijderen"</string>
+    <string name="resume">"Hervat"</string>
+    <string name="resume_print_confirmation_action">"Hervat afdrukken"</string>
+    <string name="resume_print_confirmation_message">"Wil je de afdruk hervatten?"</string>
+    <string name="screenshot_of_current_screen">"Screenshot van het huidige scherm"</string>
+    <string name="select_file_to_print">"Selecteer bestand om af te drukken"</string>
+    <string name="send_feedback">"Feedback sturen"</string>
+    <string name="send_gcode">"Stuur Gcode"</string>
+    <string name="sent_x">"Uitvoeren %s"</string>
+    <string name="sent_x_and_y_others">"Uitvoeren van %1$s en %2$d anderen"</string>
+    <string name="set">"Stel in"</string>
+    <string name="set_lebel">"Etiket instellen"</string>
+    <string name="set_temperature">"Stel de temperatuur in"</string>
+    <string name="shortcut_tutorial_line1">"Lange druk op de knop om meer opties te krijgen"</string>
+    <string name="shortcut_tutorial_line2">"Snelkoppelingen worden automatisch toegevoegd wanneer je commando's in de terminal verstuurt"</string>
+    <string name="show_actions">"Toon acties"</string>
+    <string name="show_details">"Toon details"</string>
+    <string name="show_logs">"Toon logboeken"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___access___confirm_in_web_interface">"Open de webinterface en geef toegang"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___access___explainer">"Open OctoPrint op uw telefoon of computer en bevestig dat OctoApp toegang heeft:"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___access___open_web">"Toegang verlenen"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___access___use_api_key">"…of voer een API sleutel in"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___broken_setup___api_key_revoked">"De API sleutel OctoApp is niet langer geldig, gelieve OctoPrint opnieuw te verbinden"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___broken_setup___basic_auth_required">"OctoApp vereist BasicAuth referenties voor toegang tot OctoPrint"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___broken_setup___https_issue">"OctoApp kon geen verbinding maken via HTTPS vanwege een SSL-probleem, controleer uw instellingen"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___broken_setup___websocket_upgrade_failed">"OctoApp kon geen verbinding maken met de websocket van uw OctoPrint vanwege een configuratieprobleem"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___cancel_and_use_other_information_message">"Wilt u annuleren en verbinding maken met een andere OctoPrint?"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___cancel_and_use_other_information_title">"Aansluiten op andere"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___connect_to_other_octoprint">"Verbinding maken met een andere OctoPrint"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___continue">"Ga door"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discovery___error_invalid_url">"Geef een geldige URL"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discover___web_url_hint">"OctoPrint URL"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discover___web_url_hint_active">"OctoPrint URL - Kopieer deze van uw browser!"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discovery___connect_manually_subtitle">"Het is simpel!"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discovery___connect_manually_title">"Voer de web URL van uw OctoPrint in"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discovery___delete_printer_confirmation">"OctoPrint verwijderen"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discovery___delete_printer_message">"%s en alle bijbehorende instellingen verwijderen?"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discovery___discovered_devices">"Ontdekt op uw netwerk"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discovery___need_help">"Heb je hulp nodig?"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discovery___no_wifi_warning">"Geen WiFi, OctoPrint is misschien niet beschikbaar"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discovery___options_title">"Welke OctoPrint wilt u aansluiten?"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discovery___other_options">"Niet wat je zocht?"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discovery___previously_connected_devices">"Eerder aangesloten"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discovery___quick_switch_disabled_subtitle">"Inschakelen om opnieuw aan te sluiten"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discovery___quick_switch_disabled_title">"Quick switch niet ingeschakeld"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discovery___welcome_subtitle_searching">"Op zoek naar uw OctoPrint…"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___discovery___welcome_title">"Welkom bij OctoApp"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___manual_api_key___directions">"Uw API sleutel staat in de OctoPrint instellingen of in de gebruikersinstellingen (web interface, klik op de gebruikersnaam in de rechterbovenhoek). Kopieer de sleutel naar de invoer hierboven of gebruik het QR code icoon om de QR code te scannen!"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___manual_api_key___error_invalid_api_key">"De ingevoerde API-sleutel wordt niet geaccepteerd door OctoPrint"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___manual_api_key___error_other">"Octoapp was niet in staat om de API-sleutel te testen, voer het oplossen van problemen uit om meer te leren"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___manual_api_key___hint">"API-sleutel"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___manual_api_key___hint_active">"API sleutel - van uw OctoPrint instellingen"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___manual_api_key___title">"Voer uw OctoPrint's API sleutel in"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___manual_api_key___troubleshooting">"Problemen oplossen"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___probe___basic_password">"Wachtwoord"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___probe___basic_username">"Gebruikersnaam"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___probe___edit_information">"Informatie bewerken"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___probe___probing_active_title">"De verbinding met OctoPrint testen…"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___qr_code___hint">"Je kunt de API sleutel vinden in OctoPrint's instellingen onder API"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___qr_code___scan_the_qr_code">"Scan de QR-code"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___success___subtile">"Alles is klaar!"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___success___title">"Veel plezier met de app &amp;
+gelukkig printen!"</string>
+
+    <!-- Auto filled -->
+    <string name="sign_in___try_again">"Probeer het opnieuw"</string>
+    <string name="sign_out">"Uitloggen"</string>
+
+    <!-- Auto filled -->
+    <string name="sing_in___probe___trust_and_continue">"Vertrouwen &amp; Ga door"</string>
+    <string name="size">"Grootte"</string>
+    <string name="start_printing">"Starten met printen"</string>
+    <string name="stream_stalled">"Stream is vastgelopen"</string>
+    <string name="support_octoapp">"Ondersteuning van OctoApp"</string>
+    <string name="tap_temperature_to_edit">"Tik op temperatuur om te bewerken"</string>
+    <string name="target_off">"Uit"</string>
+    <string name="target_temperature">"Gewenste temperatuur °C"</string>
+    <string name="target_x">"%1$s\u2009°C doel"</string>
+    <string name="target_x_offset_y">"%1$s\u2009°C (%2$s\u2009°C offset)"</string>
+    <string name="temperature_menu___applied_confirmation">"%s toegepast"</string>
+    <string name="temperature_menu___applied_error">"%s niet gevonden, kon niet worden toegepast"</string>
+    <string name="temperature_menu___item_preheat">"Verwarm %s"</string>
+    <string name="temperature_menu___subtitle">"U kunt deze voorinstellingen wijzigen in OctoPrint instellingen"</string>
+    <string name="temperature_menu___title">"Temperatuur Voorinstellingen"</string>
+    <string name="temperature_x">"%1$s\u2009°C"</string>
+    <string name="thank_you_for_sending_feedback_please_select_what_should_be_included_in_your_message">"Bedankt voor het sturen van feedback. Voer een bericht in en selecteer wat er bijgevoegd moet worden."</string>
+    <string name="this_file_exceeds_the_limit_for_mobile_downloads">"Dit bestand overschrijdt de limiet voor app downloads"</string>
+    <string name="this_folder_contains_no_files">"Deze map bevat geen bestanden"</string>
+    <string name="thumbnail_info_message">"Installeer de onderstaande plugin voor je slicer om thumbnail previews van alle bestanden te krijgen!"</string>
+    <string name="time_left">"Overblijvend"</string>
+    <string name="time_left_x">"Resterende tijd: %s"</string>
+    <string name="time_spent">"Gebruikt"</string>
+    <string name="toggle_favorite">"Schakelaar vastgespeld"</string>
+    <string name="trouble_shooting">"Problemen oplossen"</string>
+    <string name="try_again">"Probeer het nog eens"</string>
+    <string name="try_restrating_the_app_or_octoprint">"Probeer de app of OctoPrint opnieuw te starten"</string>
+    <string name="tune">"Bijstellen"</string>
+    <string name="understood">"Understood"</string>
+    <string name="unknown">"Onbekend"</string>
+    <string name="update_settings">"Instellingen bijwerken"</string>
+    <string name="uploaded">"Geüpload"</string>
+    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_detail">"Installeer een plugin voor het verkrijgen van miniatuurvoorvertoningen!"</string>
+    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_title">"Gebruikt u Cura of Prusa Slicer?"</string>
+    <string name="webcam">"Webcam"</string>
+
+    <!-- Auto filled -->
+    <string name="webcam_settings___aspect_ratio_source">"Beeldverhouding"</string>
+
+    <!-- Auto filled -->
+    <string name="webcam_settings___aspect_ratio_source_image">"van beeld"</string>
+
+    <!-- Auto filled -->
+    <string name="webcam_settings___aspect_ratio_source_octoprint">"van OctoPrint"</string>
+
+    <!-- Auto filled -->
+    <string name="webcam_settings___enable_full_resolution">"Volledige resolutie inschakelen"</string>
+
+    <!-- Auto filled -->
+    <string name="webcam_settings___enable_full_resolution_explainer">"De resolutie is momenteel beperkt tot %dp voor 16:9 streams, andere beeldverhoudingen kunnen andere limieten hebben. Activeer de volledige resolutie hierboven om de native resolutie van je webcam te gebruiken!"</string>
+
+    <!-- Auto filled -->
+    <string name="webcam_settings___show_resolution">"Toon resolutie"</string>
+
+    <!-- Auto filled -->
+    <string name="webcam_settings___subtitle">"Alle instellingen van de OctoPrint webinterface worden toegepast in OctoApp."</string>
+
+    <!-- Auto filled -->
+    <string name="webcam_settings___title">"Webcam Instellingen"</string>
+    <string name="why_are_the_values_not_always_shown">"Waarom worden de waarden niet altijd getoond?"</string>
+    <string name="widget_extrude">"Extrudeer"</string>
+    <string name="widget_gcode_preview">"Gcode"</string>
+    <string name="widget_gcode_send">"Stuur Gcode"</string>
+    <string name="widget_move">"Verplaats"</string>
+
+    <!-- Auto filled -->
+    <string name="widget_quick_access">"Snelle toegang"</string>
+
+    <!-- Auto filled -->
+    <string name="widget_quick_access___tutorial_detail">"U kunt op elk menu-item lang drukken om het vast te maken aan Snelle toegang, het hoofdmenu of een widget op het beginscherm."</string>
+
+    <!-- Auto filled -->
+    <string name="widget_quick_access___tutorial_learn_more">"Bekijk de handleiding"</string>
+
+    <!-- Auto filled -->
+    <string name="widget_quick_access___tutorial_title">"Maak OctoApp de jouwe!"</string>
+    <string name="widget_temperature">"Temperaturen"</string>
+    <string name="x">"X"</string>
     <plurals name="x_days">
-        <item quantity="one">Op een dag</item>
-        <item quantity="other">%d dagen</item>
+        <item quantity="one">"Op een dag"</item>
+        <item quantity="other">"%d dagen"</item>
     </plurals>
-    <string name="x_hours_y_mins">%1$02d:%2$02d h</string>
-    <string name="x_left">Nog %s</string>
-    <string name="x_mins">%2$d min</string>
-    <string name="x_mm">%s mm</string>
+    <string name="x_hours_y_mins">"%1$02d:%2$02d h"</string>
+
+    <!-- Auto filled -->
+    <string name="x_left">"Nog %s"</string>
+    <string name="x_mins">"%2$d min"</string>
+    <string name="x_mm">"%s mm"</string>
     <plurals name="x_months">
-        <item quantity="one">Een maand</item>
-        <item quantity="other">%d maanden</item>
+        <item quantity="one">"Een maand"</item>
+        <item quantity="other">"%d maanden"</item>
     </plurals>
-    <string name="x_of_y">%1$d van %2$d</string>
-    <string name="x_percent">%.0f %%</string>
-    <string name="x_percent_int">%d %%</string>
-    <string name="x_temperature">%s temperatuur</string>
-    <string name="x_times">%d keer</string>
+    <string name="x_of_y">"%1$d van %2$d"</string>
+    <string name="x_percent">"%.0f %%"</string>
+    <string name="x_percent_int">"%d %%"</string>
+    <string name="x_temperature">"%s temperatuur"</string>
+    <string name="x_times">"%d keer"</string>
     <plurals name="x_weeks">
-        <item quantity="one">Een week</item>
-        <item quantity="other">%d weeks</item>
+        <item quantity="one">"Een week"</item>
+        <item quantity="other">"%d weeks"</item>
     </plurals>
-    <string name="x_y">%1$s (%2$s)</string>
+    <string name="x_y">"%1$s (%2$s)"</string>
     <plurals name="x_years">
-        <item quantity="one">Een jaar</item>
-        <item quantity="other">%d jaar</item>
+        <item quantity="one">"Een jaar"</item>
+        <item quantity="other">"%d jaar"</item>
     </plurals>
-    <string name="y">Y</string>
-    <string name="you_can_change_this_limit_in_octoprint_settings">Je kunt deze limiet wijzigen in OctoPrint instellingen</string>
-    <string name="z">Z</string>
-    <string name="z_feedrate_mm_min">Z-feedrate (mm/min)</string>
+    <string name="y">"Y"</string>
+    <string name="you_can_change_this_limit_in_octoprint_settings">"Je kunt deze limiet wijzigen in OctoPrint instellingen"</string>
+    <string name="z">"Z"</string>
+    <string name="z_feedrate_mm_min">"Z-feedrate (mm/min)"</string>
+
+    <!-- Auto filled -->
+    <string name="main_menu___item_show_octoprint">"OctoPrint"</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_access___manual___username_hint">"BasicAuth gebruiker, optioneel"</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_access___manual___username_hint_active">"Gebruikersnaam, facultatief"</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_access___manual___password_hint">"BasicAuth wachtwoord, optioneel"</string>
+
+    <!-- Auto filled -->
+    <string name="configure_remote_access___manual___password_hint_active">"Wachtwoord, facultatief"</string>
+
+    <!-- Auto filled -->
+    <string name="workspace___explainer">"&lt;![CDATA[OctoApp zal &lt;b&gt;automatisch&lt;/b&gt; overschakelen naar de juiste werkruimte.&lt;br&gt;&lt;br&gt;&lt;b&gt;Connect&lt;/b&gt;: Er is geen printer aangesloten, maar u beschikt over alle hulpmiddelen om er een aan te sluiten.&lt;br&gt;&lt;br&gt;&lt;b&gt;Prepare&lt;/b&gt;: Een printer is aangesloten, maar drukt niet af. Bereid u voor en start uw volgende print.&lt;br&gt;&lt;br&gt;&lt;b&gt;Print&lt;/b&gt;: Stem af en controleer de actieve print.&lt;br&gt;&lt;br&gt;Elke werkruimte bevat alle bedieningselementen die u in de huidige situatie nodig hebt, zodat de app overzichtelijk en eenvoudig blijft!"</string>
+    <string name="main_menu___warning_automatic_lights"><![CDATA[<small>⚠️ Belangrijke mededeling:<br>Sommige plugins (bijv. TPLink) kunnen <b>de verbinding met uw printer verbreken wanneer OctoApp de lichten uitschakelt</b> wanneer u de app sluit! U kunt dit gedrag uitschakelen in de plugin-instellingen in de webinterface</small>]]></string>
+    <string name="print_notifications_menu___item_live_notification_on">"Live meldingen"</string>
+    <string name="main_menu___item_print_notifications">"Kennisgevingen afdrukken"</string>
+    <string name="notification_channel___filament_change">"Verandering van filament"</string>
+    <string name="print_notification___filament_change_required_title">"%s heeft filament nodig"</string>
+    <string name="print_notification___filament_change_required_message">"Afdrukken werd gepauzeerd"</string>
+    <string name="updates_notification_channel___updates">"Updates"</string>
+    <string name="app_widget___quick_access_empty">"Begin door lang te drukken op menu-items in de app en ze vast te pinnen op deze widget"</string>
+    <string name="app_widget___click_menu_item_confirmation_message">"\"%s\" uitvoeren?"</string>
+    <string name="app_widget___click_menu_item_confirmation_action">"Uitvoeren"</string>
+    <string name="print_notification___live">"Live"</string>
+    <string name="print_notification___live_on_x">"Live op %s"</string>
+    <string name="print_notification___connecting">"Controle van de live status..."</string>
+    <string name="print_notifications_menu___item_system_settings">"Android meldingsinstellingen"</string>
+    <string name="print_notifications_menu___item_system_settings_description"><![CDATA[Hier kunt u meldingen op afstand uitschakelen en ook <b>geluiden en ander gedrag aanpassen!</b>]]></string>
+    <string name="print_notifications_menu___item_live_notification_on_description">"Live meldingen hebben de voorkeur boven meldingen op afstand, maar worden niet weergegeven op Wear OS-horloges. De app houdt een actieve verbinding met OctoPrint tijdens een afdruk, waardoor de batterij mogelijk minder lang meegaat. De verbinding wordt gepauzeerd wanneer uw scherm uit is."</string>
+    <string name="print_notifications_menu___subtitle"><![CDATA[OctoApp ondersteunt twee soorten printmeldingen: App-gegenereerde <b>live meldingen</b> en <b>meldingen op afstand</b> die door de OctoApp companion plugin worden verzonden.]]></string>
+    <string name="print_notifications_menu___bottom"><![CDATA[Meer informatie over live meldingen en meldingen op afstand <a href="%s">hier</a>.]]></string>
+    <string name="main___banner_connected_via_ngrok">"Verbonden via ngrok"</string>
+    <string name="main___banner_connected_via_tailscale">"Verbonden via Tailscale"</string>
+    <string name="file_actions_menu___delete">"Delete"</string>
+    <string name="file_actions_menu___delete_confirmation_message">"Wilt u \"%s\" verwijderen?"</string>
+    <string name="file_action_menu___delete_confirmation_action">"Delete"</string>
+    <string name="main_menu___item_show_tutorials">"Tutorials"</string>
+    <string name="retry_general">"Opnieuw proberen"</string>
+    <string name="tutorials___header">"Tutorials"</string>
+    <string name="main_menu___companion_plugin_announcement___title">"Installeer de companion plugin"</string>
+    <string name="main_menu___companion_plugin_announcement___subtitle">"De OctoApp companion plugin maakt pushmeldingen over het internet mogelijk met een betere betrouwbaarheid"</string>
+    <string name="main_menu___companion_plugin_announcement___install">"Installeer de plugin"</string>
 </resources>
