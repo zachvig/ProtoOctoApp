@@ -850,8 +850,8 @@ bonne impression !"</string>
     <string name="configure_remote_access___manual___password_hint_active">"Mot de passe, facultatif"</string>
 
     <!-- Auto filled -->
-    <string name="workspace___explainer">"&lt;br&gt;[CDATA[OctoApp va &lt;b&gt;switcher automatiquement&lt;/b&gt; vers le bon espace de travail.&lt;br&gt;&lt;br&gt;&lt;b&gt;Connect&lt;/b&gt; : Aucune imprimante n'est connectée, mais vous avez tous les outils pour en connecter une.&lt;br&gt;&lt;br&gt;&lt;b&gt;Préparation&lt;/b&gt; : Une imprimante est connectée mais n'imprime pas. Préparez-vous et lancez votre prochaine impression !&lt;br&gt;&lt;br&gt;&lt;b&gt;Print&lt;/b&gt; : Réglez et contrôlez l'impression active !&lt;br&gt;&lt;br&gt;Chaque espace de travail contient tous les contrôles dont vous avez besoin dans la situation actuelle, ce qui aide l'appli à rester propre et simple !]]&gt;."</string>
-    <string name="main_menu___warning_automatic_lights">"&lt;!CDATA[&lt;small&gt;⚠️ Avis important:&lt;br&gt;Certains plugins (par exemple TPLink) peuvent &lt;b&gt;déconnecter votre imprimante lorsque OctoApp éteint les lumières&lt;/b&gt; lorsque vous fermez l'application ! Vous pouvez désactiver ce comportement dans les paramètres du plugin dans l'interface web&lt;/small&gt;]]&gt;."</string>
+    <string name="workspace___explainer"><![CDATA[OctoApp va <b>switcher automatiquement</b> vers le bon espace de travail.<br><br><b>Connect</b> : Aucune imprimante n\'est connectée, mais vous avez tous les outils pour en connecter une.<br><br><b>Préparation</b> : Une imprimante est connectée mais n\'imprime pas. Préparez-vous et lancez votre prochaine impression !<br><br><b>Print</b> : Réglez et contrôlez l\'impression active !<br><br>Chaque espace de travail contient tous les contrôles dont vous avez besoin dans la situation actuelle, ce qui aide l\'appli à rester propre et simple !]]></string>
+    <string name="main_menu___warning_automatic_lights"><![CDATA[<small>⚠️ Avis important:<br>Certains plugins (par exemple TPLink) peuvent <b>déconnecter votre imprimante lorsque OctoApp éteint les lumières</b> lorsque vous fermez l\'application ! Vous pouvez désactiver ce comportement dans les paramètres du plugin dans l\'interface web</small>]]></string>
     <string name="print_notifications_menu___item_live_notification_on">"Notifications en direct"</string>
     <string name="main_menu___item_print_notifications">"Imprimer les notifications"</string>
     <string name="notification_channel___filament_change">"Changement de filament…"</string>
@@ -865,10 +865,10 @@ bonne impression !"</string>
     <string name="print_notification___live_on_x">"En direct sur %s"</string>
     <string name="print_notification___connecting">"Vérification du statut du direct..."</string>
     <string name="print_notifications_menu___item_system_settings">"Paramètres de notification Android"</string>
-    <string name="print_notifications_menu___item_system_settings_description">"&lt; ![CDATA[Vous pouvez désactiver les notifications à distance ici et aussi &lt;b&gt;personnaliser les sons et autres comportements!&lt;/b&gt;]]&gt;."</string>
+    <string name="print_notifications_menu___item_system_settings_description"><![CDATA[Vous pouvez désactiver les notifications à distance ici et aussi <b>personnaliser les sons et autres comportements!</b>]]></string>
     <string name="print_notifications_menu___item_live_notification_on_description">"Les notifications en direct sont préférées aux notifications à distance mais ne sont pas affichées sur les montres Wear OS. L'application maintient une connexion active avec OctoPrint pendant une impression, ce qui peut réduire l'autonomie de la batterie. La connexion est interrompue lorsque votre écran est éteint."</string>
-    <string name="print_notifications_menu___subtitle">"&lt;!CDATA[OctoApp supporte deux types de notifications d'impression : Les &lt;b&gt;notifications en direct&lt;/b&gt; générées par l'application et les &lt;b&gt;notifications à distance&lt;/b&gt; envoyées par le plugin compagnon OctoApp.]]&gt;."</string>
-    <string name="print_notifications_menu___bottom">"&lt; ![CDATA[En savoir plus sur les notifications en direct et à distance &lt;a href=\"%s\"&gt;ici&lt;/a&gt;.]]&gt;."</string>
+    <string name="print_notifications_menu___subtitle"><![CDATA[OctoApp supporte deux types de notifications d\'impression : Les <b>notifications en direct</b> générées par l\'application et les <b>notifications à distance</b> envoyées par le plugin compagnon OctoApp.]]></string>
+    <string name="print_notifications_menu___bottom"><![CDATA[En savoir plus sur les notifications en direct et à distance <a href="%s">ici</a>.]]></string>
     <string name="main___banner_connected_via_ngrok">"Connecté via ngrok"</string>
     <string name="main___banner_connected_via_tailscale">"Connecté via Tailscale"</string>
     <string name="file_actions_menu___delete">"Supprimer"</string>
