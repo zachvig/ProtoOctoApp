@@ -891,4 +891,5 @@ happy printing!"</string>
     <string name="main_menu___companion_plugin_announcement___title">"Install the companion plugin"</string>
     <string name="main_menu___companion_plugin_announcement___subtitle">"The OctoApp companion plugin allows push notifications over the internet with better reliability"</string>
     <string name="main_menu___companion_plugin_announcement___install">"Install the plugin"</string>
+    <string name="print_notification___disconnected">Disconnected</string>
 </resources>

@@ -152,7 +152,7 @@ class LiveNotificationService : Service() {
             stopForeground(octoPreferences.wasPrintNotificationDisconnected)
             if (octoPreferences.wasPrintNotificationDisconnected) {
                 instance?.id?.let {
-                    notificationController.update(instanceId = it, printState = null, stateText = "Disconnected**")
+                    notificationController.update(instanceId = it, printState = null, stateText = getString(R.string.print_notification___disconnected))
                 }
             }
 
@@ -233,7 +233,7 @@ class LiveNotificationService : Service() {
         markDisconnectedJob = coroutineScope.launch {
             delay(DISCONNECT_IF_NO_MESSAGE_FOR_MS)
             Timber.i("No updates for ${DISCONNECT_IF_NO_MESSAGE_FOR_MS}ms, moving notification to disconnected state")
-            notificationController.update(instanceId = instanceId, printState = null, stateText = "Disconnected**")
+            notificationController.update(instanceId = instanceId, printState = null, stateText = getString(R.string.print_notification___disconnected))
         }
 
         // Update notification
