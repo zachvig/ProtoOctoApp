@@ -28,6 +28,7 @@ import de.crysxd.octoapp.base.gcode.render.GcodeRenderView
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.text.DecimalFormat
 import kotlin.math.roundToInt
@@ -210,10 +211,10 @@ class GcodePreviewFragment : BaseFragment() {
 
         binding.live.isVisible = true
         hideLiveJob?.cancel()
-//        hideLiveJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-//            delay(NOT_LIVE_IF_NO_UPDATE_FOR_MS)
-//            binding.live.isVisible = false
-//        }
+        hideLiveJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            delay(NOT_LIVE_IF_NO_UPDATE_FOR_MS)
+            binding.live.isVisible = false
+        }
 
         val layerHeightMm = DecimalFormat("0.0#").format(state.renderContext.layerZHeight)
         val layerProgressPercent = binding.layerProgressSeekBar.progress / LAYER_PROGRESS_STEPS.toFloat()
