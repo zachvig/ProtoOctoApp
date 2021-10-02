@@ -114,13 +114,6 @@ data class OctoPrintInstanceInformationV3(
         }
 
     fun isForWebUrl(webUrl: HttpUrl) = webUrl.isBasedOn(this.webUrl) || webUrl.isBasedOn(this.alternativeWebUrl)
-
-    // We do not want to log the M115 response all over the place. It clutters the logs.
-    override fun toString(): String = if (m115Response != null && m115Response != M115_MASK) {
-        copy(m115Response = M115_MASK).toString()
-    } else {
-        super.toString()
-    }
 }
 
 fun OctoPrintInstanceInformationV3?.hasPlugin(plugin: KClass<out Settings.PluginSettings>) =

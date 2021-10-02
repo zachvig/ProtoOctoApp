@@ -75,12 +75,12 @@ class SetAlternativeWebUrlUseCase @Inject constructor(
                 }
             } catch (e: Exception) {
                 OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigManuallySetFailed)
-                return Result.Failure(context.getString(R.string.configure_remote_acces___manual___error_unable_to_verify), e, true)
+                return Result.Failure(context.getString(R.string.configure_remote_acces___manual___error_unable_to_verify), e, allowToProceed = true)
             }
         }
 
         octoPrintRepository.update(instance.id) {
-            it.copy(alternativeWebUrl = url, octoEverywhereConnection = null)
+            it.copy(alternativeWebUrl = url, octoEverywhereConnection = null, issue = null)
         }
 
         OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigManuallySet)

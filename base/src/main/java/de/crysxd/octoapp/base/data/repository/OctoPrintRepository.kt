@@ -9,6 +9,8 @@ import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.octoprint.isBasedOn
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import timber.log.Timber
@@ -20,6 +22,7 @@ class OctoPrintRepository(
 ) {
 
     private val instanceInformationChannel = MutableStateFlow<OctoPrintInstanceInformationV3?>(null)
+    private val lock = Mutex()
 
     init {
         // Upgrade active
@@ -69,18 +72,21 @@ class OctoPrintRepository(
 
     suspend fun updateActive(block: suspend (OctoPrintInstanceInformationV3) -> OctoPrintInstanceInformationV3?) {
         instanceInformationChannel.value?.let {
-            val new = block(it)
-            if (new != it) {
-                storeOctoprintInstanceInformation(it.id, new)
-            } else {
-                Timber.i("Drop update")
-            }
+            update(it.id, block)
         }
     }
 
     suspend fun update(id: String, block: suspend (OctoPrintInstanceInformationV3) -> OctoPrintInstanceInformationV3?) {
-        get(id)?.let {
-            storeOctoprintInstanceInformation(it.id, block(it))
+        lock.withLock {
+            get(id)?.let {
+                val new = block(it)
+                if (new != it) {
+                    Timber.i("Updating instance with $id")
+                    storeOctoprintInstanceInformation(it.id, new)
+                } else {
+                    Timber.i("Drop update, no changes $it")
+                }
+            }
         }
     }
 

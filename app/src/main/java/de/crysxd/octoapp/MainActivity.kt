@@ -147,7 +147,7 @@ class MainActivity : OctoActivity() {
                                 if (instance.issue?.isForAlternative != true) {
                                     UriLibrary.getFixOctoPrintConnectionUri(baseUrl = instance.webUrl, instanceId = instance.id).open(this)
                                 } else {
-                                    Unit
+                                    UriLibrary.getConfigureRemoteAccessUri().open(this)
                                 }
                             },
                             positiveButton = getString(R.string.sign_in___continue),
