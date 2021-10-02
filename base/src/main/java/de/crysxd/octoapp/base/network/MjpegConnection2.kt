@@ -52,8 +52,6 @@ class MjpegConnection2(
 
     companion object {
         private var instanceCounter = 0
-        private const val DEFAULT_HEADER_BOUNDARY = "[_a-zA-Z0-9]*boundary"
-
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -143,7 +141,7 @@ class MjpegConnection2(
     private fun connect(): Response {
         val (url, authHeader) = streamUrl.extractAndRemoveBasicAuth()
         val sslKeystoreHandler = BaseInjector.get().sslKeyStoreHandler()
-        val logger = TimberLogger(Logger.getLogger("Mjpeg2Connection/HTTP")).logger
+        val logger = TimberLogger(Logger.getLogger("$tag/HTTP")).logger
         val client = OkHttpClient.Builder()
             .dns(BaseInjector.get().localDnsResolver())
             .addInterceptor(GenerateExceptionInterceptor(null, null))

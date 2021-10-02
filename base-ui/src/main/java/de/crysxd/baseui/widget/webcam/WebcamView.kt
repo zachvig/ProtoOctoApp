@@ -201,6 +201,11 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         }
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        scaleToFill = scaleToFill
+    }
+
     private fun displayHlsStream(state: WebcamState.HlsStreamReady) {
         binding.playingState.isVisible = true
         binding.hlsSurface.isVisible = true
@@ -331,30 +336,33 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         invalidateMjpegFrame(state.frame)
     }
 
-    private fun beginDelayedTransition() = TransitionManager.beginDelayedTransition(this, TransitionSet().also {
-        it.addTransition(Fade())
-        if (animatedMatrix) {
-            it.addTransition(ChangeImageTransform())
-        }
-        it.addListener(object : Transition.TransitionListener {
-            override fun onTransitionStart(transition: Transition) {
-                transitionActive = true
+    private fun beginDelayedTransition() {
+        TransitionManager.endTransitions(this)
+        TransitionManager.beginDelayedTransition(this, TransitionSet().also {
+            it.addTransition(Fade())
+            if (animatedMatrix) {
+                it.addTransition(ChangeImageTransform())
             }
+            it.addListener(object : Transition.TransitionListener {
+                override fun onTransitionStart(transition: Transition) {
+                    transitionActive = true
+                }
 
-            override fun onTransitionEnd(transition: Transition) {
-                transitionActive = false
-            }
+                override fun onTransitionEnd(transition: Transition) {
+                    transitionActive = false
+                }
 
-            override fun onTransitionCancel(transition: Transition) {
-                transitionActive = false
-            }
+                override fun onTransitionCancel(transition: Transition) {
+                    transitionActive = false
+                }
 
-            override fun onTransitionPause(transition: Transition) = Unit
+                override fun onTransitionPause(transition: Transition) = Unit
 
-            override fun onTransitionResume(transition: Transition) = Unit
+                override fun onTransitionResume(transition: Transition) = Unit
 
+            })
         })
-    })
+    }
 
     private fun zoom(zoomChange: Float, focusX: Float, focusY: Float) {
         fun View.zoomInternal(zoomChange: Float, focusX: Float, focusY: Float) {

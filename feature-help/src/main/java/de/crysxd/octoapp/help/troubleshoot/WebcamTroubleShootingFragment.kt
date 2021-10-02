@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionManager
 import de.crysxd.baseui.BaseFragment
 import de.crysxd.baseui.common.feedback.SendFeedbackDialog
@@ -77,6 +78,7 @@ class WebcamTroubleShootingFragment : BaseFragment() {
         when (finding) {
             is TestFullNetworkStackUseCase.Finding.WebcamReady -> {
                 binding.buttonContinue.text = getString(R.string.help___webcam_troubleshooting___continue)
+                binding.buttonContinue.setOnClickListener { findNavController().popBackStack() }
                 binding.webcamViewContainer.isVisible = true
                 binding.webcamView.setImageBitmap(finding.image)
             }

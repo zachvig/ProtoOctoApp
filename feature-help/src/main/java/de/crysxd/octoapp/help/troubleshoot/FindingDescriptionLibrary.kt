@@ -26,7 +26,7 @@ class FindingDescriptionLibrary(private val context: Context) {
         is TestFullNetworkStackUseCase.Finding.WebSocketUpgradeFailed -> "" // Never shown
         is TestFullNetworkStackUseCase.Finding.EmptyUrl -> context.getString(R.string.help___webcam_troubleshooting___title_url_syntax)
         is TestFullNetworkStackUseCase.Finding.NoImage -> context.getString(R.string.help___webcam_troubleshooting___title_might_not_be_webcam, finding.host)
-        is TestFullNetworkStackUseCase.Finding.WebcamReady -> "Test"
+        is TestFullNetworkStackUseCase.Finding.WebcamReady -> context.getString(R.string.help___webcam_troubleshooting___title_webcam_is_working)
     }
 
     fun getExplainerForFinding(finding: TestFullNetworkStackUseCase.Finding) = when (finding) {
@@ -96,6 +96,6 @@ class FindingDescriptionLibrary(private val context: Context) {
             finding.webUrl,
             finding.host
         )
-        is TestFullNetworkStackUseCase.Finding.WebcamReady -> "Test"
+        is TestFullNetworkStackUseCase.Finding.WebcamReady -> context.getString(R.string.help___webcam_troubleshooting___explainer_webcam_is_working, finding.fps)
     }
 }

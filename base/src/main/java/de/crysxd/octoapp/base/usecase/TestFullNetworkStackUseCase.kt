@@ -103,10 +103,10 @@ class TestFullNetworkStackUseCase @Inject constructor(
     }
 
     private suspend fun testWebcam(timber: Timber.Tree, webcamUrl: HttpUrl, host: String) = try {
-        withTimeoutOrNull(6000) {
+        withTimeoutOrNull(30000) {
             timber.i("Test webcam")
             var startTime: Long? = null
-            val frames = 30
+            val frames = 20
             val frame = MjpegConnection2(
                 streamUrl = webcamUrl,
                 name = "test",

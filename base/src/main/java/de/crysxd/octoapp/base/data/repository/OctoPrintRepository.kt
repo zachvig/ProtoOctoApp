@@ -69,7 +69,12 @@ class OctoPrintRepository(
 
     suspend fun updateActive(block: suspend (OctoPrintInstanceInformationV3) -> OctoPrintInstanceInformationV3?) {
         instanceInformationChannel.value?.let {
-            storeOctoprintInstanceInformation(it.id, block(it))
+            val new = block(it)
+            if (new != it) {
+                storeOctoprintInstanceInformation(it.id, new)
+            } else {
+                Timber.i("Drop update")
+            }
         }
     }
 

@@ -4,10 +4,10 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.ImageView
 import androidx.lifecycle.*
+import de.crysxd.baseui.BaseViewModel
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_HLS_WEBCAM
-import de.crysxd.baseui.BaseViewModel
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.network.MjpegConnection2
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
@@ -133,6 +133,12 @@ class WebcamViewModel(
                                         rotate90 = webcamSettings.rotate90,
                                     )
                                 }
+                            }.onEach { state ->
+                                if (state is UiState.FrameReady) {
+                                    octoPrintRepository.updateAppSettingsForActive {
+                                        it.copy(webcamLastAspectRatio = state.aspectRation)
+                                    }
+                                }
                             }.catch {
                                 Timber.tag(tag).i("ERROR")
                                 Timber.e(it)
@@ -194,7 +200,9 @@ class WebcamViewModel(
             } ?: default.ordinal
     ]
 
-    fun getInitialAspectRatio() = octoPrintRepository.getActiveInstanceSnapshot()?.settings?.webcam?.streamRatio ?: "16:9"
+    fun getInitialAspectRatio() = octoPrintRepository.getActiveInstanceSnapshot()?.let {
+        it.appSettings?.webcamLastAspectRatio ?: it.settings?.webcam?.streamRatio
+    } ?: "16:9"
 
     sealed class UiState(open val canSwitchWebcam: Boolean) {
         data class Loading(override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
