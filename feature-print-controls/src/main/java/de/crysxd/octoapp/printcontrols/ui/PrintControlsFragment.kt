@@ -74,6 +74,7 @@ class PrintControlsFragment : WidgetHostFragment() {
             WidgetType.GcodePreviewWidget,
             WidgetType.TuneWidget,
             WidgetType.ExtrudeWidget,
+            WidgetType.SendGcodeWidget
         ).also {
             if (!webcamSupported) {
                 it.remove(WidgetType.WebcamWidget)

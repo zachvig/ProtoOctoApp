@@ -9,9 +9,11 @@ import de.crysxd.baseui.BaseViewModelFactory
 import de.crysxd.baseui.common.NetworkStateViewModel
 import de.crysxd.baseui.common.configureremote.ConfigureRemoteAccessViewModel
 import de.crysxd.baseui.common.enter_value.EnterValueViewModel
+import de.crysxd.baseui.common.feedback.SendFeedbackViewModel
 import de.crysxd.baseui.common.gcode.GcodePreviewViewModel
 import de.crysxd.baseui.common.terminal.TerminalViewModel
 import de.crysxd.baseui.menu.MenuBottomSheetViewModel
+import de.crysxd.baseui.purchase.PurchaseViewModel
 import de.crysxd.baseui.widget.EditWidgetsViewModel
 import de.crysxd.baseui.widget.extrude.ExtrudeWidgetViewModel
 import de.crysxd.baseui.widget.gcode.SendGcodeWidgetViewModel
@@ -19,14 +21,12 @@ import de.crysxd.baseui.widget.quickaccess.QuickAccessWidgetViewModel
 import de.crysxd.baseui.widget.temperature.ControlTemperatureWidgetViewModel
 import de.crysxd.baseui.widget.webcam.WebcamViewModel
 import de.crysxd.octoapp.base.OctoPreferences
-import de.crysxd.baseui.purchase.PurchaseViewModel
 import de.crysxd.octoapp.base.data.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.data.repository.PinnedMenuItemRepository
 import de.crysxd.octoapp.base.data.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.data.repository.TemperatureDataRepository
 import de.crysxd.octoapp.base.di.ViewModelKey
-import de.crysxd.baseui.common.feedback.SendFeedbackViewModel
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.ExtrudeFilamentUseCase
@@ -66,10 +66,14 @@ open class ViewModelModule {
     @ViewModelKey(SendGcodeWidgetViewModel::class)
     open fun provideSendGcodeWidgetViewModel(
         useCase: ExecuteGcodeCommandUseCase,
-        getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase
+        getGcodeShortcutsUseCase: GetGcodeShortcutsUseCase,
+        octoPrintProvider: OctoPrintProvider,
+        octoPreferences: OctoPreferences
     ): ViewModel = SendGcodeWidgetViewModel(
         getGcodeShortcutsUseCase = getGcodeShortcutsUseCase,
-        sendGcodeCommandUseCase = useCase
+        sendGcodeCommandUseCase = useCase,
+        octoPreferences = octoPreferences,
+        octoPrintProvider = octoPrintProvider,
     )
 
     @Provides
