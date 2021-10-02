@@ -42,6 +42,8 @@ class GetConnectOctoEverywhereUrlUseCase @Inject constructor(
                 .replace("{{{callbackPath}}}", OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH)
         )
     } catch (e: Exception) {
+        Result.Error(BaseInjector.get().localizedContext().getString(R.string.configure_remote_acces___octoeverywhere___error_no_connection), e)
+    } catch (e: Exception) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.OctoEverywherePluginMissing)
         Result.Error(BaseInjector.get().localizedContext().getString(R.string.configure_remote_acces___octoeverywhere___error_install_plugin), e)
     }

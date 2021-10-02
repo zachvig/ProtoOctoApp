@@ -97,6 +97,10 @@ As soon as your OctoPrint can’t be reached directly, OctoApp will switch to th
     Please <b>open the webinterface</b> and install the latest version of the <b>OctoEverywhere plugin</b> before continuing.
     ]]></string>
 
+    <string name="configure_remote_acces___octoeverywhere___error_no_connection"><![CDATA[
+    The app can\'t reach your OctoPrint at the moment, but this is required for the initial setup of OctoEverywhere.
+    ]]></string>
+
     <!-- Auto filled -->
     <string name="configure_remote_acces___octoeverywhere___title">"OctoEverywhere!"</string>
 
