@@ -84,7 +84,7 @@ class OctoPrintRepository(
                     Timber.i("Updating instance with $id")
                     storeOctoprintInstanceInformation(it.id, new)
                 } else {
-                    Timber.i("Drop update, no changes $it")
+                    Timber.i("Drop update, no changes")
                 }
             }
         }
