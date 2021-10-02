@@ -45,6 +45,7 @@ import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
@@ -290,15 +291,19 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         // Show stalled indicator if no new frame arrives within 10s
         hideLiveIndicatorJob?.cancel()
         hideLiveIndicatorJob = coroutineScope.launchWhenCreated {
+            val start = System.currentTimeMillis()
             delay(NOT_LIVE_IF_NO_FRAME_FOR_MS)
             beginDelayedTransition()
             usedLiveIndicator?.isVisible = false
 
             delay(STALLED_IF_NO_FRAME_FOR_MS - NOT_LIVE_IF_NO_FRAME_FOR_MS)
             beginDelayedTransition()
-            val seconds = TimeUnit.MILLISECONDS.toSeconds(STALLED_IF_NO_FRAME_FOR_MS)
-            binding.streamStalledIndicatorDetail.text = context.getString(R.string.no_frames_since_xs, seconds)
             binding.streamStalledIndicator.isVisible = true
+            do {
+                val seconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start)
+                binding.streamStalledIndicatorDetail.text = context.getString(R.string.no_frames_since_xs, seconds)
+                delay(1000)
+            } while (isActive)
         }
 
         invalidate()

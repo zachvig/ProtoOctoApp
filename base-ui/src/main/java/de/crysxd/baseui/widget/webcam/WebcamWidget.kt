@@ -8,6 +8,7 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import de.crysxd.baseui.R
 import de.crysxd.baseui.databinding.WebcamWidgetBinding
 import de.crysxd.baseui.di.injectActivityViewModel
 import de.crysxd.baseui.ext.requireOctoActivity
@@ -19,7 +20,6 @@ import de.crysxd.baseui.widget.webcam.WebcamViewModel.UiState
 import de.crysxd.baseui.widget.webcam.WebcamViewModel.UiState.Error
 import de.crysxd.baseui.widget.webcam.WebcamViewModel.UiState.Loading
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.baseui.R
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.data.models.WidgetType
 import de.crysxd.octoapp.base.ext.open
@@ -98,7 +98,6 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
                 WebcamView.WebcamState.HlsStreamReady(state.uri, state.authHeader)
             }
             is Error -> {
-                state.aspectRation?.let(::applyAspectRatio)
                 if (state.isManualReconnect) {
                     WebcamView.WebcamState.Error(state.streamUrl)
                 } else {

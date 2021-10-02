@@ -146,7 +146,6 @@ class WebcamViewModel(
                                     UiState.Error(
                                         isManualReconnect = true,
                                         streamUrl = webcamSettings.streamUrl,
-                                        aspectRation = webcamSettings.streamRatio,
                                         canSwitchWebcam = canSwitchWebcam,
                                     )
                                 )
@@ -218,7 +217,7 @@ class WebcamViewModel(
         ) : UiState(canSwitchWebcam)
 
         data class HlsStreamReady(val uri: Uri, val authHeader: String?, val aspectRation: String, override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
-        data class Error(val isManualReconnect: Boolean, val streamUrl: String? = null, val aspectRation: String? = null, override val canSwitchWebcam: Boolean) :
+        data class Error(val isManualReconnect: Boolean, val streamUrl: String? = null, override val canSwitchWebcam: Boolean) :
             UiState(canSwitchWebcam)
     }
 }
