@@ -164,4 +164,8 @@
         <key>advertise_companion</key>
         <value>true</value>
     </entry>
+    <entry>
+        <key>companion_plugin_url</key>
+        <value>https://github.com/crysxd/OctoApp-Plugin</value>
+    </entry>
 </defaultsMap>

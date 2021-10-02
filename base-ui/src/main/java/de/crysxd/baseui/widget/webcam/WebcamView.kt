@@ -160,10 +160,12 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             WebcamState.NotConfigured -> {
                 binding.loadingState.isVisible = false
                 binding.notConfiguredState.isVisible = true
+                animatedMatrix = false
             }
             WebcamState.Reconnecting -> {
                 binding.loadingState.isVisible = false
                 binding.reconnectingState.isVisible = true
+                animatedMatrix = false
             }
             WebcamState.HlsStreamDisabled -> {
                 binding.loadingState.isVisible = false
@@ -171,6 +173,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 binding.errorTitle.text = context.getString(R.string.hls_stream_disabled_title)
                 binding.errorDescription.text = context.getString(R.string.hls_stream_disbaled_description)
                 binding.buttonReconnect.text = context.getString(R.string.enable)
+                animatedMatrix = false
             }
             is WebcamState.Error -> {
                 binding.loadingState.isVisible = false
@@ -182,6 +185,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 binding.buttonTroubleShoot.setOnClickListener {
                     UriLibrary.getWebcamTroubleshootingUri().open(findFragment<Fragment>().requireOctoActivity())
                 }
+                animatedMatrix = false
             }
             is WebcamState.HlsStreamReady -> displayHlsStream(newState)
             is WebcamState.MjpegFrameReady -> displayMjpegFrame(newState)

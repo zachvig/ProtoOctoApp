@@ -3,6 +3,8 @@ package de.crysxd.octoapp.base
 import android.net.Uri
 import android.util.Base64
 import androidx.annotation.StringRes
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.di.BaseInjector
 import okhttp3.HttpUrl
 import timber.log.Timber
@@ -50,7 +52,7 @@ object UriLibrary {
     fun getPurchaseUri(): Uri =
         getUri(R.string.uri___purchase)
 
-    fun getCompanionPluginUri(): Uri = Uri.parse("https://github.com/crysxd/OctoApp-Plugin")
+    fun getCompanionPluginUri(): Uri = Uri.parse(Firebase.remoteConfig.getString("companion_plugin_url"))
 
     fun isActiveInstanceRequired(uri: Uri) = when (uri.path) {
         getConfigureRemoteAccessUri().path -> true
