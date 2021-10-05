@@ -20,19 +20,20 @@ class SetAlternativeWebUrlUseCase @Inject constructor(
 ) : UseCase<SetAlternativeWebUrlUseCase.Params, SetAlternativeWebUrlUseCase.Result>() {
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree): Result {
-        if (!param.bypassChecks && param.webUrl.isNotEmpty()) {
+        val uri = if (param.webUrl.isEmpty()) null else try {
+            Uri.parse(param.webUrl)
+                .buildUpon()
+                .basicAuthCredentials(username = param.username, password = param.password)
+                .build()
+        } catch (e: Exception) {
+            Timber.e(e)
+            OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigManuallySetFailed)
+            return Result.Failure(context.getString(R.string.configure_remote_acces___manual___error_invalid_url), e)
+        }
+
+        if (!param.bypassChecks && uri != null) {
             val instance = octoPrintRepository.getActiveInstanceSnapshot()
                 ?: throw IllegalStateException("No active instance")
-            val uri = try {
-                Uri.parse(param.webUrl)
-                    .buildUpon()
-                    .basicAuthCredentials(username = param.username, password = param.password)
-                    .build()
-            } catch (e: Exception) {
-                Timber.e(e)
-                OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigManuallySetFailed)
-                return Result.Failure(context.getString(R.string.configure_remote_acces___manual___error_invalid_url), e)
-            }
 
             val isOe = uri.host?.endsWith("octoeverywhere.com") == true
             val isShared = uri.host?.startsWith("shared-") == true
@@ -77,7 +78,7 @@ class SetAlternativeWebUrlUseCase @Inject constructor(
         }
 
         octoPrintRepository.updateActive {
-            it.copy(alternativeWebUrl = param.webUrl.takeIf { s -> s.isNotBlank() }, octoEverywhereConnection = null)
+            it.copy(alternativeWebUrl = uri?.toString(), octoEverywhereConnection = null)
         }
 
         OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigManuallySet)
