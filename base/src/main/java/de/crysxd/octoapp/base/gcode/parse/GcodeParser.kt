@@ -38,18 +38,34 @@ class GcodeParser(
         isAbsolutePositioningActive = true
         var positionInFile = 0
         var lastUpdatePercent = 0
+        val reader = content.buffered()
 
-        content.reader().useLines { lines ->
-            lines.iterator().forEach {
-                parseLine(it.takeWhile { it != ';' }, positionInFile)
-                positionInFile += it.length + 1
-
-                val progress = (positionInFile / totalSize.toFloat())
-                val percent = (progress * 100).roundToInt()
-                if (lastUpdatePercent != percent) {
-                    progressUpdate(progress)
-                    lastUpdatePercent = percent
+        // This readLine function also returns \r and \n so we can properly keep track
+        // of our position in the file. Ignoring \r will cause progress drift while printing.
+        fun readLine(): Pair<String, Boolean> {
+            val line = StringBuffer()
+            while (true) {
+                when (val read = reader.read()) {
+                    -1 -> return line.toString() to false
+                    '\n'.code -> return line.append('\n').toString() to true
+                    else -> line.append(read.toChar())
                 }
+            }
+        }
+
+        while (true) {
+            val (line, moreLines) = readLine()
+            parseLine(line.takeWhile { it != ';' && it != '\r' && it != '\n' }, positionInFile)
+            positionInFile += line.length
+
+            val progress = (positionInFile / totalSize.toFloat())
+            val percent = (progress * 100).roundToInt()
+            if (lastUpdatePercent != percent) {
+                progressUpdate(progress)
+                lastUpdatePercent = percent
+            }
+            if (!moreLines) {
+                break
             }
         }
 
