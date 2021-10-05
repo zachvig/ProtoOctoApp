@@ -66,5 +66,6 @@ fun Uri.Builder.basicAuthCredentials(username: String, password: String): Uri.Bu
         username.isNotBlank() -> "${username.urlEncode()}@"
         else -> ""
     }
-    return encodedAuthority("$credentials${build().host}")
+    val port = ":${build().port}".takeIf { build().port > 0 } ?: ""
+    return encodedAuthority("$credentials${build().host}$port")
 }
