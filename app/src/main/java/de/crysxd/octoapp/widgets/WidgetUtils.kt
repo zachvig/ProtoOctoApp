@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.widget.RemoteViews
 import de.crysxd.octoapp.BuildConfig
 import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_WEB_URL
@@ -53,7 +54,11 @@ internal fun createLaunchAppIntent(context: Context, webUrl: String?) = PendingI
             it.putExtra(EXTRA_TARGET_OCTOPRINT_WEB_URL, webUrl)
         }
     },
-    PendingIntent.FLAG_UPDATE_CURRENT
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    } else {
+        PendingIntent.FLAG_UPDATE_CURRENT
+    }
 )
 
 internal fun createUpdateIntent(context: Context, widgetId: Int, playLive: Boolean = false) =
@@ -63,9 +68,10 @@ internal fun createUpdatedNowText() = getTime()
 
 internal fun getTime() = Date().format()
 
-internal fun createUpdateFailedText(context: Context, appWidgetId: Int) = AppWidgetPreferences.getLastUpdateTime(appWidgetId).takeIf { it > 0 }?.let {
-    context.getString(R.string.app_widget___offline_since_x, Date(it).format())
-} ?: context.getString(R.string.app_widget___update_failed)
+internal fun createUpdateFailedText(context: Context, appWidgetId: Int) =
+    AppWidgetPreferences.getLastUpdateTime(appWidgetId).takeIf { it > 0 }?.let {
+        context.getString(R.string.app_widget___offline_since_x, Date(it).format())
+    } ?: context.getString(R.string.app_widget___update_failed)
 
 internal fun applyDebugOptions(views: RemoteViews, appWidgetId: Int) {
     views.setTextViewText(R.id.widgetId, "$appWidgetId/${AppWidgetPreferences.getInstanceForWidgetId(appWidgetId)}")
