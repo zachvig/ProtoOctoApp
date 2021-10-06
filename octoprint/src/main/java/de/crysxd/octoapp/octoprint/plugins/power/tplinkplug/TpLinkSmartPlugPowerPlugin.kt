@@ -16,7 +16,7 @@ class TpLinkSmartPlugPowerPlugin(
     }
 
     internal suspend fun isOn(device: TpLinkSmartPlugPowerDevice) =
-        api.sendCommandWithResponse(TpLinkSmartPlugCommand.GetDeviceStatus(device)).currentState == TpLinkSmartPlugResponse.State.ON
+        api.sendCommandWithResponse(TpLinkSmartPlugCommand.GetDeviceStatus(device))?.currentState == TpLinkSmartPlugResponse.State.ON
 
     override fun getDevices(settings: Settings) =
         settings.plugins.values.mapNotNull {

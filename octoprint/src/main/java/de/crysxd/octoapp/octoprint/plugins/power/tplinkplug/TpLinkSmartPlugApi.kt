@@ -10,6 +10,6 @@ interface TpLinkSmartPlugApi {
     suspend fun sendCommand(@Body command: TpLinkSmartPlugCommand): Response<Unit>
 
     @POST("plugin/tplinksmartplug")
-    suspend fun sendCommandWithResponse(@Body command: TpLinkSmartPlugCommand): TpLinkSmartPlugResponse
+    suspend fun sendCommandWithResponse(@Body command: TpLinkSmartPlugCommand): TpLinkSmartPlugResponse?
 
 }
