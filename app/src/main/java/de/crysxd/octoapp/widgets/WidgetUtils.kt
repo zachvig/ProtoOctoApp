@@ -27,6 +27,7 @@ internal fun updateAppWidget(widgetId: Int) {
     when (val name = manager.getAppWidgetInfo(widgetId).provider.className) {
         ControlsWebcamAppWidget::class.java.name, NoControlsWebcamAppWidget::class.java.name -> BaseWebcamAppWidget.updateAppWidget(widgetId)
         ProgressAppWidget::class.java.name -> ProgressAppWidget.notifyWidgetDataChanged()
+        QuickAccessAppWidget::class.java.name -> QuickAccessAppWidget.notifyWidgetDataChanged()
         else -> Timber.e(IllegalArgumentException("Supposed to update widget $widgetId with unknown provider $name"))
     }
 }
