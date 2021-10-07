@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.widget.RemoteViews
 import de.crysxd.octoapp.BuildConfig
 import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_ID
@@ -28,6 +29,7 @@ internal fun updateAppWidget(widgetId: Int) {
     when (val name = manager.getAppWidgetInfo(widgetId).provider.className) {
         ControlsWebcamAppWidget::class.java.name, NoControlsWebcamAppWidget::class.java.name -> BaseWebcamAppWidget.updateAppWidget(widgetId)
         ProgressAppWidget::class.java.name -> ProgressAppWidget.notifyWidgetDataChanged()
+        QuickAccessAppWidget::class.java.name -> QuickAccessAppWidget.notifyWidgetDataChanged()
         else -> Timber.e(IllegalArgumentException("Supposed to update widget $widgetId with unknown provider $name"))
     }
 }
@@ -63,9 +65,10 @@ internal fun createUpdatedNowText() = getTime()
 
 internal fun getTime() = Date().format()
 
-internal fun createUpdateFailedText(context: Context, appWidgetId: Int) = AppWidgetPreferences.getLastUpdateTime(appWidgetId).takeIf { it > 0 }?.let {
-    context.getString(R.string.app_widget___offline_since_x, Date(it).format())
-} ?: context.getString(R.string.app_widget___update_failed)
+internal fun createUpdateFailedText(context: Context, appWidgetId: Int) =
+    AppWidgetPreferences.getLastUpdateTime(appWidgetId).takeIf { it > 0 }?.let {
+        context.getString(R.string.app_widget___offline_since_x, Date(it).format())
+    } ?: context.getString(R.string.app_widget___update_failed)
 
 internal fun applyDebugOptions(views: RemoteViews, appWidgetId: Int) {
     views.setTextViewText(R.id.widgetId, "$appWidgetId/${AppWidgetPreferences.getInstanceForWidgetId(appWidgetId)}")
