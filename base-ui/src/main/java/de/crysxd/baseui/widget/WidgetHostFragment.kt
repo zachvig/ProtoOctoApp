@@ -64,10 +64,12 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
     abstract fun doReloadWidgets()
 
     override fun requestTransition(quickTransition: Boolean) {
-        TransitionManager.beginDelayedTransition(
-            view as ViewGroup,
-            if (quickTransition) InstantAutoTransition() else AutoTransition()
-        )
+        (view as? ViewGroup)?.let {
+            TransitionManager.beginDelayedTransition(
+                it,
+                if (quickTransition) InstantAutoTransition() else AutoTransition()
+            )
+        }
     }
 
     fun installWidgets(list: List<WidgetType>) {
