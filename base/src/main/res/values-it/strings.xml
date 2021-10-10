@@ -604,7 +604,7 @@ Non appena il tuo OctoPrint non può essere raggiunto direttamente, OctoApp pass
     <string name="sign_in___broken_setup___basic_auth_required">"OctoApp ha richiesto le credenziali BasicAuth per accedere a OctoPrint"</string>
 
     <!-- Auto filled -->
-    <string name="sign_in___broken_setup___https_issue">"OctoApp non è stato in grado di connettersi via HTTPS a causa di un problema SSL, controlla la tua configurazione"</string>
+    <string name="sign_in___broken_setup___https_issue">"OctoApp non è stato in grado di connettersi via HTTPS a causa di un problema SSL, controlla la tua configurazione&lt;br&gt;&lt;br&gt;&lt;small&gt;%s&lt;/small&gt;"</string>
 
     <!-- Auto filled -->
     <string name="sign_in___broken_setup___websocket_upgrade_failed">"OctoApp non è riuscita a connettersi al websocket del tuo OctoPrint a causa di un problema di configurazione"</string>
@@ -880,4 +880,8 @@ felice stampa!"</string>
     <string name="main_menu___companion_plugin_announcement___title">"Installare il plugin di accompagnamento"</string>
     <string name="main_menu___companion_plugin_announcement___subtitle">"Il plugin OctoApp companion permette le notifiche push su internet con una migliore affidabilità"</string>
     <string name="main_menu___companion_plugin_announcement___install">"Installare il plugin"</string>
+    <string name="configure_remote_acces___octoeverywhere___error_no_connection"></string>
+    <string name="widget_gcode_send___confirmation_message"></string>
+    <string name="widget_gcode_send___confirmation_action"></string>
+    <string name="print_notification___disconnected"></string>
 </resources>
