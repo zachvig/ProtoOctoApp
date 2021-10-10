@@ -97,10 +97,6 @@ As soon as your OctoPrint can’t be reached directly, OctoApp will switch to th
     Please <b>open the webinterface</b> and install the latest version of the <b>OctoEverywhere plugin</b> before continuing.
     ]]></string>
 
-    <string name="configure_remote_acces___octoeverywhere___error_no_connection"><![CDATA[
-    The app can\'t reach your OctoPrint at the moment, but this is required for the initial setup of OctoEverywhere.
-    ]]></string>
-
     <!-- Auto filled -->
     <string name="configure_remote_acces___octoeverywhere___title">"OctoEverywhere!"</string>
 
@@ -613,7 +609,7 @@ As soon as your OctoPrint can’t be reached directly, OctoApp will switch to th
     <string name="sign_in___broken_setup___basic_auth_required">"OctoApp required Basic Auth credentials to access OctoPrint"</string>
 
     <!-- Auto filled -->
-    <string name="sign_in___broken_setup___https_issue">"OctoApp was unable to connect via HTTPS due to an SSL issue, please check your setup"</string>
+    <string name="sign_in___broken_setup___https_issue">"OctoApp was unable to connect via HTTPS due to an SSL issue, please check your setup&lt;br&gt;&lt;br&gt;&lt;small&gt;%s&lt;/small&gt;"</string>
 
     <!-- Auto filled -->
     <string name="sign_in___broken_setup___websocket_upgrade_failed">"OctoApp was unable to connect to the websocket of your OctoPrint due to an configuration issue"</string>
@@ -869,9 +865,7 @@ happy printing!"</string>
     <string name="updates_notification_channel___updates">"Updates"</string>
     <string name="app_widget___quick_access_empty">"Get started by long-pressing menu items in the app and pin them to this widget"</string>
     <string name="app_widget___click_menu_item_confirmation_message">"Execute „%s“?"</string>
-    <string name="widget_gcode_send___confirmation_message">"Execute „%s“?"</string>
     <string name="app_widget___click_menu_item_confirmation_action">"Execute"</string>
-    <string name="widget_gcode_send___confirmation_action">"Execute"</string>
     <string name="print_notification___live">"Live"</string>
     <string name="print_notification___live_on_x">"Live on %s"</string>
     <string name="print_notification___connecting">"Checking live status…"</string>
@@ -891,5 +885,8 @@ happy printing!"</string>
     <string name="main_menu___companion_plugin_announcement___title">"Install the companion plugin"</string>
     <string name="main_menu___companion_plugin_announcement___subtitle">"The OctoApp companion plugin allows push notifications over the internet with better reliability"</string>
     <string name="main_menu___companion_plugin_announcement___install">"Install the plugin"</string>
-    <string name="print_notification___disconnected">Disconnected</string>
+    <string name="configure_remote_acces___octoeverywhere___error_no_connection">"The app can't reach your OctoPrint at the moment, but this is required for the initial setup of OctoEverywhere."</string>
+    <string name="widget_gcode_send___confirmation_message">"Execute „%s“?"</string>
+    <string name="widget_gcode_send___confirmation_action">"Execute"</string>
+    <string name="print_notification___disconnected">"Disconnected"</string>
 </resources>
