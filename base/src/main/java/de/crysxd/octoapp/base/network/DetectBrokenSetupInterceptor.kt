@@ -31,18 +31,18 @@ class DetectBrokenSetupInterceptor(
         reportIssue(e.webUrl, webUrlIssue = BASIC_AUTH_REQUIRED, alternativeWebUrlIssue = BASIC_AUTH_REQUIRED_FOR_ALTERNATIVE)
         throw e
     } catch (e: OctoPrintHttpsException) {
-        Timber.w(e, "Caught OctoPrintHttpsException, setup broken (${e.webUrl})")
-        reportIssue(e.webUrl, webUrlIssue = HTTP_ISSUE, alternativeWebUrlIssue = HTTP_ISSUE_FOR_ALTERNATIVE)
+        Timber.e(e, "Caught OctoPrintHttpsException, setup broken (${e.webUrl})")
+        reportIssue(e.webUrl, webUrlIssue = HTTP_ISSUE, alternativeWebUrlIssue = HTTP_ISSUE_FOR_ALTERNATIVE, throwable = e)
         throw e
     }
 
-    private fun reportIssue(url: HttpUrl, webUrlIssue: ActiveInstanceIssue, alternativeWebUrlIssue: ActiveInstanceIssue) {
+    private fun reportIssue(url: HttpUrl, webUrlIssue: ActiveInstanceIssue, alternativeWebUrlIssue: ActiveInstanceIssue, throwable: Throwable? = null) {
         AppScope.launch {
             octoPrintRepository.findInstances(url).forEach { res ->
                 octoPrintRepository.update(res.first.id) {
                     val issue = if (res.second) alternativeWebUrlIssue else webUrlIssue
-                    Timber.w("Reporting $issue")
-                    it.copy(issue = issue)
+                    Timber.w("Reporting $issue from $throwable")
+                    it.copy(issue = issue, issueMessage = throwable?.let { t -> "${t::class.java}: ${t.message}" })
                 }
             }
         }

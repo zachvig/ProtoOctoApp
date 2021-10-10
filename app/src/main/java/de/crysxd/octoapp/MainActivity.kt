@@ -68,7 +68,6 @@ import de.crysxd.octoapp.widgets.updateAllWidgets
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 import de.crysxd.octoapp.octoprint.models.socket.Message as SocketMessage
 import de.crysxd.octoapp.preprintcontrols.di.PrePrintControlsInjector as ConnectPrinterInjector
@@ -140,9 +139,9 @@ class MainActivity : OctoActivity() {
             .observe(this) { instance ->
                 when {
                     instance != null && (instance.apiKey.isBlank() || instance.issue != null) -> {
-                        Timber.i("Instance information received without API key $this")
+                        Timber.i("Instance information received without API key: $instance")
                         showDialog(
-                            message = getString(instance.issue?.messageRes ?: R.string.sign_in___broken_setup___api_key_revoked),
+                            message = getString(instance.issue?.messageRes ?: R.string.sign_in___broken_setup___api_key_revoked, instance.issueMessage),
                             positiveAction = {
                                 if (instance.issue?.isForAlternative != true) {
                                     UriLibrary.getFixOctoPrintConnectionUri(baseUrl = instance.webUrl, instanceId = instance.id).open(this)
@@ -174,16 +173,9 @@ class MainActivity : OctoActivity() {
             }
 
         SignInInjector.get().octoprintRepository().instanceInformationFlow()
-            .onEach {
-                Timber.i("DEBUG 1: ${it?.label} -> ${it?.settings?.appearance?.color}")
-            }
             .distinctUntilChangedBy { it?.settings?.appearance?.color }
-            .onEach {
-                Timber.i("DEBUG 2: ${it?.label} -> ${it?.settings?.appearance?.color}")
-            }
             .asLiveData()
             .observe(this) {
-                Timber.i("DEBUG 3: ${it?.label} -> ${it?.settings?.appearance?.color}")
                 ColorTheme.applyColorTheme(it.colorTheme)
             }
 

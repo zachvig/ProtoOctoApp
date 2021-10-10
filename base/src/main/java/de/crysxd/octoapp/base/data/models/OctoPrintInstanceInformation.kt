@@ -72,6 +72,7 @@ data class OctoPrintInstanceInformationV3(
     val alternativeWebUrl: HttpUrl? = null,
     val apiKey: String,
     val issue: ActiveInstanceIssue? = null,
+    val issueMessage: String? = null,
     val m115Response: String? = null,
     val systemInfo: SystemInfo.Info? = null,
     val settings: Settings? = null,
