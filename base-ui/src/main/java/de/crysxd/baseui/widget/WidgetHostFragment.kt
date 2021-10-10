@@ -61,6 +61,11 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
         handler.postDelayed(reloadRunnable, 50)
     }
 
+    override fun onStop() {
+        super.onStop()
+        handler.removeCallbacks(reloadRunnable)
+    }
+
     abstract fun doReloadWidgets()
 
     override fun requestTransition(quickTransition: Boolean) {
