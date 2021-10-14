@@ -284,7 +284,7 @@ Tan pronto como su OctoPrint no pueda ser alcanzado directamente, OctoApp cambia
     <string name="main___banner_connected_via_alternative">"Conectado a través de Internet"</string>
 
     <!-- Auto filled -->
-    <string name="main___banner_connected_via_octoeverywhere">"¡Conectado a través de OctoEverywhere!"</string>
+    <string name="main___banner_connected_via_octoeverywhere">"Conectado a través de OctoEverywhere"</string>
 
     <!-- Auto filled -->
     <string name="main___banner_connection_lost_reconnecting">"Conexión perdida, reconectando…"</string>
@@ -885,8 +885,9 @@ feliz impresión!"</string>
     <string name="main_menu___companion_plugin_announcement___title">"Instalar el plugin complementario"</string>
     <string name="main_menu___companion_plugin_announcement___subtitle">"El plugin complementario de OctoApp permite las notificaciones push a través de Internet con mayor fiabilidad"</string>
     <string name="main_menu___companion_plugin_announcement___install">"Instalar el plugin"</string>
-    <string name="configure_remote_acces___octoeverywhere___error_no_connection"></string>
-    <string name="widget_gcode_send___confirmation_message"></string>
-    <string name="widget_gcode_send___confirmation_action"></string>
-    <string name="print_notification___disconnected"></string>
+    <string name="configure_remote_acces___octoeverywhere___error_no_connection">"La aplicación no puede acceder a su OctoPrint en este momento, pero esto es necesario para la configuración inicial de OctoEverywhere."</string>
+    <string name="widget_gcode_send___confirmation_message">"¿Ejecutar \"% s\"?"</string>
+    <string name="widget_gcode_send___confirmation_action">"Ejecutar"</string>
+    <string name="print_notification___disconnected">"Desconectado"</string>
+    <string name="main___banner_connected_via_local">"Conectado a través de la red local"</string>
 </resources>
