@@ -276,10 +276,10 @@ Sobald dein OctoPrint nicht mehr direkt erreichbar ist, schaltet OctoApp auf die
     <string name="location">"Speicherort"</string>
 
     <!-- Auto filled -->
-    <string name="main___banner_connected_via_alternative">"Verbunden über Internet"</string>
+    <string name="main___banner_connected_via_alternative">"Über Internet verbunden"</string>
 
     <!-- Auto filled -->
-    <string name="main___banner_connected_via_octoeverywhere">"Verbunden über OctoEverywhere!"</string>
+    <string name="main___banner_connected_via_octoeverywhere">"Über OctoEverywhere verbunden"</string>
 
     <!-- Auto filled -->
     <string name="main___banner_connection_lost_reconnecting">"Verbindung verloren, wiederherstellen…"</string>
@@ -880,8 +880,9 @@ gutes Drucken!"</string>
     <string name="main_menu___companion_plugin_announcement___title">"Installiere das OctoApp Plugin"</string>
     <string name="main_menu___companion_plugin_announcement___subtitle">"Das OctoApp Companion Plugin ermöglicht Benachrichtigungen über das Internet mit höherer Zuverlässigkeit"</string>
     <string name="main_menu___companion_plugin_announcement___install">"Installiere das Plugin"</string>
-    <string name="configure_remote_acces___octoeverywhere___error_no_connection"></string>
-    <string name="widget_gcode_send___confirmation_message"></string>
-    <string name="widget_gcode_send___confirmation_action"></string>
-    <string name="print_notification___disconnected"></string>
+    <string name="configure_remote_acces___octoeverywhere___error_no_connection">"Die App kann dein OctoPrint derzeit nicht erreichen, das ist jedoch für die Ersteinrichtung von OctoEverywhere erforderlich."</string>
+    <string name="widget_gcode_send___confirmation_message">"„%s“ ausführen?"</string>
+    <string name="widget_gcode_send___confirmation_action">"Ausführen"</string>
+    <string name="print_notification___disconnected">"Getrennt"</string>
+    <string name="main___banner_connected_via_local">"Über lokales Netzwerk verbunden"</string>
 </resources>
