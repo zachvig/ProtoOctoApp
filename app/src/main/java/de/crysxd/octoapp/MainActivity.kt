@@ -27,6 +27,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.transition.ChangeBounds
 import androidx.transition.Explode
+import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -104,10 +105,19 @@ class MainActivity : OctoActivity() {
             .asLiveData()
             .map { it }
             .observe(this, ::onEventReceived)
+
         ConnectPrinterInjector.get().octoprintProvider().passiveCurrentMessageFlow("MainActivity@currentMessage")
             .asLiveData()
             .map { it }
             .observe(this, ::onCurrentMessageReceived)
+
+        ConnectPrinterInjector.get().octoprintProvider().passiveConnectionEventFlow("MainActivity@connectionType")
+            .asLiveData()
+            .map { it }
+            .observe(this) {
+                viewModel.connectionType = it.connectionType
+                updateConnectionBanner(false)
+            }
 
         // Inflate widgets
         octoWidgetRecycler.setWidgetFactory(this) {
@@ -383,7 +393,6 @@ class MainActivity : OctoActivity() {
         // as this might lead to the user being stuck
         is Event.Disconnected -> {
             Timber.w("Connection lost")
-            viewModel.connectionType = null
             when {
                 e.exception is WebSocketMaybeBrokenException -> e.exception?.let(this::showDialog)
                 e.exception is WebSocketUpgradeFailedException -> e.exception?.let(this::showDialog)
@@ -395,8 +404,6 @@ class MainActivity : OctoActivity() {
 
         is Event.Connected -> {
             Timber.w("Connection restored")
-            viewModel.connectionType = e.connectionType
-            updateConnectionBanner(false)
             updateAllWidgets()
         }
 
@@ -407,7 +414,22 @@ class MainActivity : OctoActivity() {
 
     private fun updateConnectionBanner(alreadyShrunken: Boolean) {
         when (viewModel.connectionType) {
-            null, ConnectionType.Primary -> setBannerVisible(false)
+            null -> setBannerVisible(false)
+
+            ConnectionType.Primary -> if (viewModel.previousConnectionType != null && viewModel.previousConnectionType != ConnectionType.Primary) {
+                // If we switched back from a alternative connection to primary, show banner
+                showBanner(
+                    R.string.main___banner_connected_via_local,
+                    null,
+                    R.color.green,
+                    showSpinner = false,
+                    alreadyShrunken = false,
+                    doOnShrink = { setBannerVisible(false) }
+                )
+            } else {
+                Timber.d("Previous connection type was ${viewModel.previousConnectionType}, not showing local banner")
+                setBannerVisible(false)
+            }
 
             ConnectionType.Alternative -> showBanner(
                 R.string.main___banner_connected_via_alternative,
@@ -520,8 +542,15 @@ class MainActivity : OctoActivity() {
         else -> Unit
     }
 
-    private fun showBanner(@StringRes text: Int, @DrawableRes icon: Int?, @ColorRes background: Int, showSpinner: Boolean, alreadyShrunken: Boolean) {
-        binding.bannerView.show(this, text, icon, background, showSpinner, alreadyShrunken)
+    private fun showBanner(
+        @StringRes text: Int,
+        @DrawableRes icon: Int?,
+        @ColorRes background: Int,
+        showSpinner: Boolean,
+        alreadyShrunken: Boolean,
+        doOnShrink: () -> Unit = {}
+    ) {
+        binding.bannerView.show(this, text, icon, background, showSpinner, alreadyShrunken, doOnShrink)
         setBannerVisible(true)
     }
 
@@ -549,6 +578,7 @@ class MainActivity : OctoActivity() {
         fun runTransition() = TransitionManager.beginDelayedTransition(rootLayout, TransitionSet().apply {
             addTransition(Explode())
             addTransition(ChangeBounds())
+            addTransition(Fade())
             excludeChildren(octoToolbar, true)
         })
 

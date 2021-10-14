@@ -38,7 +38,8 @@ class ActivityBannerView @JvmOverloads constructor(context: Context, attrs: Attr
         @DrawableRes icon: Int?,
         @ColorRes backgroundColor: Int,
         showSpinner: Boolean,
-        alreadyShrunken: Boolean
+        alreadyShrunken: Boolean,
+        doOnShrink: () -> Unit = {},
     ) {
         val configHash = message + (icon ?: 0) + backgroundColor + showSpinner.hashCode()
         if (lastConfigHash == configHash) {
@@ -69,6 +70,7 @@ class ActivityBannerView @JvmOverloads constructor(context: Context, attrs: Attr
             shrinkJob = activity.lifecycleScope.launchWhenCreated {
                 delay(5000)
                 shrink()
+                doOnShrink()
             }
         }
 

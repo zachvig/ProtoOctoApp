@@ -119,17 +119,20 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
         when (state) {
             ConnectPrinterViewModel.UiState.OctoPrintNotAvailable -> {
                 binding.octoprintNotAvailableControls.isVisible = true
+                binding.octoView.swim()
                 showStatus(
                     R.string.connect_printer___octoprint_not_available_title,
                     R.string.connect_printer___octoprint_not_available_detail
                 )
             }
 
-            ConnectPrinterViewModel.UiState.OctoPrintStarting -> showStatus(
-                R.string.connect_printer___octoprint_starting_title
-            )
+            ConnectPrinterViewModel.UiState.OctoPrintStarting -> {
+                binding.octoView.swim()
+                showStatus(R.string.connect_printer___octoprint_starting_title)
+            }
 
             is ConnectPrinterViewModel.UiState.WaitingForPrinterToComeOnline -> {
+                binding.octoView.idle()
                 binding.buttonTurnOnPsu.setOnClickListener {
                     MenuBottomSheetFragment.createForMenu(PowerControlsMenu(type = PowerControlsMenu.DeviceType.PrinterPsu, action = PowerControlsMenu.Action.TurnOn))
                         .show(childFragmentManager)
@@ -152,11 +155,13 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
                 )
             }
 
-            ConnectPrinterViewModel.UiState.PrinterConnecting -> showStatus(
-                R.string.connect_printer___printer_is_connecting_title
-            )
+            ConnectPrinterViewModel.UiState.PrinterConnecting -> {
+                binding.octoView.swim()
+                showStatus(R.string.connect_printer___printer_is_connecting_title)
+            }
 
             is ConnectPrinterViewModel.UiState.PrinterOffline -> {
+                binding.octoView.idle()
                 binding.psuTurnOnControls.isVisible = true
                 binding.buttonTurnOnPsu.setOnClickListener {
                     if (state.psuSupported) {
@@ -188,11 +193,13 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
                 )
             }
 
-            is ConnectPrinterViewModel.UiState.PrinterPsuCycling -> showStatus(
-                R.string.connect_printer___psu_cycling_title
-            )
+            is ConnectPrinterViewModel.UiState.PrinterPsuCycling -> {
+                binding.octoView.swim()
+                showStatus(R.string.connect_printer___psu_cycling_title)
+            }
 
             ConnectPrinterViewModel.UiState.WaitingForUser -> {
+                binding.octoView.idle()
                 binding.beginConnectControls.isVisible = true
                 showStatus(
                     R.string.connect_printer___waiting_for_user_title,
@@ -200,19 +207,24 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
                 )
             }
 
-            ConnectPrinterViewModel.UiState.Initializing -> showStatus(
-                R.string.connect_printer___searching_for_octoprint_title
-            )
+            ConnectPrinterViewModel.UiState.Initializing -> {
+                binding.octoView.swim()
+                showStatus(R.string.connect_printer___searching_for_octoprint_title)
+            }
 
             ConnectPrinterViewModel.UiState.PrinterConnected -> {
+                binding.octoView.idle()
                 showStatus(R.string.connect_printer___printer_connected_title, R.string.connect_printer___printer_connected_detail_1)
                 showStatusDelayed(R.string.connect_printer___printer_connected_title, R.string.connect_printer___printer_connected_detail_2)
             }
 
-            ConnectPrinterViewModel.UiState.Unknown -> showStatus(
-                R.string.error_general,
-                R.string.try_restrating_the_app_or_octoprint
-            )
+            ConnectPrinterViewModel.UiState.Unknown -> {
+                binding.octoView.swim()
+                showStatus(
+                    R.string.error_general,
+                    R.string.try_restrating_the_app_or_octoprint
+                )
+            }
         }.let { }
 
         binding.psuUnvailableControls.isVisible = !binding.psuTurnOnControls.isVisible &&

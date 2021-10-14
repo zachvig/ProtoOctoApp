@@ -146,7 +146,11 @@ class OctoApp : Application() {
 
         // Prefetch tutorials
         AppScope.launch {
-            BaseInjector.get().tutorialsRepository().getTutorials()
+            try {
+                BaseInjector.get().tutorialsRepository().getTutorials()
+            } catch (e: Exception) {
+                Timber.w(e, "Unable to fetch tutorials")
+            }
         }
 
         // Update app language property
