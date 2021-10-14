@@ -880,8 +880,9 @@ bonne impression !"</string>
     <string name="main_menu___companion_plugin_announcement___title">"Installer le plugin compagnon"</string>
     <string name="main_menu___companion_plugin_announcement___subtitle">"Le plugin compagnon OctoApp permet d'envoyer des notifications push via Internet avec une meilleure fiabilité."</string>
     <string name="main_menu___companion_plugin_announcement___install">"Installer le plugin"</string>
-    <string name="configure_remote_acces___octoeverywhere___error_no_connection"></string>
-    <string name="widget_gcode_send___confirmation_message"></string>
-    <string name="widget_gcode_send___confirmation_action"></string>
-    <string name="print_notification___disconnected"></string>
+    <string name="configure_remote_acces___octoeverywhere___error_no_connection">"L'application ne peut pas atteindre votre OctoPrint pour le moment, mais cela est nécessaire pour la configuration initiale d'OctoEverywhere."</string>
+    <string name="widget_gcode_send___confirmation_message">"Exécuter « %s » ?"</string>
+    <string name="widget_gcode_send___confirmation_action">"Exécuter"</string>
+    <string name="print_notification___disconnected">"Débranché"</string>
+    <string name="main___banner_connected_via_local">"Connecté via un réseau local"</string>
 </resources>
