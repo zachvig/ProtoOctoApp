@@ -279,7 +279,7 @@ Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over n
     <string name="main___banner_connected_via_alternative">"Verbonden via internet"</string>
 
     <!-- Auto filled -->
-    <string name="main___banner_connected_via_octoeverywhere">"Verbonden via OctoEverywhere!"</string>
+    <string name="main___banner_connected_via_octoeverywhere">"Verbonden via OctoEverywhere"</string>
 
     <!-- Auto filled -->
     <string name="main___banner_connection_lost_reconnecting">"Verbinding verbroken, opnieuw verbonden…"</string>
@@ -880,8 +880,9 @@ gelukkig printen!"</string>
     <string name="main_menu___companion_plugin_announcement___title">"Installeer de companion plugin"</string>
     <string name="main_menu___companion_plugin_announcement___subtitle">"De OctoApp companion plugin maakt pushmeldingen over het internet mogelijk met een betere betrouwbaarheid"</string>
     <string name="main_menu___companion_plugin_announcement___install">"Installeer de plugin"</string>
-    <string name="configure_remote_acces___octoeverywhere___error_no_connection"></string>
-    <string name="widget_gcode_send___confirmation_message"></string>
-    <string name="widget_gcode_send___confirmation_action"></string>
-    <string name="print_notification___disconnected"></string>
+    <string name="configure_remote_acces___octoeverywhere___error_no_connection">"De app kan je OctoPrint momenteel niet bereiken, maar dit is nodig voor de eerste installatie van OctoEverywhere."</string>
+    <string name="widget_gcode_send___confirmation_message">"\"%s\" uitvoeren?"</string>
+    <string name="widget_gcode_send___confirmation_action">"uitvoeren"</string>
+    <string name="print_notification___disconnected">"Losgekoppeld"</string>
+    <string name="main___banner_connected_via_local">"Verbonden via lokaal netwerk"</string>
 </resources>
