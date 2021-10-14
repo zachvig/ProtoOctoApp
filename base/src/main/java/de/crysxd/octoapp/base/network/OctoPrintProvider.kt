@@ -6,7 +6,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.BuildConfig
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.di.BaseInjector
@@ -16,7 +15,6 @@ import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.SubjectAlternativeNameCompatVerifier
 import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereConnectionNotFoundException
 import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereSubscriptionMissingException
-import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.delay
@@ -76,9 +74,7 @@ class OctoPrintProvider(
 
                 ((event as? Event.Disconnected))?.let {
                     connectEventFlow.value = null
-                    if (it.exception is WebSocketUpgradeFailedException) {
-                        octoPrintRepository.reportIssueWithActiveInstance(ActiveInstanceIssue.HTTP_ISSUE)
-                    }
+                    it.exception?.let(detectBrokenSetupInterceptor::handleException)
                 }
             }.retry { delay(1000); true }.collect()
         }

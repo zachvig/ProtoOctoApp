@@ -136,13 +136,16 @@ class EventWebSocket(
 
     inner class WebSocketListener : okhttp3.WebSocketListener() {
 
+        private var firstMessage = true
+
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
             isOpen = true
+            firstMessage = true
 
             // Handle open event
             logger.log(Level.INFO, "Web socket open")
-            dispatchEvent(Event.Connected(getCurrentConnectionType()))
+
 
             // In order to receive any messages on OctoPrint instances with authentication set up,
             // we need to perform a login and sen the "auth" message
@@ -153,11 +156,20 @@ class EventWebSocket(
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             super.onMessage(webSocket, text)
+            // We only send the connected message after we received the first message. This is important because
+            // OctoEverywhere connects the websocket even if OctoPrint is down. When we receive the first message
+            // we know that we are connected.
+            if (firstMessage) {
+                firstMessage = false
+                logger.log(Level.INFO, "Web socket connected")
+                dispatchEvent(Event.Connected(getCurrentConnectionType()))
+            }
+
             logger.log(Level.FINEST, "Message received: ${text.substring(0, 256.coerceAtMost(text.length))} ")
             reportDisconnectedJob?.cancel()
 
             // OkHttp sometimes leaks connections.
-            // If we are no longer supposed to be cIncreonnected, we crash the socket
+            // If we are no longer supposed to be connected, we crash the socket
             if (!isConnected.get()) {
                 throw WebSocketZombieException()
             }
@@ -197,7 +209,7 @@ class EventWebSocket(
                 t is WebSocketZombieException -> {
                     logger.log(Level.WARNING, "Web socket was forcefully closed")
                 }
-                t is OctoPrintApiException && t.responseCode >= 400 -> {
+                t is OctoPrintApiException && t.responseCode in 400..599 -> {
                     reconnect(WebSocketUpgradeFailedException(t.responseCode, webSocketUrl = webSocketUrl, webUrl = webUrl), true)
                 }
                 else -> {
