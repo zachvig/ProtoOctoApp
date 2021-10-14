@@ -141,7 +141,7 @@ class MainActivity : OctoActivity() {
                     instance != null && (instance.apiKey.isBlank() || instance.issue != null) -> {
                         Timber.i("Instance information received without API key: $instance")
                         showDialog(
-                            message = getString(instance.issue?.messageRes ?: R.string.sign_in___broken_setup___api_key_revoked, instance.issueMessage),
+                            message = getString(instance.issue?.messageRes ?: R.string.sign_in___broken_setup___api_key_revoked, instance.issueMessage ?: ""),
                             positiveAction = {
                                 if (instance.issue?.isForAlternative != true) {
                                     UriLibrary.getFixOctoPrintConnectionUri(baseUrl = instance.webUrl, instanceId = instance.id).open(this)
