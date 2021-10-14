@@ -282,7 +282,7 @@ As soon as your OctoPrint can’t be reached directly, OctoApp will switch to th
     <string name="main___banner_connected_via_alternative">"Connected via remote connection"</string>
 
     <!-- Auto filled -->
-    <string name="main___banner_connected_via_octoeverywhere">"Connected via OctoEverywhere!"</string>
+    <string name="main___banner_connected_via_octoeverywhere">"Connected via OctoEverywhere"</string>
 
     <!-- Auto filled -->
     <string name="main___banner_connection_lost_reconnecting">"Connection lost, reconnecting…"</string>
@@ -889,4 +889,5 @@ happy printing!"</string>
     <string name="widget_gcode_send___confirmation_message">"Execute „%s“?"</string>
     <string name="widget_gcode_send___confirmation_action">"Execute"</string>
     <string name="print_notification___disconnected">"Disconnected"</string>
+    <string name="main___banner_connected_via_local">"Connected via local network"</string>
 </resources>
