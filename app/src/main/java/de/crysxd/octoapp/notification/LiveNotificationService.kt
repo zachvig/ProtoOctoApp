@@ -112,7 +112,16 @@ class LiveNotificationService : Service() {
             false
         } else {
             val flags = BaseInjector.get().octoPrintProvider().octoPrint().createPrinterApi().getPrinterState().state?.flags
-            flags?.isPrinting() == true
+            val isPrinting = flags?.isPrinting() == true
+
+            // Not printing? Make sure to clear the notification
+            if (!isPrinting) {
+                instance?.id?.let {
+                    notificationController.notifyIdle(it)
+                }
+            }
+
+            isPrinting
         }
     } catch (e: Exception) {
         Timber.e(e, "Failed to check preconditions")
