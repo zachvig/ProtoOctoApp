@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="announcement___new_version_detail">"OctoApp can now work with hostnames like octopi.local and offers new customization options! Watch the intro video to learn more! "</string>
+    <string name="announcement___new_version_detail">"This release adds a new tutorial section, makes OctoApp ready for Android 12 including support for the new Material You design and improves the notifications"</string>
 
     <!-- Auto filled -->
     <string name="announcement___new_version_learn_more">"Watch the video"</string>
-    <string name="announcement___new_version_title">"Welcome to OctoApp 1.10! 🍾"</string>
+    <string name="announcement___new_version_title">"Welcome to OctoApp 1.11! 🍾"</string>
 
     <!-- Auto filled -->
     <string name="announcement___octoeverywhere_detail">"You can now connect your OctoEverywhere subscription to use OctoApp when you are not at home."</string>
