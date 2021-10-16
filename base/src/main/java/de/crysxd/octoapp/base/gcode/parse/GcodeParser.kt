@@ -157,7 +157,7 @@ class GcodeParser(
         )
     }
 
-    private fun parseIjFormArcMove(x: Float?, y: Float?, i: Float, j: Float, clockwise: Boolean, positionInFile: Int): Move.ArcMove {
+    private fun parseIjFormArcMove(x: Float?, y: Float?, i: Float, j: Float, clockwise: Boolean, positionInFile: Int): Move {
         // End positions are either the given X Y (always absolute) or if they are missing the last known ones
         val endX = x ?: lastPosition?.x ?: throw IllegalArgumentException("Missing param X")
         val endY = y ?: lastPosition?.y ?: throw IllegalArgumentException("Missing param Y")
@@ -199,14 +199,23 @@ class GcodeParser(
             endAngle - startAngle
         }
 
-        return Move.ArcMove(
-            leftX = centerX - radius,
-            topY = centerY - radius,
-            r = radius,
-            startAngle = startAngle,
-            sweepAngle = sweepAngle,
-            positionInFile = positionInFile,
-        )
+        // Android Canvas seems to have issues with extremely small angles for arcs.
+        // To circumvent this issue we approximate arcs with angles of less than a quarter degree with a line.
+        return if (sweepAngle < 1) {
+            Move.LinearMove(
+                positionInFile = positionInFile,
+                positionInArray = 0,
+            )
+        } else {
+            Move.ArcMove(
+                leftX = (centerX - radius),
+                topY = (centerY - radius),
+                r = radius,
+                startAngle = startAngle,
+                sweepAngle = sweepAngle,
+                positionInFile = positionInFile,
+            )
+        }
     }
 
     private fun parseRFormArcMove(x: Float?, y: Float?, r: Float, clockwise: Boolean, positionInFile: Int): Move {
