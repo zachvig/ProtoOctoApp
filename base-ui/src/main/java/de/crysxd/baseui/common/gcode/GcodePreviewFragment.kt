@@ -209,7 +209,7 @@ class GcodePreviewFragment : BaseFragment() {
             }
         )
 
-        binding.live.isVisible = true
+        binding.live.isVisible = state.isLive
         hideLiveJob?.cancel()
         hideLiveJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             delay(NOT_LIVE_IF_NO_UPDATE_FOR_MS)
