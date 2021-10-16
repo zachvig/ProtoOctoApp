@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="announcement___new_version_detail">"OctoApp peut maintenant fonctionner avec des noms d'hôtes comme octopi.local et offre de nouvelles options de personnalisation ! Regardez la vidéo d'introduction pour en savoir plus !"</string>
+
+    <!-- Fuzzy -->
+    <string name="announcement___new_version_detail">"Cette version ajoute une nouvelle section de didacticiels, rend OctoApp prêt pour Android 12, y compris la prise en charge du nouveau thème Material You, et améliore les notifications."</string>
 
     <!-- Auto filled -->
     <string name="announcement___new_version_learn_more">"Vidéo d'introduction"</string>
-    <string name="announcement___new_version_title">"Bienvenue dans OctoApp 1.10 ! 🍾"</string>
+    <string name="announcement___new_version_title">"Bienvenue dans OctoApp 1.11 ! 🍾"</string>
 
     <!-- Auto filled -->
     <string name="announcement___octoeverywhere_detail">"Vous pouvez désormais connecter votre compte OctoEverywhere pour utiliser OctoApp lorsque vous n'êtes pas chez vous."</string>
