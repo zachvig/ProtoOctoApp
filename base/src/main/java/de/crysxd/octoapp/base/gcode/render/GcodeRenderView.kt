@@ -102,7 +102,8 @@ class GcodeRenderView @JvmOverloads constructor(
     }
 
     fun enableAsyncRender(coroutineScope: CoroutineScope) {
-
+        renderScope = coroutineScope
+        useAsyncRender = true
     }
 
     private fun enforceScrollLimits(params: RenderParams) {
@@ -188,7 +189,7 @@ class GcodeRenderView @JvmOverloads constructor(
         }
         asyncRenderBusy = true
 
-        renderScope?.launch(Dispatchers.IO) {
+        renderScope?.launch(Dispatchers.Default) {
             // Create bitmap
             val bitmap = asyncRenderCache?.takeIf { it.height == height && it.width == width }
                 ?: Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
@@ -285,10 +286,36 @@ class GcodeRenderView @JvmOverloads constructor(
             canvas.translate(params.printBedSizeMm.x * 0.5f, params.printBedSizeMm.y * 0.5f)
         }
 
-        // Render Gcode
-        params.renderContext.paths.forEach {
+        // Render previous layer, we do not render travels
+        params.renderContext.previousLayerPaths?.filter {
+            it.type != Move.Type.Travel
+        }?.forEach {
+            val paint = style.previousLayerPaint
+            paint.strokeWidth = strokeWidth
+            canvas.drawLines(it.lines, it.linesOffset, it.linesCount, paint)
+            it.arcs.forEach { arc ->
+                val d = 2 * arc.r
+                canvas.drawArc(arc.leftX, arc.topY, arc.leftX + d, arc.topY + d, arc.startAngle, arc.sweepAngle, false, paint)
+            }
+        }
+
+        // Render completed current layer
+        params.renderContext.completedLayerPaths.forEach {
             val paint = style.paintPalette(it.type)
-            canvas.drawLines(it.points, it.offset, it.count, paint)
+            canvas.drawLines(it.lines, it.linesOffset, it.linesCount, paint)
+            it.arcs.forEach { arc ->
+                val d = 2 * arc.r
+                canvas.drawArc(arc.leftX, arc.topY, arc.leftX + d, arc.topY + d, arc.startAngle, arc.sweepAngle, false, paint)
+            }
+        }
+
+        // Render remaining current layer, we do not render travels
+        params.renderContext.remainingLayerPaths.filter {
+            it.type != Move.Type.Travel
+        }.forEach {
+            val paint = style.remainingLayerPaint
+            paint.strokeWidth = strokeWidth
+            canvas.drawLines(it.lines, it.linesOffset, it.linesCount, paint)
             it.arcs.forEach { arc ->
                 val d = 2 * arc.r
                 canvas.drawArc(arc.leftX, arc.topY, arc.leftX + d, arc.topY + d, arc.startAngle, arc.sweepAngle, false, paint)
@@ -307,7 +334,6 @@ class GcodeRenderView @JvmOverloads constructor(
                 it.y + radius,
                 style.printHeadPaint
             )
-
         }
     }
 
@@ -336,6 +362,7 @@ class GcodeRenderView @JvmOverloads constructor(
             renderParams?.let {
                 scrollOffset.x -= distanceX
                 scrollOffset.y -= distanceY
+                enforceScrollLimits(it)
                 invalidate()
             }
 

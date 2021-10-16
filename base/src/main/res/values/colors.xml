@@ -61,6 +61,8 @@
 
     <!-- Don't link up! Has always dark background-->
     <color name="gcode_extrusion">#ffffff</color>
+    <color name="gcode_previous">#1A389AE5</color>
+    <color name="gcode_remaining">#80FFFFFF</color>
     <color name="gcode_unsupported">#FFC000</color>
     <color name="gcode_travel">#13C100</color>
     <color name="gcode_print_head">#EE3F3F</color>
