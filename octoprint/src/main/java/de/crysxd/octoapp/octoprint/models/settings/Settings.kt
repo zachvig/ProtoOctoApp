@@ -43,8 +43,8 @@ data class Settings(
     interface PluginSettings
 
     data class GcodeViewerSettings(
-        val mobileSizeThreshold: Int,
-        val sizeThreshold: Int
+        val mobileSizeThreshold: Long,
+        val sizeThreshold: Long
     ) : PluginSettings
 
     data class TradfriSettings(
