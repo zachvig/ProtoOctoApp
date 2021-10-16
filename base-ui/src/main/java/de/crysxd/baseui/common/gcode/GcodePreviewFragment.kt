@@ -18,6 +18,7 @@ import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.databinding.GcodePreviewFragmentBinding
 import de.crysxd.baseui.di.injectActivityViewModel
 import de.crysxd.baseui.ext.requireOctoActivity
+import de.crysxd.baseui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.ext.asStyleFileSize
@@ -94,6 +95,10 @@ class GcodePreviewFragment : BaseFragment() {
         binding.previousLayerButton.setOnClickListener {
             binding.layerSeekBar.progress = binding.layerSeekBar.progress - 1
             pushSeekBarValuesToViewModel(binding.layerSeekBar)
+        }
+
+        binding.settingsButton.setOnClickListener {
+            MenuBottomSheetFragment.createForMenu(GcodeSettingsMenu()).show(childFragmentManager)
         }
 
         if (isStandaloneScreen) {
@@ -234,6 +239,7 @@ class GcodePreviewFragment : BaseFragment() {
             originInCenter = state.printerProfile.volume.origin == PrinterProfiles.Origin.Center,
             printBedSizeMm = PointF(state.printerProfile.volume.width, state.printerProfile.volume.depth),
             extrusionWidthMm = state.printerProfile.extruder.nozzleDiameter,
+            quality = state.settings.quality,
         )
     }
 

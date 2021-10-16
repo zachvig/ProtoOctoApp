@@ -239,6 +239,7 @@ class GcodePreviewWidget(context: Context) : RecyclableOctoWidget<GcodePreviewWi
             originInCenter = state.printerProfile?.volume?.origin == PrinterProfiles.Origin.Center,
             printBedSizeMm = PointF(printerProfile.volume.width, printerProfile.volume.depth),
             extrusionWidthMm = printerProfile.extruder.nozzleDiameter,
+            quality = state.settings.quality,
         )
     }
 }

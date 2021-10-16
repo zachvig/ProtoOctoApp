@@ -23,18 +23,24 @@ sealed class GcodeRenderContextFactory {
             Move.Type.Unsupported -> 0
         }
 
-    abstract suspend fun extractMoves(gcode: Gcode): GcodeRenderContext
+    abstract suspend fun extractMoves(gcode: Gcode, includePreviousLayer: Boolean, includeRemainingCurrentLayer: Boolean): GcodeRenderContext
 
     protected fun createContext(
         gcode: Gcode,
         layerIndex: Int,
-        toPositionInFile: Int
+        toPositionInFile: Int,
+        includeRemainingCurrentLayer: Boolean,
+        includePreviousLayer: Boolean,
     ): GcodeRenderContext {
         val layerInfo = gcode.layers[layerIndex]
         val completedCurrentLayer = loadSingleLayer(gcode.cacheKey, layerInfo, toPositionInFile = toPositionInFile)
         val remainingCurrentLayer = loadSingleLayer(gcode.cacheKey, layerInfo, fromPositionInFile = toPositionInFile)
-        val previousLayer = gcode.layers.getOrNull(layerIndex - 1)?.let {
-            loadSingleLayer(gcode.cacheKey, it)
+        val previousLayer = if (includePreviousLayer) {
+            gcode.layers.getOrNull(layerIndex - 1)?.let {
+                loadSingleLayer(gcode.cacheKey, it)
+            }
+        } else {
+            null
         }
 
         val completedMoves = completedCurrentLayer.third.sumOf { it.moveCount }
@@ -43,7 +49,7 @@ sealed class GcodeRenderContextFactory {
         return GcodeRenderContext(
             previousLayerPaths = previousLayer?.third,
             completedLayerPaths = completedCurrentLayer.third,
-            remainingLayerPaths = remainingCurrentLayer.third,
+            remainingLayerPaths = remainingCurrentLayer.third.takeIf { includeRemainingCurrentLayer },
             printHeadPosition = completedCurrentLayer.second,
             layerCount = gcode.layers.size,
             layerZHeight = layerInfo.zHeight,
@@ -117,13 +123,19 @@ sealed class GcodeRenderContextFactory {
     }
 
     data class ForFileLocation(val positionInFile: Int) : GcodeRenderContextFactory() {
-        override suspend fun extractMoves(gcode: Gcode): GcodeRenderContext = withContext(Dispatchers.IO) {
+        override suspend fun extractMoves(
+            gcode: Gcode,
+            includePreviousLayer: Boolean,
+            includeRemainingCurrentLayer: Boolean
+        ): GcodeRenderContext = withContext(Dispatchers.IO) {
             try {
                 val layerIndex = gcode.layers.indexOfLast { it.positionInFile <= positionInFile }
                 createContext(
                     gcode = gcode,
                     layerIndex = layerIndex,
-                    toPositionInFile = positionInFile
+                    toPositionInFile = positionInFile,
+                    includeRemainingCurrentLayer = includeRemainingCurrentLayer,
+                    includePreviousLayer = includePreviousLayer,
                 )
             } catch (e: Exception) {
                 Timber.e(e)
@@ -134,14 +146,20 @@ sealed class GcodeRenderContextFactory {
     }
 
     data class ForLayerProgress(val layerIndex: Int, val progress: Float) : GcodeRenderContextFactory() {
-        override suspend fun extractMoves(gcode: Gcode): GcodeRenderContext = withContext(Dispatchers.IO) {
+        override suspend fun extractMoves(
+            gcode: Gcode,
+            includePreviousLayer: Boolean,
+            includeRemainingCurrentLayer: Boolean
+        ): GcodeRenderContext = withContext(Dispatchers.IO) {
             try {
                 val layerInfo = gcode.layers[layerIndex]
                 val positionInFile = layerInfo.positionInFile + (layerInfo.lengthInFile * progress).roundToInt()
                 createContext(
                     gcode = gcode,
                     layerIndex = layerIndex,
-                    toPositionInFile = positionInFile
+                    toPositionInFile = positionInFile,
+                    includeRemainingCurrentLayer = includeRemainingCurrentLayer,
+                    includePreviousLayer = includePreviousLayer,
                 ).copy(
                     printHeadPosition = null
                 )

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import de.crysxd.octoapp.base.OctoPreferences
@@ -45,6 +46,10 @@ open class AndroidModule(private val app: Application) {
 
     @Provides
     @BaseScope
-    open fun provideOctoPreferences(sharedPreferences: SharedPreferences) =
-        OctoPreferences(sharedPreferences)
+    open fun provideOctoPreferences(
+        sharedPreferences: SharedPreferences,
+    ) = OctoPreferences(
+        sharedPreferences = sharedPreferences,
+        gson = Gson()
+    )
 }

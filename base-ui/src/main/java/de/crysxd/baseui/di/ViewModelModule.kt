@@ -131,12 +131,14 @@ open class ViewModelModule {
         octoPrintProvider: OctoPrintProvider,
         octoPrintRepository: OctoPrintRepository,
         generateRenderStyleUseCase: GenerateRenderStyleUseCase,
-        gcodeFileRepository: GcodeFileRepository
+        gcodeFileRepository: GcodeFileRepository,
+        octoPreferences: OctoPreferences,
     ): ViewModel = GcodePreviewViewModel(
         octoPrintRepository = octoPrintRepository,
         octoPrintProvider = octoPrintProvider,
         generateRenderStyleUseCase = generateRenderStyleUseCase,
-        gcodeFileRepository = gcodeFileRepository
+        gcodeFileRepository = gcodeFileRepository,
+        octoPreferences = octoPreferences,
     )
 
     @Provides

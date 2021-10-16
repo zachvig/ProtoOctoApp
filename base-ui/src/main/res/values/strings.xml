@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gcode_preview_settings___show_previous_layer">Show previous layer</string>
+    <string name="gcode_preview_settings___show_current_layer">Show current layer</string>
+    <string name="gcode_preview_settings___quality_low">Low</string>
+    <string name="gcode_preview_settings___quiality_medium">Medium</string>
+    <string name="gcode_preview_settings___quality_ultra">Ultra</string>
+    <string name="gcode_preview_settings___quality">Drawing quality</string>
+    <string name="gcode_preview_settings___quality_low_description">Optimal performance even with large Gcode files</string>
+    <string name="gcode_preview_settings___quality_medium_description">Balanced performance and visual fidelity (recommended)</string>
+    <string name="gcode_preview_settings___quality_ultra_description">Highest visual fidelity with anti aliasing</string>
+</resources>

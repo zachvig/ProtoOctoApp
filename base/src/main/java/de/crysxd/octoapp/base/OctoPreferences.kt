@@ -6,13 +6,18 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.gson.Gson
+import de.crysxd.octoapp.base.data.models.GcodePreviewSettings
 import de.crysxd.octoapp.base.di.BaseInjector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import java.util.Date
 
-class OctoPreferences(private val sharedPreferences: SharedPreferences) {
+class OctoPreferences(
+    private val sharedPreferences: SharedPreferences,
+    private val gson: Gson,
+) {
 
     companion object {
         private const val KEY_PRINT_NOTIFICATION_ENABLED = "print_notification_enabled"
@@ -39,6 +44,7 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         private const val KEY_OCTOEVERYWHERE_ANNOUNCEMENT_HIDDEN_AT = "octoeverywhere_announcemenyt_hidden_at"
         private const val KEY_TUTORIALS_SEEN_AT = "tutorials_seen_at"
         private const val KEY_ALLOW_TERMINAL_DURING_PRINT = "allow_terminal_during_print"
+        private const val KEY_GCODE_PREVIEW = "gcode_preview"
 
         const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT = "octprint"
         const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_IMAGE = "native_image"
@@ -205,5 +211,13 @@ class OctoPreferences(private val sharedPreferences: SharedPreferences) {
         get() = sharedPreferences.getBoolean(KEY_ALLOW_TERMINAL_DURING_PRINT, false)
         set(value) {
             edit { putBoolean(KEY_ALLOW_TERMINAL_DURING_PRINT, value) }
+        }
+
+    var gcodePreviewSettings: GcodePreviewSettings
+        get() = sharedPreferences.getString(KEY_GCODE_PREVIEW, null)?.let {
+            gson.fromJson(it, GcodePreviewSettings::class.java)
+        } ?: GcodePreviewSettings()
+        set(value) {
+            edit { putString(KEY_GCODE_PREVIEW, gson.toJson(value)) }
         }
 }

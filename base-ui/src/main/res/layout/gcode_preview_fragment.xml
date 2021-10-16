@@ -93,6 +93,19 @@
             android:background="@color/white_translucent_2" />
 
         <ImageButton
+            android:id="@+id/settingsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cd_sync_with_print_progress"
+            android:src="@drawable/ic_round_layers_24"
+            app:tint="@color/white" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white_translucent_2" />
+
+        <ImageButton
             android:id="@+id/previousLayerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

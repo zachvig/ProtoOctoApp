@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -19,6 +20,7 @@ import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.minus
 import de.crysxd.octoapp.base.BuildConfig
 import de.crysxd.octoapp.base.R
+import de.crysxd.octoapp.base.data.models.GcodePreviewSettings
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import de.crysxd.octoapp.base.gcode.render.models.GcodeRenderContext
 import de.crysxd.octoapp.base.gcode.render.models.RenderStyle
@@ -61,6 +63,14 @@ class GcodeRenderView @JvmOverloads constructor(
         set(value) {
             printBed = value?.let {
                 ContextCompat.getDrawable(context, it.renderStyle.background)
+            }
+            renderParams?.renderStyle?.let { rs ->
+                rs.remainingLayerPaint.prepare()
+                rs.previousLayerPaint.prepare()
+                rs.printHeadPaint.prepare()
+                Move.Type.values().forEach {
+                    rs.paintPalette(it).prepare()
+                }
             }
             field = value
             invalidate()
@@ -234,6 +244,13 @@ class GcodeRenderView @JvmOverloads constructor(
         }
     }
 
+    private fun Paint.prepare(): Paint {
+        val quality = renderParams?.quality ?: GcodePreviewSettings.Quality.Medium
+        isAntiAlias = quality >= GcodePreviewSettings.Quality.Ultra
+        strokeCap = if (quality >= GcodePreviewSettings.Quality.Medium) Paint.Cap.ROUND else Paint.Cap.BUTT
+        return this
+    }
+
     private fun render(canvas: Canvas) {
         // Skip draw without params
         val params = renderParams ?: return
@@ -263,6 +280,8 @@ class GcodeRenderView @JvmOverloads constructor(
         val strokeWidth = (params.extrusionWidthMm * totalFactor * 0.8f).coerceAtLeast(2f) / totalFactor
         Move.Type.values().forEach { style.paintPalette(it).strokeWidth = strokeWidth * 0.5f }
         style.paintPalette(Move.Type.Extrude).strokeWidth = strokeWidth
+        style.previousLayerPaint.strokeWidth = strokeWidth
+        style.remainingLayerPaint.strokeWidth = strokeWidth
 
         // Scale and transform so the desired are is visible
         canvas.save()
@@ -290,8 +309,7 @@ class GcodeRenderView @JvmOverloads constructor(
         params.renderContext.previousLayerPaths?.filter {
             it.type != Move.Type.Travel
         }?.forEach {
-            val paint = style.previousLayerPaint
-            paint.strokeWidth = strokeWidth
+            val paint = style.previousLayerPaint.prepare()
             canvas.drawLines(it.lines, it.linesOffset, it.linesCount, paint)
             it.arcs.forEach { arc ->
                 val d = 2 * arc.r
@@ -301,7 +319,7 @@ class GcodeRenderView @JvmOverloads constructor(
 
         // Render completed current layer
         params.renderContext.completedLayerPaths.forEach {
-            val paint = style.paintPalette(it.type)
+            val paint = style.paintPalette(it.type).prepare()
             canvas.drawLines(it.lines, it.linesOffset, it.linesCount, paint)
             it.arcs.forEach { arc ->
                 val d = 2 * arc.r
@@ -310,11 +328,10 @@ class GcodeRenderView @JvmOverloads constructor(
         }
 
         // Render remaining current layer, we do not render travels
-        params.renderContext.remainingLayerPaths.filter {
+        params.renderContext.remainingLayerPaths?.filter {
             it.type != Move.Type.Travel
-        }.forEach {
-            val paint = style.remainingLayerPaint
-            paint.strokeWidth = strokeWidth
+        }?.forEach {
+            val paint = style.remainingLayerPaint.prepare()
             canvas.drawLines(it.lines, it.linesOffset, it.linesCount, paint)
             it.arcs.forEach { arc ->
                 val d = 2 * arc.r
@@ -332,7 +349,7 @@ class GcodeRenderView @JvmOverloads constructor(
                 it.y - radius,
                 it.x + radius,
                 it.y + radius,
-                style.printHeadPaint
+                style.printHeadPaint.prepare()
             )
         }
     }
@@ -391,6 +408,7 @@ class GcodeRenderView @JvmOverloads constructor(
         val renderStyle: RenderStyle,
         val printBedSizeMm: PointF,
         val extrusionWidthMm: Float = 0.5f,
-        val originInCenter: Boolean
+        val originInCenter: Boolean,
+        val quality: GcodePreviewSettings.Quality,
     )
 }

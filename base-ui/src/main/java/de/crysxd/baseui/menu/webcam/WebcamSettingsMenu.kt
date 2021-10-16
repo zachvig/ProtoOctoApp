@@ -2,22 +2,22 @@ package de.crysxd.baseui.menu.webcam
 
 import android.content.Context
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import de.crysxd.octoapp.base.OctoPreferences.Companion.VALUE_WEBCAM_ASPECT_RATIO_SOURCE_IMAGE
-import de.crysxd.octoapp.base.OctoPreferences.Companion.VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT
 import de.crysxd.baseui.R
-import de.crysxd.octoapp.base.UriLibrary
-import de.crysxd.octoapp.base.billing.BillingManager
-import de.crysxd.octoapp.base.di.BaseInjector
-import de.crysxd.octoapp.base.ext.open
 import de.crysxd.baseui.menu.Menu
 import de.crysxd.baseui.menu.MenuHost
 import de.crysxd.baseui.menu.MenuItem
 import de.crysxd.baseui.menu.MenuItemStyle
 import de.crysxd.baseui.menu.RevolvingOptionsMenuItem
 import de.crysxd.baseui.menu.ToggleMenuItem
+import de.crysxd.octoapp.base.OctoPreferences.Companion.VALUE_WEBCAM_ASPECT_RATIO_SOURCE_IMAGE
+import de.crysxd.octoapp.base.OctoPreferences.Companion.VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT
+import de.crysxd.octoapp.base.UriLibrary
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_ENABLE_FULL_WEBCAM_RESOLUTION
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_SHOW_WEBCAM_RESOLUTION
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_WEBCAM_ASPECT_RATIO_SOURCE
+import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.base.ext.open
 import kotlinx.parcelize.Parcelize
 import kotlin.math.roundToInt
 
@@ -62,7 +62,7 @@ class WebcamSettingsMenu : Menu {
         override val isEnabled = true
 
         override suspend fun getTitle(context: Context) = context.getString(R.string.webcam_settings___aspect_ratio_source)
-        override fun handleOptionActivated(option: Option) {
+        override fun handleOptionActivated(host: MenuHost?, option: Option) {
             BaseInjector.get().octoPreferences().webcamAspectRatioSource = option.value
         }
     }
