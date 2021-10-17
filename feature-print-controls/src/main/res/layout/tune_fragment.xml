@@ -89,7 +89,7 @@
                     android:layout_weight="1"
                     app:icon="@drawable/ic_round_swap_vert_24"
                     app:iconTint="?android:attr/textColorSecondary"
-                    app:label="@string/tune_print___z_baby_step_label" />
+                    app:label="@string/tune_print___z_baby_step" />
 
                 <View
                     android:layout_width="1dp"
@@ -148,7 +148,7 @@
             android:id="@+id/buttonApply"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/apply"
+            android:text="@string/tune_print___apply"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
