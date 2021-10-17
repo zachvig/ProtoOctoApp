@@ -15,7 +15,7 @@
         android:paddingRight="@dimen/margin_2"
         android:paddingBottom="@dimen/common_view_top_padding">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -25,48 +25,114 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_3"
-                app:detail="@string/octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed"
-                app:hideButton="@string/understood"
+                app:detail="@string/tune_print___disclaimer_detail"
+                app:hideButton="@string/tune_print___disclaimer_action_hide"
                 app:hidePrefInverted="true"
                 app:hidePrefName="show_data_hint"
-                app:title="@string/why_are_the_values_not_always_shown" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:title="@string/tune_print___disclaimer_title" />
 
             <de.crysxd.baseui.common.OctoTextInputLayout
                 android:id="@+id/feedRateInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_1"
                 app:example="100"
                 app:icon="@drawable/ic_speed_20px"
                 app:iconTint="?android:attr/textColorSecondary"
-                app:label="@string/feed_rate_label"
-                app:labelActive="@string/feed_rate_label_active"
+                app:label="@string/tune_print___feed_rate_label"
+                app:labelActive="@string/tune_print___feed_rate_label_active"
+                app:layout_constraintTop_toBottomOf="@id/tutorial"
                 app:selectAllOnFocus="true" />
 
             <de.crysxd.baseui.common.OctoTextInputLayout
                 android:id="@+id/flowRateInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_1"
+                android:layout_marginTop="@dimen/margin_1"
                 app:example="100"
                 app:icon="@drawable/ic_flow_20px"
                 app:iconTint="?android:attr/textColorSecondary"
-                app:label="@string/flow_rate_label"
-                app:labelActive="@string/flow_rate_label_active"
+                app:label="@string/tune_print___flow_rate_label"
+                app:labelActive="@string/tune_print___flow_rate_label_active"
+                app:layout_constraintTop_toBottomOf="@id/feedRateInput"
                 app:selectAllOnFocus="true" />
 
             <de.crysxd.baseui.common.OctoTextInputLayout
                 android:id="@+id/fanSpeedInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_1"
                 app:example="100"
                 app:icon="@drawable/ic_fan_20px"
                 app:iconTint="?android:attr/textColorSecondary"
-                app:label="@string/fan_speed_label"
-                app:labelActive="@string/fan_speed_label_active"
+                app:label="@string/tune_print___fan_speed_label"
+                app:labelActive="@string/tune_print___fan_speed_label_active"
+                app:layout_constraintTop_toBottomOf="@id/flowRateInput"
                 app:selectAllOnFocus="true" />
 
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/zOffsetControls"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_1"
+                android:background="@drawable/bg_input"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/fanSpeedInput">
+
+                <de.crysxd.baseui.common.OctoTextInputLayout
+                    android:id="@+id/zOffset"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:icon="@drawable/ic_round_swap_vert_24"
+                    app:iconTint="?android:attr/textColorSecondary"
+                    app:label="@string/tune_print___z_baby_step_label" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:alpha="0.1"
+                    android:background="@color/accent" />
+
+                <ImageButton
+                    android:id="@+id/zOffsetUp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/cd_next_layer"
+                    android:padding="@dimen/margin_2"
+                    android:src="@drawable/ic_round_keyboard_arrow_up_24"
+                    app:tint="@color/accent" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:alpha="0.1"
+                    android:background="@color/accent" />
+
+                <ImageButton
+                    android:id="@+id/zOffsetDown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/cd_previous_layer"
+                    android:padding="@dimen/margin_2"
+                    android:src="@drawable/ic_round_keyboard_arrow_down_24"
+                    app:tint="@color/accent" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_0_1"
+                android:gravity="center"
+                android:text="@string/tune_print___baby_step_explainer"
+                android:textAppearance="@style/OctoTheme.TextAppearance.Label.Small"
+                app:layout_constraintTop_toBottomOf="@+id/zOffsetControls" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </de.crysxd.baseui.common.OctoScrollView>
 

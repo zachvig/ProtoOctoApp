@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.printcontrols.ui
 
+import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -14,11 +15,13 @@ import de.crysxd.baseui.common.OctoTextInputLayout
 import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.ext.clearFocusAndHideSoftKeyboard
 import de.crysxd.baseui.ext.requireOctoActivity
+import de.crysxd.octoapp.printcontrols.R
 import de.crysxd.octoapp.printcontrols.databinding.TuneFragmentBinding
 import de.crysxd.octoapp.printcontrols.di.injectActivityViewModel
 import de.crysxd.octoapp.printcontrols.di.injectViewModel
 import de.crysxd.octoapp.printcontrols.ui.widget.TuneFragmentViewModel
 import de.crysxd.octoapp.printcontrols.ui.widget.tune.TuneWidgetViewModel
+import java.text.DecimalFormat
 
 
 class TuneFragment : BaseFragment() {
@@ -47,6 +50,12 @@ class TuneFragment : BaseFragment() {
             }
         }
 
+        binding.zOffset.editText.inputType = InputType.TYPE_NULL
+        binding.zOffset.backgroundTint = Color.TRANSPARENT
+        binding.zOffset.editText.isFocusable = false
+        binding.zOffsetUp.setOnClickListener { viewModel.babyStepUp() }
+        binding.zOffsetDown.setOnClickListener { viewModel.babyStepDown() }
+
         fun OctoTextInputLayout.prepare() = this.apply {
             editText.inputType = InputType.TYPE_CLASS_NUMBER
             editText.imeOptions = EditorInfo.IME_ACTION_DONE
@@ -66,6 +75,9 @@ class TuneFragment : BaseFragment() {
             if (!binding.fanSpeedInput.prepare().hasFocus()) {
                 binding.fanSpeedInput.editText.setText(it.fanSpeed?.toString())
             }
+
+            val zOffset = DecimalFormat("0.000#").format(it.zOffsetMm)
+            binding.zOffset.editText.setText(getString(R.string.x_mm, zOffset))
         }
 
         // Apply values

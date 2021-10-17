@@ -61,8 +61,10 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(TuneFragmentViewModel::class)
     open fun provideTuneFragmentViewModel(
-        tunePrintUseCase: TunePrintUseCase
+        tunePrintUseCase: TunePrintUseCase,
+        executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase,
     ): ViewModel = TuneFragmentViewModel(
-        tunePrintUseCase
+        tunePrintUseCase = tunePrintUseCase,
+        executeGcodeCommandUseCase = executeGcodeCommandUseCase
     )
 }
