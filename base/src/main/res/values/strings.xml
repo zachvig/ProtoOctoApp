@@ -44,7 +44,9 @@ The widget will always control the OctoPrint instance that is currently active i
     <string name="app_widget___offline_since_x">"Offline since %s"</string>
     <string name="app_widget___update_failed">"Update failed"</string>
     <string name="app_widget___updating">"Updating…"</string>
-    <string name="apply">"Apply"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___apply">"Apply"</string>
     <string name="billing_unsupported_detail">"Only apps downlaoded from Google Play can activate features. Please reach out to hello@octoapp.eu!"</string>
     <string name="billing_unsupported_title">"Only supported for apps from Google Play"</string>
     <string name="cancel">"Cancel"</string>
@@ -216,10 +218,18 @@ As soon as your OctoPrint can’t be reached directly, OctoApp will switch to th
     <string name="extrude_retract">"Extrude / Retract"</string>
     <string name="extruding_x_mm">"Extruding %d mm"</string>
     <string name="failures">"Failures"</string>
-    <string name="fan_speed_label">"Fan Speed (%)"</string>
-    <string name="fan_speed_label_active">"Fan speed from 0 to 100"</string>
-    <string name="feed_rate_label">"Feed Rate (%)"</string>
-    <string name="feed_rate_label_active">"Feed rate as number (100 is default)"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___fan_speed_label">"Fan Speed (%)"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___fan_speed_label_active">"Fan speed from 0 to 100"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___feed_rate_label">"Feed Rate (%)"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___feed_rate_label_active">"Feed rate as number (100 is default)"</string>
     <string name="filament_use">"Filament use"</string>
     <string name="file">"File"</string>
     <string name="file_details_tab_info">"Info"</string>
@@ -227,8 +237,12 @@ As soon as your OctoPrint can’t be reached directly, OctoApp will switch to th
     <string name="file_location_local">"Local"</string>
     <string name="file_location_sd_card">"SD card"</string>
     <string name="file_location_unknown">"Unknown"</string>
-    <string name="flow_rate_label">"Flow Rate (%)"</string>
-    <string name="flow_rate_label_active">"Flow rate as number (100 is default)"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___flow_rate_label">"Flow Rate (%)"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___flow_rate_label_active">"Flow rate as number (100 is default)"</string>
     <string name="free_trial_x">"Free trial: %s"</string>
     <string name="fullscreen">"Fullscreen"</string>
     <string name="gcode_one_command_per_line">"Gcode (one command per line)"</string>
@@ -455,7 +469,9 @@ As soon as your OctoPrint can’t be reached directly, OctoApp will switch to th
     <string name="no_value_placeholder">"--"</string>
     <string name="no_wifi_warning_long">"Your phone is not connected to WiFi. In many cases, OctoPrint is only available over WiFi."</string>
     <string name="notification_channel___print_progress">"Print progress"</string>
-    <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">"OctoPrint can't query fan speed and rates. Values can only be shown if changes are witnessed."</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___disclaimer_detail">"OctoPrint can't query fan speed and rates. Values can only be shown if changes are witnessed."</string>
     <string name="one_gcode_per_line">"One Gcode command per line"</string>
     <string name="open_email">"Open Email"</string>
     <string name="open_octoprint">"Open OctoPrint"</string>
@@ -740,10 +756,7 @@ happy printing!"</string>
     <string name="target_x_offset_y">"%1$s\u2009°C (%2$s\u2009°C offset)"</string>
     <string name="temperature_menu___applied_confirmation">"Applied %s"</string>
     <string name="temperature_menu___applied_error">"%s not found, could not apply"</string>
-    <string name="temperature_menu___item_preheat">"Preheat for %s"</string>
-    <string name="temperature_menu___item_preheat_hotend">"Preheat hotend for %s"</string>
-    <string name="temperature_menu___item_preheat_bed">"Preheat bed for %s"</string>
-    <string name="temperature_menu___item_preheat_chamber">"Preheat chamber for %s"</string>
+    <string name="temperature_menu___item_preheat">"Preheat %s"</string>
     <string name="temperature_menu___subtitle">"You can change this presets in OctoPrint settings"</string>
     <string name="temperature_menu___title">"Temperature Presets"</string>
     <string name="temperature_x">"%1$s\u2009°C"</string>
@@ -759,7 +772,9 @@ happy printing!"</string>
     <string name="try_again">"Try again"</string>
     <string name="try_restrating_the_app_or_octoprint">"Try restarting the app or OctoPrint"</string>
     <string name="tune">"Tune"</string>
-    <string name="understood">"Understood"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___disclaimer_action_hide">"Understood"</string>
     <string name="unknown">"Unknown"</string>
     <string name="update_settings">"Update settings"</string>
     <string name="uploaded">"Uploaded"</string>
@@ -790,7 +805,9 @@ happy printing!"</string>
 
     <!-- Auto filled -->
     <string name="webcam_settings___title">"Webcam Settings"</string>
-    <string name="why_are_the_values_not_always_shown">"Why are the values not always shown?"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___disclaimer_title">"Why are the values not always shown?"</string>
     <string name="widget_extrude">"Extrude"</string>
     <string name="widget_gcode_preview">"Gcode"</string>
     <string name="widget_gcode_send">"Send Gcode"</string>
@@ -893,13 +910,20 @@ happy printing!"</string>
     <string name="widget_gcode_send___confirmation_action">"Execute"</string>
     <string name="print_notification___disconnected">"Disconnected"</string>
     <string name="main___banner_connected_via_local">"Connected via local network"</string>
-    <string name="gcode_preview_settings___show_previous_layer">Show previous layer</string>
-    <string name="gcode_preview_settings___show_current_layer">Show current layer</string>
-    <string name="gcode_preview_settings___quality_low">Low</string>
-    <string name="gcode_preview_settings___quiality_medium">Medium</string>
-    <string name="gcode_preview_settings___quality_ultra">Ultra</string>
-    <string name="gcode_preview_settings___quality">Drawing quality</string>
-    <string name="gcode_preview_settings___quality_low_description">Optimal performance even with large Gcode files</string>
-    <string name="gcode_preview_settings___quality_medium_description">Balanced performance and visual fidelity (recommended)</string>
-    <string name="gcode_preview_settings___quality_ultra_description">Highest visual fidelity with anti aliasing</string>
+    <string name="temperature_menu___item_preheat_hotend">"Preheat hotend for %s"</string>
+    <string name="temperature_menu___item_preheat_bed">"Preheat bed for %s"</string>
+    <string name="temperature_menu___item_preheat_chamber">"Preheat chamber for %s"</string>
+    <string name="x_feedrate_mm_min">"X feedrate (mm/min)"</string>
+    <string name="y_feedrate_mm_min">"Y feedrate (mm/min)"</string>
+    <string name="gcode_preview_settings___show_previous_layer">"Show previous layer"</string>
+    <string name="gcode_preview_settings___show_current_layer">"Show current layer"</string>
+    <string name="gcode_preview_settings___quality_low">"Low"</string>
+    <string name="gcode_preview_settings___quiality_medium">"Medium"</string>
+    <string name="gcode_preview_settings___quality_ultra">"Ultra"</string>
+    <string name="gcode_preview_settings___quality">"Drawing quality"</string>
+    <string name="gcode_preview_settings___quality_low_description">"Optimal performance even with large Gcode files"</string>
+    <string name="gcode_preview_settings___quality_medium_description">"Balanced performance and visual fidelity (recommended)"</string>
+    <string name="gcode_preview_settings___quality_ultra_description">"Highest visual fidelity with anti aliasing"</string>
+    <string name="tune_print___z_baby_step">"Z baby step"</string>
+    <string name="tune_print___baby_step_explainer">"Baby stepping through the app can be delayed because the printer will always complete the active command before the baby step"</string>
 </resources>

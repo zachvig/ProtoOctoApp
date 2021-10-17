@@ -2,6 +2,7 @@ package de.crysxd.octoapp.preprintcontrols.ui.widget.move
 
 import android.content.Context
 import android.text.InputType
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import de.crysxd.baseui.BaseViewModel
@@ -16,14 +17,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-const val DEFAULT_FEED_RATE = 4000
+import timber.log.Timber
 
 class MoveToolWidgetViewModel(
     private val homePrintHeadUseCase: HomePrintHeadUseCase,
     private val jogPrintHeadUseCase: JogPrintHeadUseCase,
     private val octoPrintRepository: OctoPrintRepository,
 ) : BaseViewModel() {
+
+    companion object {
+        private const val DEFAULT_FEED_RATE = 4000
+    }
 
     var jogResolution: Float = -1f
 
@@ -47,39 +51,56 @@ class MoveToolWidgetViewModel(
     }
 
     fun showSettings(context: Context) = viewModelScope.launch(coroutineExceptionHandler) {
-        val result = NavigationResultMediator.registerResultCallback<String?>()
+        val resultX = NavigationResultMediator.registerResultCallback<String?>()
+        val resultY = NavigationResultMediator.registerResultCallback<String?>()
+        val resultZ = NavigationResultMediator.registerResultCallback<String?>()
 
         navContoller.navigate(
             R.id.action_enter_value,
             EnterValueFragmentArgs(
                 title = context.getString(R.string.move_settings),
-                hint = context.getString(R.string.z_feedrate_mm_min),
                 action = context.getString(R.string.update_settings),
-                resultId = result.first,
-                value = getZFeedRate().toString(),
+                selectAll = true,
+
+                hint = context.getString(R.string.x_feedrate_mm_min),
+                value = getXFeedRate().toString(),
                 inputType = InputType.TYPE_CLASS_NUMBER,
-                selectAll = true
+                resultId = resultX.first,
+
+                hint2 = context.getString(R.string.y_feedrate_mm_min),
+                value2 = getYFeedRate().toString(),
+                inputType2 = InputType.TYPE_CLASS_NUMBER,
+                resultId2 = resultY.first,
+
+                hint3 = context.getString(R.string.z_feedrate_mm_min),
+                value3 = getZFeedRate().toString(),
+                inputType3 = InputType.TYPE_CLASS_NUMBER,
+                resultId3 = resultZ.first,
             ).toBundle()
         )
 
         withContext(Dispatchers.Default) {
-            result.second.asFlow().first()
-        }?.let { feedRate ->
-            setZFeedRate(feedRate.toIntOrNull() ?: DEFAULT_FEED_RATE)
+            suspend fun Pair<Int, LiveData<String?>>.readFeedRate() = second.asFlow().first()?.toIntOrNull() ?: DEFAULT_FEED_RATE
+            setFeedRates(xFeedRate = resultX.readFeedRate(), yFeedRate = resultY.readFeedRate(), zFeedRate = resultZ.readFeedRate())
         }
     }
 
     @Suppress("UNUSED_PARAMETER")
     private fun getFeedRate(x: Direction = Direction.None, y: Direction = Direction.None, z: Direction = Direction.None) = when {
+        x != Direction.None -> getXFeedRate()
+        y != Direction.None -> getYFeedRate()
         z != Direction.None -> getZFeedRate()
         else -> DEFAULT_FEED_RATE
     }
 
+    private fun getXFeedRate() = octoPrintRepository.getActiveInstanceSnapshot()?.appSettings?.moveXFeedRate ?: DEFAULT_FEED_RATE
+    private fun getYFeedRate() = octoPrintRepository.getActiveInstanceSnapshot()?.appSettings?.moveYFeedRate ?: DEFAULT_FEED_RATE
     private fun getZFeedRate() = octoPrintRepository.getActiveInstanceSnapshot()?.appSettings?.moveZFeedRate ?: DEFAULT_FEED_RATE
 
-    private fun setZFeedRate(feedRate: Int) = viewModelScope.launch(coroutineExceptionHandler) {
+    private fun setFeedRates(xFeedRate: Int, yFeedRate: Int, zFeedRate: Int) = viewModelScope.launch(coroutineExceptionHandler) {
+        Timber.i("xFeedRate=$xFeedRate yFeedRate=$yFeedRate zFeedRate=$zFeedRate")
         octoPrintRepository.updateAppSettingsForActive {
-            it.copy(moveZFeedRate = feedRate)
+            it.copy(moveZFeedRate = zFeedRate, moveXFeedRate = xFeedRate, moveYFeedRate = yFeedRate)
         }
     }
 

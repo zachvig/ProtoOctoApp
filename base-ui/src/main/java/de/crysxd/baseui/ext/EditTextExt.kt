@@ -6,9 +6,9 @@ import android.widget.EditText
 
 fun EditText.requestFocusAndOpenSoftKeyboard() {
     requestFocus()
-    (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).toggleSoftInput(
-        InputMethodManager.SHOW_IMPLICIT,
-        InputMethodManager.HIDE_IMPLICIT_ONLY
+    (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).showSoftInput(
+        this,
+        InputMethodManager.SHOW_IMPLICIT
     )
 }
 
