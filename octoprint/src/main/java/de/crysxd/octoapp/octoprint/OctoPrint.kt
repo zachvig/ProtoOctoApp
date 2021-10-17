@@ -59,7 +59,7 @@ class OctoPrint(
     private val continuousOnlineCheck = ContinuousOnlineCheck(
         url = webUrl,
         localDns = customDns,
-        logger = createHttpLogger(),
+        logger = getLogger(),
         onOnline = {
             if (!alternativeWebUrlInterceptor.isPrimaryUsed) {
                 getLogger().log(Level.INFO, "Switching back to primary web url")

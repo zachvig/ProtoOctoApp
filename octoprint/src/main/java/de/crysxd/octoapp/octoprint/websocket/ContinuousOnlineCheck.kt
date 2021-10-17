@@ -1,11 +1,13 @@
 package de.crysxd.octoapp.octoprint.websocket
 
 import de.crysxd.octoapp.octoprint.UPNP_ADDRESS_PREFIX
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import okhttp3.Dns
 import okhttp3.HttpUrl
 import java.net.HttpURLConnection
@@ -22,11 +24,17 @@ class ContinuousOnlineCheck(
     private val intervalMs: Long = 15_000L,
     private val localDns: Dns? = null,
 ) {
-    private var checkJob: Job? = null
+    private var checkJob = SupervisorJob()
+    private val coroutineScope
+        get() = CoroutineScope(checkJob + Dispatchers.Main.immediate) + CoroutineExceptionHandler { _, throwable ->
+            logger.log(Level.SEVERE, "NON-CONTAINED exception in coroutineScope", throwable)
+        }
 
     fun start() {
         stop()
-        checkJob = GlobalScope.launch(Dispatchers.IO) {
+        checkJob = SupervisorJob()
+        coroutineScope.launch(Dispatchers.IO) {
+            logger.log(Level.INFO, "Starting continuous online check")
             while (true) {
                 delay(intervalMs)
                 if (checkNow()) {
@@ -68,11 +76,6 @@ class ContinuousOnlineCheck(
         false
     }
 
-    private fun String.isLocalAddress() = startsWith("192.168.") ||
-            startsWith("172.1") ||
-            startsWith("10.")
+    fun stop() = checkJob.cancel()
 
-    fun stop() {
-        checkJob?.cancel()
-    }
 }

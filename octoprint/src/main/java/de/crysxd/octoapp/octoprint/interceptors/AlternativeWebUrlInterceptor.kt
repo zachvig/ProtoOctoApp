@@ -45,16 +45,24 @@ class AlternativeWebUrlInterceptor(
 
             return chain.proceed(upgradedRequest)
         } catch (e: IOException) {
-            if (attempt < 1 && canSolveExceptionBySwitchingUrl(e)) {
-                isPrimaryUsed = !usingPrimary
-                logger.log(
-                    Level.WARNING,
-                    "Caught exception in ${request.url}, switching web url to ${if (isPrimaryUsed) "primary" else "alternative"} (${e::class.java.simpleName}: ${e.message})"
-                )
-                logger.log(Level.INFO, "webUrl=$webUrl alternativeWebUrl=$alternativeWebUrl")
-                return doIntercept(chain, 1)
-            } else {
-                throw e
+            val isCancelled = chain.call().isCanceled()
+            when {
+                isCancelled -> {
+                    logger.log(Level.INFO, "Caught IOException due to a cancelled, request, ignoring")
+                    throw  e
+                }
+
+                attempt < 1 && canSolveExceptionBySwitchingUrl(e) -> {
+                    isPrimaryUsed = !usingPrimary
+                    logger.log(
+                        Level.WARNING,
+                        "Caught exception in ${request.url}, switching web url to ${if (isPrimaryUsed) "primary" else "alternative"} (${e::class.java.simpleName}: ${e.message})"
+                    )
+                    logger.log(Level.INFO, "webUrl=$webUrl alternativeWebUrl=$alternativeWebUrl")
+                    return doIntercept(chain, 1)
+                }
+
+                else -> throw e
             }
         }
     }
