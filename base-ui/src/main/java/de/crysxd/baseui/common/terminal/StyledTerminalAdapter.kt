@@ -2,20 +2,23 @@ package de.crysxd.baseui.common.terminal
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import de.crysxd.baseui.R
 import de.crysxd.baseui.common.ViewBindingHolder
 import de.crysxd.baseui.databinding.ItemTerminalStyledCommandEndBinding
 import de.crysxd.baseui.databinding.ItemTerminalStyledCommandStartBinding
 import de.crysxd.baseui.databinding.ItemTerminalStyledStandardBinding
-import de.crysxd.baseui.R
 import de.crysxd.octoapp.base.data.models.SerialCommunication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.regex.Pattern
 
-class StyledTerminalAdapter : TerminalAdapter<RecyclerView.ViewHolder>() {
+class StyledTerminalAdapter(
+    private val onCopyText: (String, String) -> Unit
+) : TerminalAdapter<RecyclerView.ViewHolder>() {
 
     private val serialCommunications = mutableListOf<Item>()
     private val commandStartRegex = Pattern.compile("^Send:\\s+(.*)$")
@@ -89,6 +92,10 @@ class StyledTerminalAdapter : TerminalAdapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = serialCommunications[position]
         holder.itemView.findViewById<TextView>(R.id.textView)?.text = item.data
+        holder.itemView.findViewById<ImageButton>(R.id.copy)?.setOnClickListener {
+            val text = serialCommunications.drop(position).takeWhile { it.data != "ok" }.map { it.data.replace("echo:", "").trim() }.joinToString("\n")
+            onCopyText(item.data, text)
+        }
 
         if (item is Item.Standard) {
             if (item.partOfCommand) {

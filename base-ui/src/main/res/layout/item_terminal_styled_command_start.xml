@@ -1,15 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/textView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginStart="@dimen/margin_2"
     android:layout_marginTop="@dimen/margin_1"
     android:background="@drawable/styled_terminal_start_background"
     android:gravity="center_vertical"
+    android:orientation="horizontal"
     android:paddingStart="@dimen/margin_2"
-    android:paddingEnd="@dimen/margin_2"
-    android:paddingBottom="@dimen/margin_1"
-    android:textIsSelectable="true"
-    tools:text="TextView" />
+    android:paddingEnd="@dimen/margin_1"
+    android:paddingBottom="@dimen/margin_1">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textIsSelectable="true"
+        tools:text="TextView" />
+
+    <ImageButton
+        android:id="@+id/copy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cd_copy"
+        android:padding="@dimen/margin_1"
+        android:src="@drawable/ic_round_content_copy_24"
+        app:tint="@color/accent" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -1,26 +1,35 @@
 package de.crysxd.baseui.common.terminal
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.text.InputType
 import android.transition.AutoTransition
 import android.transition.TransitionManager
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import de.crysxd.baseui.BaseFragment
+import de.crysxd.baseui.OctoActivity
+import de.crysxd.baseui.R
 import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.common.gcodeshortcut.GcodeShortcutLayoutManager
 import de.crysxd.baseui.databinding.TerminalFragmentBinding
 import de.crysxd.baseui.di.injectViewModel
 import de.crysxd.baseui.ext.requireOctoActivity
-import de.crysxd.baseui.R
 import de.crysxd.octoapp.base.data.models.GcodeHistoryItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import timber.log.Timber
+
 
 class TerminalFragment : BaseFragment() {
 
@@ -61,7 +70,7 @@ class TerminalFragment : BaseFragment() {
         // Terminal
         initTerminal(
             if (viewModel.isStyledTerminalUsed()) {
-                StyledTerminalAdapter()
+                StyledTerminalAdapter(::copyToClipboard)
             } else {
                 PlainTerminalAdapter()
             }
@@ -86,7 +95,7 @@ class TerminalFragment : BaseFragment() {
             ) {
                 viewModel.selectedTerminalFilters = it.filter { it.second }.map { it.first }
                 binding.buttonFilters.text = viewModel.selectedTerminalFilters.size.toString()
-                initTerminal(adapter ?: StyledTerminalAdapter())
+                initTerminal(adapter ?: StyledTerminalAdapter(::copyToClipboard))
             }
         }
         binding.buttonToggleStyled.setOnClickListener {
@@ -94,7 +103,7 @@ class TerminalFragment : BaseFragment() {
                 initTerminal(PlainTerminalAdapter())
                 viewModel.setStyledTerminalUsed(false)
             } else {
-                initTerminal(StyledTerminalAdapter())
+                initTerminal(StyledTerminalAdapter(::copyToClipboard))
                 viewModel.setStyledTerminalUsed(true)
             }
         }
@@ -118,6 +127,18 @@ class TerminalFragment : BaseFragment() {
                 true
             } else false
         }
+    }
+
+    private fun copyToClipboard(label: String, text: String) {
+        val clipboard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText(label, text)
+        clipboard.setPrimaryClip(clip)
+        requireOctoActivity().showSnackbar(
+            OctoActivity.Message.SnackbarMessage(
+                text = { "Copied „$label“ to clipboard" },
+                type = OctoActivity.Message.SnackbarMessage.Type.Positive,
+            )
+        )
     }
 
     private fun sendGcodeFromInput() {
