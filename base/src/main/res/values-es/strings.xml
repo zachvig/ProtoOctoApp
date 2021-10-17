@@ -43,7 +43,9 @@ El widget siempre controlará la instancia de OctoPrint que está actualmente ac
     <string name="app_widget___offline_since_x">"Sin conexión desde %s"</string>
     <string name="app_widget___update_failed">"Actualización fallida"</string>
     <string name="app_widget___updating">"Actualizando…"</string>
-    <string name="apply">"Aplique"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___apply">"Aplique"</string>
     <string name="billing_unsupported_detail">"Sólo las aplicaciones descargadas de Google Play pueden activar las funciones. Por favor, ¡contacta con hello@octoapp.eu!"</string>
     <string name="billing_unsupported_title">"Sólo compatible con aplicaciones de Google Play"</string>
     <string name="cancel">"Cancelar"</string>
@@ -218,10 +220,18 @@ Tan pronto como su OctoPrint no pueda ser alcanzado directamente, OctoApp cambia
     <string name="extrude_retract">"Extrudir / Retraer"</string>
     <string name="extruding_x_mm">"Extrusión %d mm"</string>
     <string name="failures">"Fallas"</string>
-    <string name="fan_speed_label">"Velocidad del ventilador (%)"</string>
-    <string name="fan_speed_label_active">"Velocidad del ventilador de 0 a 100"</string>
-    <string name="feed_rate_label">"Tasa de alimentación (%)"</string>
-    <string name="feed_rate_label_active">"Tasa de alimentación como número (100 es el valor predeterminado)"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___fan_speed_label">"Velocidad del ventilador (%)"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___fan_speed_label_active">"Velocidad del ventilador de 0 a 100"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___feed_rate_label">"Tasa de alimentación (%)"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___feed_rate_label_active">"Tasa de alimentación como número (100 es el valor predeterminado)"</string>
     <string name="filament_use">"Uso de filamentos"</string>
     <string name="file">"Archivo"</string>
     <string name="file_details_tab_info">"Información"</string>
@@ -229,8 +239,12 @@ Tan pronto como su OctoPrint no pueda ser alcanzado directamente, OctoApp cambia
     <string name="file_location_local">"Local"</string>
     <string name="file_location_sd_card">"Tarjeta SD"</string>
     <string name="file_location_unknown">"Desconocido"</string>
-    <string name="flow_rate_label">"Tasa de flujo (%)"</string>
-    <string name="flow_rate_label_active">"La tasa de flujo como número (100 es el valor predeterminado)"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___flow_rate_label">"Tasa de flujo (%)"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___flow_rate_label_active">"La tasa de flujo como número (100 es el valor predeterminado)"</string>
     <string name="free_trial_x">"Prueba gratuita: %s"</string>
     <string name="fullscreen">"Pantalla completa"</string>
     <string name="gcode_one_command_per_line">"Gcode (un comando por línea)"</string>
@@ -455,7 +469,9 @@ Tan pronto como su OctoPrint no pueda ser alcanzado directamente, OctoApp cambia
     <string name="no_value_placeholder">"--"</string>
     <string name="no_wifi_warning_long">"En muchos casos, OctoPrint sólo está disponible a través de WiFi."</string>
     <string name="notification_channel___print_progress">"La impresión…"</string>
-    <string name="octoprint_can_t_query_fan_speed_and_rates_values_can_only_be_shown_if_changes_are_witnessed">"OctoPrint no puede consultar la velocidad del ventilador y las tasas. Los valores sólo se pueden mostrar si se observan cambios."</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___disclaimer_detail">"OctoPrint no puede consultar la velocidad del ventilador y las tasas. Los valores sólo se pueden mostrar si se observan cambios."</string>
     <string name="one_gcode_per_line">"Un comando Gcode por línea"</string>
     <string name="open_email">"Abrir el correo electrónico"</string>
     <string name="open_octoprint">"Abrir OctoPrint"</string>
@@ -756,7 +772,9 @@ feliz impresión!"</string>
     <string name="try_again">"Inténtalo de nuevo."</string>
     <string name="try_restrating_the_app_or_octoprint">"Intenta reiniciar la aplicación o OctoPrint"</string>
     <string name="tune">"Sintoniza"</string>
-    <string name="understood">"Entendido"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___disclaimer_action_hide">"Entendido"</string>
     <string name="unknown">"Desconocido"</string>
     <string name="update_settings">"Actualizar la configuración"</string>
     <string name="uploaded">"Cargado"</string>
@@ -787,7 +805,9 @@ feliz impresión!"</string>
 
     <!-- Auto filled -->
     <string name="webcam_settings___title">"Configuración de la cámara web"</string>
-    <string name="why_are_the_values_not_always_shown">"¿Por qué no se muestran siempre los valores?"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___disclaimer_title">"¿Por qué no se muestran siempre los valores?"</string>
     <string name="widget_extrude">"Extrusión"</string>
     <string name="widget_gcode_preview">"Gcode"</string>
     <string name="widget_gcode_send">"Envía a Gcode"</string>
@@ -890,4 +910,20 @@ feliz impresión!"</string>
     <string name="widget_gcode_send___confirmation_action">"Ejecutar"</string>
     <string name="print_notification___disconnected">"Desconectado"</string>
     <string name="main___banner_connected_via_local">"Conectado a través de la red local"</string>
+    <string name="temperature_menu___item_preheat_hotend"></string>
+    <string name="temperature_menu___item_preheat_bed"></string>
+    <string name="temperature_menu___item_preheat_chamber"></string>
+    <string name="x_feedrate_mm_min"></string>
+    <string name="y_feedrate_mm_min"></string>
+    <string name="gcode_preview_settings___show_previous_layer"></string>
+    <string name="gcode_preview_settings___show_current_layer"></string>
+    <string name="gcode_preview_settings___quality_low"></string>
+    <string name="gcode_preview_settings___quiality_medium"></string>
+    <string name="gcode_preview_settings___quality_ultra"></string>
+    <string name="gcode_preview_settings___quality"></string>
+    <string name="gcode_preview_settings___quality_low_description"></string>
+    <string name="gcode_preview_settings___quality_medium_description"></string>
+    <string name="gcode_preview_settings___quality_ultra_description"></string>
+    <string name="tune_print___z_baby_step"></string>
+    <string name="tune_print___baby_step_explainer"></string>
 </resources>
