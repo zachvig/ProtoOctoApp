@@ -54,7 +54,7 @@
     <fragment
         android:id="@+id/manualApiKey"
         android:name="de.crysxd.octoapp.signin.apikey.ManualApiKeyFragment"
-        android:label="RequestAccessFragment"
+        android:label="ManualApiKeyFragment"
         tools:layout="@layout/base_signin_fragment">
 
         <argument
