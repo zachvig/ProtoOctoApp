@@ -12,10 +12,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -25,7 +28,7 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
     private val serialCommunicationLogsRepository: SerialCommunicationLogsRepository
 ) : UseCase<ExecuteGcodeCommandUseCase.Param, List<ExecuteGcodeCommandUseCase.Response>>() {
 
-    override suspend fun doExecute(param: Param, timber: Timber.Tree): List<ExecuteGcodeCommandUseCase.Response> {
+    override suspend fun doExecute(param: Param, timber: Timber.Tree): List<Response> {
         val result = if (param.recordResponse) {
             when (param.command) {
                 is GcodeCommand.Single -> listOf(param.command)
@@ -56,6 +59,7 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
     private suspend fun executeAndRecordResponse(command: GcodeCommand.Single, fromUser: Boolean, timber: Timber.Tree) = withContext(Dispatchers.Default) {
         val readJob = async {
             var sendLineFound = false
+            var wasExecuted = false
             val sendLinePattern = Pattern.compile("^Send:.*%%COMMAND%%.*".replace("%%COMMAND%%", command.command))
             val responseEndLinePattern = Pattern.compile(Firebase.remoteConfig.getString("gcode_response_end_line_pattern"))
             val spamMessagePattern = Pattern.compile(Firebase.remoteConfig.getString("gcode_response_spam_pattern"))
@@ -64,6 +68,13 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
             val list = serialCommunicationLogsRepository
                 .flow(false)
                 .map { it.content }
+                .onEach {
+                    if (!wasExecuted) {
+                        timber.i("Receiving first logs, executing $command now")
+                        wasExecuted = true
+                        execute(command, fromUser, timber)
+                    }
+                }
                 .filter {
                     // Filter undesired "Spam"
                     !spamMessagePattern.matcher(it).matches()
@@ -74,13 +85,17 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
                         sendLineFound = sendLinePattern.matcher(it).matches()
                         if (sendLineFound) {
                             timber.v("Send line was found: $it")
+                        } else {
+                            timber.v("Skipping $it")
                         }
                         sendLineFound
                     } else {
+                        timber.v("Passing $it")
                         true
                     }
                 }
                 .takeWhile {
+                    timber.v("Recording $it")
                     !responseEndLinePattern.matcher(it).matches()
                 }
                 .toList()
@@ -92,11 +107,14 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
             )
         }
 
-        // Execute command
-        execute(command, fromUser, timber)
-
         // Wait until response is read
-        return@withContext readJob.await()
+        return@withContext withTimeoutOrNull(TimeUnit.SECONDS.toMillis(30)) {
+            readJob.await()
+        } ?: let {
+            timber.w("Response recording timed out")
+            readJob.cancel()
+            Response.DroppedResponse
+        }
     }
 
     private suspend fun execute(command: GcodeCommand, fromUser: Boolean, timber: Timber.Tree) {
@@ -109,7 +127,7 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
         octoPrintProvider.octoPrint().createPrinterApi().executeGcodeCommand(command)
     }
 
-    private fun logExecuted(command: String, fromUser: Boolean) {
+    private suspend fun logExecuted(command: String, fromUser: Boolean) {
         serialCommunicationLogsRepository.addInternalLog(
             log = "[OctoApp] Send: $command",
             fromUser = fromUser

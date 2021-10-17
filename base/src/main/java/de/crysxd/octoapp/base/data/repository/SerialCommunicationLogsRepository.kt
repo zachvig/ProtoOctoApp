@@ -6,8 +6,9 @@ import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
@@ -26,7 +27,7 @@ class SerialCommunicationLogsRepository(
 ) {
 
     private val logs = mutableListOf<SerialCommunication>()
-    private val flow = MutableStateFlow<SerialCommunication?>(null)
+    private val flow = MutableSharedFlow<SerialCommunication?>(0, 10, BufferOverflow.SUSPEND)
 
     init {
         AppScope.launch(Dispatchers.Default) {
@@ -51,7 +52,7 @@ class SerialCommunicationLogsRepository(
 
                     logs.addAll(newLogs)
                     newLogs.forEach {
-                        flow.value = it
+                        flow.emit(it)
                     }
 
                     if (logs.size > MAX_COMMUNICATION_ENTRIES) {
@@ -66,12 +67,14 @@ class SerialCommunicationLogsRepository(
         }
     }
 
-    fun addInternalLog(log: String, fromUser: Boolean) {
-        flow.value = SerialCommunication(
-            content = log,
-            serverDate = null,
-            date = Date(),
-            source = if (fromUser) SerialCommunication.Source.User else SerialCommunication.Source.OctoAppInternal
+    suspend fun addInternalLog(log: String, fromUser: Boolean) {
+        flow.emit(
+            SerialCommunication(
+                content = log,
+                serverDate = null,
+                date = Date(),
+                source = if (fromUser) SerialCommunication.Source.User else SerialCommunication.Source.OctoAppInternal
+            )
         )
     }
 
