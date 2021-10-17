@@ -13,8 +13,8 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
-import de.crysxd.octoapp.R
 import de.crysxd.baseui.common.OctoTextInputLayout
+import de.crysxd.octoapp.R
 import de.crysxd.octoapp.signin.discover.DiscoverOptionView
 import org.hamcrest.Matchers.allOf
 
@@ -59,6 +59,17 @@ object SignInRobot {
                 withText(R.string.sign_in___discovery___options_title)
             ),
             timeout = 5_000
+        )
+    }
+
+    fun waitForRequestAccessToBeShown() {
+        waitFor(
+            viewMatcher = allOf(
+                withId(R.id.title),
+                isDisplayed(),
+                withText(R.string.sign_in___access___confirm_in_web_interface)
+            ),
+            timeout = 10_000
         )
     }
 
@@ -117,16 +128,18 @@ object SignInRobot {
         onView(withId(R.id.scrollView)).perform(swipeDown())
     }
 
-    fun waitForSignInToBeCompleted() {
+    fun waitForSignInToBeCompleted(skipRequestAccessCheck: Boolean = false) {
         // Wait for access screen
-        waitFor(
-            timeout = 5000,
-            viewMatcher = allOf(
-                withId(R.id.title),
-                isDisplayed(),
-                withText(R.string.sign_in___access___confirm_in_web_interface)
+        if (!skipRequestAccessCheck) {
+            waitFor(
+                timeout = 5000,
+                viewMatcher = allOf(
+                    withId(R.id.title),
+                    isDisplayed(),
+                    withText(R.string.sign_in___access___confirm_in_web_interface)
+                )
             )
-        )
+        }
 
         // Wait for success and continue
         waitFor(
