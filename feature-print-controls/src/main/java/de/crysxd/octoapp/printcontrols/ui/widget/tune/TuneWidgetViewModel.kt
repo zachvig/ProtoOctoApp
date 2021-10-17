@@ -3,16 +3,20 @@ package de.crysxd.octoapp.printcontrols.ui.widget.tune
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
 import de.crysxd.baseui.BaseViewModel
 import de.crysxd.octoapp.base.data.models.SerialCommunication
 import de.crysxd.octoapp.base.data.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.utils.PollingLiveData
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.retry
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -25,7 +29,6 @@ class TuneWidgetViewModel(
     private val executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase
 ) : BaseViewModel() {
 
-    private var updateJob: Job? = null
     private val uiStateMediator = MediatorLiveData<UiState>()
     val uiState = uiStateMediator.map { it }
 
@@ -44,9 +47,38 @@ class TuneWidgetViewModel(
     // "M107" -> M107 command to turn fan off
     private val fanSpeedPattern = Pattern.compile("(M106|M107)( S(\\d+))?")
 
-    val updateLiveData = PollingLiveData(interval = SETTINGS_POLLING_INTERVAL_MS) {
-        // Response is picked up from serial communications stream
+    private val pollValuesLiveData = PollingLiveData(interval = SETTINGS_POLLING_INTERVAL_MS) {
+        // Response is picked up from serial communications stream, so we don't need to do anything here
         delay(SETTINGS_POLLING_INITIAL_DELAY)
+        pollSettingsNow()
+    }
+
+    init {
+        uiStateMediator.addSource(serialCommunicationLogsRepository.flow(includeOld = true)
+            .onEach {
+                extractValues(it)
+            }
+            .retry { Timber.e(it); delay(100); true }
+            .flowOn(Dispatchers.Default)
+            .asLiveData()
+        ) {
+
+        }
+        uiStateMediator.addSource(pollValuesLiveData) {}
+        uiStateMediator.postValue(UiState())
+    }
+
+    private suspend fun extractValues(comm: SerialCommunication) {
+        extractValue(flowRatePattern.matcher(comm.content), 2) { state, value -> state.copy(flowRate = value) }
+        extractValue(feedRatePattern.matcher(comm.content), 2) { state, value -> state.copy(feedRate = value) }
+        extractValue(fanSpeedPattern.matcher(comm.content), 3) { state, value -> state.copy(fanSpeed = ((value / 255f) * 100f).toInt()) }
+    }
+
+    fun pollSettingsNow() = viewModelScope.launch(coroutineExceptionHandler) {
+        doPollSettings()
+    }
+
+    private suspend fun doPollSettings() {
         executeGcodeCommandUseCase.execute(
             ExecuteGcodeCommandUseCase.Param(
                 command = GcodeCommand.Batch(arrayOf("M220", "M221")),
@@ -55,25 +87,7 @@ class TuneWidgetViewModel(
         )
     }
 
-    init {
-        uiStateMediator.addSource(serialCommunicationLogsRepository.flow()
-            .onEach {
-                extractValues(it)
-            }
-            .retry { Timber.e(it); delay(100); true }
-            .asLiveData()
-        ) {}
-
-        uiStateMediator.postValue(UiState())
-    }
-
-    private fun extractValues(comm: SerialCommunication) {
-        extractValue(flowRatePattern.matcher(comm.content), 2) { state, value -> state.copy(flowRate = value) }
-        extractValue(feedRatePattern.matcher(comm.content), 2) { state, value -> state.copy(feedRate = value) }
-        extractValue(fanSpeedPattern.matcher(comm.content), 3) { state, value -> state.copy(fanSpeed = ((value / 255f) * 100f).toInt()) }
-    }
-
-    private fun extractValue(matcher: Matcher, groupIndex: Int, upgrade: (UiState, Int) -> UiState) {
+    private suspend fun extractValue(matcher: Matcher, groupIndex: Int, upgrade: (UiState, Int) -> UiState) {
         if (matcher.find()) {
             val value = if (matcher.groupCount() < groupIndex + 1) {
                 matcher.group(groupIndex)?.toInt() ?: 0
@@ -83,7 +97,9 @@ class TuneWidgetViewModel(
 
             val oldState = uiStateMediator.value ?: UiState()
             val newState = upgrade(oldState, value)
-            uiStateMediator.value = newState
+            withContext(Dispatchers.Main) {
+                uiStateMediator.value = newState
+            }
             Timber.i("Upgraded state after serial communication value was extracted: $oldState -> $newState")
         }
     }
