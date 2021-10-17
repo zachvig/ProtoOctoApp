@@ -135,7 +135,7 @@ class TerminalFragment : BaseFragment() {
         clipboard.setPrimaryClip(clip)
         requireOctoActivity().showSnackbar(
             OctoActivity.Message.SnackbarMessage(
-                text = { "Copied „$label“ to clipboard" },
+                text = { getString(R.string.terminal___copied_x_to_clipboard, label) },
                 type = OctoActivity.Message.SnackbarMessage.Type.Positive,
             )
         )

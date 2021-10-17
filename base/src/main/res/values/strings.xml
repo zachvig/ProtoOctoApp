@@ -926,4 +926,7 @@ happy printing!"</string>
     <string name="gcode_preview_settings___quality_ultra_description">"Highest visual fidelity with anti aliasing"</string>
     <string name="tune_print___z_baby_step">"Z baby step"</string>
     <string name="tune_print___baby_step_explainer">"Baby stepping through the app can be delayed because the printer will always complete the active command before the baby step"</string>
+    <string name="terminal___copied_x_to_clipboard">Copied „%s“ to clipboard</string>
+    <string name="terminal___select_filters">Select Filters</string>
+    <string name="terminal___apply_filters">Apply</string>
 </resources>
