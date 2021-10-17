@@ -15,14 +15,19 @@
             android:defaultValue=""
             app:argType="string" />
         <argument
-            android:name="hint"
-            android:defaultValue=""
-            app:argType="string" />
-        <argument
             android:name="action"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="selectAll"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="hint"
+            android:defaultValue=""
+            app:argType="string" />
         <argument
             android:name="inputType"
             android:defaultValue="1"
@@ -37,17 +42,67 @@
             app:argType="string"
             app:nullable="true" />
         <argument
-            android:name="resultId"
-            app:argType="integer" />
-        <argument
-            android:name="selectAll"
-            android:defaultValue="false"
-            app:argType="boolean" />
-        <argument
             android:name="validator"
             android:defaultValue="@null"
             app:argType="de.crysxd.baseui.common.enter_value.EnterValueFragment$ValueValidator"
             app:nullable="true" />
+        <argument
+            android:name="resultId"
+            app:argType="integer" />
+
+        <argument
+            android:name="hint2"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="inputType2"
+            android:defaultValue="1"
+            app:argType="integer" />
+        <argument
+            android:name="maxLines2"
+            android:defaultValue="1"
+            app:argType="integer" />
+        <argument
+            android:name="value2"
+            android:defaultValue=""
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="validator2"
+            android:defaultValue="@null"
+            app:argType="de.crysxd.baseui.common.enter_value.EnterValueFragment$ValueValidator"
+            app:nullable="true" />
+        <argument
+            android:name="resultId2"
+            android:defaultValue="-1"
+            app:argType="integer" />
+
+        <argument
+            android:name="hint3"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="inputType3"
+            android:defaultValue="1"
+            app:argType="integer" />
+        <argument
+            android:name="maxLines3"
+            android:defaultValue="1"
+            app:argType="integer" />
+        <argument
+            android:name="value3"
+            android:defaultValue=""
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="validator3"
+            android:defaultValue="@null"
+            app:argType="de.crysxd.baseui.common.enter_value.EnterValueFragment$ValueValidator"
+            app:nullable="true" />
+        <argument
+            android:name="resultId3"
+            android:defaultValue="-1"
+            app:argType="integer" />
     </fragment>
 
 </navigation>

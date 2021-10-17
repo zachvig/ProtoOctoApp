@@ -6,7 +6,6 @@ import androidx.lifecycle.Transformations
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicInteger
 
-@Deprecated("We should remove this")
 object NavigationResultMediator {
 
     private var resultCounter = AtomicInteger()
@@ -21,21 +20,19 @@ object NavigationResultMediator {
         return Pair(resultId, wrappedLiveData)
     }
 
-    fun <T : Any> postResult(resultId: Int, result: T?): Boolean {
-        if (resultId >= 0) {
-            val liveData = liveDataIndex[resultId]?.get()
+    fun <T : Any> postResult(resultId: Int, result: T?) = if (resultId >= 0) {
+        val liveData = liveDataIndex[resultId]?.get()
 
-            return when {
-                liveData != null -> {
-                    liveData.postValue(result)
-                    true
-                }
-                else -> {
-                    false
-                }
+        when {
+            liveData != null -> {
+                liveData.postValue(result)
+                true
             }
-        } else {
-            return false
+            else -> {
+                false
+            }
         }
+    } else {
+        false
     }
 }

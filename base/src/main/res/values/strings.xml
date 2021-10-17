@@ -841,6 +841,8 @@ happy printing!"</string>
     <string name="you_can_change_this_limit_in_octoprint_settings">"You can change this limit in OctoPrint settings"</string>
     <string name="z">"Z"</string>
     <string name="z_feedrate_mm_min">"Z feedrate (mm/min)"</string>
+    <string name="x_feedrate_mm_min">"X feedrate (mm/min)"</string>
+    <string name="y_feedrate_mm_min">"Y feedrate (mm/min)"</string>
 
     <!-- Auto filled -->
     <string name="main_menu___item_show_octoprint">"OctoPrint"</string>
