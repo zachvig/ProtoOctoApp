@@ -16,10 +16,10 @@ import java.util.Locale
 
 class TimberCacheTree(
     private val mask: SensitiveDataMask,
-    private val maxSize: Int = 1024 * 128
+    private val maxSize: Int = 1024 * 512
 ) : Timber.DebugTree() {
 
-    private val maxMessageLength = 4000
+    private val maxMessageLength = 6000
     private val dateFormat = SimpleDateFormat("yyyy/MM/dd hh:mm:ss.SSS", Locale.ENGLISH)
     private val cache = StringBuilder()
     private val lock = Mutex()

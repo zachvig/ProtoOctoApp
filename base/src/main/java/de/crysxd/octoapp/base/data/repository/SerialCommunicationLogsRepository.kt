@@ -20,11 +20,14 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.Date
 
-const val MAX_COMMUNICATION_ENTRIES = 1000
 
 class SerialCommunicationLogsRepository(
     private val octoPrintProvider: OctoPrintProvider
 ) {
+
+    companion object {
+        const val MAX_COMMUNICATION_ENTRIES = 1000
+    }
 
     private val logs = mutableListOf<SerialCommunication>()
     private val flow = MutableSharedFlow<SerialCommunication?>(0, 10, BufferOverflow.SUSPEND)
@@ -37,6 +40,7 @@ class SerialCommunicationLogsRepository(
                 .mapNotNull { it.message as? Message.CurrentMessage }
                 .onEach {
                     if (it.isHistoryMessage) {
+                        Timber.i("History message received, clearing cache")
                         logs.clear()
                     }
 
@@ -51,9 +55,7 @@ class SerialCommunicationLogsRepository(
                     }
 
                     logs.addAll(newLogs)
-                    newLogs.forEach {
-                        flow.emit(it)
-                    }
+                    newLogs.forEach { sc -> flow.emit(sc) }
 
                     if (logs.size > MAX_COMMUNICATION_ENTRIES) {
                         logs.removeAll(logs.take(logs.size - MAX_COMMUNICATION_ENTRIES))

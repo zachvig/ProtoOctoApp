@@ -40,12 +40,20 @@ class EventWebSocket(
     private val connectionTimeoutMs: Long,
 ) {
 
+
+    companion object {
+        var instanceCounter = 0
+    }
+
+    private val webSocketId = "WS/${instanceCounter++}"
+    private var listenerCounter = 0
+
     private val reconnectTimeout = connectionTimeoutMs + RECONNECT_DELAY_MS
 
     private var reportDisconnectedJob: Job? = null
     private var webSocket: WebSocket? = null
+    private var webSocketListener: EventWebSocket.WebSocketListener? = null
     private var isConnected = AtomicBoolean(false)
-    private var isOpen = false
     private var lastCurrentMessage: Message.CurrentMessage? = null
     private val eventFlow = MutableSharedFlow<Event>(15)
     private val subscriberCount = AtomicInteger(0)
@@ -56,8 +64,8 @@ class EventWebSocket(
             logger.log(Level.SEVERE, "NON-CONTAINED exception in coroutineScope", throwable)
         }
 
-    private var currentMessageCounter = 0
     private val logMaskPattern = Pattern.compile("\\[(.*?)]")
+
 
     fun start() {
         if (subscriberCount.get() > 0 && isConnected.compareAndSet(false, true)) {
@@ -68,13 +76,16 @@ class EventWebSocket(
                 .url(webSocketUrl)
                 .build()
 
-            httpClient.newBuilder()
-                .pingInterval(pingPongTimeoutMs, TimeUnit.MILLISECONDS)
-                .connectTimeout(connectionTimeoutMs, TimeUnit.MILLISECONDS)
-                .build()
-                .newWebSocket(request, WebSocketListener())
+            webSocketListener?.dispose()
+            webSocketListener = WebSocketListener().also {
+                webSocket = httpClient.newBuilder()
+                    .pingInterval(pingPongTimeoutMs, TimeUnit.MILLISECONDS)
+                    .connectTimeout(connectionTimeoutMs, TimeUnit.MILLISECONDS)
+                    .build()
+                    .newWebSocket(request, it)
+            }
 
-            logger.log(Level.INFO, "Opening web socket")
+            logger.log(Level.INFO, "[$webSocketId] Opening web socket")
             onStart()
         }
     }
@@ -87,11 +98,12 @@ class EventWebSocket(
     }
 
     private fun doStop() {
+        webSocketListener?.dispose()
         webSocket?.close(1000, "User exited app")
         webSocket?.cancel()
         job.cancel()
         reportDisconnectedJob?.cancel()
-        logger.log(Level.INFO, "Closing web socket")
+        logger.log(Level.INFO, "[$webSocketId] Closing web socket")
         handleClosure()
         onStop()
     }
@@ -100,11 +112,11 @@ class EventWebSocket(
 
     fun eventFlow(tag: String): Flow<Event> {
         return eventFlow.onStart {
-            logger.log(Level.INFO, "onStart for Flow (tag=$tag, webSocket=${this@EventWebSocket})")
+            logger.log(Level.INFO, "[$webSocketId] onStart for Flow (tag=$tag, webSocket=${this@EventWebSocket})")
             subscriberCount.incrementAndGet()
             start()
         }.onCompletion {
-            logger.log(Level.INFO, "onCompletion for Flow (tag=$tag, webSocket=${this@EventWebSocket})")
+            logger.log(Level.INFO, "[$webSocketId] onCompletion for Flow (tag=$tag, webSocket=${this@EventWebSocket})")
             subscriberCount.decrementAndGet()
             stop()
         }
@@ -116,7 +128,7 @@ class EventWebSocket(
 
     private fun handleClosure() {
         isConnected.set(false)
-        logger.log(Level.INFO, "Web socket closed")
+        logger.log(Level.INFO, "[$webSocketId] Web socket closed")
     }
 
     internal fun postMessage(message: Message) {
@@ -135,8 +147,17 @@ class EventWebSocket(
     }
 
     inner class WebSocketListener : okhttp3.WebSocketListener() {
-
+        var isOpen = false
+        val listenerId = "$webSocketId/${listenerCounter++}"
+        private var currentMessageCounter = 0
         private var firstMessage = true
+
+        fun dispose() {
+            logger.log(Level.INFO, "[$listenerId] Web socket disposed")
+            isOpen = false
+        }
+
+        private fun shouldLogCurrentMessage() = currentMessageCounter++ % 5 == 0
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
@@ -144,7 +165,7 @@ class EventWebSocket(
             firstMessage = true
 
             // Handle open event
-            logger.log(Level.INFO, "Web socket open")
+            logger.log(Level.INFO, "[$listenerId] Web socket open")
 
 
             // In order to receive any messages on OctoPrint instances with authentication set up,
@@ -156,43 +177,45 @@ class EventWebSocket(
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             super.onMessage(webSocket, text)
+
+            // OkHttp sometimes leaks connections.
+            // If we are no longer supposed to be connected, we crash the socket
+            if (!isOpen) {
+                throw WebSocketZombieException()
+            }
+
             // We only send the connected message after we received the first message. This is important because
             // OctoEverywhere connects the websocket even if OctoPrint is down. When we receive the first message
             // we know that we are connected.
             if (firstMessage) {
                 firstMessage = false
-                logger.log(Level.INFO, "Web socket connected")
+                logger.log(Level.INFO, "[$listenerId] Web socket connected")
                 dispatchEvent(Event.Connected(getCurrentConnectionType()))
             }
 
-            logger.log(Level.FINEST, "Message received: ${text.substring(0, 256.coerceAtMost(text.length))} ")
+            logger.log(Level.FINEST, "[$listenerId] Message received: ${text.substring(0, 32.coerceAtMost(text.length))} ")
             reportDisconnectedJob?.cancel()
 
-            // OkHttp sometimes leaks connections.
-            // If we are no longer supposed to be connected, we crash the socket
-            if (!isConnected.get()) {
-                throw WebSocketZombieException()
-            }
-
             try {
-                val message = gson.fromJson(text, Message::class.java)
-
-                if (message is Message.CurrentMessage) {
-                    if (currentMessageCounter++ % 5 == 0) {
-                        logger.log(Level.INFO, "Current message received: ${logMaskPattern.matcher(text).replaceAll("[...]")} ")
+                when (val message = gson.fromJson(text, Message::class.java)) {
+                    is Message.CurrentMessage -> {
+                        lastCurrentMessage = message
+                        dispatchEvent(Event.MessageReceived(message))
+                        if (shouldLogCurrentMessage()) {
+                            logger.log(Level.FINE, "[$listenerId] Current message received: ${logMaskPattern.matcher(text).replaceAll("[...]")} ")
+                        }
                     }
-                    lastCurrentMessage = message
-                }
 
-                if (message is Message.ReAuthRequired) {
-                    logger.log(Level.WARNING, "Web socket needs to authenticate again")
-                    stop()
-                    reconnect()
-                } else {
-                    dispatchEvent(Event.MessageReceived(message))
+                    is Message.ReAuthRequired -> {
+                        logger.log(Level.WARNING, "[$listenerId] Web socket needs to authenticate again")
+                        stop()
+                        reconnect()
+                    }
+
+                    else -> dispatchEvent(Event.MessageReceived(message))
                 }
             } catch (e: Exception) {
-                logger.log(Level.WARNING, "Error while parsing webs socket message: $text", e)
+                logger.log(Level.WARNING, "[$listenerId] Error while parsing webs socket message: $text", e)
             }
         }
 
@@ -207,7 +230,7 @@ class EventWebSocket(
             when {
                 !isConnected.get() -> Unit
                 t is WebSocketZombieException -> {
-                    logger.log(Level.WARNING, "Web socket was forcefully closed")
+                    logger.log(Level.WARNING, "[$listenerId] Web socket was forcefully closed")
                 }
                 t is OctoPrintApiException && t.responseCode in 400..599 -> {
                     reconnect(WebSocketUpgradeFailedException(t.responseCode, webSocketUrl = webSocketUrl, webUrl = webUrl), true)
@@ -221,17 +244,19 @@ class EventWebSocket(
         }
 
         private fun reconnect(t: Throwable? = null, reportImmediately: Boolean = false, reconnectDelay: Long = RECONNECT_DELAY_MS) {
-            isConnected.set(false)
+            if (isOpen) {
+                isConnected.set(false)
 
-            coroutineScope.launch {
-                delay(reconnectDelay)
-                start()
+                coroutineScope.launch {
+                    delay(reconnectDelay)
+                    start()
+                }
+
+                reportDisconnectedAfterDelay(
+                    throwable = t,
+                    delay = if (!isOpen || reportImmediately) 0 else reconnectTimeout
+                )
             }
-
-            reportDisconnectedAfterDelay(
-                throwable = t,
-                delay = if (!isOpen || reportImmediately) 0 else reconnectTimeout
-            )
         }
 
         private fun reportDisconnectedAfterDelay(throwable: Throwable?, delay: Long = reconnectTimeout) {

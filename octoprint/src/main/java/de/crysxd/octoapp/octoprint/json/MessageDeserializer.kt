@@ -1,10 +1,14 @@
 package de.crysxd.octoapp.octoprint.json
 
-import com.google.gson.*
+import com.google.gson.Gson
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import java.lang.reflect.Type
-import java.util.*
+import java.util.Locale
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -16,8 +20,8 @@ class MessageDeserializer(
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Message {
         val o = json.asJsonObject
         return when {
-            o.has("current") -> gson.fromJson(o["current"], Message.CurrentMessage::class.java).also { it.copy(isHistoryMessage = false) }
-            o.has("history") -> gson.fromJson(o["history"], Message.CurrentMessage::class.java).also { it.copy(isHistoryMessage = true) }
+            o.has("current") -> gson.fromJson(o["current"], Message.CurrentMessage::class.java).copy(isHistoryMessage = false)
+            o.has("history") -> gson.fromJson(o["history"], Message.CurrentMessage::class.java).copy(isHistoryMessage = true)
             o.has("connected") -> gson.fromJson(o["connected"], Message.ConnectedMessage::class.java)
             o.has("reauthRequired") -> Message.ReAuthRequired
             o.has("plugin") -> when (o["plugin"].asJsonObject["plugin"].asString) {

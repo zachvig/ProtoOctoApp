@@ -21,7 +21,8 @@ sealed class Message {
         val progress: ProgressInformation?,
         val job: JobInformation?,
         val serverTime: Double,
-        val isHistoryMessage: Boolean
+        val isHistoryMessage: Boolean,
+        val originHash: Int = 0,
     ) : Message()
 
     data class UnknownPluginMessage(
