@@ -86,11 +86,11 @@ class SendGcodeWidgetViewModel(
                     postMessage(
                         OctoActivity.Message.DialogMessage(
                             text = {
-                                responses.joinToString("\n\n") {
+                                responses.joinToString("<br><br>") {
                                     listOf(
                                         listOf((it as? RecordedResponse)?.sendLine ?: ""),
                                         (it as? RecordedResponse)?.responseLines ?: emptyList()
-                                    ).flatten().joinToString("\n")
+                                    ).flatten().joinToString("<br>")
                                 }
                             }
                         )

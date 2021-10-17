@@ -26,6 +26,10 @@
         <item name="materialAlertDialogTheme">@style/OctoTheme.AlertDialog</item>
         <item name="materialButtonStyle">@style/OctoTheme.Widget.Button</item>
         <item name="imageButtonStyle">@style/OctoTheme.Widget.Button.Image</item>
+        <item name="snackbarStyle">@style/OctoTheme.Snackbar</item>
+        <item name="snackbarButtonStyle">@style/OctoTheme.Snackbar.Button</item>
+        <item name="snackbarTextViewStyle">@style/OctoTheme.Snackbar.Text</item>
+
     </style>
 
     <style name="OctoTheme" parent="OctoTheme.Base" />
@@ -222,6 +226,22 @@
         <item name="buttonBarNeutralButtonStyle">@style/OctoTheme.Widget.Button.Borderless</item>
         <item name="cornerFamily">rounded</item>
         <item name="cornerRadius">@dimen/margin_1</item>
+    </style>
+
+    <style name="OctoTheme.Snackbar" parent="@style/Widget.MaterialComponents.Snackbar">
+        <item name="android:layout_margin">@dimen/margin_2</item>
+    </style>
+
+    <style name="OctoTheme.Snackbar.Button" parent="@style/Widget.MaterialComponents.Button.TextButton.Snackbar">
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:elevation">0dp</item>
+        <item name="backgroundTint">@color/white_translucent_2</item>
+        <item name="shapeAppearance">@style/OctoTheme.ShapeAppearance.Button</item>
+        <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Button.Borderless</item>
+    </style>
+
+    <style name="OctoTheme.Snackbar.Text" parent="@style/Widget.MaterialComponents.Snackbar.TextView">
+        <item name="android:textAppearance">@style/OctoTheme.TextAppearance</item>
     </style>
 
     <style name="OctoTheme.ShapeAppearance.Button" parent="ShapeAppearance.MaterialComponents.SmallComponent">

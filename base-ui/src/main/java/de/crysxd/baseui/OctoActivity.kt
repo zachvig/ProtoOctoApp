@@ -60,7 +60,7 @@ abstract class OctoActivity : LocalizedActivity() {
         // Debounce snackbars to prevent them from "flashing up"
         lifecycleScope.launchWhenCreated {
             snackbarMessageChannel
-                .debounce(1000)
+                .debounce(300)
                 .filterNotNull()
                 .collect(::doShowSnackbar)
         }
