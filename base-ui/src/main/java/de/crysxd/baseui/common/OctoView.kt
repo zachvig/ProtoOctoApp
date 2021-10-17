@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.AppCompatImageView
@@ -28,6 +29,7 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     private val animationHandler = Handler(Looper.getMainLooper())
     private var doAfterAnimation: () -> Boolean = { true }
     private var scheduleRunnable: Runnable? = null
+    var animateVisibility = false
 
     private val loopCallback = object : Animatable2Compat.AnimationCallback() {
         override fun onAnimationEnd(drawable: Drawable) {
@@ -203,5 +205,11 @@ class OctoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         animationHandler.removeCallbacks(startRunnable)
+    }
+
+    override fun setVisibility(visibility: Int) = if (animateVisibility) {
+        animate().alpha(if (visibility == View.VISIBLE) 1f else 0f).start()
+    } else {
+        super.setVisibility(visibility)
     }
 }

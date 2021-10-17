@@ -73,6 +73,7 @@ abstract class OctoActivity : LocalizedActivity() {
         super.onStart()
         // Remove splash background
         window.decorView.background = ColorDrawable(ContextCompat.getColor(this, R.color.window_background))
+        octo.animateVisibility = true
     }
 
     override fun onDestroy() {

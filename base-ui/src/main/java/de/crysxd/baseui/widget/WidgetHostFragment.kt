@@ -20,6 +20,7 @@ import de.crysxd.octoapp.base.data.models.WidgetPreferences
 import de.crysxd.octoapp.base.data.models.WidgetType
 import de.crysxd.octoapp.base.di.BaseInjector
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
 
@@ -34,6 +35,12 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
         Timber.i("Reload widgets")
         requestTransition()
         doReloadWidgets()
+        startPostponedEnterTransition()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        postponeEnterTransition(1000, TimeUnit.MILLISECONDS)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -47,6 +54,7 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
 
     override fun onStart() {
         super.onStart()
+        postponeEnterTransition(1000, TimeUnit.MILLISECONDS)
         Timber.i("Starting")
         requireOctoActivity().octoToolbar.state = toolbarState
         requireOctoActivity().octo.isVisible = true
