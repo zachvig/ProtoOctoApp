@@ -14,10 +14,10 @@ abstract class RevolvingOptionsMenuItem : MenuItem {
     override suspend fun onClicked(host: MenuHost?) {
         val current = options.indexOfFirst { it.value == activeValue }.coerceAtLeast(0)
         val next = (current + 1) % options.size
-        handleOptionActivated(options[next])
+        handleOptionActivated(host, options[next])
     }
 
-    abstract fun handleOptionActivated(option: Option)
+    abstract fun handleOptionActivated(host: MenuHost?, option: Option)
 
     data class Option(
         val label: CharSequence,

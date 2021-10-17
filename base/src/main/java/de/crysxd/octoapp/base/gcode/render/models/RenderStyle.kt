@@ -7,5 +7,7 @@ import de.crysxd.octoapp.base.gcode.parse.models.Move
 data class RenderStyle(
     val printHeadPaint: Paint,
     val paintPalette: (Move.Type) -> Paint,
+    val previousLayerPaint: Paint,
+    val remainingLayerPaint: Paint,
     @DrawableRes val background: Int
 )

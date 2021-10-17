@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -19,6 +18,7 @@ import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.databinding.GcodePreviewFragmentBinding
 import de.crysxd.baseui.di.injectActivityViewModel
 import de.crysxd.baseui.ext.requireOctoActivity
+import de.crysxd.baseui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.ext.asStyleFileSize
@@ -95,6 +95,10 @@ class GcodePreviewFragment : BaseFragment() {
         binding.previousLayerButton.setOnClickListener {
             binding.layerSeekBar.progress = binding.layerSeekBar.progress - 1
             pushSeekBarValuesToViewModel(binding.layerSeekBar)
+        }
+
+        binding.settingsButton.setOnClickListener {
+            MenuBottomSheetFragment.createForMenu(GcodeSettingsMenu()).show(childFragmentManager)
         }
 
         if (isStandaloneScreen) {
@@ -221,13 +225,11 @@ class GcodePreviewFragment : BaseFragment() {
         binding.layerNumber.text = getString(R.string.x_of_y, state.renderContext.layerNumber + 1, state.renderContext.layerCount)
         binding.layerHeight.text = getString(R.string.x_mm, layerHeightMm)
         binding.layerProgress.text = String.format("%.0f %%", layerProgressPercent * 100)
-        binding.unsupportedGcode.isVisible = state.renderContext.paths.any { it.type == Move.Type.Unsupported && it.points.isNotEmpty() }
+        binding.unsupportedGcode.isVisible = state.renderContext.completedLayerPaths.any { path -> path.type == Move.Type.Unsupported && path.moveCount > 0 }
 
         // Only switch to async render if the view recommends it.
         // This way we have smooth scrolling as long as possible but never block the UI thread
         if (binding.renderView.asyncRenderRecommended && !binding.renderView.useAsyncRender) {
-            binding.slow.animate().alpha(1f).start()
-            Toast.makeText(requireContext(), "Slow", Toast.LENGTH_SHORT).show()
             binding.renderView.enableAsyncRender(viewLifecycleOwner.lifecycleScope)
         }
 
@@ -237,6 +239,7 @@ class GcodePreviewFragment : BaseFragment() {
             originInCenter = state.printerProfile.volume.origin == PrinterProfiles.Origin.Center,
             printBedSizeMm = PointF(state.printerProfile.volume.width, state.printerProfile.volume.depth),
             extrusionWidthMm = state.printerProfile.extruder.nozzleDiameter,
+            quality = state.settings.quality,
         )
     }
 

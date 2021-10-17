@@ -14,6 +14,20 @@ class GenerateRenderStyleUseCase @Inject constructor(
     context: Context
 ) : UseCase<OctoPrintInstanceInformationV3?, RenderStyle>() {
 
+    private val previousLayerPaint = Paint().apply {
+        style = Paint.Style.STROKE
+        isAntiAlias = true
+        color = ContextCompat.getColor(context, R.color.gcode_previous)
+        alpha = 128
+    }
+
+    private val remainingPaint = Paint().apply {
+        style = Paint.Style.STROKE
+        isAntiAlias = true
+        color = ContextCompat.getColor(context, R.color.gcode_remaining)
+        alpha = 128
+    }
+
     private val extrudePaint = Paint().apply {
         style = Paint.Style.STROKE
         isAntiAlias = true
@@ -40,6 +54,8 @@ class GenerateRenderStyleUseCase @Inject constructor(
 
     private val defaultStyle = RenderStyle(
         printHeadPaint = printHeadPaint,
+        previousLayerPaint = previousLayerPaint,
+        remainingLayerPaint = remainingPaint,
         paintPalette = {
             when (it) {
                 Move.Type.Travel -> travelPaint
@@ -81,6 +97,8 @@ class GenerateRenderStyleUseCase @Inject constructor(
         // Create style
         RenderStyle(
             printHeadPaint = printHeadPaint,
+            previousLayerPaint = previousLayerPaint,
+            remainingLayerPaint = remainingPaint,
             paintPalette = {
                 when (it) {
                     Move.Type.Travel -> travelPaint

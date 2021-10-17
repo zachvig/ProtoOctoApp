@@ -1,5 +1,8 @@
 package de.crysxd.octoapp.base.data.source
 
+import android.content.Context
+import android.net.ConnectivityManager
+import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.gcode.parse.GcodeParser
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.utils.measureTime
@@ -13,12 +16,20 @@ import timber.log.Timber
 class RemoteGcodeFileDataSource(
     private val octoPrintProvider: OctoPrintProvider,
     private val localDataSource: LocalGcodeFileDataSource,
+    private val context: Context,
 ) {
 
     fun loadFile(file: FileObject.File, allowLargeFileDownloads: Boolean) = flow {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val onMeteredNetwork = connectivityManager.isActiveNetworkMetered
+
         val maxFileSize = octoPrintProvider.octoPrint().createSettingsApi()
             .getSettings().plugins.values.mapNotNull { it as? Settings.GcodeViewerSettings }
-            .firstOrNull()?.mobileSizeThreshold
+            .firstOrNull()?.let {
+                if (onMeteredNetwork) it.mobileSizeThreshold else it.sizeThreshold
+            }.also {
+                Timber.i("Current network is metered: $onMeteredNetwork -> max file size for direct download is ${it?.asStyleFileSize()}")
+            }
 
         if (maxFileSize != null && !allowLargeFileDownloads && file.size > maxFileSize) {
             return@flow emit(GcodeFileDataSource.LoadState.FailedLargeFileDownloadRequired)

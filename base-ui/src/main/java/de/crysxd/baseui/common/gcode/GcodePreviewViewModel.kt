@@ -3,8 +3,10 @@ package de.crysxd.baseui.common.gcode
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.crysxd.baseui.BaseViewModel
+import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_GCODE_PREVIEW
+import de.crysxd.octoapp.base.data.models.GcodePreviewSettings
 import de.crysxd.octoapp.base.data.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.data.source.GcodeFileDataSource
@@ -16,7 +18,6 @@ import de.crysxd.octoapp.base.usecase.GenerateRenderStyleUseCase
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import de.crysxd.octoapp.octoprint.models.socket.Message
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -26,6 +27,7 @@ import timber.log.Timber
 class GcodePreviewViewModel(
     octoPrintProvider: OctoPrintProvider,
     octoPrintRepository: OctoPrintRepository,
+    octoPreferences: OctoPreferences,
     generateRenderStyleUseCase: GenerateRenderStyleUseCase,
     private val gcodeFileRepository: GcodeFileRepository
 ) : BaseViewModel() {
@@ -35,11 +37,11 @@ class GcodePreviewViewModel(
     }
 
     private var filePendingToLoad: FileObject.File? = null
-    private val gcodeChannel = ConflatedBroadcastChannel<Flow<GcodeFileDataSource.LoadState>?>()
-    private val contextFactoryChannel = ConflatedBroadcastChannel<(Message.CurrentMessage) -> Pair<GcodeRenderContextFactory, Boolean>>()
-    private val manualViewStateChannel = ConflatedBroadcastChannel<ViewState>(ViewState.Loading())
-    private val renderStyleFlow = octoPrintRepository.instanceInformationFlow().map {
-        generateRenderStyleUseCase.execute(it)
+    private val gcodeFlow = MutableStateFlow<Flow<GcodeFileDataSource.LoadState>?>(emptyFlow())
+    private val contextFactoryFlow = MutableStateFlow<(Message.CurrentMessage) -> Pair<GcodeRenderContextFactory, Boolean>?> { null }
+    private val manualViewStateFlow = MutableStateFlow<ViewState>(ViewState.Loading())
+    private val renderStyleFlow = octoPrintRepository.instanceInformationFlow().combine(octoPreferences.updatedFlow) { instance, _ ->
+        generateRenderStyleUseCase.execute(instance)
     }
 
     private val printerProfileFlow = octoPrintRepository.instanceInformationFlow().map {
@@ -63,22 +65,30 @@ class GcodePreviewViewModel(
         it.job?.file ?: return@mapNotNull null
     }.distinctUntilChangedBy { it.path }.asLiveData()
 
-    private val renderContextFlow: Flow<ViewState> = gcodeChannel.asFlow().filterNotNull().flatMapLatest { it }
+    private val renderContextFlow: Flow<ViewState> = gcodeFlow.filterNotNull().flatMapLatest { it }
         .combine(octoPrintProvider.passiveCurrentMessageFlow("gcode_preview_1").sample(1000)) { gcodeState, currentMessage ->
             Pair(gcodeState, currentMessage)
-        }.combine(contextFactoryChannel.asFlow()) { pair, factory ->
+        }.combine(contextFactoryFlow) { pair, factory ->
             val (gcodeState, currentMessage) = pair
+            val settings = octoPreferences.gcodePreviewSettings
 
             when (gcodeState) {
                 is GcodeFileDataSource.LoadState.Loading -> ViewState.Loading(gcodeState.progress)
                 GcodeFileDataSource.LoadState.FailedLargeFileDownloadRequired -> ViewState.LargeFileDownloadRequired
                 is GcodeFileDataSource.LoadState.Failed -> ViewState.Error(gcodeState.exception)
                 is GcodeFileDataSource.LoadState.Ready -> {
-                    val (factoryInstance, fromUser) = factory(currentMessage)
-                    ViewState.DataReady(
-                        renderContext = factoryInstance.extractMoves(gcodeState.gcode),
-                        fromUser = fromUser
-                    )
+                    factory(currentMessage)?.let {
+                        val (factoryInstance, fromUser) = it
+                        ViewState.DataReady(
+                            renderContext = factoryInstance.extractMoves(
+                                gcode = gcodeState.gcode,
+                                includePreviousLayer = settings.showPreviousLayer,
+                                includeRemainingCurrentLayer = settings.showCurrentLayer,
+                            ),
+                            fromUser = fromUser,
+                            settings = settings
+                        )
+                    } ?: ViewState.Loading(1f)
                 }
             }
         }.distinctUntilChanged()
@@ -98,7 +108,7 @@ class GcodePreviewViewModel(
             emit(ViewState.Error(e))
         }
 
-    val viewState = merge(manualViewStateChannel.asFlow(), internalViewState)
+    val viewState = merge(manualViewStateFlow, internalViewState)
         .asLiveData(viewModelScope.coroutineContext)
 
 
@@ -106,10 +116,10 @@ class GcodePreviewViewModel(
 
     fun downloadGcode(file: FileObject.File, allowLargeFileDownloads: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
         Timber.i("Download file: ${file.path}")
-        gcodeChannel.offer(flowOf(GcodeFileDataSource.LoadState.Loading(0f)))
+        gcodeFlow.value = flowOf(GcodeFileDataSource.LoadState.Loading(0f))
 
         if (isFeatureEnabled()) {
-            gcodeChannel.offer(gcodeFileRepository.loadFile(file, allowLargeFileDownloads))
+            gcodeFlow.value = gcodeFileRepository.loadFile(file, allowLargeFileDownloads)
         } else {
             // Feature currently disabled. Store the file to be loaded once the feature got enabled.
             filePendingToLoad = file
@@ -117,7 +127,7 @@ class GcodePreviewViewModel(
     }
 
     fun useLiveProgress() {
-        contextFactoryChannel.offer {
+        contextFactoryFlow.value = {
             Pair(
                 GcodeRenderContextFactory.ForFileLocation(it.progress?.filepos?.toInt() ?: Int.MAX_VALUE),
                 false
@@ -126,9 +136,9 @@ class GcodePreviewViewModel(
     }
 
     fun useManualProgress(layer: Int, progress: Float) {
-        contextFactoryChannel.offer {
+        contextFactoryFlow.value = {
             Pair(
-                GcodeRenderContextFactory.ForLayerProgress(layerNo = layer, progress = progress),
+                GcodeRenderContextFactory.ForLayerProgress(layerIndex = layer, progress = progress),
                 true
             )
         }
@@ -143,7 +153,8 @@ class GcodePreviewViewModel(
             val renderStyle: RenderStyle? = null,
             val renderContext: GcodeRenderContext? = null,
             val printerProfile: PrinterProfiles.Profile? = null,
-            val fromUser: Boolean? = null
+            val fromUser: Boolean? = null,
+            val settings: GcodePreviewSettings,
         ) : ViewState()
     }
 }

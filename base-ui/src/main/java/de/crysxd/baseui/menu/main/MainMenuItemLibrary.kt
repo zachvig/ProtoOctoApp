@@ -5,6 +5,10 @@ import de.crysxd.baseui.menu.material.MaterialPluginMenu
 import de.crysxd.baseui.menu.power.PowerControlsMenu
 import de.crysxd.baseui.menu.switchprinter.AddInstanceMenuItem
 import de.crysxd.baseui.menu.switchprinter.SwitchInstanceMenuItem
+import de.crysxd.baseui.menu.temperature.ApplyTemperaturePresetForAllMenuItem
+import de.crysxd.baseui.menu.temperature.ApplyTemperaturePresetForBedMenuItem
+import de.crysxd.baseui.menu.temperature.ApplyTemperaturePresetForChamberMenuItem
+import de.crysxd.baseui.menu.temperature.ApplyTemperaturePresetForHotendMenuItem
 import de.crysxd.baseui.menu.temperature.ApplyTemperaturePresetMenuItem
 import de.crysxd.baseui.menu.webcam.WebcamSettingsMenu
 import de.crysxd.octoapp.base.data.models.MenuItems
@@ -58,6 +62,10 @@ class MenuItemLibrary {
             null
         }
         itemId.startsWith(MenuItems.MENU_ITEM_SWITCH_INSTANCE) -> SwitchInstanceMenuItem.forItemId(itemId)
+        itemId.startsWith(MenuItems.MENU_ITEM_APPLY_TEMPERATURE_PRESET_ALL) -> ApplyTemperaturePresetForAllMenuItem.forItemId(itemId)
+        itemId.startsWith(MenuItems.MENU_ITEM_APPLY_TEMPERATURE_PRESET_HOTEND) -> ApplyTemperaturePresetForHotendMenuItem.forItemId(itemId)
+        itemId.startsWith(MenuItems.MENU_ITEM_APPLY_TEMPERATURE_PRESET_BED) -> ApplyTemperaturePresetForBedMenuItem.forItemId(itemId)
+        itemId.startsWith(MenuItems.MENU_ITEM_APPLY_TEMPERATURE_PRESET_CHAMBER) -> ApplyTemperaturePresetForChamberMenuItem.forItemId(itemId)
         itemId.startsWith(MenuItems.MENU_ITEM_APPLY_TEMPERATURE_PRESET) -> ApplyTemperaturePresetMenuItem.forItemId(itemId)
         itemId.startsWith(MenuItems.MENU_EXECUTE_SYSTEM_COMMAND) -> ExecuteSystemCommandMenuItem.forItemId(itemId)
         itemId.startsWith(MenuItems.MENU_ITEM_ACTIVATE_MATERIAL) -> MaterialPluginMenu.ActivateMaterialMenuItem.forItemId(itemId)

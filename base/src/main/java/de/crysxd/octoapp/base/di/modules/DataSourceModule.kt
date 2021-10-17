@@ -66,8 +66,9 @@ class DataSourceModule {
     @BaseScope
     fun provideRemoteGcodeFileDataSource(
         octoPrintProvider: OctoPrintProvider,
-        local: LocalGcodeFileDataSource
-    ) = RemoteGcodeFileDataSource(octoPrintProvider, local)
+        local: LocalGcodeFileDataSource,
+        context: Context,
+    ) = RemoteGcodeFileDataSource(octoPrintProvider, local, context)
 
     @Provides
     @BaseScope
