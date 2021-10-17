@@ -13,30 +13,24 @@ import de.crysxd.baseui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.base.data.models.WidgetType
 import de.crysxd.octoapp.printcontrols.R
 import de.crysxd.octoapp.printcontrols.databinding.TuneWidgetBinding
-import de.crysxd.octoapp.printcontrols.di.injectViewModel
-import de.crysxd.octoapp.printcontrols.ui.ARG_NO_VALUE
+import de.crysxd.octoapp.printcontrols.di.injectActivityViewModel
 import de.crysxd.octoapp.printcontrols.ui.PrintControlsFragmentDirections
 
 class TuneWidget(context: Context) : RecyclableOctoWidget<TuneWidgetBinding, TuneWidgetViewModel>(context) {
     override val type = WidgetType.TuneWidget
     private val observer = Observer(::updateViewState)
     override val binding = TuneWidgetBinding.inflate(LayoutInflater.from(context))
-    override fun createNewViewModel(parent: BaseWidgetHostFragment) = parent.injectViewModel<TuneWidgetViewModel>().value
+    override fun createNewViewModel(parent: BaseWidgetHostFragment) = parent.injectActivityViewModel<TuneWidgetViewModel>().value
     override fun getTitle(context: Context): String? = null
     override fun getAnalyticsName() = "tune"
 
     init {
         view.setOnClickListener {
             recordInteraction()
-            baseViewModel.uiState.value?.let { uiState ->
-                it.findNavController().navigate(
-                    PrintControlsFragmentDirections.actionTunePrint(
-                        currentFanSpeed = uiState.fanSpeed ?: ARG_NO_VALUE,
-                        currentFeedRate = uiState.feedRate ?: ARG_NO_VALUE,
-                        currentFlowRate = uiState.flowRate ?: ARG_NO_VALUE
-                    )
-                )
-            }
+            baseViewModel.pollSettingsNow()
+            it.findNavController().navigate(
+                PrintControlsFragmentDirections.actionTunePrint()
+            )
         }
     }
 

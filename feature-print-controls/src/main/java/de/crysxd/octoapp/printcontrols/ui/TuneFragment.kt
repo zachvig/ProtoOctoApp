@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.printcontrols.ui
 
+import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -8,23 +9,25 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionManager
 import de.crysxd.baseui.BaseFragment
 import de.crysxd.baseui.common.OctoTextInputLayout
 import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.ext.clearFocusAndHideSoftKeyboard
-import de.crysxd.baseui.ext.requestFocusAndOpenSoftKeyboard
 import de.crysxd.baseui.ext.requireOctoActivity
+import de.crysxd.octoapp.printcontrols.R
 import de.crysxd.octoapp.printcontrols.databinding.TuneFragmentBinding
+import de.crysxd.octoapp.printcontrols.di.injectActivityViewModel
 import de.crysxd.octoapp.printcontrols.di.injectViewModel
 import de.crysxd.octoapp.printcontrols.ui.widget.TuneFragmentViewModel
+import de.crysxd.octoapp.printcontrols.ui.widget.tune.TuneWidgetViewModel
+import java.text.DecimalFormat
 
-const val ARG_NO_VALUE = -1
 
 class TuneFragment : BaseFragment() {
 
     override val viewModel: TuneFragmentViewModel by injectViewModel()
+    private val tuneViewModel by injectActivityViewModel<TuneWidgetViewModel>()
     private lateinit var binding: TuneFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -39,10 +42,6 @@ class TuneFragment : BaseFragment() {
                 TransitionManager.beginDelayedTransition(view as ViewGroup)
             }
 
-            if (it.initialValue && !binding.tutorial.isVisible) {
-                binding.feedRateInput.editText.requestFocusAndOpenSoftKeyboard()
-            }
-
             binding.buttonApply.isEnabled = !it.loading
 
             if (it.operationCompleted) {
@@ -51,18 +50,35 @@ class TuneFragment : BaseFragment() {
             }
         }
 
+        binding.zOffset.editText.inputType = InputType.TYPE_NULL
+        binding.zOffset.backgroundTint = Color.TRANSPARENT
+        binding.zOffset.editText.isFocusable = false
+        binding.zOffsetUp.setOnClickListener { viewModel.babyStepUp() }
+        binding.zOffsetDown.setOnClickListener { viewModel.babyStepDown() }
+
         fun OctoTextInputLayout.prepare() = this.apply {
             editText.inputType = InputType.TYPE_CLASS_NUMBER
             editText.imeOptions = EditorInfo.IME_ACTION_DONE
             editText.setOnEditorActionListener { _, _, _ -> applyChanges(); true }
         }
 
-        // Set initial values
-        val args = navArgs<TuneFragmentArgs>().value
-        binding.feedRateInput.prepare().editText.setText(if (args.currentFeedRate == ARG_NO_VALUE) null else args.currentFeedRate.toString())
-        binding.flowRateInput.prepare().editText.setText(if (args.currentFlowRate == ARG_NO_VALUE) null else args.currentFlowRate.toString())
-        binding.fanSpeedInput.prepare().editText.setText(if (args.currentFanSpeed == ARG_NO_VALUE) null else args.currentFanSpeed.toString())
+        // Set values
+        tuneViewModel.uiState.observe(viewLifecycleOwner) {
+            if (!binding.feedRateInput.prepare().hasFocus()) {
+                binding.feedRateInput.editText.setText(it.feedRate?.toString())
+            }
 
+            if (!binding.flowRateInput.prepare().hasFocus()) {
+                binding.flowRateInput.editText.setText(it.flowRate?.toString())
+            }
+
+            if (!binding.fanSpeedInput.prepare().hasFocus()) {
+                binding.fanSpeedInput.editText.setText(it.fanSpeed?.toString())
+            }
+
+            val zOffset = DecimalFormat("0.000#").format(it.zOffsetMm)
+            binding.zOffset.editText.setText(getString(R.string.x_mm, zOffset))
+        }
 
         // Apply values
         binding.buttonApply.setOnClickListener { applyChanges() }
@@ -78,7 +94,6 @@ class TuneFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Print
         requireOctoActivity().octo.isVisible = true
         binding.octoScrollView.setupWithToolbar(

@@ -919,6 +919,6 @@ gutes Drucken!"</string>
     <string name="gcode_preview_settings___quality_low_description"></string>
     <string name="gcode_preview_settings___quality_medium_description"></string>
     <string name="gcode_preview_settings___quality_ultra_description"></string>
-    <string name="tune_print___z_baby_step"></string>
+    <string name="tune_print___z_baby_step_label"></string>
     <string name="tune_print___baby_step_explainer"></string>
 </resources>

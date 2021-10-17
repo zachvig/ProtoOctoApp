@@ -26,7 +26,7 @@ class MoveToolWidgetViewModel(
 ) : BaseViewModel() {
 
     companion object {
-        private const val DEFAULT_FEED_RATE = 4000
+        private const val DEFAULT_FEED_RATE = 8000
     }
 
     var jogResolution: Float = -1f
