@@ -16,11 +16,11 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import de.crysxd.baseui.R
 import de.crysxd.baseui.common.OctoRecyclerView
 import de.crysxd.baseui.common.ViewBindingHolder
 import de.crysxd.baseui.databinding.WidgetListContainerBinding
 import de.crysxd.baseui.ext.requireOctoActivity
-import de.crysxd.baseui.R
 import de.crysxd.octoapp.base.data.models.WidgetType
 import timber.log.Timber
 
@@ -102,7 +102,6 @@ class WidgetLayout @JvmOverloads constructor(
             lastWidgets.clear()
             lastWidgets.addAll(widgets)
             resumeWidgets()
-            widgetAdapter.notifyDataSetChanged()
         }
 
         widgetAdapter.widgets = lastWidgets
@@ -112,6 +111,7 @@ class WidgetLayout @JvmOverloads constructor(
         lastWidgets.forEach { it.first.onPause() }
         lastWidgets.forEach { widgetRecycler?.returnWidget(instanceId, it.first) }
         lastWidgets.clear()
+        widgetAdapter.widgets = lastWidgets
     }
 
     @Suppress("Unused")
