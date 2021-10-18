@@ -7,11 +7,11 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.OctoPreferences
-import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.suspendedAwait
-import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.exceptions.MissingPermissionException
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
@@ -44,9 +44,11 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                 timber.w("Cancelling update, no OctoPrint available")
                 return@withContext
             }
-            val old = octoPrintRepository.getActiveInstanceSnapshot()
 
-            require(activeInstance.isForWebUrl(octoPrint.webUrl)) { "OctoPrint does not match instance!" }
+            if (!activeInstance.isForWebUrl(octoPrint.webUrl)) {
+                timber.e("OctoPrint does not match active instance!")
+                return@withContext
+            }
 
             // Perform online check. This will trigger switching to the primary web url
             // if we currently use a cloud/backup connection
