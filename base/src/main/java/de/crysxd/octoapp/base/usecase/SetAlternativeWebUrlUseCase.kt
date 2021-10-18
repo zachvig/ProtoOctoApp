@@ -47,12 +47,12 @@ class SetAlternativeWebUrlUseCase @Inject constructor(
                 isOe && !isShared -> return Result.Failure(
                     errorMessage = context.getString(R.string.configure_remote_acces___manual___error_normal_octoeverywhere_url),
                     allowToProceed = false,
-                    exception = IllegalArgumentException("Given URL is a standard OctoEverywhere URL")
+                    exception = InvalidAlternativeUrlException("Given URL is a standard OctoEverywhere URL")
                 )
                 isOe && isShared -> return Result.Failure(
                     errorMessage = context.getString(R.string.configure_remote_acces___manual___error_shared_octoeverywhere_url),
                     allowToProceed = true,
-                    exception = IllegalArgumentException("Given URL is a shared OctoEverywhere URL")
+                    exception = InvalidAlternativeUrlException("Given URL is a shared OctoEverywhere URL")
                 )
             }
 
@@ -71,7 +71,7 @@ class SetAlternativeWebUrlUseCase @Inject constructor(
                     .plugins.values.mapNotNull { it as? Settings.Discovery }.firstOrNull()?.uuid
 
                 if (localUuid != remoteUuid) {
-                    throw IllegalStateException("Upnp UUIDs for primary and alternate URLs differ: $localUuid <--> $remoteUuid")
+                    throw InvalidAlternativeUrlException("Upnp UUIDs for primary and alternate URLs differ: $localUuid <--> $remoteUuid")
                 }
             } catch (e: Exception) {
                 OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigManuallySetFailed)
@@ -103,4 +103,6 @@ class SetAlternativeWebUrlUseCase @Inject constructor(
             val allowToProceed: Boolean = false
         ) : Result()
     }
+
+    class InvalidAlternativeUrlException(message: String) : java.lang.IllegalArgumentException(message)
 }
