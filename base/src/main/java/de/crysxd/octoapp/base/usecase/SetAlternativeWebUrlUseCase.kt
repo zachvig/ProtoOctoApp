@@ -32,7 +32,7 @@ class SetAlternativeWebUrlUseCase @Inject constructor(
                     .username(param.username)
                     .build()
             } catch (e: Exception) {
-                Timber.e(e)
+                Timber.w(e)
                 OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigManuallySetFailed)
                 return Result.Failure(context.getString(R.string.configure_remote_acces___manual___error_invalid_url), e)
             }
