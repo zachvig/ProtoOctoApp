@@ -20,11 +20,14 @@ import de.crysxd.octoapp.filemanager.menu.FileActionsMenu
 import kotlinx.coroutines.delay
 import timber.log.Timber
 
-// Delay the initial loading display a little. Usually we are on fast local networks so the
-// loader would just flash up for a split second which doesn't look nice
-const val LOADER_DELAY = 400L
 
 class SelectFileFragment : BaseFragment(), FileActionsMenu.Callback {
+
+    companion object {
+        // Delay the initial loading display a little. Usually we are on fast local networks so the
+        // loader would just flash up for a split second which doesn't look nice
+        const val LOADER_DELAY = 400L
+    }
 
     private lateinit var binding: SelectFileFragmentBinding
     override val viewModel: SelectFileViewModel by injectViewModel()

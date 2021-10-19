@@ -23,6 +23,7 @@ import de.crysxd.octoapp.filemanager.R
 import de.crysxd.octoapp.filemanager.databinding.FileDetailsFragmentBinding
 import de.crysxd.octoapp.filemanager.di.injectViewModel
 import de.crysxd.octoapp.octoprint.models.files.FileObject
+import java.util.concurrent.TimeUnit
 
 class FileDetailsFragment : BaseFragment(), InsetAwareScreen {
 
@@ -30,6 +31,11 @@ class FileDetailsFragment : BaseFragment(), InsetAwareScreen {
     private val args by navArgs<FileDetailsFragmentArgs>()
     private val originalOctoTranslationY by lazy { requireOctoActivity().octo.translationY }
     private lateinit var binding: FileDetailsFragmentBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        postponeEnterTransition(1000, TimeUnit.MILLISECONDS)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         FileDetailsFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
@@ -94,6 +100,7 @@ class FileDetailsFragment : BaseFragment(), InsetAwareScreen {
     }
 
     private fun updateLayout() {
+        startPostponedEnterTransition()
         binding.viewPager.post {
             val position = binding.viewPager.currentItem
             binding.viewPager.updateLayoutParams {
@@ -139,7 +146,7 @@ class FileDetailsFragment : BaseFragment(), InsetAwareScreen {
         super.onResume()
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
         requireOctoActivity().octo.isVisible = true
-        binding.scrollView.setupWithToolbar(requireOctoActivity(), binding.bottomAction, binding.tabs)
+        binding.scrollView.setupWithToolbar(requireOctoActivity(), binding.bottomAction, binding.tabsContainer)
         binding.viewPager.currentItem = 0
 
         // Save translation
