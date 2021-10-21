@@ -16,6 +16,7 @@ import de.crysxd.baseui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.filemanager.R
 import de.crysxd.octoapp.filemanager.databinding.SelectFileFragmentBinding
 import de.crysxd.octoapp.filemanager.di.injectViewModel
+import de.crysxd.octoapp.filemanager.menu.AddItemMenu
 import de.crysxd.octoapp.filemanager.menu.FileActionsMenu
 import kotlinx.coroutines.delay
 import timber.log.Timber
@@ -24,7 +25,7 @@ import timber.log.Timber
 // loader would just flash up for a split second which doesn't look nice
 const val LOADER_DELAY = 400L
 
-class SelectFileFragment : BaseFragment(), FileActionsMenu.Callback {
+class SelectFileFragment : BaseFragment() {
 
     private lateinit var binding: SelectFileFragmentBinding
     override val viewModel: SelectFileViewModel by injectViewModel()
@@ -62,6 +63,9 @@ class SelectFileFragment : BaseFragment(), FileActionsMenu.Callback {
             onRetry = {
                 it.showLoading()
                 viewModel.reload()
+            },
+            onAddItemClicked = {
+                MenuBottomSheetFragment.createForMenu(AddItemMenu(viewModel.fileOrigin, navArgs.folder)).show(childFragmentManager)
             }
         )
         binding.recyclerViewFileList.adapter = adapter
@@ -108,11 +112,5 @@ class SelectFileFragment : BaseFragment(), FileActionsMenu.Callback {
         } catch (e: Exception) {
             Timber.e(e)
         }
-    }
-
-    override fun refreshFiles() {
-        Timber.i("Menu closed, triggering refresh")
-        viewModel.reload()
-        binding.swipeRefreshLayout.isRefreshing = true
     }
 }

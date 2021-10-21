@@ -592,7 +592,7 @@ As soon as your OctoPrint can’t be reached directly, OctoApp will switch to th
     <string name="resume_print_confirmation_action">"Resume print"</string>
     <string name="resume_print_confirmation_message">"Do you want to resume the print?"</string>
     <string name="screenshot_of_current_screen">"Screenshot of current screen"</string>
-    <string name="select_file_to_print">"Select file to print"</string>
+    <string name="select_file_to_print">"Your files"</string>
     <string name="send_feedback">"Send Feedback"</string>
     <string name="send_gcode">"Send Gcode"</string>
     <string name="sent_x">"Executing %s"</string>

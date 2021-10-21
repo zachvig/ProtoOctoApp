@@ -25,7 +25,7 @@ import de.crysxd.octoapp.filemanager.databinding.InfoTabFragmentBinding
 import de.crysxd.octoapp.filemanager.di.FileManagerInjector
 import de.crysxd.octoapp.filemanager.di.injectParentViewModel
 import de.crysxd.octoapp.filemanager.ui.CropAlphaTransformation
-import de.crysxd.octoapp.octoprint.models.files.FileObject
+import de.crysxd.octoapp.octoprint.models.files.FileOrigin
 import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -103,8 +103,8 @@ class InfoTabFragment : Fragment() {
             addDetail(
                 label = R.string.location,
                 value = when (file.origin) {
-                    FileObject.FILE_ORIGIN_SD -> getString(R.string.file_location_sd_card)
-                    FileObject.FILE_ORIGIN_LOCAL -> getString(R.string.file_location_local)
+                    FileOrigin.SdCard -> getString(R.string.file_location_sd_card)
+                    FileOrigin.Local -> getString(R.string.file_location_local)
                     else -> getString(R.string.file_location_unknown)
                 }
             )

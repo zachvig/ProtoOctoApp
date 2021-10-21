@@ -1,9 +1,16 @@
 package de.crysxd.octoapp.octoprint.models.files
 
-sealed class FileOrigin(private val name: String) {
+import com.google.gson.annotations.SerializedName
 
-    override fun toString() = name
+enum class FileOrigin {
+    @SerializedName("local")
+    Local,
 
-    object Local : FileOrigin("local")
-    object SdCard : FileOrigin("sdcard")
+    @SerializedName("sdcard")
+    SdCard;
+
+    override fun toString() = when (this) {
+        Local -> "local"
+        SdCard -> "sdcard"
+    }
 }

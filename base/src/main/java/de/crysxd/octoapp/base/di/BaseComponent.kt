@@ -30,6 +30,7 @@ import de.crysxd.octoapp.base.network.SslKeyStoreHandler
 import de.crysxd.octoapp.base.usecase.ActivateMaterialUseCase
 import de.crysxd.octoapp.base.usecase.ApplyLegacyDarkMode
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
+import de.crysxd.octoapp.base.usecase.CreateFolderUseCase
 import de.crysxd.octoapp.base.usecase.CreateProgressAppWidgetDataUseCase
 import de.crysxd.octoapp.base.usecase.CyclePsuUseCase
 import de.crysxd.octoapp.base.usecase.DeleteFileUseCase
@@ -147,5 +148,6 @@ interface BaseComponent {
     fun requestApiAccessUseCase(): RequestApiAccessUseCase
     fun testFullNetworkStackUseCase(): TestFullNetworkStackUseCase
     fun deleteFileUseCase(): DeleteFileUseCase
+    fun createFolderUseCase(): CreateFolderUseCase
 
 }

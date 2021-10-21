@@ -32,17 +32,7 @@ class FileActionsMenu(val file: FileObject) : Menu {
         override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.file_action_menu___delete_confirmation_action)
         override suspend fun onConfirmed(host: MenuHost?) {
             BaseInjector.get().deleteFileUseCase().execute(file)
-            host?.notifyRefreshAndClose()
+            host?.closeMenu()
         }
     }
-
-
-    interface Callback {
-        fun refreshFiles()
-    }
-}
-
-private fun MenuHost.notifyRefreshAndClose() {
-    (getHostFragment() as? FileActionsMenu.Callback)?.refreshFiles()
-    closeMenu()
 }

@@ -5,6 +5,16 @@
     android:id="@+id/filemanager_nav_graph"
     app:startDestination="@id/fileListFragment">
 
+    <include app:graph="@navigation/enter_value_nav_graph" />
+
+    <action
+        android:id="@id/action_enter_value"
+        app:destination="@id/enter_value_nav_graph"
+        app:enterAnim="@anim/enterAnim"
+        app:exitAnim="@anim/exitAnim"
+        app:popEnterAnim="@anim/popEnterAnim"
+        app:popExitAnim="@anim/popExitAnim" />
+
     <deepLink
         android:id="@+id/deepLink4"
         app:uri="@string/uri___file_manager" />

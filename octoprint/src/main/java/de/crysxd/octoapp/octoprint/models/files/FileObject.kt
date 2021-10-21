@@ -5,7 +5,7 @@ import java.io.Serializable
 sealed class FileObject(
     open val display: String,
     open val name: String,
-    open val origin: String,
+    open val origin: FileOrigin,
     open val path: String,
     open val type: String?,
     open val typePath: List<String>?,
@@ -16,7 +16,7 @@ sealed class FileObject(
     class File(
         display: String,
         name: String,
-        origin: String,
+        origin: FileOrigin,
         path: String,
         type: String?,
         typePath: List<String>?,
@@ -32,7 +32,7 @@ sealed class FileObject(
     class Folder(
         display: String,
         name: String,
-        origin: String,
+        origin: FileOrigin,
         path: String,
         type: String,
         typePath: List<String>,
@@ -80,8 +80,6 @@ sealed class FileObject(
     }
 
     companion object {
-        const val FILE_ORIGIN_SD = "sdcard"
-        const val FILE_ORIGIN_LOCAL = "local"
         const val FILE_TYPE_FOLDER = "folder"
         const val FILE_TYPE_MACHINE_CODE = "machinecode"
         const val FILE_TYPE_MACHINE_CODE_GCODE = "gcode"

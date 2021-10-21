@@ -35,6 +35,7 @@ class SelectFileAdapter(
     private val onFileMenuOpened: (FileObject) -> Unit,
     private val onHideThumbnailHint: (SelectFileAdapter) -> Unit,
     private val onShowThumbnailInfo: (SelectFileAdapter) -> Unit,
+    private val onAddItemClicked: () -> Unit,
     private val onRetry: (SelectFileAdapter) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -98,7 +99,15 @@ class SelectFileAdapter(
         notifyDataSetChanged()
     }
 
-    override fun getItemId(position: Int) = items[position].hashCode().toLong()
+    override fun getItemId(position: Int) = when (val item = items[position]) {
+        DataItem.Error -> -1
+        DataItem.Loading -> -2
+        DataItem.ThumbnailHint -> -3
+        DataItem.Margin -> position
+        is DataItem.File -> item.file.display.hashCode()
+        is DataItem.NoFiles -> item.folderName?.hashCode() ?: -5
+        is DataItem.Title -> item.title?.hashCode() ?: -4
+    }.toLong()
 
     override fun getItemCount() = items.size
 
@@ -148,6 +157,7 @@ class SelectFileAdapter(
                 is FileObject.Folder -> {
                     holder.binding.textViewDetail.isVisible = false
                     holder.binding.imageViewArrow.visibility = View.VISIBLE
+                    holder.binding.resultIndicator.alpha = 0f
                     holder.binding.imageViewFileIcon.setImageDrawable(folderIcon)
                 }
 
@@ -204,7 +214,8 @@ class SelectFileAdapter(
 
         is ViewHolder.TitleViewHolder -> {
             holder.binding.textViewTitle.text = (items[position] as DataItem.Title).title
-                ?: holder.itemView.context.getString(R.string.select_file_to_print)
+                ?: "Your files**"
+            holder.binding.buttonAdd.setOnClickListener { onAddItemClicked() }
         }
 
         is ViewHolder.ThumbnailHintViewHolder -> {
@@ -224,6 +235,8 @@ class SelectFileAdapter(
                     HtmlCompat.FROM_HTML_MODE_COMPACT
                 )
             }
+
+            holder.binding.buttonAdd.setOnClickListener { onAddItemClicked() }
         }
 
         is ViewHolder.ErrorViewHolder -> holder.binding.buttonRery.setOnClickListener { onRetry(this) }

@@ -30,10 +30,12 @@ open class ViewModelModule {
     open fun provideSelectFileViewModel(
         loadFilesUseCase: LoadFilesUseCase,
         octoPreferences: OctoPreferences,
+        octoPrintProvider: OctoPrintProvider,
         picasso: LiveData<Picasso?>
     ): ViewModel = SelectFileViewModel(
         loadFilesUseCase,
         octoPreferences,
+        octoPrintProvider,
         picasso
     )
 

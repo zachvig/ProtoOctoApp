@@ -59,6 +59,8 @@ sealed class Message {
 
         object Connecting : EventMessage()
 
+        object UpdatedFiles : EventMessage()
+
         data class Connected(
             val baudrate: Int,
             val port: String?
