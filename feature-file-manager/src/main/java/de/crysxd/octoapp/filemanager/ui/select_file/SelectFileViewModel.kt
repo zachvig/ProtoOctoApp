@@ -17,7 +17,6 @@ import de.crysxd.octoapp.octoprint.models.files.FileOrigin
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -63,7 +62,7 @@ class SelectFileViewModel(
             viewModelScope.launch(Dispatchers.Default + coroutineExceptionHandler) {
                 try {
                     val loadedFolder = loadFilesUseCase.execute(Params(fileOrigin, folder))
-                    delay(1000)
+
                     // Check if we should show the thumbnail hint
                     // As soon as we determine we should hide it, persist that info so we remember that
                     // we e.g. saw a thumbnail in the root folder when showing a sub folder

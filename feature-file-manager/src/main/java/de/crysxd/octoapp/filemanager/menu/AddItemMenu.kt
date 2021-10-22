@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.filemanager.menu
 
 import android.content.Context
+import android.net.Uri
 import android.text.InputType
 import androidx.lifecycle.asFlow
 import de.crysxd.baseui.common.enter_value.EnterValueFragment
@@ -13,10 +14,13 @@ import de.crysxd.baseui.utils.NavigationResultMediator
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.usecase.CreateFolderUseCase
 import de.crysxd.octoapp.filemanager.R
+import de.crysxd.octoapp.filemanager.di.FileManagerInjector
+import de.crysxd.octoapp.filemanager.upload.PickFileForUploadFragmentArgs
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
 import kotlinx.coroutines.flow.first
 import kotlinx.parcelize.Parcelize
+
 
 @Parcelize
 class AddItemMenu(private val origin: FileOrigin, private val folder: FileObject.Folder?) : Menu {
@@ -78,7 +82,27 @@ class AddItemMenu(private val origin: FileOrigin, private val folder: FileObject
         override suspend fun getTitle(context: Context) = "Upload a file*"
 
         override suspend fun onClicked(host: MenuHost?) {
+            // Let user pick file
+            val result = NavigationResultMediator.registerResultCallback<Uri>()
+            host?.getNavController()?.navigate(
+                R.id.action_pick_file_for_upload, PickFileForUploadFragmentArgs(
+                    origin = origin,
+                    parent = parent,
+                    resultId = result.first
+                ).toBundle()
+            )
 
+            // Start upload once ready
+            result.second.asFlow().first()?.let {
+                FileManagerInjector.get().uploadMediator().startUpload(
+                    contentResolverUri = it,
+                    origin = origin,
+                    parent = parent
+                )
+
+            }
+
+            host?.closeMenu()
         }
     }
 }

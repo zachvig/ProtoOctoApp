@@ -30,7 +30,7 @@ class ProgressRequestBody private constructor(private val wrapped: RequestBody, 
         override fun write(source: Buffer, byteCount: Long) {
             super.write(source, byteCount)
             bytesWritten += byteCount
-            progressUpdate(byteCount / contentLength.toFloat())
+            progressUpdate(bytesWritten / contentLength.toFloat())
         }
     }
 

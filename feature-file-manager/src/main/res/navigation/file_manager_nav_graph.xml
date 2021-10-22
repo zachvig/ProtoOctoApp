@@ -32,15 +32,18 @@
             app:exitAnim="@anim/exitAnim"
             app:popEnterAnim="@anim/popEnterAnim"
             app:popExitAnim="@anim/popExitAnim" />
+
         <argument
             android:name="folder"
             android:defaultValue="@null"
             app:argType="de.crysxd.octoapp.octoprint.models.files.FileObject$Folder"
             app:nullable="true" />
+
         <argument
             android:name="showThumbnailHint"
             android:defaultValue="false"
             app:argType="boolean" />
+
         <action
             android:id="@+id/action_show_file_details"
             app:destination="@id/fileDetailsFragment"
@@ -48,6 +51,10 @@
             app:exitAnim="@anim/exitAnim"
             app:popEnterAnim="@anim/popEnterAnim"
             app:popExitAnim="@anim/popExitAnim" />
+
+        <action
+            android:id="@+id/action_pick_file_for_upload"
+            app:destination="@id/pickFileForUploadFragment" />
 
     </fragment>
 
@@ -59,6 +66,22 @@
         <argument
             android:name="file"
             app:argType="de.crysxd.octoapp.octoprint.models.files.FileObject$File" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/pickFileForUploadFragment"
+        android:name="de.crysxd.octoapp.filemanager.upload.PickFileForUploadFragment"
+        android:label="PickFileForUploadFragment">
+        <argument
+            android:name="origin"
+            app:argType="de.crysxd.octoapp.octoprint.models.files.FileOrigin" />
+        <argument
+            android:name="parent"
+            app:argType="de.crysxd.octoapp.octoprint.models.files.FileObject$Folder"
+            app:nullable="true" />
+        <argument
+            android:name="resultId"
+            app:argType="integer" />
     </fragment>
 
 </navigation>

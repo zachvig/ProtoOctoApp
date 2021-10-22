@@ -79,13 +79,13 @@ interface FilesApi {
             wrapped.uploadObject(origin, body)
         }
 
-        suspend fun uploadFile(origin: FileOrigin, source: File, name: String, parent: FileObject.File, progressUpdate: (Float) -> Unit) {
+        suspend fun uploadFile(origin: FileOrigin, source: File, name: String, parent: FileObject.Folder?, progressUpdate: (Float) -> Unit) {
             val fileBody = source.asRequestBody("application/octet-stream".toMediaType()).asProgressRequestBody(progressUpdate)
             val filePart = MultipartBody.Part.createFormData(name = "file", filename = name, body = fileBody)
             val body = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addPart(filePart)
-                .addFormDataPart(name = "path", value = parent.path)
+                .addFormDataPart(name = "path", value = parent?.path ?: "/")
                 .build()
 
             wrapped.uploadObject(origin, body)

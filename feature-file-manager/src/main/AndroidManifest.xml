@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="de.crysxd.octoapp.filemanager">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="de.crysxd.octoapp.filemanager">
 
+    <application>
+
+        <service
+            android:name=".upload.UploadFilesService"
+            android:exported="false" />
+
+    </application>
 </manifest>
