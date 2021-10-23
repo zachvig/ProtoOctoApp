@@ -553,7 +553,7 @@ Dès que votre OctoPrint ne peut plus être joint directement, OctoApp bascule s
     <string name="print_notification___paused_title">"En pause"</string>
     <string name="print_notification___pausing_title">"Mise en pause…"</string>
     <string name="print_notification___print_done_title">"%s terminé !"</string>
-    <string name="print_notification___printing_title">"Impression de %.0f%%..."</string>
+    <string name="print_notification___printing_title">"Impression de %.0f%%"</string>
 
     <!-- Auto filled -->
     <string name="print_notification___reconnecting_title">"Reconnexion…"</string>
