@@ -83,13 +83,13 @@ class UploadFilesService : Service() {
     }
 
     private fun createNotification(progress: Float = 0f, name: String? = null) = NotificationCompat.Builder(this, getString(R.string.updates_notification_channel))
-        .setContentTitle(name?.let { "Uploading $it **" } ?: "Starting upload...**")
+        .setContentTitle(name?.let { getString(R.string.file_manager___upload___uploading_x) } ?: getString(R.string.file_manager___upload___starting_upload))
         .setSmallIcon(R.drawable.ic_notification_default)
         .setSilent(true)
         .setProgress(100, (progress * 100).toInt(), progress == 0f || progress == 1f)
         .setContentText(
             mediator.getActiveUploads().size.let {
-                if (it > 1) "$it files pending**" else ""
+                if (it > 1) getString(R.string.file_manager___upload___x_files_pending, it) else ""
             }
         ).build()
 }

@@ -101,7 +101,7 @@ class SelectFileAdapter(
                 is SelectFileViewModel.FileWrapper.UploadWrapper -> DataItem.File(
                     file = null,
                     name = it.upload.name,
-                    detail = "Uploading...**",
+                    detail = context.getString(R.string.file_manager___file_list___uploading),
                     iconUrl = null,
                     iconPlaceholder = uploadIcon,
                     resultIcon = null,
@@ -112,7 +112,7 @@ class SelectFileAdapter(
                 is SelectFileViewModel.FileWrapper.SelectedFileObjectWrapper -> DataItem.File(
                     file = it.fileObject,
                     name = it.fileObject.name,
-                    detail = "Currently selected**",
+                    detail = context.getString(R.string.file_manager___file_list___currently_selected),
                     iconUrl = null,
                     iconPlaceholder = printableFileIcon,
                     resultIcon = null,
@@ -215,7 +215,7 @@ class SelectFileAdapter(
 
         is ViewHolder.TitleViewHolder -> {
             holder.binding.textViewTitle.text = (items[position] as DataItem.Title).title
-                ?: "Your files**"
+                ?: context.getString(R.string.file_manager___file_list___your_files)
             holder.binding.buttonAdd.setOnClickListener { onAddItemClicked() }
             holder.binding.buttonSortOptions.setOnClickListener { onSortOptionsClicked() }
         }
@@ -228,12 +228,12 @@ class SelectFileAdapter(
         is ViewHolder.NoFilesViewHolder -> {
             (items[position] as DataItem.NoFiles).folderName?.let {
                 holder.binding.textViewNoFilesTitle.text = it
-                holder.binding.textViewNoFilesSubitle.text = holder.itemView.context.getString(R.string.this_folder_contains_no_files)
+                holder.binding.textViewNoFilesSubitle.text = holder.itemView.context.getString(R.string.file_manager___file_list___no_files_in_folder)
             } ?: run {
-                holder.binding.textViewNoFilesTitle.text = holder.itemView.context.getString(R.string.no_files_on_octoprint_title)
+                holder.binding.textViewNoFilesTitle.text = holder.itemView.context.getString(R.string.file_manager___file_list___no_files_on_octoprint_title)
                 holder.binding.textViewNoFilesSubitle.movementMethod = LinkMovementMethod()
                 holder.binding.textViewNoFilesSubitle.text = HtmlCompat.fromHtml(
-                    holder.itemView.context.getString(R.string.no_files_on_octoprint_subtitle),
+                    holder.itemView.context.getString(R.string.file_manager___file_list___no_files_on_octoprint_subtitle),
                     HtmlCompat.FROM_HTML_MODE_COMPACT
                 )
             }

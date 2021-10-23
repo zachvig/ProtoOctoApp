@@ -58,11 +58,11 @@ class SelectFileFragment : BaseFragment() {
             onAddItemClicked = { MenuBottomSheetFragment.createForMenu(AddItemMenu(viewModel.fileOrigin, navArgs.folder)).show(childFragmentManager) },
             onShowThumbnailInfo = {
                 MaterialAlertDialogBuilder(requireContext())
-                    .setMessage(getString(R.string.thumbnail_info_message))
-                    .setPositiveButton(R.string.cura_plugin) { _, _ ->
+                    .setMessage(getString(R.string.file_manager___thumbnail_info___popup_message))
+                    .setPositiveButton(R.string.file_manager___thumbnail_info___popup_cura) { _, _ ->
                         openLink("https://plugins.octoprint.org/plugins/UltimakerFormatPackage/")
                     }
-                    .setNegativeButton(R.string.prusa_slicer_plugin) { _, _ ->
+                    .setNegativeButton(R.string.file_manager___thumbnail_info___popup_prusa) { _, _ ->
                         openLink("https://plugins.octoprint.org/plugins/prusaslicerthumbnails/")
                     }
                     .setNeutralButton(R.string.cancel, null)

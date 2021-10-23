@@ -9,6 +9,7 @@ import de.crysxd.octoapp.base.data.models.exceptions.UserMessageException
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.network.OctoPrintProvider
+import de.crysxd.octoapp.filemanager.R
 import de.crysxd.octoapp.filemanager.di.FileManagerScope
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
@@ -122,7 +123,6 @@ class UploadMediator @Inject constructor(
     }
 
     class UnsupportedFileException(private val allowedExtensions: List<String>) : IllegalArgumentException(), UserMessageException, SuppressedException {
-        override fun getUserMessage(context: Context) =
-            "This file type is not supported by OctoPrint.**<br><br><small>Supported file types: ${allowedExtensions.joinToString()}</small>"
+        override fun getUserMessage(context: Context) = context.getString(R.string.file_manager___upload___error_invalid_file_type, allowedExtensions.joinToString())
     }
 }

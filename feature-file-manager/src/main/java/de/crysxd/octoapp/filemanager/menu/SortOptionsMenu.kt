@@ -15,12 +15,12 @@ import kotlinx.parcelize.Parcelize
 class SortOptionsMenu : Menu {
 
     override suspend fun getMenuItem() = listOf(
-        SortByMenuItem(),
-        SortDirectionMenuItem(),
+        SortByMenuItem(BaseInjector.get().localizedContext()),
+        SortDirectionMenuItem(BaseInjector.get().localizedContext()),
         HidePrintedMenuItem()
     )
 
-    class SortByMenuItem : RevolvingOptionsMenuItem() {
+    class SortByMenuItem(private val context: Context) : RevolvingOptionsMenuItem() {
         override val activeValue get() = BaseInjector.get().octoPreferences().fileManagerSettings.sortBy.name
         override val canBePinned = false
         override val itemId = "sort_by"
@@ -31,24 +31,24 @@ class SortOptionsMenu : Menu {
         override val icon: Int = R.drawable.ic_round_sort_24
         override val options = listOf(
             Option(
-                label = "Upload time**",
+                label = context.getString(R.string.file_manager___sorting_menu___sort_by_upload_time),
                 value = FileManagerSettings.SortBy.UploadTime.name
             ),
             Option(
-                label = "Last print time**",
+                label = context.getString(R.string.file_manager___sorting_menu___sort_by_last_print_time),
                 value = FileManagerSettings.SortBy.PrintTime.name
             ),
             Option(
-                label = "Name**",
+                label = context.getString(R.string.file_manager___sorting_menu___sort_by_name),
                 value = FileManagerSettings.SortBy.Name.name
             ),
             Option(
-                label = "File size**",
+                label = context.getString(R.string.file_manager___sorting_menu___sort_by_file_size),
                 value = FileManagerSettings.SortBy.FileSize.name
             ),
         )
 
-        override suspend fun getTitle(context: Context) = "Sort by**"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___sorting_menu___sort_by)
 
         override fun handleOptionActivated(host: MenuHost?, option: Option) {
             BaseInjector.get().octoPreferences().fileManagerSettings = BaseInjector.get().octoPreferences().fileManagerSettings.copy(
@@ -57,7 +57,8 @@ class SortOptionsMenu : Menu {
         }
     }
 
-    class SortDirectionMenuItem : RevolvingOptionsMenuItem() {
+    class SortDirectionMenuItem(private val context: Context) : RevolvingOptionsMenuItem() {
+
         override val activeValue get() = BaseInjector.get().octoPreferences().fileManagerSettings.sortDirection.name
         override val canBePinned = false
         override val itemId = "sort_directon"
@@ -68,16 +69,16 @@ class SortOptionsMenu : Menu {
         override val icon: Int = R.drawable.ic_round_swap_vert_24
         override val options = listOf(
             Option(
-                label = "Ascending**",
+                label = context.getString(R.string.file_manager___sorting_menu___direction_ascending),
                 value = FileManagerSettings.SortDirection.Ascending.name
             ),
             Option(
-                label = "Descending**",
+                label = context.getString(R.string.file_manager___sorting_menu___direction_decending),
                 value = FileManagerSettings.SortDirection.Descending.name
             ),
         )
 
-        override suspend fun getTitle(context: Context) = "Direction**"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___sorting_menu___direction)
 
         override fun handleOptionActivated(host: MenuHost?, option: Option) {
             BaseInjector.get().octoPreferences().fileManagerSettings = BaseInjector.get().octoPreferences().fileManagerSettings.copy(
@@ -94,7 +95,7 @@ class SortOptionsMenu : Menu {
         override val style = MenuItemStyle.Settings
         override val canBePinned = false
         override val icon: Int = R.drawable.ic_round_remove_done_24
-        override suspend fun getTitle(context: Context) = "Hide successfully printed**"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___sorting_menu___hide_printed)
 
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             BaseInjector.get().octoPreferences().fileManagerSettings = BaseInjector.get().octoPreferences().fileManagerSettings.copy(

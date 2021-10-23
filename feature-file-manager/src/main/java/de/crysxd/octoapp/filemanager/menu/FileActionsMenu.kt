@@ -43,9 +43,9 @@ class FileActionsMenu(val file: FileObject) : Menu {
         override val icon = R.drawable.ic_round_delete_outline_24
         override val canBePinned = false
 
-        override suspend fun getTitle(context: Context) = context.getString(R.string.file_actions_menu___delete)
-        override fun getConfirmMessage(context: Context) = context.getString(R.string.file_actions_menu___delete_confirmation_message, file.display)
-        override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.file_action_menu___delete_confirmation_action)
+        override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___delete)
+        override fun getConfirmMessage(context: Context) = context.getString(R.string.file_manager___file_menu___delete, file.display)
+        override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.file_manager___file_menu___delete)
         override suspend fun onConfirmed(host: MenuHost?) {
             BaseInjector.get().deleteFileUseCase().execute(file)
             host?.closeMenu()
@@ -60,19 +60,20 @@ class FileActionsMenu(val file: FileObject) : Menu {
         override val icon = R.drawable.ic_round_edit_24
         override val canBePinned = false
 
-        override suspend fun getTitle(context: Context) = "Rename**"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___rename)
         override suspend fun onClicked(host: MenuHost?) {
             val result = NavigationResultMediator.registerResultCallback<String>()
             val navController = host?.getNavController() ?: return
             val extension = (file as? FileObject.File)?.extension?.let { ".$it" } ?: ""
             val originalName = file.name.removeSuffix(extension)
+            val context = host.requireContext()
 
             navController.navigate(
                 de.crysxd.baseui.R.id.action_enter_value,
                 EnterValueFragmentArgs(
-                    title = "Rename ${file.name}**",
-                    hint = "File name**",
-                    action = "Rename**",
+                    title = context.getString(R.string.file_manager___file_menu___rename_input_title),
+                    hint = context.getString(R.string.file_manager___file_menu___rename_input_hint),
+                    action = context.getString(R.string.file_manager___file_menu___rename_action),
                     selectAll = true,
                     value = originalName,
                     resultId = result.first,
@@ -99,7 +100,7 @@ class FileActionsMenu(val file: FileObject) : Menu {
         override val icon = R.drawable.ic_round_content_copy_24
         override val canBePinned = false
 
-        override suspend fun getTitle(context: Context) = "Copy**"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___copy)
         override suspend fun onClicked(host: MenuHost?) {
             host?.getHostFragment()?.let {
                 it.injectActivityViewModel<MoveAndCopyFilesViewModel>().value.let { vm ->
@@ -119,7 +120,7 @@ class FileActionsMenu(val file: FileObject) : Menu {
         override val icon = R.drawable.ic_round_content_cut_24
         override val canBePinned = false
 
-        override suspend fun getTitle(context: Context) = "Move**"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___move)
         override suspend fun onClicked(host: MenuHost?) {
             host?.getHostFragment()?.let {
                 it.injectActivityViewModel<MoveAndCopyFilesViewModel>().value.let { vm ->
@@ -139,8 +140,10 @@ class FileActionsMenu(val file: FileObject) : Menu {
         override val icon = R.drawable.ic_round_share_24
         override val canBePinned = false
 
-        override suspend fun getTitle(context: Context) = "Download & Share**"
-        override suspend fun getDescription(context: Context) = "This will download ${file.size.asStyleFileSize()}"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___download_and_share)
+        override suspend fun getDescription(context: Context) =
+            context.getString(R.string.file_manager___file_menu___download_and_share_description, file.size.asStyleFileSize())
+
         override suspend fun onClicked(host: MenuHost?) {
             host?.getMenuActivity()?.let {
                 BaseInjector.get().downloadAndShareFileUseCase().execute(

@@ -51,7 +51,7 @@
             style="@style/OctoTheme.Widget.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Paste here**"
+            android:text="@string/file_manager___file_list___paste_here"
             android:textColor="@color/text_colored_background" />
 
         <Button
@@ -59,7 +59,7 @@
             style="@style/OctoTheme.Widget.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel**"
+            android:text="@string/file_manager___file_list___cancel_paste"
             android:textColor="@color/text_colored_background" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

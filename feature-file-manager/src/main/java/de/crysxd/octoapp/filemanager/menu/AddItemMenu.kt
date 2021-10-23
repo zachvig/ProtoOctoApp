@@ -25,7 +25,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 class AddItemMenu(private val origin: FileOrigin, private val folder: FileObject.Folder?) : Menu {
 
-    override suspend fun getTitle(context: Context) = "Add item*"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___add_menu___title)
 
     override suspend fun getMenuItem() = listOf(
         AddFolderMenuItem(origin, folder),
@@ -40,25 +40,26 @@ class AddItemMenu(private val origin: FileOrigin, private val folder: FileObject
         override val icon = R.drawable.ic_round_create_new_folder_24
         override val canBePinned = false
 
-        override suspend fun getTitle(context: Context) = "Create a folder*"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___add_menu___create_folder_title)
 
         override suspend fun onClicked(host: MenuHost?) {
             val result = NavigationResultMediator.registerResultCallback<String>()
             val navController = host?.getNavController() ?: return
+            val context = host.getMenuActivity()
 
             navController.navigate(
                 de.crysxd.baseui.R.id.action_enter_value,
                 EnterValueFragmentArgs(
-                    title = "Create a folder**",
-                    hint = "Folder name**",
-                    action = "Create**",
+                    title = context.getString(R.string.file_manager___add_menu___create_folder_title),
+                    hint = context.getString(R.string.file_manager___add_menu___create_folder_input_hint),
+                    action = context.getString(R.string.file_manager___add_menu___create_folder_action),
                     resultId = result.first,
                     inputType = InputType.TYPE_CLASS_TEXT,
                     validator = EnterValueFragment.NotEmptyValidator()
                 ).toBundle()
             )
 
-            val name = result.second.asFlow().first()?.takeIf { it.isNotEmpty() } ?: return
+            val name = result.second.asFlow().first()?.takeIf { it.isNotEmpty() } ?: return host.closeMenu()
             BaseInjector.get().createFolderUseCase().execute(
                 CreateFolderUseCase.Params(
                     parent = parent,
@@ -79,7 +80,7 @@ class AddItemMenu(private val origin: FileOrigin, private val folder: FileObject
         override val icon = R.drawable.ic_round_upload_file_24
         override val canBePinned = false
 
-        override suspend fun getTitle(context: Context) = "Upload a file**"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___add_menu___upload_file_title)
 
         override suspend fun onClicked(host: MenuHost?) {
             // Let user pick file

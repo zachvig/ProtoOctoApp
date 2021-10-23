@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="file_manager___file_list___uploading">Uploading…</string>
+    <string name="file_manager___file_list___currently_selected">Currently selected</string>
+    <string name="file_manager___file_list___paste_here">Paste here</string>
+    <string name="file_manager___file_list___cancel_paste">Cancel</string>
+    <string name="file_manager___add_menu___create_folder_title">Create a folder</string>
+    <string name="file_manager___add_menu___create_folder_input_hint">Folder name</string>
+    <string name="file_manager___add_menu___create_folder_action">Create</string>
+    <string name="file_manager___add_menu___upload_file_title">Upload a file</string>
+    <string name="file_manager___add_menu___title">Add item</string>
+    <string name="file_manager___file_menu___copy">Copy</string>
+    <string name="file_manager___file_menu___move">Move</string>
+    <string name="file_manager___file_menu___download_and_share"><![CDATA[Download & Share]]></string>
+    <string name="file_manager___file_menu___download_and_share_description">This will download %s</string>
+    <string name="file_manager___file_menu___rename">Rename</string>
+    <string name="file_manager___file_menu___rename_input_title">Rename %s</string>
+    <string name="file_manager___file_menu___rename_input_hint">File name</string>
+    <string name="file_manager___file_menu___rename_action">Rename</string>
+    <string name="file_manager___sorting_menu___hide_printed">Hide successfully printed</string>
+    <string name="file_manager___sorting_menu___direction">Direction</string>
+    <string name="file_manager___sorting_menu___direction_ascending">ascending</string>
+    <string name="file_manager___sorting_menu___direction_decending">descending</string>
+    <string name="file_manager___sorting_menu___sort_by">Sort by</string>
+    <string name="file_manager___sorting_menu___sort_by_upload_time">upload time</string>
+    <string name="file_manager___sorting_menu___sort_by_last_print_time">last print time</string>
+    <string name="file_manager___sorting_menu___sort_by_name">name</string>
+    <string name="file_manager___sorting_menu___sort_by_file_size">file size</string>
+    <string name="file_manager___upload___uploading_x">Uploading %s</string>
+    <string name="file_manager___upload___starting_upload">Starting upload...</string>
+    <string name="file_manager___upload___x_files_pending">%d files pending</string>
+    <string name="file_manager___upload___error_invalid_file_type"><![CDATA[This file type is not supported by OctoPrint.**<br><br><small>Supported file types: %s</small>]]></string>
+</resources>
