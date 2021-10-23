@@ -20,8 +20,13 @@ import de.crysxd.octoapp.base.data.models.WidgetPreferences
 import de.crysxd.octoapp.base.data.models.WidgetType
 import de.crysxd.octoapp.base.di.BaseInjector
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
+
+    companion object {
+        private const val VIEW_ANIMATION_AFTER_CREATE_THRESHOLD = 300L
+    }
 
     private lateinit var binding: WidgetHostFragmentBinding
     protected val mainButton get() = binding.mainButton
@@ -30,6 +35,7 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
     abstract val toolbarState: OctoToolbar.State
     private var lastWidgetList: List<WidgetType> = emptyList()
     private val handler = Handler(Looper.getMainLooper())
+    private var viewCreatedAt = 0L
     private val reloadRunnable = Runnable {
         Timber.i("Reload widgets")
         requestTransition()
@@ -43,6 +49,8 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
         super.onViewCreated(view, savedInstanceState)
         Timber.i("Create view")
         binding.widgetList.connectToLifecycle(viewLifecycleOwner)
+        postponeEnterTransition(VIEW_ANIMATION_AFTER_CREATE_THRESHOLD, TimeUnit.MILLISECONDS)
+        viewCreatedAt = System.currentTimeMillis()
     }
 
     override fun onStart() {
@@ -69,11 +77,10 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
     abstract fun doReloadWidgets()
 
     override fun requestTransition(quickTransition: Boolean) {
-        (view as? ViewGroup)?.let {
-            TransitionManager.beginDelayedTransition(
-                it,
-                if (quickTransition) InstantAutoTransition() else AutoTransition()
-            )
+        if ((System.currentTimeMillis() - viewCreatedAt) > VIEW_ANIMATION_AFTER_CREATE_THRESHOLD) {
+            (view as? ViewGroup)?.let {
+                TransitionManager.beginDelayedTransition(it, if (quickTransition) InstantAutoTransition() else AutoTransition())
+            }
         }
     }
 
@@ -91,6 +98,7 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
             parent = this,
             widgetClasses = widgets
         )
+        startPostponedEnterTransition()
     }
 
     fun startEdit() {
