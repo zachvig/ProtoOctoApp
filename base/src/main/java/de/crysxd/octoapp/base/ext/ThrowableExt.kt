@@ -10,7 +10,7 @@ import de.crysxd.octoapp.octoprint.exceptions.OctoPrintException
 import de.crysxd.octoapp.octoprint.exceptions.ProxyException
 
 fun Throwable.composeErrorMessage(context: Context, @StringRes baseStringRes: Int = R.string.error_general_with_details): CharSequence = HtmlCompat.fromHtml(
-    (this as? UserMessageException)?.userMessage?.let { context.getString(it) }?.htmlify()
+    (this as? UserMessageException)?.getUserMessage(context)?.htmlify()
         ?: (this as? OctoPrintException)?.userFacingMessage?.htmlify()
         ?: context.getString(
             baseStringRes,

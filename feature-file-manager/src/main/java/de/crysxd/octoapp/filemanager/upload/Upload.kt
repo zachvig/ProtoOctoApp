@@ -6,6 +6,7 @@ import de.crysxd.octoapp.octoprint.models.files.FileOrigin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.io.File
+import java.util.Date
 import java.util.UUID
 
 data class Upload(
@@ -16,6 +17,7 @@ data class Upload(
     val name: String,
     val source: File,
     val size: Long,
+    val startTime: Date = Date()
 ) {
     private val progressFlow = MutableStateFlow(0f)
     val progress = progressFlow.asStateFlow()

@@ -15,6 +15,7 @@ import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
 import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
 import de.crysxd.octoapp.filemanager.ui.file_details.FileDetailsViewModel
 import de.crysxd.octoapp.filemanager.ui.select_file.SelectFileViewModel
+import de.crysxd.octoapp.filemanager.upload.UploadMediator
 import javax.inject.Provider
 
 @Module
@@ -31,12 +32,14 @@ open class ViewModelModule {
         loadFilesUseCase: LoadFilesUseCase,
         octoPreferences: OctoPreferences,
         octoPrintProvider: OctoPrintProvider,
+        uploadMediator: UploadMediator,
         picasso: LiveData<Picasso?>
     ): ViewModel = SelectFileViewModel(
-        loadFilesUseCase,
-        octoPreferences,
-        octoPrintProvider,
-        picasso
+        loadFilesUseCase = loadFilesUseCase,
+        octoPreferences = octoPreferences,
+        octoPrintProvider = octoPrintProvider,
+        picasso = picasso,
+        uploadMediator = uploadMediator,
     )
 
     @Provides

@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.baseui.BaseFragment
@@ -18,7 +18,6 @@ import de.crysxd.octoapp.filemanager.databinding.SelectFileFragmentBinding
 import de.crysxd.octoapp.filemanager.di.injectViewModel
 import de.crysxd.octoapp.filemanager.menu.AddItemMenu
 import de.crysxd.octoapp.filemanager.menu.FileActionsMenu
-import kotlinx.coroutines.delay
 import timber.log.Timber
 
 // Delay the initial loading display a little. Usually we are on fast local networks so the
@@ -39,15 +38,12 @@ class SelectFileFragment : BaseFragment() {
 
         // Setup adapter
         val adapter = SelectFileAdapter(
-            onFileSelected = {
-                viewModel.selectFile(it)
-            },
-            onFileMenuOpened = {
-                MenuBottomSheetFragment.createForMenu(FileActionsMenu(it)).show(childFragmentManager)
-            },
-            onHideThumbnailHint = {
-                viewModel.hideThumbnailHint()
-            },
+            context = requireContext(),
+            onFileSelected = { viewModel.selectFile(it) },
+            onFileMenuOpened = { MenuBottomSheetFragment.createForMenu(FileActionsMenu(it)).show(childFragmentManager) },
+            onHideThumbnailHint = { viewModel.hideThumbnailHint() },
+            onRetry = { viewModel.loadFiles(navArgs.folder, reload = true) },
+            onAddItemClicked = { MenuBottomSheetFragment.createForMenu(AddItemMenu(viewModel.fileOrigin, navArgs.folder)).show(childFragmentManager) },
             onShowThumbnailInfo = {
                 MaterialAlertDialogBuilder(requireContext())
                     .setMessage(getString(R.string.thumbnail_info_message))
@@ -60,48 +56,46 @@ class SelectFileFragment : BaseFragment() {
                     .setNeutralButton(R.string.cancel, null)
                     .show()
             },
-            onRetry = {
-                it.showLoading()
-                viewModel.reload()
-            },
-            onAddItemClicked = {
-                MenuBottomSheetFragment.createForMenu(AddItemMenu(viewModel.fileOrigin, navArgs.folder)).show(childFragmentManager)
-            }
         )
+
         binding.recyclerViewFileList.adapter = adapter
         viewModel.picasso.observe(viewLifecycleOwner) {
             adapter.picasso = it
         }
 
-        val showLoaderJob = lifecycleScope.launchWhenCreated {
-            delay(LOADER_DELAY)
-            adapter.showLoading()
-        }
-
         // Load files
-        viewModel.loadFiles(navArgs.folder).observe(viewLifecycleOwner) {
-            Timber.i(it.toString())
-            binding.swipeRefreshLayout.isRefreshing = false
-            showLoaderJob.cancel()
-            if (it.error) {
-                adapter.showError()
-            } else {
-                adapter.showFiles(
-                    folderName = navArgs.folder?.name,
-                    files = it.files,
-                    showThumbnailHint = it.showThumbnailHint
-                )
+        adapter.showLoading()
+        viewModel.uiState.asLiveData().observe(viewLifecycleOwner) {
+            Timber.i("UiState: $it")
+            when (it) {
+                is SelectFileViewModel.UiState.DataReady -> {
+                    binding.swipeRefreshLayout.isRefreshing = false
+                    adapter.showFiles(
+                        files = it.files,
+                        showThumbnailHint = it.showThumbnailHint,
+                        folderName = navArgs.folder?.name
+                    )
+                }
+                is SelectFileViewModel.UiState.Error -> {
+                    binding.swipeRefreshLayout.isRefreshing = false
+                    adapter.showError()
+                }
+                is SelectFileViewModel.UiState.Loading -> adapter.showLoading()
             }
         }
 
         // Setup swipe to refresh
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.reload()
+            viewModel.loadFiles(navArgs.folder, reload = true)
         }
     }
 
     override fun onStart() {
         super.onStart()
+
+        viewModel.setupThumbnailHint(navArgs.showThumbnailHint)
+        viewModel.loadFiles(navArgs.folder)
+
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare
         binding.recyclerViewFileList.setupWithToolbar(requireOctoActivity())
     }

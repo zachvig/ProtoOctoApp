@@ -6,13 +6,13 @@ import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.base.utils.ExceptionReceivers
 import de.crysxd.octoapp.filemanager.R
 import de.crysxd.octoapp.filemanager.di.FileManagerInjector
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -54,7 +54,6 @@ class UploadFilesService : Service() {
 
     private suspend fun performUpload(upload: Upload) {
         try {
-            delay(15000)
             notificationManager.notify(notificationId, createNotification(progress = 0f, name = upload.name))
             var lastProgressLog = 0
             var lastProgressUpdate = 0
@@ -78,18 +77,19 @@ class UploadFilesService : Service() {
                 }
             )
         } catch (e: Exception) {
+            ExceptionReceivers.dispatchException(e)
             Timber.e(e, "Upload ${upload.id} failed")
         }
     }
 
     private fun createNotification(progress: Float = 0f, name: String? = null) = NotificationCompat.Builder(this, getString(R.string.updates_notification_channel))
-        .setContentTitle(name?.let { "Uploading $it **" } ?: "Starting upload...")
+        .setContentTitle(name?.let { "Uploading $it **" } ?: "Starting upload...**")
         .setSmallIcon(R.drawable.ic_notification_default)
         .setSilent(true)
         .setProgress(100, (progress * 100).toInt(), progress == 0f || progress == 1f)
         .setContentText(
             mediator.getActiveUploads().size.let {
-                if (it > 1) "$it files pending" else ""
+                if (it > 1) "$it files pending**" else ""
             }
         ).build()
 }

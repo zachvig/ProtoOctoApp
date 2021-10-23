@@ -45,25 +45,25 @@ class AddItemMenu(private val origin: FileOrigin, private val folder: FileObject
         override suspend fun onClicked(host: MenuHost?) {
             val result = NavigationResultMediator.registerResultCallback<String>()
             val navController = host?.getNavController() ?: return
-            val context = host.getHostFragment()?.context ?: return
 
             navController.navigate(
                 de.crysxd.baseui.R.id.action_enter_value,
                 EnterValueFragmentArgs(
-                    title = "Create a folder*",
-                    hint = "Folder name*",
-                    action = "Create*",
+                    title = "Create a folder**",
+                    hint = "Folder name**",
+                    action = "Create**",
                     resultId = result.first,
                     inputType = InputType.TYPE_CLASS_TEXT,
                     validator = EnterValueFragment.NotEmptyValidator()
                 ).toBundle()
             )
 
+            val name = result.second.asFlow().first()?.takeIf { it.isNotEmpty() } ?: return
             BaseInjector.get().createFolderUseCase().execute(
                 CreateFolderUseCase.Params(
                     parent = parent,
                     origin = origin,
-                    name = result.second.asFlow().first() ?: throw IllegalStateException("Name must not be empty")
+                    name = name
                 )
             )
 
@@ -79,7 +79,7 @@ class AddItemMenu(private val origin: FileOrigin, private val folder: FileObject
         override val icon = R.drawable.ic_round_insert_drive_file_24
         override val canBePinned = false
 
-        override suspend fun getTitle(context: Context) = "Upload a file*"
+        override suspend fun getTitle(context: Context) = "Upload a file**"
 
         override suspend fun onClicked(host: MenuHost?) {
             // Let user pick file

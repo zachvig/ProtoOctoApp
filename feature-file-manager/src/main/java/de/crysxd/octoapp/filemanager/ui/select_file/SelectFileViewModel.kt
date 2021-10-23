@@ -1,7 +1,6 @@
 package de.crysxd.octoapp.filemanager.ui.select_file
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.squareup.picasso.Picasso
 import de.crysxd.baseui.BaseViewModel
@@ -9,15 +8,25 @@ import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase.Params
-import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.filemanager.R
 import de.crysxd.octoapp.filemanager.ui.file_details.FileDetailsFragmentArgs
+import de.crysxd.octoapp.filemanager.upload.Upload
+import de.crysxd.octoapp.filemanager.upload.UploadMediator
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -29,6 +38,7 @@ class SelectFileViewModel(
     private val loadFilesUseCase: LoadFilesUseCase,
     private val octoPreferences: OctoPreferences,
     private val octoPrintProvider: OctoPrintProvider,
+    private val uploadMediator: UploadMediator,
     val picasso: LiveData<Picasso?>,
 ) : BaseViewModel() {
 
@@ -37,56 +47,62 @@ class SelectFileViewModel(
     }
 
     val fileOrigin = FileOrigin.Local
-    private val filesMediator = MutableLiveData<UiState>()
-    private var filesInitialised = false
-    private var showThumbnailHint = false
+    private val mutableUiState = MutableStateFlow<Flow<UiState>>(flowOf(UiState.Initial))
+    private val showThumbnailFlow = MutableStateFlow(false)
     private var lastFolder: FileObject.Folder? = null
+    private var lastFileList: List<FileObject>? = null
+    val uiState = mutableUiState.flatMapLatest { it }
 
     init {
         viewModelScope.launch(coroutineExceptionHandler) {
             octoPrintProvider.eventFlow("select-file").collect {
                 if (it is Event.MessageReceived && it.message is Message.EventMessage.UpdatedFiles) {
-                    filesInitialised = false
-                    if (filesMediator.hasActiveObservers()) {
-                        reload()
+                    if (mutableUiState.subscriptionCount.first() > 0) {
+                        loadFiles(folder = lastFolder, reload = true)
                     }
                 }
             }
         }
     }
 
-    fun loadFiles(folder: FileObject.Folder?): LiveData<UiState> {
-        if (!filesInitialised) {
-            filesInitialised = true
+    fun setupThumbnailHint(showThumbnailHint: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
+        showThumbnailFlow.value = !isHideThumbnailHint() && showThumbnailHint
+    }
+
+    fun loadFiles(folder: FileObject.Folder?, reload: Boolean = false) = viewModelScope.launch(coroutineExceptionHandler) {
+        if (reload || uiState.first() == UiState.Initial) {
             lastFolder = folder
-            viewModelScope.launch(Dispatchers.Default + coroutineExceptionHandler) {
-                try {
-                    val loadedFolder = loadFilesUseCase.execute(Params(fileOrigin, folder))
 
-                    // Check if we should show the thumbnail hint
-                    // As soon as we determine we should hide it, persist that info so we remember that
-                    // we e.g. saw a thumbnail in the root folder when showing a sub folder
-                    val showThumbnailHint = !isAnyThumbnailPresent(loadedFolder) && !isHideThumbnailHint() && isAnyFilePresent(loadedFolder)
-                    if (!showThumbnailHint) {
-                        hideThumbnailHint()
-                    }
+            mutableUiState.value = flow {
+                lastFileList?.let { emit(it) }
 
-                    Timber.i("Loaded ${loadedFolder.size} files")
-                    filesMediator.postValue(UiState(false, loadedFolder, showThumbnailHint))
-                } catch (e: Exception) {
-                    Timber.e(e)
-                    filesInitialised = false
-                    filesMediator.postValue(UiState(true, emptyList(), false))
+                val files = loadFilesUseCase.execute(Params(fileOrigin, folder))
+
+                // Check if the user already uses thumbnails
+                if (isAnyThumbnailPresent(files)) {
+                    showThumbnailFlow.value = false
                 }
+
+                lastFileList = files
+                emit(files)
+            }.combine(uploadMediator.getActiveUploads(fileOrigin, lastFolder)) { allFiles, uploads ->
+                val folders = allFiles.filterIsInstance<FileObject.Folder>()
+                    .map { FileWrapper.FileObjectWrapper(it) }
+                    .sortedBy { it.fileObject.display.lowercase() }
+
+                val files = listOf(
+                    allFiles.filterIsInstance<FileObject.File>().map { FileWrapper.FileObjectWrapper(it) },
+                    uploads.map { FileWrapper.UploadWrapper(it) }
+                ).flatten().sortedByDescending { it.date }
+
+                listOf(folders, files).flatten()
+            }.combine(showThumbnailFlow) { files, showThumbnail ->
+                UiState.DataReady(files, showThumbnail)
+            }.retry(1).catch {
+                Timber.e(it)
+                UiState.Error(it)
             }
         }
-
-        return filesMediator
-    }
-
-    fun reload() {
-        filesInitialised = false
-        loadFiles(lastFolder)
     }
 
     private suspend fun isHideThumbnailHint(): Boolean = withContext(Dispatchers.IO) {
@@ -95,19 +111,7 @@ class SelectFileViewModel(
 
     fun hideThumbnailHint() = viewModelScope.launch(coroutineExceptionHandler) {
         octoPreferences.hideThumbnailHintUntil = Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(HIDE_THUMBNAIL_HINT_FOR_DAYS))
-
-        filesMediator.value?.let {
-            filesMediator.postValue(it.copy(showThumbnailHint = false))
-        }
-
-        showThumbnailHint = false
-    }
-
-    private fun isAnyFilePresent(files: List<FileObject>): Boolean = files.any {
-        when (it) {
-            is FileObject.Folder -> isAnyFilePresent(it.children ?: emptyList())
-            is FileObject.File -> true
-        }
+        showThumbnailFlow.value = false
     }
 
     private fun isAnyThumbnailPresent(files: List<FileObject>): Boolean = files.any {
@@ -117,16 +121,32 @@ class SelectFileViewModel(
         }
     }
 
-    fun selectFile(file: FileObject) = AppScope.launch(coroutineExceptionHandler) {
+    fun selectFile(file: FileObject) = viewModelScope.launch(coroutineExceptionHandler) {
         when (file) {
-            is FileObject.File -> {
-                navContoller.navigate(R.id.action_show_file_details, FileDetailsFragmentArgs(file).toBundle())
-            }
-            is FileObject.Folder -> {
-                navContoller.navigate(R.id.action_open_folder, SelectFileFragmentArgs(file, showThumbnailHint).toBundle())
-            }
+            is FileObject.File -> navContoller.navigate(R.id.action_show_file_details, FileDetailsFragmentArgs(file).toBundle())
+            is FileObject.Folder -> navContoller.navigate(R.id.action_open_folder, SelectFileFragmentArgs(file, showThumbnailFlow.value).toBundle())
         }
     }
 
-    data class UiState(val error: Boolean, val files: List<FileObject>, val showThumbnailHint: Boolean)
+    sealed class UiState {
+        open class Loading : UiState()
+        object Initial : Loading()
+        data class Error(val exception: Throwable) : UiState()
+        data class DataReady(val files: List<FileWrapper>, val showThumbnailHint: Boolean) : UiState()
+    }
+
+    sealed class FileWrapper {
+        abstract val date: Date
+
+        data class UploadWrapper(val upload: Upload) : FileWrapper() {
+            override val date = upload.startTime
+        }
+
+        data class FileObjectWrapper(val fileObject: FileObject) : FileWrapper() {
+            override val date = when (fileObject) {
+                is FileObject.File -> Date(fileObject.date)
+                is FileObject.Folder -> Date(Long.MAX_VALUE)
+            }
+        }
+    }
 }

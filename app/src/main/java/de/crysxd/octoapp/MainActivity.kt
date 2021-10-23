@@ -70,6 +70,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
 import timber.log.Timber
+import java.util.Date
 import de.crysxd.octoapp.octoprint.models.socket.Message as SocketMessage
 import de.crysxd.octoapp.preprintcontrols.di.PrePrintControlsInjector as ConnectPrinterInjector
 
@@ -85,6 +86,7 @@ class MainActivity : OctoActivity() {
     override val rootLayout by lazy { binding.coordinator }
     override val navController get() = findNavController(R.id.mainNavController)
     private var enforceAutoamticNavigationAllowed = false
+    private var uiStoppedAt = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -321,15 +323,22 @@ class MainActivity : OctoActivity() {
     override fun onStart() {
         super.onStart()
         Timber.i("UI started")
-        // OctoPrint might not be available, this is more like a fire and forget
-        // Don't bother user with error messages
-        updateCapabilities("ui_start", updateM115 = false, escalateError = false)
+
+        if ((System.currentTimeMillis() - uiStoppedAt) > 30_000) {
+            // OctoPrint might not be available, this is more like a fire and forget
+            // Don't bother user with error messages
+            updateCapabilities("ui_start", updateM115 = false, escalateError = false)
+        } else {
+            Timber.i("Ui stopped for less than 30s, skipping capabilities update")
+        }
+
         updateConnectionBanner(alreadyShrunken = true)
     }
 
     override fun onStop() {
         super.onStop()
-        Timber.i("UI stopped")
+        uiStoppedAt = System.currentTimeMillis()
+        Timber.i("UI stopped at ${Date(uiStoppedAt)}")
     }
 
     override fun onResume() {

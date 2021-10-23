@@ -92,6 +92,11 @@ data class Settings(
         @SerializedName("upnpUuid") val uuid: String?
     ) : PluginSettings
 
+    data class UploadAnything(
+        @SerializedName("allowed") val allowedExtensions: List<String>?
+    ) : PluginSettings
+
+
     data class OctoEverywhere(
         @SerializedName("PrinterKey") val printerKey: String?
     ) : PluginSettings

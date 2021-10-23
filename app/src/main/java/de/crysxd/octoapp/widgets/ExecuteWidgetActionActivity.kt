@@ -18,11 +18,10 @@ import de.crysxd.baseui.menu.Menu
 import de.crysxd.baseui.menu.MenuHost
 import de.crysxd.baseui.menu.MenuItem
 import de.crysxd.baseui.menu.main.MenuItemLibrary
-import de.crysxd.baseui.widget.WidgetHostFragment
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
-import de.crysxd.octoapp.base.data.models.exceptions.UserMessageException
 import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.base.ext.composeErrorMessage
 import de.crysxd.octoapp.base.ext.mainActivityClass
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.base.utils.AppScope
@@ -194,7 +193,7 @@ class ExecuteWidgetActionActivity : LocalizedActivity(), MenuHost {
             Timber.e(e)
             Toast.makeText(
                 this,
-                (e as? UserMessageException)?.userMessage?.let(::getString) ?: e.localizedMessage ?: "Something went wrong",
+                e.composeErrorMessage(this),
                 Toast.LENGTH_LONG
             ).show()
         }
