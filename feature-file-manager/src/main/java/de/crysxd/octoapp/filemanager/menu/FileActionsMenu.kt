@@ -12,6 +12,8 @@ import de.crysxd.baseui.menu.MenuItem
 import de.crysxd.baseui.menu.MenuItemStyle
 import de.crysxd.baseui.utils.NavigationResultMediator
 import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.base.ext.asStyleFileSize
+import de.crysxd.octoapp.base.usecase.DownloadAndShareFileUseCase
 import de.crysxd.octoapp.base.usecase.MoveFileUseCase
 import de.crysxd.octoapp.filemanager.R
 import de.crysxd.octoapp.octoprint.models.files.FileObject
@@ -23,9 +25,10 @@ class FileActionsMenu(val file: FileObject) : Menu {
 
     override suspend fun getTitle(context: Context) = file.display
 
-    override suspend fun getMenuItem() = listOf(
+    override suspend fun getMenuItem() = listOfNotNull(
         DeleteFileMenuItem(file),
-        RenameFileMenuItem(file)
+        RenameFileMenuItem(file),
+        (file as? FileObject.File)?.let { DownloadAndShareMenuItem(it) }
     )
 
     class DeleteFileMenuItem(val file: FileObject) : ConfirmedMenuItem() {
@@ -48,7 +51,7 @@ class FileActionsMenu(val file: FileObject) : Menu {
     class RenameFileMenuItem(val file: FileObject) : MenuItem {
         override val itemId = "rename"
         override var groupId = ""
-        override val order = 1
+        override val order = 2
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_edit_24
         override val canBePinned = false
@@ -57,8 +60,8 @@ class FileActionsMenu(val file: FileObject) : Menu {
         override suspend fun onClicked(host: MenuHost?) {
             val result = NavigationResultMediator.registerResultCallback<String>()
             val navController = host?.getNavController() ?: return
-            val extension = file.name.split(".").takeIf { it.size > 1 }?.lastOrNull() ?: ""
-            val originalName = file.name.removeSuffix(extension).removeSuffix(".")
+            val extension = (file as? FileObject.File)?.extension?.let { ".$it" } ?: ""
+            val originalName = file.name.removeSuffix(extension)
 
             navController.navigate(
                 de.crysxd.baseui.R.id.action_enter_value,
@@ -75,12 +78,32 @@ class FileActionsMenu(val file: FileObject) : Menu {
             )
 
             val name = result.second.asFlow().first()?.takeIf { it.isNotEmpty() } ?: return
-            val newPath = file.path.removeSuffix(file.name) + name + (extension.takeIf { it.isNotEmpty() }?.let { ".$it" } ?: "")
+            val newPath = file.path.removeSuffix(file.name) + name + extension
             if (file.path != newPath) {
                 BaseInjector.get().moveFileUseCase().execute(MoveFileUseCase.Params(file = file, newPath = newPath))
             }
 
             host.closeMenu()
+        }
+    }
+
+    class DownloadAndShareMenuItem(val file: FileObject.File) : MenuItem {
+        override val itemId = "download"
+        override var groupId = ""
+        override val order = 3
+        override val style = MenuItemStyle.OctoPrint
+        override val icon = R.drawable.ic_round_share_24
+        override val canBePinned = false
+
+        override suspend fun getTitle(context: Context) = "Download & Share**"
+        override suspend fun getDescription(context: Context) = "This will download ${file.size.asStyleFileSize()}"
+        override suspend fun onClicked(host: MenuHost?) {
+            host?.getMenuActivity()?.let {
+                BaseInjector.get().downloadAndShareFileUseCase().execute(
+                    DownloadAndShareFileUseCase.Params(context = it, file = file)
+                )
+            }
+            host?.closeMenu()
         }
     }
 }

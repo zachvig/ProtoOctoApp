@@ -13,6 +13,8 @@ sealed class FileObject(
     open val ref: Reference?
 ) : Serializable {
 
+    val isPrintable get() = typePath?.contains(FILE_TYPE_MACHINE_CODE) == true
+
     class File(
         display: String,
         name: String,
@@ -27,7 +29,9 @@ sealed class FileObject(
         val hash: String,
         val gcodeAnalysis: GcodeAnalysis?,
         val prints: PrintHistory?
-    ) : FileObject(display, name, origin, path, type, typePath, size, ref)
+    ) : FileObject(display, name, origin, path, type, typePath, size, ref) {
+        val extension get() = name.split(".").takeIf { it.size > 1 }?.lastOrNull()
+    }
 
     class Folder(
         display: String,

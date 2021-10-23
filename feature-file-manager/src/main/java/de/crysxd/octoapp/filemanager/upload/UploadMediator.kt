@@ -7,6 +7,7 @@ import android.provider.OpenableColumns
 import de.crysxd.octoapp.base.data.models.exceptions.SuppressedException
 import de.crysxd.octoapp.base.data.models.exceptions.UserMessageException
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.filemanager.di.FileManagerScope
 import de.crysxd.octoapp.octoprint.models.files.FileObject
@@ -62,7 +63,7 @@ class UploadMediator @Inject constructor(
         checkValidFile(fileName)
 
         // Copy file to cache...we need a file for OkHttp or we need to load it into memory
-        val file = File(context.cacheDir, UUID.randomUUID().toString())
+        val file = File(BaseInjector.get().publicFileDirectory(), UUID.randomUUID().toString())
         file.outputStream().use {
             contentResolver.openInputStream(contentResolverUri)?.copyTo(it) ?: throw FileNotFoundException("Unable to open input")
         }

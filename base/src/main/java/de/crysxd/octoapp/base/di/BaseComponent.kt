@@ -17,6 +17,7 @@ import de.crysxd.octoapp.base.data.repository.WidgetPreferencesRepository
 import de.crysxd.octoapp.base.data.source.LocalGcodeFileDataSource
 import de.crysxd.octoapp.base.di.modules.AndroidModule
 import de.crysxd.octoapp.base.di.modules.DataSourceModule
+import de.crysxd.octoapp.base.di.modules.FileModule
 import de.crysxd.octoapp.base.di.modules.FirebaseModule
 import de.crysxd.octoapp.base.di.modules.LoggingModule
 import de.crysxd.octoapp.base.di.modules.OctoPrintModule
@@ -35,6 +36,7 @@ import de.crysxd.octoapp.base.usecase.CreateProgressAppWidgetDataUseCase
 import de.crysxd.octoapp.base.usecase.CyclePsuUseCase
 import de.crysxd.octoapp.base.usecase.DeleteFileUseCase
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
+import de.crysxd.octoapp.base.usecase.DownloadAndShareFileUseCase
 import de.crysxd.octoapp.base.usecase.EmergencyStopUseCase
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.ExecuteSystemCommandUseCase
@@ -65,6 +67,7 @@ import de.crysxd.octoapp.base.usecase.TogglePsuUseCase
 import de.crysxd.octoapp.base.usecase.TurnOffPsuUseCase
 import de.crysxd.octoapp.base.usecase.TurnOnPsuUseCase
 import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
+import java.io.File
 import javax.inject.Named
 
 @BaseScope
@@ -75,6 +78,7 @@ import javax.inject.Named
         OctoPrintModule::class,
         DataSourceModule::class,
         FirebaseModule::class,
+        FileModule::class,
         SslModule::class,
     ]
 )
@@ -87,6 +91,9 @@ interface BaseComponent {
     fun app(): Application
     fun sharedPreferences(): SharedPreferences
     fun octoPreferences(): OctoPreferences
+
+    // FileModule
+    fun publicFileDirectory(): File
 
     // SslModule
     fun sslKeyStoreHandler(): SslKeyStoreHandler
@@ -151,5 +158,6 @@ interface BaseComponent {
     fun deleteFileUseCase(): DeleteFileUseCase
     fun moveFileUseCase(): MoveFileUseCase
     fun createFolderUseCase(): CreateFolderUseCase
+    fun downloadAndShareFileUseCase(): DownloadAndShareFileUseCase
 
 }

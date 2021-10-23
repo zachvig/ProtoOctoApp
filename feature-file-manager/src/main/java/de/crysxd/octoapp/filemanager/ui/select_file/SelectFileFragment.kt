@@ -18,6 +18,7 @@ import de.crysxd.octoapp.filemanager.databinding.SelectFileFragmentBinding
 import de.crysxd.octoapp.filemanager.di.injectViewModel
 import de.crysxd.octoapp.filemanager.menu.AddItemMenu
 import de.crysxd.octoapp.filemanager.menu.FileActionsMenu
+import de.crysxd.octoapp.octoprint.models.files.FileObject
 import timber.log.Timber
 
 // Delay the initial loading display a little. Usually we are on fast local networks so the
@@ -39,7 +40,13 @@ class SelectFileFragment : BaseFragment() {
         // Setup adapter
         val adapter = SelectFileAdapter(
             context = requireContext(),
-            onFileSelected = { viewModel.selectFile(it) },
+            onFileSelected = {
+                if (it is FileObject.Folder || it.isPrintable) {
+                    viewModel.selectFile(it)
+                } else {
+                    MenuBottomSheetFragment.createForMenu(FileActionsMenu(it)).show(childFragmentManager)
+                }
+            },
             onFileMenuOpened = { MenuBottomSheetFragment.createForMenu(FileActionsMenu(it)).show(childFragmentManager) },
             onHideThumbnailHint = { viewModel.hideThumbnailHint() },
             onRetry = { viewModel.loadFiles(navArgs.folder, reload = true) },

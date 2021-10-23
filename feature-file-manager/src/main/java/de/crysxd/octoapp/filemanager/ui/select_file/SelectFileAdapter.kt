@@ -85,7 +85,7 @@ class SelectFileAdapter(
                     },
                     iconUrl = (it.fileObject as? FileObject.File)?.thumbnail,
                     iconPlaceholder = when (it.fileObject) {
-                        is FileObject.File -> if (it.fileObject.typePath?.contains(FileObject.FILE_TYPE_MACHINE_CODE) == true) printableFileIcon else otherFileIcon
+                        is FileObject.File -> if (it.fileObject.isPrintable) printableFileIcon else otherFileIcon
                         is FileObject.Folder -> folderIcon
                     },
                     resultIcon = when ((it.fileObject as? FileObject.File)?.prints?.last?.success) {
