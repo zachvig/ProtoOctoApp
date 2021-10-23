@@ -7,6 +7,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.gson.Gson
+import de.crysxd.octoapp.base.data.models.FileManagerSettings
 import de.crysxd.octoapp.base.data.models.GcodePreviewSettings
 import de.crysxd.octoapp.base.di.BaseInjector
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,6 +46,7 @@ class OctoPreferences(
         private const val KEY_TUTORIALS_SEEN_AT = "tutorials_seen_at"
         private const val KEY_ALLOW_TERMINAL_DURING_PRINT = "allow_terminal_during_print"
         private const val KEY_GCODE_PREVIEW = "gcode_preview"
+        private const val KEY_FILE_MANAGER = "file_manager"
 
         const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT = "octprint"
         const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_IMAGE = "native_image"
@@ -219,5 +221,13 @@ class OctoPreferences(
         } ?: GcodePreviewSettings()
         set(value) {
             edit { putString(KEY_GCODE_PREVIEW, gson.toJson(value)) }
+        }
+
+    var fileManagerSettings: FileManagerSettings
+        get() = sharedPreferences.getString(KEY_FILE_MANAGER, null)?.let {
+            gson.fromJson(it, FileManagerSettings::class.java)
+        } ?: FileManagerSettings()
+        set(value) {
+            edit { putString(KEY_FILE_MANAGER, gson.toJson(value)) }
         }
 }

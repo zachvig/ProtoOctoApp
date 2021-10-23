@@ -25,6 +25,7 @@
         tools:text="TextView" />
 
     <ImageButton
+        android:id="@+id/buttonSortOptions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"

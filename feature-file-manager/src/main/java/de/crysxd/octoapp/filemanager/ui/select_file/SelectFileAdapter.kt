@@ -38,6 +38,7 @@ class SelectFileAdapter(
     private val onHideThumbnailHint: (SelectFileAdapter) -> Unit,
     private val onShowThumbnailInfo: (SelectFileAdapter) -> Unit,
     private val onAddItemClicked: () -> Unit,
+    private val onSortOptionsClicked: () -> Unit,
     private val onRetry: (SelectFileAdapter) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -216,6 +217,7 @@ class SelectFileAdapter(
             holder.binding.textViewTitle.text = (items[position] as DataItem.Title).title
                 ?: "Your files**"
             holder.binding.buttonAdd.setOnClickListener { onAddItemClicked() }
+            holder.binding.buttonSortOptions.setOnClickListener { onSortOptionsClicked() }
         }
 
         is ViewHolder.ThumbnailHintViewHolder -> {

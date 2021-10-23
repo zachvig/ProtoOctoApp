@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.squareup.picasso.Picasso
 import de.crysxd.baseui.BaseViewModel
 import de.crysxd.octoapp.base.OctoPreferences
+import de.crysxd.octoapp.base.data.models.FileManagerSettings
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.usecase.LoadFileUseCase
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
@@ -80,9 +81,10 @@ class SelectFileViewModel(
     }.combine(getSelectFile()) { allFiles, selectedFile ->
         Timber.i("Selected file received: ${selectedFile?.path}")
         allFiles to selectedFile
+    }.combine(octoPreferences.updatedFlow) { allFilesAndSelected, _ ->
+        allFilesAndSelected
     }.combine(uploadsFlow) { allFilesAndSelected, uploads ->
         val (allFiles, selectedFile) = allFilesAndSelected
-
         val selected = listOfNotNull(
             selectedFile?.let { FileWrapper.SelectedFileObjectWrapper(it) }
         )
@@ -94,7 +96,7 @@ class SelectFileViewModel(
         val files = listOf(
             allFiles.filterIsInstance<FileObject.File>().map { FileWrapper.FileObjectWrapper(it) },
             uploads.map { FileWrapper.UploadWrapper(it) }
-        ).flatten().sortedByDescending { it.date }
+        ).flatten().sorted()
 
         listOf(
             selected,
@@ -135,6 +137,22 @@ class SelectFileViewModel(
         lastFileList = null
         lastSelectedFile = null
         trigger.value = (trigger.value ?: 0) + 1
+    }
+
+    private fun List<FileWrapper>.sorted() = octoPreferences.fileManagerSettings.let {
+        val comparator = when (it.sortBy) {
+            FileManagerSettings.SortBy.UploadTime -> compareBy<FileWrapper> { it.date }
+            FileManagerSettings.SortBy.PrintTime -> compareBy { it.lastPrintDate }
+            FileManagerSettings.SortBy.FileSize -> compareBy { it.size }
+            FileManagerSettings.SortBy.Name -> compareBy { it.name }
+        }.thenBy { it.path }
+
+        val sorted = this.filter { f -> !f.wasPrinted || !it.hidePrintedFiles }.sortedWith(comparator)
+
+        when (it.sortDirection) {
+            FileManagerSettings.SortDirection.Ascending -> sorted
+            FileManagerSettings.SortDirection.Descending -> sorted.reversed()
+        }
     }
 
     private fun getSelectFile() = octoPrintProvider.passiveCurrentMessageFlow("list-files").map {
@@ -195,20 +213,40 @@ class SelectFileViewModel(
     }
 
     sealed class FileWrapper {
-        abstract val date: Date
+        abstract val date: Long
+        abstract val path: String
+        abstract val name: String
+        abstract val size: Long
+        abstract val lastPrintDate: Long
+        abstract val wasPrinted: Boolean
 
         data class UploadWrapper(val upload: Upload) : FileWrapper() {
-            override val date = upload.startTime
+            override val date = upload.startTime.time
+            override val path = upload.parent?.path + upload.name
+            override val name = upload.name
+            override val size = upload.size
+            override val lastPrintDate = 0L
+            override val wasPrinted = false
         }
 
         data class SelectedFileObjectWrapper(val fileObject: FileObject.File) : FileWrapper() {
-            override val date = Date(fileObject.date)
+            override val date = fileObject.date * 1000
+            override val path = fileObject.path
+            override val name = fileObject.name
+            override val size = fileObject.size
+            override val lastPrintDate = ((fileObject.prints?.last?.date ?: 0f) * 1000).toLong()
+            override val wasPrinted = false
         }
 
         data class FileObjectWrapper(val fileObject: FileObject) : FileWrapper() {
+            override val path = fileObject.path
+            override val name = fileObject.name
+            override val size = fileObject.size
+            override val lastPrintDate = (((fileObject as? FileObject.File)?.prints?.last?.date ?: 0f) * 1000).toLong()
+            override val wasPrinted = (fileObject as? FileObject.File)?.prints?.last?.success == true
             override val date = when (fileObject) {
-                is FileObject.File -> Date(fileObject.date)
-                is FileObject.Folder -> Date(Long.MAX_VALUE)
+                is FileObject.File -> fileObject.date * 1000
+                is FileObject.Folder -> Long.MAX_VALUE
             }
         }
     }

@@ -19,6 +19,7 @@ import de.crysxd.octoapp.filemanager.databinding.SelectFileFragmentBinding
 import de.crysxd.octoapp.filemanager.di.injectViewModel
 import de.crysxd.octoapp.filemanager.menu.AddItemMenu
 import de.crysxd.octoapp.filemanager.menu.FileActionsMenu
+import de.crysxd.octoapp.filemanager.menu.SortOptionsMenu
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import kotlinx.coroutines.delay
 import timber.log.Timber
@@ -50,6 +51,7 @@ class SelectFileFragment : BaseFragment() {
                     MenuBottomSheetFragment.createForMenu(FileActionsMenu(it)).show(childFragmentManager)
                 }
             },
+            onSortOptionsClicked = { MenuBottomSheetFragment.createForMenu(SortOptionsMenu()).show(childFragmentManager) },
             onFileMenuOpened = { MenuBottomSheetFragment.createForMenu(FileActionsMenu(it)).show(childFragmentManager) },
             onHideThumbnailHint = { viewModel.hideThumbnailHint() },
             onRetry = { viewModel.reload() },

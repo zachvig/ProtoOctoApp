@@ -37,7 +37,7 @@ class AddItemMenu(private val origin: FileOrigin, private val folder: FileObject
         override var groupId = ""
         override val order = 1
         override val style = MenuItemStyle.OctoPrint
-        override val icon = R.drawable.ic_round_folder_24
+        override val icon = R.drawable.ic_round_create_new_folder_24
         override val canBePinned = false
 
         override suspend fun getTitle(context: Context) = "Create a folder*"
@@ -76,7 +76,7 @@ class AddItemMenu(private val origin: FileOrigin, private val folder: FileObject
         override var groupId = ""
         override val order = 2
         override val style = MenuItemStyle.OctoPrint
-        override val icon = R.drawable.ic_round_insert_drive_file_24
+        override val icon = R.drawable.ic_round_upload_file_24
         override val canBePinned = false
 
         override suspend fun getTitle(context: Context) = "Upload a file**"
