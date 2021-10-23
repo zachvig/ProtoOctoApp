@@ -6,4 +6,4 @@ import de.crysxd.baseui.OctoActivity
 fun Fragment.requireOctoActivity(): OctoActivity = requireActivity() as? OctoActivity
     ?: throw IllegalStateException("Fragment is not hosted by a OctoActivity")
 
-fun Fragment.optionallyRequestOctoActivity(): OctoActivity? = requireActivity() as? OctoActivity
+fun Fragment.optionallyRequestOctoActivity(): OctoActivity? = activity as? OctoActivity
