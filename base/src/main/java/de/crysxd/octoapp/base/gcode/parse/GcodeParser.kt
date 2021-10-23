@@ -85,8 +85,9 @@ class GcodeParser(
 
     private fun extractValue(label: String, line: String): Float? {
         try {
-            val start = line.indexOf(label)
+            var start = line.indexOf(label)
             if (start < 0) return null
+            while ((start + 1) < label.length && label[start + 1] == ' ') start++
             val mappedStart = if (start < 0) return null else start + label.length
             val end = line.indexOf(' ', startIndex = mappedStart)
             val mappedEnd = if (end < 0) line.length else end
