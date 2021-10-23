@@ -51,6 +51,7 @@ import de.crysxd.octoapp.base.usecase.HandleOctoEverywhereExceptionUseCase
 import de.crysxd.octoapp.base.usecase.HomePrintHeadUseCase
 import de.crysxd.octoapp.base.usecase.JogPrintHeadUseCase
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
+import de.crysxd.octoapp.base.usecase.MoveFileUseCase
 import de.crysxd.octoapp.base.usecase.OpenEmailClientForFeedbackUseCase
 import de.crysxd.octoapp.base.usecase.OpenOctoprintWebUseCase
 import de.crysxd.octoapp.base.usecase.RequestApiAccessUseCase
@@ -148,6 +149,7 @@ interface BaseComponent {
     fun requestApiAccessUseCase(): RequestApiAccessUseCase
     fun testFullNetworkStackUseCase(): TestFullNetworkStackUseCase
     fun deleteFileUseCase(): DeleteFileUseCase
+    fun moveFileUseCase(): MoveFileUseCase
     fun createFolderUseCase(): CreateFolderUseCase
 
 }

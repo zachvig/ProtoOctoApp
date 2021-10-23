@@ -97,7 +97,7 @@ interface FilesApi {
             wrapped.getRootFolder(origin)
         }
 
-        suspend fun executeFileCommand(file: FileObject.File, command: FileCommand) {
+        suspend fun executeFileCommand(file: FileObject, command: FileCommand) {
             wrapped.executeFileCommand(file.origin, file.path, command)
         }
     }

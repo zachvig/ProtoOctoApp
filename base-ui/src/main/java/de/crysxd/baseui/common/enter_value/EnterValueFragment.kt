@@ -95,7 +95,9 @@ class EnterValueFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        binding.textInputLayout.editText.requestFocusAndOpenSoftKeyboard()
+        binding.textInputLayout.postDelayed({
+            binding.textInputLayout.editText.requestFocusAndOpenSoftKeyboard()
+        }, 300)
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
     }
 
