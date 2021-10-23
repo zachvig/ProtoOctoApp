@@ -14,9 +14,15 @@ class MoveFileUseCase @Inject constructor(
     override suspend fun doExecute(param: Params, timber: Timber.Tree) {
         octoPrintProvider.octoPrint().createFilesApi().executeFileCommand(
             file = param.file,
-            command = FileCommand.MoveFile(
-                destination = param.newPath
-            )
+            command = when (param.copyFile) {
+                true -> FileCommand.CopyFile(
+                    destination = param.newPath
+                )
+
+                false -> FileCommand.MoveFile(
+                    destination = param.newPath
+                )
+            }
         )
 
         // Await changes to take affect
@@ -26,5 +32,6 @@ class MoveFileUseCase @Inject constructor(
     data class Params(
         val file: FileObject,
         val newPath: String,
+        val copyFile: Boolean = false,
     )
 }

@@ -10,6 +10,7 @@ import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.usecase.LoadFileUseCase
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase.Params
+import de.crysxd.octoapp.base.usecase.MoveFileUseCase
 import de.crysxd.octoapp.filemanager.R
 import de.crysxd.octoapp.filemanager.ui.file_details.FileDetailsFragmentArgs
 import de.crysxd.octoapp.filemanager.upload.Upload
@@ -39,6 +40,7 @@ import java.util.concurrent.TimeUnit
 class SelectFileViewModel(
     private val loadFilesUseCase: LoadFilesUseCase,
     private val loadFileUseCase: LoadFileUseCase,
+    private val moveFileUseCase: MoveFileUseCase,
     private val octoPreferences: OctoPreferences,
     private val octoPrintProvider: OctoPrintProvider,
     private val uploadMediator: UploadMediator,
@@ -203,6 +205,10 @@ class SelectFileViewModel(
             is FileObject.File -> navContoller.navigate(R.id.action_show_file_details, FileDetailsFragmentArgs(file).toBundle())
             is FileObject.Folder -> navContoller.navigate(R.id.action_open_folder, SelectFileFragmentArgs(file, showThumbnailFlow.value).toBundle())
         }
+    }
+
+    fun moveFileHere(fileObject: FileObject, copyFile: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
+        moveFileUseCase.execute(MoveFileUseCase.Params(file = fileObject, newPath = lastFolder.value?.path ?: "/", copyFile = copyFile))
     }
 
     sealed class UiState {

@@ -16,6 +16,8 @@ import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.usecase.DownloadAndShareFileUseCase
 import de.crysxd.octoapp.base.usecase.MoveFileUseCase
 import de.crysxd.octoapp.filemanager.R
+import de.crysxd.octoapp.filemanager.di.injectActivityViewModel
+import de.crysxd.octoapp.filemanager.ui.select_file.MoveAndCopyFilesViewModel
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import kotlinx.coroutines.flow.first
 import kotlinx.parcelize.Parcelize
@@ -28,15 +30,17 @@ class FileActionsMenu(val file: FileObject) : Menu {
     override suspend fun getMenuItem() = listOfNotNull(
         DeleteFileMenuItem(file),
         RenameFileMenuItem(file),
+        CopyFileMenuItem(file),
+        MoveFileMenuItem(file),
         (file as? FileObject.File)?.let { DownloadAndShareMenuItem(it) }
     )
 
     class DeleteFileMenuItem(val file: FileObject) : ConfirmedMenuItem() {
         override val itemId = "delete"
         override var groupId = ""
-        override val order = 1
+        override val order = 2
         override val style = MenuItemStyle.OctoPrint
-        override val icon = R.drawable.ic_round_delete_24
+        override val icon = R.drawable.ic_round_delete_outline_24
         override val canBePinned = false
 
         override suspend fun getTitle(context: Context) = context.getString(R.string.file_actions_menu___delete)
@@ -51,7 +55,7 @@ class FileActionsMenu(val file: FileObject) : Menu {
     class RenameFileMenuItem(val file: FileObject) : MenuItem {
         override val itemId = "rename"
         override var groupId = ""
-        override val order = 2
+        override val order = 1
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_edit_24
         override val canBePinned = false
@@ -87,10 +91,50 @@ class FileActionsMenu(val file: FileObject) : Menu {
         }
     }
 
+    class CopyFileMenuItem(val file: FileObject) : MenuItem {
+        override val itemId = "copy"
+        override var groupId = ""
+        override val order = 3
+        override val style = MenuItemStyle.OctoPrint
+        override val icon = R.drawable.ic_round_content_copy_24
+        override val canBePinned = false
+
+        override suspend fun getTitle(context: Context) = "Copy**"
+        override suspend fun onClicked(host: MenuHost?) {
+            host?.getHostFragment()?.let {
+                it.injectActivityViewModel<MoveAndCopyFilesViewModel>().value.let { vm ->
+                    vm.copyFile = true
+                    vm.selectedFile.value = file
+                }
+            }
+            host?.closeMenu()
+        }
+    }
+
+    class MoveFileMenuItem(val file: FileObject) : MenuItem {
+        override val itemId = "move"
+        override var groupId = ""
+        override val order = 4
+        override val style = MenuItemStyle.OctoPrint
+        override val icon = R.drawable.ic_round_content_cut_24
+        override val canBePinned = false
+
+        override suspend fun getTitle(context: Context) = "Move**"
+        override suspend fun onClicked(host: MenuHost?) {
+            host?.getHostFragment()?.let {
+                it.injectActivityViewModel<MoveAndCopyFilesViewModel>().value.let { vm ->
+                    vm.copyFile = false
+                    vm.selectedFile.value = file
+                }
+            }
+            host?.closeMenu()
+        }
+    }
+
     class DownloadAndShareMenuItem(val file: FileObject.File) : MenuItem {
         override val itemId = "download"
         override var groupId = ""
-        override val order = 3
+        override val order = 5
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_share_24
         override val canBePinned = false

@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import androidx.transition.TransitionManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.baseui.BaseFragment
 import de.crysxd.baseui.common.OctoToolbar
@@ -16,6 +18,7 @@ import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.filemanager.R
 import de.crysxd.octoapp.filemanager.databinding.SelectFileFragmentBinding
+import de.crysxd.octoapp.filemanager.di.injectActivityViewModel
 import de.crysxd.octoapp.filemanager.di.injectViewModel
 import de.crysxd.octoapp.filemanager.menu.AddItemMenu
 import de.crysxd.octoapp.filemanager.menu.FileActionsMenu
@@ -25,14 +28,11 @@ import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
-// Delay the initial loading display a little. Usually we are on fast local networks so the
-// loader would just flash up for a split second which doesn't look nice
-const val LOADER_DELAY = 400L
-
 class SelectFileFragment : BaseFragment() {
 
     private lateinit var binding: SelectFileFragmentBinding
     override val viewModel: SelectFileViewModel by injectViewModel()
+    val copyViewModel: MoveAndCopyFilesViewModel by injectActivityViewModel()
     private val navArgs by navArgs<SelectFileFragmentArgs>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -103,6 +103,20 @@ class SelectFileFragment : BaseFragment() {
                     adapter.showError()
                 }
                 is SelectFileViewModel.UiState.Loading -> adapter.showLoading()
+            }
+        }
+
+        // Observe moving files
+        copyViewModel.selectedFile.observe(viewLifecycleOwner) { file ->
+            TransitionManager.beginDelayedTransition(binding.root)
+            binding.copyControls.isVisible = file != null
+            binding.copiedFileName.text = file?.display
+            binding.buttonCancelPaste.setOnClickListener { copyViewModel.selectedFile.value = null }
+            binding.buttonPasteHere.setOnClickListener {
+                file?.let {
+                    viewModel.moveFileHere(file, copyFile = copyViewModel.copyFile)
+                    copyViewModel.selectedFile.value = null
+                }
             }
         }
 

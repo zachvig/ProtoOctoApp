@@ -1,18 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/swipeRefreshLayout"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <de.crysxd.baseui.common.OctoRecyclerView
-        android:id="@+id/recyclerViewFileList"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingTop="@dimen/common_view_top_padding"
-        android:nestedScrollingEnabled="false"
-        android:paddingBottom="@dimen/margin_2"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <de.crysxd.baseui.common.OctoRecyclerView
+            android:id="@+id/recyclerViewFileList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
+            android:paddingTop="@dimen/common_view_top_padding"
+            android:paddingBottom="@dimen/margin_2"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/copyControls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/accent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingVertical="@dimen/margin_0_1"
+        android:paddingStart="@dimen/margin_2"
+        tools:background="#f00">
+
+        <TextView
+            android:id="@+id/copiedFileName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/OctoTheme.TextAppearance"
+            android:textColor="@color/text_colored_background"
+            tools:text="Some file.gcode" />
+
+        <Button
+            android:id="@+id/buttonPasteHere"
+            style="@style/OctoTheme.Widget.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Paste here**"
+            android:textColor="@color/text_colored_background" />
+
+        <Button
+            android:id="@+id/buttonCancelPaste"
+            style="@style/OctoTheme.Widget.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel**"
+            android:textColor="@color/text_colored_background" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
