@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.baseui.BaseFragment
@@ -19,7 +20,9 @@ import de.crysxd.octoapp.filemanager.di.injectViewModel
 import de.crysxd.octoapp.filemanager.menu.AddItemMenu
 import de.crysxd.octoapp.filemanager.menu.FileActionsMenu
 import de.crysxd.octoapp.octoprint.models.files.FileObject
+import kotlinx.coroutines.delay
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 // Delay the initial loading display a little. Usually we are on fast local networks so the
 // loader would just flash up for a split second which doesn't look nice
@@ -49,7 +52,7 @@ class SelectFileFragment : BaseFragment() {
             },
             onFileMenuOpened = { MenuBottomSheetFragment.createForMenu(FileActionsMenu(it)).show(childFragmentManager) },
             onHideThumbnailHint = { viewModel.hideThumbnailHint() },
-            onRetry = { viewModel.loadFiles(navArgs.folder, reload = true) },
+            onRetry = { viewModel.reload() },
             onAddItemClicked = { MenuBottomSheetFragment.createForMenu(AddItemMenu(viewModel.fileOrigin, navArgs.folder)).show(childFragmentManager) },
             onShowThumbnailInfo = {
                 MaterialAlertDialogBuilder(requireContext())
@@ -70,9 +73,19 @@ class SelectFileFragment : BaseFragment() {
             adapter.picasso = it
         }
 
+        // Show loading and postpone enter to have a smooth animation if we load very fast
+        val delay = 300L
+        postponeEnterTransition(delay, TimeUnit.MILLISECONDS)
+        val showLoadingJob = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            delay(delay * 2)
+            adapter.showLoading()
+            startPostponedEnterTransition()
+        }
+
         // Load files
-        adapter.showLoading()
         viewModel.uiState.asLiveData().observe(viewLifecycleOwner) {
+            showLoadingJob.cancel()
+            startPostponedEnterTransition()
             Timber.i("UiState: $it")
             when (it) {
                 is SelectFileViewModel.UiState.DataReady -> {
@@ -93,7 +106,7 @@ class SelectFileFragment : BaseFragment() {
 
         // Setup swipe to refresh
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.loadFiles(navArgs.folder, reload = true)
+            viewModel.reload()
         }
     }
 

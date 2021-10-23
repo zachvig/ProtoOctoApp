@@ -84,7 +84,7 @@ class InfoTabFragment : Fragment() {
             addTitle(R.string.print_info)
             addDetail(
                 label = R.string.print_time,
-                value = file.gcodeAnalysis?.estimatedPrintTime?.let { formatDurationUseCase.execute(it) }
+                value = file.gcodeAnalysis?.estimatedPrintTime?.toLong()?.let { formatDurationUseCase.execute(it) }
             )
             addDetail(
                 label = R.string.model_size,
@@ -125,7 +125,7 @@ class InfoTabFragment : Fragment() {
             addDetail(
                 label = R.string.last_print,
                 value = file.prints?.last?.let {
-                    getString(if (it.success) R.string.last_print_at_x_success else R.string.last_print_at_x_failure, Date(it.date * 1000).format())
+                    getString(if (it.success) R.string.last_print_at_x_success else R.string.last_print_at_x_failure, Date(it.date.toLong() * 1000).format())
                 } ?: getString(R.string.never)
             )
             addDetail(

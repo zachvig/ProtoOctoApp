@@ -56,14 +56,14 @@ sealed class FileObject(
         val last: LastPrint?
     ) : Serializable {
         data class LastPrint(
-            val date: Long,
+            val date: Float,
             val success: Boolean
         ) : Serializable
     }
 
     data class GcodeAnalysis(
         val dimensions: Dimensions?,
-        val estimatedPrintTime: Long?,
+        val estimatedPrintTime: Float?,
         val filament: FilamentUse?,
     ) : Serializable {
         data class Dimensions(

@@ -52,6 +52,7 @@ import de.crysxd.octoapp.base.usecase.HandleOctoEverywhereAppPortalSuccessUseCas
 import de.crysxd.octoapp.base.usecase.HandleOctoEverywhereExceptionUseCase
 import de.crysxd.octoapp.base.usecase.HomePrintHeadUseCase
 import de.crysxd.octoapp.base.usecase.JogPrintHeadUseCase
+import de.crysxd.octoapp.base.usecase.LoadFileUseCase
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
 import de.crysxd.octoapp.base.usecase.MoveFileUseCase
 import de.crysxd.octoapp.base.usecase.OpenEmailClientForFeedbackUseCase
@@ -128,6 +129,7 @@ interface BaseComponent {
     fun executeGcodeCommandUseCase(): ExecuteGcodeCommandUseCase
     fun extrudeFilamentUseCase(): ExtrudeFilamentUseCase
     fun loadFilesUseCase(): LoadFilesUseCase
+    fun loadFileUseCase(): LoadFileUseCase
     fun startPrintJobUseCase(): StartPrintJobUseCase
     fun cancelPrintJobUseCase(): CancelPrintJobUseCase
     fun togglePausePrintJobUseCase(): TogglePausePrintJobUseCase

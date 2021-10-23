@@ -93,22 +93,38 @@ class SelectFileAdapter(
                         false -> R.drawable.ic_round_highlight_off_circle_24
                         true -> R.drawable.ic_round_check_circle_24
                     },
-                    id = (it.fileObject.path + it.fileObject.name).hashCode()
+                    id = (it.fileObject.path + it.fileObject.name).hashCode(),
+                    highlight = false
                 )
 
                 is SelectFileViewModel.FileWrapper.UploadWrapper -> DataItem.File(
                     file = null,
                     name = it.upload.name,
-                    detail = "Uploading...",
+                    detail = "Uploading...**",
                     iconUrl = null,
                     iconPlaceholder = uploadIcon,
                     resultIcon = null,
-                    id = it.upload.id.hashCode()
+                    id = it.upload.id.hashCode(),
+                    highlight = false
+                )
+
+                is SelectFileViewModel.FileWrapper.SelectedFileObjectWrapper -> DataItem.File(
+                    file = it.fileObject,
+                    name = it.fileObject.name,
+                    detail = "Currently selected**",
+                    iconUrl = null,
+                    iconPlaceholder = printableFileIcon,
+                    resultIcon = null,
+                    id = (it.fileObject.path + it.fileObject.name + "selected").hashCode(),
+                    highlight = true
                 )
             } as DataItem
         }.toMutableList()
 
         // Insert spacer between folders and files
+        newItems.indexOfLast { it is DataItem.File && it.highlight }.takeIf { it >= 0 }?.let {
+            newItems.add(it + 1, DataItem.Margin)
+        }
         newItems.indexOfLast { it is DataItem.File && it.file is FileObject.Folder }.takeIf { it >= 0 }?.let {
             newItems.add(it + 1, DataItem.Margin)
         }
@@ -167,8 +183,10 @@ class SelectFileAdapter(
             holder.binding.textViewDetail.text = file.detail
             holder.binding.textViewDetail.isVisible = !file.detail.isNullOrBlank()
             holder.binding.resultIndicator.setImageResource(file.resultIcon ?: 0)
+            holder.binding.resultIndicator.isVisible = !file.highlight
             holder.binding.imageViewArrow.isVisible = file.file is FileObject.Folder
             holder.binding.progress.isVisible = file.file == null
+            holder.binding.highlightBackground.isVisible = file.highlight
             val imagePadding = context.resources.getDimensionPixelSize(if (holder.binding.progress.isVisible) R.dimen.margin_1_2 else R.dimen.margin_1)
             holder.binding.imageViewFileIcon.setPadding(imagePadding, imagePadding, imagePadding, imagePadding)
 
@@ -249,6 +267,7 @@ class SelectFileAdapter(
             val iconUrl: String?,
             val iconPlaceholder: Drawable,
             val resultIcon: Int?,
+            val highlight: Boolean,
         ) : DataItem()
 
         data class Title(val title: String?) : DataItem()

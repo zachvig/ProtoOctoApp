@@ -27,6 +27,9 @@ interface FilesApi {
     @GET("files/{origin}?recursive=true")
     suspend fun getAllFiles(@Path("origin") origin: FileOrigin): FileList
 
+    @GET("files/{origin}/{path}")
+    suspend fun getFile(@Path("origin") origin: FileOrigin, @Path("path") path: String): FileObject.File
+
     @GET("files/{origin}")
     suspend fun getRootFolder(@Path("origin") origin: FileOrigin): FileList
 
@@ -96,6 +99,8 @@ interface FilesApi {
         } else {
             wrapped.getRootFolder(origin)
         }
+
+        suspend fun getFile(origin: FileOrigin, path: String) = wrapped.getFile(origin, path)
 
         suspend fun executeFileCommand(file: FileObject, command: FileCommand) {
             wrapped.executeFileCommand(file.origin, file.path, command)

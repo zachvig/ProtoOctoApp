@@ -29,6 +29,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="@dimen/margin_1"
+        android:contentDescription="@string/cd_sort"
         android:src="@drawable/ic_round_sort_24"
         app:tint="@color/accent" />
 
@@ -40,14 +41,6 @@
         android:contentDescription="@string/cd_add_item"
         android:padding="@dimen/margin_1"
         android:src="@drawable/ic_round_add_24"
-        app:tint="@color/accent" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="@dimen/margin_1"
-        android:src="@drawable/ic_round_edit_24"
         app:tint="@color/accent" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

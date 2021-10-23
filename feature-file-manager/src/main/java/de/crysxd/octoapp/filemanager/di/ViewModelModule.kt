@@ -11,6 +11,7 @@ import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.di.ViewModelFactory
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.network.OctoPrintProvider
+import de.crysxd.octoapp.base.usecase.LoadFileUseCase
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
 import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
 import de.crysxd.octoapp.filemanager.ui.file_details.FileDetailsViewModel
@@ -30,12 +31,14 @@ open class ViewModelModule {
     @ViewModelKey(SelectFileViewModel::class)
     open fun provideSelectFileViewModel(
         loadFilesUseCase: LoadFilesUseCase,
+        loadFileUseCase: LoadFileUseCase,
         octoPreferences: OctoPreferences,
         octoPrintProvider: OctoPrintProvider,
         uploadMediator: UploadMediator,
         picasso: LiveData<Picasso?>
     ): ViewModel = SelectFileViewModel(
         loadFilesUseCase = loadFilesUseCase,
+        loadFileUseCase = loadFileUseCase,
         octoPreferences = octoPreferences,
         octoPrintProvider = octoPrintProvider,
         picasso = picasso,
