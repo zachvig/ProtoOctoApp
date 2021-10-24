@@ -17,7 +17,7 @@ fun HttpUrl.withoutBasicAuth() = newBuilder()
 fun HttpUrl.resolvePath(path: String?) = path?.let {
     // This is similar to the old behaviour when we did not use HttpUrl
     val sanitized = (newBuilder().query(null).toString().removeSuffix("/") + "/").toHttpUrl()
-    sanitized.newBuilder(it)?.build() ?: throw IllegalStateException("Builder was null")
+    sanitized.newBuilder(it)?.build() ?: throw IllegalStateException("Builder was null for input $this + $path")
 } ?: this
 
 fun HttpUrl.forLogging() = newBuilder()

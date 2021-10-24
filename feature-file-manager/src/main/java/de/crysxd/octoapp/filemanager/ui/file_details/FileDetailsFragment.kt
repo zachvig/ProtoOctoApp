@@ -16,6 +16,7 @@ import de.crysxd.baseui.BaseFragment
 import de.crysxd.baseui.InsetAwareScreen
 import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.common.gcode.GcodePreviewFragment
+import de.crysxd.baseui.ext.optionallyRequestOctoActivity
 import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.menu.MenuBottomSheetFragment
 import de.crysxd.baseui.menu.material.MaterialPluginMenu
@@ -102,6 +103,7 @@ class FileDetailsFragment : BaseFragment(), InsetAwareScreen {
     private fun updateLayout() {
         startPostponedEnterTransition()
         binding.viewPager.post {
+            val activity = optionallyRequestOctoActivity() ?: return@post
             val position = binding.viewPager.currentItem
             binding.viewPager.updateLayoutParams {
                 height = if (position == 0) {
@@ -120,11 +122,11 @@ class FileDetailsFragment : BaseFragment(), InsetAwareScreen {
                 binding.scrollView.isBottomActionAnimationEnabled = position == 0
             }.start()
 
-            val toolbarTranslation = if (position == 0) 0f else -requireOctoActivity().octoToolbar.bottom.toFloat()
-            requireOctoActivity().octoToolbar.animate().also {
+            val toolbarTranslation = if (position == 0) 0f else -activity.octoToolbar.bottom.toFloat()
+            activity.octoToolbar.animate().also {
                 it.duration = 150
             }.translationY(toolbarTranslation).start()
-            requireOctoActivity().octo.animate().also {
+            activity.octo.animate().also {
                 it.duration = 150
             }.translationY(toolbarTranslation + originalOctoTranslationY).start()
         }

@@ -168,7 +168,7 @@ class MjpegConnection2(
         val contentType: String = response.header("Content-Type") ?: throw Exception("Unable to get content type")
         val types = contentType.split(";".toRegex()).toTypedArray()
         if (types.none { it.startsWith("multipart/") }) {
-            throw IllegalStateException("No image resource: $contentType")
+            throw NoImageResourceException(contentType)
         }
 
         var extractedBoundary: String? = null
@@ -324,4 +324,6 @@ class MjpegConnection2(
         object Loading : MjpegSnapshot()
         data class Frame(val frame: Bitmap) : MjpegSnapshot()
     }
+
+    class NoImageResourceException(mimeType: String) : IllegalStateException("No image resource: $mimeType")
 }

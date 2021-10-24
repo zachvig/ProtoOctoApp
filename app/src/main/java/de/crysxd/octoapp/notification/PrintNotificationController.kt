@@ -48,10 +48,10 @@ class PrintNotificationController(
         }
     }
 
-    suspend fun createServiceNotification(instance: OctoPrintInstanceInformationV3, statusText: String, doNotify: Boolean = false): Pair<Notification, Int> {
-        val notification = getLast(instance.id)?.let { notificationFactory.createStatusNotification(instance.id, it, "Connecting*") }
+    suspend fun createServiceNotification(instance: OctoPrintInstanceInformationV3?, statusText: String, doNotify: Boolean = false): Pair<Notification, Int> {
+        val notification = instance?.id?.let { getLast(it) }?.let { notificationFactory.createStatusNotification(instance.id, it, "Connecting*") }
             ?: notificationFactory.createServiceNotification(instance, statusText)
-        val id = printNotificationIdRepository.getPrintStatusNotificationId(instance.id)
+        val id = printNotificationIdRepository.getPrintStatusNotificationId(instance?.id)
 
         if (doNotify) {
             notificationManager.notify(id, notification)

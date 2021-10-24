@@ -572,7 +572,7 @@ Tan pronto como su OctoPrint no pueda ser alcanzado directamente, OctoApp cambia
     <string name="print_notification___paused_title">"Pausado"</string>
     <string name="print_notification___pausing_title">"Pausa…"</string>
     <string name="print_notification___print_done_title">"%s completed print"</string>
-    <string name="print_notification___printing_title">"Impresión %.0f%%%"</string>
+    <string name="print_notification___printing_title">"Impresión %.0f%%"</string>
 
     <!-- Auto filled -->
     <string name="print_notification___reconnecting_title">"Reconectando…"</string>

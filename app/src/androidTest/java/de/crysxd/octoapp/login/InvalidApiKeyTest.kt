@@ -22,7 +22,7 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 
 
-class ApiKeyTest {
+class InvalidApiKeyTest {
 
     private val testEnv = TestEnvironmentLibrary.Terrier
     private val baristaRule = BaristaRule.create(MainActivity::class.java)
