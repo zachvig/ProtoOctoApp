@@ -24,6 +24,10 @@ import java.util.concurrent.TimeUnit
 
 abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
 
+    companion object {
+        private const val VIEW_ANIMATION_AFTER_CREATE_THRESHOLD = 300L
+    }
+
     private lateinit var binding: WidgetHostFragmentBinding
     protected val mainButton get() = binding.mainButton
     protected val moreButton get() = binding.buttonMore
@@ -31,6 +35,7 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
     abstract val toolbarState: OctoToolbar.State
     private var lastWidgetList: List<WidgetType> = emptyList()
     private val handler = Handler(Looper.getMainLooper())
+    private var viewCreatedAt = 0L
     private val reloadRunnable = Runnable {
         Timber.i("Reload widgets")
         requestTransition()
@@ -50,6 +55,13 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
         super.onViewCreated(view, savedInstanceState)
         Timber.i("Create view")
         binding.widgetList.connectToLifecycle(viewLifecycleOwner)
+        postponeEnterTransition(VIEW_ANIMATION_AFTER_CREATE_THRESHOLD, TimeUnit.MILLISECONDS)
+        viewCreatedAt = System.currentTimeMillis()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        handler.removeCallbacks(reloadRunnable)
     }
 
     override fun onStart() {
@@ -59,14 +71,14 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
         requireOctoActivity().octoToolbar.state = toolbarState
         requireOctoActivity().octo.isVisible = true
         binding.widgetListScroller.setupWithToolbar(requireOctoActivity(), binding.bottomAction)
-        reloadWidgets()
+        reloadWidgets("host-start")
     }
 
     @CallSuper
-    override fun reloadWidgets() {
-        Timber.i("Schedule reload widgets")
+    override fun reloadWidgets(trigger: String) {
+        Timber.i("Schedule reload widgets (trigger=$trigger)")
         handler.removeCallbacks(reloadRunnable)
-        handler.postDelayed(reloadRunnable, 50)
+        handler.postDelayed(reloadRunnable, 500)
     }
 
     override fun onStop() {
@@ -77,11 +89,10 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
     abstract fun doReloadWidgets()
 
     override fun requestTransition(quickTransition: Boolean) {
-        (view as? ViewGroup)?.let {
-            TransitionManager.beginDelayedTransition(
-                it,
-                if (quickTransition) InstantAutoTransition() else AutoTransition()
-            )
+        if ((System.currentTimeMillis() - viewCreatedAt) > VIEW_ANIMATION_AFTER_CREATE_THRESHOLD) {
+            (view as? ViewGroup)?.let {
+                TransitionManager.beginDelayedTransition(it, if (quickTransition) InstantAutoTransition() else AutoTransition())
+            }
         }
     }
 
@@ -99,6 +110,7 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
             parent = this,
             widgetClasses = widgets
         )
+        startPostponedEnterTransition()
     }
 
     fun startEdit() {

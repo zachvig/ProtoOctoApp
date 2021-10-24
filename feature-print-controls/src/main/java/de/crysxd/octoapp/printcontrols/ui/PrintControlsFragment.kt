@@ -25,7 +25,7 @@ class PrintControlsFragment : WidgetHostFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         moreButton.setOnClickListener { MenuBottomSheetFragment().show(childFragmentManager) }
-        viewModel.webCamSupported.observe(viewLifecycleOwner) { reloadWidgets() }
+        viewModel.webCamSupported.observe(viewLifecycleOwner) { reloadWidgets("webcam-suppport-change") }
 
         viewModel.printState.observe(viewLifecycleOwner) {
             val isPaused = it.state?.flags?.paused == true

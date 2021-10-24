@@ -20,7 +20,7 @@ class ExtrudeWidget(context: Context) : RecyclableOctoWidget<ExtrudeWidgetBindin
     override fun onResume(lifecycleOwner: LifecycleOwner) {
         super.onResume(lifecycleOwner)
         baseViewModel.isVisible.observe(lifecycleOwner) {
-            parent.reloadWidgets()
+            parent.reloadWidgets("extrude-visibility-change")
         }
     }
 

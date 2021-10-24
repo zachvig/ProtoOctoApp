@@ -21,7 +21,7 @@ class PrePrintControlsFragment : WidgetHostFragment() {
         super.onViewCreated(view, savedInstanceState)
         mainButton.setOnClickListener { UriLibrary.getFileManagerUri().open(requireOctoActivity()) }
         moreButton.setOnClickListener { MenuBottomSheetFragment().show(childFragmentManager) }
-        viewModel.webCamSupported.observe(viewLifecycleOwner) { reloadWidgets() }
+        viewModel.webCamSupported.observe(viewLifecycleOwner) { reloadWidgets("webcam-support-change") }
     }
 
     override fun doReloadWidgets() {

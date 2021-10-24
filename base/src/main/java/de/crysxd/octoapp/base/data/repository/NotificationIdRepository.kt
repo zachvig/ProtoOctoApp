@@ -9,7 +9,8 @@ class NotificationIdRepository(
     private val octoPrintRepository: OctoPrintRepository,
 ) {
     companion object {
-        private val UPLOAD_STATUS_NOTIFICATION = 14_099
+        private val UPLOAD_STATUS_NOTIFICATION = 14_998
+        private const val PRINT_STATUS_FALLBACK_NOTIFICATION_ID = 14_999
         private val PRINT_STATUS_NOTIFICATION_ID_RANGE = 15_000..15_099
         private val PRINT_EVENT_NOTIFICATION_ID_RANGE = 15_100..15_199
         private val UPDATE_NOTIFICATION_ID_RANGE = 15_200..15_299
@@ -23,7 +24,9 @@ class NotificationIdRepository(
 
     val requestAccessCompletedNotificationId = REQUEST_ACCESS_COMPLETED_NOTIFICATION_ID
 
-    fun getPrintStatusNotificationId(instanceId: String): Int {
+
+    fun getPrintStatusNotificationId(instanceId: String?): Int {
+        instanceId ?: return PRINT_STATUS_FALLBACK_NOTIFICATION_ID
         val key = "$KEY_PRINT_NOTIFICATION_PREFIX$instanceId"
 
         // Clean up

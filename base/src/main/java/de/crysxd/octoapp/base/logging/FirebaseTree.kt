@@ -4,7 +4,9 @@ import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigClientException
 import de.crysxd.octoapp.base.data.models.exceptions.SuppressedException
+import de.crysxd.octoapp.base.network.MjpegConnection2
 import de.crysxd.octoapp.base.usecase.GetConnectOctoEverywhereUrlUseCase
+import de.crysxd.octoapp.base.usecase.SetAlternativeWebUrlUseCase
 import de.crysxd.octoapp.base.utils.AppScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -49,5 +51,7 @@ class FirebaseTree(
             t !is CancellationException &&
             t !is FirebaseRemoteConfigClientException &&
             t !is URISyntaxException &&
-            t !is GetConnectOctoEverywhereUrlUseCase.OctoEverywhereNotInstalledException
+            t !is GetConnectOctoEverywhereUrlUseCase.OctoEverywhereNotInstalledException &&
+            t !is MjpegConnection2.NoImageResourceException &&
+            t !is SetAlternativeWebUrlUseCase.InvalidAlternativeUrlException
 }

@@ -257,6 +257,11 @@ object BillingManager {
             return
         }
 
+        if (billingResult.responseCode == 6) {
+            Timber.w("Internal error")
+            return
+        }
+
         if (billingResult.responseCode == -1) {
             Timber.w("Service was disconnected")
             return

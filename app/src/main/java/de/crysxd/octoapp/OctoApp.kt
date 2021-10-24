@@ -112,6 +112,7 @@ class OctoApp : Application() {
                 Timber.i("Already signed in as ${Firebase.auth.currentUser?.uid}")
                 FirebaseCrashlytics.getInstance().setCustomKey("User ID", Firebase.auth.currentUser?.uid ?: "???")
                 OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.UserId, Firebase.auth.currentUser?.uid)
+                OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.AndroidBuild, Build.FINGERPRINT)
             }
 
             // Setup analytics

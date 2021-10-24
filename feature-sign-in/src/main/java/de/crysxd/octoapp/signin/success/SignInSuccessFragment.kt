@@ -24,7 +24,7 @@ import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.databinding.SignInSuccessFragmentBinding
 import de.crysxd.octoapp.signin.databinding.SignInSuccessFragmentContentBinding
 import de.crysxd.octoapp.signin.ext.goBackToDiscover
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import java.util.UUID
 
 class SignInSuccessFragment : Fragment(), InsetAwareScreen {
@@ -79,7 +79,9 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
             BaseInjector.get().octorPrintRepository().setActive(
                 OctoPrintInstanceInformationV3(
                     id = UUID.randomUUID().toString(),
-                    webUrl = UriLibrary.secureDecode(args.webUrl).toHttpUrl(),
+                    webUrl = UriLibrary.secureDecode(args.webUrl).toHttpUrlOrNull().let {
+                        it ?: throw IllegalStateException("Not an HTTP url: ${args.webUrl} -> ${UriLibrary.secureDecode(args.webUrl)} -> null")
+                    },
                     apiKey = args.apiKey
                 )
             )

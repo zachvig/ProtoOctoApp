@@ -14,41 +14,56 @@
         android:fillViewport="true"
         android:paddingTop="@dimen/common_view_top_padding">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <!--
+        We need to reverse the drawing order so the tabs are drawn on top of the view pager
+        when the user scrolls down.
+        -->
+        <de.crysxd.octoapp.filemanager.ui.file_details.ReversedDrawingOrderLinearLayoutCompat
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/margin_1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="@dimen/margin_1">
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tabs"
-                android:layout_marginHorizontal="@dimen/margin_2"
-                style="@style/OctoTheme.Widget.TabLayout"
+            <FrameLayout
+                android:id="@+id/tabsContainer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@color/window_background"
+                android:paddingTop="@dimen/margin_0_1"
+                android:paddingBottom="@dimen/margin_0_1">
 
-                <!-- This tabs are only for the layout preview, will be created by the ViewPager! -->
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabs"
+                    style="@style/OctoTheme.Widget.TabLayout"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="Info" />
+                    android:layout_marginHorizontal="@dimen/margin_2"
+                    android:elevation="0.1dp">
 
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="Gcode" />
+                    <!-- This tabs are only for the layout preview, will be created by the ViewPager! -->
 
-            </com.google.android.material.tabs.TabLayout>
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="Info" />
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="Gcode" />
+
+                </com.google.android.material.tabs.TabLayout>
+
+            </FrameLayout>
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPager"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/margin_1" />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
+        </de.crysxd.octoapp.filemanager.ui.file_details.ReversedDrawingOrderLinearLayoutCompat>
 
     </de.crysxd.baseui.common.OctoScrollView>
 

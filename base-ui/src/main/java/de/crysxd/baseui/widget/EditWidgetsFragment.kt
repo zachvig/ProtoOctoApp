@@ -48,6 +48,6 @@ class EditWidgetsFragment : BaseWidgetHostFragment() {
 
     override fun requestTransition(quickTransition: Boolean) = Unit
 
-    override fun reloadWidgets() = Unit
+    override fun reloadWidgets(trigger: String) = Unit
 
 }

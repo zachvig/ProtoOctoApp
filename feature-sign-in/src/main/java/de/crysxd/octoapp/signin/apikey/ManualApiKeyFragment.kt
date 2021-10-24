@@ -13,6 +13,7 @@ import androidx.navigation.fragment.navArgs
 import de.crysxd.baseui.BaseFragment
 import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.signin.R
 import de.crysxd.octoapp.signin.access.RequestAccessFragmentDirections
 import de.crysxd.octoapp.signin.apikey.ReadQrCodeFragment.Companion.RESULT_API_KEY
@@ -103,7 +104,7 @@ class ManualApiKeyFragment : BaseFragment() {
 
                 is ManualApiKeyViewModel.ViewState.Success -> {
                     val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
-                    val directions = RequestAccessFragmentDirections.actionSuccess(webUrl = it.webUrl, apiKey = it.apiKey)
+                    val directions = RequestAccessFragmentDirections.actionSuccess(webUrl = UriLibrary.secureEncode(it.webUrl), apiKey = it.apiKey)
                     findNavController().navigate(directions, extras)
                 }
 

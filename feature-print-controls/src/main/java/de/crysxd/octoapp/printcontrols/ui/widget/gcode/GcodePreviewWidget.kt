@@ -190,7 +190,7 @@ class GcodePreviewWidget(context: Context) : RecyclableOctoWidget<GcodePreviewWi
         binding.buttonHide.setOnClickListener {
             OctoAnalytics.logEvent(OctoAnalytics.Event.DisabledFeatureHidden, bundleOf("feature" to "gcode_preview"))
             BaseInjector.get().sharedPreferences().edit { putLong(KEY_HIDDEN_AT, System.currentTimeMillis()) }
-            parent.reloadWidgets()
+            parent.reloadWidgets("hide-gcode-disabled-state")
         }
 
         binding.buttonEnable.setOnClickListener {

@@ -66,15 +66,18 @@ class LiveNotificationService : Service() {
         super.onCreate()
         BaseInjector.get().octoPreferences().wasPrintNotificationDisconnected = false
 
-        // Start notification
-        val instance = instance ?: return let {
-            Timber.w("Active instance is null, stopping")
-            stop()
-        }
+        // Start notification. We ALWAYS need to do this to prevent a crash if we stop
+        // before showing the notification
         val (notification, notificationId) = runBlocking {
             notificationController.createServiceNotification(instance, getString(R.string.print_notification___connecting))
         }
         startForeground(notificationId, notification)
+
+        // Ensure instance is set from here on
+        val instance = instance ?: return let {
+            Timber.w("Active instance is null, stopping")
+            stop()
+        }
 
         if (LiveNotificationManager.isNotificationEnabled) {
             Timber.i("Creating notification service")

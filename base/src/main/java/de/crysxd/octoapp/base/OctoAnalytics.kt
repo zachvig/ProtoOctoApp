@@ -27,6 +27,7 @@ object OctoAnalytics {
         object PremiumSubUser : UserProperty("premium_sub_user")
         object BillingStatus : UserProperty("billing_status")
         object UserId : UserProperty("user_id")
+        object AndroidBuild : UserProperty("android_build")
         object OctoEverywhereUser : UserProperty("octoeverywhere_user")
         object RemoteAccess : UserProperty("remote_access_configured")
     }

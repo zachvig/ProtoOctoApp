@@ -101,11 +101,11 @@ class PrintNotificationFactory(
     )
 
     fun createServiceNotification(
-        instanceInformation: OctoPrintInstanceInformationV3,
+        instanceInformation: OctoPrintInstanceInformationV3?,
         statusText: String
     ) = createNotificationBuilder(
         instanceInformation = instanceInformation,
-        notificationChannelId = instanceInformation.channelId
+        notificationChannelId = instanceInformation?.channelId ?: getString(R.string.updates_notification_channel)
     ).setContentTitle(statusText)
         .setSilent(true)
         .build()
