@@ -10,6 +10,6 @@
     android:layout_marginRight="@dimen/margin_2"
     android:layout_marginBottom="@dimen/margin_3"
     app:alwaysShow="true"
-    app:detail="@string/using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_detail"
+    app:detail="@string/file_manager___thumbnail_info___details"
     app:learnMoreButton="@string/learn_more"
-    app:title="@string/using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_title" />
+    app:title="@string/file_manager___thumbnail_info___title" />

@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.filemanager.ui.select_file
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -8,8 +9,8 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
@@ -31,10 +32,13 @@ import de.crysxd.octoapp.octoprint.models.files.FileObject
 import java.util.Date
 
 class SelectFileAdapter(
+    private val context: Context,
     private val onFileSelected: (FileObject) -> Unit,
     private val onFileMenuOpened: (FileObject) -> Unit,
     private val onHideThumbnailHint: (SelectFileAdapter) -> Unit,
     private val onShowThumbnailInfo: (SelectFileAdapter) -> Unit,
+    private val onAddItemClicked: () -> Unit,
+    private val onSortOptionsClicked: () -> Unit,
     private val onRetry: (SelectFileAdapter) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -44,14 +48,20 @@ class SelectFileAdapter(
             field = value
             notifyDataSetChanged()
         }
-    private val iconTintColorRes = R.color.primary
-    private var folderIcon: Drawable? = null
-    private var printableFileIcon: Drawable? = null
-    private var otherFileIcon: Drawable? = null
+    private var folderIcon: Drawable = loadDrawable(R.drawable.ic_round_folder_24)
+    private var printableFileIcon: Drawable = loadDrawable(R.drawable.ic_round_print_24)
+    private var otherFileIcon: Drawable = loadDrawable(R.drawable.ic_round_insert_drive_file_24)
+    private var uploadIcon: Drawable = loadDrawable(R.drawable.ic_round_upload_24).also {
+        it.alpha = it.alpha / 2
+    }
 
     init {
         setHasStableIds(true)
     }
+
+    private fun loadDrawable(@DrawableRes res: Int) = ContextCompat.getDrawable(context, res).also {
+        it?.colorFilter = PorterDuffColorFilter(ContextCompat.getColor(context, R.color.accent), PorterDuff.Mode.SRC_IN)
+    } ?: ColorDrawable(Color.TRANSPARENT)
 
     fun showLoading() {
         items = listOf(DataItem.Loading)
@@ -64,41 +74,85 @@ class SelectFileAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun showFiles(folderName: String?, files: List<FileObject>, showThumbnailHint: Boolean) {
-        // Sort files by date, folders by name
-        val groups = files.groupBy { it::class.java }
-        val sortedFiles = groups[FileObject.File::class.java]?.sortedByDescending { (it as FileObject.File).date } ?: emptyList()
-        val sortedFolders = groups[FileObject.Folder::class.java]?.sortedBy { it.display } ?: emptyList()
+    fun showFiles(folderName: String?, files: List<SelectFileViewModel.FileWrapper>, showThumbnailHint: Boolean) {
+        val newItems = files.map {
+            when (it) {
+                is SelectFileViewModel.FileWrapper.FileObjectWrapper -> DataItem.File(
+                    file = it.fileObject,
+                    name = it.fileObject.display,
+                    detail = when (it.fileObject) {
+                        is FileObject.File -> context.getString(R.string.x_y, Date(it.fileObject.date * 1000).format(), it.fileObject.size.asStyleFileSize())
+                        is FileObject.Folder -> null
+                    },
+                    iconUrl = (it.fileObject as? FileObject.File)?.thumbnail,
+                    iconPlaceholder = when (it.fileObject) {
+                        is FileObject.File -> if (it.fileObject.isPrintable) printableFileIcon else otherFileIcon
+                        is FileObject.Folder -> folderIcon
+                    },
+                    resultIcon = when ((it.fileObject as? FileObject.File)?.prints?.last?.success) {
+                        null -> null
+                        false -> R.drawable.ic_round_highlight_off_circle_24
+                        true -> R.drawable.ic_round_check_circle_24
+                    },
+                    id = (it.fileObject.path + it.fileObject.name).hashCode(),
+                    highlight = false
+                )
 
-        // Headers
-        val headers = mutableListOf<DataItem>()
-        if (sortedFiles.isEmpty() && sortedFolders.isEmpty()) {
-            headers.add(DataItem.NoFiles(folderName))
-        } else {
-            if (showThumbnailHint) {
-                headers.add(DataItem.ThumbnailHint)
-            }
-            headers.add(DataItem.Title(folderName))
+                is SelectFileViewModel.FileWrapper.UploadWrapper -> DataItem.File(
+                    file = null,
+                    name = it.upload.name,
+                    detail = context.getString(R.string.file_manager___file_list___uploading),
+                    iconUrl = null,
+                    iconPlaceholder = uploadIcon,
+                    resultIcon = null,
+                    id = it.upload.id.hashCode(),
+                    highlight = false
+                )
+
+                is SelectFileViewModel.FileWrapper.SelectedFileObjectWrapper -> DataItem.File(
+                    file = it.fileObject,
+                    name = it.fileObject.name,
+                    detail = context.getString(R.string.file_manager___file_list___currently_selected),
+                    iconUrl = null,
+                    iconPlaceholder = printableFileIcon,
+                    resultIcon = null,
+                    id = (it.fileObject.path + it.fileObject.name + "selected").hashCode(),
+                    highlight = true
+                )
+            } as DataItem
+        }.toMutableList()
+
+        // Insert spacer between folders and files
+        newItems.indexOfLast { it is DataItem.File && it.highlight }.takeIf { it >= 0 }?.let {
+            newItems.add(it + 1, DataItem.Margin)
+        }
+        newItems.indexOfLast { it is DataItem.File && it.file is FileObject.Folder }.takeIf { it >= 0 }?.let {
+            newItems.add(it + 1, DataItem.Margin)
         }
 
+        // Headers
+        if (newItems.isEmpty()) {
+            newItems.add(DataItem.NoFiles(folderName))
+        } else {
+            newItems.add(0, DataItem.Title(folderName))
+            if (showThumbnailHint) {
+                newItems.add(0, DataItem.ThumbnailHint)
+            }
+        }
 
-        items = listOf(
-            headers,
-            sortedFolders.map { DataItem.File(it) as DataItem }.let {
-                if (it.isNotEmpty()) {
-                    it.toMutableList().also { it.add(DataItem.Margin) }
-                } else {
-                    it
-                }
-            },
-            sortedFiles.map
-            { DataItem.File(it) }
-        ).flatten()
-
+        items = newItems
         notifyDataSetChanged()
     }
 
-    override fun getItemId(position: Int) = items[position].hashCode().toLong()
+    override fun getItemId(position: Int) = when (val item = items[position]) {
+        DataItem.Error -> -1
+        DataItem.Loading -> -2
+        DataItem.ThumbnailHint -> -3
+        DataItem.Margin -> position
+        is DataItem.File -> item.id
+        is DataItem.NoFiles -> item.folderName?.hashCode() ?: -5
+        is DataItem.Title -> item.title?.hashCode() ?: -4
+    }.toLong()
 
     override fun getItemCount() = items.size
 
@@ -125,86 +179,45 @@ class SelectFileAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = when (holder) {
         is ViewHolder.FileViewHolder -> {
-            // Load icons (once)
-            val context = holder.itemView.context
-            val iconTintColor = ContextCompat.getColor(context, iconTintColorRes)
-            if (folderIcon == null || printableFileIcon == null || otherFileIcon == null) {
-                val colorFilter = PorterDuffColorFilter(iconTintColor, PorterDuff.Mode.SRC_IN)
-                folderIcon = ContextCompat.getDrawable(context, R.drawable.ic_round_folder_24).also {
-                    it?.colorFilter = colorFilter
-                }
-                printableFileIcon = ContextCompat.getDrawable(context, R.drawable.ic_round_print_24).also {
-                    it?.colorFilter = colorFilter
-                }
-                otherFileIcon = ContextCompat.getDrawable(context, R.drawable.ic_round_insert_drive_file_24).also {
-                    it?.colorFilter = colorFilter
-                }
+            val file = items[position] as DataItem.File
+            holder.binding.textViewTitle.text = file.name
+            holder.binding.textViewDetail.text = file.detail
+            holder.binding.textViewDetail.isVisible = !file.detail.isNullOrBlank()
+            holder.binding.resultIndicator.setImageResource(file.resultIcon ?: 0)
+            holder.binding.resultIndicator.isVisible = !file.highlight
+            holder.binding.imageViewArrow.isVisible = file.file is FileObject.Folder
+            holder.binding.progress.isVisible = file.file == null
+            holder.binding.highlightBackground.isVisible = file.highlight
+            val imagePadding = context.resources.getDimensionPixelSize(if (holder.binding.progress.isVisible) R.dimen.margin_1_2 else R.dimen.margin_1)
+            holder.binding.imageViewFileIcon.setPadding(imagePadding, imagePadding, imagePadding, imagePadding)
+
+            // Icon
+            picasso?.cancelRequest(holder.binding.imageViewFileIcon)
+            when {
+                file.iconUrl == null || picasso == null -> holder.binding.imageViewFileIcon.setImageDrawable(file.iconPlaceholder)
+                else -> picasso?.load(file.iconUrl)?.error(file.iconPlaceholder)?.into(holder.binding.imageViewFileIcon)
             }
 
-            val file = (items[position] as DataItem.File).file
-            holder.binding.textViewTitle.text = file.display
-
-            when (file) {
-                is FileObject.Folder -> {
-                    holder.binding.textViewDetail.isVisible = false
-                    holder.binding.imageViewArrow.visibility = View.VISIBLE
-                    holder.binding.imageViewFileIcon.setImageDrawable(folderIcon)
+            // Click handling
+            file.file?.let {
+                holder.binding.root.setOnClickListener { _ ->
+                    onFileSelected(it)
                 }
-
-                is FileObject.File -> {
-                    holder.binding.textViewDetail.text = holder.itemView.context.getString(
-                        R.string.x_y,
-                        Date(file.date * 1000).format(),
-                        file.size.asStyleFileSize()
-                    )
-                    holder.binding.imageViewArrow.visibility = View.GONE
-                    holder.binding.textViewDetail.isVisible = true
-
-                    val icon = if (file.typePath?.contains(FileObject.FILE_TYPE_MACHINE_CODE) == true) {
-                        printableFileIcon
-                    } else {
-                        otherFileIcon
-                    } ?: ColorDrawable(Color.TRANSPARENT)
-
-                    val resultIcon = when (file.prints?.last?.success) {
-                        true -> R.drawable.ic_round_check_circle_24
-                        false -> R.drawable.ic_round_highlight_off_circle_24
-                        null -> null
-                    }
-                    resultIcon?.let(holder.binding.resultIndicator::setImageResource)
-                    holder.binding.resultIndicator.alpha = if (resultIcon != null) 1f else 0f
-
-                    when {
-                        picasso == null -> {
-                            holder.binding.imageViewFileIcon.setImageDrawable(icon)
-                            null
-                        }
-                        !file.thumbnail.isNullOrBlank() -> picasso?.load(file.thumbnail)?.error(icon)?.into(holder.binding.imageViewFileIcon)
-                        else -> {
-                            // Use Picasso as well to prevent the recycled view to get corrupted
-                            // Picasso fails to load the image (as it is an empty path) so let's set it manually as well
-                            picasso?.cancelRequest(holder.binding.imageViewFileIcon)
-                            holder.binding.imageViewFileIcon.setImageDrawable(icon)
-                        }
-                    }
+                holder.itemView.setOnLongClickListener { _ ->
+                    onFileMenuOpened(it)
+                    true
                 }
-
-                else -> Unit
-
-            }.let {}
-
-            holder.itemView.setOnClickListener {
-                onFileSelected(file)
-            }
-            holder.itemView.setOnLongClickListener {
-                onFileMenuOpened(file)
-                true
+            } ?: let {
+                holder.binding.root.setOnClickListener(null)
+                holder.binding.root.setOnLongClickListener(null)
             }
         }
 
         is ViewHolder.TitleViewHolder -> {
             holder.binding.textViewTitle.text = (items[position] as DataItem.Title).title
-                ?: holder.itemView.context.getString(R.string.select_file_to_print)
+                ?: context.getString(R.string.file_manager___file_list___your_files)
+            holder.binding.buttonAdd.setOnClickListener { onAddItemClicked() }
+            holder.binding.buttonSortOptions.setOnClickListener { onSortOptionsClicked() }
         }
 
         is ViewHolder.ThumbnailHintViewHolder -> {
@@ -215,15 +228,17 @@ class SelectFileAdapter(
         is ViewHolder.NoFilesViewHolder -> {
             (items[position] as DataItem.NoFiles).folderName?.let {
                 holder.binding.textViewNoFilesTitle.text = it
-                holder.binding.textViewNoFilesSubitle.text = holder.itemView.context.getString(R.string.this_folder_contains_no_files)
+                holder.binding.textViewNoFilesSubitle.text = holder.itemView.context.getString(R.string.file_manager___file_list___no_files_in_folder)
             } ?: run {
-                holder.binding.textViewNoFilesTitle.text = holder.itemView.context.getString(R.string.no_files_on_octoprint_title)
+                holder.binding.textViewNoFilesTitle.text = holder.itemView.context.getString(R.string.file_manager___file_list___no_files_on_octoprint_title)
                 holder.binding.textViewNoFilesSubitle.movementMethod = LinkMovementMethod()
                 holder.binding.textViewNoFilesSubitle.text = HtmlCompat.fromHtml(
-                    holder.itemView.context.getString(R.string.no_files_on_octoprint_subtitle),
+                    holder.itemView.context.getString(R.string.file_manager___file_list___no_files_on_octoprint_subtitle),
                     HtmlCompat.FROM_HTML_MODE_COMPACT
                 )
             }
+
+            holder.binding.buttonAdd.setOnClickListener { onAddItemClicked() }
         }
 
         is ViewHolder.ErrorViewHolder -> holder.binding.buttonRery.setOnClickListener { onRetry(this) }
@@ -246,7 +261,17 @@ class SelectFileAdapter(
     }
 
     sealed class DataItem {
-        data class File(val file: FileObject) : DataItem()
+        data class File(
+            val id: Int,
+            val file: FileObject?,
+            val name: String,
+            val detail: String?,
+            val iconUrl: String?,
+            val iconPlaceholder: Drawable,
+            val resultIcon: Int?,
+            val highlight: Boolean,
+        ) : DataItem()
+
         data class Title(val title: String?) : DataItem()
         data class NoFiles(val folderName: String?) : DataItem()
         object Error : DataItem()

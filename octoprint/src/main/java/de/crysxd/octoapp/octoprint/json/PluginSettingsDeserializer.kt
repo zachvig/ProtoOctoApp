@@ -38,6 +38,11 @@ class PluginSettingsDeserializer : JsonDeserializer<Settings.PluginSettingsGroup
         "wled" -> context.deserialize<Settings.WledSettings>(element, Settings.WledSettings::class.java)
         "mystromswitch" -> context.deserialize<Settings.MyStromSettings>(element, Settings.MyStromSettings::class.java)
         "discovery" -> context.deserialize<Settings.Discovery>(element, Settings.Discovery::class.java)
+        "uploadanything" -> try {
+            Settings.UploadAnything(element.asJsonObject.get("allowed").asString.replace(" ", "").split(","))
+        } catch (e: Exception) {
+            Settings.UploadAnything(emptyList())
+        }
         "octoeverywhere" -> context.deserialize<Settings.OctoEverywhere>(element, Settings.OctoEverywhere::class.java)
         "octocam" -> context.deserialize<Settings.OctoCamSettings>(element, Settings.OctoCamSettings::class.java)
         "octoapp" -> context.deserialize<Settings.OctoAppCompanionSettings>(element, Settings.OctoAppCompanionSettings::class.java)

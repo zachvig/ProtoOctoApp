@@ -81,8 +81,8 @@ class FileDetailsFragment : BaseFragment(), InsetAwareScreen {
         binding.viewPager.isUserInputEnabled = false
         TabLayoutMediator(binding.tabs, binding.viewPager) { tab, position ->
             tab.text = when (adapter.createFragment(position)) {
-                is InfoTabFragment -> getString(R.string.file_details_tab_info)
-                is GcodePreviewFragment -> getString(R.string.file_details_tab_preview)
+                is InfoTabFragment -> getString(R.string.file_manager___file_details___tab_info)
+                is GcodePreviewFragment -> getString(R.string.file_manager___file_details___tab_preview)
                 else -> ""
             }
         }.attach()

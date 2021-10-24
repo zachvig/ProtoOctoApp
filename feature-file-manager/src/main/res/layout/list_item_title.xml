@@ -1,17 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView android:id="@+id/textViewTitle"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="@dimen/margin_2"
+    android:layout_marginEnd="@dimen/margin_1"
     android:layout_marginStart="@dimen/margin_5"
+    android:gravity="center"
     android:layout_marginBottom="@dimen/margin_2"
-    android:ellipsize="end"
-    android:lines="1"
-    android:textColor="@color/dark_text"
-    android:textAppearance="@style/OctoTheme.TextAppearance.Title"
-    app:layout_constraintStart_toEndOf="@+id/imageViewFileIcon"
-    app:layout_constraintTop_toTopOf="parent"
-    tools:text="TextView"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" />
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_1"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+        android:textColor="@color/dark_text"
+        app:layout_constraintStart_toEndOf="@+id/imageViewFileIcon"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="TextView" />
+
+    <ImageButton
+        android:id="@+id/buttonSortOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="@dimen/margin_1"
+        android:contentDescription="@string/cd_sort"
+        android:src="@drawable/ic_round_sort_24"
+        app:tint="@color/accent" />
+
+    <ImageButton
+        android:id="@+id/buttonAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cd_add_item"
+        android:padding="@dimen/margin_1"
+        android:src="@drawable/ic_round_add_24"
+        app:tint="@color/accent" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

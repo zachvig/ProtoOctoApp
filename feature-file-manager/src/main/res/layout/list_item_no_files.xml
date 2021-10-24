@@ -34,4 +34,15 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewNoFilesTitle"
         tools:text="This folder contains no files" />
 
+    <Button
+        android:id="@+id/buttonAdd"
+        style="@style/OctoTheme.Widget.Button.Small.Secondary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_2"
+        android:text="Upload file or add folder"
+        app:layout_constraintEnd_toEndOf="@+id/textViewNoFilesSubitle"
+        app:layout_constraintStart_toStartOf="@+id/textViewNoFilesSubitle"
+        app:layout_constraintTop_toBottomOf="@+id/textViewNoFilesSubitle" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

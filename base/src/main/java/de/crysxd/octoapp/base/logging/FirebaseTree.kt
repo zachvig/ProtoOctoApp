@@ -3,6 +3,7 @@ package de.crysxd.octoapp.base.logging
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigClientException
+import de.crysxd.octoapp.base.data.models.exceptions.SuppressedException
 import de.crysxd.octoapp.base.network.MjpegConnection2
 import de.crysxd.octoapp.base.usecase.GetConnectOctoEverywhereUrlUseCase
 import de.crysxd.octoapp.base.usecase.SetAlternativeWebUrlUseCase
@@ -45,6 +46,7 @@ class FirebaseTree(
 
     private fun shouldLog(t: Throwable?) = t != null &&
             t != lastException &&
+            t !is SuppressedException &&
             t !is IOException &&
             t !is CancellationException &&
             t !is FirebaseRemoteConfigClientException &&

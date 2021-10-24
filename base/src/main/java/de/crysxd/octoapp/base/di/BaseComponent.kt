@@ -17,6 +17,7 @@ import de.crysxd.octoapp.base.data.repository.WidgetPreferencesRepository
 import de.crysxd.octoapp.base.data.source.LocalGcodeFileDataSource
 import de.crysxd.octoapp.base.di.modules.AndroidModule
 import de.crysxd.octoapp.base.di.modules.DataSourceModule
+import de.crysxd.octoapp.base.di.modules.FileModule
 import de.crysxd.octoapp.base.di.modules.FirebaseModule
 import de.crysxd.octoapp.base.di.modules.LoggingModule
 import de.crysxd.octoapp.base.di.modules.OctoPrintModule
@@ -30,10 +31,12 @@ import de.crysxd.octoapp.base.network.SslKeyStoreHandler
 import de.crysxd.octoapp.base.usecase.ActivateMaterialUseCase
 import de.crysxd.octoapp.base.usecase.ApplyLegacyDarkMode
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
+import de.crysxd.octoapp.base.usecase.CreateFolderUseCase
 import de.crysxd.octoapp.base.usecase.CreateProgressAppWidgetDataUseCase
 import de.crysxd.octoapp.base.usecase.CyclePsuUseCase
 import de.crysxd.octoapp.base.usecase.DeleteFileUseCase
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
+import de.crysxd.octoapp.base.usecase.DownloadAndShareFileUseCase
 import de.crysxd.octoapp.base.usecase.EmergencyStopUseCase
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.ExecuteSystemCommandUseCase
@@ -49,7 +52,9 @@ import de.crysxd.octoapp.base.usecase.HandleOctoEverywhereAppPortalSuccessUseCas
 import de.crysxd.octoapp.base.usecase.HandleOctoEverywhereExceptionUseCase
 import de.crysxd.octoapp.base.usecase.HomePrintHeadUseCase
 import de.crysxd.octoapp.base.usecase.JogPrintHeadUseCase
+import de.crysxd.octoapp.base.usecase.LoadFileUseCase
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
+import de.crysxd.octoapp.base.usecase.MoveFileUseCase
 import de.crysxd.octoapp.base.usecase.OpenEmailClientForFeedbackUseCase
 import de.crysxd.octoapp.base.usecase.OpenOctoprintWebUseCase
 import de.crysxd.octoapp.base.usecase.RequestApiAccessUseCase
@@ -63,6 +68,7 @@ import de.crysxd.octoapp.base.usecase.TogglePsuUseCase
 import de.crysxd.octoapp.base.usecase.TurnOffPsuUseCase
 import de.crysxd.octoapp.base.usecase.TurnOnPsuUseCase
 import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
+import java.io.File
 import javax.inject.Named
 
 @BaseScope
@@ -73,6 +79,7 @@ import javax.inject.Named
         OctoPrintModule::class,
         DataSourceModule::class,
         FirebaseModule::class,
+        FileModule::class,
         SslModule::class,
     ]
 )
@@ -85,6 +92,9 @@ interface BaseComponent {
     fun app(): Application
     fun sharedPreferences(): SharedPreferences
     fun octoPreferences(): OctoPreferences
+
+    // FileModule
+    fun publicFileDirectory(): File
 
     // SslModule
     fun sslKeyStoreHandler(): SslKeyStoreHandler
@@ -119,6 +129,7 @@ interface BaseComponent {
     fun executeGcodeCommandUseCase(): ExecuteGcodeCommandUseCase
     fun extrudeFilamentUseCase(): ExtrudeFilamentUseCase
     fun loadFilesUseCase(): LoadFilesUseCase
+    fun loadFileUseCase(): LoadFileUseCase
     fun startPrintJobUseCase(): StartPrintJobUseCase
     fun cancelPrintJobUseCase(): CancelPrintJobUseCase
     fun togglePausePrintJobUseCase(): TogglePausePrintJobUseCase
@@ -147,5 +158,8 @@ interface BaseComponent {
     fun requestApiAccessUseCase(): RequestApiAccessUseCase
     fun testFullNetworkStackUseCase(): TestFullNetworkStackUseCase
     fun deleteFileUseCase(): DeleteFileUseCase
+    fun moveFileUseCase(): MoveFileUseCase
+    fun createFolderUseCase(): CreateFolderUseCase
+    fun downloadAndShareFileUseCase(): DownloadAndShareFileUseCase
 
 }

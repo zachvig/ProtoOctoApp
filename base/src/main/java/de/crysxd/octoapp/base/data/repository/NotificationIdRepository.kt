@@ -9,6 +9,7 @@ class NotificationIdRepository(
     private val octoPrintRepository: OctoPrintRepository,
 ) {
     companion object {
+        private val UPLOAD_STATUS_NOTIFICATION = 14_998
         private const val PRINT_STATUS_FALLBACK_NOTIFICATION_ID = 14_999
         private val PRINT_STATUS_NOTIFICATION_ID_RANGE = 15_000..15_099
         private val PRINT_EVENT_NOTIFICATION_ID_RANGE = 15_100..15_199
@@ -72,4 +73,6 @@ class NotificationIdRepository(
         }
         return next
     }
+
+    fun getUploadStatusNotificationId() = UPLOAD_STATUS_NOTIFICATION
 }

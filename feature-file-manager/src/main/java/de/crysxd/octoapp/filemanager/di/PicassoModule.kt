@@ -18,7 +18,7 @@ import timber.log.Timber
 class PicassoModule {
 
     @Provides
-    @PrePrintControlsScope
+    @FileManagerScope
     fun providePicasso(context: Context, octoPrintProvider: OctoPrintProvider): LiveData<Picasso?> =
         octoPrintProvider.octoPrintFlow().asLiveData().map {
             it?.let { octoPrint ->
