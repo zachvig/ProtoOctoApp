@@ -62,7 +62,7 @@ class PurchaseFragment : BaseFragment(), InsetAwareScreen {
         binding.appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
             val collapseProgress = verticalOffset.absoluteValue / binding.appBar.totalScrollRange.toFloat()
             val content = listOf<View?>(binding.initState.root, binding.skuState.root).firstOrNull { it?.isVisible == true }
-            val padding = binding.statusBarScrim.height + requireContext().resources.getDimension(R.dimen.margin_4)
+            val padding = binding.statusBarScrim.height + binding.root.resources.getDimension(R.dimen.margin_4)
             content?.updatePadding(top = (padding * collapseProgress).toInt())
 
             if (!eventSent && verticalOffset != 0) {
