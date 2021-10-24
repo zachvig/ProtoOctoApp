@@ -129,7 +129,6 @@ class SelectFileFragment : BaseFragment() {
     override fun onStart() {
         super.onStart()
 
-        viewModel.setupThumbnailHint(navArgs.showThumbnailHint)
         viewModel.loadFiles(navArgs.folder)
 
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Prepare

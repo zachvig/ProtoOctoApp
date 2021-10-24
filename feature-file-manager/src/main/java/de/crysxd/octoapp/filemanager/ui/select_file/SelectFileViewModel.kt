@@ -19,7 +19,6 @@ import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -32,7 +31,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -52,7 +50,7 @@ class SelectFileViewModel(
     }
 
     val fileOrigin = FileOrigin.Local
-    private val showThumbnailFlow = MutableStateFlow(false)
+    private val showThumbnailFlow = MutableStateFlow(true)
     private var lastFolder = MutableStateFlow<FileObject.Folder?>(null)
     private var lastFileList: List<FileObject>? = null
     private var lastSelectedFile: FileObject.File? = null
@@ -124,13 +122,10 @@ class SelectFileViewModel(
         }
     }
 
-    fun setupThumbnailHint(showThumbnailHint: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
-        showThumbnailFlow.value = !isHideThumbnailHint() && showThumbnailHint
-    }
-
-    fun loadFiles(folder: FileObject.Folder?) {
+    fun loadFiles(folder: FileObject.Folder?) = viewModelScope.launch(coroutineExceptionHandler) {
         if (lastFileList == null || lastFolder.value?.path != folder?.path) {
             lastFolder.value = folder
+            showThumbnailFlow.value = folder == null && !isHideThumbnailHint()
             reload()
         }
     }
@@ -184,11 +179,9 @@ class SelectFileViewModel(
         emit(null)
     }
 
-    private suspend fun isHideThumbnailHint(): Boolean = withContext(Dispatchers.IO) {
-        octoPreferences.hideThumbnailHintUntil.after(Date())
-    }
+    private fun isHideThumbnailHint() = octoPreferences.hideThumbnailHintUntil.after(Date())
 
-    fun hideThumbnailHint() = viewModelScope.launch(coroutineExceptionHandler) {
+    fun hideThumbnailHint() {
         octoPreferences.hideThumbnailHintUntil = Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(HIDE_THUMBNAIL_HINT_FOR_DAYS))
         showThumbnailFlow.value = false
     }
@@ -203,7 +196,7 @@ class SelectFileViewModel(
     fun selectFile(file: FileObject) = viewModelScope.launch(coroutineExceptionHandler) {
         when (file) {
             is FileObject.File -> navContoller.navigate(R.id.action_show_file_details, FileDetailsFragmentArgs(file).toBundle())
-            is FileObject.Folder -> navContoller.navigate(R.id.action_open_folder, SelectFileFragmentArgs(file, showThumbnailFlow.value).toBundle())
+            is FileObject.Folder -> navContoller.navigate(R.id.action_open_folder, SelectFileFragmentArgs(file).toBundle())
         }
     }
 
