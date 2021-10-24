@@ -53,20 +53,25 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
         viewCreatedAt = System.currentTimeMillis()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        handler.removeCallbacks(reloadRunnable)
+    }
+
     override fun onStart() {
         super.onStart()
         Timber.i("Starting")
         requireOctoActivity().octoToolbar.state = toolbarState
         requireOctoActivity().octo.isVisible = true
         binding.widgetListScroller.setupWithToolbar(requireOctoActivity(), binding.bottomAction)
-        reloadWidgets()
+        reloadWidgets("host-start")
     }
 
     @CallSuper
-    override fun reloadWidgets() {
-        Timber.i("Schedule reload widgets")
+    override fun reloadWidgets(trigger: String) {
+        Timber.i("Schedule reload widgets (trigger=$trigger)")
         handler.removeCallbacks(reloadRunnable)
-        handler.postDelayed(reloadRunnable, 50)
+        handler.postDelayed(reloadRunnable, 500)
     }
 
     override fun onStop() {

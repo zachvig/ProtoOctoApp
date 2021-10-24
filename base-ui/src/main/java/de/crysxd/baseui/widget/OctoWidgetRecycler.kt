@@ -66,7 +66,6 @@ class OctoWidgetRecycler {
 
     fun returnWidget(rentalTag: Int, widget: RecyclableOctoWidget<*, *>) {
         if (widget.view.tag == rentalTag) {
-
             if (findIdleWidget(widget.type) != null) {
                 widgetPool[widget.type]?.remove(widget)
                 Timber.i("Already one widget of type ${widget::class} in pool, destroying $widget")

@@ -39,7 +39,7 @@ class SendGcodeWidget(context: Context) : RecyclableOctoWidget<SendGcodeWidgetBi
         super.onResume(lifecycleOwner)
         baseViewModel.gcodes.observe(lifecycleOwner, ::showGcodes)
         baseViewModel.isVisible.observe(lifecycleOwner) {
-            parent.reloadWidgets()
+            parent.reloadWidgets("send-gcode-visibility-change")
         }
     }
 

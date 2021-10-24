@@ -4,5 +4,5 @@ import de.crysxd.baseui.BaseFragment
 
 abstract class BaseWidgetHostFragment: BaseFragment() {
     abstract fun requestTransition(quickTransition: Boolean = false)
-    abstract fun reloadWidgets()
+    abstract fun reloadWidgets(trigger: String)
 }
