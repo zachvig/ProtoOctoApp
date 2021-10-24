@@ -29,7 +29,7 @@ class AnnouncementWidget(context: Context) : RecyclableOctoWidget<AnnouncementWi
         Timber.i("Init")
         val hideAction = {
             if (!isVisible()) {
-                parent.reloadWidgets()
+                parent.reloadWidgets("hide-announcement")
             } else {
                 parent.requestTransition()
             }
