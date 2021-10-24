@@ -21,7 +21,6 @@ import de.crysxd.octoapp.printcontrols.di.injectActivityViewModel
 import de.crysxd.octoapp.printcontrols.di.injectViewModel
 import de.crysxd.octoapp.printcontrols.ui.widget.TuneFragmentViewModel
 import de.crysxd.octoapp.printcontrols.ui.widget.tune.TuneWidgetViewModel
-import java.text.DecimalFormat
 
 
 class TuneFragment : BaseFragment() {
@@ -76,8 +75,8 @@ class TuneFragment : BaseFragment() {
                 binding.fanSpeedInput.editText.setText(it.fanSpeed?.toString())
             }
 
-            val zOffset = DecimalFormat("0.000#").format(it.zOffsetMm)
-            binding.zOffset.editText.setText(getString(R.string.x_mm, zOffset))
+            val zOffset = null//it.zOffsetMm?.let { mm -> DecimalFormat("0.000#").format(it) }
+            binding.zOffset.editText.setText(zOffset?.let { getString(R.string.x_mm, zOffset) })
         }
 
         // Apply values
