@@ -177,13 +177,15 @@ class PrintNotificationFactory(
         } ?: title
     }
 
+    private fun isMultiPrinterActive() = octoPrintRepository.getAll().size > 1 && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH)
+
     private suspend fun PrintState.notificationText(instanceInformation: OctoPrintInstanceInformationV3) = listOfNotNull(
         getString(R.string.print_notification___live)
-            .takeIf { source == PrintState.Source.Live && !BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
+            .takeIf { source == PrintState.Source.Live && !isMultiPrinterActive() },
         getString(R.string.print_notification___live_on_x, instanceInformation.label)
-            .takeIf { source == PrintState.Source.Live && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
+            .takeIf { source == PrintState.Source.Live && isMultiPrinterActive() },
         instanceInformation.label
-            .takeIf { source != PrintState.Source.Live && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
+            .takeIf { source != PrintState.Source.Live && isMultiPrinterActive() },
         eta?.let {
             formatEtaUseCase.execute(
                 FormatEtaUseCase.Params(
