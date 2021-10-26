@@ -230,8 +230,8 @@ object BillingManager {
                     val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
                         .setPurchaseToken(purchase.purchaseToken)
                     val billingResult = withContext(Dispatchers.IO) {
-                        billingClient!!.acknowledgePurchase(acknowledgePurchaseParams.build())
-                    }
+                        billingClient?.acknowledgePurchase(acknowledgePurchaseParams.build())
+                    } ?: return Timber.w("BillingClient was not ready, unable to handle purchases")
                     if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
                         logError("Failed to acknowledge purchase ${purchase.orderId}", billingResult)
                     } else {

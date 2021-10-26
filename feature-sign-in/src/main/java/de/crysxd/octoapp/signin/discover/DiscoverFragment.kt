@@ -181,7 +181,6 @@ class DiscoverFragment : BaseFragment() {
             val steps = 200
             binding.loading.progress.max = steps
             val delay = (viewModel.getLoadingDelay() / steps.toFloat()).roundToLong()
-            Timber.i("DELAY $delay")
             repeat(steps) {
                 delay(delay)
                 binding.loading.progress.progress = it
