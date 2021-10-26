@@ -20,6 +20,7 @@ import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.base.utils.PendingIntentCompat
 import de.crysxd.octoapp.widgets.createLaunchAppIntent
+import timber.log.Timber
 
 class PrintNotificationFactory(
     context: Context,
@@ -107,20 +108,34 @@ class PrintNotificationFactory(
         instanceInformation = instanceInformation,
         notificationChannelId = instanceInformation?.channelId ?: getString(R.string.updates_notification_channel)
     ).setContentTitle(statusText)
+        .setContentText(instanceInformation?.label ?: "OctoApp")
         .setSilent(true)
+        .addStopLiveAction()
         .build()
+        .also {
+            Timber.i("Creating service notification: statusText=$statusText")
+        }
 
     suspend fun createStatusNotification(
         instanceId: String,
         printState: PrintState,
         stateText: String?,
+        doLog: Boolean = false,
     ) = octoPrintRepository.get(instanceId)?.let {
+        val text = printState.notificationText(it)
+        val title = printState.notificationTitle(stateText)
+        val progress = (MAX_PROGRESS * (printState.progress / 100f)).toInt()
+
+        if (doLog) {
+            Timber.i("Creating status notification: title=$title text=$text stateText=$stateText progress=$progress")
+        }
+
         createNotificationBuilder(
             instanceInformation = it,
             notificationChannelId = it.channelId
-        ).setContentTitle(printState.notificationTitle(stateText))
-            .setContentText(printState.notificationText(it))
-            .setProgress(MAX_PROGRESS, (MAX_PROGRESS * (printState.progress / 100f)).toInt(), false)
+        ).setContentTitle(title)
+            .setContentText(text)
+            .setProgress(MAX_PROGRESS, progress, false)
             .addStopLiveAction()
             .setSilent(true)
             .setVibrate(arrayOf(0L).toLongArray())

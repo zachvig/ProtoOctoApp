@@ -7,6 +7,7 @@ import android.content.ContextWrapper
 import android.os.Build
 import androidx.core.content.edit
 import com.google.gson.Gson
+import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.data.repository.NotificationIdRepository
@@ -49,7 +50,8 @@ class PrintNotificationController(
     }
 
     suspend fun createServiceNotification(instance: OctoPrintInstanceInformationV3?, statusText: String, doNotify: Boolean = false): Pair<Notification, Int> {
-        val notification = instance?.id?.let { getLast(it) }?.let { notificationFactory.createStatusNotification(instance.id, it, "Connecting*") }
+        val notification = instance?.id?.let { getLast(it) }
+            ?.let { notificationFactory.createStatusNotification(instance.id, it, getString(R.string.print_notification___connecting), doLog = true) }
             ?: notificationFactory.createServiceNotification(instance, statusText)
         val id = printNotificationIdRepository.getPrintStatusNotificationId(instance?.id)
 

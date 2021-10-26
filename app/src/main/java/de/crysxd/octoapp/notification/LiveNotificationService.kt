@@ -71,6 +71,7 @@ class LiveNotificationService : Service() {
         val (notification, notificationId) = runBlocking {
             notificationController.createServiceNotification(instance, getString(R.string.print_notification___connecting))
         }
+        Timber.i("Starting foreground with: $notification")
         startForeground(notificationId, notification)
 
         // Ensure instance is set from here on
