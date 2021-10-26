@@ -165,6 +165,8 @@ object BillingManager {
     private suspend fun fetchSku(params: SkuDetailsParams): List<SkuDetails> {
         if (params.skusList.isEmpty()) {
             return emptyList()
+        } else {
+            Timber.i("Fetching ${params.skusList.size} SKUs for ${params.skuType}")
         }
 
         val result = billingClient?.querySkuDetails(params)
