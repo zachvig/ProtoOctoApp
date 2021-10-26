@@ -72,16 +72,19 @@ class LocalGcodeFileDataSource(
             removeFromCache(file)
         }
 
+        Timber.i("Checked ${getDataFile(cacheKey)} and ${getIndexFile(cacheKey).exists()}, can load $cacheKey: $cached")
         return cached
     }
 
     fun loadFile(file: FileObject.File): Flow<GcodeFileDataSource.LoadState> = flow {
+        val cacheKey = getCacheKey(file)
+        Timber.i("Loading file for: $cacheKey")
         try {
             emit(GcodeFileDataSource.LoadState.Loading(0f))
             initJob.join()
 
             val gcode = try {
-                getIndexFile(getCacheKey(file)).inputStream().use {
+                getIndexFile(cacheKey).inputStream().use {
                     fstConfig.decodeFromStream(it) as Gcode
                 }
             } catch (e: OutOfMemoryError) {
@@ -118,6 +121,7 @@ class LocalGcodeFileDataSource(
     }
 
     fun removeFromCache(cacheKey: CacheKey) {
+        Timber.i("Removing from cache: $cacheKey")
         getDataFile(cacheKey).delete()
         getIndexFile(cacheKey).delete()
         sharedPreferences.edit { remove(cacheKey) }
