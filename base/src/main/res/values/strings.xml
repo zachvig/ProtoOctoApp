@@ -992,4 +992,10 @@ happy printing!"</string>
     <string name="terminal___copied_x_to_clipboard">"Copied „%s“ to clipboard"</string>
     <string name="terminal___select_filters">"Select Filters"</string>
     <string name="terminal___apply_filters">"Apply"</string>
+    <string name="app_widget___cancelling_title">"Cancelling…"</string>
+    <string name="app_widget___paused_title">"Paused"</string>
+
+    <!-- Fuzzy -->
+    <string name="app_widget___pausing_title">"Pausing…"</string>
+    <string name="app_widget___printing_title">"Printing…"</string>
 </resources>
