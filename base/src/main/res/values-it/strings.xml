@@ -985,4 +985,8 @@ felice stampa!"</string>
     <string name="terminal___copied_x_to_clipboard"></string>
     <string name="terminal___select_filters"></string>
     <string name="terminal___apply_filters"></string>
+    <string name="app_widget___cancelling_title"></string>
+    <string name="app_widget___paused_title"></string>
+    <string name="app_widget___pausing_title"></string>
+    <string name="app_widget___printing_title"></string>
 </resources>
