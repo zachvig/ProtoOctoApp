@@ -890,4 +890,8 @@ feliz impresión!"</string>
     <string name="widget_gcode_send___confirmation_action">"Ejecutar"</string>
     <string name="print_notification___disconnected">"Desconectado"</string>
     <string name="main___banner_connected_via_local">"Conectado a través de la red local"</string>
+    <string name="app_widget___printing_title">Impresión…</string>
+    <string name="app_widget___cancelling_title">Cancelar…</string>
+    <string name="app_widget___pausing_title">Pausa…</string>
+    <string name="app_widget___paused_title">Pausado</string>
 </resources>

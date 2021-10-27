@@ -885,4 +885,8 @@ felice stampa!"</string>
     <string name="widget_gcode_send___confirmation_action">"Eseguire"</string>
     <string name="print_notification___disconnected">"disconnesso"</string>
     <string name="main___banner_connected_via_local">"Collegato tramite rete locale"</string>
+    <string name="app_widget___printing_title">Stampa…</string>
+    <string name="app_widget___cancelling_title">Cancellare…</string>
+    <string name="app_widget___pausing_title">Pausa…</string>
+    <string name="app_widget___paused_title">In pausa</string>
 </resources>

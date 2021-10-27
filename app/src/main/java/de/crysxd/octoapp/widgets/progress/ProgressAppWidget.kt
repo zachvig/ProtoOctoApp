@@ -206,10 +206,10 @@ class ProgressAppWidget : AppWidgetProvider() {
             views.setTextViewText(R.id.updatedAt, createUpdatedNowText())
             views.setTextViewText(
                 R.id.title, when {
-                    data.isPausing -> context.getString(R.string.print_notification___pausing_title)
-                    data.isPaused -> context.getString(R.string.print_notification___paused_title)
-                    data.isCancelling -> context.getString(R.string.print_notification___cancelling_title)
-                    data.isPrinting -> context.getString(R.string.print_notification___printing_title)
+                    data.isPausing -> context.getString(R.string.app_widget___pausing_title)
+                    data.isPaused -> context.getString(R.string.app_widget___paused_title)
+                    data.isCancelling -> context.getString(R.string.app_widget___cancelling_title)
+                    data.isPrinting -> context.getString(R.string.app_widget___printing_title)
                     data.isPrinterConnected -> context.getString(R.string.app_widget___idle, data.label)
                     else -> context.getString(R.string.app_widget___no_printer)
                 }

@@ -887,4 +887,8 @@ bonne impression !"</string>
     <string name="widget_gcode_send___confirmation_action">"Exécuter"</string>
     <string name="print_notification___disconnected">"Débranché"</string>
     <string name="main___banner_connected_via_local">"Connecté via un réseau local"</string>
+    <string name="app_widget___printing_title">Impression…</string>
+    <string name="app_widget___cancelling_title">Annulation…</string>
+    <string name="app_widget___pausing_title">Mise en pause…</string>
+    <string name="app_widget___paused_title">En pause</string>
 </resources>

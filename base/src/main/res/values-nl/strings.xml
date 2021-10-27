@@ -885,4 +885,8 @@ gelukkig printen!"</string>
     <string name="widget_gcode_send___confirmation_action">"uitvoeren"</string>
     <string name="print_notification___disconnected">"Losgekoppeld"</string>
     <string name="main___banner_connected_via_local">"Verbonden via lokaal netwerk"</string>
+    <string name="app_widget___printing_title">Afdrukken…</string>
+    <string name="app_widget___cancelling_title">Annuleren…</string>
+    <string name="app_widget___pausing_title">Pauzeren…</string>
+    <string name="app_widget___paused_title">Gepauzeerd</string>
 </resources>

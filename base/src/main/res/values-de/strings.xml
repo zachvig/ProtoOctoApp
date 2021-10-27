@@ -551,7 +551,7 @@ Sobald dein OctoPrint nicht mehr direkt erreichbar ist, schaltet OctoApp auf die
     <string name="print_notification___paused_title">"Pausiert"</string>
     <string name="print_notification___pausing_title">"Pausieren…"</string>
     <string name="print_notification___print_done_title">"%s hat Druck abgeschlossen"</string>
-    <string name="print_notification___printing_title">"Drucke %.0f%%"</string>
+    <string name="print_notification___printing_title">Drucken %.0f%%</string>
 
     <!-- Auto filled -->
     <string name="print_notification___reconnecting_title">"Verbindung wird wiederhergestelt…"</string>
@@ -885,4 +885,8 @@ gutes Drucken!"</string>
     <string name="widget_gcode_send___confirmation_action">"Ausführen"</string>
     <string name="print_notification___disconnected">"Getrennt"</string>
     <string name="main___banner_connected_via_local">"Über lokales Netzwerk verbunden"</string>
+    <string name="app_widget___printing_title">Drucken…</string>
+    <string name="app_widget___cancelling_title">Abbrechen…</string>
+    <string name="app_widget___pausing_title">Pausieren…</string>
+    <string name="app_widget___paused_title">Pausiert</string>
 </resources>
