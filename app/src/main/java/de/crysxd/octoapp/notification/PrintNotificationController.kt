@@ -49,6 +49,12 @@ class PrintNotificationController(
         }
     }
 
+    fun ensureNotificationChannelCreated() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationFactory.createNotificationChannels()
+        }
+    }
+
     suspend fun createServiceNotification(instance: OctoPrintInstanceInformationV3?, statusText: String, doNotify: Boolean = false): Pair<Notification, Int> {
         val notification = instance?.id?.let { getLast(it) }
             ?.let { notificationFactory.createStatusNotification(instance.id, it, getString(R.string.print_notification___connecting), doLog = true) }

@@ -68,6 +68,7 @@ class LiveNotificationService : Service() {
 
         // Start notification. We ALWAYS need to do this to prevent a crash if we stop
         // before showing the notification
+        notificationController.ensureNotificationChannelCreated()
         val (notification, notificationId) = runBlocking {
             notificationController.createServiceNotification(instance, getString(R.string.print_notification___connecting))
         }

@@ -33,13 +33,13 @@ class PrintNotificationFactory(
         private const val OCTOPRINT_CHANNEL_GROUP_ID = "octoprint"
         private const val FILAMENT_CHANGE_CHANNEL_ID = "filament_change"
         private const val MAX_PROGRESS = 1000
-        private const val OPEN_APP_REQUEST_CODE = 3249
     }
 
     private val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun createNotificationChannels() {
+        Timber.i("Creating notification channels")
         // Delete legacy channel and channels for deleted instances
         notificationManager.deleteNotificationChannel("print_progress")
         notificationManager.notificationChannels.filter { it.id.startsWith(OCTOPRINT_CHANNEL_PREFIX) }.forEach {
@@ -113,7 +113,7 @@ class PrintNotificationFactory(
         .addStopLiveAction()
         .build()
         .also {
-            Timber.i("Creating service notification: statusText=$statusText")
+            Timber.i("Creating service notification on channel ${instanceInformation?.channelId}: statusText=$statusText")
         }
 
     suspend fun createStatusNotification(
@@ -127,7 +127,7 @@ class PrintNotificationFactory(
         val progress = (MAX_PROGRESS * (printState.progress / 100f)).toInt()
 
         if (doLog) {
-            Timber.i("Creating status notification: title=$title text=$text stateText=$stateText progress=$progress")
+            Timber.i("Creating status notification on channel ${it.channelId}: title=$title text=$text stateText=$stateText progress=$progress")
         }
 
         createNotificationBuilder(
