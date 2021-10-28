@@ -84,18 +84,37 @@ object SignInRobot {
     }
 
     fun waitForChecksToFailWithUnableToResolveHost(domain: String) {
+        waitForChecksToFailWithTitle(
+            InstrumentationRegistry.getInstrumentation().targetContext
+                .getString(R.string.sign_in___probe_finding___title_local_dns_failure)
+                .replace("**%s**", domain)
+        )
+    }
+
+    fun waitForChecksToFailWithSslError(domain: String) {
+        waitForChecksToFailWithTitle(
+            InstrumentationRegistry.getInstrumentation().targetContext
+                .getString(R.string.sign_in___probe_finding___title_https_not_trusted)
+                .replace("**%s**", domain)
+        )
+    }
+
+    fun waitForChecksToFailWithOctoPrintNotFound() {
+        waitForChecksToFailWithTitle(
+            InstrumentationRegistry.getInstrumentation().targetContext
+                .getString(R.string.sign_in___probe_finding___title_octoprint_not_found)
+        )
+    }
+
+    fun waitForChecksToFailWithTitle(title: String) {
         // Wait for checks to fail
         waitForChecks()
         waitFor(
-            timeout = 5000,
+            timeout = 10_000,
             viewMatcher = allOf(
                 withId(R.id.title),
                 isDisplayed(),
-                withText(
-                    InstrumentationRegistry.getInstrumentation().targetContext
-                        .getString(R.string.sign_in___probe_finding___title_local_dns_failure)
-                        .replace("**%s**", domain)
-                ),
+                withText(title),
             )
         )
     }

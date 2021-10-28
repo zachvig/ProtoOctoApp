@@ -50,7 +50,7 @@ class DetectBrokenSetupInterceptor(
 
             is OctoPrintHttpsException -> {
                 Timber.e(e, "Caught OctoPrintHttpsException, setup broken (${e.webUrl})")
-                reportIssue(e.webUrl, webUrlIssue = HTTP_ISSUE, alternativeWebUrlIssue = HTTP_ISSUE_FOR_ALTERNATIVE, throwable = e)
+                reportIssue(e.webUrl, webUrlIssue = HTTP_ISSUE, alternativeWebUrlIssue = HTTP_ISSUE_FOR_ALTERNATIVE, throwable = e.originalCause)
             }
 
             is WebSocketUpgradeFailedException -> {
@@ -66,7 +66,7 @@ class DetectBrokenSetupInterceptor(
                 octoPrintRepository.update(res.first.id) {
                     val issue = if (res.second) alternativeWebUrlIssue else webUrlIssue
                     Timber.w("Reporting $issue from $throwable")
-                    it.copy(issue = issue, issueMessage = throwable?.let { t -> "${t::class.java}: ${t.message}" })
+                    it.copy(issue = issue, issueMessage = throwable?.let { t -> "${t::class.java.simpleName}: ${t.message}" })
                 }
             }
         }
