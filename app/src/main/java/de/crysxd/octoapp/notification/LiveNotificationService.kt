@@ -68,9 +68,11 @@ class LiveNotificationService : Service() {
 
         // Start notification. We ALWAYS need to do this to prevent a crash if we stop
         // before showing the notification
+        notificationController.ensureNotificationChannelCreated()
         val (notification, notificationId) = runBlocking {
             notificationController.createServiceNotification(instance, getString(R.string.print_notification___connecting))
         }
+        Timber.i("Starting foreground with: $notification")
         startForeground(notificationId, notification)
 
         // Ensure instance is set from here on
@@ -276,6 +278,9 @@ class LiveNotificationService : Service() {
                                 val current = message.toPrint()
                                 if (last.objectId == current.objectId && current.progress >= 100) {
                                     notificationController.notifyCompleted(instanceId, current)
+                                    Timber.i("Print completed")
+                                } else {
+                                    Timber.i("Print not active but did not complete: lastId=${last.objectId} ${current.objectId} progress=${current.progress}")
                                 }
                             }
                         }

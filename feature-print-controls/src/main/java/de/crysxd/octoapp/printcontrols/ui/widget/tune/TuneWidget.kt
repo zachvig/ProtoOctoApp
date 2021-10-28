@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import de.crysxd.baseui.widget.BaseWidgetHostFragment
 import de.crysxd.baseui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.base.data.models.WidgetType
@@ -15,6 +17,7 @@ import de.crysxd.octoapp.printcontrols.R
 import de.crysxd.octoapp.printcontrols.databinding.TuneWidgetBinding
 import de.crysxd.octoapp.printcontrols.di.injectActivityViewModel
 import de.crysxd.octoapp.printcontrols.ui.PrintControlsFragmentDirections
+import timber.log.Timber
 
 class TuneWidget(context: Context) : RecyclableOctoWidget<TuneWidgetBinding, TuneWidgetViewModel>(context) {
     override val type = WidgetType.TuneWidget
@@ -28,9 +31,19 @@ class TuneWidget(context: Context) : RecyclableOctoWidget<TuneWidgetBinding, Tun
         view.setOnClickListener {
             recordInteraction()
             baseViewModel.pollSettingsNow()
-            it.findNavController().navigate(
-                PrintControlsFragmentDirections.actionTunePrint()
-            )
+
+            val exceptions = mutableListOf<Throwable>()
+            fun NavController.launch() = try {
+                navigate(
+                    PrintControlsFragmentDirections.actionTunePrint()
+                )
+            } catch (e: Exception) {
+                exceptions.add(e)
+                null
+            }
+
+            it.findNavController().launch()?.let { Timber.i("DEBUG: Succeeded launching via it") }
+                ?: parent.findNavController().launch()?.let { Timber.i("DEBUG: Succeeded launching via parent") }
         }
     }
 

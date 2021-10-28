@@ -73,9 +73,9 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
         Timber.i("Resume")
         binding.webcamView.scaleToFill = baseViewModel.getScaleType(isFullscreen = false, ImageView.ScaleType.FIT_CENTER) != ImageView.ScaleType.FIT_CENTER
         binding.webcamView.coroutineScope = lifecycleOwner.lifecycleScope
+        baseViewModel.uiState.observe(lifecycleOwner, observer)
         binding.webcamView.onResolutionClicked = { onAction() }
         applyAspectRatio(baseViewModel.getInitialAspectRatio())
-        baseViewModel.uiState.observe(lifecycleOwner, observer)
     }
 
     private fun onUiStateChanged(state: UiState) {

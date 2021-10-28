@@ -20,6 +20,7 @@ import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.base.utils.PendingIntentCompat
 import de.crysxd.octoapp.widgets.createLaunchAppIntent
+import timber.log.Timber
 
 class PrintNotificationFactory(
     context: Context,
@@ -32,13 +33,13 @@ class PrintNotificationFactory(
         private const val OCTOPRINT_CHANNEL_GROUP_ID = "octoprint"
         private const val FILAMENT_CHANGE_CHANNEL_ID = "filament_change"
         private const val MAX_PROGRESS = 1000
-        private const val OPEN_APP_REQUEST_CODE = 3249
     }
 
     private val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun createNotificationChannels() {
+        Timber.i("Creating notification channels")
         // Delete legacy channel and channels for deleted instances
         notificationManager.deleteNotificationChannel("print_progress")
         notificationManager.notificationChannels.filter { it.id.startsWith(OCTOPRINT_CHANNEL_PREFIX) }.forEach {
@@ -107,20 +108,34 @@ class PrintNotificationFactory(
         instanceInformation = instanceInformation,
         notificationChannelId = instanceInformation?.channelId ?: getString(R.string.updates_notification_channel)
     ).setContentTitle(statusText)
+        .setContentText(instanceInformation?.label ?: "OctoApp")
         .setSilent(true)
+        .addStopLiveAction()
         .build()
+        .also {
+            Timber.i("Creating service notification on channel ${instanceInformation?.channelId}: statusText=$statusText")
+        }
 
     suspend fun createStatusNotification(
         instanceId: String,
         printState: PrintState,
         stateText: String?,
+        doLog: Boolean = false,
     ) = octoPrintRepository.get(instanceId)?.let {
+        val text = printState.notificationText(it)
+        val title = printState.notificationTitle(stateText)
+        val progress = (MAX_PROGRESS * (printState.progress / 100f)).toInt()
+
+        if (doLog) {
+            Timber.i("Creating status notification on channel ${it.channelId}: title=$title text=$text stateText=$stateText progress=$progress")
+        }
+
         createNotificationBuilder(
             instanceInformation = it,
             notificationChannelId = it.channelId
-        ).setContentTitle(printState.notificationTitle(stateText))
-            .setContentText(printState.notificationText(it))
-            .setProgress(MAX_PROGRESS, (MAX_PROGRESS * (printState.progress / 100f)).toInt(), false)
+        ).setContentTitle(title)
+            .setContentText(text)
+            .setProgress(MAX_PROGRESS, progress, false)
             .addStopLiveAction()
             .setSilent(true)
             .setVibrate(arrayOf(0L).toLongArray())
@@ -177,13 +192,15 @@ class PrintNotificationFactory(
         } ?: title
     }
 
+    private fun isMultiPrinterActive() = octoPrintRepository.getAll().size > 1 && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH)
+
     private suspend fun PrintState.notificationText(instanceInformation: OctoPrintInstanceInformationV3) = listOfNotNull(
         getString(R.string.print_notification___live)
-            .takeIf { source == PrintState.Source.Live && !BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
+            .takeIf { source == PrintState.Source.Live && !isMultiPrinterActive() },
         getString(R.string.print_notification___live_on_x, instanceInformation.label)
-            .takeIf { source == PrintState.Source.Live && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
+            .takeIf { source == PrintState.Source.Live && isMultiPrinterActive() },
         instanceInformation.label
-            .takeIf { source != PrintState.Source.Live && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH) },
+            .takeIf { source != PrintState.Source.Live && isMultiPrinterActive() },
         eta?.let {
             formatEtaUseCase.execute(
                 FormatEtaUseCase.Params(

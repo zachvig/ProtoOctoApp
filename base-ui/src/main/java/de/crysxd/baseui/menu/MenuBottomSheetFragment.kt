@@ -23,7 +23,6 @@ import de.crysxd.baseui.ext.optionallyRequestOctoActivity
 import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.menu.main.MainMenu
 import de.crysxd.baseui.utils.InstantAutoTransition
-import de.crysxd.baseui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.data.models.MenuId
 import de.crysxd.octoapp.base.ext.open
 import kotlinx.coroutines.*
@@ -92,7 +91,11 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
         }
     }
 
-    fun show(fm: FragmentManager) = show(fm, "main-menu")
+    fun show(fm: FragmentManager) = try {
+        show(fm, "main-menu")
+    } catch (e: IllegalStateException) {
+        Timber.w("Can't show menu, after onSaveInstanceState")
+    }
 
     override fun pushMenu(subMenu: Menu) {
         viewModel.menuBackStack.add(subMenu)

@@ -24,7 +24,7 @@ object LiveNotificationManager {
 
 
     fun start(context: Context) {
-        // Guard: We can't start the service without an active instnace
+        // Guard: We can't start the service without an active instance
         BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()
             ?: return Timber.w("Rejecting start of service: No active instance")
 

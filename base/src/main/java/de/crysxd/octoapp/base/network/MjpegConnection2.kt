@@ -32,7 +32,6 @@ import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
@@ -202,13 +201,7 @@ class MjpegConnection2(
         }
 
         fun push(bytes: ByteArray, length: Int) {
-            require((array.size() + length) < maxSize) {
-                val file = File("/storage/emulated/0/Download/webcam.bin")
-                val out = file.outputStream()
-                array.writeTo(out)
-                out.close()
-                "Byte cached overflow: ${maxSize.asStyleFileSize()}"
-            }
+            require((array.size() + length) < maxSize) { "Byte cached overflow: ${maxSize.asStyleFileSize()}" }
             array.write(bytes, 0, length)
         }
 

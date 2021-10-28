@@ -181,7 +181,6 @@ class DiscoverFragment : BaseFragment() {
             val steps = 200
             binding.loading.progress.max = steps
             val delay = (viewModel.getLoadingDelay() / steps.toFloat()).roundToLong()
-            Timber.i("DELAY $delay")
             repeat(steps) {
                 delay(delay)
                 binding.loading.progress.progress = it
@@ -386,6 +385,7 @@ class DiscoverFragment : BaseFragment() {
             DiscoverFragmentContentManualBinding.inflate(LayoutInflater.from(requireContext()), binding.content, false)
         }
         binding.content.removeAllViews()
+        (localManualBinding.root.parent as? ViewGroup)?.removeView(localManualBinding.root)
         binding.content.addView(localManualBinding.root)
         binding.contentWrapper.updateLayoutParams<FrameLayout.LayoutParams> { gravity = Gravity.TOP }
         manualBinding = localManualBinding

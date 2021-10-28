@@ -38,4 +38,5 @@ data class TradfriPowerDevice(
     override suspend fun isOn() = plugin?.isOn(this)
         ?: throw IllegalStateException("Acquire this class from TradfriPowerPlugin!")
 
+
 }

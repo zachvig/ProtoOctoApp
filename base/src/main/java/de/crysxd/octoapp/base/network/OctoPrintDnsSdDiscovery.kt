@@ -43,7 +43,7 @@ class OctoPrintDnsSdDiscovery(
                 Timber.e("mDNS browse failed (errorCode=$errorCode)")
             }
 
-            override fun serviceFound(browser: DNSSDService, flags: Int, ifIndex: Int, serviceName: String, regType: String, domain: String) {
+            override fun serviceFound(browser: DNSSDService?, flags: Int, ifIndex: Int, serviceName: String, regType: String, domain: String) {
                 Timber.i("Found $serviceName $regType $domain")
                 resolveService(
                     flags = flags,
@@ -56,7 +56,7 @@ class OctoPrintDnsSdDiscovery(
             }
 
             override fun serviceLost(browser: DNSSDService?, flags: Int, ifIndex: Int, serviceName: String?, regType: String?, domain: String?) {
-                Timber.i("Lost $browser $serviceName $regType $domain")
+                Timber.i("Lost $serviceName $regType $domain")
             }
         })
 
