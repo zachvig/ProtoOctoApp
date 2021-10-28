@@ -159,5 +159,10 @@ class OctoApp : Application() {
             val appLanguage = BaseInjector.get().getAppLanguageUseCase().execute(Unit).appLanguageLocale?.language ?: "en"
             OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.AppLanguage, appLanguage)
         }
+
+        // Delete all cache files
+        AppScope.launch {
+            BaseInjector.get().publicFileDirectory().deleteRecursively()
+        }
     }
 }

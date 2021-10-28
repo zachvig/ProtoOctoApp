@@ -26,6 +26,7 @@ object NavigationResultMediator {
         when {
             liveData != null -> {
                 liveData.postValue(result)
+                liveDataIndex.remove(resultId)
                 true
             }
             else -> {

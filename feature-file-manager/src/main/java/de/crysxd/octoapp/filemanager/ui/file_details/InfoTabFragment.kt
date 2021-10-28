@@ -25,7 +25,7 @@ import de.crysxd.octoapp.filemanager.databinding.InfoTabFragmentBinding
 import de.crysxd.octoapp.filemanager.di.FileManagerInjector
 import de.crysxd.octoapp.filemanager.di.injectParentViewModel
 import de.crysxd.octoapp.filemanager.ui.CropAlphaTransformation
-import de.crysxd.octoapp.octoprint.models.files.FileObject
+import de.crysxd.octoapp.octoprint.models.files.FileOrigin
 import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -81,17 +81,17 @@ class InfoTabFragment : Fragment() {
 
             // Bind data
             binding.printName.text = file.name
-            addTitle(R.string.print_info)
+            addTitle(R.string.file_manager___file_details___print_info)
             addDetail(
-                label = R.string.print_time,
-                value = file.gcodeAnalysis?.estimatedPrintTime?.let { formatDurationUseCase.execute(it) }
+                label = R.string.file_manager___file_details___print_time,
+                value = file.gcodeAnalysis?.estimatedPrintTime?.toLong()?.let { formatDurationUseCase.execute(it) }
             )
             addDetail(
-                label = R.string.model_size,
+                label = R.string.file_manager___file_details___model_size,
                 value = file.gcodeAnalysis?.dimensions?.let { String.format(Locale.getDefault(), "%.1f × %.1f × %.1f mm", it.width, it.depth, it.height) }
             )
             addDetail(
-                label = R.string.filament_use,
+                label = R.string.file_manager___file_details___filament_use,
                 value = file.gcodeAnalysis?.filament?.let {
                     val totalLength = listOfNotNull(it.tool0, it.tool1).sumOf { s -> s.length }
                     val totalVolume = listOfNotNull(it.tool0, it.tool1).sumOf { s -> s.volume }
@@ -99,42 +99,45 @@ class InfoTabFragment : Fragment() {
                 }
             )
 
-            addTitle(R.string.file)
+            addTitle(R.string.file_manager___file_details___file)
             addDetail(
                 label = R.string.location,
                 value = when (file.origin) {
-                    FileObject.FILE_ORIGIN_SD -> getString(R.string.file_location_sd_card)
-                    FileObject.FILE_ORIGIN_LOCAL -> getString(R.string.file_location_local)
-                    else -> getString(R.string.file_location_unknown)
+                    FileOrigin.SdCard -> getString(R.string.file_manager___file_details___file_location_sd_card)
+                    FileOrigin.Local -> getString(R.string.file_manager___file_details___file_location_local)
+                    else -> getString(R.string.file_manager___file_details___file_location_unknown)
                 }
             )
             addDetail(
-                label = R.string.path,
+                label = R.string.file_manager___file_details___path,
                 value = "/" + file.path.removeSuffix(file.name).removeSuffix("/")
             )
             addDetail(
-                label = R.string.size,
+                label = R.string.file_manager___file_details___file_size,
                 value = file.size.asStyleFileSize()
             )
             addDetail(
-                label = R.string.uploaded,
+                label = R.string.file_manager___file_details___uploaded,
                 value = Date(file.date * 1000).format()
             )
 
-            addTitle(R.string.history)
+            addTitle(R.string.file_manager___file_details___history)
             addDetail(
-                label = R.string.last_print,
+                label = R.string.file_manager___file_details___last_print,
                 value = file.prints?.last?.let {
-                    getString(if (it.success) R.string.last_print_at_x_success else R.string.last_print_at_x_failure, Date(it.date * 1000).format())
-                } ?: getString(R.string.never)
+                    getString(
+                        if (it.success) R.string.file_manager___file_details___last_print_at_x_success else R.string.file_manager___file_details___last_print_at_x_failure,
+                        Date(it.date.toLong() * 1000).format()
+                    )
+                } ?: getString(R.string.file_manager___file_details___never)
             )
             addDetail(
-                label = R.string.completed,
-                value = file.prints?.success?.let { getString(R.string.x_times, it) } ?: getString(R.string.never)
+                label = R.string.file_manager___file_details___completed,
+                value = file.prints?.success?.let { getString(R.string.x_times, it) } ?: getString(R.string.file_manager___file_details___never)
             )
             addDetail(
-                label = R.string.failures,
-                value = file.prints?.failure?.let { getString(R.string.x_times, it) } ?: getString(R.string.never)
+                label = R.string.file_manager___file_details___failures,
+                value = file.prints?.failure?.let { getString(R.string.x_times, it) } ?: getString(R.string.file_manager___file_details___never)
             )
 
             // Make all labels same width

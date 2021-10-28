@@ -59,7 +59,9 @@ De widget zal altijd de OctoPrint instantie besturen die op dat moment actief is
     <string name="change_filament_confirmation_message">"Wil je de filament veranderen?"</string>
     <string name="clear_lebel">"Duidelijk label"</string>
     <string name="command">"Opdracht"</string>
-    <string name="completed">"Voltooid"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___completed">"Voltooid"</string>
 
     <!-- Auto filled -->
     <string name="configure_remote_acces___description"><![CDATA[Niet thuis? Op zichzelf kan OctoApp uw OctoPrint niet bereiken, omdat deze alleen beschikbaar is in uw thuisnetwerk. U moet OctoPrint beschikbaar maken via het internet, zodat OctoApp er toegang toe heeft, waar u ook bent. Meer informatie <a href="https://app.octoapp.eu/help/use_remotely">hier</a>.]]></string>
@@ -183,7 +185,9 @@ Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over n
     <string name="connect_printer___waiting_for_user_subtitle">"U kunt auto-connect inschakelen in de instellingen"</string>
     <string name="connect_printer___waiting_for_user_title">"Maak verbinding als je er klaar voor bent"</string>
     <string name="connection_failed">"Verbinding mislukt"</string>
-    <string name="cura_plugin">"Plugin Heling"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___thumbnail_info___popup_cura">"Plugin Heling"</string>
     <string name="distance_in_mm_negative_for_retract">"Afstand in mm (negatief voor retract)"</string>
     <string name="done">"Klaar"</string>
     <string name="download_x">"Download %s"</string>
@@ -214,7 +218,9 @@ Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over n
     <string name="extrude">"Extrudeer"</string>
     <string name="extrude_retract">"Extruderen / Terugtrekken"</string>
     <string name="extruding_x_mm">"Extruderen %d mm"</string>
-    <string name="failures">"Mislukkingen"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___failures">"Mislukkingen"</string>
 
     <!-- Fuzzy -->
     <string name="tune_print___fan_speed_label">"Ventilatorsnelheid (%)"</string>
@@ -227,13 +233,27 @@ Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over n
 
     <!-- Fuzzy -->
     <string name="tune_print___feed_rate_label_active">"Aanvoersnelheid als getal (100 is standaard)"</string>
-    <string name="filament_use">"Gebruik van de filterelementen"</string>
-    <string name="file">"Bestand"</string>
-    <string name="file_details_tab_info">"Info"</string>
-    <string name="file_details_tab_preview">"Voorbeeld"</string>
-    <string name="file_location_local">"Lokaal"</string>
-    <string name="file_location_sd_card">"SD-kaart"</string>
-    <string name="file_location_unknown">"Onbekend"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___filament_use">"Gebruik van de filterelementen"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___file">"Bestand"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___tab_info">"Info"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___tab_preview">"Voorbeeld"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___file_location_local">"Lokaal"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___file_location_sd_card">"SD-kaart"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___file_location_unknown">"Onbekend"</string>
 
     <!-- Fuzzy -->
     <string name="tune_print___flow_rate_label">"Stroomsnelheid (%)"</string>
@@ -272,16 +292,24 @@ Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over n
     <!-- Auto filled -->
     <string name="help___content_not_available">"Dieser Inhalt ist derzeit nicht verfügbar. Versuche es später noch einmal!"</string>
     <string name="hide">"Verberg"</string>
-    <string name="history">"Geschiedenis"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___history">"Geschiedenis"</string>
     <string name="hls_stream_disabled_title">"HLS webcam"</string>
     <string name="hls_stream_disbaled_description">"HLS webcams zijn uitgeschakeld, laat ze nu uw webcambeeld zien."</string>
     <string name="information_about_your_octoprint">"Informatie over je OctoPrint"</string>
     <string name="information_about_your_phone">"Informatie over je telefoon"</string>
     <string name="insert">"Voeg in."</string>
     <string name="label_for_x">"Label voor %s"</string>
-    <string name="last_print">"Laatste druk"</string>
-    <string name="last_print_at_x_failure">"%s (mislukking)"</string>
-    <string name="last_print_at_x_success">"%s (succes)"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___last_print">"Laatste druk"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___last_print_at_x_failure">"%s (mislukking)"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___last_print_at_x_success">"%s (succes)"</string>
     <string name="layer">"Laag"</string>
     <string name="layer_progress">"Lagenvoortgang"</string>
     <string name="learn_more">"Meer informatie"</string>
@@ -451,14 +479,21 @@ Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over n
     <string name="mm_1">"1 mm"</string>
     <string name="mm_10">"10 mm"</string>
     <string name="mm_100">"100 mm"</string>
-    <string name="model_size">"Modelgrootte"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___model_size">"Modelgrootte"</string>
     <string name="move">"Verplaats"</string>
     <string name="move_settings">"Bewegingsinstellingen"</string>
-    <string name="never">"Nooit"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___never">"Nooit"</string>
 
     <!-- Auto filled -->
-    <string name="no_files_on_octoprint_subtitle"><![CDATA[Upload bestanden in de webinterface om te worden vermeld! <br><br><small>Kijk eens hoe <a href="https://www.youtube.com/watch?v=QB8MzoafnjY">Cura</a> en <a href="https://www.youtube.com/watch?v=V2PdG-Wx5Z0">Prusa Slicer</a> bestanden in OctoPrint automatisch kan opslaan.</small>]]></string>
-    <string name="no_files_on_octoprint_title">"Geen bestanden op OctoPrint"</string>
+    <!-- Fuzzy -->
+    <string name="file_manager___file_list___no_files_on_octoprint_subtitle"><![CDATA[Upload bestanden in de webinterface om te worden vermeld! <br><br><small>Kijk eens hoe <a href="https://www.youtube.com/watch?v=QB8MzoafnjY">Cura</a> en <a href="https://www.youtube.com/watch?v=V2PdG-Wx5Z0">Prusa Slicer</a> bestanden in OctoPrint automatisch kan opslaan.</small>]]></string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_list___no_files_on_octoprint_title">"Geen bestanden op OctoPrint"</string>
     <string name="no_frames_since_xs">"Geen frames sinds %ds"</string>
     <string name="no_preview_image_available">"Geen voorbeeldafbeelding beschikbaar"</string>
     <string name="no_value_placeholder">"--"</string>
@@ -472,7 +507,9 @@ Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over n
     <string name="open_octoprint">"Open OctoPrint"</string>
     <string name="open_terminal">"Open Terminal"</string>
     <string name="other">"Andere"</string>
-    <string name="path">"Pad"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___path">"Pad"</string>
     <string name="pause">"Pauze"</string>
     <string name="pause_print_confirmation_action">"Pauze-afdruk"</string>
     <string name="pause_print_confirmation_message">"Wil je de afdruk pauzeren?"</string>
@@ -560,7 +597,9 @@ Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over n
 
     <!-- Auto filled -->
     <string name="workspace___print">"Print"</string>
-    <string name="print_info">"Afdrukken"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___print_info">"Afdrukken"</string>
     <string name="print_name">"Naam"</string>
     <string name="print_notification___cancelling_title">"Annuleren…"</string>
     <string name="print_notification___close">"Pauzeer meldingen"</string>
@@ -571,9 +610,13 @@ Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over n
 
     <!-- Auto filled -->
     <string name="print_notification___reconnecting_title">"Opnieuw verbinden…"</string>
-    <string name="print_time">"Afdruktijd"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___print_time">"Afdruktijd"</string>
     <string name="progress">"Voortgang"</string>
-    <string name="prusa_slicer_plugin">"Pruisen Slicer Plugin"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___thumbnail_info___popup_prusa">"Pruisen Slicer Plugin"</string>
     <string name="purchase_dialog_button">"Terug naar de app"</string>
     <string name="purchase_dialog_subtitle">"Alle functies zijn ontgrendeld"</string>
     <string name="purchase_dialog_text">"Dankzij jouw ondersteuning kan ik de ontwikkeling van OctoApp voortzetten! Als je suggesties, problemen of gedachten hebt, kun je te allen tijde contact opnemen met %s!"</string>
@@ -587,7 +630,7 @@ Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over n
     <string name="resume_print_confirmation_action">"Hervat afdrukken"</string>
     <string name="resume_print_confirmation_message">"Wil je de afdruk hervatten?"</string>
     <string name="screenshot_of_current_screen">"Screenshot van het huidige scherm"</string>
-    <string name="select_file_to_print">"Selecteer bestand om af te drukken"</string>
+    <string name="file_manager___file_list___your_files"></string>
     <string name="send_feedback">"Feedback sturen"</string>
     <string name="send_gcode">"Stuur Gcode"</string>
     <string name="sent_x">"Uitvoeren %s"</string>
@@ -740,7 +783,9 @@ gelukkig printen!"</string>
 
     <!-- Auto filled -->
     <string name="sing_in___probe___trust_and_continue">"Vertrouwen &amp; Ga door"</string>
-    <string name="size">"Grootte"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___file_size">"Grootte"</string>
     <string name="start_printing">"Starten met printen"</string>
     <string name="stream_stalled">"Stream is vastgelopen"</string>
     <string name="support_octoapp">"Ondersteuning van OctoApp"</string>
@@ -757,8 +802,12 @@ gelukkig printen!"</string>
     <string name="temperature_x">"%1$s\u2009°C"</string>
     <string name="thank_you_for_sending_feedback_please_select_what_should_be_included_in_your_message">"Bedankt voor het sturen van feedback. Voer een bericht in en selecteer wat er bijgevoegd moet worden."</string>
     <string name="this_file_exceeds_the_limit_for_mobile_downloads">"Dit bestand overschrijdt de limiet voor app downloads"</string>
-    <string name="this_folder_contains_no_files">"Deze map bevat geen bestanden"</string>
-    <string name="thumbnail_info_message">"Installeer de onderstaande plugin voor je slicer om thumbnail previews van alle bestanden te krijgen!"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_list___no_files_in_folder">"Deze map bevat geen bestanden"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___thumbnail_info___popup_message">"Installeer de onderstaande plugin voor je slicer om thumbnail previews van alle bestanden te krijgen!"</string>
     <string name="time_left">"Overblijvend"</string>
     <string name="time_left_x">"Resterende tijd: %s"</string>
     <string name="time_spent">"Gebruikt"</string>
@@ -772,9 +821,15 @@ gelukkig printen!"</string>
     <string name="tune_print___disclaimer_action_hide">"Understood"</string>
     <string name="unknown">"Onbekend"</string>
     <string name="update_settings">"Instellingen bijwerken"</string>
-    <string name="uploaded">"Geüpload"</string>
-    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_detail">"Installeer een plugin voor het verkrijgen van miniatuurvoorvertoningen!"</string>
-    <string name="using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_title">"Gebruikt u Cura of Prusa Slicer?"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_details___uploaded">"Geüpload"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___thumbnail_info___details">"Installeer een plugin voor het verkrijgen van miniatuurvoorvertoningen!"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___thumbnail_info___title">"Gebruikt u Cura of Prusa Slicer?"</string>
     <string name="webcam">"Webcam"</string>
 
     <!-- Auto filled -->
@@ -891,9 +946,15 @@ gelukkig printen!"</string>
     <string name="print_notifications_menu___bottom"><![CDATA[Meer informatie over live meldingen en meldingen op afstand <a href="%s">hier</a>.]]></string>
     <string name="main___banner_connected_via_ngrok">"Verbonden via ngrok"</string>
     <string name="main___banner_connected_via_tailscale">"Verbonden via Tailscale"</string>
-    <string name="file_actions_menu___delete">"Delete"</string>
-    <string name="file_actions_menu___delete_confirmation_message">"Wilt u \"%s\" verwijderen?"</string>
-    <string name="file_action_menu___delete_confirmation_action">"Delete"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_menu___delete">"Delete"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_menu___delete_confirmation_message">"Wilt u \"%s\" verwijderen?"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___file_menu___delete_confirmation_action">"Delete"</string>
     <string name="main_menu___item_show_tutorials">"Tutorials"</string>
     <string name="retry_general">"Opnieuw proberen"</string>
     <string name="tutorials___header">"Tutorials"</string>
@@ -919,6 +980,13 @@ gelukkig printen!"</string>
     <string name="gcode_preview_settings___quality_low_description"></string>
     <string name="gcode_preview_settings___quality_medium_description"></string>
     <string name="gcode_preview_settings___quality_ultra_description"></string>
-    <string name="tune_print___z_baby_step_label"></string>
+    <string name="tune_print___z_baby_step"></string>
     <string name="tune_print___baby_step_explainer"></string>
+    <string name="terminal___copied_x_to_clipboard"></string>
+    <string name="terminal___select_filters"></string>
+    <string name="terminal___apply_filters"></string>
+    <string name="app_widget___cancelling_title"></string>
+    <string name="app_widget___paused_title"></string>
+    <string name="app_widget___pausing_title"></string>
+    <string name="app_widget___printing_title"></string>
 </resources>

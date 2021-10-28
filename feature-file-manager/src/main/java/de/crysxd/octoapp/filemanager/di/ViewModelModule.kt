@@ -11,10 +11,14 @@ import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.di.ViewModelFactory
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.network.OctoPrintProvider
+import de.crysxd.octoapp.base.usecase.LoadFileUseCase
 import de.crysxd.octoapp.base.usecase.LoadFilesUseCase
+import de.crysxd.octoapp.base.usecase.MoveFileUseCase
 import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
 import de.crysxd.octoapp.filemanager.ui.file_details.FileDetailsViewModel
+import de.crysxd.octoapp.filemanager.ui.select_file.MoveAndCopyFilesViewModel
 import de.crysxd.octoapp.filemanager.ui.select_file.SelectFileViewModel
+import de.crysxd.octoapp.filemanager.upload.UploadMediator
 import javax.inject.Provider
 
 @Module
@@ -29,12 +33,20 @@ open class ViewModelModule {
     @ViewModelKey(SelectFileViewModel::class)
     open fun provideSelectFileViewModel(
         loadFilesUseCase: LoadFilesUseCase,
+        loadFileUseCase: LoadFileUseCase,
         octoPreferences: OctoPreferences,
+        moveFileUseCase: MoveFileUseCase,
+        octoPrintProvider: OctoPrintProvider,
+        uploadMediator: UploadMediator,
         picasso: LiveData<Picasso?>
     ): ViewModel = SelectFileViewModel(
-        loadFilesUseCase,
-        octoPreferences,
-        picasso
+        loadFilesUseCase = loadFilesUseCase,
+        loadFileUseCase = loadFileUseCase,
+        moveFileUseCase = moveFileUseCase,
+        octoPreferences = octoPreferences,
+        octoPrintProvider = octoPrintProvider,
+        picasso = picasso,
+        uploadMediator = uploadMediator,
     )
 
     @Provides
@@ -47,4 +59,9 @@ open class ViewModelModule {
         startPrintJobUseCase = startPrintJobUseCase,
         octoPrintProvider = octoPrintProvider
     )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(MoveAndCopyFilesViewModel::class)
+    open fun provideMoveAndCopyFilesViewModel(): ViewModel = MoveAndCopyFilesViewModel()
 }

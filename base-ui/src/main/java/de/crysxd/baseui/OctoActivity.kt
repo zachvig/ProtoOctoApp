@@ -1,6 +1,7 @@
 package de.crysxd.baseui
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
@@ -52,6 +53,7 @@ abstract class OctoActivity : LocalizedActivity() {
     abstract val navController: NavController
     private val handler = Handler(Looper.getMainLooper())
     private val snackbarMessageChannel = MutableStateFlow<Message.SnackbarMessage?>(null)
+    val resultFlow = MutableStateFlow<Triple<Int, Int, Intent>?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         instance = this
@@ -79,6 +81,11 @@ abstract class OctoActivity : LocalizedActivity() {
     override fun onDestroy() {
         super.onDestroy()
         instance = null
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     fun observeErrorEvents(events: LiveData<Event<Throwable>>) = events.observe(this) {

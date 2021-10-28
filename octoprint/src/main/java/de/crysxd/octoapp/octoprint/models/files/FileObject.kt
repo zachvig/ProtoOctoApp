@@ -5,7 +5,7 @@ import java.io.Serializable
 sealed class FileObject(
     open val display: String,
     open val name: String,
-    open val origin: String,
+    open val origin: FileOrigin,
     open val path: String,
     open val type: String?,
     open val typePath: List<String>?,
@@ -13,10 +13,12 @@ sealed class FileObject(
     open val ref: Reference?
 ) : Serializable {
 
+    val isPrintable get() = typePath?.contains(FILE_TYPE_MACHINE_CODE) == true
+
     class File(
         display: String,
         name: String,
-        origin: String,
+        origin: FileOrigin,
         path: String,
         type: String?,
         typePath: List<String>?,
@@ -27,12 +29,14 @@ sealed class FileObject(
         val hash: String,
         val gcodeAnalysis: GcodeAnalysis?,
         val prints: PrintHistory?
-    ) : FileObject(display, name, origin, path, type, typePath, size, ref)
+    ) : FileObject(display, name, origin, path, type, typePath, size, ref) {
+        val extension get() = name.split(".").takeIf { it.size > 1 }?.lastOrNull()
+    }
 
     class Folder(
         display: String,
         name: String,
-        origin: String,
+        origin: FileOrigin,
         path: String,
         type: String,
         typePath: List<String>,
@@ -52,14 +56,14 @@ sealed class FileObject(
         val last: LastPrint?
     ) : Serializable {
         data class LastPrint(
-            val date: Long,
+            val date: Float,
             val success: Boolean
         ) : Serializable
     }
 
     data class GcodeAnalysis(
         val dimensions: Dimensions?,
-        val estimatedPrintTime: Long?,
+        val estimatedPrintTime: Float?,
         val filament: FilamentUse?,
     ) : Serializable {
         data class Dimensions(
@@ -80,8 +84,6 @@ sealed class FileObject(
     }
 
     companion object {
-        const val FILE_ORIGIN_SD = "sdcard"
-        const val FILE_ORIGIN_LOCAL = "local"
         const val FILE_TYPE_FOLDER = "folder"
         const val FILE_TYPE_MACHINE_CODE = "machinecode"
         const val FILE_TYPE_MACHINE_CODE_GCODE = "gcode"

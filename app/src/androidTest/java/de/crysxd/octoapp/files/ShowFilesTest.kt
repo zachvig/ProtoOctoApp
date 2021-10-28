@@ -47,31 +47,31 @@ class ShowFilesTest {
         onView(withText(R.string.start_printing)).perform(click())
 
         // Check slicer hint is shown and can be dismissed
-        onView(withText(R.string.using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_title)).check(matches(isDisplayed()))
-        onView(withText(R.string.using_cura_or_prusa_slicer_install_a_plugin_to_get_thumbnail_previews_detail)).check(matches(isDisplayed()))
+        onView(withText(R.string.file_manager___thumbnail_info___title)).check(matches(isDisplayed()))
+        onView(withText(R.string.file_manager___thumbnail_info___details)).check(matches(isDisplayed()))
         onView(withText(R.string.hide)).perform(click())
         waitForNot(allOf(withText(R.string.hide), isDisplayed()))
 
         // Check files listed
-        onView(withText(R.string.select_file_to_print)).check(matches(isDisplayed()))
+        onView(withText(R.string.file_manager___file_list___your_files)).check(matches(isDisplayed()))
         onView(withText("layers.gcode")).check(matches(isDisplayed()))
         onView(withText("CE3_886e3c50-0100-4d4f-bbbe-4508835bab2b.gcode")).check(matches(isDisplayed()))
         onView(withText("CE3_e6bea3cb-37c8-4a1c-8a4e-dd6cded40fa0.gcode")).check(matches(isDisplayed()))
         onView(withText("layers.gcode")).perform(click())
 
         // Check tabs
-        onView(withText(R.string.file_details_tab_preview)).check(matches(isDisplayed()))
-        onView(withText(R.string.file_details_tab_info)).check(matches(isDisplayed()))
+        onView(withText(R.string.file_manager___file_details___tab_preview)).check(matches(isDisplayed()))
+        onView(withText(R.string.file_manager___file_details___tab_info)).check(matches(isDisplayed()))
 
         // Check some details
         onView(withText("layers.gcode")).check(matches(isDisplayed()))
-        onView(withText(R.string.print_time)).check(matches(isDisplayed()))
-        onView(withText(R.string.model_size)).check(matches(isDisplayed()))
-        onView(withText(R.string.filament_use)).check(matches(isDisplayed()))
+        onView(withText(R.string.file_manager___file_details___print_time)).check(matches(isDisplayed()))
+        onView(withText(R.string.file_manager___file_details___model_size)).check(matches(isDisplayed()))
+        onView(withText(R.string.file_manager___file_details___filament_use)).check(matches(isDisplayed()))
         onView(withText(R.string.location)).check(matches(isDisplayed()))
-        onView(withText(R.string.path)).check(matches(isDisplayed()))
-        onView(withText(R.string.size)).check(matches(isDisplayed()))
-        onView(withText(R.string.uploaded)).check(matches(isDisplayed()))
-        onView(withText(R.string.last_print)).check(matches(isDisplayed()))
+        onView(withText(R.string.file_manager___file_details___path)).check(matches(isDisplayed()))
+        onView(withText(R.string.file_manager___file_details___file_size)).check(matches(isDisplayed()))
+        onView(withText(R.string.file_manager___file_details___uploaded)).check(matches(isDisplayed()))
+        onView(withText(R.string.file_manager___file_details___last_print)).check(matches(isDisplayed()))
     }
 }

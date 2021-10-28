@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.os.Build
-import androidx.core.content.FileProvider
 import androidx.core.os.ConfigurationCompat
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.ktx.auth
@@ -15,16 +14,15 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
-import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.base.di.modules.FileModule
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.forLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.io.File
 import java.util.Locale
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -33,7 +31,8 @@ import javax.inject.Inject
 
 class OpenEmailClientForFeedbackUseCase @Inject constructor(
     private val octoPrint: OctoPrintProvider,
-    private val getAppLanguageUseCase: GetAppLanguageUseCase
+    private val getAppLanguageUseCase: GetAppLanguageUseCase,
+    private val publicFileFactory: FileModule.PublicFileFactory
 ) : UseCase<OpenEmailClientForFeedbackUseCase.Params, Unit>() {
 
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -78,12 +77,8 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor(
         }
         val subject = "Feedback OctoApp $version"
 
-        val publicDir = File(context.externalCacheDir, context.getString(R.string.public_file_dir_name))
-        publicDir.mkdir()
-
-        val zipFile = File(publicDir, "data.zip")
+        val (zipFile, zipFileUri) = publicFileFactory.createPublicFile("data.zip")
         val zipStream = ZipOutputStream(zipFile.outputStream())
-        val zipFileUri = FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", zipFile)
         var fileCount = 0
 
         if (param.sendLogs) {

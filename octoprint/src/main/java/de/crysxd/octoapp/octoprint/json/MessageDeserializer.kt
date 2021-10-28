@@ -54,6 +54,8 @@ class MessageDeserializer(
 
         "Disconnected" -> Message.EventMessage.Disconnected
 
+        "UpdatedFiles" -> Message.EventMessage.UpdatedFiles
+
         "PrintStarted" -> deserializeFileEventMessage(Message.EventMessage.PrintStarted::class.java, o["payload"].asJsonObject)
 
         "FileSelected" -> deserializeFileEventMessage(Message.EventMessage.FileSelected::class.java, o["payload"].asJsonObject)
