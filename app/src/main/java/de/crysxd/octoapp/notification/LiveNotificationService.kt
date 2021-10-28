@@ -277,6 +277,9 @@ class LiveNotificationService : Service() {
                                 val current = message.toPrint()
                                 if (last.objectId == current.objectId && current.progress >= 100) {
                                     notificationController.notifyCompleted(instanceId, current)
+                                    Timber.i("Print completed")
+                                } else {
+                                    Timber.i("Print not active but did not complete: lastId=${last.objectId} ${current.objectId} progress=${current.progress}")
                                 }
                             }
                         }
