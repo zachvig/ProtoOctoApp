@@ -178,7 +178,7 @@ class EventWebSocket(
                 val message = gson.fromJson(text, Message::class.java)
 
                 if (message is Message.CurrentMessage) {
-                    if (currentMessageCounter++ % 5 == 0) {
+                    if (currentMessageCounter++ % 10 == 0) {
                         logger.log(Level.INFO, "Current message received: ${logMaskPattern.matcher(text).replaceAll("[...]")} ")
                     }
                     lastCurrentMessage = message

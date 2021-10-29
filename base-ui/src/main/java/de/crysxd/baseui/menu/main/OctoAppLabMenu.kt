@@ -16,6 +16,7 @@ class OctoAppLabMenu : Menu {
         NotificationBatterySaver(),
         SuppressM115Request(),
         AllowTerminalDuringPrint(),
+        WebcamBlackScreenDebug(),
     )
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.lab_menu___title)
@@ -82,6 +83,22 @@ class OctoAppLabMenu : Menu {
         override suspend fun getDescription(context: Context) = context.getString(R.string.lab_menu___allow_terminal_during_print_description)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             BaseInjector.get().octoPreferences().allowTerminalDuringPrint = enabled
+        }
+    }
+
+    class WebcamBlackScreenDebug : ToggleMenuItem() {
+        override val isEnabled get() = BaseInjector.get().octoPreferences().webcamBlackscreenDebug
+        override val itemId = "webcam_black_screen_debug"
+        override var groupId = ""
+        override val canBePinned = false
+        override val order = 165
+        override val style = MenuItemStyle.Settings
+        override val icon = R.drawable.ic_round_bug_report_24
+
+        override suspend fun getTitle(context: Context) = "Webcam debug mode"
+        override suspend fun getDescription(context: Context) = "This is a debug mode, you don't need this 😋 Changes apply the next time you open the app"
+        override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
+            BaseInjector.get().octoPreferences().webcamBlackscreenDebug = enabled
         }
     }
 }

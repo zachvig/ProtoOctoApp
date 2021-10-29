@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.Point
 import android.net.Uri
+import android.os.Build
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -114,6 +116,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
     private val binding = WebcamViewBinding.inflate(LayoutInflater.from(context), this)
 
+
     init {
         applyState(null, state)
         usedLiveIndicator = binding.liveIndicator
@@ -122,6 +125,28 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         binding.imageButtonFullscreen.setOnClickListener { onFullscreenClicked() }
         binding.imageButtonSwitchCamera.setOnClickListener { onSwitchWebcamClicked() }
         binding.resolutionIndicator.setOnClickListener { onResolutionClicked() }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val webCamDebug = BaseInjector.get().octoPreferences().webcamBlackscreenDebug
+            if (webCamDebug) {
+                binding.playingState.foreground = ContextCompat.getDrawable(context, R.drawable.a_debug_1)
+                binding.mjpegSurface.foreground = ContextCompat.getDrawable(context, R.drawable.a_debug_6)
+                binding.errorState.foreground = ContextCompat.getDrawable(context, R.drawable.a_debug_5)
+                binding.streamStalledIndicator.foreground = ContextCompat.getDrawable(context, R.drawable.a_debug_3)
+                binding.reconnectingState.foreground = ContextCompat.getDrawable(context, R.drawable.a_debug_4)
+                foreground = ContextCompat.getDrawable(context, R.drawable.a_debug_2)
+            } else {
+                binding.playingState.foreground = null
+                binding.mjpegSurface.foreground = null
+                binding.errorState.foreground = null
+                binding.streamStalledIndicator.foreground = null
+                binding.reconnectingState.foreground = null
+                foreground = null
+            }
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -321,7 +346,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             }
         }
 
-    private fun displayMjpegFrame(state: WebcamState.MjpegFrameReady) {
+    private fun displayMjpegFrame(newState: WebcamState.MjpegFrameReady) {
         // Do not update frame if a transition is active
         if (transitionActive) {
             Timber.i("Drop frame, transition active")
@@ -334,15 +359,18 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         }
 
         // Update image matrix and set the animated flag. As it's now initialized, we can animate changes
-        binding.mjpegSurface.imageMatrix = createMjpegMatrix(scaleToFill, state)
-        animatedMatrix = true
+        val oldState = state as? WebcamState.MjpegFrameReady
+        if (newState.flipH != oldState?.flipH || newState.flipV != oldState.flipV || newState.rotate90 != oldState.rotate90 || oldState.frame.width != newState.frame.width || oldState.frame.height != newState.frame.height) {
+            binding.mjpegSurface.imageMatrix = createMjpegMatrix(scaleToFill, newState)
+            animatedMatrix = true
+        }
 
-        val size = min(state.frame.width, state.frame.height)
+        val size = min(newState.frame.width, newState.frame.height)
         @SuppressLint("SetTextI18n")
         binding.resolutionIndicator.text = "${size}p"
-        applyAspectRatio(state.frame.width, state.frame.height)
+        applyAspectRatio(newState.frame.width, newState.frame.height)
         binding.resolutionIndicator.isVisible = BaseInjector.get().octoPreferences().isShowWebcamResolution
-        invalidateMjpegFrame(state.frame)
+        invalidateMjpegFrame(newState.frame)
     }
 
     private fun beginDelayedTransition() {
@@ -426,10 +454,10 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         matrix.postScale(scale, scale)
 
         // Center in view
-        matrix.postTranslate(
-            (width - (state.frame.width * scale)) / 2,
-            (height - (state.frame.height * scale)) / 2
-        )
+        val dx = (width - (state.frame.width * scale)) / 2
+        val dy = (height - (state.frame.height * scale)) / 2
+        matrix.postTranslate(dx, dy)
+        Timber.d("Creating matrix with flipH=${state.flipH} flipV=${state.flipV} scale=$scale, dx=$dx, dy=$dy")
         return matrix
     }
 
