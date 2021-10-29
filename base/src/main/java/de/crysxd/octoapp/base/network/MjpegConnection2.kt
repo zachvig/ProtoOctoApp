@@ -29,6 +29,7 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.internal.closeQuietly
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
@@ -48,6 +49,7 @@ class MjpegConnection2(
     private val tempCache = ByteArray(bufferSize)
     private val cache = ByteCache()
     private val timeoutMs = Firebase.remoteConfig.getLong("webcam_timeout_ms")
+    private var response: Response? = null
 
     companion object {
         private var instanceCounter = 0
@@ -63,14 +65,15 @@ class MjpegConnection2(
             emit(MjpegSnapshot.Loading)
 
             Timber.tag(tag).i("Connecting")
-            val response = connect()
+            val localResponse = connect()
+            response = localResponse
             hasBeenConnected = true
             Timber.tag(tag).i("Connected, getting boundary")
-            val boundary = extractBoundary(response)
+            val boundary = extractBoundary(localResponse)
             Timber.tag(tag).i("Boundary extracted, starting to load images ($boundary)")
 
             cache.reset()
-            val inputStream = response.body!!.byteStream().buffered(bufferSize * 4)
+            val inputStream = localResponse.body!!.byteStream().buffered(bufferSize * 4)
             while (true) {
                 emit(
                     MjpegSnapshot.Frame(
@@ -80,6 +83,7 @@ class MjpegConnection2(
             }
         }.onCompletion {
             Timber.tag(tag).i("Stopped stream")
+            response?.body?.closeQuietly()
         }.onStart {
             Timber.tag(tag).i("Started stream")
         }.retryWhen { cause, attempt ->
