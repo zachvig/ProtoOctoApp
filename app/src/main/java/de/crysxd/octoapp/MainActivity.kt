@@ -73,9 +73,12 @@ import timber.log.Timber
 import de.crysxd.octoapp.octoprint.models.socket.Message as SocketMessage
 import de.crysxd.octoapp.preprintcontrols.di.PrePrintControlsInjector as ConnectPrinterInjector
 
-const val EXTRA_TARGET_OCTOPRINT_ID = "octoprint_id"
-
 class MainActivity : OctoActivity() {
+
+    companion object {
+        const val EXTRA_TARGET_OCTOPRINT_ID = "octoprint_id"
+        const val EXTRA_CLICK_URI = "clickUri"
+    }
 
     private lateinit var binding: MainActivityBinding
     private val viewModel by lazy { ViewModelProvider(this)[MainActivityViewModel::class.java] }
@@ -254,6 +257,19 @@ class MainActivity : OctoActivity() {
             if (it.host == "app.octoapp.eu") {
                 // Give a second for everything to settle
                 handleDeepLink(it)
+            }
+        }
+
+        intent?.getStringExtra(EXTRA_CLICK_URI)?.let {
+            try {
+                val uri = Uri.parse(it)
+                Timber.i("Handling click URI: $uri")
+                if (uri.host == "app.octoapp.eu") {
+                    // Give a second for everything to settle
+                    handleDeepLink(uri)
+                }
+            } catch (e: Exception) {
+                Timber.e(e)
             }
         }
 
