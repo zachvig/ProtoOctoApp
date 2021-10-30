@@ -9,8 +9,10 @@ import java.util.concurrent.TimeUnit
 
 data class Sale(
     val banner: String?,
+    val bannerCompact: String?,
     @SerializedName("sale_id") val saleId: String?,
     @SerializedName("end_time") val endTime: Long?,
+    @SerializedName("start_time") val startTime: Long?,
     val offers: Map<String, String>?,
 ) {
     val bannerWithTime: CharSequence?
@@ -33,7 +35,7 @@ fun FirebaseRemoteConfig.getSale(): Sale? {
             val json = getString("purchase_sale").takeIf { it.isNotBlank() } ?: return@getSale null
             Timber.d("Using sale: $json")
             it.fromJson(json, Sale::class.java)
-        }.takeIf { it.endTime == null || it.endTime > System.currentTimeMillis() }
+        }.takeIf { (it.endTime == null || it.endTime > System.currentTimeMillis()) && (it.startTime == null || it.startTime < System.currentTimeMillis()) }
     } catch (e: Exception) {
         Timber.e(e)
         return null

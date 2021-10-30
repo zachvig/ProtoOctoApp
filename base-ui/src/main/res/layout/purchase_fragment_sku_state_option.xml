@@ -48,7 +48,7 @@
             android:background="@drawable/bg_chip"
             android:backgroundTint="@color/red"
             android:gravity="center"
-            android:textAppearance="@style/OctoTheme.TextAppearance.Discount"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Focus"
             android:textColor="@color/text_colored_background"
             app:layout_constraintBottom_toBottomOf="@+id/priceOld"
             app:layout_constraintEnd_toEndOf="parent"
