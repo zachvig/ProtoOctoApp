@@ -374,7 +374,8 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     }
 
     private fun beginDelayedTransition() {
-        TransitionManager.endTransitions(this)
+//        Suspect to cause #922
+//        TransitionManager.endTransitions(this)
         TransitionManager.beginDelayedTransition(this, TransitionSet().also {
             it.addTransition(Fade())
             if (animatedMatrix) {
