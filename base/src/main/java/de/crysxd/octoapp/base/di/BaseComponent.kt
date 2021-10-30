@@ -7,6 +7,7 @@ import dagger.Component
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.data.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.data.repository.GcodeHistoryRepository
+import de.crysxd.octoapp.base.data.repository.MediaFileRepository
 import de.crysxd.octoapp.base.data.repository.NotificationIdRepository
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.data.repository.PinnedMenuItemRepository
@@ -109,6 +110,7 @@ interface BaseComponent {
     fun notificationIdRepository(): NotificationIdRepository
     fun temperatureDataRepository(): TemperatureDataRepository
     fun tutorialsRepository(): TutorialsRepository
+    fun mediaFileRepository(): MediaFileRepository
 
     // UseCaseModule
     fun setTargetTemperatureUseCase(): SetTargetTemperaturesUseCase

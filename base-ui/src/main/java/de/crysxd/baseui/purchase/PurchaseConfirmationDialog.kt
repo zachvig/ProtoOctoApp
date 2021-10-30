@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
@@ -18,8 +17,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.baseui.R
 import de.crysxd.baseui.databinding.PurchaseCofirmationDialogBinding
+import de.crysxd.octoapp.base.di.BaseInjector
 import kotlinx.coroutines.delay
-import timber.log.Timber
 
 class PurchaseConfirmationDialog : DialogFragment() {
     private val mediaPlayer = MediaPlayer()
@@ -28,23 +27,38 @@ class PurchaseConfirmationDialog : DialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
         PurchaseCofirmationDialogBinding.inflate(inflater, container, false).also { binding = it }.root
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mediaPlayer.isLooping = true
-        mediaPlayer.setDataSource(getString(R.string.video_url___success))
-        mediaPlayer.prepareAsync()
-        mediaPlayer.playbackParams = mediaPlayer.playbackParams.also { p -> p.speed = 0.6f }
-        mediaPlayer.setOnPreparedListener {
-            mediaPlayer.start()
-        }
-        mediaPlayer.setOnInfoListener { _, what, _ ->
-            if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                Timber.i("Fading overlay out")
-                binding.backgroundSurfaceOverlay.animate()?.alpha(0.75f)?.start()
-            }
+    private fun prepareVideo() {
+        val loadingStart = System.currentTimeMillis()
+        BaseInjector.get().mediaFileRepository().getMediaUri(getString(R.string.video_url___success), viewLifecycleOwner) { uri ->
+            binding.backgroundSurface.holder.addCallback(object : SurfaceHolder.Callback {
+                override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) = Unit
+                override fun surfaceDestroyed(holder: SurfaceHolder) = Unit
+                override fun surfaceCreated(holder: SurfaceHolder) {
+                    mediaPlayer.setDataSource(requireContext(), uri)
+                    mediaPlayer.setDisplay(holder)
+                    mediaPlayer.prepareAsync()
+                    mediaPlayer.isLooping = true
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        mediaPlayer.playbackParams = mediaPlayer.playbackParams.also { p -> p.speed = 0.6f }
+                    }
 
-            true
+                    startPostponedEnterTransition()
+
+                    mediaPlayer.setOnPreparedListener {
+                        mediaPlayer.start()
+                    }
+                    mediaPlayer.setOnInfoListener { _, what, _ ->
+                        if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+                            binding.backgroundSurfaceOverlay.animate()
+                                .setDuration(600)
+                                .alpha(0.75f)
+                                .start()
+                        }
+
+                        true
+                    }
+                }
+            })
         }
     }
 
@@ -66,13 +80,6 @@ class PurchaseConfirmationDialog : DialogFragment() {
         binding.content.movementMethod = LinkMovementMethod()
         binding.header.imageViewStatusBackground.isVisible = false
         binding.backgroundSurface.holder.setFormat(PixelFormat.TRANSLUCENT)
-        binding.backgroundSurface.holder.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) = Unit
-            override fun surfaceDestroyed(holder: SurfaceHolder) = Unit
-            override fun surfaceCreated(holder: SurfaceHolder) {
-                mediaPlayer.setSurface(holder.surface)
-            }
-        })
 
         // Fade views in
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
@@ -84,6 +91,8 @@ class PurchaseConfirmationDialog : DialogFragment() {
                 delay(200)
             }
         }
+
+        prepareVideo()
     }
 
     override fun onStart() {

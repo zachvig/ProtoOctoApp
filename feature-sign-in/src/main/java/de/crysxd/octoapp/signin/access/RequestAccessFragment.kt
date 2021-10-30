@@ -1,7 +1,6 @@
 package de.crysxd.octoapp.signin.access
 
 import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
@@ -98,30 +97,31 @@ class RequestAccessFragment : BaseFragment() {
 
     private fun prepareVideo() {
         contentBinding.videoOverlay.alpha = 1f
+        BaseInjector.get().mediaFileRepository().getMediaUri(getString(R.string.video_url___access_explainer), viewLifecycleOwner) { uri ->
+            contentBinding.video.holder.addCallback(object : SurfaceHolder.Callback {
+                override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) = Unit
+                override fun surfaceDestroyed(holder: SurfaceHolder) = Unit
+                override fun surfaceCreated(holder: SurfaceHolder) {
 
-        contentBinding.video.holder.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) = Unit
-            override fun surfaceDestroyed(holder: SurfaceHolder) = Unit
-            override fun surfaceCreated(holder: SurfaceHolder) {
-                val mediaPath = Uri.parse(getString(R.string.video_url___access_explainer))
-                mediaPlayer.setDataSource(requireContext(), mediaPath)
-                mediaPlayer.setDisplay(holder)
-                mediaPlayer.prepareAsync()
-                mediaPlayer.isLooping = true
+                    mediaPlayer.setDataSource(requireContext(), uri)
+                    mediaPlayer.setDisplay(holder)
+                    mediaPlayer.prepareAsync()
+                    mediaPlayer.isLooping = true
 
-                startPostponedEnterTransition()
+                    startPostponedEnterTransition()
 
-                mediaPlayer.setOnPreparedListener {
-                    mediaPlayer.start()
-                }
-                mediaPlayer.setOnInfoListener { _, what, _ ->
-                    if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                        contentBinding.videoOverlay.animate().alpha(0f).setDuration(150).start()
+                    mediaPlayer.setOnPreparedListener {
+                        mediaPlayer.start()
                     }
-                    true
+                    mediaPlayer.setOnInfoListener { _, what, _ ->
+                        if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+                            contentBinding.videoOverlay.animate().alpha(0f).setDuration(150).start()
+                        }
+                        true
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 
     private fun continueWithManualApiKey() {

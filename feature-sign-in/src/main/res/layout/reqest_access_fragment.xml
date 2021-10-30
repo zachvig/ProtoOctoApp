@@ -79,7 +79,7 @@
                     android:id="@+id/videoOverlay"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/white" />
+                    android:background="@color/input_background" />
             </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

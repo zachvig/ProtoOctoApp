@@ -9,6 +9,7 @@ import de.crysxd.octoapp.base.data.models.GcodeHistoryItem
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.data.repository.GcodeFileRepository
 import de.crysxd.octoapp.base.data.repository.GcodeHistoryRepository
+import de.crysxd.octoapp.base.data.repository.MediaFileRepository
 import de.crysxd.octoapp.base.data.repository.NotificationIdRepository
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.data.repository.PinnedMenuItemRepository
@@ -18,8 +19,10 @@ import de.crysxd.octoapp.base.data.repository.TutorialsRepository
 import de.crysxd.octoapp.base.data.repository.WidgetPreferencesRepository
 import de.crysxd.octoapp.base.data.source.DataSource
 import de.crysxd.octoapp.base.data.source.LocalGcodeFileDataSource
+import de.crysxd.octoapp.base.data.source.LocalMediaFileDataSource
 import de.crysxd.octoapp.base.data.source.LocalPinnedMenuItemsDataSource
 import de.crysxd.octoapp.base.data.source.RemoteGcodeFileDataSource
+import de.crysxd.octoapp.base.data.source.RemoteMediaFileDataSource
 import de.crysxd.octoapp.base.data.source.RemoteTutorialsDataSource
 import de.crysxd.octoapp.base.data.source.WidgetPreferencesDataSource
 import de.crysxd.octoapp.base.di.BaseScope
@@ -120,4 +123,14 @@ open class OctoPrintModule {
     open fun provideLocalDnsResolver(
         context: Context
     ) = LocalDnsResolver(context)
+
+    @BaseScope
+    @Provides
+    open fun provideMediaFileRepository(
+        localMediaFileDataSource: LocalMediaFileDataSource,
+        remoteMediaFileDataSource: RemoteMediaFileDataSource,
+    ) = MediaFileRepository(
+        localDataSource = localMediaFileDataSource,
+        remoteDataSource = remoteMediaFileDataSource
+    )
 }

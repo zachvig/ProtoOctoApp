@@ -12,9 +12,11 @@ import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.data.source.DataSource
 import de.crysxd.octoapp.base.data.source.LocalGcodeFileDataSource
 import de.crysxd.octoapp.base.data.source.LocalGcodeHistoryDataSource
+import de.crysxd.octoapp.base.data.source.LocalMediaFileDataSource
 import de.crysxd.octoapp.base.data.source.LocalOctoPrintInstanceInformationSource
 import de.crysxd.octoapp.base.data.source.LocalPinnedMenuItemsDataSource
 import de.crysxd.octoapp.base.data.source.RemoteGcodeFileDataSource
+import de.crysxd.octoapp.base.data.source.RemoteMediaFileDataSource
 import de.crysxd.octoapp.base.data.source.RemoteTutorialsDataSource
 import de.crysxd.octoapp.base.data.source.WidgetPreferencesDataSource
 import de.crysxd.octoapp.base.di.BaseScope
@@ -82,4 +84,16 @@ class DataSourceModule {
         sharedPreferences = sharedPreferences,
         gson = createGson()
     )
+
+    @Provides
+    @BaseScope
+    fun provideLocalMediaFileDataSource(
+        context: Context,
+    ) = LocalMediaFileDataSource(
+        context = context
+    )
+
+    @Provides
+    @BaseScope
+    fun provideRemoteMediaFileDataSource() = RemoteMediaFileDataSource()
 }

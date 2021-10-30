@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="video_url___success" translatable="false">https://firebasestorage.googleapis.com/v0/b/octoapp-4e438.appspot.com/o/resources%2Fapp%2Fsuccess_light.mp4?alt=media&amp;token=2e142fab-d7f3-47de-9a99-12a5af1da048</string>
-    <string name="video_url___access_explainer" translatable="false">https://firebasestorage.googleapis.com/v0/b/octoapp-4e438.appspot.com/o/resources%2Fapp%2Faccess_explainer.mp4?alt=media&amp;token=46496e98-b32c-46c5-81d6-9cf9eeba6403</string>
+    <string name="video_url___success" translatable="false">https://firebasestorage.googleapis.com/v0/b/octoapp-4e438.appspot.com/o/resources%2Fapp%2Fsuccess_light.webm?alt=media&amp;token=d7f98543-c5f7-4af0-b5fa-9958af3e4613</string>
+    <string name="video_url___access_explainer" translatable="false">https://firebasestorage.googleapis.com/v0/b/octoapp-4e438.appspot.com/o/resources%2Fapp%2Faccess_explainer.webm?alt=media&amp;token=fb11bbc5-5e83-40cf-8585-56cb0e696dfc</string>
 </resources>
