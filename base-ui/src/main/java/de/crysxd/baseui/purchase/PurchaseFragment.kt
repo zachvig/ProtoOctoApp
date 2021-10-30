@@ -32,13 +32,11 @@ import de.crysxd.baseui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.data.models.getSale
-import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.utils.LongDuration
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import java.text.NumberFormat
-import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 
 class PurchaseFragment : BaseFragment(), InsetAwareScreen {
@@ -80,30 +78,18 @@ class PurchaseFragment : BaseFragment(), InsetAwareScreen {
         })
 
         // Sales banner with countdown
-        binding.saleBannerText.text = getSalesBannerText()
+        binding.saleBannerText.text = Firebase.remoteConfig.getSale()?.bannerWithTime
         binding.saleBanner.isVisible = binding.saleBannerText.text.isNotBlank()
         if (binding.saleBanner.isVisible) {
             viewLifecycleOwner.lifecycleScope.launchWhenCreated {
                 while (isActive) {
                     delay(1000)
-                    binding.saleBannerText.text = getSalesBannerText()
+                    binding.saleBannerText.text = Firebase.remoteConfig.getSale()?.bannerWithTime
                 }
             }
         }
 
         populateInitState()
-    }
-
-    private fun getSalesBannerText() = sale?.let {
-        val banner = it.banner ?: return@let null
-        val until = it.endTime ?: 0L
-        val now = System.currentTimeMillis()
-        val left = (until - now).coerceAtLeast(0)
-        val hours = TimeUnit.MILLISECONDS.toHours(left)
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(left - TimeUnit.HOURS.toMillis(hours))
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(left - TimeUnit.HOURS.toMillis(hours) - TimeUnit.MINUTES.toMillis(minutes))
-        val countDown = String.format("%02dh %02dmin %02ds", hours, minutes, seconds)
-        String.format(banner, countDown).toHtml()
     }
 
     private fun moveToState(state: PurchaseViewModel.ViewState) {

@@ -12,6 +12,12 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <FrameLayout
+            android:id="@+id/customHeaderContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:visibility="visible" />
+
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
@@ -58,7 +64,7 @@
                 android:layout_marginEnd="@dimen/margin_2"
                 android:drawablePadding="@dimen/margin_2"
                 android:gravity="center"
-                android:text="Announcement Title"
+                tools:text="Announcement Title"
                 android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
                 android:textColor="@color/dark_text"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -74,7 +80,7 @@
                 android:layout_marginEnd="@dimen/margin_2"
                 android:drawablePadding="@dimen/margin_2"
                 android:gravity="center"
-                android:text="Announcement subtitle"
+                tools:text="Announcement subtitle"
                 android:textAppearance="@style/OctoTheme.TextAppearance"
                 android:textColor="@color/light_text"
                 app:layout_constraintEnd_toEndOf="parent"
