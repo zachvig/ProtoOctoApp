@@ -8,4 +8,5 @@ data class BillingData(
     val isPremiumFromSubscription: Boolean = false,
     val purchases: Set<String> = emptySet(),
     val availableSku: List<SkuDetails> = emptyList(),
+    val allSku: List<SkuDetails> = emptyList(),
 )

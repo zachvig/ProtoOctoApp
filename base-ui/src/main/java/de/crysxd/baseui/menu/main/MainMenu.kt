@@ -4,6 +4,8 @@ import android.content.Context
 import android.net.Uri
 import androidx.annotation.IdRes
 import androidx.core.os.bundleOf
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.baseui.R
 import de.crysxd.baseui.menu.Menu
 import de.crysxd.baseui.menu.MenuHost
@@ -23,6 +25,7 @@ import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_TUTORIALS
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_YOUTUBE
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.ext.toHtml
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -57,8 +60,11 @@ class SupportOctoAppMenuItem : MenuItem {
     override val canBePinned = false
     override val icon = R.drawable.ic_round_favorite_24
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_support_octoapp)
+    override suspend fun getTitle(context: Context) = Firebase.remoteConfig.getString("purchase_screen_launch_cta").takeUnless { it.isBlank() }
+        ?: context.getString(R.string.main_menu___item_support_octoapp)
+
     override suspend fun isVisible(@IdRes destinationId: Int) = BillingManager.shouldAdvertisePremium()
+    override suspend fun getDescription(context: Context) = Firebase.remoteConfig.getString("purchase_screen_launch_details").takeUnless { it.isBlank() }?.toHtml()
     override suspend fun onClicked(host: MenuHost?) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "main_menu"))
         host?.getMenuActivity()?.let {

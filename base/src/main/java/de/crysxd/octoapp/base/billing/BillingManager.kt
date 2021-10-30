@@ -129,16 +129,18 @@ object BillingManager {
         try {
             fetchRemoteConfig()
             Timber.i("Updating SKU")
-            val subscriptionSkuIds = Firebase.remoteConfig.getString("available_subscription_sku_id")
-            val purchaseSkuIds = Firebase.remoteConfig.getString("available_purchase_sku_id")
             fun String.splitSkuIds() = split(",").map { it.trim() }
+            val subscriptionSkuIds = Firebase.remoteConfig.getString("all_subscription_sku_id").splitSkuIds()
+            val purchaseSkuIds = Firebase.remoteConfig.getString("all_purchase_sku_id").splitSkuIds()
+            val availableSubscriptionSkuIds = Firebase.remoteConfig.getString("available_subscription_sku_id").splitSkuIds()
+            val availablePurchaseSkuIds = Firebase.remoteConfig.getString("available_purchase_sku_id").splitSkuIds()
             Timber.i("Fetching SKU: subscriptions=$subscriptionSkuIds purchases=$purchaseSkuIds")
 
             val supervisor = SupervisorJob()
             val subscriptions = async(supervisor) {
                 fetchSku(
                     SkuDetailsParams.newBuilder()
-                        .setSkusList(subscriptionSkuIds.splitSkuIds())
+                        .setSkusList(subscriptionSkuIds)
                         .setType(BillingClient.SkuType.SUBS)
                         .build()
                 )
@@ -147,16 +149,18 @@ object BillingManager {
             val purchases = async(supervisor) {
                 fetchSku(
                     SkuDetailsParams.newBuilder()
-                        .setSkusList(purchaseSkuIds.splitSkuIds())
+                        .setSkusList(purchaseSkuIds)
                         .setType(BillingClient.SkuType.INAPP)
                         .build()
                 )
             }
 
             val allSku = listOf(subscriptions.await(), purchases.await()).flatten()
+            val availableSku = allSku.filter { availablePurchaseSkuIds.contains(it.sku) || availableSubscriptionSkuIds.contains(it.sku) }
             Timber.i("Updated SKU: ${allSku.map { it.sku }}")
+            Timber.i("Available SKU: ${availableSku.map { it.sku }}")
             Timber.i("Premium features: ${Firebase.remoteConfig.getString("premium_features")}")
-            billingChannel.update { it.copy(availableSku = allSku) }
+            billingChannel.update { it.copy(availableSku = availableSku, allSku = allSku) }
         } catch (e: Exception) {
             Timber.e(e)
         }

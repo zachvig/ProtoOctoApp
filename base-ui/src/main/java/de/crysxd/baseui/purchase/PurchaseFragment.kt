@@ -1,5 +1,6 @@
 package de.crysxd.baseui.purchase
 
+import android.graphics.Paint
 import android.graphics.Rect
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
@@ -30,9 +31,14 @@ import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.data.models.getSale
+import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.utils.LongDuration
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
+import java.text.NumberFormat
+import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 
 class PurchaseFragment : BaseFragment(), InsetAwareScreen {
@@ -48,6 +54,7 @@ class PurchaseFragment : BaseFragment(), InsetAwareScreen {
             }
         }
     }
+    private val sale by lazy { Firebase.remoteConfig.getSale() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         PurchaseFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
@@ -61,9 +68,10 @@ class PurchaseFragment : BaseFragment(), InsetAwareScreen {
         var eventSent = false
         binding.appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
             val collapseProgress = verticalOffset.absoluteValue / binding.appBar.totalScrollRange.toFloat()
-            val content = listOf<View?>(binding.initState.root, binding.skuState.root).firstOrNull { it?.isVisible == true }
-            val padding = binding.statusBarScrim.height + binding.root.resources.getDimension(R.dimen.margin_4)
-            content?.updatePadding(top = (padding * collapseProgress).toInt())
+            val content = binding.saleBanner.takeIf { it.isVisible } ?: binding.contentContainer
+            val padding = binding.statusBarScrim.height
+            binding.statusBarScrim.alpha = 1 - collapseProgress
+            content.updatePadding(top = (padding * collapseProgress).toInt())
 
             if (!eventSent && verticalOffset != 0) {
                 eventSent = true
@@ -71,7 +79,31 @@ class PurchaseFragment : BaseFragment(), InsetAwareScreen {
             }
         })
 
+        // Sales banner with countdown
+        binding.saleBannerText.text = getSalesBannerText()
+        binding.saleBanner.isVisible = binding.saleBannerText.text.isNotBlank()
+        if (binding.saleBanner.isVisible) {
+            viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+                while (isActive) {
+                    delay(1000)
+                    binding.saleBannerText.text = getSalesBannerText()
+                }
+            }
+        }
+
         populateInitState()
+    }
+
+    private fun getSalesBannerText() = sale?.let {
+        val banner = it.banner ?: return@let null
+        val until = it.endTime ?: 0L
+        val now = System.currentTimeMillis()
+        val left = (until - now).coerceAtLeast(0)
+        val hours = TimeUnit.MILLISECONDS.toHours(left)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(left - TimeUnit.HOURS.toMillis(hours))
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(left - TimeUnit.HOURS.toMillis(hours) - TimeUnit.MINUTES.toMillis(minutes))
+        val countDown = String.format("%02dh %02dmin %02ds", hours, minutes, seconds)
+        String.format(banner, countDown).toHtml()
     }
 
     private fun moveToState(state: PurchaseViewModel.ViewState) {
@@ -126,6 +158,17 @@ class PurchaseFragment : BaseFragment(), InsetAwareScreen {
         )
         state.billingData.availableSku.forEach { details ->
             val itemBinding = PurchaseFragmentSkuStateOptionBinding.inflate(LayoutInflater.from(requireContext()))
+
+            // If we have a matching offer, we show the old price
+            sale?.offers?.get(details.sku)?.let { baseSku -> state.billingData.allSku.firstOrNull { it.sku == baseSku } }?.let {
+                itemBinding.priceOld.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                itemBinding.priceOld.text = it.price
+                itemBinding.discount.text = NumberFormat.getPercentInstance().format((1 - (details.priceAmountMicros / it.priceAmountMicros.toFloat())) * -1)
+            }
+            itemBinding.priceOld.isVisible = itemBinding.priceOld.text.isNotBlank()
+            itemBinding.discount.isVisible = itemBinding.priceOld.isVisible
+
+            // Normal offer
             itemBinding.price.text = details.price
             itemBinding.buttonSelect.text = state.names.getOrElse(details.sku) { details.title }
             itemBinding.details.text = LongDuration.parse(details.freeTrialPeriod)?.format(requireContext())?.let { getString(R.string.free_trial_x, it) }
@@ -143,11 +186,12 @@ class PurchaseFragment : BaseFragment(), InsetAwareScreen {
                 BillingManager.purchase(requireActivity(), details)
             }
             itemBinding.badge.setImageResource(
-                when (state.badges[details.sku]) {
-                    PurchaseViewModel.Badge.NoBadge -> 0
-                    PurchaseViewModel.Badge.Popular -> R.drawable.ic_badge_popular
-                    PurchaseViewModel.Badge.BestValue -> R.drawable.ic_badge_best_value
-                    null -> 0
+                when {
+                    sale?.offers?.containsKey(details.sku) == true -> R.drawable.ic_badge_sale
+                    state.badges[details.sku] == PurchaseViewModel.Badge.NoBadge -> 0
+                    state.badges[details.sku] == PurchaseViewModel.Badge.Popular -> R.drawable.ic_badge_popular
+                    state.badges[details.sku] == PurchaseViewModel.Badge.BestValue -> R.drawable.ic_badge_best_value
+                    else -> 0
                 }
             )
             binding.skuState.skuList.addView(itemBinding.root)
