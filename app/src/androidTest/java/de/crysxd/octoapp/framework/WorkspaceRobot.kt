@@ -2,6 +2,7 @@ package de.crysxd.octoapp.framework
 
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import de.crysxd.octoapp.R
 import org.hamcrest.Matchers.allOf
 
@@ -12,10 +13,10 @@ object WorkspaceRobot {
     }
 
     fun waitForPrepareWorkspace() {
-        waitFor(allOf(withId(R.id.textViewStep2Label), isDisplayed()), timeout = 10_000)
+        waitFor(allOf(withText(R.string.start_printing), isDisplayed()), timeout = 10_000)
     }
 
     fun waitForPrintWorkspace() {
-        waitFor(allOf(withId(R.id.textViewStep3Label), isDisplayed()), timeout = 10_000)
+        waitFor(allOf(withText(R.string.pause), isDisplayed()), timeout = 10_000)
     }
 }
