@@ -39,7 +39,7 @@ class HelpFragment : Fragment(), MenuHost {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        postponeEnterTransition()
+        postponeEnterTransition(500, TimeUnit.MILLISECONDS)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
