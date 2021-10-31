@@ -1,6 +1,9 @@
 package de.crysxd.octoapp.framework
 
+import androidx.test.espresso.AmbiguousViewMatcherException
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.NoMatchingRootException
+import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
@@ -35,6 +38,19 @@ object MenuRobot {
     }
 
     fun waitForMenuToBeClosed() {
-        waitTime(2000)
+        fun isMenuOpen() = try {
+            onView(withId(R.id.menuContainer)).check(matches(isDisplayed()))
+            true
+        } catch (e: AmbiguousViewMatcherException) {
+            true
+        } catch (e: NoMatchingViewException) {
+            false
+        } catch (e: NoMatchingRootException) {
+            false
+        }
+
+        while (isMenuOpen()) {
+            waitTime(500)
+        }
     }
 }
