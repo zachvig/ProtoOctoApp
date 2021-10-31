@@ -71,8 +71,8 @@
     <string name="help___webcam_troubleshooting___trust_and_try_again" translatable="false">Trust server</string>
     <string name="help___webcam_troubleshooting___loading_title" translatable="false">Testing your webcam…</string>
     <string name="help___webcam_troubleshooting___help" translatable="false">Need Help?</string>
-    <string name="help___webcam_troubleshooting___title_webcam_is_working">Webcam is working</string>
-    <string name="help___webcam_troubleshooting___explainer_webcam_is_working">OctoApp was able to load images with %.1f FPS from your webcam:</string>
+    <string name="help___webcam_troubleshooting___title_webcam_is_working" translatable="false">Webcam is working</string>
+    <string name="help___webcam_troubleshooting___explainer_webcam_is_working" translatable="false">OctoApp was able to load images with %.1f FPS from your webcam:</string>
     <!-- Help -->
     <string name="help___status_x" translatable="false">Status: %s</string>
     <string name="help___octoprint_community" translatable="false">OctoPrint community</string>

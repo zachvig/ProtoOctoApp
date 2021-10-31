@@ -2,7 +2,6 @@ package de.crysxd.octoapp.signin.success
 
 import android.graphics.Rect
 import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionInflater
@@ -11,11 +10,12 @@ import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.annotation.RequiresApi
+import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import de.crysxd.baseui.InsetAwareScreen
+import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
@@ -30,7 +30,8 @@ import java.util.UUID
 class SignInSuccessFragment : Fragment(), InsetAwareScreen {
 
     companion object {
-        private const val START_DELAY = 500L
+        private const val START_DELAY = 2000L
+        private const val DURATION = 600L
     }
 
     private lateinit var binding: SignInSuccessFragmentBinding
@@ -47,23 +48,11 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
         super.onCreate(savedInstanceState)
         sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
         sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            playVideo()
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.backgroundSurface.holder.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) = Unit
-            override fun surfaceDestroyed(holder: SurfaceHolder) = Unit
-            override fun surfaceCreated(holder: SurfaceHolder) {
-                mediaPlayer.setSurface(holder.surface)
-            }
-        })
-
-        binding.buttonContinue.animate().setStartDelay(START_DELAY * 4).setDuration(600).alpha(1f).start()
-
+        binding.buttonContinue.animate().setStartDelay(START_DELAY).setDuration(DURATION).alpha(1f).start()
         binding.base.octoView.scheduleAnimation(1000) {
             party()
         }
@@ -91,31 +80,61 @@ class SignInSuccessFragment : Fragment(), InsetAwareScreen {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() = goBackToDiscover()
         })
+
+        prepareVideo()
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun playVideo() {
-        val mediaPath = Uri.parse(getString(R.string.video_url___success))
-        mediaPlayer.isLooping = true
-        mediaPlayer.setDataSource(requireContext(), mediaPath)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.playbackParams = mediaPlayer.playbackParams.also { p -> p.speed = 0.6f }
-        mediaPlayer.setOnPreparedListener {
-            mediaPlayer.start()
-        }
+    private fun prepareVideo() {
         val loadingStart = System.currentTimeMillis()
-        mediaPlayer.setOnInfoListener { _, what, _ ->
-            if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                val delay = (START_DELAY - (System.currentTimeMillis() - loadingStart)).coerceAtLeast(0)
-                binding.videoMask.animate()
-                    .setStartDelay(delay)
-                    .alpha(0.75f)
-                    .setDuration(800)
-                    .start()
-            }
+        BaseInjector.get().mediaFileRepository().getMediaUri(getString(R.string.video_url___success), viewLifecycleOwner) { uri ->
+            binding.backgroundSurface.holder.addCallback(object : SurfaceHolder.Callback {
+                override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) = Unit
+                override fun surfaceDestroyed(holder: SurfaceHolder) = Unit
+                override fun surfaceCreated(holder: SurfaceHolder) {
+                    mediaPlayer.setDataSource(requireContext(), uri)
+                    mediaPlayer.setDisplay(holder)
+                    mediaPlayer.prepareAsync()
+                    mediaPlayer.isLooping = true
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        mediaPlayer.playbackParams = mediaPlayer.playbackParams.also { p -> p.speed = 0.6f }
+                    }
 
-            true
+                    startPostponedEnterTransition()
+
+                    mediaPlayer.setOnPreparedListener {
+                        mediaPlayer.start()
+                    }
+                    mediaPlayer.setOnInfoListener { _, what, _ ->
+                        if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+                            val delay = (START_DELAY - (System.currentTimeMillis() - loadingStart)).coerceAtLeast(0)
+                            binding.videoMask.animate()
+                                .setStartDelay(delay)
+                                .alpha(0.75f)
+                                .setDuration(DURATION)
+                                .setStartDelay(delay)
+                                .start()
+                        }
+
+                        true
+                    }
+                }
+            })
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mediaPlayer.seekTo(0)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        requireOctoActivity().octo.isVisible = false
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.release()
     }
 
     override fun handleInsets(insets: Rect) {

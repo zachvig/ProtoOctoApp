@@ -157,7 +157,7 @@ class EventWebSocket(
             isOpen = false
         }
 
-        private fun shouldLogCurrentMessage() = currentMessageCounter++ % 5 == 0
+        private fun shouldLogCurrentMessage() = currentMessageCounter++ % 10 == 0
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
