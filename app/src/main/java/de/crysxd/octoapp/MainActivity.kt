@@ -416,7 +416,13 @@ class MainActivity : OctoActivity() {
             updateAllWidgets()
         }
 
-        is Event.MessageReceived -> onMessageReceived(e.message)
+        is Event.MessageReceived -> {
+            if (viewModel.connectionType == ConnectionType.Primary) {
+                setBannerVisible(false)
+            }
+
+            onMessageReceived(e.message)
+        }
 
         else -> Unit
     }
