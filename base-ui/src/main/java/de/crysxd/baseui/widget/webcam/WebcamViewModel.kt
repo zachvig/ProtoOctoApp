@@ -114,6 +114,7 @@ class WebcamViewModel(
                             }
                         } else {
                             delay(100)
+                            var lastAspectRatio: String? = null
                             MjpegConnection2(streamUrl = streamUrl, name = tag).load().map {
                                 when (it) {
                                     is MjpegConnection2.MjpegSnapshot.Loading -> UiState.Loading(canSwitchWebcam)
@@ -134,7 +135,8 @@ class WebcamViewModel(
                                     )
                                 }
                             }.onEach { state ->
-                                if (state is UiState.FrameReady) {
+                                if (state is UiState.FrameReady && state.aspectRation != lastAspectRatio) {
+                                    lastAspectRatio = state.aspectRation
                                     octoPrintRepository.updateAppSettingsForActive {
                                         it.copy(webcamLastAspectRatio = state.aspectRation)
                                     }
