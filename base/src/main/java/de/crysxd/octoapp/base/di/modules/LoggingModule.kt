@@ -11,17 +11,20 @@ import de.crysxd.octoapp.base.logging.TimberHandler
 @Module
 open class LoggingModule {
 
-    @Provides
-    @BaseScope
-    open fun provideSensitiveDataMask() = SensitiveDataMask()
+    companion object {
+        // We had issues with the logs being removed on test failure. Thus we
+        // use a "singleton" approach for logging
+        private val sensitiveDataMask = SensitiveDataMask()
+        private val timberTree = TimberCacheTree(sensitiveDataMask)
+    }
 
     @Provides
     @BaseScope
-    open fun provideTimberCacheTree(
-        mask: SensitiveDataMask
-    ): TimberCacheTree = TimberCacheTree(
-        mask
-    )
+    open fun provideSensitiveDataMask() = sensitiveDataMask
+
+    @Provides
+    @BaseScope
+    open fun provideTimberCacheTree(): TimberCacheTree = timberTree
 
     @Provides
     @BaseScope
