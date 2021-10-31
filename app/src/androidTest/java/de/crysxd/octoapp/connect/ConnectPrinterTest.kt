@@ -7,6 +7,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import com.adevinta.android.barista.rule.BaristaRule
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
@@ -52,6 +53,7 @@ class ConnectPrinterTest {
         .around(AcceptAllAccessRequestRule(testEnv))
 
     @Test(timeout = 30_000)
+    @AllowFlaky(attempts = 3)
     fun WHEN_auto_connect_is_disabled_THEN_connect_button_can_be_used() {
         // GIVEN
         BaseInjector.get().octorPrintRepository().setActive(testEnv)
@@ -66,10 +68,10 @@ class ConnectPrinterTest {
         waitForDialog(withText(R.string.connect_printer___begin_connection_cofirmation_positive))
         onView(withText(R.string.connect_printer___begin_connection_cofirmation_positive)).inRoot(isDialog()).perform(click())
         WorkspaceRobot.waitForPrepareWorkspace()
-
     }
 
     @Test(timeout = 30_000)
+    @AllowFlaky(attempts = 3)
     fun WHEN_OctoPrint_not_available_and_no_quick_switch_THEN_other_OctoPrint_can_be_connected() {
         // GIVEN
         BaseInjector.get().octorPrintRepository().setActive(wrongEnv)
@@ -87,6 +89,7 @@ class ConnectPrinterTest {
     }
 
     @Test(timeout = 30_000)
+    @AllowFlaky(attempts = 1)
     fun WHEN_OctoPrint_not_available_and_quick_switch_available_THEN_other_OctoPrint_can_be_connected() {
         // GIVEN
         BaseInjector.get().octorPrintRepository().setActive(testEnv)
@@ -105,6 +108,7 @@ class ConnectPrinterTest {
     }
 
     @Test(timeout = 30_000)
+    @AllowFlaky(attempts = 3)
     fun WHEN_power_controls_are_available_THEN_psu_can_be_turned_on() = runBlocking {
         // GIVEN
         // We need a bit of wait before/after changing virtual printer, OctoPrint otherwise gets overloaded...
