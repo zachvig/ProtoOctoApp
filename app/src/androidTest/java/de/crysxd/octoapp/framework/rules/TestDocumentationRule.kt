@@ -1,6 +1,9 @@
 package de.crysxd.octoapp.framework.rules
 
 import android.graphics.Bitmap
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.screenshot.Screenshot
 import de.crysxd.octoapp.BuildConfig
@@ -22,7 +25,11 @@ class TestDocumentationRule : TestWatcher() {
             it.collectVerbose = true
             it.clear()
         }
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
         Timber.w("Starting ${description.testName}")
+        Handler(Looper.getMainLooper()).post {
+            Toast.makeText(context, description.testName, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun failed(e: Throwable?, description: Description) {
@@ -38,7 +45,6 @@ class TestDocumentationRule : TestWatcher() {
     }
 
     private fun getFile(description: Description, suffix: String): File {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
         val dir = File(BuildConfig.FAILED_TEST_SCREENSHOT_DIR)
         if (!dir.exists()) dir.mkdirs()
         val filename = "${description.testName}.$suffix"
