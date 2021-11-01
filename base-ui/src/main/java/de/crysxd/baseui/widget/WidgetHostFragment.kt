@@ -16,6 +16,7 @@ import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.databinding.WidgetHostFragmentBinding
 import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.utils.InstantAutoTransition
+import de.crysxd.baseui.widget.webcam.WebcamView
 import de.crysxd.octoapp.base.data.models.WidgetPreferences
 import de.crysxd.octoapp.base.data.models.WidgetType
 import de.crysxd.octoapp.base.di.BaseInjector
@@ -91,7 +92,10 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
     override fun requestTransition(quickTransition: Boolean) {
         if ((System.currentTimeMillis() - viewCreatedAt) > VIEW_ANIMATION_AFTER_CREATE_THRESHOLD) {
             (view as? ViewGroup)?.let {
-                TransitionManager.beginDelayedTransition(it, if (quickTransition) InstantAutoTransition() else AutoTransition())
+                // We need to exclude the Webcam view's children as this can cause animation glitches in the webcam view
+                val transition = if (quickTransition) InstantAutoTransition() else AutoTransition()
+                transition.excludeChildren(WebcamView::class.java, true)
+                TransitionManager.beginDelayedTransition(it, transition)
             }
         }
     }
