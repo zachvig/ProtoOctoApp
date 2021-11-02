@@ -96,7 +96,9 @@ class SelectFileViewModel(
         val files = listOf(
             allFiles.filterIsInstance<FileObject.File>().map { FileWrapper.FileObjectWrapper(it) },
             uploads.map { FileWrapper.UploadWrapper(it) }
-        ).flatten().sorted()
+        ).flatten().sorted().filter {
+            it.path != selectedFile?.path
+        }
 
         listOf(
             selected,

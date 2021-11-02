@@ -113,7 +113,7 @@ class SelectFileAdapter(
                     file = it.fileObject,
                     name = it.fileObject.name,
                     detail = context.getString(R.string.file_manager___file_list___currently_selected),
-                    iconUrl = null,
+                    iconUrl = it.fileObject.thumbnail,
                     iconPlaceholder = printableFileIcon,
                     resultIcon = null,
                     id = (it.fileObject.path + it.fileObject.name + "selected").hashCode(),
