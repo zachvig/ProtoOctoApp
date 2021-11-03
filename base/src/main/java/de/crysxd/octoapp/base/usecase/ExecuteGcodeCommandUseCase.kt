@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -61,55 +60,54 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
             val readJob = async {
                 var sendLineFound = false
                 var wasExecuted = false
-                var wasExecuted = false
-            val sendLinePattern = Pattern.compile("^Send:.*%%COMMAND%%.*".replace("%%COMMAND%%", command.command))
-            val responseEndLinePattern = Pattern.compile(Firebase.remoteConfig.getString("gcode_response_end_line_pattern"))
-            val spamMessagePattern = Pattern.compile(Firebase.remoteConfig.getString("gcode_response_spam_pattern"))
+                val sendLinePattern = Pattern.compile("^Send:.*%%COMMAND%%.*".replace("%%COMMAND%%", command.command))
+                val responseEndLinePattern = Pattern.compile(Firebase.remoteConfig.getString("gcode_response_end_line_pattern"))
+                val spamMessagePattern = Pattern.compile(Firebase.remoteConfig.getString("gcode_response_spam_pattern"))
 
                 // Collect all lines from when we see `Send: $command` until we see `Recv: ok`
                 val list = serialCommunicationLogsRepository
                     .flow(false)
-                .map { it.content }
-                .onEach {
-                    if (!wasExecuted) {
-                        timber.i("Receiving first logs, executing $command now")
-                        wasExecuted = true
-                        execute(command, fromUser, timber)
-                    }
-                }
-                .filter {
-                    // Filter undesired "Spam"
-                    !spamMessagePattern.matcher(it).matches()
-                }
-                .filter {
-                    // Skip until send line was found
-                    if (!sendLineFound) {
-                        sendLineFound = sendLinePattern.matcher(it).matches()
-                        if (sendLineFound) {
-                            timber.v("Send line was found: $it")
-                        } else {
-                            timber.v("Skipping $it")
+                    .map { it.content }
+                    .onEach {
+                        if (!wasExecuted) {
+                            timber.i("Receiving first logs, executing $command now")
+                            wasExecuted = true
+                            execute(command, fromUser, timber)
                         }
-                        sendLineFound
-                    } else {
-                        timber.v("Passing $it")
-                        true
                     }
-                }
-                .takeWhile {
-                    timber.v("Recording $it")
-                    !responseEndLinePattern.matcher(it).matches()
-                }
-                .toList()
+                    .filter {
+                        // Filter undesired "Spam"
+                        !spamMessagePattern.matcher(it).matches()
+                    }
+                    .filter {
+                        // Skip until send line was found
+                        if (!sendLineFound) {
+                            sendLineFound = sendLinePattern.matcher(it).matches()
+                            if (sendLineFound) {
+                                timber.v("Send line was found: $it")
+                            } else {
+                                timber.v("Skipping $it")
+                            }
+                            sendLineFound
+                        } else {
+                            timber.v("Passing $it")
+                            true
+                        }
+                    }
+                    .takeWhile {
+                        timber.v("Recording $it")
+                        !responseEndLinePattern.matcher(it).matches()
+                    }
+                    .toList()
 
-            timber.v("Recorded response for ${command.command}: $list")
-            Response.RecordedResponse(
-                sendLine = list.first(),
-                responseLines = list.subList(1, list.size)
-            )
-        }
+                timber.v("Recorded response for ${command.command}: $list")
+                Response.RecordedResponse(
+                    sendLine = list.first(),
+                    responseLines = list.subList(1, list.size)
+                )
+            }
 
-        // Wait until response is read
+            // Wait until response is read
             return@withContext withTimeoutOrNull(timeoutMs) {
                 readJob.await()
             } ?: let {
@@ -117,7 +115,7 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
                 readJob.cancel()
                 Response.DroppedResponse
             }
-    }
+        }
 
     private suspend fun execute(command: GcodeCommand, fromUser: Boolean, timber: Timber.Tree) {
         when (command) {
