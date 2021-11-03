@@ -27,9 +27,10 @@ import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_PRINTER_MENU
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_SETTINGS_MENU
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_TUTORIALS
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_YOUTUBE
-import de.crysxd.octoapp.base.data.models.getSale
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.ext.purchaseOffers
+import de.crysxd.octoapp.base.ext.toHtml
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -55,12 +56,13 @@ class MainMenu : Menu {
 
     override fun getCustomHeaderView(host: MenuHost) = if (BillingManager.shouldAdvertisePremium()) {
         SaleHeaderViewBinding.inflate(LayoutInflater.from(host.requireContext())).also {
+            val config = Firebase.remoteConfig.purchaseOffers.activeConfig
             val context = host.requireContext()
-            it.banner.text = Firebase.remoteConfig.getSale()?.bannerWithTime
+            it.banner.text = config.textsWithData.launchPurchaseScreenHighlight?.toHtml()
             it.banner.isVisible = it.banner.text.isNotBlank()
             it.salesSpacer.isVisible = it.banner.isVisible
             fun refreshTime() {
-                it.banner.text = Firebase.remoteConfig.getSale()?.bannerWithTime
+                it.banner.text = config.textsWithData.launchPurchaseScreenHighlight?.toHtml()
                 it.banner.postDelayed(::refreshTime, 1000)
             }
             refreshTime()
@@ -72,7 +74,7 @@ class MainMenu : Menu {
             it.item.toggle.isVisible = false
             it.item.right.isVisible = false
             it.item.secondaryButton.isVisible = false
-            it.item.text.text = Firebase.remoteConfig.getString("purchase_screen_launch_cta").takeUnless { i -> i.isBlank() }
+            it.item.text.text = config.textsWithData.launchPurchaseScreenCta.takeUnless { i -> i.isBlank() }
                 ?: context.getString(R.string.main_menu___item_support_octoapp)
             it.item.icon.setImageResource(R.drawable.ic_round_favorite_24)
             it.root.setBackgroundColor(if (it.banner.isVisible) ContextCompat.getColor(context, MenuItemStyle.Support.backgroundColor) else Color.TRANSPARENT)

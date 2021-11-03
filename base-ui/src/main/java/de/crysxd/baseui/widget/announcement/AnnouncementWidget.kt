@@ -16,9 +16,9 @@ import de.crysxd.baseui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.data.models.Announcement
 import de.crysxd.octoapp.base.data.models.WidgetType
-import de.crysxd.octoapp.base.data.models.getSale
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.ext.purchaseOffers
 import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import timber.log.Timber
@@ -59,15 +59,15 @@ class AnnouncementWidget(context: Context) : RecyclableOctoWidget<AnnouncementWi
         return !isAlreadyConnected && hasPlugin && isVisible && shouldAdvertise
     }
 
-    private fun isSaleAnnouncementVisible() = Firebase.remoteConfig.getSale()?.let {
-        val banner = it.bannerCompact?.takeIf { b -> b.isNotBlank() } ?: return@let false
+    private fun isSaleAnnouncementVisible() = Firebase.remoteConfig.purchaseOffers.activeConfig.advertisementWithData?.let {
+        val banner = it.message.takeIf { b -> b.isNotBlank() } ?: return@let false
         binding.saleAnnouncement.checkVisible(
             Announcement(
                 text = { banner.toHtml() },
                 actionText = "Show",
                 backgroundColor = R.color.red_translucent,
                 foregroundColor = R.color.red,
-                id = it.saleId ?: return@let false,
+                id = it.id,
                 actionUri = UriLibrary.getPurchaseUri(),
                 refreshInterval = 0,
             )
