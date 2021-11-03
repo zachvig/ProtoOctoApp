@@ -1,10 +1,17 @@
 package de.crysxd.baseui.menu.main
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.net.Uri
-import androidx.annotation.IdRes
+import android.view.LayoutInflater
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.baseui.R
+import de.crysxd.baseui.databinding.SaleHeaderViewBinding
 import de.crysxd.baseui.menu.Menu
 import de.crysxd.baseui.menu.MenuHost
 import de.crysxd.baseui.menu.MenuItem
@@ -18,11 +25,12 @@ import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_NEWS
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_OCTOPRINT
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_PRINTER_MENU
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_SETTINGS_MENU
-import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_SUPPORT_OCTOAPP
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_TUTORIALS
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_YOUTUBE
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.ext.purchaseOffers
+import de.crysxd.octoapp.base.ext.toHtml
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -30,7 +38,6 @@ class MainMenu : Menu {
     override fun shouldLoadBlocking() = true
     override suspend fun getMenuItem(): List<MenuItem> {
         val base = listOf(
-            SupportOctoAppMenuItem(),
             ShowPrinterMenuItem(),
             ShowSettingsMenuItem(),
             ShowOctoPrintMenuItem(),
@@ -46,24 +53,42 @@ class MainMenu : Menu {
 
         return listOf(base, pinnedItems).flatten()
     }
-}
 
-class SupportOctoAppMenuItem : MenuItem {
-    override val itemId = MENU_ITEM_SUPPORT_OCTOAPP
-    override var groupId = "support"
-    override val order = 0
-    override val style = MenuItemStyle.Support
-    override val showAsSubMenu = true
-    override val canBePinned = false
-    override val icon = R.drawable.ic_round_favorite_24
+    override fun getCustomHeaderView(host: MenuHost) = if (BillingManager.shouldAdvertisePremium()) {
+        SaleHeaderViewBinding.inflate(LayoutInflater.from(host.requireContext())).also {
+            val config = Firebase.remoteConfig.purchaseOffers.activeConfig
+            val context = host.requireContext()
+            it.banner.text = config.textsWithData.launchPurchaseScreenHighlight?.toHtml()
+            it.banner.isVisible = it.banner.text.isNotBlank()
+            it.salesSpacer.isVisible = it.banner.isVisible
+            fun refreshTime() {
+                it.banner.text = config.textsWithData.launchPurchaseScreenHighlight?.toHtml()
+                it.banner.postDelayed(::refreshTime, 1000)
+            }
+            refreshTime()
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_support_octoapp)
-    override suspend fun isVisible(@IdRes destinationId: Int) = BillingManager.shouldAdvertisePremium()
-    override suspend fun onClicked(host: MenuHost?) {
-        OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "main_menu"))
-        host?.getMenuActivity()?.let {
-            UriLibrary.getPurchaseUri().open(it)
-        }
+            it.item.badge.isVisible = false
+            it.item.description.isVisible = false
+            it.item.pin.isVisible = false
+            it.item.right.isVisible = false
+            it.item.toggle.isVisible = false
+            it.item.right.isVisible = false
+            it.item.secondaryButton.isVisible = false
+            it.item.text.text = config.textsWithData.launchPurchaseScreenCta.takeUnless { i -> i.isBlank() }
+                ?: context.getString(R.string.main_menu___item_support_octoapp)
+            it.item.icon.setImageResource(R.drawable.ic_round_favorite_24)
+            it.root.setBackgroundColor(if (it.banner.isVisible) ContextCompat.getColor(context, MenuItemStyle.Support.backgroundColor) else Color.TRANSPARENT)
+            it.item.button.backgroundTintList = ContextCompat.getColorStateList(context, MenuItemStyle.Support.backgroundColor)
+            it.item.icon.setColorFilter(ContextCompat.getColor(context, MenuItemStyle.Support.highlightColor))
+            it.item.button.strokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
+            it.item.button.rippleColor = ContextCompat.getColorStateList(context, MenuItemStyle.Support.backgroundColor)
+            it.item.button.setOnClickListener {
+                OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "main_menu"))
+                UriLibrary.getPurchaseUri().open(host.getMenuActivity())
+            }
+        }.root
+    } else {
+        null
     }
 }
 
@@ -150,7 +175,6 @@ class ShowNewsMenuItem : MenuItem {
         }
     }
 }
-
 
 class ShowYoutubeMenuItem : MenuItem {
     override val itemId = MENU_ITEM_YOUTUBE

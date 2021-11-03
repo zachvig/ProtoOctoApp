@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/red_translucent"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/margin_2"
+    android:paddingTop="@dimen/margin_2">
+
+    <TextView
+        android:id="@+id/banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_1"
+        android:gravity="center"
+        android:textAppearance="@style/OctoTheme.TextAppearance"
+        android:textColor="@color/dark_text"
+        tools:text="Black Friday sale active!\n72h 44min 32s" />
+
+    <include
+        android:id="@+id/item"
+        layout="@layout/menu_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:id="@+id/salesSpacer"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/margin_1" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

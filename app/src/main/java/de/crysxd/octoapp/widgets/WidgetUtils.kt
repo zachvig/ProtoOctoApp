@@ -4,11 +4,10 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.widget.RemoteViews
 import de.crysxd.octoapp.BuildConfig
-import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_ID
 import de.crysxd.octoapp.MainActivity
+import de.crysxd.octoapp.MainActivity.Companion.EXTRA_TARGET_OCTOPRINT_ID
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_QUICK_SWITCH

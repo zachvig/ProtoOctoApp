@@ -23,6 +23,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.base.ext.purchaseOffersForced
 import de.crysxd.octoapp.base.utils.AppScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -129,16 +130,16 @@ object BillingManager {
         try {
             fetchRemoteConfig()
             Timber.i("Updating SKU")
-            val subscriptionSkuIds = Firebase.remoteConfig.getString("available_subscription_sku_id")
-            val purchaseSkuIds = Firebase.remoteConfig.getString("available_purchase_sku_id")
-            fun String.splitSkuIds() = split(",").map { it.trim() }
+            val offers = Firebase.remoteConfig.purchaseOffersForced
+            val subscriptionSkuIds = offers.subscriptionSku ?: emptyList()
+            val purchaseSkuIds = offers.purchaseSku ?: emptyList()
             Timber.i("Fetching SKU: subscriptions=$subscriptionSkuIds purchases=$purchaseSkuIds")
 
             val supervisor = SupervisorJob()
             val subscriptions = async(supervisor) {
                 fetchSku(
                     SkuDetailsParams.newBuilder()
-                        .setSkusList(subscriptionSkuIds.splitSkuIds())
+                        .setSkusList(subscriptionSkuIds)
                         .setType(BillingClient.SkuType.SUBS)
                         .build()
                 )
@@ -147,7 +148,7 @@ object BillingManager {
             val purchases = async(supervisor) {
                 fetchSku(
                     SkuDetailsParams.newBuilder()
-                        .setSkusList(purchaseSkuIds.splitSkuIds())
+                        .setSkusList(purchaseSkuIds)
                         .setType(BillingClient.SkuType.INAPP)
                         .build()
                 )
@@ -155,8 +156,9 @@ object BillingManager {
 
             val allSku = listOf(subscriptions.await(), purchases.await()).flatten()
             Timber.i("Updated SKU: ${allSku.map { it.sku }}")
+            Timber.i("Active offer: ${offers.activeConfig}")
             Timber.i("Premium features: ${Firebase.remoteConfig.getString("premium_features")}")
-            billingChannel.update { it.copy(availableSku = allSku) }
+            billingChannel.update { it.copy(allSku = allSku) }
         } catch (e: Exception) {
             Timber.e(e)
         }
@@ -320,7 +322,7 @@ object BillingManager {
     }
 
     fun shouldAdvertisePremium() = billingChannel.value.let {
-        it.isBillingAvailable && !it.isPremiumActive && it.availableSku.isNotEmpty()
+        it.isBillingAvailable && !it.isPremiumActive && !Firebase.remoteConfig.purchaseOffersForced.activeConfig.offers.isNullOrEmpty() && it.allSku.isNotEmpty()
     }
 
     fun onResume(context: Context) = AppScope.launch {
