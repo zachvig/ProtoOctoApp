@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -34,7 +33,7 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
                 is GcodeCommand.Single -> listOf(param.command)
                 is GcodeCommand.Batch -> param.command.commands.map { GcodeCommand.Single(it) }
             }.map {
-                executeAndRecordResponse(it, param.fromUser, timber)
+                executeAndRecordResponse(it, param.fromUser, timber, param.recordTimeoutMs)
             }
         } else {
             execute(param.command, param.fromUser, timber)
@@ -56,17 +55,18 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
         return result
     }
 
-    private suspend fun executeAndRecordResponse(command: GcodeCommand.Single, fromUser: Boolean, timber: Timber.Tree) = withContext(Dispatchers.Default) {
-        val readJob = async {
-            var sendLineFound = false
-            var wasExecuted = false
-            val sendLinePattern = Pattern.compile("^Send:.*%%COMMAND%%.*".replace("%%COMMAND%%", command.command))
-            val responseEndLinePattern = Pattern.compile(Firebase.remoteConfig.getString("gcode_response_end_line_pattern"))
-            val spamMessagePattern = Pattern.compile(Firebase.remoteConfig.getString("gcode_response_spam_pattern"))
+    private suspend fun executeAndRecordResponse(command: GcodeCommand.Single, fromUser: Boolean, timber: Timber.Tree, timeoutMs: Long) =
+        withContext(Dispatchers.Default) {
+            val readJob = async {
+                var sendLineFound = false
+                var wasExecuted = false
+                val sendLinePattern = Pattern.compile("^Send:.*%%COMMAND%%.*".replace("%%COMMAND%%", command.command))
+                val responseEndLinePattern = Pattern.compile(Firebase.remoteConfig.getString("gcode_response_end_line_pattern"))
+                val spamMessagePattern = Pattern.compile(Firebase.remoteConfig.getString("gcode_response_spam_pattern"))
 
-            // Collect all lines from when we see `Send: $command` until we see `Recv: ok`
-            val list = serialCommunicationLogsRepository
-                .flow(false)
+                // Collect all lines from when we see `Send: $command` until we see `Recv: ok`
+                val list = serialCommunicationLogsRepository
+                    .flow(false)
                 .map { it.content }
                 .onEach {
                     if (!wasExecuted) {
@@ -108,13 +108,13 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
         }
 
         // Wait until response is read
-        return@withContext withTimeoutOrNull(TimeUnit.SECONDS.toMillis(30)) {
-            readJob.await()
-        } ?: let {
-            timber.w("Response recording timed out")
-            readJob.cancel()
-            Response.DroppedResponse
-        }
+            return@withContext withTimeoutOrNull(timeoutMs) {
+                readJob.await()
+            } ?: let {
+                timber.w("Response recording timed out")
+                readJob.cancel()
+                Response.DroppedResponse
+            }
     }
 
     private suspend fun execute(command: GcodeCommand, fromUser: Boolean, timber: Timber.Tree) {
@@ -141,7 +141,7 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
     sealed class Response {
         data class RecordedResponse(
             val sendLine: String,
-            val responseLines: List<String>
+            val responseLines: List<String>,
         ) : Response()
 
         object DroppedResponse : Response()
@@ -150,6 +150,7 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
     data class Param(
         val command: GcodeCommand,
         val fromUser: Boolean,
+        val recordTimeoutMs: Long = 30_000L,
         val recordResponse: Boolean = false
     )
 }

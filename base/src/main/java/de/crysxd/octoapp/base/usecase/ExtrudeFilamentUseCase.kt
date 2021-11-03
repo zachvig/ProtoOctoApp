@@ -39,7 +39,8 @@ class ExtrudeFilamentUseCase @Inject constructor(
                     ExecuteGcodeCommandUseCase.Param(
                         command = GcodeCommand.Single("M302"),
                         fromUser = false,
-                        recordResponse = true
+                        recordResponse = true,
+                        recordTimeoutMs = 3_000L,
                     )
                 )
                 val m302ResponsePattern = Pattern.compile("^Recv:\\s+echo:.*(disabled|enabled).*min\\s+temp\\s+(\\d+)")
