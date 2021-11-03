@@ -1,10 +1,11 @@
 package de.crysxd.octoapp.signin.access
 
+import android.media.AudioManager
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
-import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
@@ -31,14 +32,12 @@ class RequestAccessFragment : BaseFragment() {
     override val viewModel by injectViewModel<RequestAccessViewModel>()
     private lateinit var binding: BaseSigninFragmentBinding
     private val wifiViewModel by injectViewModel<NetworkStateViewModel>(BaseUiInjector.get().viewModelFactory())
-    private val mediaPlayer = MediaPlayer()
     private lateinit var contentBinding: ReqestAccessFragmentBinding
     private val webUrl get() = UriLibrary.secureDecode(navArgs<RequestAccessFragmentArgs>().value.webUrl)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
-        postponeEnterTransition()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -80,47 +79,41 @@ class RequestAccessFragment : BaseFragment() {
         contentBinding.buttonConnectOther.isVisible = BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot() != null
     }
 
-    override fun onResume() {
-        super.onResume()
-        mediaPlayer.seekTo(0)
-    }
-
     override fun onPause() {
         super.onPause()
         contentBinding.videoOverlay.alpha = 1f
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
         requireOctoActivity().octo.isVisible = false
+        contentBinding.video.start()
     }
 
     private fun prepareVideo() {
         contentBinding.videoOverlay.alpha = 1f
+        Timber.v("Preparing video")
         BaseInjector.get().mediaFileRepository().getMediaUri(getString(R.string.video_url___access_explainer), viewLifecycleOwner) { uri ->
-            contentBinding.video.holder.addCallback(object : SurfaceHolder.Callback {
-                override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) = Unit
-                override fun surfaceDestroyed(holder: SurfaceHolder) = Unit
-                override fun surfaceCreated(holder: SurfaceHolder) {
+            Timber.v("Uri ready: $uri")
+            contentBinding.video.setVideoURI(uri)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Set this BEFORE start playback
+                contentBinding.video.setAudioFocusRequest(AudioManager.AUDIOFOCUS_NONE)
+            }
 
-                    mediaPlayer.setDataSource(requireContext(), uri)
-                    mediaPlayer.setDisplay(holder)
-                    mediaPlayer.prepareAsync()
-                    mediaPlayer.isLooping = true
+            contentBinding.video.setOnPreparedListener {
+                it.isLooping = true
+            }
 
-                    startPostponedEnterTransition()
-
-                    mediaPlayer.setOnPreparedListener {
-                        mediaPlayer.start()
-                    }
-                    mediaPlayer.setOnInfoListener { _, what, _ ->
-                        if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                            contentBinding.videoOverlay.animate().alpha(0f).setDuration(150).start()
-                        }
-                        true
-                    }
+            contentBinding.video.setOnInfoListener { _, what, _ ->
+                if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+                    Timber.v("Removing overlay")
+                    contentBinding.videoOverlay.animate().alpha(0f).setDuration(300).start()
                 }
-            })
+                true
+            }
+
+            contentBinding.video.start()
         }
     }
 
@@ -134,10 +127,5 @@ class RequestAccessFragment : BaseFragment() {
         val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
         val directions = RequestAccessFragmentDirections.actionSuccess(webUrl = UriLibrary.secureEncode(webUrl), apiKey = apiKey)
         findNavController().navigate(directions, extras)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mediaPlayer.release()
     }
 }

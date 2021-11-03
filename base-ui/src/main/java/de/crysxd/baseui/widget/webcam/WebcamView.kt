@@ -23,11 +23,6 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
 import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.transition.ChangeImageTransform
-import androidx.transition.Fade
-import androidx.transition.Transition
-import androidx.transition.TransitionManager
-import androidx.transition.TransitionSet
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.MediaItem
@@ -359,11 +354,12 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         }
 
         // Update image matrix and set the animated flag. As it's now initialized, we can animate changes
-        val oldState = state as? WebcamState.MjpegFrameReady
-        if (newState.flipH != oldState?.flipH || newState.flipV != oldState.flipV || newState.rotate90 != oldState.rotate90 || oldState.frame.width != newState.frame.width || oldState.frame.height != newState.frame.height) {
-            binding.mjpegSurface.imageMatrix = createMjpegMatrix(scaleToFill, newState)
-            animatedMatrix = true
-        }
+        // TODO This also needs to factor in view size changes!
+//        val oldState = state as? WebcamState.MjpegFrameReady
+//        if (newState.flipH != oldState?.flipH || newState.flipV != oldState.flipV || newState.rotate90 != oldState.rotate90 || oldState.frame.width != newState.frame.width || oldState.frame.height != newState.frame.height) {
+        binding.mjpegSurface.imageMatrix = createMjpegMatrix(scaleToFill, newState)
+        animatedMatrix = true
+//        }
 
         val size = min(newState.frame.width, newState.frame.height)
         @SuppressLint("SetTextI18n")
@@ -376,30 +372,30 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     private fun beginDelayedTransition() {
 //        Suspect to cause #922
 //        TransitionManager.endTransitions(this)
-        TransitionManager.beginDelayedTransition(this, TransitionSet().also {
-            it.addTransition(Fade())
-            if (animatedMatrix) {
-                it.addTransition(ChangeImageTransform())
-            }
-            it.addListener(object : Transition.TransitionListener {
-                override fun onTransitionStart(transition: Transition) {
-                    transitionActive = true
-                }
-
-                override fun onTransitionEnd(transition: Transition) {
-                    transitionActive = false
-                }
-
-                override fun onTransitionCancel(transition: Transition) {
-                    transitionActive = false
-                }
-
-                override fun onTransitionPause(transition: Transition) = Unit
-
-                override fun onTransitionResume(transition: Transition) = Unit
-
-            })
-        })
+//        TransitionManager.beginDelayedTransition(this, TransitionSet().also {
+//            it.addTransition(Fade())
+//            if (animatedMatrix) {
+//                it.addTransition(ChangeImageTransform())
+//            }
+//            it.addListener(object : Transition.TransitionListener {
+//                override fun onTransitionStart(transition: Transition) {
+//                    transitionActive = true
+//                }
+//
+//                override fun onTransitionEnd(transition: Transition) {
+//                    transitionActive = false
+//                }
+//
+//                override fun onTransitionCancel(transition: Transition) {
+//                    transitionActive = false
+//                }
+//
+//                override fun onTransitionPause(transition: Transition) = Unit
+//
+//                override fun onTransitionResume(transition: Transition) = Unit
+//
+//            })
+//        })
     }
 
     private fun zoom(zoomChange: Float, focusX: Float, focusY: Float) {

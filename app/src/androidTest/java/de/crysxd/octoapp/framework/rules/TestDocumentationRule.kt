@@ -1,10 +1,14 @@
 package de.crysxd.octoapp.framework.rules
 
 import android.graphics.Bitmap
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.screenshot.Screenshot
 import de.crysxd.octoapp.BuildConfig
 import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.base.ext.asStyleFileSize
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import timber.log.Timber
@@ -21,7 +25,11 @@ class TestDocumentationRule : TestWatcher() {
             it.collectVerbose = true
             it.clear()
         }
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
         Timber.w("Starting ${description.testName}")
+        Handler(Looper.getMainLooper()).post {
+            Toast.makeText(context, description.testName, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun failed(e: Throwable?, description: Description) {
@@ -31,12 +39,12 @@ class TestDocumentationRule : TestWatcher() {
         Timber.i("Writing screenshot to ${screenshotFile.absolutePath}")
         bitmap.compress(Bitmap.CompressFormat.WEBP_LOSSY, 80, screenshotFile.outputStream())
         val logsFile = getFile(description, "log")
-        Timber.i("Writing logs to ${logsFile.absolutePath}")
-        logsFile.writeText(BaseInjector.get().timberCacheTree().logs)
+        val logs = BaseInjector.get().timberCacheTree().logs
+        Timber.i("Writing logs to ${logsFile.absolutePath} (${logs.length.toLong().asStyleFileSize()})")
+        logsFile.writeText(logs)
     }
 
     private fun getFile(description: Description, suffix: String): File {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
         val dir = File(BuildConfig.FAILED_TEST_SCREENSHOT_DIR)
         if (!dir.exists()) dir.mkdirs()
         val filename = "${description.testName}.$suffix"
