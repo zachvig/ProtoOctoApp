@@ -1,22 +1,26 @@
 package de.crysxd.octoapp.notification
 
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.util.Base64
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
+import de.crysxd.octoapp.MainActivity
+import de.crysxd.octoapp.MainActivity.Companion.EXTRA_CLICK_URI
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.utils.AppScope
+import de.crysxd.octoapp.base.utils.PendingIntentCompat
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_FILE_NAME
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_FILE_TIME
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_PROGRESS
 import de.crysxd.octoapp.octoprint.models.settings.Settings
-import de.crysxd.octoapp.widgets.createLaunchAppIntent
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -44,22 +48,26 @@ class FcmNotificationService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+        try {
+            Timber.i("Received message")
+            message.data["raw"]?.let {
+                handleRawDataEvent(
+                    instanceId = message.data["instanceId"] ?: throw IllegalArgumentException("Not instance id"),
+                    raw = it,
+                    sentTime = Date(message.sentTime),
+                )
+            }
 
-        Timber.i("Received message")
-        message.data["raw"]?.let {
-            handleRawDataEvent(
-                instanceId = message.data["instanceId"] ?: throw IllegalArgumentException("Not instance id"),
-                raw = it,
-                sentTime = Date(message.sentTime),
-            )
-        }
-
-        message.notification?.let {
-            handleNotification(it)
+            message.notification?.let {
+                handleNotification(it, message.data[EXTRA_CLICK_URI])
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
         }
     }
 
-    private fun handleNotification(notification: RemoteMessage.Notification) {
+    private fun handleNotification(notification: RemoteMessage.Notification, contextUri: String?) {
+        Timber.i("Showing notification")
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channelId = getString(R.string.updates_notification_channel)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
@@ -69,7 +77,14 @@ class FcmNotificationService : FirebaseMessagingService() {
             .setAutoCancel(true)
             .setColorized(true)
             .setColor(ContextCompat.getColor(this, R.color.primary_dark))
-            .setContentIntent(createLaunchAppIntent(this, null))
+            .setContentIntent(
+                PendingIntent.getActivity(
+                    this,
+                    notification.title.hashCode(),
+                    Intent(this, MainActivity::class.java).also { it.putExtra(EXTRA_CLICK_URI, contextUri) },
+                    PendingIntentCompat.FLAG_IMMUTABLE
+                )
+            )
         manager.notify(BaseInjector.get().notificationIdRepository().nextUpdateNotificationId(), notificationBuilder.build())
     }
 

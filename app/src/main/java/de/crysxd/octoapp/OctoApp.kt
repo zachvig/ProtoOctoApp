@@ -15,6 +15,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.ktx.messaging
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import de.crysxd.octoapp.base.OctoAnalytics
@@ -123,6 +124,12 @@ class OctoApp : Application() {
             Firebase.analytics.setAnalyticsCollectionEnabled(analyticsEnabled && !analyticsSuppressed)
             if (BuildConfig.DEBUG) {
                 Firebase.analytics.setUserProperty("debug", "true")
+            }
+
+            // Connect to test notifications
+            if (BuildConfig.DEBUG) {
+                Timber.i("Subscribed to debug notifications")
+                Firebase.messaging.subscribeToTopic("debug_notifications")
             }
         }
 

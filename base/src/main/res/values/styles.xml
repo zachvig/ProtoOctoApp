@@ -86,7 +86,7 @@
     </style>
 
     <style name="OctoTheme.Widget.Button.Mini">
-        <item name="android:textAppearance">@style/OctoTheme.TextAppearance</item>
+        <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Focus</item>
         <item name="backgroundTint">@android:color/transparent</item>
         <item name="android:textColor">@color/button_secondary_text_color</item>
         <item name="iconTint">@color/button_secondary_text_color</item>
@@ -94,12 +94,13 @@
         <item name="strokeColor">@color/button_primary_bg_color</item>
         <item name="rippleColor">@color/accent</item>
         <item name="android:elevation">0dp</item>
-        <item name="android:paddingStart">@dimen/margin_2</item>
-        <item name="android:paddingEnd">@dimen/margin_2</item>
+        <item name="android:paddingStart">@dimen/margin_1</item>
+        <item name="android:paddingEnd">@dimen/margin_1</item>
         <item name="android:paddingTop">@dimen/margin_0_1</item>
         <item name="android:paddingBottom">@dimen/margin_0_1</item>
         <item name="android:stateListAnimator">@null</item>
         <item name="android:minHeight">0dp</item>
+        <item name="android:minWidth">0dp</item>
     </style>
 
     <style name="OctoTheme.Widget.Button.Tertiary">
@@ -151,7 +152,8 @@
     <style name="OctoTheme.Widget.Button.Card" parent="OctoTheme.Widget.Button">
         <item name="shapeAppearance">@style/OctoTheme.ShapeAppearance.Button.Card</item>
         <item name="android:layout_margin">0dp</item>
-        <item name="android:translationY">6dp</item>
+        <item name="android:paddingTop">@dimen/margin_1_2</item>
+        <item name="android:paddingBottom">@dimen/margin_1_2</item>
     </style>
 
     <style name="OctoTheme.Widget.Button.Small">
@@ -200,6 +202,7 @@
         <item name="strokeWidth">0dp</item>
         <item name="android:elevation">0dp</item>
         <item name="android:minWidth">0dp</item>
+        <item name="android:textAppearance">@style/OctoTheme.TextAppearance.Focus</item>
         <item name="android:stateListAnimator">@null</item>
         <item name="rippleColor">@color/accent</item>
         <item name="paddingStart">@dimen/margin_0</item>

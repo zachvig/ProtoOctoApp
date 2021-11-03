@@ -16,8 +16,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.baseui.LocalizedActivity
 import de.crysxd.baseui.utils.colorTheme
-import de.crysxd.octoapp.EXTRA_TARGET_OCTOPRINT_ID
 import de.crysxd.octoapp.MainActivity
+import de.crysxd.octoapp.MainActivity.Companion.EXTRA_TARGET_OCTOPRINT_ID
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_INFINITE_WIDGETS
