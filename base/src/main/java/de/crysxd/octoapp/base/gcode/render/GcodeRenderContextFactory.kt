@@ -41,7 +41,7 @@ sealed class GcodeRenderContextFactory {
         }
         val previousLayer = if (includePreviousLayer) {
             gcode.layers.getOrNull(layerIndex - 1)?.let {
-                loadSingleLayer(ds.loadLayer(gcode.cacheKey, layerInfo))
+                loadSingleLayer(ds.loadLayer(gcode.cacheKey, it))
             }
         } else {
             null

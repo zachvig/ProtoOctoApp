@@ -13,6 +13,7 @@
     <string name="cd_turn_style_on_off" translatable="false">Turn style on/off</string>
     <string name="cd_filter_terminal" translatable="false">Filter Terminal</string>
     <string name="cd_live" translatable="false">Live</string>
+    <string name="cd_close" translatable="false">Close</string>
     <string name="cd_copy" translatable="false">Copy</string>
     <string name="cd_settings" translatable="false">Settings</string>
     <string name="cd_next_layer" translatable="false">Next Layer</string>

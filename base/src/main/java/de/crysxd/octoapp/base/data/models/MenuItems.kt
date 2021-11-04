@@ -1,7 +1,6 @@
 package de.crysxd.octoapp.base.data.models
 
 object MenuItems {
-    const val MENU_ITEM_SUPPORT_OCTOAPP = "main___support_octoapp"
     const val MENU_ITEM_SETTINGS_MENU = "main___settings_menu"
     const val MENU_ITEM_PRINTER_MENU = "main___printer_menu"
     const val MENU_ITEM_OCTOPRINT = "main___octoprint"

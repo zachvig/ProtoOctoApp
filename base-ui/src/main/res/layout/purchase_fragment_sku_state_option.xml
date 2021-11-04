@@ -10,19 +10,68 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp">
+        android:layout_height="wrap_content"
+        android:minHeight="150dp">
+
+        <ImageView
+            android:id="@+id/badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_badge_best_value" />
+
+        <TextView
+            android:id="@+id/priceOld"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_2"
+            android:layout_marginBottom="@dimen/margin_0_1"
+            android:gravity="center"
+            android:textAppearance="@style/OctoTheme.TextAppearance"
+            android:textColor="@color/light_text"
+            app:layout_constraintBottom_toTopOf="@+id/price"
+            app:layout_constraintEnd_toStartOf="@id/discount"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="6 Euro" />
+
+
+        <TextView
+            android:id="@+id/discount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_0_1"
+            android:background="@drawable/bg_chip"
+            android:backgroundTint="@color/red"
+            android:gravity="center"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Focus"
+            android:textColor="@color/text_colored_background"
+            app:layout_constraintBottom_toBottomOf="@+id/priceOld"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/priceOld"
+            app:layout_constraintTop_toTopOf="@+id/priceOld"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="-30%" />
 
         <TextView
             android:id="@+id/price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big"
             android:textColor="@color/dark_text"
+            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintBottom_toTopOf="@+id/details"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/priceOld"
             app:layout_constraintHorizontal_bias="0.5"
+            app:layout_goneMarginBottom="@dimen/margin_2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_goneMarginTop="@dimen/margin_2"
             app:layout_constraintVertical_chainStyle="packed"
             tools:text="6 Euro" />
 
@@ -33,9 +82,10 @@
             android:textAppearance="@style/OctoTheme.TextAppearance.Label"
             android:textColor="@color/normal_text"
             app:layout_constraintBottom_toTopOf="@+id/buttonSelect"
-            app:layout_constraintEnd_toEndOf="@+id/price"
+            android:layout_marginBottom="@dimen/margin_2"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@+id/price"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/price"
             tools:text="1 week free trial" />
 
@@ -44,17 +94,10 @@
             style="@style/OctoTheme.Widget.Button.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:text="Support for 1 month" />
-
-        <ImageView
-            android:id="@+id/badge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:importantForAccessibility="no"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/ic_badge_best_value" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
