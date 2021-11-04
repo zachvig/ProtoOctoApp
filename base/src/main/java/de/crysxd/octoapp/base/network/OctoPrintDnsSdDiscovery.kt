@@ -2,7 +2,7 @@ package de.crysxd.octoapp.base.network
 
 import android.content.Context
 import com.github.druk.dnssd.BrowseListener
-import com.github.druk.dnssd.DNSSDBindable
+import com.github.druk.dnssd.DNSSD
 import com.github.druk.dnssd.DNSSDService
 import com.github.druk.dnssd.QueryListener
 import com.github.druk.dnssd.ResolveListener
@@ -19,9 +19,8 @@ import java.net.InetAddress
 
 class OctoPrintDnsSdDiscovery(
     private val context: Context,
+    private val dnssd: DNSSD,
 ) {
-    private val dnssd = DNSSDBindable(context)
-
     fun discover(scope: CoroutineScope, callback: (Service) -> Unit) {
 
         // Sometimes the internal Dnssd service is not running...we can start it with this:

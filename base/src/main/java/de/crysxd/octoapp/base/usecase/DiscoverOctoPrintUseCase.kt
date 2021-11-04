@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.usecase
 
 import android.content.Context
+import com.github.druk.dnssd.DNSSD
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.network.OctoPrintDnsSdDiscovery
 import de.crysxd.octoapp.base.network.OctoPrintUpnpDiscovery
@@ -17,6 +18,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
     private val context: Context,
     private val sensitiveDataMask: SensitiveDataMask,
     private val testFullNetworkStackUseCase: TestFullNetworkStackUseCase,
+    private val dnssd: DNSSD,
 ) : UseCase<Unit, Flow<DiscoverOctoPrintUseCase.Result>>() {
 
     override suspend fun doExecute(param: Unit, timber: Timber.Tree): Flow<Result> = withContext(Dispatchers.IO) {
@@ -50,7 +52,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
         timber: Timber.Tree,
         scope: CoroutineScope,
         submitResult: (DiscoveredOctoPrint) -> Unit
-    ) = OctoPrintDnsSdDiscovery(context).discover(scope) {
+    ) = OctoPrintDnsSdDiscovery(context, dnssd).discover(scope) {
         scope.launch {
             timber.i("Testing $it")
             testDiscoveredInstanceAndPublishResult(
