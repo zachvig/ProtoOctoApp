@@ -11,6 +11,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import de.crysxd.octoapp.R
+import junit.framework.AssertionFailedError
 import org.hamcrest.Matchers.allOf
 
 object MenuRobot {
@@ -47,6 +48,9 @@ object MenuRobot {
             false
         } catch (e: NoMatchingRootException) {
             false
+        } catch (e: AssertionFailedError) {
+            // Is animating out
+            true
         }
 
         while (isMenuOpen()) {
