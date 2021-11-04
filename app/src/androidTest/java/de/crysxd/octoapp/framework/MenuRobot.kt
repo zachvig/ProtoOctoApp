@@ -49,7 +49,8 @@ object MenuRobot {
         } catch (e: NoMatchingRootException) {
             false
         } catch (e: AssertionFailedError) {
-            false
+            // Is animating out
+            true
         }
 
         while (isMenuOpen()) {
