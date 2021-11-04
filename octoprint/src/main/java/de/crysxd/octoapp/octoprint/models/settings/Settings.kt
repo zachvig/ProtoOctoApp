@@ -78,6 +78,8 @@ data class Settings(
 
     class OctoCamSettings : PluginSettings
 
+    class OctoLightSettings : PluginSettings
+
     class MyStromSettings : PluginSettings
 
     data class OctoAppCompanionSettings(
