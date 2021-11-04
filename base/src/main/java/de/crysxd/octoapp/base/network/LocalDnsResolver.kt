@@ -2,7 +2,7 @@ package de.crysxd.octoapp.base.network
 
 import android.content.Context
 import android.net.wifi.WifiManager
-import com.github.druk.dnssd.DNSSDBindable
+import com.github.druk.dnssd.DNSSD
 import com.github.druk.dnssd.DNSSDService
 import com.github.druk.dnssd.QueryListener
 import com.qiniu.android.dns.DnsManager
@@ -25,7 +25,10 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-class LocalDnsResolver(private val context: Context) : Dns {
+class LocalDnsResolver(
+    private val context: Context,
+    private val dnssd: DNSSD,
+) : Dns {
 
     companion object {
         private val cache = mutableListOf<DnsEntry>()
@@ -34,7 +37,6 @@ class LocalDnsResolver(private val context: Context) : Dns {
         private val resolveLock = ReentrantLock()
     }
 
-    private val dnssd = DNSSDBindable(context)
     private val wifi = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
 
     override fun lookup(hostname: String): List<InetAddress> {

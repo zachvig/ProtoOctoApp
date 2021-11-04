@@ -1,6 +1,10 @@
 package de.crysxd.octoapp.base.di.modules
 
 import android.content.Context
+import android.os.Build
+import com.github.druk.dnssd.DNSSD
+import com.github.druk.dnssd.DNSSDBindable
+import com.github.druk.dnssd.DNSSDEmbedded
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
 import dagger.Provides
@@ -121,8 +125,19 @@ open class OctoPrintModule {
     @BaseScope
     @Provides
     open fun provideLocalDnsResolver(
-        context: Context
-    ) = LocalDnsResolver(context)
+        context: Context,
+        dnssd: DNSSD,
+    ) = LocalDnsResolver(context, dnssd)
+
+    @BaseScope
+    @Provides
+    open fun provideDNSSD(
+        context: Context,
+    ) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        DNSSDEmbedded(context)
+    } else {
+        DNSSDBindable(context)
+    }
 
     @BaseScope
     @Provides
