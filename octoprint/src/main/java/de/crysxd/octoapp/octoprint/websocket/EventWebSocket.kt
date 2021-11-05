@@ -57,7 +57,7 @@ class EventWebSocket(
         }
 
     private var currentMessageCounter = 0
-    private val logMaskPattern = Pattern.compile("\\[(.*?)]")
+    private val logMaskPattern = Pattern.compile("\"(messages|logs)\":\\s?\\[(.*?)]")
 
     fun start() {
         if (subscriberCount.get() > 0 && isConnected.compareAndSet(false, true)) {
@@ -178,8 +178,10 @@ class EventWebSocket(
                 val message = gson.fromJson(text, Message::class.java)
 
                 if (message is Message.CurrentMessage) {
-                    if (currentMessageCounter++ % 10 == 0) {
-                        logger.log(Level.INFO, "Current message received: ${logMaskPattern.matcher(text).replaceAll("[...]")} ")
+                    if (!text.startsWith("{\"history") && currentMessageCounter++ % 20 == 0) {
+                        text.chunked(128).forEach {
+                            logger.log(Level.INFO, "Current message ${currentMessageCounter - 1} received: $it")
+                        }
                     }
                     lastCurrentMessage = message
                 }
