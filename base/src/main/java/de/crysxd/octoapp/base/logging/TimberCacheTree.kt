@@ -16,7 +16,7 @@ import java.util.Locale
 
 class TimberCacheTree(
     private val mask: SensitiveDataMask,
-    private val maxSize: Int = 1024 * 128
+    private val maxSize: Int = 1024 * 512
 ) : Timber.DebugTree() {
 
     private val maxMessageLength = 4000
