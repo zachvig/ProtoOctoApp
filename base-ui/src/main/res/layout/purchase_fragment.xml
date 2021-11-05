@@ -36,28 +36,57 @@
         android:fillViewport="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <FrameLayout
-            android:id="@+id/contentWrapper"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/contentContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <include
-                android:id="@+id/initState"
-                layout="@layout/purchase_fragment_init_state" />
-
-            <include
-                android:id="@+id/unsupported_platform_state"
-                layout="@layout/purchase_fragment_unsupported_state"
+            <FrameLayout
+                android:id="@+id/saleBanner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@color/red_translucent">
 
-            <include
-                android:id="@+id/skuState"
-                layout="@layout/purchase_fragment_sku_state"
+                <TextView
+                    android:id="@+id/saleBannerText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/margin_2"
+                    android:paddingVertical="@dimen/margin_1"
+                    android:textAppearance="@style/OctoTheme.TextAppearance.Data"
+                    android:textColor="@color/dark_text"
+                    tools:text="Sale!!!" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/contentWrapper"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
-        </FrameLayout>
+                <include
+                    android:id="@+id/initState"
+                    layout="@layout/purchase_fragment_init_state" />
+
+                <include
+                    android:id="@+id/unsupported_platform_state"
+                    layout="@layout/purchase_fragment_unsupported_state"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <include
+                    android:id="@+id/skuState"
+                    layout="@layout/purchase_fragment_sku_state"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </FrameLayout>
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </de.crysxd.baseui.common.OctoScrollView>
 

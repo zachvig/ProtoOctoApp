@@ -1,5 +1,6 @@
 package de.crysxd.baseui.purchase
 
+import android.graphics.Paint
 import android.graphics.Rect
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
@@ -30,9 +31,14 @@ import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.billing.BillingManager
+import de.crysxd.octoapp.base.data.models.PurchaseOffers
+import de.crysxd.octoapp.base.ext.purchaseOffers
+import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.utils.LongDuration
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
+import java.text.NumberFormat
 import kotlin.math.absoluteValue
 
 class PurchaseFragment : BaseFragment(), InsetAwareScreen {
@@ -48,6 +54,7 @@ class PurchaseFragment : BaseFragment(), InsetAwareScreen {
             }
         }
     }
+    private val config by lazy { Firebase.remoteConfig.purchaseOffers.activeConfig }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         PurchaseFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
@@ -61,15 +68,28 @@ class PurchaseFragment : BaseFragment(), InsetAwareScreen {
         var eventSent = false
         binding.appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
             val collapseProgress = verticalOffset.absoluteValue / binding.appBar.totalScrollRange.toFloat()
-            val content = listOf<View?>(binding.initState.root, binding.skuState.root).firstOrNull { it?.isVisible == true }
-            val padding = binding.statusBarScrim.height + binding.root.resources.getDimension(R.dimen.margin_4)
-            content?.updatePadding(top = (padding * collapseProgress).toInt())
+            val content = binding.saleBanner.takeIf { it.isVisible } ?: binding.contentContainer
+            val padding = binding.statusBarScrim.height
+            binding.statusBarScrim.alpha = 1 - collapseProgress
+            content.updatePadding(top = (padding * collapseProgress).toInt())
 
             if (!eventSent && verticalOffset != 0) {
                 eventSent = true
                 OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenScroll)
             }
         })
+
+        // Sales banner with countdown
+        binding.saleBannerText.text = config.textsWithData.highlightBanner?.toHtml()
+        binding.saleBanner.isVisible = binding.saleBannerText.text.isNotBlank()
+        if (binding.saleBanner.isVisible) {
+            viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+                while (isActive) {
+                    delay(1000)
+                    binding.saleBannerText.text = config.textsWithData.highlightBanner?.toHtml()
+                }
+            }
+        }
 
         populateInitState()
     }
@@ -124,10 +144,27 @@ class PurchaseFragment : BaseFragment(), InsetAwareScreen {
             Firebase.remoteConfig.getString("sku_list_title"),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
-        state.billingData.availableSku.forEach { details ->
+
+        config.offers?.mapNotNull { offer ->
+            val sku = state.billingData.allSku.firstOrNull { it.sku == offer.key } ?: return@mapNotNull null
+            sku to offer.value
+        }?.forEach { x ->
+            val (details, offer) = x
             val itemBinding = PurchaseFragmentSkuStateOptionBinding.inflate(LayoutInflater.from(requireContext()))
+            val dealFor = state.billingData.allSku.firstOrNull { it.sku == offer.dealFor }
+
+            // If we have a matching offer, we show the old price
+            dealFor?.let {
+                itemBinding.priceOld.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                itemBinding.priceOld.text = it.price
+                itemBinding.discount.text = NumberFormat.getPercentInstance().format((1 - (details.priceAmountMicros / it.priceAmountMicros.toFloat())) * -1)
+            }
+            itemBinding.priceOld.isVisible = itemBinding.priceOld.text.isNotBlank()
+            itemBinding.discount.isVisible = itemBinding.priceOld.isVisible
+
+            // Normal offer
             itemBinding.price.text = details.price
-            itemBinding.buttonSelect.text = state.names.getOrElse(details.sku) { details.title }
+            itemBinding.buttonSelect.text = offer.label ?: details.title
             itemBinding.details.text = LongDuration.parse(details.freeTrialPeriod)?.format(requireContext())?.let { getString(R.string.free_trial_x, it) }
             itemBinding.details.isVisible = !itemBinding.details.text.isNullOrBlank()
             itemBinding.buttonSelect.setOnClickListener {
@@ -136,24 +173,25 @@ class PurchaseFragment : BaseFragment(), InsetAwareScreen {
                         "button_text" to itemBinding.buttonSelect.text,
                         "title" to binding.skuState.skuTitle.text,
                         "trial" to details.freeTrialPeriod,
-                        "badge" to state.badges[details.sku]?.let { it::class.java.simpleName },
+                        "badge" to offer.badge,
+                        "deal_for" to dealFor?.sku,
                         "sku" to details.sku
                     )
                 )
                 BillingManager.purchase(requireActivity(), details)
             }
             itemBinding.badge.setImageResource(
-                when (state.badges[details.sku]) {
-                    PurchaseViewModel.Badge.NoBadge -> 0
-                    PurchaseViewModel.Badge.Popular -> R.drawable.ic_badge_popular
-                    PurchaseViewModel.Badge.BestValue -> R.drawable.ic_badge_best_value
-                    null -> 0
+                when {
+                    dealFor != null -> R.drawable.ic_badge_sale
+                    offer.badge == PurchaseOffers.Badge.BestValue -> R.drawable.ic_badge_best_value
+                    offer.badge == PurchaseOffers.Badge.Popular -> R.drawable.ic_badge_popular
+                    else -> 0
                 }
             )
             binding.skuState.skuList.addView(itemBinding.root)
         }
 
-        if (state.billingData.availableSku.isEmpty()) {
+        if (state.billingData.allSku.isEmpty()) {
             OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseMissingSku)
             MaterialAlertDialogBuilder(requireContext())
                 .setMessage("Thanks for your interest! There was a issue loading available offers, check back later!")
@@ -165,25 +203,14 @@ class PurchaseFragment : BaseFragment(), InsetAwareScreen {
 
     private fun populateInitState() {
         val initBinding = binding.initState
+        val texts = config.textsWithData
         initBinding.root.updatePadding(top = 0)
 
-        initBinding.purchaseTitle.text = HtmlCompat.fromHtml(
-            Firebase.remoteConfig.getString("purchase_screen_title"),
-            HtmlCompat.FROM_HTML_MODE_LEGACY
-        )
-        initBinding.description.text = HtmlCompat.fromHtml(
-            Firebase.remoteConfig.getString("purchase_screen_description"),
-            HtmlCompat.FROM_HTML_MODE_LEGACY
-        )
-        initBinding.featureList.text = HtmlCompat.fromHtml(
-            Firebase.remoteConfig.getString("purchase_screen_features"),
-            HtmlCompat.FROM_HTML_MODE_LEGACY
-        )
-        initBinding.moreFeatures.text = HtmlCompat.fromHtml(
-            Firebase.remoteConfig.getString("purchase_screen_more_features"),
-            HtmlCompat.FROM_HTML_MODE_LEGACY
-        )
-        binding.buttonSupport.text = Firebase.remoteConfig.getString("purchase_screen_continue_cta")
+        initBinding.purchaseTitle.text = texts.purchaseScreenTitle.toHtml()
+        initBinding.description.text = texts.purchaseScreenDescription.toHtml()
+        initBinding.featureList.text = texts.purchaseScreenFeatures.toHtml()
+        initBinding.moreFeatures.text = texts.purchaseScreenMoreFeatures.toHtml()
+        binding.buttonSupport.text = texts.purchaseScreenContinueCta.toHtml()
 
         initBinding.purchaseTitle.movementMethod = LinkMovementMethod()
         initBinding.description.movementMethod = LinkMovementMethod()

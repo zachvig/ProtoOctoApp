@@ -19,7 +19,6 @@ import timber.log.Timber
 class MenuItemLibrary {
 
     private val map = mapOf(
-        MenuItems.MENU_ITEM_SUPPORT_OCTOAPP to SupportOctoAppMenuItem::class,
         MenuItems.MENU_ITEM_SETTINGS_MENU to ShowSettingsMenuItem::class,
         MenuItems.MENU_ITEM_PRINTER_MENU to ShowPrinterMenuItem::class,
         MenuItems.MENU_ITEM_TUTORIALS to ShowTutorialsMenuItem::class,

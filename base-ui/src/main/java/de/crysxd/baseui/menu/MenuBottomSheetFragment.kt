@@ -148,6 +148,12 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
                         }
                     }
 
+                    // Header
+                    viewBinding.customHeaderContainer.removeAllViews()
+                    settingsMenu.getCustomHeaderView(this)?.let {
+                        viewBinding.customHeaderContainer.addView(it)
+                    }
+
                     // Tutorial
                     val announcement = settingsMenu.getAnnouncement(context)
                     viewBinding.announcement.isVisible = announcement != null

@@ -47,7 +47,7 @@ android {
 
     buildTypes {
         debug {
-            manifestPlaceholders = [firebaseRemoteServicesEnabled: "false"]
+            manifestPlaceholders = [firebaseRemoteServicesEnabled: "true"]
         }
         release {
             minifyEnabled false
@@ -94,12 +94,12 @@ dependencies {
     /*
      * Firebase
      */
-    implementation platform('com.google.firebase:firebase-bom:26.5.0')
+    implementation platform('com.google.firebase:firebase-bom:29.0.0')
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-config-ktx'
     implementation 'com.google.firebase:firebase-crashlytics'
-    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-messaging-ktx'
 
     /*
     * Markdown

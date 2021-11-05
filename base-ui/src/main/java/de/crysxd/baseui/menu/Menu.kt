@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Parcelable
 import android.text.method.MovementMethod
+import android.view.View
 
 interface Menu : Parcelable {
     fun shouldLoadBlocking() = false
@@ -11,6 +12,7 @@ interface Menu : Parcelable {
     suspend fun shouldShowMenu(host: MenuHost) = true
     suspend fun getTitle(context: Context): CharSequence? = null
     suspend fun getSubtitle(context: Context): CharSequence? = null
+    fun getCustomHeaderView(host: MenuHost): View? = null
     fun getEmptyStateIcon(): Int = 0
     fun getEmptyStateActionText(context: Context): String? = null
     fun getEmptyStateActionUrl(context: Context): String? = null
