@@ -23,7 +23,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.logging.Level
 import java.util.logging.Logger
-import java.util.regex.Pattern
 
 const val RECONNECT_DELAY_MS = 1000L
 
@@ -51,7 +50,6 @@ class EventWebSocket(
     private var webSocketListener: EventWebSocket.WebSocketListener? = null
     private var isConnected = AtomicBoolean(false)
     private var reconnectCounter = 0
-    private val logMaskPattern = Pattern.compile("\\[(.*?)]")
 
     private var lastCurrentMessage: Message.CurrentMessage? = null
     private val eventFlow = MutableSharedFlow<Event>(15)
@@ -156,7 +154,7 @@ class EventWebSocket(
             isOpen = false
         }
 
-        private fun shouldLogCurrentMessage() = currentMessageCounter++ % 10 == 0
+        private fun shouldLogCurrentMessage(text: String) = !text.startsWith("{\"history") && currentMessageCounter++ % 10 == 0
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
@@ -199,8 +197,10 @@ class EventWebSocket(
                     is Message.CurrentMessage -> {
                         lastCurrentMessage = message
                         dispatchEvent(Event.MessageReceived(message))
-                        if (shouldLogCurrentMessage()) {
-                            logger.log(Level.FINE, "[$listenerId] Current message received: ${logMaskPattern.matcher(text).replaceAll("[...]")} ")
+                        if (shouldLogCurrentMessage(text)) {
+                            text.chunked(128).forEach {
+                                logger.log(Level.FINE, "[$listenerId] Current message ${currentMessageCounter - 1} received: $it")
+                            }
                         }
                     }
 

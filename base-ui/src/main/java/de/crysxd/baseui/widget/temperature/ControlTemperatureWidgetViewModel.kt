@@ -20,6 +20,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -34,14 +35,25 @@ class ControlTemperatureWidgetViewModel(
     private val printerProfile = octoPrintRepository.instanceInformationFlow().map {
         it?.activeProfile ?: PrinterProfiles.Profile()
     }
-    val temperature = temperatureDataRepository.flow().combine(printerProfile) { temps, profile ->
-        temps.filter {
+    private var first = true
+    val temperature = temperatureDataRepository.flow().onStart {
+        first = true
+    }.combine(printerProfile) { temps, profile ->
+        val input = temps.map { it.copy(history = emptyList()) }
+        val output = temps.filter {
             val isChamber = it.component == "chamber" && profile.heatedChamber
             val isBed = it.component == "bed" && profile.heatedBed
             val isTool = it.component.startsWith("tool") && (!profile.extruder.sharedNozzle || it.component == "tool0")
             val isOther = it.component != "chamber" && it.component != "bed" && !it.component.startsWith("tool")
             isOther || isTool || isChamber || isBed
         }
+
+        if (input.size != output.size && first) {
+            first = false
+            Timber.d("Reducing temperatures: $input -> $output")
+        }
+
+        output
     }.let {
         // Slow down update rate for test
         if (AnimationTestUtils.animationsDisabled) {
