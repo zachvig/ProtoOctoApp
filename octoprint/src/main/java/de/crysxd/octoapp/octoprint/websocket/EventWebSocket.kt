@@ -199,7 +199,7 @@ class EventWebSocket(
                         dispatchEvent(Event.MessageReceived(message))
                         if (shouldLogCurrentMessage(text)) {
                             text.chunked(128).forEach {
-                                logger.log(Level.FINE, "[$listenerId]Current message ${currentMessageCounter - 1} received: $it")
+                                logger.log(Level.FINE, "[$listenerId] Current message ${currentMessageCounter - 1} received: $it")
                             }
                         }
                     }
