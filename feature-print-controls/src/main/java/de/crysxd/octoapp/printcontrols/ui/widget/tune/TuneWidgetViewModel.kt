@@ -93,7 +93,7 @@ class TuneWidgetViewModel(
     private suspend fun doPollSettings() {
         executeGcodeCommandUseCase.execute(
             ExecuteGcodeCommandUseCase.Param(
-                command = GcodeCommand.Batch(arrayOf("M220", "M221", "M290")),
+                command = GcodeCommand.Batch(arrayOf("M220", "M221")),
                 fromUser = false
             )
         )
