@@ -36,7 +36,7 @@ class PrintNotificationsMenu : Menu {
     override fun getBottomMovementMethod(host: MenuHost) = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.getMenuActivity()))
 
     class LiveNotificationMenuItem : ToggleMenuItem() {
-        override val isEnabled get() = BaseInjector.get().octoPreferences().isLivePrintNotificationsEnabled
+        override val isChecked get() = BaseInjector.get().octoPreferences().isLivePrintNotificationsEnabled
         override val itemId = MENU_ITEM_LIVE_NOTIFICATION
         override var groupId = ""
         override val order = 105

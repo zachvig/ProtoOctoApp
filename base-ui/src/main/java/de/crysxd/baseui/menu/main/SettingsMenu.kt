@@ -5,8 +5,6 @@ import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import de.crysxd.baseui.R
-import de.crysxd.octoapp.base.UriLibrary
-import de.crysxd.octoapp.base.ext.open
 import de.crysxd.baseui.common.LinkClickMovementMethod
 import de.crysxd.baseui.menu.Menu
 import de.crysxd.baseui.menu.MenuHost
@@ -16,6 +14,7 @@ import de.crysxd.baseui.menu.SubMenuItem
 import de.crysxd.baseui.menu.ToggleMenuItem
 import de.crysxd.baseui.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.baseui.widget.WidgetHostFragment
+import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_AUTOMATIC_LIGHTS
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_AUTO_CONNECT_PRINTER
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_CHANGE_LANGUAGE
@@ -27,6 +26,7 @@ import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_LIVE_NOTIFICATION
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_NIGHT_THEME
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_SCREEN_ON_DURING_PRINT
 import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
 import kotlinx.parcelize.Parcelize
@@ -124,7 +124,7 @@ class CustomizeWidgetsMenuItem : MenuItem {
 }
 
 class NightThemeMenuItem : ToggleMenuItem() {
-    override val isEnabled get() = BaseInjector.get().octoPreferences().isManualDarkModeEnabled
+    override val isChecked get() = BaseInjector.get().octoPreferences().isManualDarkModeEnabled
     override val itemId = MENU_ITEM_NIGHT_THEME
     override var groupId = ""
     override val order = 104
@@ -140,7 +140,7 @@ class NightThemeMenuItem : ToggleMenuItem() {
 }
 
 class KeepScreenOnDuringPrintMenuItem : ToggleMenuItem() {
-    override val isEnabled get() = BaseInjector.get().octoPreferences().isKeepScreenOnDuringPrint
+    override val isChecked get() = BaseInjector.get().octoPreferences().isKeepScreenOnDuringPrint
     override val itemId = MENU_ITEM_SCREEN_ON_DURING_PRINT
     override var groupId = ""
     override val order = 105
@@ -154,7 +154,7 @@ class KeepScreenOnDuringPrintMenuItem : ToggleMenuItem() {
 }
 
 class AutoConnectPrinterMenuItem : ToggleMenuItem() {
-    override val isEnabled get() = BaseInjector.get().octoPreferences().isAutoConnectPrinter
+    override val isChecked get() = BaseInjector.get().octoPreferences().isAutoConnectPrinter
     override val itemId = MENU_ITEM_AUTO_CONNECT_PRINTER
     override var groupId = ""
     override val order = 106

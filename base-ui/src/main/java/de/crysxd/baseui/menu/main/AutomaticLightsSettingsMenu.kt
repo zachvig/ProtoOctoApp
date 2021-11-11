@@ -61,7 +61,7 @@ class AutomaticLightsSettingsMenu : Menu {
 
     class AutoLightsForWidgetMenuItem : ToggleMenuItem() {
         private val prefs get() = BaseInjector.get().octoPreferences()
-        override val isEnabled get() = prefs.automaticLightsForWidgetRefresh
+        override val isChecked get() = prefs.automaticLightsForWidgetRefresh
         override val itemId = "light_for_widget_refresh"
         override var groupId = "0"
         override val order = 200
@@ -78,7 +78,7 @@ class AutomaticLightsSettingsMenu : Menu {
 
     class LightSettingMenuItem(private val device: PowerDevice) : ToggleMenuItem() {
         private val prefs get() = BaseInjector.get().octoPreferences()
-        override val isEnabled get() = prefs.automaticLights.contains(device.id)
+        override val isChecked get() = prefs.automaticLights.contains(device.id)
         override val itemId = "light_settings/${device.id}"
         override var groupId = "lights"
         override val order = 100

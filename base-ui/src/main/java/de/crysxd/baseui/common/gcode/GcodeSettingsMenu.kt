@@ -22,7 +22,7 @@ class GcodeSettingsMenu : Menu {
 
     class ShowPreviousLayer : ToggleMenuItem() {
         private val preferences = BaseInjector.get().octoPreferences()
-        override val isEnabled get() = preferences.gcodePreviewSettings.showPreviousLayer
+        override val isChecked get() = preferences.gcodePreviewSettings.showPreviousLayer
         override val itemId = "previous"
         override var groupId = "none"
         override val order = 0
@@ -39,7 +39,7 @@ class GcodeSettingsMenu : Menu {
 
     class ShowCurrentLayer : ToggleMenuItem() {
         private val preferences = BaseInjector.get().octoPreferences()
-        override val isEnabled get() = preferences.gcodePreviewSettings.showCurrentLayer
+        override val isChecked get() = preferences.gcodePreviewSettings.showCurrentLayer
         override val itemId = "current"
         override var groupId = "none"
         override val order = 1

@@ -46,7 +46,7 @@ class PrivacyMenu : Menu {
     )
 
     class CrashReportingMenuItem : ToggleMenuItem() {
-        override val isEnabled: Boolean get() = BaseInjector.get().octoPreferences().isCrashReportingEnabled
+        override val isChecked: Boolean get() = BaseInjector.get().octoPreferences().isCrashReportingEnabled
         override val itemId = MENU_ITEM_CRASH_REPORTING
         override var groupId = ""
         override val order = 10000
@@ -62,7 +62,7 @@ class PrivacyMenu : Menu {
     }
 
     class AnalyticsMenuItem : ToggleMenuItem() {
-        override val isEnabled: Boolean get() = BaseInjector.get().octoPreferences().isAnalyticsEnabled
+        override val isChecked: Boolean get() = BaseInjector.get().octoPreferences().isAnalyticsEnabled
         override val itemId = MENU_ITEM_ANALYTICS
         override var groupId = ""
         override val order = 10001

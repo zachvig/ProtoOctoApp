@@ -11,6 +11,7 @@ import de.crysxd.baseui.menu.MenuHost
 import de.crysxd.baseui.menu.MenuItem
 import de.crysxd.baseui.menu.MenuItemStyle
 import de.crysxd.baseui.utils.NavigationResultMediator
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.usecase.CreateFolderUseCase
 import de.crysxd.octoapp.filemanager.R
@@ -28,6 +29,7 @@ class AddItemMenu(private val origin: FileOrigin, private val folder: FileObject
     override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___add_menu___title)
 
     override suspend fun getMenuItem() = listOf(
+        FileActionsMenu.EnableFileManagementMenuItem(),
         AddFolderMenuItem(origin, folder),
         UploadFileMenuItem(origin, folder)
     )
@@ -35,10 +37,11 @@ class AddItemMenu(private val origin: FileOrigin, private val folder: FileObject
     class AddFolderMenuItem(private val origin: FileOrigin, private val parent: FileObject.Folder?) : MenuItem {
         override val itemId = "create_folder"
         override var groupId = ""
-        override val order = 1
+        override val order = 101
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_create_new_folder_24
         override val canBePinned = false
+        override val isEnabled get() = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
 
         override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___add_menu___create_folder_title)
 
@@ -75,10 +78,11 @@ class AddItemMenu(private val origin: FileOrigin, private val folder: FileObject
     class UploadFileMenuItem(private val origin: FileOrigin, private val parent: FileObject.Folder?) : MenuItem {
         override val itemId = "add_file"
         override var groupId = ""
-        override val order = 2
+        override val order = 102
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_upload_file_24
         override val canBePinned = false
+        override val isEnabled get() = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
 
         override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___add_menu___upload_file_title)
 

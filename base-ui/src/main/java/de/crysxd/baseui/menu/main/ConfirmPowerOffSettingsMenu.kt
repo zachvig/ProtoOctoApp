@@ -27,7 +27,7 @@ class ConfirmPowerOffSettingsMenu : Menu {
 
     class ConfirmPowerOffMenuItem(private val device: PowerDevice) : ToggleMenuItem() {
         private val prefs get() = BaseInjector.get().octoPreferences()
-        override val isEnabled get() = prefs.confirmPowerOffDevices.contains(device.uniqueId)
+        override val isChecked get() = prefs.confirmPowerOffDevices.contains(device.uniqueId)
         override val itemId = "confirm_power_off/${device.uniqueId}"
         override var groupId = "devices"
         override val order = 100
