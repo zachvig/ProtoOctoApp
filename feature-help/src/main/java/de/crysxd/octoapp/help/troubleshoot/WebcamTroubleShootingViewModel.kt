@@ -2,6 +2,7 @@ package de.crysxd.octoapp.help.troubleshoot
 
 import androidx.lifecycle.asLiveData
 import de.crysxd.baseui.BaseViewModel
+import de.crysxd.octoapp.base.data.models.ResolvedWebcamSettings
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
@@ -37,7 +38,9 @@ class WebcamTroubleShootingViewModel(
                 val instance = octoPrintRepository.getActiveInstanceSnapshot()
                 val activeIndex = instance?.appSettings?.activeWebcamIndex ?: 0
                 val webcamSettings = getWebcamSettingsUseCase.execute(instance)!![activeIndex]
-                val target = TestFullNetworkStackUseCase.Target.Webcam(webcamSettings)
+                val mjpegSettings = webcamSettings as? ResolvedWebcamSettings.MjpegSettings
+                    ?: return@flow emit(UiState.UnsupportedWebcam)
+                val target = TestFullNetworkStackUseCase.Target.Webcam(mjpegSettings)
                 val finding = testFullNetworkStackUseCase.execute(target)
                 val end = System.currentTimeMillis()
                 val delay = MIN_LOADING_TIME - (end - start)
@@ -54,5 +57,6 @@ class WebcamTroubleShootingViewModel(
     sealed class UiState {
         object Loading : UiState()
         data class Finding(val finding: TestFullNetworkStackUseCase.Finding) : UiState()
+        object UnsupportedWebcam : UiState()
     }
 }

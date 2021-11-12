@@ -3,6 +3,8 @@ package de.crysxd.octoapp.octoprint.interceptors
 import de.crysxd.octoapp.octoprint.exceptions.AlternativeWebUrlException
 import de.crysxd.octoapp.octoprint.getConnectionType
 import de.crysxd.octoapp.octoprint.models.ConnectionType
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -18,6 +20,12 @@ class AlternativeWebUrlInterceptor(
 ) : Interceptor {
 
     var isPrimaryUsed = true
+        set(value) {
+            field = value
+            mutableActiveUrl.value = if (value) webUrl else (alternativeWebUrl ?: webUrl)
+        }
+    private val mutableActiveUrl = MutableStateFlow(webUrl)
+    val activeUrl get() = mutableActiveUrl.asStateFlow()
 
     override fun intercept(chain: Interceptor.Chain): Response {
         return doIntercept(chain, 0)

@@ -69,6 +69,7 @@
     <string name="help___webcam_troubleshooting___continue" translatable="false">Continue</string>
     <string name="help___webcam_troubleshooting___try_again" translatable="false">Try again</string>
     <string name="help___webcam_troubleshooting___trust_and_try_again" translatable="false">Trust server</string>
+    <string name="help___webcam_troubleshooting___only_mjpeg_supported" translatable="false">At the moment troubleshooting is only available for MJPEG webcams</string>
     <string name="help___webcam_troubleshooting___loading_title" translatable="false">Testing your webcam…</string>
     <string name="help___webcam_troubleshooting___help" translatable="false">Need Help?</string>
     <string name="help___webcam_troubleshooting___title_webcam_is_working" translatable="false">Webcam is working</string>

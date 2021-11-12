@@ -24,10 +24,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.LoadEventInfo
@@ -59,7 +59,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     private var lastFocusX = 0f
     private var lastFocusY = 0f
 
-    private val hlsPlayer by lazy { SimpleExoPlayer.Builder(context).build() }
+    private val richPlayer by lazy { ExoPlayer.Builder(context).build() }
     private var playerInitialized = false
 
     lateinit var coroutineScope: LifecycleCoroutineScope
@@ -155,8 +155,8 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
     fun onPause() {
         Timber.i("Stopping stream")
-        hlsPlayer.pause()
-        hlsPlayer.stop()
+        richPlayer.pause()
+        richPlayer.stop()
     }
 
     private fun applyState(oldState: WebcamState?, newState: WebcamState) {
@@ -187,7 +187,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 binding.reconnectingState.isVisible = true
                 animatedMatrix = false
             }
-            WebcamState.HlsStreamDisabled -> {
+            WebcamState.RichStreamDisabled -> {
                 binding.loadingState.isVisible = false
                 binding.errorState.isVisible = true
                 binding.errorTitle.text = context.getString(R.string.hls_stream_disabled_title)
@@ -207,7 +207,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 }
                 animatedMatrix = false
             }
-            is WebcamState.HlsStreamReady -> displayHlsStream(newState)
+            is WebcamState.RichStreamReady -> displayHlsStream(newState)
             is WebcamState.MjpegFrameReady -> displayMjpegFrame(newState)
         }
     }
@@ -217,10 +217,10 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         if (newAspectRatio != nativeAspectRation) {
             nativeAspectRation = newAspectRatio
 
-            binding.hlsSurface.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            binding.richSurface.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 dimensionRatio = if (scaleToFill) null else "H,$width:$height"
             }
-            hlsPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+            richPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
 
             onNativeAspectRatioChanged(width, height)
         }
@@ -231,33 +231,34 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         scaleToFill = scaleToFill
     }
 
-    private fun displayHlsStream(state: WebcamState.HlsStreamReady) {
+    private fun displayHlsStream(state: WebcamState.RichStreamReady) = try {
+        Timber.i("Streaming ${state.uri}")
         binding.playingState.isVisible = true
-        binding.hlsSurface.isVisible = true
+        binding.richSurface.isVisible = true
         binding.mjpegSurface.isVisible = false
         binding.resolutionIndicator.isVisible = false
         usedLiveIndicator?.isVisible = false
-        hlsPlayer.setVideoSurfaceHolder(binding.hlsSurface.holder)
+        richPlayer.setVideoSurfaceHolder(binding.richSurface.holder)
         val mediaItem = MediaItem.fromUri(state.uri)
+        val dataSourceFactory = DefaultHttpDataSource.Factory()
         state.authHeader?.let {
-            val dataSourceFactory = DefaultHttpDataSource.Factory()
             dataSourceFactory.setDefaultRequestProperties(mapOf("Authorization" to it))
-            val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
-            hlsPlayer.setMediaSource(mediaSourceFactory.createMediaSource(mediaItem))
-        } ?: hlsPlayer.setMediaItem(mediaItem)
-        hlsPlayer.prepare()
-        hlsPlayer.play()
+        }
+        val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
+        richPlayer.setMediaSource(mediaSourceFactory.createMediaSource(mediaItem))
+        richPlayer.prepare()
+        richPlayer.play()
 
         if (!playerInitialized) {
             playerInitialized = true
 
-            hlsPlayer.addListener(object : Player.Listener {
+            richPlayer.addListener(object : Player.Listener {
                 override fun onVideoSizeChanged(videoSize: VideoSize) {
                     super.onVideoSizeChanged(videoSize)
                     applyAspectRatio(videoSize.width, videoSize.height)
                 }
             })
-            hlsPlayer.addAnalyticsListener(object : AnalyticsListener {
+            richPlayer.addAnalyticsListener(object : AnalyticsListener {
                 override fun onIsPlayingChanged(eventTime: AnalyticsListener.EventTime, isPlaying: Boolean) {
                     super.onIsPlayingChanged(eventTime, isPlaying)
                     Timber.v("onIsPlayingChanged: $isPlaying")
@@ -270,7 +271,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                     }
                 }
 
-                override fun onPlayerError(eventTime: AnalyticsListener.EventTime, error: ExoPlaybackException) {
+                override fun onPlayerError(eventTime: AnalyticsListener.EventTime, error: PlaybackException) {
                     super.onPlayerError(eventTime, error)
                     Timber.v("onPlayerError")
                     binding.loadingState.isVisible = false
@@ -283,7 +284,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 override fun onLoadCompleted(eventTime: AnalyticsListener.EventTime, loadEventInfo: LoadEventInfo, mediaLoadData: MediaLoadData) {
                     super.onLoadCompleted(eventTime, loadEventInfo, mediaLoadData)
                     Timber.v("onLoadCompleted")
-                    if (hlsPlayer.isPlaying) {
+                    if (richPlayer.isPlaying) {
                         binding.loadingState.isVisible = false
                     }
                     usedLiveIndicator?.isVisible = true
@@ -294,17 +295,22 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 override fun onLoadStarted(eventTime: AnalyticsListener.EventTime, loadEventInfo: LoadEventInfo, mediaLoadData: MediaLoadData) {
                     super.onLoadStarted(eventTime, loadEventInfo, mediaLoadData)
                     Timber.v("onLoadStarted")
-                    if (!hlsPlayer.isPlaying) {
+                    if (!richPlayer.isPlaying) {
                         binding.loadingState.isVisible = true
                     }
                 }
             })
+        } else {
+            Timber.i("Reusing player")
         }
+    } catch (e: Exception) {
+        Timber.e(e)
+        this.state = WebcamState.Error(state.uri.toString())
     }
 
     private fun invalidateMjpegFrame(frame: Bitmap) {
         binding.playingState.isGatedVisible = true
-        binding.hlsSurface.isGatedVisible = false
+        binding.richSurface.isGatedVisible = false
         binding.mjpegSurface.isGatedVisible = true
         usedLiveIndicator?.isGatedVisible = true
         binding.loadingState.isGatedVisible = false
@@ -411,7 +417,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             translationY += focusShiftY + centerOffsetY
         }
 
-        binding.hlsSurface.zoomInternal(zoomChange, focusX, focusY)
+        binding.richSurface.zoomInternal(zoomChange, focusX, focusY)
         binding.mjpegSurface.zoomInternal(zoomChange, focusX, focusY)
         lastFocusX = focusX
         lastFocusY = focusY
@@ -483,7 +489,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             }
         }
 
-        binding.hlsSurface.limitScrollRangeInternal()
+        binding.richSurface.limitScrollRangeInternal()
         binding.mjpegSurface.limitScrollRangeInternal()
     }
 
@@ -491,9 +497,9 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         object Loading : WebcamState()
         object Reconnecting : WebcamState()
         object NotConfigured : WebcamState()
-        object HlsStreamDisabled : WebcamState()
+        object RichStreamDisabled : WebcamState()
         data class Error(val streamUrl: String?) : WebcamState()
-        data class HlsStreamReady(val uri: Uri, val authHeader: String?) : WebcamState()
+        data class RichStreamReady(val uri: Uri, val authHeader: String?) : WebcamState()
         data class MjpegFrameReady(
             val frame: Bitmap,
             val flipH: Boolean,
@@ -530,8 +536,8 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         override fun onSingleTapUp(e: MotionEvent) = false
 
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
-            binding.hlsSurface.translationX -= distanceX
-            binding.hlsSurface.translationY -= distanceY
+            binding.richSurface.translationX -= distanceX
+            binding.richSurface.translationY -= distanceY
             binding.mjpegSurface.translationX -= distanceX
             binding.mjpegSurface.translationY -= distanceY
             limitScrollRange()

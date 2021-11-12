@@ -2,46 +2,26 @@ package de.crysxd.octoapp.base.usecase
 
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
-import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.network.OctoPrintProvider
+import de.crysxd.octoapp.base.data.models.ResolvedWebcamSettings
+import de.crysxd.octoapp.octoprint.extractAndRemoveBasicAuth
 import de.crysxd.octoapp.octoprint.isHlsStreamUrl
-import de.crysxd.octoapp.octoprint.models.ConnectionType
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import de.crysxd.octoapp.octoprint.resolvePath
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.first
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import timber.log.Timber
 import javax.inject.Inject
 
 class GetWebcamSettingsUseCase @Inject constructor(
-    private val octoPrintProvider: OctoPrintProvider,
-    private val octoPrintRepository: OctoPrintRepository,
-) : UseCase<OctoPrintInstanceInformationV3?, List<WebcamSettings>?>() {
+    private val getActiveHttpUrlUseCase: GetActiveHttpUrlUseCase,
+) : UseCase<OctoPrintInstanceInformationV3?, List<ResolvedWebcamSettings>?>() {
 
-    override suspend fun doExecute(param: OctoPrintInstanceInformationV3?, timber: Timber.Tree): List<WebcamSettings> {
-        // This is a little complicated on first glance, but not that bad
-        //
-        // Case A: A instance information is given via params (used for widgets) and we need to create an ad hoc instance
-        //         In this case we need to fetch the settings to see wether we have a local or a remote connection. OctoEverywhere also will alter the settings
-        //         with updated webcam URLs which we need
-        //
-        // Case B: No instance information is given in params and we use the "default" OctoPrint. In this case we need to check
-        //         if the websocket is connected. If this is the case, we can rely on the isAlternativeUrlBeingUsed being correct, no additional network request
-        //         is needed to test out the route
-        val (octoPrint, settings, useAlternative) = param?.let {
-            val o = octoPrintProvider.createAdHocOctoPrint(param)
-            val s = o.createSettingsApi().getSettings()
-            timber.i("Using ad-hoc connection (useAlternative=${o.isAlternativeUrlBeingUsed})")
-            Triple(o, s, o.isAlternativeUrlBeingUsed)
-        } ?: let {
-            val o = octoPrintProvider.octoPrint()
-            val connection = octoPrintProvider.passiveConnectionEventFlow("webcam-settings").firstOrNull()?.connectionType
-            val s = octoPrintRepository.getActiveInstanceSnapshot()?.settings?.takeIf { connection != null } ?: o.createSettingsApi().getSettings()
-            val a = (connection != null && connection != ConnectionType.Primary) || o.isAlternativeUrlBeingUsed
-            timber.i("Using default connection (connection=$connection, useAlternative=$a)")
-            Triple(o, s, a)
-        }
+    override suspend fun doExecute(param: OctoPrintInstanceInformationV3?, timber: Timber.Tree): List<ResolvedWebcamSettings> {
+        val (_, settings, activeWebUrlFlow) = getActiveHttpUrlUseCase.execute(param)
+        val activeWebUrl = activeWebUrlFlow.first()
 
         // Add all webcams from multicam plugin
         val webcamSettings = mutableListOf<WebcamSettings>()
@@ -52,30 +32,49 @@ class GetWebcamSettingsUseCase @Inject constructor(
             webcamSettings.add(settings.webcam)
         }
 
-        val primaryUrl = octoPrint.fullWebUrl
-        val alternativeUrl = octoPrint.fullAlternativeWebUrl
-
         val newSettings = webcamSettings.mapNotNull { ws ->
-            val streamUrl = ws.streamUrl ?: return@mapNotNull null
-
-            val upgradedUrl = ws.streamUrl?.toHttpUrlOrNull() ?: let {
-                // Conversion to HTTP url failed, indicating this URL is not absolute. Resolve from base.
-                val base = alternativeUrl?.takeIf { useAlternative } ?: primaryUrl
-                base.resolvePath(streamUrl)
+            fun HttpUrl.toWebcamSettings() = extractAndRemoveBasicAuth().let {
+                if (it.first.isHlsStreamUrl()) {
+                    ResolvedWebcamSettings.HlsSettings(url = it.first, webcamSettings = ws, basicAuth = it.second)
+                } else {
+                    ResolvedWebcamSettings.MjpegSettings(url = this, webcamSettings = ws)
+                }
             }
 
-            ws.copy(
-                multiCamUrl = upgradedUrl.toString(),
-                absoluteStreamUrl = upgradedUrl,
-                standardStreamUrl = upgradedUrl.toString(),
-            )
+            try {
+                val streamUrl = ws.streamUrl ?: return@mapNotNull null
+                when {
+                    // Stream URL
+                    ws.streamUrl?.toHttpUrlOrNull() != null -> ws.streamUrl!!.toHttpUrl().toWebcamSettings()
+
+                    // RTSP URL
+                    ws.streamUrl?.startsWith("rtsp://") == true -> {
+                        val originalPrefix = "rtsp://"
+                        val fakePrefix = "http://"
+                        val fakeHttpUrl = (fakePrefix + ws.streamUrl!!.removePrefix(originalPrefix)).toHttpUrl()
+                        val (url, basicAuth) = fakeHttpUrl.extractAndRemoveBasicAuth()
+                        ResolvedWebcamSettings.RtspSettings(
+                            url = originalPrefix + url.toString().removePrefix(fakePrefix),
+                            webcamSettings = ws,
+                            basicAuth = basicAuth
+                        )
+                    }
+
+                    // No HTTP/S, no RTSP. Let's assume it's a HTTP path and resolve it
+                    else -> activeWebUrl.resolvePath(streamUrl).toWebcamSettings()
+                }
+            } catch (e: Exception) {
+                Timber.e(e)
+                null
+            }
         }
 
         OctoAnalytics.setUserProperty(
             OctoAnalytics.UserProperty.WebCamAvailable,
             when {
-                newSettings.any { it.absoluteStreamUrl?.isHlsStreamUrl() == true } -> "hls"
-                newSettings.any { it.absoluteStreamUrl != null } -> "mjpeg"
+                newSettings.any { it is ResolvedWebcamSettings.RtspSettings } -> "rtsp"
+                newSettings.any { it is ResolvedWebcamSettings.HlsSettings } -> "hls"
+                newSettings.any { it is ResolvedWebcamSettings.MjpegSettings } -> "mjpeg"
                 else -> "false"
             }
         )

@@ -68,7 +68,7 @@ class OctoPrint(
             }
         }
     )
-    val isAlternativeUrlBeingUsed get() = !alternativeWebUrlInterceptor.isPrimaryUsed
+    val activeUrl get() = alternativeWebUrlInterceptor.activeUrl
     private val okHttpClient = createOkHttpClient()
 
     private val webSocket = EventWebSocket(
