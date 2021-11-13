@@ -1,8 +1,8 @@
 package de.crysxd.octoapp.base.data.models
 
 data class ProgressWidgetSettings(
-    val showUsedTime: Boolean = false,
-    val showLeftTime: Boolean = false,
+    val showUsedTime: Boolean = true,
+    val showLeftTime: Boolean = true,
     val showThumbnail: Boolean = false,
     val etaStyle: EtaStyle = EtaStyle.Compact,
     val printNameStyle: PrintNameStyle = PrintNameStyle.Compact,
