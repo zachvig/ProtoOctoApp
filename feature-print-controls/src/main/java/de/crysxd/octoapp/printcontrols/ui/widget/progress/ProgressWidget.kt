@@ -11,17 +11,20 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import de.crysxd.baseui.common.gcode.GcodePreviewViewModel
 import de.crysxd.baseui.di.BaseUiInjector
 import de.crysxd.baseui.menu.MenuBottomSheetFragment
 import de.crysxd.baseui.utils.ColorTheme
 import de.crysxd.baseui.widget.BaseWidgetHostFragment
 import de.crysxd.baseui.widget.RecyclableOctoWidget
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.data.models.ProgressWidgetSettings
 import de.crysxd.octoapp.base.data.models.WidgetType
 import de.crysxd.octoapp.base.di.BaseInjector
@@ -32,6 +35,7 @@ import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.printcontrols.R
 import de.crysxd.octoapp.printcontrols.databinding.ProgressWidgetBinding
+import de.crysxd.octoapp.printcontrols.di.injectActivityViewModel
 import de.crysxd.octoapp.printcontrols.di.injectViewModel
 import timber.log.Timber
 import kotlin.math.roundToInt
@@ -45,8 +49,10 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
     private var lastSettings: ProgressWidgetSettings? = null
     override val binding = ProgressWidgetBinding.inflate(LayoutInflater.from(context))
     private val observer = Observer(::updateView)
+    private val gcodeObserver = Observer(::updateLayer)
     private val progressPercentLayoutThreshold = 80f
     private var picasso: Picasso? = null
+    private lateinit var gcodeViewModel: GcodePreviewViewModel
 
     override fun getActionIcon() = R.drawable.ic_round_settings_24
 
@@ -69,6 +75,14 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
             false -> GONE
             true -> INVISIBLE
         }
+        binding.layer.visibility = when (settings.showLayer) {
+            false -> GONE
+            true -> INVISIBLE
+        }
+        binding.zHeight.visibility = when (settings.showZHeight) {
+            false -> GONE
+            true -> INVISIBLE
+        }
         binding.printName.visibility = when (settings.printNameStyle) {
             ProgressWidgetSettings.PrintNameStyle.None -> GONE
             ProgressWidgetSettings.PrintNameStyle.Compact -> INVISIBLE
@@ -79,6 +93,7 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
             true -> INVISIBLE
         }
         binding.textViewProgressPercent.isInvisible = true
+        gcodeViewModel = parent.injectActivityViewModel<GcodePreviewViewModel>(BaseUiInjector.get().viewModelFactory()).value
         return parent.injectViewModel<ProgressWidgetViewModel>().value
     }
 
@@ -88,6 +103,7 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
     override fun onResume(lifecycleOwner: LifecycleOwner) {
         super.onResume(lifecycleOwner)
         baseViewModel.printState.observe(lifecycleOwner, observer)
+        gcodeViewModel.viewState.observe(lifecycleOwner, gcodeObserver)
         BaseUiInjector.get().picasso().observe(lifecycleOwner) {
             picasso = it
         }
@@ -96,6 +112,22 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
     override fun onPause() {
         super.onPause()
         baseViewModel.printState.removeObserver(observer)
+        gcodeViewModel.viewState.removeObserver(gcodeObserver)
+    }
+
+    private fun updateLayer(layerState: GcodePreviewViewModel.ViewState) {
+        val (layer, zHeight) = when (layerState) {
+            is GcodePreviewViewModel.ViewState.DataReady -> layerState.renderContext?.let {
+                String.format("%d/%d (%.0f%%)", it.layerNumber, it.layerCount, it.layerProgress * 100) to context.getString(R.string.x_mm, it.layerZHeight)
+            } ?: "Unavailable" to "Unavailable"
+            is GcodePreviewViewModel.ViewState.Error -> "Unavailable" to "Unavailable"
+            is GcodePreviewViewModel.ViewState.FeatureDisabled -> "Unavailable" to "Unavailable"
+            GcodePreviewViewModel.ViewState.LargeFileDownloadRequired -> "Large file" to "Large File"
+            is GcodePreviewViewModel.ViewState.Loading -> "Loading…" to "Loading…"
+        }
+
+        binding.layer.value = layer
+        binding.zHeight.value = zHeight
     }
 
     private fun updateView(pair: Pair<Message.CurrentMessage, ProgressWidgetSettings>) {
@@ -163,6 +195,11 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
             binding.eta.smallFont = binding.printName.smallFont
             binding.timeLeft.smallFont = binding.printName.smallFont
             binding.timeUsed.smallFont = binding.printName.smallFont
+            binding.layer.smallFont = binding.printName.smallFont
+            binding.zHeight.smallFont = binding.printName.smallFont
+            val gap = context.resources.getDimensionPixelSize(if (binding.printName.smallFont) R.dimen.margin_1 else R.dimen.margin_2)
+            binding.printName.updatePadding(top = gap / 2)
+            binding.itemsFlow.setVerticalGap(gap / 2)
 
             binding.progressBarFill.backgroundTintList = ColorStateList.valueOf(ColorTheme.activeColorTheme.dark)
             binding.textViewProgressPercent.text = progressText
@@ -175,9 +212,12 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
                 it?.setTint(ContextCompat.getColor(context, message.progress?.printTimeLeftOrigin.asPrintTimeLeftOriginColor()))
             }
 
+            val hasLayerInfo = BillingManager.isFeatureEnabled(BillingManager.FEATURE_GCODE_PREVIEW)
             binding.eta.isVisible = settings.etaStyle != ProgressWidgetSettings.EtaStyle.None
             binding.timeUsed.isVisible = settings.showUsedTime
             binding.timeLeft.isVisible = settings.showLeftTime
+            binding.zHeight.isVisible = settings.showZHeight && hasLayerInfo
+            binding.layer.isVisible = settings.showLayer && hasLayerInfo
             binding.printName.isVisible = settings.printNameStyle != ProgressWidgetSettings.PrintNameStyle.None
             binding.textViewProgressPercent.isVisible = true
 
@@ -221,3 +261,4 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
         formatEtaUseCase.execute(FormatEtaUseCase.Params(seconds, allowRelative = false, showLabel = false, useCompactDate = compactDate))
 
 }
+

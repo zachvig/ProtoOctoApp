@@ -97,8 +97,8 @@ class ProgressItemView @JvmOverloads constructor(context: Context, attributeSet:
             MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
         )
 
-        val measuredWidth = max(labelView.measuredWidth, valueView.measuredWidth)
-        val measuredHeight = labelView.measuredHeight + valueView.measuredHeight
+        val measuredWidth = max(labelView.measuredWidth, valueView.measuredWidth) + paddingLeft + paddingRight
+        val measuredHeight = labelView.measuredHeight + valueView.measuredHeight + paddingTop + paddingBottom
 
         super.onMeasure(
             MeasureSpec.makeMeasureSpec(measuredWidth, MeasureSpec.EXACTLY),
@@ -108,10 +108,10 @@ class ProgressItemView @JvmOverloads constructor(context: Context, attributeSet:
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         val iconSize = (labelView.measuredHeight * 0.8).roundToInt()
-        val iconX = labelView.measuredWidth + iconSize / 8
-        val iconY = (labelView.measuredHeight - iconSize) / 2
-        labelView.layout(0, 0, labelView.measuredWidth, labelView.measuredHeight)
+        val iconX = paddingLeft + labelView.measuredWidth + iconSize / 8
+        val iconY = paddingTop + (labelView.measuredHeight - iconSize) / 2
+        labelView.layout(paddingLeft, paddingTop, labelView.measuredWidth + paddingLeft, labelView.measuredHeight + paddingTop)
         iconView.layout(iconX, iconY, iconX + iconSize, iconY + iconSize)
-        valueView.layout(0, labelView.measuredHeight, r, b)
+        valueView.layout(paddingLeft, labelView.measuredHeight + paddingTop, r - paddingRight, b - paddingBottom)
     }
 }

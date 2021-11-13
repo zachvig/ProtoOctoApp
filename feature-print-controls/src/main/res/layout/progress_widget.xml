@@ -72,7 +72,7 @@
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_2"
         android:layout_marginEnd="@dimen/margin_2"
-        app:constraint_referenced_ids="timeUsed,timeLeft,eta"
+        app:constraint_referenced_ids="timeUsed,timeLeft,eta,layer,zHeight"
         app:flow_horizontalBias="0"
         app:flow_horizontalGap="@dimen/margin_2"
         app:flow_horizontalStyle="packed"
@@ -104,11 +104,24 @@
         app:value="5:33 AM+4" />
 
     <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
+        android:id="@+id/layer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:label="Layer**"
+        app:value="4/204 @ 56%" />
+
+    <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
+        android:id="@+id/zHeight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:label="Z Height**"
+        app:value="32mm" />
+
+    <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
         android:id="@+id/printName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:label="@string/print_name"
-        android:layout_marginTop="@dimen/margin_1"
         app:layout_constraintEnd_toEndOf="@id/itemsFlow"
         app:layout_constraintStart_toStartOf="@id/itemsFlow"
         app:layout_constraintTop_toBottomOf="@id/itemsFlow"
