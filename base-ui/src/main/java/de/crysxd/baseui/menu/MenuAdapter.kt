@@ -25,6 +25,7 @@ import de.crysxd.baseui.databinding.MenuItemBinding
 import de.crysxd.baseui.ext.oneOffEndAction
 import de.crysxd.octoapp.base.data.models.MenuId
 import de.crysxd.octoapp.base.di.BaseInjector
+import timber.log.Timber
 import java.lang.ref.WeakReference
 
 @SuppressLint("NotifyDataSetChanged")
@@ -92,6 +93,7 @@ class MenuAdapter(
     override fun getItemCount() = menuItems.size
 
 
+    @SuppressLint("MissingPermission")
     override fun onBindViewHolder(holder: MenuItemHolder, position: Int) {
         val preparedItem = menuItems[position]
         val item = preparedItem.menuItem
@@ -103,6 +105,7 @@ class MenuAdapter(
         holder.binding.right.isVisible = holder.binding.right.text.isNotBlank()
         holder.binding.description.text = preparedItem.description
         holder.binding.description.isVisible = holder.binding.description.text.isNotBlank()
+        holder.binding.button.isEnabled = preparedItem.isEnabled
         holder.binding.button.setOnClickListener {
             onClick(item)
         }
@@ -110,10 +113,13 @@ class MenuAdapter(
         holder.binding.button.setOnLongClickListener {
             if (item.canBePinned) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    (context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator)
-                        .vibrate(VibrationEffect.createOneShot(30, 255))
+                    try {
+                        (context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator)
+                            .vibrate(VibrationEffect.createOneShot(30, 255))
+                    } catch (e: SecurityException) {
+                        Timber.w("Can't vibrate")
+                    }
                 }
-
 
                 onPinItem(item, it)
             }
@@ -122,12 +128,14 @@ class MenuAdapter(
 
         // Toggle
         holder.binding.toggle.isVisible = item is ToggleMenuItem
-        holder.binding.toggle.isChecked = (item as? ToggleMenuItem)?.isEnabled == true
+        holder.binding.toggle.isChecked = (item as? ToggleMenuItem)?.isChecked == true
+        holder.binding.toggle.isEnabled = preparedItem.isEnabled
 
         // Secondary button
         val icon = item.secondaryButtonIcon
         holder.binding.secondaryButton.isVisible = icon != null
         holder.binding.secondaryButton.setImageResource(icon ?: 0)
+        holder.binding.secondaryButton.isEnabled = preparedItem.isEnabled
         holder.binding.secondaryButton.setOnClickListener {
             onSecondaryClick(item)
         }
@@ -152,7 +160,7 @@ class MenuAdapter(
 
         // Margins
         val nextItem = menuItems.getOrNull(position + 1)?.menuItem
-        val groupChanged = nextItem != null && nextItem.groupId != item.groupId
+        val groupChanged = nextItem != null && nextItem.groupId.isNotBlank() && nextItem.groupId != item.groupId
         val lastItem = nextItem == null
         var column = 0
         for (it in menuItems) {
@@ -183,6 +191,7 @@ class MenuAdapter(
         holder.binding.icon.setColorFilter(foreground.defaultColor)
         holder.binding.button.strokeColor = if (item.showAsOutlined) foreground else transparent
         holder.binding.button.rippleColor = if (item.showAsOutlined) foreground else background
+        holder.root.alpha = if (preparedItem.isEnabled) 1f else 0.5f
     }
 }
 
@@ -203,5 +212,6 @@ data class PreparedMenuItem(
     val right: CharSequence?,
     val description: CharSequence?,
     val isVisible: Boolean,
+    val isEnabled: Boolean,
     val badgeCount: Int,
 )

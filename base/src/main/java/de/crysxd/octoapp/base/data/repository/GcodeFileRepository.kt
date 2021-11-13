@@ -1,11 +1,13 @@
 package de.crysxd.octoapp.base.data.repository
 
+import de.crysxd.octoapp.base.data.source.GcodeFileDataSource
 import de.crysxd.octoapp.base.data.source.LocalGcodeFileDataSource
 import de.crysxd.octoapp.base.data.source.RemoteGcodeFileDataSource
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.retry
 import timber.log.Timber
 
@@ -15,6 +17,7 @@ class GcodeFileRepository(
     private val remoteDataSource: RemoteGcodeFileDataSource,
 ) {
     fun loadFile(file: FileObject.File, allowLargeFileDownloads: Boolean) = flow {
+        emit(flowOf(GcodeFileDataSource.LoadState.Loading(0f)))
         if (!localDataSource.canLoadFile(file)) {
             Timber.i("Loading ${file.path} from remote")
             emit(remoteDataSource.loadFile(file, allowLargeFileDownloads))

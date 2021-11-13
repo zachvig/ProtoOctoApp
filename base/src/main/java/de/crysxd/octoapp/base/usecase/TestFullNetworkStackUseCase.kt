@@ -2,11 +2,11 @@ package de.crysxd.octoapp.base.usecase
 
 import android.graphics.Bitmap
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.models.ResolvedWebcamSettings
 import de.crysxd.octoapp.base.network.LocalDnsResolver
 import de.crysxd.octoapp.base.network.MjpegConnection2
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.exceptions.*
-import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -272,7 +272,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
 
     sealed class Target(open val webUrl: String?) {
         // URL is a String here because it might come directly from user input. This way we can also test URL syntax
-        data class Webcam(val webcamSettings: WebcamSettings) : Target(webcamSettings.absoluteStreamUrl?.toString())
+        data class Webcam(val webcamSettings: ResolvedWebcamSettings.MjpegSettings) : Target(webcamSettings.urlString)
         data class OctoPrint(override val webUrl: String, val apiKey: String) : Target(webUrl)
     }
 

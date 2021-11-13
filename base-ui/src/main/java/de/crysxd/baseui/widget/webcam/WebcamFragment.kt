@@ -15,15 +15,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import de.crysxd.baseui.R
-import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.baseui.InsetAwareScreen
+import de.crysxd.baseui.R
 import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.databinding.WebcamFragmentBinding
 import de.crysxd.baseui.di.injectActivityViewModel
 import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.menu.MenuBottomSheetFragment
 import de.crysxd.baseui.menu.webcam.WebcamSettingsMenu
+import de.crysxd.octoapp.base.data.models.ProgressWidgetSettings
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
@@ -91,10 +92,10 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
             binding.webcamView.state = when (it) {
                 is WebcamViewModel.UiState.Loading -> WebcamView.WebcamState.Loading
                 WebcamViewModel.UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
-                is WebcamViewModel.UiState.HlsStreamDisabled -> {
+                is WebcamViewModel.UiState.RichStreamDisabled -> {
                     // We can't launch the purchase flow in fullscreen. Close screen.
                     findNavController().popBackStack()
-                    WebcamView.WebcamState.HlsStreamDisabled
+                    WebcamView.WebcamState.RichStreamDisabled
                 }
                 is WebcamViewModel.UiState.FrameReady -> WebcamView.WebcamState.MjpegFrameReady(
                     frame = it.frame,
@@ -102,7 +103,7 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
                     flipV = it.flipV,
                     rotate90 = it.rotate90
                 )
-                is WebcamViewModel.UiState.HlsStreamReady -> WebcamView.WebcamState.HlsStreamReady(it.uri, it.authHeader)
+                is WebcamViewModel.UiState.RichStreamReady -> WebcamView.WebcamState.RichStreamReady(it.uri, it.authHeader)
                 is WebcamViewModel.UiState.Error -> if (it.isManualReconnect) {
                     WebcamView.WebcamState.Error(it.streamUrl)
                 } else {
@@ -112,6 +113,7 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
         }
 
         lifecycleScope.launchWhenCreated {
+            val compactEtaDate = BaseInjector.get().octoPreferences().progressWidgetSettings.etaStyle == ProgressWidgetSettings.EtaStyle.Compact
             BaseInjector.get().octoPrintProvider().passiveCurrentMessageFlow("webcam").collectLatest { message ->
                 val flags = message.state?.flags
                 val printActive = listOf(flags?.paused, flags?.pausing, flags?.printing, flags?.cancelling).any { it == true }
@@ -127,7 +129,7 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
                         getString(R.string.time_left_x, BaseInjector.get().formatDurationUseCase().execute(it))
                     }
                     binding.textViewEta.text = message.progress?.printTimeLeft?.let {
-                        BaseInjector.get().formatEtaUseCase().execute(FormatEtaUseCase.Params(it.toLong(), false))
+                        BaseInjector.get().formatEtaUseCase().execute(FormatEtaUseCase.Params(it.toLong(), useCompactDate = compactEtaDate))
                     }
                 } else {
                     binding.textViewProgress.text = ""

@@ -61,8 +61,8 @@ class ContinuousOnlineCheck(
         connection.requestMethod = "HEAD"
         connection.connect()
 
-        // Got any response code except 500? Online.
-        if (connection.responseCode in 0..499) {
+        // Got any response code in 2xx range? Online.
+        if (connection.responseCode in 0..299) {
             logger.log(Level.INFO, "$url is ONLINE (${connection.responseCode})")
             onOnline()
             true

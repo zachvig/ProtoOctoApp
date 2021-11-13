@@ -7,33 +7,21 @@
     app:divider="@drawable/margin_2_divider"
     app:showDividers="middle">
 
-    <de.crysxd.baseui.common.TutorialView
-        android:id="@+id/whatsNew"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:alwaysShow="true"
-        app:detail="@string/announcement___new_version_detail"
-        app:hideButton="@string/hide"
-        app:hidePrefName="@string/pref_key_version_announcement"
-        app:learnMoreButton="@string/announcement___new_version_learn_more"
-        app:noBottomMargin="true"
-        app:title="@string/announcement___new_version_title" />
+    <!--    <de.crysxd.baseui.common.TutorialView-->
+    <!--        android:id="@+id/whatsNew"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        app:alwaysShow="true"-->
+    <!--        app:detail="@string/announcement___new_version_detail"-->
+    <!--        app:hideButton="@string/hide"-->
+    <!--        app:hidePrefName="@string/pref_key_version_announcement"-->
+    <!--        app:learnMoreButton="@string/announcement___new_version_learn_more"-->
+    <!--        app:noBottomMargin="true"-->
+    <!--        app:title="@string/announcement___new_version_title" />-->
 
-    <de.crysxd.baseui.common.TutorialView
-        android:id="@+id/octoEverywhere"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:alwaysShow="true"
-        app:detail="@string/announcement___octoeverywhere_detail"
-        app:hero="@drawable/octoeverywhere_hero"
-        app:hideButton="@string/hide"
-        app:hidePrefName="@string/pref_key_octoeverywhere_announcement"
-        app:learnMoreButton="@string/announcement___octoeverywhere_learn_more"
-        app:noBottomMargin="true"
-        app:title="@string/announcement___octoeverywhere_title" />
 
     <de.crysxd.baseui.common.AnnouncementView
-        android:id="@+id/saleAnnouncement"
+        android:id="@+id/announcement"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

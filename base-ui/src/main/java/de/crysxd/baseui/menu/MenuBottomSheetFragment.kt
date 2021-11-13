@@ -129,6 +129,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
                                 right = it.getRightDetail(context),
                                 description = it.getDescription(context),
                                 isVisible = it.isVisible(currentDestination),
+                                isEnabled = it.isEnabled,
                                 badgeCount = it.getBadgeCount()
                             )
                         }.filter {

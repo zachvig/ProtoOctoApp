@@ -20,7 +20,7 @@ class SortOptionsMenu : Menu {
         HidePrintedMenuItem()
     )
 
-    class SortByMenuItem(private val context: Context) : RevolvingOptionsMenuItem() {
+    class SortByMenuItem(context: Context) : RevolvingOptionsMenuItem() {
         override val activeValue get() = BaseInjector.get().octoPreferences().fileManagerSettings.sortBy.name
         override val canBePinned = false
         override val itemId = "sort_by"
@@ -88,7 +88,7 @@ class SortOptionsMenu : Menu {
     }
 
     class HidePrintedMenuItem : ToggleMenuItem() {
-        override val isEnabled get() = BaseInjector.get().octoPreferences().fileManagerSettings.hidePrintedFiles
+        override val isChecked get() = BaseInjector.get().octoPreferences().fileManagerSettings.hidePrintedFiles
         override val itemId = "hide_printed"
         override var groupId = "none"
         override val order = 3

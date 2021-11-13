@@ -115,6 +115,23 @@ data class OctoPrintInstanceInformationV3(
         }
 
     fun isForWebUrl(webUrl: HttpUrl) = webUrl.isBasedOn(this.webUrl) || webUrl.isBasedOn(this.alternativeWebUrl)
+
+    override fun toString() = StringBuilder().also {
+        it.append("OctoPrintInstanceInformationV3(")
+        it.append("id=$id ")
+        it.append("webUrl=$webUrl ")
+        it.append("alternativeWebUrl=$alternativeWebUrl ")
+        it.append("notificationId=$notificationId ")
+        it.append("apiKey=$apiKey ")
+        it.append("issue=$issue ")
+        it.append("m115Response=${if (m115Response == null) null else "..."} ")
+        it.append("settings=$settings ")
+        it.append("activeProfile=$activeProfile ")
+        it.append("systemCommands=${if (systemCommands == null) null else "..."} ")
+        it.append("appSettings=$appSettings ")
+        it.append("octoEverywhereConnection=${if (octoEverywhereConnection == null) null else "..."} \"")
+        it.append(")")
+    }.toString()
 }
 
 fun OctoPrintInstanceInformationV3?.hasPlugin(plugin: KClass<out Settings.PluginSettings>) =

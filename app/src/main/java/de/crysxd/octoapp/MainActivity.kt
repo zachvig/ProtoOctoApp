@@ -610,6 +610,7 @@ class MainActivity : OctoActivity() {
             addTransition(Explode())
             addTransition(ChangeBounds())
             addTransition(Fade())
+            excludeTarget(de.crysxd.baseui.R.id.widgetContainer, true)
             excludeChildren(octoToolbar, true)
         })
 

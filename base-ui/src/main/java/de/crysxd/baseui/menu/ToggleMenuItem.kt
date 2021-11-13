@@ -1,7 +1,7 @@
 package de.crysxd.baseui.menu
 
 abstract class ToggleMenuItem : MenuItem {
-    abstract val isEnabled: Boolean
+    abstract val isChecked: Boolean
     override val canRunWithAppInBackground = false
 
     abstract suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean)

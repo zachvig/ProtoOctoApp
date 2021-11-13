@@ -18,6 +18,7 @@ import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.squareup.picasso.Callback
+import de.crysxd.baseui.di.BaseUiInjector
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.ext.format
 import de.crysxd.octoapp.filemanager.R
@@ -52,7 +53,7 @@ class InfoTabFragment : Fragment() {
             // Load preview image
             val start = System.currentTimeMillis()
             file.thumbnail?.let {
-                FileManagerInjector.get().picasso().observe(viewLifecycleOwner) { picasso ->
+                BaseUiInjector.get().picasso().observe(viewLifecycleOwner) { picasso ->
                     picasso.load(it)
                         .noFade()
                         .transform(CropAlphaTransformation())

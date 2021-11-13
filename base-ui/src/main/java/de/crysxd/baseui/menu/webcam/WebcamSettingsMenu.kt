@@ -33,7 +33,7 @@ class WebcamSettingsMenu : Menu {
     override suspend fun getSubtitle(context: Context) = context.getString(R.string.webcam_settings___subtitle)
 
     class ShowResolutionMenuItem : ToggleMenuItem() {
-        override val isEnabled get() = BaseInjector.get().octoPreferences().isShowWebcamResolution
+        override val isChecked get() = BaseInjector.get().octoPreferences().isShowWebcamResolution
 
         override val itemId = MENU_ITEM_SHOW_WEBCAM_RESOLUTION
         override var groupId = ""

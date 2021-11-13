@@ -11,8 +11,11 @@ import de.crysxd.baseui.menu.MenuHost
 import de.crysxd.baseui.menu.MenuItem
 import de.crysxd.baseui.menu.MenuItemStyle
 import de.crysxd.baseui.utils.NavigationResultMediator
+import de.crysxd.octoapp.base.UriLibrary
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.asStyleFileSize
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.usecase.DownloadAndShareFileUseCase
 import de.crysxd.octoapp.base.usecase.MoveFileUseCase
 import de.crysxd.octoapp.filemanager.R
@@ -29,22 +32,41 @@ class FileActionsMenu(val file: FileObject) : Menu {
 
     override suspend fun getMenuItem() = listOfNotNull(
         DeleteFileMenuItem(file),
+        EnableFileManagementMenuItem(),
         RenameFileMenuItem(file),
         CopyFileMenuItem(file),
         MoveFileMenuItem(file),
         (file as? FileObject.File)?.let { DownloadAndShareMenuItem(it) }
     )
 
+    class EnableFileManagementMenuItem : MenuItem {
+        override val itemId = "enable_all"
+        override var groupId = "enable"
+        override val order = 100
+        override val canBePinned = false
+        override val style = MenuItemStyle.Support
+        override val icon = de.crysxd.baseui.R.drawable.ic_round_favorite_24
+        override suspend fun isVisible(destinationId: Int) = !BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
+
+        override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___enable_all_options)
+
+        override suspend fun onClicked(host: MenuHost?) {
+            host?.getMenuActivity()?.let {
+                UriLibrary.getPurchaseUri().open(it)
+            }
+        }
+    }
+
     class DeleteFileMenuItem(val file: FileObject) : ConfirmedMenuItem() {
         override val itemId = "delete"
         override var groupId = ""
-        override val order = 2
+        override val order = 1
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_delete_outline_24
         override val canBePinned = false
 
         override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___delete)
-        override fun getConfirmMessage(context: Context) = context.getString(R.string.file_manager___file_menu___delete, file.display)
+        override fun getConfirmMessage(context: Context) = context.getString(R.string.file_manager___file_menu___delete_confirmation_message, file.display)
         override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.file_manager___file_menu___delete)
         override suspend fun onConfirmed(host: MenuHost?) {
             BaseInjector.get().deleteFileUseCase().execute(file)
@@ -55,10 +77,11 @@ class FileActionsMenu(val file: FileObject) : Menu {
     class RenameFileMenuItem(val file: FileObject) : MenuItem {
         override val itemId = "rename"
         override var groupId = ""
-        override val order = 1
+        override val order = 102
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_edit_24
         override val canBePinned = false
+        override val isEnabled get() = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
 
         override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___rename)
         override suspend fun onClicked(host: MenuHost?) {
@@ -95,10 +118,11 @@ class FileActionsMenu(val file: FileObject) : Menu {
     class CopyFileMenuItem(val file: FileObject) : MenuItem {
         override val itemId = "copy"
         override var groupId = ""
-        override val order = 3
+        override val order = 103
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_content_copy_24
         override val canBePinned = false
+        override val isEnabled get() = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
 
         override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___copy)
         override suspend fun onClicked(host: MenuHost?) {
@@ -115,10 +139,11 @@ class FileActionsMenu(val file: FileObject) : Menu {
     class MoveFileMenuItem(val file: FileObject) : MenuItem {
         override val itemId = "move"
         override var groupId = ""
-        override val order = 4
+        override val order = 104
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_content_cut_24
         override val canBePinned = false
+        override val isEnabled get() = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
 
         override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___move)
         override suspend fun onClicked(host: MenuHost?) {
@@ -135,10 +160,11 @@ class FileActionsMenu(val file: FileObject) : Menu {
     class DownloadAndShareMenuItem(val file: FileObject.File) : MenuItem {
         override val itemId = "download"
         override var groupId = ""
-        override val order = 5
+        override val order = 105
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_share_24
         override val canBePinned = false
+        override val isEnabled get() = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
 
         override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___download_and_share)
         override suspend fun getDescription(context: Context) =

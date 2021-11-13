@@ -2,6 +2,7 @@ package de.crysxd.octoapp.help.troubleshoot
 
 import androidx.lifecycle.asLiveData
 import de.crysxd.baseui.BaseViewModel
+import de.crysxd.octoapp.base.data.models.ResolvedWebcamSettings
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
@@ -31,19 +32,25 @@ class WebcamTroubleShootingViewModel(
         .combine(retrySignalChannel) { _, _ ->
             // No data returned, we only need a trigger :)
         }.flatMapLatest {
-            flow {
-                emit(UiState.Loading)
-                val start = System.currentTimeMillis()
+            getWebcamSettingsUseCase.execute(null).flatMapLatest { ws ->
                 val instance = octoPrintRepository.getActiveInstanceSnapshot()
                 val activeIndex = instance?.appSettings?.activeWebcamIndex ?: 0
-                val webcamSettings = getWebcamSettingsUseCase.execute(instance)!![activeIndex]
-                val target = TestFullNetworkStackUseCase.Target.Webcam(webcamSettings)
-                val finding = testFullNetworkStackUseCase.execute(target)
-                val end = System.currentTimeMillis()
-                val delay = MIN_LOADING_TIME - (end - start)
-                if (delay > 0) delay(delay)
-                emit(UiState.Finding(finding))
+                val webcamSettings = ws[activeIndex]
+                Timber.i("Troubleshooting $webcamSettings'")
+                flow {
+                    emit(UiState.Loading)
+                    val start = System.currentTimeMillis()
+                    val mjpegSettings = webcamSettings as? ResolvedWebcamSettings.MjpegSettings
+                        ?: return@flow emit(UiState.UnsupportedWebcam)
+                    val target = TestFullNetworkStackUseCase.Target.Webcam(mjpegSettings)
+                    val finding = testFullNetworkStackUseCase.execute(target)
+                    val end = System.currentTimeMillis()
+                    val delay = MIN_LOADING_TIME - (end - start)
+                    if (delay > 0) delay(delay)
+                    emit(UiState.Finding(finding))
+                }
             }
+
         }.catch {
             Timber.e(it)
             emit(UiState.Finding(TestFullNetworkStackUseCase.Finding.UnexpectedIssue(null, it)))
@@ -54,5 +61,6 @@ class WebcamTroubleShootingViewModel(
     sealed class UiState {
         object Loading : UiState()
         data class Finding(val finding: TestFullNetworkStackUseCase.Finding) : UiState()
+        object UnsupportedWebcam : UiState()
     }
 }

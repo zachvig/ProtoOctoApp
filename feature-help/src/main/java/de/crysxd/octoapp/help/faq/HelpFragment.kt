@@ -183,6 +183,7 @@ class HelpFragment : Fragment(), MenuHost {
             description = it.getDescription(requireContext()),
             menuItem = it,
             isVisible = it.isVisible(findNavController().currentDestination?.id ?: 0),
+            isEnabled = it.isEnabled,
             badgeCount = it.getBadgeCount()
         )
     }

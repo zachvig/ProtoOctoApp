@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.data.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.di.ViewModelFactory
@@ -34,17 +35,21 @@ open class ViewModelModule {
         octoPrintProvider: OctoPrintProvider,
         togglePausePrintJobUseCase: TogglePausePrintJobUseCase,
     ): ViewModel = PrintControlsViewModel(
-        octoPrintRepository,
-        octoPrintProvider,
-        togglePausePrintJobUseCase,
+        octoPrintRepository = octoPrintRepository,
+        octoPrintProvider = octoPrintProvider,
+        togglePausePrintJobUseCase = togglePausePrintJobUseCase,
     )
 
     @Provides
     @IntoMap
     @ViewModelKey(ProgressWidgetViewModel::class)
     open fun provideProgressWidgetViewModel(
-        octoPrintProvider: OctoPrintProvider
-    ): ViewModel = ProgressWidgetViewModel(octoPrintProvider)
+        octoPrintProvider: OctoPrintProvider,
+        octoPreferences: OctoPreferences,
+    ): ViewModel = ProgressWidgetViewModel(
+        octoPrintProvider = octoPrintProvider,
+        octoPreferences = octoPreferences
+    )
 
     @Provides
     @IntoMap
@@ -53,8 +58,8 @@ open class ViewModelModule {
         serialCommunicationLogsRepository: SerialCommunicationLogsRepository,
         executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase
     ): ViewModel = TuneWidgetViewModel(
-        serialCommunicationLogsRepository,
-        executeGcodeCommandUseCase
+        serialCommunicationLogsRepository = serialCommunicationLogsRepository,
+        executeGcodeCommandUseCase = executeGcodeCommandUseCase
     )
 
     @Provides

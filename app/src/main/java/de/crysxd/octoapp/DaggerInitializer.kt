@@ -15,6 +15,6 @@ fun initializeDagger() {
     ConnectPrinterInjector.init(BaseInjector.get())
     PrePrintControlsInjector.init(BaseInjector.get())
     PrintControlsInjector.init(BaseInjector.get())
-    FileManagerInjector.init(BaseInjector.get())
+    FileManagerInjector.init(BaseInjector.get(), BaseUiInjector.get())
     HelpInjector.init(BaseInjector.get())
 }

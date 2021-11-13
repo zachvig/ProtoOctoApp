@@ -7,12 +7,14 @@ import android.graphics.Rect
 import android.graphics.RectF
 import androidx.core.graphics.applyCanvas
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.models.ResolvedWebcamSettings
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.network.MjpegConnection2
 import de.crysxd.octoapp.base.utils.measureTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onCompletion
@@ -20,7 +22,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -33,19 +34,22 @@ class GetWebcamSnapshotUseCase @Inject constructor(
 ) : UseCase<GetWebcamSnapshotUseCase.Params, Flow<Bitmap>>() {
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) = withContext(Dispatchers.IO) {
-        withTimeout(10000) {
+        withTimeout(10_000) {
             // Get webcam settings.
             val instanceInfo = param.instanceInfo ?: octoPrintRepository.getActiveInstanceSnapshot() ?: throw IllegalStateException("No instance info")
             val activeIndex = param.instanceInfo?.appSettings?.activeWebcamIndex ?: 0
-            val allWebcamSettings = getWebcamSettingsUseCase.execute(instanceInfo)
-            val webcamSettings = allWebcamSettings?.getOrElse(activeIndex) { allWebcamSettings.firstOrNull() }
+            val allWebcamSettings = getWebcamSettingsUseCase.execute(instanceInfo).firstOrNull()
+            val webcamSettings = allWebcamSettings?.getOrNull(activeIndex) as? ResolvedWebcamSettings.MjpegSettings
+                ?: allWebcamSettings?.mapNotNull { it as? ResolvedWebcamSettings.MjpegSettings }?.firstOrNull()
             var illuminated = false
 
-            // Load single frame
-            val mjpegConnection = MjpegConnection2(webcamSettings?.streamUrl?.toHttpUrlOrNull() ?: throw IllegalStateException("No stream URL"), "widget")
+            // Load single frame'
+            val mjpegConnection = MjpegConnection2(webcamSettings?.url ?: throw IllegalStateException("No stream URL"), "widget")
             mjpegConnection.load().mapNotNull { it as? MjpegConnection2.MjpegSnapshot.Frame }.map {
                 measureTime("transform_frame_for_widget") {
-                    val transformed = applyWebcamTransformationsUseCase.execute(ApplyWebcamTransformationsUseCase.Params(it.frame, settings = webcamSettings))
+                    val transformed = applyWebcamTransformationsUseCase.execute(
+                        ApplyWebcamTransformationsUseCase.Params(it.frame, settings = webcamSettings.webcamSettings)
+                    )
                     val width = transformed.width.coerceAtMost(param.maxWidthPx)
                     val height = ((width / transformed.width.toFloat()) * transformed.height).toInt()
                     val final = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)

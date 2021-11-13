@@ -216,7 +216,6 @@ As soon as your OctoPrint can’t be reached directly, OctoApp will switch to th
     <string name="error_unable_to_load_gcode">"Something went wrong, unable to load Gcode"</string>
     <string name="error_video_playback">"Unable to play %1$s (%2$s)"</string>
     <string name="estimation">"Estimation"</string>
-    <string name="eta">"ETA"</string>
     <string name="eta_x">"ETA: %s"</string>
     <string name="extrude">"Extrude"</string>
     <string name="extrude_retract">"Extrude / Retract"</string>
@@ -298,8 +297,12 @@ As soon as your OctoPrint can’t be reached directly, OctoApp will switch to th
 
     <!-- Fuzzy -->
     <string name="file_manager___file_details___history">"History"</string>
-    <string name="hls_stream_disabled_title">"HLS webcam stream"</string>
-    <string name="hls_stream_disbaled_description">"HLS streams are disabled, enable them now to see your webcam image."</string>
+
+    <!-- Fuzzy -->
+    <string name="rich_stream_disabled_title">"HLS/RTSP webcam stream"</string>
+
+    <!-- Fuzzy -->
+    <string name="rich_stream_disbaled_description">"HLS/RTSP streams are disabled, enable them now to see your webcam image."</string>
     <string name="information_about_your_octoprint">"Information about your OctoPrint"</string>
     <string name="information_about_your_phone">"Information about your phone"</string>
     <string name="insert">"Insert"</string>
@@ -605,7 +608,6 @@ As soon as your OctoPrint can’t be reached directly, OctoApp will switch to th
 
     <!-- Fuzzy -->
     <string name="file_manager___file_details___print_info">"Print info"</string>
-    <string name="print_name">"Print name"</string>
     <string name="print_notification___cancelling_title">"Cancelling…"</string>
     <string name="print_notification___close">"Pause notifications"</string>
     <string name="print_notification___paused_title">"Paused"</string>
@@ -618,7 +620,6 @@ As soon as your OctoPrint can’t be reached directly, OctoApp will switch to th
 
     <!-- Fuzzy -->
     <string name="file_manager___file_details___print_time">"Print time"</string>
-    <string name="progress">"Progress"</string>
 
     <!-- Fuzzy -->
     <string name="file_manager___thumbnail_info___popup_prusa">"Prusa Slicer Plugin"</string>
@@ -815,9 +816,7 @@ happy printing!"</string>
 
     <!-- Fuzzy -->
     <string name="file_manager___thumbnail_info___popup_message">"Install the below plugin for your slicer to get thumbnail previews of all files!"</string>
-    <string name="time_left">"Left"</string>
     <string name="time_left_x">"Time left: %s"</string>
-    <string name="time_spent">"Used"</string>
     <string name="toggle_favorite">"Toggle pinned"</string>
     <string name="trouble_shooting">"Trouble shooting"</string>
     <string name="try_again">"Try again"</string>
@@ -998,4 +997,65 @@ happy printing!"</string>
     <!-- Fuzzy -->
     <string name="app_widget___pausing_title">"Pausing…"</string>
     <string name="app_widget___printing_title">"Printing…"</string>
+    <string name="file_manager___file_menu___enable_all_options">"Enable all options"</string>
+    <string name="file_manager___file_list___uploading">"Uploading…"</string>
+    <string name="file_manager___file_list___currently_selected">"Currently selected"</string>
+    <string name="file_manager___file_list___paste_here">"Paste here"</string>
+    <string name="file_manager___file_list___cancel_paste">"Cancel"</string>
+    <string name="file_manager___add_menu___create_folder_title">"Create a folder"</string>
+    <string name="file_manager___add_menu___create_folder_input_hint">"Folder name"</string>
+    <string name="file_manager___add_menu___create_folder_action">"Create"</string>
+    <string name="file_manager___add_menu___upload_file_title">"Upload a file"</string>
+    <string name="file_manager___add_menu___title">"Add item"</string>
+    <string name="file_manager___file_menu___copy">"Copy"</string>
+    <string name="file_manager___file_menu___move">"Move"</string>
+    <string name="file_manager___file_menu___download_and_share"><![CDATA[Download & Share]]></string>
+    <string name="file_manager___file_menu___download_and_share_description">"This will download %s"</string>
+    <string name="file_manager___file_menu___rename">"Rename"</string>
+    <string name="file_manager___file_menu___rename_input_title">"Rename %s"</string>
+    <string name="file_manager___file_menu___rename_input_hint">"File name"</string>
+    <string name="file_manager___file_menu___rename_action">"Rename"</string>
+    <string name="file_manager___sorting_menu___hide_printed">"Hide successfully printed"</string>
+    <string name="file_manager___sorting_menu___direction">"Direction"</string>
+    <string name="file_manager___sorting_menu___direction_ascending">"ascending"</string>
+    <string name="file_manager___sorting_menu___direction_decending">"descending"</string>
+    <string name="file_manager___sorting_menu___sort_by">"Sort by"</string>
+    <string name="file_manager___sorting_menu___sort_by_upload_time">"upload time"</string>
+    <string name="file_manager___sorting_menu___sort_by_last_print_time">"last print time"</string>
+    <string name="file_manager___sorting_menu___sort_by_name">"name"</string>
+    <string name="file_manager___sorting_menu___sort_by_file_size">"file size"</string>
+    <string name="file_manager___upload___uploading_x">"Uploading %s"</string>
+    <string name="file_manager___upload___starting_upload">"Starting upload..."</string>
+    <string name="file_manager___upload___x_files_pending">"%d files pending"</string>
+    <string name="file_manager___upload___error_invalid_file_type"><![CDATA[This file type is not supported by OctoPrint.**<br><br><small>Supported file types: %s</small>]]></string>
+    <string name="progress_widget___eta">"ETA"</string>
+    <string name="hls_stream_disabled_title">"HLS webcam stream"</string>
+    <string name="hls_stream_disbaled_description">"HLS streams are disabled, enable them now to see your webcam image."</string>
+    <string name="progress_widget___z_height">"Z Height"</string>
+    <string name="progress_widget___layer">"Layer"</string>
+    <string name="progress_widget___gcode_unavailable">"Unavailable"</string>
+    <string name="progress_widget___gcode_large_file">"Large file"</string>
+    <string name="progress_widget___gcode_loading">"Loading…"</string>
+    <string name="progress_widget___settings___font_size">"Font size"</string>
+    <string name="progress_widget___settings___font_size_normal">"Normal"</string>
+    <string name="progress_widget___settings___font_size_small">"Small"</string>
+    <string name="progress_widget___settings___show_print_name">"Show print name"</string>
+    <string name="progress_widget___settings___show_print_name_none">"Off"</string>
+    <string name="progress_widget___settings___show_print_name_compact">"Compact"</string>
+    <string name="progress_widget___settings___show_print_name_full">"Full"</string>
+    <string name="progress_widget___settings___show_eta">"Show ETA"</string>
+    <string name="progress_widget___settings___show_eta_none">"Off"</string>
+    <string name="progress_widget___settings___show_eta_compact">"Compact"</string>
+    <string name="progress_widget___settings___show_eta_full">"Full"</string>
+    <string name="progress_widget___settings___show_time_used">"Show used time"</string>
+    <string name="progress_widget___settings___show_time_left">"Show time left"</string>
+    <string name="progress_widget___settings___show_layer">"Show layer information"</string>
+    <string name="progress_widget___settings___show_z_height">"Show Z Height"</string>
+    <string name="progress_widget___settings___gcode_description">"Synced with the Gcode Preview, if text is „Unavailable“ or „Large file“, check the Gcode Preview for details"</string>
+    <string name="progress_widget___settings___show_thumbnail">"Show thumbnail"</string>
+    <string name="progress_widget___settings___thumbnail_description">"Thumbnails are generated by the Cura and Prusa Slicer plugins and only shown if available"</string>
+    <string name="progress_widget___print_name">"Print name"</string>
+    <string name="progress_widget___title">"Progress"</string>
+    <string name="progress_widget___time_left">"Left"</string>
+    <string name="progress_widget___time_spent">"Used"</string>
 </resources>

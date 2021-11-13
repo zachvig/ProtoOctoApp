@@ -36,7 +36,7 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
 
     init {
         binding.webcamView.onResetConnection = {
-            if (binding.webcamView.state == WebcamView.WebcamState.HlsStreamDisabled) {
+            if (binding.webcamView.state == WebcamView.WebcamState.RichStreamDisabled) {
                 OctoAnalytics.logEvent(OctoAnalytics.Event.PurchaseScreenOpen, bundleOf("trigger" to "hls_webcam_widget"))
                 UriLibrary.getPurchaseUri().open(parent.requireOctoActivity())
             } else {
@@ -83,7 +83,7 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
         binding.webcamView.state = when (state) {
             is Loading -> WebcamView.WebcamState.Loading
             UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
-            is UiState.HlsStreamDisabled -> WebcamView.WebcamState.HlsStreamDisabled
+            is UiState.RichStreamDisabled -> WebcamView.WebcamState.RichStreamDisabled
             is UiState.FrameReady -> {
                 applyAspectRatio(state.aspectRation)
                 WebcamView.WebcamState.MjpegFrameReady(
@@ -93,9 +93,9 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
                     rotate90 = state.rotate90
                 )
             }
-            is UiState.HlsStreamReady -> {
+            is UiState.RichStreamReady -> {
                 applyAspectRatio(state.aspectRation)
-                WebcamView.WebcamState.HlsStreamReady(state.uri, state.authHeader)
+                WebcamView.WebcamState.RichStreamReady(state.uri, state.authHeader)
             }
             is Error -> {
                 if (state.isManualReconnect) {

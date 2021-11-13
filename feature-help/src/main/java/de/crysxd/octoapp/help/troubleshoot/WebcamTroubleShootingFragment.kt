@@ -45,11 +45,16 @@ class WebcamTroubleShootingFragment : BaseFragment() {
             SendFeedbackDialog().show(childFragmentManager, "webcam-feedback")
             true
         }
+        showLoadingState()
         viewModel.uiState.observe(viewLifecycleOwner) {
             TransitionManager.beginDelayedTransition(binding.root)
             when (it) {
                 is WebcamTroubleShootingViewModel.UiState.Finding -> showFinding(it.finding)
                 WebcamTroubleShootingViewModel.UiState.Loading -> showLoadingState()
+                WebcamTroubleShootingViewModel.UiState.UnsupportedWebcam -> {
+                    requireOctoActivity().showDialog(message = getString(R.string.help___webcam_troubleshooting___only_mjpeg_supported))
+                    findNavController().popBackStack()
+                }
             }
         }
     }

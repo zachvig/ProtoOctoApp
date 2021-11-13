@@ -45,6 +45,7 @@ object BillingManager {
     const val FEATURE_HLS_WEBCAM = "hls_webcam"
     const val FEATURE_INFINITE_WIDGETS = "infinite_app_widgets"
     const val FEATURE_FULL_WEBCAM_RESOLUTION = "full_webcam_resolution"
+    const val FEATURE_FILE_MANAGEMENT = "file_management"
 
     @VisibleForTesting
     var enabledForTest: Boolean? = null

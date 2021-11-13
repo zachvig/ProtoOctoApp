@@ -95,6 +95,7 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
                 // We need to exclude the Webcam view's children as this can cause animation glitches in the webcam view
                 val transition = if (quickTransition) InstantAutoTransition() else AutoTransition()
                 transition.excludeChildren(WebcamView::class.java, true)
+                transition.excludeTarget(R.id.widgetContainer, true)
                 TransitionManager.beginDelayedTransition(it, transition)
             }
         }

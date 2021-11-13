@@ -23,7 +23,7 @@ class OctoAppLabMenu : Menu {
     override suspend fun getSubtitle(context: Context) = context.getString(R.string.lab_menu___subtitle)
 
     class NotificationBatterySaver : ToggleMenuItem() {
-        override val isEnabled get() = BaseInjector.get().octoPreferences().allowNotificationBatterySaver
+        override val isChecked get() = BaseInjector.get().octoPreferences().allowNotificationBatterySaver
         override val itemId = ""
         override var groupId = "notification_battery_saver"
         override val canBePinned = false
@@ -39,7 +39,7 @@ class OctoAppLabMenu : Menu {
     }
 
     class RotationMenuItem : ToggleMenuItem() {
-        override val isEnabled get() = BaseInjector.get().octoPreferences().allowAppRotation
+        override val isChecked get() = BaseInjector.get().octoPreferences().allowAppRotation
         override val itemId = "rotate_app"
         override var groupId = ""
         override val canBePinned = false
@@ -55,7 +55,7 @@ class OctoAppLabMenu : Menu {
     }
 
     class SuppressM115Request : ToggleMenuItem() {
-        override val isEnabled get() = BaseInjector.get().octoPreferences().suppressM115Request
+        override val isChecked get() = BaseInjector.get().octoPreferences().suppressM115Request
         override val itemId = "suppress_m115"
         override var groupId = ""
         override val canBePinned = false
@@ -71,7 +71,7 @@ class OctoAppLabMenu : Menu {
     }
 
     class AllowTerminalDuringPrint : ToggleMenuItem() {
-        override val isEnabled get() = BaseInjector.get().octoPreferences().allowTerminalDuringPrint
+        override val isChecked get() = BaseInjector.get().octoPreferences().allowTerminalDuringPrint
         override val itemId = "allow_terminal_during_print"
         override var groupId = ""
         override val canBePinned = false
@@ -87,7 +87,7 @@ class OctoAppLabMenu : Menu {
     }
 
     class WebcamBlackScreenDebug : ToggleMenuItem() {
-        override val isEnabled get() = BaseInjector.get().octoPreferences().webcamBlackscreenDebug
+        override val isChecked get() = BaseInjector.get().octoPreferences().webcamBlackscreenDebug
         override val itemId = "webcam_black_screen_debug"
         override var groupId = ""
         override val canBePinned = false

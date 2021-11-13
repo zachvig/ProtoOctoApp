@@ -15,8 +15,8 @@ class MenuItemClickExecutor(
         wasNewMenuPushed = false
         when (item) {
             is ToggleMenuItem -> {
-                item.handleToggleFlipped(this, !item.isEnabled)
-                adapter.setToggle(item, item.isEnabled)
+                item.handleToggleFlipped(this, !item.isChecked)
+                adapter.setToggle(item, item.isChecked)
             }
 
             is RevolvingOptionsMenuItem -> {

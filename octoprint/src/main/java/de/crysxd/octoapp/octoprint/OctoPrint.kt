@@ -36,8 +36,8 @@ import javax.net.ssl.*
 
 
 class OctoPrint(
-    rawWebUrl: HttpUrl,
-    rawAlternativeWebUrl: HttpUrl?,
+    private val rawWebUrl: HttpUrl,
+    private val rawAlternativeWebUrl: HttpUrl?,
     private val apiKey: String,
     private val highLevelInterceptors: List<Interceptor> = emptyList(),
     private val customDns: Dns? = null,
@@ -51,11 +51,13 @@ class OctoPrint(
     private val debug: Boolean,
 ) {
 
-    val fullWebUrl = rawWebUrl
-    val fullAlternativeWebUrl = rawAlternativeWebUrl
     val webUrl = rawWebUrl.withoutBasicAuth()
     private val alternativeWebUrl = rawAlternativeWebUrl?.withoutBasicAuth()
-    private val alternativeWebUrlInterceptor = AlternativeWebUrlInterceptor(createHttpLogger(), webUrl, alternativeWebUrl)
+    private val alternativeWebUrlInterceptor = AlternativeWebUrlInterceptor(
+        logger = createHttpLogger(),
+        fullWebUrl = rawWebUrl,
+        fullAlternativeWebUrl = rawAlternativeWebUrl
+    )
     private val continuousOnlineCheck = ContinuousOnlineCheck(
         url = webUrl,
         localDns = customDns,
@@ -68,7 +70,7 @@ class OctoPrint(
             }
         }
     )
-    val isAlternativeUrlBeingUsed get() = !alternativeWebUrlInterceptor.isPrimaryUsed
+    val activeUrl get() = alternativeWebUrlInterceptor.activeUrl
     private val okHttpClient = createOkHttpClient()
 
     private val webSocket = EventWebSocket(
@@ -201,7 +203,7 @@ class OctoPrint(
         addInterceptor(alternativeWebUrlInterceptor)
 
         // 7. Basic Auth interceptor is the last because we might change the host above
-        addInterceptor(BasicAuthInterceptor(logger, fullWebUrl, fullAlternativeWebUrl))
+        addInterceptor(BasicAuthInterceptor(logger, rawWebUrl, rawAlternativeWebUrl))
 
         // 8. Logger needs to be lowest level, we need to log any change made in the stack above
         addInterceptor(

@@ -5,7 +5,6 @@ import android.content.Context
 abstract class RevolvingOptionsMenuItem : MenuItem {
     abstract val activeValue: String
     abstract val options: List<Option>
-    abstract val isEnabled: Boolean
     override val canRunWithAppInBackground = false
 
     override suspend fun getRightDetail(context: Context) = options.firstOrNull { it.value == activeValue }?.label

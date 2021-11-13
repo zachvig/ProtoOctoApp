@@ -47,7 +47,7 @@ class PluginSettingsDeserializer : JsonDeserializer<Settings.PluginSettingsGroup
         "octocam" -> context.deserialize<Settings.OctoCamSettings>(element, Settings.OctoCamSettings::class.java)
         "octolight" -> context.deserialize<Settings.OctoLightSettings>(element, Settings.OctoLightSettings::class.java)
         "octoapp" -> context.deserialize<Settings.OctoAppCompanionSettings>(element, Settings.OctoAppCompanionSettings::class.java)
-        else -> Unknown
+        else -> Settings.Unknown
     }
 
     private fun deserializeGpioControlSettings(context: JsonDeserializationContext, element: JsonElement): Settings.GpioControlSettings {
@@ -76,6 +76,4 @@ class PluginSettingsDeserializer : JsonDeserializer<Settings.PluginSettingsGroup
 
         return Settings.OctoRelaySettings(devices)
     }
-
-    private object Unknown : Settings.PluginSettings
 }
