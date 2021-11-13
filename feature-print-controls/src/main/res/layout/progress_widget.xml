@@ -63,7 +63,8 @@
         app:layout_constraintTop_toTopOf="@id/itemsFlow"
         app:layout_constraintVertical_bias="0"
         app:layout_constraintWidth_percent="0.25"
-        tools:src="@tools:sample/avatars" />
+        tools:src="@tools:sample/avatars"
+        tools:targetApi="s" />
 
     <androidx.constraintlayout.helper.widget.Flow
         android:id="@+id/itemsFlow"
@@ -86,42 +87,42 @@
         android:id="@+id/timeUsed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:label="@string/time_spent"
+        app:label="@string/progress_widget___time_spent"
         app:value="99:59 h" />
 
     <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
         android:id="@+id/timeLeft"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:label="@string/time_left"
+        app:label="@string/progress_widget___time_left"
         app:value="32 min" />
 
     <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
         android:id="@+id/eta"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:label="@string/eta"
+        app:label="@string/progress_widget___eta"
         app:value="5:33 AM+4" />
 
     <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
         android:id="@+id/layer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:label="Layer**"
+        app:label="progress_widget___layer"
         app:value="4/204 @ 56%" />
 
     <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
         android:id="@+id/zHeight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:label="Z Height**"
-        app:value="32mm" />
+        app:label="@string/progress_widget___z_height"
+        app:value="32 mm" />
 
     <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
         android:id="@+id/printName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:label="@string/print_name"
+        app:label="@string/progress_widget___print_name"
         app:layout_constraintEnd_toEndOf="@id/itemsFlow"
         app:layout_constraintStart_toStartOf="@id/itemsFlow"
         app:layout_constraintTop_toBottomOf="@id/itemsFlow"

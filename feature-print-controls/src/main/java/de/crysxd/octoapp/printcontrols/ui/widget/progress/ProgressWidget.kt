@@ -38,6 +38,7 @@ import de.crysxd.octoapp.printcontrols.databinding.ProgressWidgetBinding
 import de.crysxd.octoapp.printcontrols.di.injectActivityViewModel
 import de.crysxd.octoapp.printcontrols.di.injectViewModel
 import timber.log.Timber
+import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
 class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBinding, ProgressWidgetViewModel>(context) {
@@ -97,7 +98,7 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
         return parent.injectViewModel<ProgressWidgetViewModel>().value
     }
 
-    override fun getTitle(context: Context) = context.getString(R.string.progress)
+    override fun getTitle(context: Context) = context.getString(R.string.progress_widget___title)
     override fun getAnalyticsName() = "progress"
 
     override fun onResume(lifecycleOwner: LifecycleOwner) {
@@ -116,14 +117,19 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
     }
 
     private fun updateLayer(layerState: GcodePreviewViewModel.ViewState) {
+        val unavailable = context.getString(R.string.progress_widget___gcode_unavailable)
+        val largeFile = context.getString(R.string.progress_widget___gcode_large_file)
+        val loading = context.getString(R.string.progress_widget___gcode_loading)
         val (layer, zHeight) = when (layerState) {
             is GcodePreviewViewModel.ViewState.DataReady -> layerState.renderContext?.let {
-                String.format("%d/%d (%.0f%%)", it.layerNumber, it.layerCount, it.layerProgress * 100) to context.getString(R.string.x_mm, it.layerZHeight)
-            } ?: "Unavailable" to "Unavailable"
-            is GcodePreviewViewModel.ViewState.Error -> "Unavailable" to "Unavailable"
-            is GcodePreviewViewModel.ViewState.FeatureDisabled -> "Unavailable" to "Unavailable"
-            GcodePreviewViewModel.ViewState.LargeFileDownloadRequired -> "Large file" to "Large File"
-            is GcodePreviewViewModel.ViewState.Loading -> "Loading…" to "Loading…"
+                val layerHeight = DecimalFormat("0.0#").format(it.layerZHeight)
+                val progress = it.layerProgress * 100
+                String.format("%d/%d (%.0f%%)", it.layerNumber, it.layerCount, progress) to context.getString(R.string.x_mm, layerHeight)
+            } ?: unavailable to unavailable
+            is GcodePreviewViewModel.ViewState.Error -> unavailable to unavailable
+            is GcodePreviewViewModel.ViewState.FeatureDisabled -> unavailable to unavailable
+            GcodePreviewViewModel.ViewState.LargeFileDownloadRequired -> largeFile to largeFile
+            is GcodePreviewViewModel.ViewState.Loading -> loading to loading
         }
 
         binding.layer.value = layer

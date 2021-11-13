@@ -17,18 +17,20 @@ import kotlinx.parcelize.Parcelize
 class ProgressWidgetSettingsMenu : Menu {
 
     val octoPreferences get() = BaseInjector.get().octoPreferences()
+    val context get() = BaseInjector.get().localizedContext()
+
     override suspend fun getMenuItem() = listOf(
         ShowThumbnailMenuItem(octoPreferences),
         ShowTimeUsedMenuItem(octoPreferences),
         ShowTimeLeftMenuItem(octoPreferences),
-        EtaStyleMenuItem(octoPreferences),
-        PrintNameStyleMenuItem(octoPreferences),
-        FontSizeMenuItem(octoPreferences),
+        EtaStyleMenuItem(octoPreferences, context),
+        PrintNameStyleMenuItem(octoPreferences, context),
+        FontSizeMenuItem(octoPreferences, context),
         ShowLayerInfoMenuItem(octoPreferences),
         ShowZHeightMenuItem(octoPreferences),
     )
 
-    class FontSizeMenuItem(private val prefs: OctoPreferences) : RevolvingOptionsMenuItem() {
+    class FontSizeMenuItem(private val prefs: OctoPreferences, private val context: Context) : RevolvingOptionsMenuItem() {
         override val itemId = "fontSize"
         override var groupId = ""
         override val order = 0
@@ -36,13 +38,13 @@ class ProgressWidgetSettingsMenu : Menu {
         override val style = MenuItemStyle.Settings
         override val icon: Int = R.drawable.ic_round_format_size_24
         override val activeValue get() = prefs.progressWidgetSettings.fontSize.toString()
-        override suspend fun getTitle(context: Context) = "Font size**"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.progress_widget___settings___font_size)
         override val options = ProgressWidgetSettings.FontSize.values().map {
             Option(
                 value = it.toString(),
                 label = when (it) {
-                    ProgressWidgetSettings.FontSize.Small -> "Small**"
-                    ProgressWidgetSettings.FontSize.Normal -> "Normal**"
+                    ProgressWidgetSettings.FontSize.Small -> context.getString(R.string.progress_widget___settings___font_size_small)
+                    ProgressWidgetSettings.FontSize.Normal -> context.getString(R.string.progress_widget___settings___font_size_normal)
                 }
             )
         }
@@ -52,22 +54,22 @@ class ProgressWidgetSettingsMenu : Menu {
         }
     }
 
-    class PrintNameStyleMenuItem(private val prefs: OctoPreferences) : RevolvingOptionsMenuItem() {
+    class PrintNameStyleMenuItem(private val prefs: OctoPreferences, private val context: Context) : RevolvingOptionsMenuItem() {
         override val itemId = "printNameStyle"
         override var groupId = ""
         override val order = 1
         override val canBePinned = false
         override val style = MenuItemStyle.Settings
         override val icon: Int = R.drawable.ic_round_label_24
-        override suspend fun getTitle(context: Context) = "Show print name**"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.progress_widget___settings___show_print_name)
         override val activeValue get() = prefs.progressWidgetSettings.printNameStyle.toString()
         override val options = ProgressWidgetSettings.PrintNameStyle.values().map {
             Option(
                 value = it.toString(),
                 label = when (it) {
-                    ProgressWidgetSettings.PrintNameStyle.None -> "None**"
-                    ProgressWidgetSettings.PrintNameStyle.Compact -> "Compact**"
-                    ProgressWidgetSettings.PrintNameStyle.Full -> "Full**"
+                    ProgressWidgetSettings.PrintNameStyle.None -> context.getString(R.string.progress_widget___settings___show_print_name_none)
+                    ProgressWidgetSettings.PrintNameStyle.Compact -> context.getString(R.string.progress_widget___settings___show_print_name_compact)
+                    ProgressWidgetSettings.PrintNameStyle.Full -> context.getString(R.string.progress_widget___settings___show_print_name_full)
                 }
             )
         }
@@ -77,22 +79,22 @@ class ProgressWidgetSettingsMenu : Menu {
         }
     }
 
-    class EtaStyleMenuItem(private val prefs: OctoPreferences) : RevolvingOptionsMenuItem() {
+    class EtaStyleMenuItem(private val prefs: OctoPreferences, private val context: Context) : RevolvingOptionsMenuItem() {
         override val itemId = "etaStyle"
         override var groupId = "time"
         override val order = 2
         override val canBePinned = false
         override val style = MenuItemStyle.Settings
         override val icon: Int = R.drawable.ic_round_calendar_today_24
-        override suspend fun getTitle(context: Context) = "Show ETA**"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.progress_widget___settings___show_eta)
         override val activeValue get() = prefs.progressWidgetSettings.etaStyle.toString()
         override val options = ProgressWidgetSettings.EtaStyle.values().map {
             Option(
                 value = it.toString(),
                 label = when (it) {
-                    ProgressWidgetSettings.EtaStyle.None -> "None**"
-                    ProgressWidgetSettings.EtaStyle.Compact -> "Compact**"
-                    ProgressWidgetSettings.EtaStyle.Full -> "Full**"
+                    ProgressWidgetSettings.EtaStyle.None -> context.getString(R.string.progress_widget___settings___show_eta_none)
+                    ProgressWidgetSettings.EtaStyle.Compact -> context.getString(R.string.progress_widget___settings___show_eta_compact)
+                    ProgressWidgetSettings.EtaStyle.Full -> context.getString(R.string.progress_widget___settings___show_eta_full)
                 }
             )
         }
@@ -110,7 +112,7 @@ class ProgressWidgetSettingsMenu : Menu {
         override val style = MenuItemStyle.Settings
         override val icon: Int = R.drawable.ic_round_restore_24
         override val isChecked get() = prefs.progressWidgetSettings.showUsedTime
-        override suspend fun getTitle(context: Context) = "Show used time**"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.progress_widget___settings___show_time_used)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             prefs.progressWidgetSettings = prefs.progressWidgetSettings.copy(showUsedTime = enabled)
         }
@@ -124,7 +126,7 @@ class ProgressWidgetSettingsMenu : Menu {
         override val style = MenuItemStyle.Settings
         override val icon: Int = R.drawable.ic_round_update_24
         override val isChecked get() = prefs.progressWidgetSettings.showLeftTime
-        override suspend fun getTitle(context: Context) = "Show time left**"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.progress_widget___settings___show_time_left)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             prefs.progressWidgetSettings = prefs.progressWidgetSettings.copy(showLeftTime = enabled)
         }
@@ -139,7 +141,7 @@ class ProgressWidgetSettingsMenu : Menu {
         override val icon: Int = R.drawable.ic_round_layers_24
         override val isChecked get() = prefs.progressWidgetSettings.showLayer
         override suspend fun isVisible(destinationId: Int) = BillingManager.isFeatureEnabled(BillingManager.FEATURE_GCODE_PREVIEW)
-        override suspend fun getTitle(context: Context) = "Show layer information**"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.progress_widget___settings___show_layer)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             prefs.progressWidgetSettings = prefs.progressWidgetSettings.copy(showLayer = enabled)
         }
@@ -154,9 +156,8 @@ class ProgressWidgetSettingsMenu : Menu {
         override val icon: Int = R.drawable.ic_round_height_24
         override val isChecked get() = prefs.progressWidgetSettings.showZHeight
         override suspend fun isVisible(destinationId: Int) = BillingManager.isFeatureEnabled(BillingManager.FEATURE_GCODE_PREVIEW)
-        override suspend fun getTitle(context: Context) = "Show Z Height**"
-        override suspend fun getDescription(context: Context) =
-            "Synced with the Gcode Preview, if text is 'Unavailable' or 'Large file', check the Gcode Preview for details**"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.progress_widget___settings___show_z_height)
+        override suspend fun getDescription(context: Context) = context.getString(R.string.progress_widget___settings___gcode_description)
 
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             prefs.progressWidgetSettings = prefs.progressWidgetSettings.copy(showZHeight = enabled)
@@ -172,8 +173,8 @@ class ProgressWidgetSettingsMenu : Menu {
         override val style = MenuItemStyle.Settings
         override val icon: Int = R.drawable.ic_round_image_24
         override val isChecked get() = prefs.progressWidgetSettings.showThumbnail
-        override suspend fun getTitle(context: Context) = "Show thumbnail**"
-        override suspend fun getDescription(context: Context) = "Thumbnails are generated by the Cura and Prusa Slicer plugins and only shown if available**"
+        override suspend fun getTitle(context: Context) = context.getString(R.string.progress_widget___settings___show_thumbnail)
+        override suspend fun getDescription(context: Context) = context.getString(R.string.progress_widget___settings___thumbnail_description)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             prefs.progressWidgetSettings = prefs.progressWidgetSettings.copy(showThumbnail = enabled)
         }

@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_2"
-        android:text="@string/time_spent"
+        android:text="@string/progress_widget___time_spent"
         android:textColor="@color/dark_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progressBarBackground" />
@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_0"
-        android:text="@string/time_left"
+        android:text="@string/progress_widget___time_left"
         android:textColor="@color/dark_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewTimeSpentLabel" />
