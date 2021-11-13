@@ -28,7 +28,7 @@ class AnnouncementView @JvmOverloads constructor(context: Context, attributeSet:
 
     init {
         refreshTextRunnable = Runnable {
-            binding?.text?.text = announcement?.text?.invoke()
+            binding?.text?.text = announcement?.text?.invoke(context)
             announcement?.refreshInterval?.takeIf { it > 0 }?.let {
                 binding?.text?.postDelayed(refreshTextRunnable, it)
             }
@@ -49,12 +49,13 @@ class AnnouncementView @JvmOverloads constructor(context: Context, attributeSet:
 
         // Bind
         if (!isAnnouncementHidden) {
+            val actionText = announcement.actionText(context)
             this.announcement = announcement
             val b = binding ?: AnnouncementViewBinding.inflate(LayoutInflater.from(context), this, true)
             binding = b
             b.root.backgroundTintList = ContextCompat.getColorStateList(context, announcement.backgroundColor)
-            b.buttonOpen.rippleColor = ContextCompat.getColorStateList(context, announcement.backgroundColor)
-            b.buttonClose.rippleColor = ContextCompat.getColorStateList(context, announcement.backgroundColor)
+            b.buttonOpen.rippleColor = ContextCompat.getColorStateList(context, announcement.foregroundColor)
+            b.buttonClose.rippleColor = ContextCompat.getColorStateList(context, announcement.foregroundColor)
             b.buttonOpen.setTextColor(ContextCompat.getColor(context, announcement.foregroundColor))
             b.buttonClose.setTextColor(ContextCompat.getColor(context, announcement.foregroundColor))
 
@@ -62,10 +63,10 @@ class AnnouncementView @JvmOverloads constructor(context: Context, attributeSet:
                 prefs.edit { putBoolean(prefsKey, true) }
                 hideAction()
             }
-            b.buttonOpen.isVisible = !announcement.actionText.isNullOrBlank() && announcement.actionUri != null
-            b.buttonOpen.text = announcement.actionText
+            b.buttonOpen.isVisible = !actionText.isNullOrBlank()
+            b.buttonOpen.text = actionText
             b.buttonOpen.setOnClickListener {
-                announcement.actionUri?.open(findFragment<Fragment>().requireOctoActivity())
+                announcement.actionUri(it.context)?.open(findFragment<Fragment>().requireOctoActivity())
             }
             refreshTextRunnable.run()
         } else {
