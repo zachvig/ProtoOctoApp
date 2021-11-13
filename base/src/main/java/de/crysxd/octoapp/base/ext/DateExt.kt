@@ -58,7 +58,8 @@ fun Date.isThisYear(): Boolean {
 fun Number.toSuperscriptString() = toString().map {
     when (it) {
         ',' -> '⋅'
-        '-' -> '⋅'
+        '.' -> '⋅'
+        '-' -> '⁻'
         '+' -> '⁺'
         '0' -> '⁰'
         '1' -> '¹'
