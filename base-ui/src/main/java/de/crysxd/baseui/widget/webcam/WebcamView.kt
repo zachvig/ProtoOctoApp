@@ -23,6 +23,11 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
 import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.transition.ChangeImageTransform
+import androidx.transition.Fade
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -68,14 +73,13 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     private var transitionActive = false
     private var nativeAspectRation: Point? = null
     private var animatedMatrix = false
+    private var lastMatrixInput: Int? = null
     var supportsToubleShooting = false
     var scaleToFill: Boolean = false
         set(value) {
             field = value
             onScaleToFillChanged()
-            (state as? WebcamState.MjpegFrameReady)?.let {
-                binding.mjpegSurface.imageMatrix = createMjpegMatrix(scaleToFill, it)
-            }
+            (state as? WebcamState.MjpegFrameReady)?.let { updateMjpegMatrix(it) }
             nativeAspectRation?.let { applyAspectRatio(it.x, it.y) }
         }
 
@@ -363,13 +367,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             beginDelayedTransition()
         }
 
-        // Update image matrix and set the animated flag. As it's now initialized, we can animate changes
-        // TODO This also needs to factor in view size changes!
-//        val oldState = state as? WebcamState.MjpegFrameReady
-//        if (newState.flipH != oldState?.flipH || newState.flipV != oldState.flipV || newState.rotate90 != oldState.rotate90 || oldState.frame.width != newState.frame.width || oldState.frame.height != newState.frame.height) {
-        binding.mjpegSurface.imageMatrix = createMjpegMatrix(scaleToFill, newState)
-        animatedMatrix = true
-//        }
+        updateMjpegMatrix(newState)
 
         val size = min(newState.frame.width, newState.frame.height)
         @SuppressLint("SetTextI18n")
@@ -380,32 +378,29 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     }
 
     private fun beginDelayedTransition() {
-//        Suspect to cause #922
-//        TransitionManager.endTransitions(this)
-//        TransitionManager.beginDelayedTransition(this, TransitionSet().also {
-//            it.addTransition(Fade())
-//            if (animatedMatrix) {
-//                it.addTransition(ChangeImageTransform())
-//            }
-//            it.addListener(object : Transition.TransitionListener {
-//                override fun onTransitionStart(transition: Transition) {
-//                    transitionActive = true
-//                }
-//
-//                override fun onTransitionEnd(transition: Transition) {
-//                    transitionActive = false
-//                }
-//
-//                override fun onTransitionCancel(transition: Transition) {
-//                    transitionActive = false
-//                }
-//
-//                override fun onTransitionPause(transition: Transition) = Unit
-//
-//                override fun onTransitionResume(transition: Transition) = Unit
-//
-//            })
-//        })
+        if (animatedMatrix) {
+            TransitionManager.beginDelayedTransition(this, TransitionSet().also {
+                it.addTransition(ChangeImageTransform())
+                it.addTransition(Fade())
+                it.addListener(object : Transition.TransitionListener {
+                    override fun onTransitionStart(transition: Transition) {
+                        transitionActive = true
+                    }
+
+                    override fun onTransitionEnd(transition: Transition) {
+                        transitionActive = false
+                    }
+
+                    override fun onTransitionCancel(transition: Transition) {
+                        transitionActive = false
+                    }
+
+                    override fun onTransitionPause(transition: Transition) = Unit
+                    override fun onTransitionResume(transition: Transition) = Unit
+
+                })
+            })
+        }
     }
 
     private fun zoom(zoomChange: Float, focusX: Float, focusY: Float) {
@@ -423,13 +418,23 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
         binding.richSurface.zoomInternal(zoomChange, focusX, focusY)
         binding.mjpegSurface.zoomInternal(zoomChange, focusX, focusY)
-        lastFocusX = focusX
-        lastFocusY = focusY
 
         limitScrollRange()
     }
 
-    private fun createMjpegMatrix(fit: Boolean, state: WebcamState.MjpegFrameReady): Matrix {
+    private fun updateMjpegMatrix(state: WebcamState.MjpegFrameReady) {
+        // Gate calculations
+        val matrixInput = "$scaleToFill${state.flipH}${state.flipV}${state.rotate90}${state.frame.width}${state.frame.height}$width$height".hashCode()
+        if (matrixInput == lastMatrixInput) return
+
+        // Not the first time we calculate? Animate
+        if (lastMatrixInput == null) {
+            animatedMatrix = true
+            beginDelayedTransition()
+        }
+        lastMatrixInput = matrixInput
+
+        // Reset matrix
         val matrix = Matrix()
 
         // Apply rotation (around center)
@@ -453,7 +458,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         // Apply scale to fit or fill view
         val scaleY = height / frameHeight.toFloat()
         val scaleX = width / frameWidth.toFloat()
-        val scale = if (fit) {
+        val scale = if (scaleToFill) {
             max(scaleX, scaleY)
         } else {
             min(scaleX, scaleY)
@@ -464,8 +469,8 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         val dx = (width - (state.frame.width * scale)) / 2
         val dy = (height - (state.frame.height * scale)) / 2
         matrix.postTranslate(dx, dy)
-        Timber.d("Creating matrix with flipH=${state.flipH} flipV=${state.flipV} scale=$scale, dx=$dx, dy=$dy")
-        return matrix
+        binding.mjpegSurface.imageMatrix = matrix
+        Timber.d("Creating matrix for input $matrixInput with scaleToFill=$scaleToFill flipH=${state.flipH} flipV=${state.flipV} scale=$scale, dx=$dx, dy=$dy")
     }
 
     private fun limitScrollRange() {
