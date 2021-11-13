@@ -26,7 +26,6 @@
     <color name="button_disabled">@color/very_light_grey</color>
     <color name="menu_pin_foreground">@color/white</color>
     <color name="menu_pin_background">@color/black_translucent_2</color>
-    <color name="progress_bar_track">@color/black_translucent_3</color>
     <color name="app_widget_button_background">#48000000</color>
 
     <color name="menu_style_support_foreground">@color/red</color>

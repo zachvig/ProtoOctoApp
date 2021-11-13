@@ -1,4 +1,4 @@
-package de.crysxd.octoapp.filemanager.di
+package de.crysxd.baseui.di
 
 import android.content.Context
 import android.net.Uri
@@ -18,7 +18,7 @@ import timber.log.Timber
 class PicassoModule {
 
     @Provides
-    @FileManagerScope
+    @BaseUiScope
     fun providePicasso(context: Context, octoPrintProvider: OctoPrintProvider): LiveData<Picasso?> =
         octoPrintProvider.octoPrintFlow().asLiveData().map {
             it?.let { octoPrint ->

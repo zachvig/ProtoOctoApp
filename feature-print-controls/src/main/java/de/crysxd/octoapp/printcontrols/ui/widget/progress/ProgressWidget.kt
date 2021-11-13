@@ -13,6 +13,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
+import de.crysxd.baseui.di.BaseUiInjector
 import de.crysxd.baseui.utils.ColorTheme
 import de.crysxd.baseui.widget.BaseWidgetHostFragment
 import de.crysxd.baseui.widget.RecyclableOctoWidget
@@ -34,15 +37,18 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
     private val formatDurationUseCase: FormatDurationUseCase = BaseInjector.get().formatDurationUseCase()
     private val formatEtaUseCase = BaseInjector.get().formatEtaUseCase()
     private var lastProgress: Float? = null
+    private var lastFile: String? = null
     override val binding = ProgressWidgetBinding.inflate(LayoutInflater.from(context))
     private val observer = Observer(::updateView)
     private val progressPercentLayoutThreshold = 80f
+    private var picasso: Picasso? = null
 
     override fun createNewViewModel(parent: BaseWidgetHostFragment): ProgressWidgetViewModel {
         binding.eta.isInvisible = true
         binding.timeUsed.isInvisible = true
         binding.timeLeft.isInvisible = true
         binding.printName.isInvisible = true
+        binding.preview.isVisible = false
         binding.textViewProgressPercent.isInvisible = true
         return parent.injectViewModel<ProgressWidgetViewModel>().value
     }
@@ -53,6 +59,9 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
     override fun onResume(lifecycleOwner: LifecycleOwner) {
         super.onResume(lifecycleOwner)
         baseViewModel.printState.observe(lifecycleOwner, observer)
+        BaseUiInjector.get().picasso().observe(lifecycleOwner) {
+            picasso = it
+        }
     }
 
     override fun onPause() {
@@ -79,6 +88,20 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
 
             if (lastProgress != progress) {
                 TransitionManager.beginDelayedTransition(binding.root)
+            }
+
+            val p = picasso
+            val file = message.job?.file
+            if (lastFile != file?.path && file?.thumbnail != null && p != null) {
+                Timber.i("Loading thumbnail: ${file.thumbnail}")
+                lastFile = message.job?.file?.path
+                p.load(file.thumbnail).into(binding.preview, object : Callback {
+                    override fun onError(e: Exception?) = Unit
+                    override fun onSuccess() {
+                        TransitionManager.beginDelayedTransition(binding.root)
+                        binding.preview.isVisible = true
+                    }
+                })
             }
 
             updateProgressBar(progress, progressPercent)

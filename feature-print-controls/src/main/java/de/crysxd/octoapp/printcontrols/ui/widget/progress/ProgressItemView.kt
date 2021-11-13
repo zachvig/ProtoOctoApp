@@ -67,7 +67,7 @@ class ProgressItemView @JvmOverloads constructor(context: Context, attributeSet:
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
-        val width = MeasureSpec.getSize(widthMeasureSpec) - resources.getDimensionPixelSize(R.dimen.margin_2) * 2
+        val width = MeasureSpec.getSize(widthMeasureSpec)
 
         labelView.measure(
             MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),

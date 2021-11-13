@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/margin_3"
         android:background="@drawable/bg_input"
-        android:backgroundTint="@color/progress_bar_track"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -48,21 +47,39 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
+    <ImageView
+        android:id="@+id/preview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:background="@drawable/bg_input"
+        android:clipToOutline="true"
+        android:importantForAccessibility="no"
+        android:outlineProvider="background"
+        android:padding="@dimen/margin_1"
+        android:scaleType="fitStart"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/itemsFlow"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintWidth_percent="0.25"
+        tools:src="@tools:sample/avatars" />
+
     <androidx.constraintlayout.helper.widget.Flow
         android:id="@+id/itemsFlow"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_2"
         android:layout_marginEnd="@dimen/margin_2"
-        app:constraint_referenced_ids="timeUsed,timeLeft,eta,printName"
+        app:constraint_referenced_ids="timeUsed,timeLeft,eta"
         app:flow_horizontalBias="0"
         app:flow_horizontalGap="@dimen/margin_2"
         app:flow_horizontalStyle="packed"
         app:flow_verticalGap="@dimen/margin_1"
         app:flow_wrapMode="chain"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/preview"
         app:layout_constraintTop_toBottomOf="@id/progressBarBackground" />
 
     <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
@@ -88,9 +105,13 @@
 
     <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
         android:id="@+id/printName"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:label="@string/print_name"
+        android:layout_marginTop="@dimen/margin_1"
+        app:layout_constraintEnd_toEndOf="@id/itemsFlow"
+        app:layout_constraintStart_toStartOf="@id/itemsFlow"
+        app:layout_constraintTop_toBottomOf="@id/itemsFlow"
         app:value="This_is_a_file_withsdi fh sdif hsdiof hdsihf s dfhossdu fhsduo fh.gcode"
         app:valueMaxLines="3" />
 
