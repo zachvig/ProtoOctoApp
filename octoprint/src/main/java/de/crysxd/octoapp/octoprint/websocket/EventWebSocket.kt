@@ -154,7 +154,7 @@ class EventWebSocket(
             isOpen = false
         }
 
-        private fun shouldLogCurrentMessage(text: String) = !text.startsWith("{\"history") && currentMessageCounter++ % 10 == 0
+        private fun shouldLogCurrentMessage(text: String) = !text.startsWith("{\"history") && currentMessageCounter++ % 20 == 0
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
