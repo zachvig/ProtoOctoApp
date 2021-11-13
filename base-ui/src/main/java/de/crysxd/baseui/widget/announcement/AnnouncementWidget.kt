@@ -69,21 +69,6 @@ class AnnouncementWidget(context: Context) : RecyclableOctoWidget<AnnouncementWi
         )
     }
 
-    private fun test() = BaseInjector.get().context().let {
-        binding.announcement.checkVisible(
-            Announcement(
-                text = { "Test" },
-                actionText = { null },
-                id = "test",
-                actionUri = {
-                    recordInteraction()
-                    Uri.parse(getString(R.string.version_announcement_learn_more_link))
-                },
-                refreshInterval = 0,
-            )
-        )
-    }
-
     override fun onResume(lifecycleOwner: LifecycleOwner) {
         super.onResume(lifecycleOwner)
         isVisible()
@@ -91,7 +76,7 @@ class AnnouncementWidget(context: Context) : RecyclableOctoWidget<AnnouncementWi
 
     override fun isVisible(): Boolean {
         // Check all announcements and show the most important one
-        val isVisible = test() || isSaleAnnouncementVisible() || isWhatsNewVisible()
+        val isVisible = isSaleAnnouncementVisible() || isWhatsNewVisible()
 
         Timber.i("visible=$isVisible this=$this")
         return isVisible
