@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import de.crysxd.baseui.utils.ColorTheme
 import de.crysxd.baseui.utils.colorTheme
 import de.crysxd.octoapp.R
+import de.crysxd.octoapp.base.data.models.ProgressWidgetSettings
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftImageResource
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
@@ -193,7 +194,15 @@ class ProgressAppWidget : AppWidgetProvider() {
             val etaIndicator = ContextCompat.getDrawable(context, data.printTimeLeftOrigin.asPrintTimeLeftImageResource())
                 ?.toBitmapWithColor(context, data.printTimeLeftOrigin.asPrintTimeLeftOriginColor())
             val eta = runBlocking {
-                data.printTimeLeft?.let { BaseInjector.get().formatEtaUseCase().execute(FormatEtaUseCase.Params(it.toLong(), true)) }
+                data.printTimeLeft?.let {
+                    BaseInjector.get().formatEtaUseCase().execute(
+                        FormatEtaUseCase.Params(
+                            secsLeft = it.toLong(),
+                            allowRelative = true,
+                            useCompactDate = BaseInjector.get().octoPreferences().progressWidgetSettings.etaStyle == ProgressWidgetSettings.EtaStyle.Compact
+                        )
+                    )
+                }
             }
             val views = if (data.isPrinting || data.isCancelling || data.isPaused || data.isPausing) {
                 RemoteViews(context.packageName, R.layout.app_widget_pogress_active)

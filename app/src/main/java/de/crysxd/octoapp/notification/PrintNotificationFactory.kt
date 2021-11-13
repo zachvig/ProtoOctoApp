@@ -16,7 +16,9 @@ import de.crysxd.baseui.utils.colorTheme
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.models.ProgressWidgetSettings
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.base.utils.PendingIntentCompat
 import de.crysxd.octoapp.widgets.createLaunchAppIntent
@@ -206,7 +208,8 @@ class PrintNotificationFactory(
                 FormatEtaUseCase.Params(
                     secsLeft = (it.time - System.currentTimeMillis()) / 1000,
                     showLabel = true,
-                    allowRelative = false
+                    allowRelative = false,
+                    useCompactDate = BaseInjector.get().octoPreferences().progressWidgetSettings.etaStyle == ProgressWidgetSettings.EtaStyle.Compact
                 )
             )
         }

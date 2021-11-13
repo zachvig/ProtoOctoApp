@@ -24,16 +24,16 @@ private fun getDeviceLocale() = try {
     Locale.getDefault()
 }
 
-fun Date.format(forceShowDate: Boolean = false): String = when {
+fun Date.format(forceShowDate: Boolean = false, useCompactFutureDate: Boolean = false): String = when {
     // Today? Only format time
     isToday() && !forceShowDate -> DateFormat.getTimeInstance(DateFormat.SHORT, getDeviceLocale()).format(this)
 
     // Is in future? Use a "flight schedule" style denotion, e.g. 3:45 PM +1d
-    isInFuture() && !forceShowDate -> {
+    isInFuture() && !forceShowDate && useCompactFutureDate -> {
         val formattedTime = DateFormat.getTimeInstance(DateFormat.SHORT, getDeviceLocale()).format(this)
-        val daysAhead = TimeUnit.MILLISECONDS.toDays(time - System.currentTimeMillis())
-        val formattedDaysAhead = daysAhead.toSuperscriptString()
-        "$formattedTime⁺$formattedDaysAhead"
+        val daysAhead = TimeUnit.MILLISECONDS.toDays(time - System.currentTimeMillis()).takeIf { it > 0 }
+        val formattedDaysAhead = daysAhead?.toSuperscriptString()?.let { "⁺$it" } ?: ""
+        "$formattedTime$formattedDaysAhead"
     }
 
     // This year? Only do not show yar in date

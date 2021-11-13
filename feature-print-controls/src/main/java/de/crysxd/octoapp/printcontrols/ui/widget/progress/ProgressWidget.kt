@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.ClipDrawable
 import android.view.LayoutInflater
+import android.view.View.GONE
+import android.view.View.INVISIBLE
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
@@ -16,9 +18,11 @@ import androidx.transition.TransitionManager
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import de.crysxd.baseui.di.BaseUiInjector
+import de.crysxd.baseui.menu.MenuBottomSheetFragment
 import de.crysxd.baseui.utils.ColorTheme
 import de.crysxd.baseui.widget.BaseWidgetHostFragment
 import de.crysxd.baseui.widget.RecyclableOctoWidget
+import de.crysxd.octoapp.base.data.models.ProgressWidgetSettings
 import de.crysxd.octoapp.base.data.models.WidgetType
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftImageResource
@@ -38,17 +42,42 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
     private val formatEtaUseCase = BaseInjector.get().formatEtaUseCase()
     private var lastProgress: Float? = null
     private var lastFile: String? = null
+    private var lastSettings: ProgressWidgetSettings? = null
     override val binding = ProgressWidgetBinding.inflate(LayoutInflater.from(context))
     private val observer = Observer(::updateView)
     private val progressPercentLayoutThreshold = 80f
     private var picasso: Picasso? = null
 
+    override fun getActionIcon() = R.drawable.ic_round_settings_24
+
+    override fun onAction() {
+        MenuBottomSheetFragment.createForMenu(ProgressWidgetSettingsMenu()).show(parent.childFragmentManager)
+    }
+
     override fun createNewViewModel(parent: BaseWidgetHostFragment): ProgressWidgetViewModel {
-        binding.eta.isInvisible = true
-        binding.timeUsed.isInvisible = true
-        binding.timeLeft.isInvisible = true
-        binding.printName.isInvisible = true
-        binding.preview.isVisible = false
+        val settings = BaseInjector.get().octoPreferences().progressWidgetSettings
+        binding.eta.visibility = when (settings.etaStyle) {
+            ProgressWidgetSettings.EtaStyle.None -> GONE
+            ProgressWidgetSettings.EtaStyle.Compact -> INVISIBLE
+            ProgressWidgetSettings.EtaStyle.Full -> INVISIBLE
+        }
+        binding.timeUsed.visibility = when (settings.showUsedTime) {
+            false -> GONE
+            true -> INVISIBLE
+        }
+        binding.timeLeft.visibility = when (settings.showLeftTime) {
+            false -> GONE
+            true -> INVISIBLE
+        }
+        binding.printName.visibility = when (settings.printNameStyle) {
+            ProgressWidgetSettings.PrintNameStyle.None -> GONE
+            ProgressWidgetSettings.PrintNameStyle.Compact -> INVISIBLE
+            ProgressWidgetSettings.PrintNameStyle.Full -> INVISIBLE
+        }
+        binding.preview.visibility = when (settings.showThumbnail) {
+            false -> GONE
+            true -> INVISIBLE
+        }
         binding.textViewProgressPercent.isInvisible = true
         return parent.injectViewModel<ProgressWidgetViewModel>().value
     }
@@ -69,7 +98,8 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
         baseViewModel.printState.removeObserver(observer)
     }
 
-    private fun updateView(message: Message.CurrentMessage) {
+    private fun updateView(pair: Pair<Message.CurrentMessage, ProgressWidgetSettings>) {
+        val (message, settings) = pair
         parent.lifecycleScope.launchWhenStarted {
             Timber.i("Received progress message ${message.copy(logs = emptyList(), temps = emptyList())}")
             val progressPercent = message.progress?.completion ?: 0f
@@ -79,20 +109,20 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
             val loading = progressPercent == 0f && printTimeLeft == null && printTimeSpent == null
             val formattedSpent = (printTimeSpent ?: 0L).takeIf { printTimeLeft != null }?.let { formatDuration(it) }
             val formattedLeft = printTimeLeft?.let { formatDuration(it) }
-            val formattedEta = printTimeLeft?.let { formatEta(it) }
+            val formattedEta = printTimeLeft?.let { formatEta(it, settings.etaStyle == ProgressWidgetSettings.EtaStyle.Compact) }
             val progressText = when {
                 message.state?.flags?.cancelling == true -> context.getString(R.string.cancelling)
                 loading -> context.getString(R.string.loading)
                 else -> context.getString(R.string.x_percent, progress * 100f)
             }
 
-            if (lastProgress != progress) {
+            if (lastProgress != progress || lastSettings != settings) {
                 TransitionManager.beginDelayedTransition(binding.root)
             }
 
             val p = picasso
             val file = message.job?.file
-            if (lastFile != file?.path && file?.thumbnail != null && p != null) {
+            if (lastFile != file?.path && file?.thumbnail != null && p != null && settings.showThumbnail) {
                 Timber.i("Loading thumbnail: ${file.thumbnail}")
                 lastFile = message.job?.file?.path
                 p.load(file.thumbnail).into(binding.preview, object : Callback {
@@ -102,6 +132,11 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
                         binding.preview.isVisible = true
                     }
                 })
+            }
+
+            if (!settings.showThumbnail) {
+                binding.preview.isVisible = false
+                lastFile = null
             }
 
             updateProgressBar(progress, progressPercent)
@@ -124,9 +159,15 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
                 return@launchWhenStarted
             }
 
+            binding.printName.smallFont = settings.fontSize == ProgressWidgetSettings.FontSize.Small
+            binding.eta.smallFont = binding.printName.smallFont
+            binding.timeLeft.smallFont = binding.printName.smallFont
+            binding.timeUsed.smallFont = binding.printName.smallFont
+
             binding.progressBarFill.backgroundTintList = ColorStateList.valueOf(ColorTheme.activeColorTheme.dark)
             binding.textViewProgressPercent.text = progressText
             binding.printName.value = message.job?.file?.display
+            binding.printName.valueMaxLines = if (settings.printNameStyle == ProgressWidgetSettings.PrintNameStyle.Full) 10 else 1
             binding.eta.value = formattedEta
             binding.timeUsed.value = formattedSpent
             binding.timeLeft.value = formattedLeft
@@ -134,12 +175,13 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
                 it?.setTint(ContextCompat.getColor(context, message.progress?.printTimeLeftOrigin.asPrintTimeLeftOriginColor()))
             }
 
-            binding.eta.isVisible = true
-            binding.timeUsed.isVisible = true
-            binding.timeLeft.isVisible = true
-            binding.printName.isVisible = true
+            binding.eta.isVisible = settings.etaStyle != ProgressWidgetSettings.EtaStyle.None
+            binding.timeUsed.isVisible = settings.showUsedTime
+            binding.timeLeft.isVisible = settings.showLeftTime
+            binding.printName.isVisible = settings.printNameStyle != ProgressWidgetSettings.PrintNameStyle.None
             binding.textViewProgressPercent.isVisible = true
 
+            lastSettings = settings
             lastProgress = progress
         }
     }
@@ -175,6 +217,7 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
     }
 
     private suspend fun formatDuration(seconds: Long) = formatDurationUseCase.execute(seconds)
-    private suspend fun formatEta(seconds: Long) = formatEtaUseCase.execute(FormatEtaUseCase.Params(seconds, allowRelative = false, showLabel = false))
+    private suspend fun formatEta(seconds: Long, compactDate: Boolean) =
+        formatEtaUseCase.execute(FormatEtaUseCase.Params(seconds, allowRelative = false, showLabel = false, useCompactDate = compactDate))
 
 }

@@ -4,7 +4,7 @@ import android.content.Context
 import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.ext.format
 import timber.log.Timber
-import java.util.*
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -23,14 +23,15 @@ class FormatEtaUseCase @Inject constructor(
 
         return when {
             lessThanAnHour && param.allowRelative -> context.getString(R.string.x_left, formatDurationUseCase.execute(param.secsLeft))
-            param.showLabel -> context.getString(R.string.eta_x, eta.format())
-            else -> eta.format()
+            param.showLabel -> context.getString(R.string.eta_x, eta.format(useCompactFutureDate = param.useCompactDate))
+            else -> eta.format(useCompactFutureDate = param.useCompactDate)
         }
     }
 
     data class Params(
         val secsLeft: Long,
-        val allowRelative: Boolean,
+        val useCompactDate: Boolean,
+        val allowRelative: Boolean = true,
         val showLabel: Boolean = true,
     )
 }

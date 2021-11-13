@@ -23,6 +23,7 @@ import de.crysxd.baseui.di.injectActivityViewModel
 import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.menu.MenuBottomSheetFragment
 import de.crysxd.baseui.menu.webcam.WebcamSettingsMenu
+import de.crysxd.octoapp.base.data.models.ProgressWidgetSettings
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import kotlinx.coroutines.flow.collectLatest
@@ -112,6 +113,7 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
         }
 
         lifecycleScope.launchWhenCreated {
+            val compactEtaDate = BaseInjector.get().octoPreferences().progressWidgetSettings.etaStyle == ProgressWidgetSettings.EtaStyle.Compact
             BaseInjector.get().octoPrintProvider().passiveCurrentMessageFlow("webcam").collectLatest { message ->
                 val flags = message.state?.flags
                 val printActive = listOf(flags?.paused, flags?.pausing, flags?.printing, flags?.cancelling).any { it == true }
@@ -127,7 +129,7 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
                         getString(R.string.time_left_x, BaseInjector.get().formatDurationUseCase().execute(it))
                     }
                     binding.textViewEta.text = message.progress?.printTimeLeft?.let {
-                        BaseInjector.get().formatEtaUseCase().execute(FormatEtaUseCase.Params(it.toLong(), false))
+                        BaseInjector.get().formatEtaUseCase().execute(FormatEtaUseCase.Params(it.toLong(), useCompactDate = compactEtaDate))
                     }
                 } else {
                     binding.textViewProgress.text = ""

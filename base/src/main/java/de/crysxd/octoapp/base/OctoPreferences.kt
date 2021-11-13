@@ -9,6 +9,7 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.gson.Gson
 import de.crysxd.octoapp.base.data.models.FileManagerSettings
 import de.crysxd.octoapp.base.data.models.GcodePreviewSettings
+import de.crysxd.octoapp.base.data.models.ProgressWidgetSettings
 import de.crysxd.octoapp.base.di.BaseInjector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -47,6 +48,7 @@ class OctoPreferences(
         private const val KEY_ALLOW_TERMINAL_DURING_PRINT = "allow_terminal_during_print"
         private const val KEY_GCODE_PREVIEW = "gcode_preview"
         private const val KEY_FILE_MANAGER = "file_manager"
+        private const val KEY_PROGRESS_WIDGET = "progress_widget"
         private const val KEY_WEBCAM_BLACKSCREEN_DEBUG = "webcam_baclscreen_debug"
 
         const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT = "octprint"
@@ -236,5 +238,13 @@ class OctoPreferences(
         } ?: FileManagerSettings()
         set(value) {
             edit { putString(KEY_FILE_MANAGER, gson.toJson(value)) }
+        }
+
+    var progressWidgetSettings: ProgressWidgetSettings
+        get() = sharedPreferences.getString(KEY_PROGRESS_WIDGET, null)?.let {
+            gson.fromJson(it, ProgressWidgetSettings::class.java)
+        } ?: ProgressWidgetSettings()
+        set(value) {
+            edit { putString(KEY_PROGRESS_WIDGET, gson.toJson(value)) }
         }
 }

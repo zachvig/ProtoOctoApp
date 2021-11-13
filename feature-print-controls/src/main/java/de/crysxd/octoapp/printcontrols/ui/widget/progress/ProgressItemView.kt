@@ -46,13 +46,18 @@ class ProgressItemView @JvmOverloads constructor(context: Context, attributeSet:
         set(value) {
             valueView.maxLines = value
         }
+    var smallFont: Boolean = false
+        set(value) {
+            field = value
+            setFont()
+        }
+    private var appliedSmallFont: Boolean? = null
 
     init {
         addView(labelView)
         addView(iconView)
         addView(valueView)
-        TextViewCompat.setTextAppearance(labelView, R.style.OctoTheme_TextAppearance_Label)
-        TextViewCompat.setTextAppearance(valueView, R.style.OctoTheme_TextAppearance_Data)
+        setFont()
         labelView.setTextColor(ContextCompat.getColor(context, R.color.normal_text))
         valueView.setTextColor(ContextCompat.getColor(context, R.color.normal_text))
         valueView.ellipsize = TextUtils.TruncateAt.END
@@ -61,6 +66,19 @@ class ProgressItemView @JvmOverloads constructor(context: Context, attributeSet:
             labelView.text = it.getString(R.styleable.ProgressItemView_label)
             valueView.text = it.getString(R.styleable.ProgressItemView_value)
             valueMaxLines = it.getInt(R.styleable.ProgressItemView_valueMaxLines, 1)
+        }
+    }
+
+    private fun setFont() {
+        if (smallFont != appliedSmallFont) {
+            appliedSmallFont = smallFont
+            if (smallFont) {
+                TextViewCompat.setTextAppearance(labelView, R.style.OctoTheme_TextAppearance_Label_Small)
+                TextViewCompat.setTextAppearance(valueView, R.style.OctoTheme_TextAppearance)
+            } else {
+                TextViewCompat.setTextAppearance(labelView, R.style.OctoTheme_TextAppearance_Label)
+                TextViewCompat.setTextAppearance(valueView, R.style.OctoTheme_TextAppearance_Data)
+            }
         }
     }
 
