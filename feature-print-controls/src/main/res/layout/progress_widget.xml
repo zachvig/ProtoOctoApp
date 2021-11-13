@@ -108,7 +108,7 @@
         android:id="@+id/layer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:label="progress_widget___layer"
+        app:label="@string/progress_widget___layer"
         app:value="4/204 @ 56%" />
 
     <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView

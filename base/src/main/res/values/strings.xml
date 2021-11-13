@@ -1032,6 +1032,7 @@ happy printing!"</string>
     <string name="hls_stream_disabled_title">"HLS webcam stream"</string>
     <string name="hls_stream_disbaled_description">"HLS streams are disabled, enable them now to see your webcam image."</string>
     <string name="progress_widget___z_height">"Z Height"</string>
+    <string name="progress_widget___layer">"Layer"</string>
     <string name="progress_widget___gcode_unavailable">"Unavailable"</string>
     <string name="progress_widget___gcode_large_file">"Large file"</string>
     <string name="progress_widget___gcode_loading">"Loading…"</string>
