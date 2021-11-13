@@ -39,15 +39,10 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
     private val progressPercentLayoutThreshold = 80f
 
     override fun createNewViewModel(parent: BaseWidgetHostFragment): ProgressWidgetViewModel {
-        binding.textViewEtaLabel.isInvisible = true
-        binding.textVieEta.isInvisible = true
-        binding.estimationIndicator.isInvisible = true
-        binding.textViewTimeSpentLabel.isInvisible = true
-        binding.textViewTimeSpent.isInvisible = true
-        binding.textViewTimeLeftLabel.isInvisible = true
-        binding.textViewTimeLeft.isInvisible = true
-        binding.textViewPrintName.isInvisible = true
-        binding.textViewPrintNameLabel.isInvisible = true
+        binding.eta.isInvisible = true
+        binding.timeUsed.isInvisible = true
+        binding.timeLeft.isInvisible = true
+        binding.printName.isInvisible = true
         binding.textViewProgressPercent.isInvisible = true
         return parent.injectViewModel<ProgressWidgetViewModel>().value
     }
@@ -108,23 +103,20 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
 
             binding.progressBarFill.backgroundTintList = ColorStateList.valueOf(ColorTheme.activeColorTheme.dark)
             binding.textViewProgressPercent.text = progressText
-            binding.textViewPrintName.text = message.job?.file?.display
-            binding.textViewTimeSpent.text = formattedSpent
-            binding.textViewTimeLeft.text = formattedLeft
-            binding.textVieEta.text = formattedEta
-            binding.estimationIndicator.isVisible = printTimeLeft != null
-            binding.estimationIndicator.setImageResource(message.progress?.printTimeLeftOrigin.asPrintTimeLeftImageResource())
-            binding.estimationIndicator.setColorFilter(ContextCompat.getColor(context, message.progress?.printTimeLeftOrigin.asPrintTimeLeftOriginColor()))
-            binding.textViewEtaLabel.isVisible = true
-            binding.textVieEta.isVisible = true
-            binding.estimationIndicator.isVisible = true
-            binding.textViewTimeSpentLabel.isVisible = true
-            binding.textViewTimeSpent.isVisible = true
-            binding.textViewPrintName.isVisible = true
-            binding.textViewPrintNameLabel.isVisible = true
+            binding.printName.value = message.job?.file?.display
+            binding.eta.value = formattedEta
+            binding.timeUsed.value = formattedSpent
+            binding.timeLeft.value = formattedLeft
+            binding.eta.labelIcon = ContextCompat.getDrawable(context, message.progress?.printTimeLeftOrigin.asPrintTimeLeftImageResource()).also {
+                it?.setTint(ContextCompat.getColor(context, message.progress?.printTimeLeftOrigin.asPrintTimeLeftOriginColor()))
+            }
+
+            binding.eta.isVisible = true
+            binding.timeUsed.isVisible = true
+            binding.timeLeft.isVisible = true
+            binding.printName.isVisible = true
             binding.textViewProgressPercent.isVisible = true
-            binding.textViewTimeLeftLabel.isVisible = true
-            binding.textViewTimeLeft.isVisible = true
+
             lastProgress = progress
         }
     }

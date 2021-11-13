@@ -48,128 +48,50 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
-    <TextView
-        android:id="@+id/textViewPrintNameLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="@dimen/margin_1"
-        android:text="@string/print_name"
-        android:textColor="@color/dark_text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textVieEta" />
-
-    <TextView
-        android:id="@+id/textViewPrintName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin_2"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:textAppearance="@style/OctoTheme.TextAppearance.Data"
-        android:visibility="invisible"
-        app:autoSizeMinTextSize="14sp"
-        app:autoSizeTextType="uniform"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/textViewPrintNameLabel"
-        app:layout_constraintTop_toBottomOf="@+id/textViewPrintNameLabel"
-        tools:text="This is a long filename"
-        tools:visibility="visible" />
-
-    <TextView
-        android:id="@+id/textViewTimeSpentLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/time_spent"
-        android:textColor="@color/dark_text"
-        app:layout_constraintStart_toStartOf="@+id/textViewTimeSpent"
-        app:layout_constraintTop_toTopOf="@+id/textViewEtaLabel" />
-
-    <TextView
-        android:id="@+id/textViewTimeLeftLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/time_left"
-        android:textColor="@color/dark_text"
-        app:layout_constraintStart_toStartOf="@+id/textViewTimeLeft"
-        app:layout_constraintTop_toTopOf="@+id/textViewEtaLabel" />
-
-    <TextView
-        android:id="@+id/textViewEtaLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_1"
-        android:text="@string/eta"
-        android:textColor="@color/dark_text"
-        app:layout_constraintStart_toStartOf="@+id/textVieEta"
-        app:layout_constraintTop_toBottomOf="@+id/progressBarBackground" />
-
-    <TextView
-        android:id="@+id/textVieEta"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/itemsFlow"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
+        android:layout_marginTop="@dimen/margin_2"
         android:layout_marginEnd="@dimen/margin_2"
-        android:maxLines="1"
-        android:minWidth="60dp"
-        android:textAppearance="@style/OctoTheme.TextAppearance.Data"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toStartOf="@id/textViewTimeSpent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewEtaLabel"
-        app:layout_constraintWidth_default="wrap"
-        tools:text="20.12., 08:45 PM"
-        tools:visibility="visible" />
-
-    <TextView
-        android:id="@+id/textViewTimeSpent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ellipsize="middle"
-        android:textAppearance="@style/OctoTheme.TextAppearance.Data"
-        android:visibility="invisible"
-        android:minWidth="60dp"
-        app:layout_constraintEnd_toStartOf="@+id/textViewTimeLeft"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textVieEta"
-        app:layout_constraintTop_toTopOf="@+id/textVieEta"
-        tools:text="32:45 h"
-        tools:visibility="visible" />
-
-    <TextView
-        android:id="@+id/textViewTimeLeft"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_2"
-        android:layout_marginEnd="@dimen/margin_2"
-        android:ellipsize="middle"
-        android:minWidth="60dp"
-        android:textAppearance="@style/OctoTheme.TextAppearance.Data"
-        android:visibility="invisible"
+        app:constraint_referenced_ids="timeUsed,timeLeft,eta,printName"
+        app:flow_horizontalBias="0"
+        app:flow_horizontalGap="@dimen/margin_2"
+        app:flow_horizontalStyle="packed"
+        app:flow_verticalGap="@dimen/margin_1"
+        app:flow_wrapMode="chain"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textViewTimeSpent"
-        app:layout_constraintTop_toTopOf="@+id/textVieEta"
-        tools:text="32:45 h"
-        tools:visibility="visible" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/progressBarBackground" />
 
-    <ImageView
-        android:id="@+id/estimationIndicator"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginVertical="@dimen/margin_0"
-        android:adjustViewBounds="true"
-        android:importantForAccessibility="no"
-        android:src="@drawable/ic_round_star_18"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/textViewEtaLabel"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintStart_toEndOf="@+id/textViewEtaLabel"
-        app:layout_constraintTop_toTopOf="@+id/textViewEtaLabel"
-        tools:tint="#f00"
-        tools:visibility="visible" />
+    <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
+        android:id="@+id/timeUsed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:label="@string/time_spent"
+        app:value="99:59 h" />
+
+    <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
+        android:id="@+id/timeLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:label="@string/time_left"
+        app:value="32 min" />
+
+    <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
+        android:id="@+id/eta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:label="@string/eta"
+        app:value="5:33 AM+4" />
+
+    <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
+        android:id="@+id/printName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:label="@string/print_name"
+        app:value="This_is_a_file_withsdi fh sdif hsdiof hdsihf s dfhossdu fhsduo fh.gcode"
+        app:valueMaxLines="3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
