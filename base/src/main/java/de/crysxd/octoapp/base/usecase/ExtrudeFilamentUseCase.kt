@@ -74,7 +74,7 @@ class ExtrudeFilamentUseCase @Inject constructor(
             throw ColdExtrusionException(
                 minTemp = minTemp,
                 currentTemp = currentTemp,
-                octoPrintProvider.octoPrint().fullWebUrl,
+                webUrl = octoPrintProvider.octoPrint().webUrl,
             )
         }
 

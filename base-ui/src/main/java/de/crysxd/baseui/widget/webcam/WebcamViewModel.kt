@@ -28,107 +28,89 @@ class WebcamViewModel(
 
     companion object {
         private var instanceCounter = 0
-        const val INITIAL_WEBCAM_HASH = -1
-        const val FALLBACK_WEBCAM_HASH = 0
     }
 
     private val tag = "WebcamViewModel/${instanceCounter++}"
     private var previousSource: LiveData<UiState>? = null
     private val uiStateMediator = MediatorLiveData<UiState>()
-    private var connectedWebcamSettingsHash: Int = INITIAL_WEBCAM_HASH
     val uiState = uiStateMediator.map { it }
     private val settingsLiveData = octoPreferences.updatedFlow.asLiveData()
-    private val octoPrintLiveData = octoPrintRepository.instanceInformationFlow()
-        .filter {
-            val result = try {
-                // Only pass if changes since last connection call
-                getWebcamSettings().hashCode()
-            } catch (e: Exception) {
-                Timber.tag(tag).e(e)
-                FALLBACK_WEBCAM_HASH
-            } != connectedWebcamSettingsHash
-            Timber.tag(tag).i("Configuration change is relevant: $result")
-            result
-        }
-        .asLiveData()
 
     init {
-        uiStateMediator.addSource(octoPrintLiveData) { connect() }
         uiStateMediator.addSource(settingsLiveData) { connect() }
         uiStateMediator.postValue(UiState.Loading(false))
     }
 
-    private suspend fun getWebcamSettings(): Pair<ResolvedWebcamSettings?, Int> {
+    private suspend fun getWebcamSettings(): Flow<Pair<ResolvedWebcamSettings?, Int>> {
         // Load settings
         val activeWebcamIndex = octoPrintRepository.getActiveInstanceSnapshot()?.appSettings?.activeWebcamIndex ?: 0
-        val allWebcamSettings = getWebcamSettingsUseCase.execute(null)
-        val preferredSettings = allWebcamSettings?.getOrNull(activeWebcamIndex)
-        val webcamSettings = preferredSettings ?: allWebcamSettings?.firstOrNull()
+        return getWebcamSettingsUseCase.execute(null).map {
+            val preferredSettings = it.getOrNull(activeWebcamIndex)
+            val webcamSettings = preferredSettings ?: it.firstOrNull()
 
-        if (preferredSettings == null) {
-            switchWebcam(0)
-        }
-
-        return webcamSettings to (allWebcamSettings?.size ?: 0)
+            if (preferredSettings == null) {
+                switchWebcam(0)
+            }
+            webcamSettings to (it.size)
+        }.distinctUntilChanged()
     }
 
     fun connect() {
-        Timber.tag(tag).i("Connecting")
-        previousSource?.let(uiStateMediator::removeSource)
+        viewModelScope.launch(coroutineExceptionHandler) {
+            Timber.tag(tag).i("Connecting")
+            previousSource?.let(uiStateMediator::removeSource)
 
-        val liveData = BillingManager.billingFlow()
-            .distinctUntilChangedBy { it.isPremiumActive }
-            .map {
-                flow {
-                    try {
-                        emit(UiState.Loading(false))
+            val liveData = BillingManager.billingFlow()
+                .distinctUntilChangedBy { it.isPremiumActive }
+                .combine(getWebcamSettings()) { _, ws ->
+                    flow {
+                        try {
+                            emit(UiState.Loading(false))
+                            val (resolvedSettings, webcamCount) = ws
+                            val canSwitchWebcam = webcamCount > 1
+                            Timber.tag(tag).i("Refresh with streamUrl: ${resolvedSettings?.urlString}")
+                            Timber.tag(tag).i("Webcam count: $webcamCount")
+                            emit(UiState.Loading(canSwitchWebcam))
 
-                        val combinedSettings = getWebcamSettings()
-                        connectedWebcamSettingsHash = combinedSettings.hashCode()
-                        val (resolvedSettings, webcamCount) = combinedSettings
-                        val canSwitchWebcam = webcamCount > 1
-                        Timber.tag(tag).i("Refresh with streamUrl: ${resolvedSettings?.urlString}")
-                        Timber.tag(tag).i("Webcam count: $webcamCount")
-                        emit(UiState.Loading(canSwitchWebcam))
+                            // Check if webcam is configured
+                            if (resolvedSettings == null || resolvedSettings.webcamSettings.webcamEnabled == false) {
+                                return@flow emit(UiState.WebcamNotConfigured)
+                            }
 
-                        // Check if webcam is configured
-                        if (resolvedSettings == null || resolvedSettings.webcamSettings.webcamEnabled == false) {
-                            return@flow emit(UiState.WebcamNotConfigured)
+                            // Open stream
+                            when (resolvedSettings) {
+                                is ResolvedWebcamSettings.HlsSettings -> emitRichFlow(
+                                    url = resolvedSettings.urlString,
+                                    basicAuth = resolvedSettings.basicAuth,
+                                    webcamSettings = resolvedSettings.webcamSettings,
+                                    canSwitchWebcam = canSwitchWebcam
+                                )
+
+                                is ResolvedWebcamSettings.RtspSettings -> emitRichFlow(
+                                    url = resolvedSettings.urlString,
+                                    basicAuth = resolvedSettings.basicAuth,
+                                    webcamSettings = resolvedSettings.webcamSettings,
+                                    canSwitchWebcam = canSwitchWebcam
+                                )
+
+                                is ResolvedWebcamSettings.MjpegSettings -> emitMjpegFlow(
+                                    mjpegSettings = resolvedSettings,
+                                    canSwitchWebcam = canSwitchWebcam
+                                )
+                            }
+                        } catch (e: CancellationException) {
+                            Timber.tag(tag).w("Webcam stream cancelled")
+                        } catch (e: Exception) {
+                            Timber.e(e)
+                            emit(UiState.Error(true, canSwitchWebcam = false))
                         }
+                    }.flowOn(Dispatchers.IO)
+                }.flatMapLatest { it }.asLiveData()
 
-                        // Open stream
-                        when (resolvedSettings) {
-                            is ResolvedWebcamSettings.HlsSettings -> emitRichFlow(
-                                url = resolvedSettings.urlString,
-                                basicAuth = resolvedSettings.basicAuth,
-                                webcamSettings = resolvedSettings.webcamSettings,
-                                canSwitchWebcam = canSwitchWebcam
-                            )
-
-                            is ResolvedWebcamSettings.RtspSettings -> emitRichFlow(
-                                url = resolvedSettings.urlString,
-                                basicAuth = resolvedSettings.basicAuth,
-                                webcamSettings = resolvedSettings.webcamSettings,
-                                canSwitchWebcam = canSwitchWebcam
-                            )
-
-                            is ResolvedWebcamSettings.MjpegSettings -> emitMjpegFlow(
-                                mjpegSettings = resolvedSettings,
-                                canSwitchWebcam = canSwitchWebcam
-                            )
-                        }
-                    } catch (e: CancellationException) {
-                        Timber.tag(tag).w("Webcam stream cancelled")
-                    } catch (e: Exception) {
-                        Timber.e(e)
-                        emit(UiState.Error(true, canSwitchWebcam = false))
-                    }
-                }.flowOn(Dispatchers.IO)
-            }.flatMapLatest { it }.asLiveData()
-
-        previousSource = liveData
-        uiStateMediator.addSource(liveData)
-        { uiStateMediator.postValue(it) }
+            previousSource = liveData
+            uiStateMediator.addSource(liveData)
+            { uiStateMediator.postValue(it) }
+        }
     }
 
     private suspend fun FlowCollector<UiState>.emitRichFlow(url: String, basicAuth: String?, webcamSettings: WebcamSettings, canSwitchWebcam: Boolean) {
@@ -149,7 +131,6 @@ class WebcamViewModel(
     private suspend fun FlowCollector<UiState>.emitMjpegFlow(mjpegSettings: ResolvedWebcamSettings.MjpegSettings, canSwitchWebcam: Boolean) {
         delay(100)
         var lastAspectRatio: String? = null
-        val url = mjpegSettings.url.newBuilder()
         MjpegConnection2(streamUrl = mjpegSettings.url, name = tag).load().map {
             when (it) {
                 is MjpegConnection2.MjpegSnapshot.Loading -> UiState.Loading(canSwitchWebcam)

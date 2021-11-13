@@ -45,6 +45,7 @@ class WebcamTroubleShootingFragment : BaseFragment() {
             SendFeedbackDialog().show(childFragmentManager, "webcam-feedback")
             true
         }
+        showLoadingState()
         viewModel.uiState.observe(viewLifecycleOwner) {
             TransitionManager.beginDelayedTransition(binding.root)
             when (it) {

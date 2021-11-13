@@ -3,6 +3,7 @@ package de.crysxd.octoapp.octoprint.interceptors
 import de.crysxd.octoapp.octoprint.exceptions.AlternativeWebUrlException
 import de.crysxd.octoapp.octoprint.getConnectionType
 import de.crysxd.octoapp.octoprint.models.ConnectionType
+import de.crysxd.octoapp.octoprint.withoutBasicAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.HttpUrl
@@ -13,18 +14,18 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 
-class AlternativeWebUrlInterceptor(
+class AlternativeWebUrlInterceptor constructor(
     private val logger: Logger,
-    private val webUrl: HttpUrl,
-    private val alternativeWebUrl: HttpUrl?
+    private val fullWebUrl: HttpUrl,
+    private val fullAlternativeWebUrl: HttpUrl?
 ) : Interceptor {
 
     var isPrimaryUsed = true
         set(value) {
             field = value
-            mutableActiveUrl.value = if (value) webUrl else (alternativeWebUrl ?: webUrl)
+            mutableActiveUrl.value = if (value) fullWebUrl else (fullAlternativeWebUrl ?: fullWebUrl)
         }
-    private val mutableActiveUrl = MutableStateFlow(webUrl)
+    private val mutableActiveUrl = MutableStateFlow(fullWebUrl)
     val activeUrl get() = mutableActiveUrl.asStateFlow()
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -36,13 +37,13 @@ class AlternativeWebUrlInterceptor(
         val request = chain.request()
 
         try {
-            val upgradedRequest = if (alternativeWebUrl != null && !isPrimaryUsed) {
+            val upgradedRequest = if (fullAlternativeWebUrl != null && !isPrimaryUsed) {
                 val url = request.url.toString()
                 usingPrimary = false
-                val upgradedUrl = url.replace(webUrl.toString(), alternativeWebUrl.toString())
+                val upgradedUrl = url.replace(fullWebUrl.withoutBasicAuth().toString(), fullAlternativeWebUrl.withoutBasicAuth().toString())
 
-                if (upgradedUrl == url && webUrl != alternativeWebUrl) {
-                    throw AlternativeWebUrlException("Alternative URL and primary URL are the same: $url <--> $upgradedUrl", webUrl)
+                if (upgradedUrl == url && fullWebUrl.withoutBasicAuth() != fullAlternativeWebUrl.withoutBasicAuth()) {
+                    throw AlternativeWebUrlException("Alternative URL and primary URL are the same: $url <--> $upgradedUrl", fullWebUrl.withoutBasicAuth())
                 }
 
                 request.newBuilder().url(upgradedUrl).build()
@@ -66,7 +67,7 @@ class AlternativeWebUrlInterceptor(
                         Level.WARNING,
                         "Caught exception in ${request.url}, switching web url to ${if (isPrimaryUsed) "primary" else "alternative"} (${e::class.java.simpleName}: ${e.message})"
                     )
-                    logger.log(Level.INFO, "webUrl=$webUrl alternativeWebUrl=$alternativeWebUrl")
+                    logger.log(Level.INFO, "webUrl=$fullWebUrl alternativeWebUrl=$fullAlternativeWebUrl")
                     return doIntercept(chain, 1)
                 }
 
@@ -76,9 +77,9 @@ class AlternativeWebUrlInterceptor(
     }
 
     fun getActiveConnectionType() = if (isPrimaryUsed) {
-        webUrl.getConnectionType(ConnectionType.Primary)
+        fullWebUrl.getConnectionType(ConnectionType.Primary)
     } else {
-        alternativeWebUrl?.getConnectionType(ConnectionType.Alternative) ?: ConnectionType.Primary
+        fullAlternativeWebUrl?.getConnectionType(ConnectionType.Alternative) ?: ConnectionType.Primary
     }
 
     private fun canSolveExceptionBySwitchingUrl(e: Exception) = e is IOException

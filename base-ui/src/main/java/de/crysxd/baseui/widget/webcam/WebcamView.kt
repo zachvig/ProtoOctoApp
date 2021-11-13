@@ -175,6 +175,10 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             binding.mjpegSurface.setImageBitmap(null)
         }
 
+        if (state !is WebcamState.RichStreamReady) {
+            richPlayer.stop()
+        }
+
         when (newState) {
             WebcamState.Loading -> binding.loadingState.isVisible = true
             WebcamState.NotConfigured -> {

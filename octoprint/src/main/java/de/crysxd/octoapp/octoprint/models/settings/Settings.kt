@@ -38,7 +38,21 @@ data class Settings(
         val name: String
     )
 
-    class PluginSettingsGroup : HashMap<String, PluginSettings>()
+    class PluginSettingsGroup : HashMap<String, PluginSettings>() {
+        override fun toString() = StringBuilder().also { builder ->
+            builder.append("PluginSettingsGroup(")
+            entries.filter {
+                it.value !is Unknown
+            }.forEach {
+                builder.append(it.key)
+                builder.append("=")
+                builder.append(it.value)
+                builder.append(" ")
+            }
+            builder.removeSuffix(" ")
+            builder.append(")")
+        }.toString()
+    }
 
     interface PluginSettings
 
@@ -102,4 +116,7 @@ data class Settings(
     data class OctoEverywhere(
         @SerializedName("PrinterKey") val printerKey: String?
     ) : PluginSettings
+
+    object Unknown : PluginSettings
+
 }

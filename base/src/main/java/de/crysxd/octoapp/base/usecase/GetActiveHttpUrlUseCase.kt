@@ -20,7 +20,7 @@ class GetActiveHttpUrlUseCase @Inject constructor(
         // This is a little complicated on first glance, but not that bad
         //
         // Case A: A instance information is given via params (used for widgets) and we need to create an ad hoc instance
-        //         In this case we need to fetch the settings to see wether we have a local or a remote connection. OctoEverywhere also will alter the settings
+        //         In this case we need to fetch the settings to see whether we have a local or a remote connection. OctoEverywhere also will alter the settings
         //         with updated webcam URLs which we need
         //
         // Case B: No instance information is given in params and we use the "default" OctoPrint. In this case we need to check

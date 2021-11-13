@@ -14,6 +14,7 @@ import de.crysxd.octoapp.base.utils.measureTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onCompletion
@@ -37,7 +38,7 @@ class GetWebcamSnapshotUseCase @Inject constructor(
             // Get webcam settings.
             val instanceInfo = param.instanceInfo ?: octoPrintRepository.getActiveInstanceSnapshot() ?: throw IllegalStateException("No instance info")
             val activeIndex = param.instanceInfo?.appSettings?.activeWebcamIndex ?: 0
-            val allWebcamSettings = getWebcamSettingsUseCase.execute(instanceInfo)
+            val allWebcamSettings = getWebcamSettingsUseCase.execute(instanceInfo).firstOrNull()
             val webcamSettings = allWebcamSettings?.getOrNull(activeIndex) as? ResolvedWebcamSettings.MjpegSettings
                 ?: allWebcamSettings?.mapNotNull { it as? ResolvedWebcamSettings.MjpegSettings }?.firstOrNull()
             var illuminated = false
