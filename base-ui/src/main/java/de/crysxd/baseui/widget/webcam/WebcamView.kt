@@ -194,8 +194,8 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             WebcamState.RichStreamDisabled -> {
                 binding.loadingState.isVisible = false
                 binding.errorState.isVisible = true
-                binding.errorTitle.text = context.getString(R.string.hls_stream_disabled_title)
-                binding.errorDescription.text = context.getString(R.string.hls_stream_disbaled_description)
+                binding.errorTitle.text = context.getString(R.string.rich_stream_disabled_title)
+                binding.errorDescription.text = context.getString(R.string.rich_stream_disbaled_description)
                 binding.buttonReconnect.text = context.getString(R.string.enable)
                 animatedMatrix = false
             }
