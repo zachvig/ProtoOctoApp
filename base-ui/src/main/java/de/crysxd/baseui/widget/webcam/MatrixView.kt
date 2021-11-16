@@ -14,7 +14,11 @@ import android.view.ScaleGestureDetector
 import android.view.ViewGroup
 import androidx.core.graphics.transform
 import androidx.core.view.children
+import androidx.transition.ChangeTransform
+import androidx.transition.TransitionManager
+import de.crysxd.baseui.BuildConfig
 import timber.log.Timber
+import kotlin.math.max
 import kotlin.math.min
 
 class MatrixView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null) : ViewGroup(context, attributeSet) {
@@ -28,10 +32,12 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
     private val viewPortRect = RectF()
     private val helperRect = RectF()
     private val helperMatrix = Matrix()
-    var matrixInput: MatrixInput? = null
+    private var internalMatrixInput: MatrixInput? = null
+    var matrixInput: MatrixInput?
+        get() = internalMatrixInput
         set(value) {
-            if (field != value) {
-                field = value
+            if (internalMatrixInput != value) {
+                internalMatrixInput = value
                 requestLayout()
             }
         }
@@ -42,7 +48,7 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
     }
 
     init {
-        setWillNotDraw(false)
+        setWillNotDraw(BuildConfig.DEBUG)
     }
 
 
@@ -109,15 +115,15 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
         imageRect.bottom = (vy + vh).toFloat()
         imageRect.left = vx.toFloat()
         imageRect.right = (vx + vw).toFloat()
+        imageRect.scale(minZoom, imageRect.centerX(), imageRect.centerY())
         helperMatrix.reset()
         helperMatrix.postRotate(rotation, imageRect.centerX(), imageRect.centerY())
-        imageRect.scale(minZoom, imageRect.centerX(), imageRect.centerY()).transform(helperMatrix)
+        imageRect.transform(helperMatrix)
 
         Timber.i("contentSize=${input.contentWidth}x${input.contentHeight}px viewSize=${vw}x${vh}px scale=$minZoom")
         children.forEach {
             // Layout
             it.layout(vx, vy, vx + vw, vy + vh)
-            Timber.i("view=$it")
 
             // Rotate and flip views
             it.scaleX = minZoom * input.scaleXMultiplier
@@ -128,10 +134,6 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
     inner class ScaleGestureListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
-//            if (matrixInput?.scaleToFill == true) {
-//                matrixInput = matrixInput?.copy(scaleToFill = false)
-//            }
-
             // Limit the scale factor so we never go below min scale
             val scaleFactorMin = minZoom / currentZoom
             val scaleFactorMax = maxZoom / currentZoom
@@ -156,6 +158,20 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
         }
 
         override fun onDoubleTap(e: MotionEvent): Boolean {
+            val input = matrixInput ?: return true
+
+            TransitionManager.beginDelayedTransition(this@MatrixView, ChangeTransform())
+            internalMatrixInput = input.copy(scaleToFill = !input.scaleToFill)
+            val newZoom = if (input.scaleToFill) {
+                minZoom
+            } else {
+                max(width / (imageRect.width() / currentZoom), height / (imageRect.height() / currentZoom))
+            }
+            val scaleFactor = newZoom / currentZoom
+            currentZoom = newZoom
+            imageRect.scale(scaleFactor, imageRect.centerX(), imageRect.centerY()).limitBounds(viewPortRect).flushToViews()
+
+            Timber.i("${input.scaleToFill} => ${matrixInput?.scaleToFill} @ $currentZoom => $newZoom @ $scaleFactor ")
             return true
         }
 
@@ -165,11 +181,13 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
     }
 
-    private fun RectF.scale(scale: Float, focusX: Float, focusY: Float) = transform(Matrix().also {
+    private fun RectF.scale(scale: Float, focusX: Float, focusY: Float) = transform(helperMatrix.also {
+        it.reset()
         it.postScale(scale, scale, focusX, focusY)
     })
 
-    private fun RectF.translate(x: Float, y: Float) = transform(Matrix().also {
+    private fun RectF.translate(x: Float, y: Float) = transform(helperMatrix.also {
+        it.reset()
         it.postTranslate(-x, -y)
     })
 
@@ -196,10 +214,11 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
         bottom = other.bottom
     }
 
-    private fun RectF.limitBounds(bounds: RectF) = transform(Matrix().also {
+    private fun RectF.limitBounds(bounds: RectF) = transform(helperMatrix.also {
+        it.reset()
+
         var dx = 0f
         var dy = 0f
-        val input = matrixInput ?: return@also
 
         // Limit left right movement
         if (bounds.width() > width()) {
