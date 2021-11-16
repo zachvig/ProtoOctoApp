@@ -3,25 +3,18 @@ package de.crysxd.baseui.widget.webcam
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Matrix
 import android.graphics.Point
 import android.graphics.RectF
 import android.net.Uri
 import android.os.Build
 import android.util.AttributeSet
-import android.view.GestureDetector
 import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.ScaleGestureDetector
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.transform
 import androidx.core.view.children
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -52,7 +45,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
-import kotlin.math.max
 import kotlin.math.min
 
 class WebcamView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, defStyle: Int = 0) : FrameLayout(context, attributeSet, defStyle) {
@@ -62,9 +54,9 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         private const val MAX_ZOOM = 10f
     }
 
-    private val gestureDetector = GestureDetector(context, GestureListener())
-    private val scaleGestureDetector = ScaleGestureDetector(context, ScaleGestureListener())
-    private var currentZoom = 1f
+//    private val gestureDetector = GestureDetector(context, GestureListener())
+//    private val scaleGestureDetector = ScaleGestureDetector(context, ScaleGestureListener())
+private var currentZoom = 1f
     private val imageRect = RectF()
     private val viewPortRect = RectF()
 
@@ -83,7 +75,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         set(value) {
             field = value
             onScaleToFillChanged()
-            (state as? WebcamState.MjpegFrameReady)?.let { updateMjpegMatrix(it) }
+//            (state as? WebcamState.MjpegFrameReady)?.let { updateMjpegMatrix(it) }
             nativeAspectRation?.let { applyAspectRatio(it.x, it.y) }
         }
 
@@ -153,14 +145,14 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        scaleGestureDetector.onTouchEvent(event)
-        if (!scaleGestureDetector.isInProgress) {
-            gestureDetector.onTouchEvent(event)
-        }
-        return true
-    }
+//    @SuppressLint("ClickableViewAccessibility")
+//    override fun onTouchEvent(event: MotionEvent): Boolean {
+//        scaleGestureDetector.onTouchEvent(event)
+//        if (!scaleGestureDetector.isInProgress) {
+//            gestureDetector.onTouchEvent(event)
+//        }
+//        return true
+//    }
 
     fun onPause() {
         Timber.i("Stopping stream")
@@ -230,9 +222,9 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         if (newAspectRatio != nativeAspectRation) {
             nativeAspectRation = newAspectRatio
 
-            binding.richSurface.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                dimensionRatio = if (scaleToFill) null else "H,$width:$height"
-            }
+//            binding.richSurface.updateLayoutParams<ConstraintLayout.LayoutParams> {
+//                dimensionRatio = if (scaleToFill) null else "H,$width:$height"
+//            }
             richPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
 
             onNativeAspectRatioChanged(width, height)
@@ -256,7 +248,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         viewPortRect.bottom = height.toFloat()
         scaleToFill = scaleToFill
 
-        imageRect.flushToViews(binding.surfaces)
+//        imageRect.flushToViews(binding.surfaces)
     }
 
     private fun displayHlsStream(state: WebcamState.RichStreamReady) = try {
@@ -283,6 +275,14 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             richPlayer.addListener(object : Player.Listener {
                 override fun onVideoSizeChanged(videoSize: VideoSize) {
                     super.onVideoSizeChanged(videoSize)
+                    binding.matrixView.matrixInput = MatrixView.MatrixInput(
+                        flipH = false,
+                        flipV = true,
+                        rotate90 = false,
+                        contentHeight = videoSize.height,
+                        contentWidth = videoSize.width,
+                        scaleToFill = scaleToFill
+                    )
                     applyAspectRatio(videoSize.width, videoSize.height)
                 }
             })
@@ -387,7 +387,14 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             beginDelayedTransition()
         }
 
-        updateMjpegMatrix(newState)
+        binding.matrixView.matrixInput = MatrixView.MatrixInput(
+            flipH = newState.flipH,
+            flipV = newState.flipV,
+            rotate90 = newState.rotate90,
+            contentHeight = newState.frame.height,
+            contentWidth = newState.frame.width,
+            scaleToFill = scaleToFill
+        )
 
         val size = min(newState.frame.width, newState.frame.height)
         @SuppressLint("SetTextI18n")
@@ -423,56 +430,56 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         }
     }
 
-    private fun updateMjpegMatrix(state: WebcamState.MjpegFrameReady) {
-        // Gate calculations
-        val matrixInput = "$scaleToFill${state.flipH}${state.flipV}${state.rotate90}${state.frame.width}${state.frame.height}$width$height".hashCode()
-        if (matrixInput == lastMatrixInput) return
-
-        // Not the first time we calculate? Animate
-        if (lastMatrixInput == null) {
-            animatedMatrix = true
-            beginDelayedTransition()
-        }
-        lastMatrixInput = matrixInput
-
-        // Reset matrix
-        val matrix = Matrix()
-
-        // Apply rotation (around center)
-        val (frameWidth, frameHeight) = if (state.rotate90) {
-            matrix.postRotate(-90f, state.frame.width / 2f, state.frame.height / 2f)
-            state.frame.height to state.frame.width
-        } else {
-            state.frame.width to state.frame.height
-        }
-
-        // Apply flips
-        if (state.flipH || state.flipV) {
-            matrix.postScale(
-                if (state.flipH) -1f else 1f,
-                if (state.flipV) -1f else 1f,
-                state.frame.width / 2f,
-                state.frame.height / 2f
-            )
-        }
-
-        // Apply scale to fit or fill view
-        val scaleY = height / frameHeight.toFloat()
-        val scaleX = width / frameWidth.toFloat()
-        val scale = if (scaleToFill) {
-            max(scaleX, scaleY)
-        } else {
-            min(scaleX, scaleY)
-        }
-        matrix.postScale(scale, scale)
-
-        // Center in view
-        val dx = (width - (state.frame.width * scale)) / 2
-        val dy = (height - (state.frame.height * scale)) / 2
-        matrix.postTranslate(dx, dy)
-        binding.mjpegSurface.imageMatrix = matrix
-        Timber.d("Creating matrix for input $matrixInput with scaleToFill=$scaleToFill flipH=${state.flipH} flipV=${state.flipV} scale=$scale, dx=$dx, dy=$dy")
-    }
+//    private fun updateMjpegMatrix(state: WebcamState.MjpegFrameReady) {
+//        // Gate calculations
+//        val matrixInput = "$scaleToFill${state.flipH}${state.flipV}${state.rotate90}${state.frame.width}${state.frame.height}$width$height".hashCode()
+//        if (matrixInput == lastMatrixInput) return
+//
+//        // Not the first time we calculate? Animate
+//        if (lastMatrixInput == null) {
+//            animatedMatrix = true
+//            beginDelayedTransition()
+//        }
+//        lastMatrixInput = matrixInput
+//
+//        // Reset matrix
+//        val matrix = Matrix()
+//
+//        // Apply rotation (around center)
+//        val (frameWidth, frameHeight) = if (state.rotate90) {
+//            matrix.postRotate(-90f, state.frame.width / 2f, state.frame.height / 2f)
+//            state.frame.height to state.frame.width
+//        } else {
+//            state.frame.width to state.frame.height
+//        }
+//
+//        // Apply flips
+//        if (state.flipH || state.flipV) {
+//            matrix.postScale(
+//                if (state.flipH) -1f else 1f,
+//                if (state.flipV) -1f else 1f,
+//                state.frame.width / 2f,
+//                state.frame.height / 2f
+//            )
+//        }
+//
+//        // Apply scale to fit or fill view
+//        val scaleY = height / frameHeight.toFloat()
+//        val scaleX = width / frameWidth.toFloat()
+//        val scale = if (scaleToFill) {
+//            max(scaleX, scaleY)
+//        } else {
+//            min(scaleX, scaleY)
+//        }
+//        matrix.postScale(scale, scale)
+//
+//        // Center in view
+//        val dx = (width - (state.frame.width * scale)) / 2
+//        val dy = (height - (state.frame.height * scale)) / 2
+//        matrix.postTranslate(dx, dy)
+//        binding.mjpegSurface.imageMatrix = matrix
+//        Timber.d("Creating matrix for input $matrixInput with scaleToFill=$scaleToFill flipH=${state.flipH} flipV=${state.flipV} scale=$scale, dx=$dx, dy=$dy")
+//    }
 
     sealed class WebcamState {
         object Loading : WebcamState()
@@ -489,84 +496,84 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         ) : WebcamState()
     }
 
-    inner class ScaleGestureListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-        override fun onScale(detector: ScaleGestureDetector): Boolean {
-            if (scaleToFill) {
-                scaleToFill = false
-            }
-
-            // Limit the scale factor so we never go below min scale
-            val scaleFactorMin = MIN_ZOOM / currentZoom
-            val scaleFactorMax = MAX_ZOOM / currentZoom
-            val scaleFactor = detector.scaleFactor.coerceIn(scaleFactorMin, scaleFactorMax)
-            currentZoom *= scaleFactor
-            imageRect.scale(scaleFactor, detector.focusX, detector.focusY)
-                .limitBounds(viewPortRect).flushToViews(binding.surfaces)
-            return true
-        }
-    }
-
-    inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
-        override fun onDown(e: MotionEvent) = true
-
-        override fun onShowPress(e: MotionEvent) = Unit
-
-        override fun onSingleTapUp(e: MotionEvent) = false
-
-        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
-            imageRect.translate(distanceX, distanceY).limitBounds(viewPortRect).flushToViews(binding.surfaces)
-            return true
-        }
-
-        override fun onDoubleTap(e: MotionEvent): Boolean {
-            beginDelayedTransition()
-            if (currentZoom > MIN_ZOOM) {
-                createRect()
-            } else {
-                scaleToFill = !scaleToFill
-            }
-            return true
-        }
-
-        override fun onLongPress(e: MotionEvent?) = Unit
-
-        override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float) = false
-
-    }
-
-    private fun RectF.scale(scale: Float, focusX: Float, focusY: Float) = transform(Matrix().also {
-        it.postScale(scale, scale, focusX, focusY)
-    })
-
-    private fun RectF.translate(x: Float, y: Float) = transform(Matrix().also {
-        it.postTranslate(-x, -y)
-    })
-
-    private fun RectF.flushToViews(vararg views: View) = views.forEach { view ->
-        view.scaleX = (width() / view.width).takeIf { it.isFinite() } ?: 1f
-        view.scaleY = (height() / view.height).takeIf { it.isFinite() } ?: 1f
-        view.translationX = left - (view.width - view.width * currentZoom) / 2
-        view.translationY = top - (view.height - view.height * currentZoom) / 2
-    }
-
-    private fun RectF.limitBounds(bounds: RectF) = transform(Matrix().also {
-        var dx = 0f
-        var dy = 0f
-
-        // Limit left right movement
-        if (left > bounds.left) {
-            dx = bounds.left - left
-        } else if (right < bounds.right) {
-            dx = bounds.right - right
-        }
-
-        // Limit top bottom movement
-        if (top > bounds.top) {
-            dy = bounds.top - top
-        } else if (bottom < bounds.bottom) {
-            dy = bounds.bottom - bottom
-        }
-
-        it.postTranslate(dx, dy)
-    })
+//    inner class ScaleGestureListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+//        override fun onScale(detector: ScaleGestureDetector): Boolean {
+//            if (scaleToFill) {
+//                scaleToFill = false
+//            }
+//
+//            // Limit the scale factor so we never go below min scale
+//            val scaleFactorMin = MIN_ZOOM / currentZoom
+//            val scaleFactorMax = MAX_ZOOM / currentZoom
+//            val scaleFactor = detector.scaleFactor.coerceIn(scaleFactorMin, scaleFactorMax)
+//            currentZoom *= scaleFactor
+//            imageRect.scale(scaleFactor, detector.focusX, detector.focusY)
+//                .limitBounds(viewPortRect).flushToViews(binding.surfaces)
+//            return true
+//        }
+//    }
+//
+//    inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
+//        override fun onDown(e: MotionEvent) = true
+//
+//        override fun onShowPress(e: MotionEvent) = Unit
+//
+//        override fun onSingleTapUp(e: MotionEvent) = false
+//
+//        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+//            imageRect.translate(distanceX, distanceY).limitBounds(viewPortRect).flushToViews(binding.surfaces)
+//            return true
+//        }
+//
+//        override fun onDoubleTap(e: MotionEvent): Boolean {
+//            beginDelayedTransition()
+//            if (currentZoom > MIN_ZOOM) {
+//                createRect()
+//            } else {
+//                scaleToFill = !scaleToFill
+//            }
+//            return true
+//        }
+//
+//        override fun onLongPress(e: MotionEvent?) = Unit
+//
+//        override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float) = false
+//
+//    }
+//
+//    private fun RectF.scale(scale: Float, focusX: Float, focusY: Float) = transform(Matrix().also {
+//        it.postScale(scale, scale, focusX, focusY)
+//    })
+//
+//    private fun RectF.translate(x: Float, y: Float) = transform(Matrix().also {
+//        it.postTranslate(-x, -y)
+//    })
+//
+//    private fun RectF.flushToViews(vararg views: View) = views.forEach { view ->
+//        view.scaleX = (width() / view.width).takeIf { it.isFinite() } ?: 1f
+//        view.scaleY = (height() / view.height).takeIf { it.isFinite() } ?: 1f
+//        view.translationX = left - (view.width - view.width * currentZoom) / 2
+//        view.translationY = top - (view.height - view.height * currentZoom) / 2
+//    }
+//
+//    private fun RectF.limitBounds(bounds: RectF) = transform(Matrix().also {
+//        var dx = 0f
+//        var dy = 0f
+//
+//        // Limit left right movement
+//        if (left > bounds.left) {
+//            dx = bounds.left - left
+//        } else if (right < bounds.right) {
+//            dx = bounds.right - right
+//        }
+//
+//        // Limit top bottom movement
+//        if (top > bounds.top) {
+//            dy = bounds.top - top
+//        } else if (bottom < bounds.bottom) {
+//            dy = bounds.bottom - bottom
+//        }
+//
+//        it.postTranslate(dx, dy)
+//    })
 }

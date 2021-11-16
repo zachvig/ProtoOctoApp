@@ -14,8 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/surfaces"
+        <de.crysxd.baseui.widget.webcam.MatrixView
+            android:id="@+id/matrixView"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -29,23 +29,22 @@
                 android:layout_height="0dp"
                 android:adjustViewBounds="true"
                 android:importantForAccessibility="no"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 tools:src="@tools:sample/backgrounds/scenic" />
+
+            <!--            <FrameLayout-->
+            <!--                android:layout_width="0dp"-->
+            <!--                android:foreground="#6AFF0000"-->
+            <!--                android:layout_height="0dp">-->
 
             <TextureView
                 android:id="@+id/rich_surface"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <!--            </FrameLayout>-->
+
+        </de.crysxd.baseui.widget.webcam.MatrixView>
 
 
         <TextView
