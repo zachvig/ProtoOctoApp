@@ -44,14 +44,10 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
             }
         }
         binding.webcamView.onFullscreenClicked = ::openFullscreen
-        binding.webcamView.supportsToubleShooting = true
+        binding.webcamView.supportsTroubleShooting = true
         binding.webcamView.onScaleToFillChanged = {
             baseViewModel.storeScaleType(
-                if (binding.webcamView.scaleToFill) {
-                    ImageView.ScaleType.CENTER_CROP
-                } else {
-                    ImageView.ScaleType.FIT_CENTER
-                },
+                scaleType = if (it) ImageView.ScaleType.CENTER_CROP else ImageView.ScaleType.FIT_CENTER,
                 isFullscreen = false
             )
         }
@@ -75,6 +71,10 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
         binding.webcamView.coroutineScope = lifecycleOwner.lifecycleScope
         baseViewModel.uiState.observe(lifecycleOwner, observer)
         binding.webcamView.onResolutionClicked = { onAction() }
+        binding.webcamView.onNativeAspectRatioChanged = { ratio, _, _ ->
+            baseViewModel.storeAspectRatio(ratio)
+            applyAspectRatio(ratio)
+        }
         applyAspectRatio(baseViewModel.getInitialAspectRatio())
     }
 
@@ -85,7 +85,6 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
             UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
             is UiState.RichStreamDisabled -> WebcamView.WebcamState.RichStreamDisabled
             is UiState.FrameReady -> {
-                applyAspectRatio(state.aspectRation)
                 WebcamView.WebcamState.MjpegFrameReady(
                     frame = state.frame,
                     flipH = state.flipH,
@@ -94,8 +93,13 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
                 )
             }
             is UiState.RichStreamReady -> {
-                applyAspectRatio(state.aspectRation)
-                WebcamView.WebcamState.RichStreamReady(state.uri, state.authHeader)
+                WebcamView.WebcamState.RichStreamReady(
+                    uri = state.uri,
+                    authHeader = state.authHeader,
+                    flipH = state.flipH,
+                    flipV = state.flipV,
+                    rotate90 = state.rotate90
+                )
             }
             is Error -> {
                 if (state.isManualReconnect) {

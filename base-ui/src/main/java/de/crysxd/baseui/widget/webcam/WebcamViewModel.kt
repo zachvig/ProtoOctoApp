@@ -120,9 +120,11 @@ class WebcamViewModel(
             emit(
                 UiState.RichStreamReady(
                     uri = Uri.parse(url),
-                    aspectRation = webcamSettings.saveStreamRatio,
                     canSwitchWebcam = canSwitchWebcam,
                     authHeader = basicAuth,
+                    flipV = webcamSettings.flipV,
+                    flipH = webcamSettings.flipH,
+                    rotate90 = webcamSettings.rotate90,
                 )
             )
         }
@@ -130,32 +132,16 @@ class WebcamViewModel(
 
     private suspend fun FlowCollector<UiState>.emitMjpegFlow(mjpegSettings: ResolvedWebcamSettings.MjpegSettings, canSwitchWebcam: Boolean) {
         delay(100)
-        var lastAspectRatio: String? = null
         MjpegConnection2(streamUrl = mjpegSettings.url, name = tag).load().map {
             when (it) {
                 is MjpegConnection2.MjpegSnapshot.Loading -> UiState.Loading(canSwitchWebcam)
                 is MjpegConnection2.MjpegSnapshot.Frame -> UiState.FrameReady(
                     frame = it.frame,
-                    aspectRation = when (octoPreferences.webcamAspectRatioSource) {
-                        OctoPreferences.VALUE_WEBCAM_ASPECT_RATIO_SOURCE_IMAGE -> if (mjpegSettings.webcamSettings.rotate90) {
-                            "${it.frame.height}:${it.frame.width}"
-                        } else {
-                            "${it.frame.width}:${it.frame.height}"
-                        }
-                        else -> mjpegSettings.webcamSettings.saveStreamRatio
-                    },
                     canSwitchWebcam = canSwitchWebcam,
                     flipV = mjpegSettings.webcamSettings.flipV,
                     flipH = mjpegSettings.webcamSettings.flipH,
                     rotate90 = mjpegSettings.webcamSettings.rotate90,
                 )
-            }
-        }.onEach { state ->
-            if (state is UiState.FrameReady && state.aspectRation != lastAspectRatio) {
-                lastAspectRatio = state.aspectRation
-                octoPrintRepository.updateAppSettingsForActive {
-                    it.copy(webcamLastAspectRatio = state.aspectRation)
-                }
             }
         }.catch {
             Timber.tag(tag).i("ERROR")
@@ -188,6 +174,12 @@ class WebcamViewModel(
         }
     }
 
+    fun storeAspectRatio(ratio: String) = viewModelScope.launch {
+        octoPrintRepository.updateAppSettingsForActive {
+            it.copy(webcamLastAspectRatio = ratio)
+        }
+    }
+
     fun nextWebcam() = switchWebcam(null)
 
     private fun switchWebcam(index: Int?) = viewModelScope.launch(coroutineExceptionHandler) {
@@ -209,20 +201,38 @@ class WebcamViewModel(
     } ?: "16:9"
 
     sealed class UiState(open val canSwitchWebcam: Boolean) {
-        data class Loading(override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
         object WebcamNotConfigured : UiState(false)
-        data class RichStreamDisabled(override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
-        data class RichStreamReady(val uri: Uri, val authHeader: String?, val aspectRation: String, override val canSwitchWebcam: Boolean) : UiState(canSwitchWebcam)
-        data class FrameReady(
-            val frame: Bitmap,
-            val aspectRation: String,
+
+        data class Loading(
+            override val canSwitchWebcam: Boolean
+        ) : UiState(canSwitchWebcam)
+
+        data class RichStreamDisabled(
+            override val canSwitchWebcam: Boolean
+        ) : UiState(canSwitchWebcam)
+
+        data class Error(
+            val isManualReconnect: Boolean,
+            val streamUrl: String? = null,
+            override val canSwitchWebcam: Boolean
+        ) : UiState(canSwitchWebcam)
+
+        data class RichStreamReady(
+            val uri: Uri,
+            val authHeader: String?,
             override val canSwitchWebcam: Boolean,
             val flipH: Boolean,
             val flipV: Boolean,
             val rotate90: Boolean,
         ) : UiState(canSwitchWebcam)
 
-        data class Error(val isManualReconnect: Boolean, val streamUrl: String? = null, override val canSwitchWebcam: Boolean) :
-            UiState(canSwitchWebcam)
+        data class FrameReady(
+            val frame: Bitmap,
+            override val canSwitchWebcam: Boolean,
+            val flipH: Boolean,
+            val flipV: Boolean,
+            val rotate90: Boolean,
+        ) : UiState(canSwitchWebcam)
+
     }
 }

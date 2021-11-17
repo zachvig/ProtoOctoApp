@@ -18,6 +18,7 @@ import androidx.transition.ChangeTransform
 import androidx.transition.TransitionManager
 import de.crysxd.baseui.BuildConfig
 import timber.log.Timber
+import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
 
@@ -32,12 +33,16 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
     private val viewPortRect = RectF()
     private val helperRect = RectF()
     private val helperMatrix = Matrix()
-    private var internalMatrixInput: MatrixInput? = null
-    var matrixInput: MatrixInput?
-        get() = internalMatrixInput
+    var onScaleToFillChanged: (Boolean) -> Unit = {}
+    var scaleToFill: Boolean = false
         set(value) {
-            if (internalMatrixInput != value) {
-                internalMatrixInput = value
+            field = value
+            applyScaleToFill()
+        }
+    var matrixInput: MatrixInput? = null
+        set(value) {
+            if (field != value) {
+                field = value
                 requestLayout()
             }
         }
@@ -48,7 +53,7 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
     }
 
     init {
-        setWillNotDraw(BuildConfig.DEBUG)
+        setWillNotDraw(!BuildConfig.DEBUG)
     }
 
 
@@ -120,16 +125,30 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
         helperMatrix.postRotate(rotation, imageRect.centerX(), imageRect.centerY())
         imageRect.transform(helperMatrix)
 
-        Timber.i("contentSize=${input.contentWidth}x${input.contentHeight}px viewSize=${vw}x${vh}px scale=$minZoom")
+        Timber.i("contentSize=${input.contentWidth}x${input.contentHeight}px viewSize=${vw}x${vh}px scale=$minZoom scaleToFill=${scaleToFill}")
         children.forEach {
             // Layout
             it.layout(vx, vy, vx + vw, vy + vh)
 
             // Rotate and flip views
-            it.scaleX = minZoom * input.scaleXMultiplier
-            it.scaleY = minZoom * input.scaleYMultiplier
+            it.scaleX = if (input.flipH) -1f else 1f
+            it.scaleY = if (input.flipV) -1f else 1f
             it.rotation = rotation
         }
+
+        applyScaleToFill()
+    }
+
+    private fun calculateScaleToFillZoom() = max(width / (imageRect.width() / currentZoom), height / (imageRect.height() / currentZoom))
+
+    private fun applyScaleToFill() {
+        val zoom = when (scaleToFill) {
+            true -> calculateScaleToFillZoom()
+            false -> minZoom
+        }
+        val scaleFactor = zoom / currentZoom
+        currentZoom *= scaleFactor
+        imageRect.scale(scaleFactor, imageRect.centerX(), imageRect.centerY()).limitBounds(viewPortRect).flushToViews()
     }
 
     inner class ScaleGestureListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -139,8 +158,7 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
             val scaleFactorMax = maxZoom / currentZoom
             val scaleFactor = detector.scaleFactor.coerceIn(scaleFactorMin, scaleFactorMax)
             currentZoom *= scaleFactor
-            imageRect.scale(scaleFactor, detector.focusX, detector.focusY)
-                .limitBounds(viewPortRect).flushToViews()
+            imageRect.scale(scaleFactor, detector.focusX, detector.focusY).limitBounds(viewPortRect).flushToViews()
             return true
         }
     }
@@ -160,18 +178,23 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
         override fun onDoubleTap(e: MotionEvent): Boolean {
             val input = matrixInput ?: return true
 
-            TransitionManager.beginDelayedTransition(this@MatrixView, ChangeTransform())
-            internalMatrixInput = input.copy(scaleToFill = !input.scaleToFill)
-            val newZoom = if (input.scaleToFill) {
-                minZoom
-            } else {
-                max(width / (imageRect.width() / currentZoom), height / (imageRect.height() / currentZoom))
+            // Determine new scale to fill. If we currently scale to fill, we are now not scale to fill
+            // Determination based on current zoom
+            val scaleToFillZoom = calculateScaleToFillZoom()
+            val newScaleToFill = when {
+                (currentZoom - scaleToFillZoom).absoluteValue < 0.001f -> false
+                else -> true
             }
-            val scaleFactor = newZoom / currentZoom
-            currentZoom = newZoom
-            imageRect.scale(scaleFactor, imageRect.centerX(), imageRect.centerY()).limitBounds(viewPortRect).flushToViews()
 
-            Timber.i("${input.scaleToFill} => ${matrixInput?.scaleToFill} @ $currentZoom => $newZoom @ $scaleFactor ")
+            // Flush new value if changed
+            if (newScaleToFill != scaleToFill) {
+                onScaleToFillChanged(newScaleToFill)
+            }
+
+            // Apply with animation
+            TransitionManager.beginDelayedTransition(this@MatrixView, ChangeTransform())
+            scaleToFill = newScaleToFill
+
             return true
         }
 
@@ -192,17 +215,26 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
     })
 
     private fun RectF.flushToViews() = children.forEach { view ->
-        val input = matrixInput ?: return@forEach
+        if (isEmpty || view.width == 0) return
+
+        // Determine the rect dimensions in the view's orientation
         helperRect.copyFrom(this)
-        val scale = width() / view.width
-        val inverseScale = 1 / scale
         helperMatrix.reset()
-        helperMatrix.preScale(inverseScale, inverseScale, helperRect.centerX(), helperRect.centerY())
-        helperMatrix.postRotate(if (input.rotate90) -90f else 0f, helperRect.centerX(), helperRect.centerY())
+        helperMatrix.postRotate(-view.rotation, helperRect.centerX(), helperRect.centerY())
         helperRect.transform(helperMatrix)
 
-        view.scaleX = scale * input.scaleXMultiplier
-        view.scaleY = scale * input.scaleYMultiplier
+        // Calc scale required for view to fill rect
+        val scale = helperRect.width() / view.width
+        val inverseScale = 1 / scale
+
+        // Apply inverse scale to rect
+        helperMatrix.reset()
+        helperMatrix.postScale(inverseScale, inverseScale, helperRect.centerX(), helperRect.centerY())
+        helperRect.transform(helperMatrix)
+
+        // helperRect now represent the rect (this) in the view's coordinate system, we can copy values
+        view.scaleX = scale * (if (view.scaleX > 0) 1 else -1)
+        view.scaleY = scale * (if (view.scaleY > 0) 1 else -1)
         view.translationX = helperRect.left - view.left
         view.translationY = helperRect.top - view.top
     }
@@ -221,35 +253,33 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
         var dy = 0f
 
         // Limit left right movement
-        if (bounds.width() > width()) {
-            dx = bounds.centerX() - centerX()
-        } else if (left > bounds.left) {
-            dx = bounds.left - left
-        } else if (right < bounds.right) {
-            dx = bounds.right - right
+        when {
+            // Smaller than view? Center
+            bounds.width() > width() -> dx = bounds.centerX() - centerX()
+
+            // Bigger than view? Limit scroll range
+            left > bounds.left -> dx = bounds.left - left
+            right < bounds.right -> dx = bounds.right - right
         }
 
         // Limit top bottom movement
-        if (bounds.height() > height()) {
-            dy = bounds.centerY() - centerY()
-        } else if (top > bounds.top) {
-            dy = bounds.top - top
-        } else if (bottom < bounds.bottom) {
-            dy = bounds.bottom - bottom
+        when {
+            // Smaller than view? Center
+            bounds.height() > height() -> dy = bounds.centerY() - centerY()
+
+            // Bigger than view? Limit scroll range
+            top > bounds.top -> dy = bounds.top - top
+            bottom < bounds.bottom -> dy = bounds.bottom - bottom
         }
 
         it.postTranslate(dx, dy)
     })
 
     data class MatrixInput(
-        val scaleToFill: Boolean,
         val flipH: Boolean,
         val flipV: Boolean,
         val rotate90: Boolean,
         val contentWidth: Int,
         val contentHeight: Int,
-    ) {
-        val scaleXMultiplier get() = if (flipH) -1f else 1f
-        val scaleYMultiplier get() = if (flipV) -1f else 1f
-    }
+    )
 }
