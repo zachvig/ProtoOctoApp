@@ -49,7 +49,6 @@ class OctoPreferences(
         private const val KEY_GCODE_PREVIEW = "gcode_preview"
         private const val KEY_FILE_MANAGER = "file_manager"
         private const val KEY_PROGRESS_WIDGET = "progress_widget"
-        private const val KEY_WEBCAM_BLACKSCREEN_DEBUG = "webcam_baclscreen_debug"
 
         const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT = "octprint"
         const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_IMAGE = "native_image"
@@ -201,7 +200,7 @@ class OctoPreferences(
         }
 
     var webcamAspectRatioSource
-        get() = sharedPreferences.getString(KEY_WEBCAM_ASPECT_RATIO_SOURCE, VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT) ?: VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT
+        get() = sharedPreferences.getString(KEY_WEBCAM_ASPECT_RATIO_SOURCE, VALUE_WEBCAM_ASPECT_RATIO_SOURCE_IMAGE) ?: VALUE_WEBCAM_ASPECT_RATIO_SOURCE_IMAGE
         set(value) {
             edit { putString(KEY_WEBCAM_ASPECT_RATIO_SOURCE, value) }
         }
@@ -216,12 +215,6 @@ class OctoPreferences(
         get() = sharedPreferences.getBoolean(KEY_ALLOW_TERMINAL_DURING_PRINT, false)
         set(value) {
             edit { putBoolean(KEY_ALLOW_TERMINAL_DURING_PRINT, value) }
-        }
-
-    var webcamBlackscreenDebug
-        get() = sharedPreferences.getBoolean(KEY_WEBCAM_BLACKSCREEN_DEBUG, false)
-        set(value) {
-            edit { putBoolean(KEY_WEBCAM_BLACKSCREEN_DEBUG, value) }
         }
 
     var gcodePreviewSettings: GcodePreviewSettings

@@ -39,6 +39,7 @@ import de.crysxd.octoapp.base.usecase.HandleAutomaticLightEventUseCase
 import de.crysxd.octoapp.base.usecase.OpenEmailClientForFeedbackUseCase
 import de.crysxd.octoapp.base.usecase.SetAlternativeWebUrlUseCase
 import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
+import de.crysxd.octoapp.base.usecase.ShareImageUseCase
 import javax.inject.Provider
 
 @Module
@@ -94,11 +95,15 @@ open class ViewModelModule {
     open fun provideWebcamWidgetViewModel(
         octoPrintRepository: OctoPrintRepository,
         octoPreferences: OctoPreferences,
+        octoPrintProvider: OctoPrintProvider,
         getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
+        shareImageUseCase: ShareImageUseCase,
         handleAutomaticLightEventUseCase: HandleAutomaticLightEventUseCase,
     ): ViewModel = WebcamViewModel(
         octoPrintRepository = octoPrintRepository,
         octoPreferences = octoPreferences,
+        octoPrintProvider = octoPrintProvider,
+        shareImageUseCase = shareImageUseCase,
         getWebcamSettingsUseCase = getWebcamSettingsUseCase,
         handleAutomaticLightEventUseCase = handleAutomaticLightEventUseCase
     )

@@ -115,7 +115,7 @@ class StartPrintTest {
         WorkspaceRobot.waitForPrintWorkspace()
 
         // Wait for print data to show up
-        waitFor(allOf(withText(R.string.less_than_a_minute), isDisplayed()))
+        waitFor(allOf(withText(R.string.less_than_a_minute), isDisplayed()), timeout = 10_000)
         onView(withText("layers.gcode")).check(matches(isDisplayed()))
     }
 

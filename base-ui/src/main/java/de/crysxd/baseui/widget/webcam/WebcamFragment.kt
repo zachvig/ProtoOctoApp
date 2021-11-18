@@ -58,14 +58,11 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
         }
         binding.webcamView.onScaleToFillChanged = {
             viewModel.storeScaleType(
-                if (binding.webcamView.scaleToFill) {
-                    ImageView.ScaleType.CENTER_CROP
-                } else {
-                    ImageView.ScaleType.FIT_CENTER
-                },
+                if (it) ImageView.ScaleType.CENTER_CROP else ImageView.ScaleType.FIT_CENTER,
                 isFullscreen = true
             )
         }
+        binding.webcamView.onShareImageClicked = { viewModel.shareImage(requireContext(), it) }
         binding.webcamView.onSwitchWebcamClicked = { viewModel.nextWebcam() }
         binding.webcamView.scaleToFill = viewModel.getScaleType(isFullscreen = true, ImageView.ScaleType.FIT_CENTER) != ImageView.ScaleType.FIT_CENTER
         binding.webcamView.onFullscreenClicked = {
@@ -73,7 +70,8 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
         }
 
         // Handle orientation stuff
-        binding.webcamView.onNativeAspectRatioChanged = { width, height ->
+        binding.webcamView.onNativeAspectRatioChanged = { ratio, width, height ->
+            viewModel.storeAspectRatio(ratio)
             val frameAspectRatio = width / height.toFloat()
             val screenAspectRatio = resources.displayMetrics.run { widthPixels / heightPixels.toFloat() }
 
@@ -103,7 +101,13 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
                     flipV = it.flipV,
                     rotate90 = it.rotate90
                 )
-                is WebcamViewModel.UiState.RichStreamReady -> WebcamView.WebcamState.RichStreamReady(it.uri, it.authHeader)
+                is WebcamViewModel.UiState.RichStreamReady -> WebcamView.WebcamState.RichStreamReady(
+                    uri = it.uri,
+                    authHeader = it.authHeader,
+                    flipH = it.flipH,
+                    flipV = it.flipV,
+                    rotate90 = it.rotate90
+                )
                 is WebcamViewModel.UiState.Error -> if (it.isManualReconnect) {
                     WebcamView.WebcamState.Error(it.streamUrl)
                 } else {
