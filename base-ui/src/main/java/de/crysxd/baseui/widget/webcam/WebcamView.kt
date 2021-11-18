@@ -5,13 +5,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
-import android.os.Build
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
-import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
@@ -128,28 +126,6 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             val size = min(w, h)
             binding.resolutionIndicator.text = "${size}p"
             binding.resolutionIndicator.isVisible = BaseInjector.get().octoPreferences().isShowWebcamResolution
-        }
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val webCamDebug = BaseInjector.get().octoPreferences().webcamBlackscreenDebug
-            if (webCamDebug) {
-                binding.playingState.foreground = ContextCompat.getDrawable(context, R.drawable.a_debug_1)
-                binding.mjpegSurface.foreground = ContextCompat.getDrawable(context, R.drawable.a_debug_6)
-                binding.errorState.foreground = ContextCompat.getDrawable(context, R.drawable.a_debug_5)
-                binding.streamStalledIndicator.foreground = ContextCompat.getDrawable(context, R.drawable.a_debug_3)
-                binding.reconnectingState.foreground = ContextCompat.getDrawable(context, R.drawable.a_debug_4)
-                foreground = ContextCompat.getDrawable(context, R.drawable.a_debug_2)
-            } else {
-                binding.playingState.foreground = null
-                binding.mjpegSurface.foreground = null
-                binding.errorState.foreground = null
-                binding.streamStalledIndicator.foreground = null
-                binding.reconnectingState.foreground = null
-                foreground = null
-            }
         }
     }
 
