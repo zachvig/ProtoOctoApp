@@ -39,6 +39,15 @@
 
         </de.crysxd.baseui.widget.webcam.MatrixView>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:alpha="0.15"
+            android:background="@drawable/bg_black_shade_gradient"
+            android:rotation="180"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/imageButtonFullscreen" />
+
         <TextView
             android:id="@+id/liveIndicator"
             style="@style/OctoTheme.Chip.Live"
@@ -70,6 +79,21 @@
             app:srcCompat="@drawable/ic_round_fullscreen_24"
             app:tint="@color/text_colored_background" />
 
+        <!-- Only used to move the share button over -->
+        <ImageButton
+            android:id="@+id/imageButtonSwitchCameraInPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:alpha="0"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/fullscreen"
+            android:padding="@dimen/margin_1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_round_camera_front_24"
+            app:tint="@color/text_colored_background" />
+
         <ImageButton
             android:id="@+id/imageButtonShare"
             android:layout_width="wrap_content"
@@ -79,7 +103,7 @@
             android:contentDescription="@string/cd_share"
             android:padding="@dimen/margin_1"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/imageButtonFullscreen"
+            app:layout_constraintStart_toEndOf="@id/imageButtonSwitchCameraInPlay"
             app:srcCompat="@drawable/ic_round_share_24"
             app:tint="@color/text_colored_background" />
 

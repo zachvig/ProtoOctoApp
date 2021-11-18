@@ -85,6 +85,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         get() = binding.imageButtonSwitchCamera.isVisible
         set(value) {
             binding.imageButtonSwitchCamera.isVisible = value
+            binding.imageButtonSwitchCameraInPlay.isVisible = value
         }
     var fullscreenIconResource: Int
         get() = 0
@@ -334,10 +335,6 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         }
 
         invalidate()
-    }
-
-    fun requestSizeTransition() {
-        binding.matrixView.beginInternalSizeTransition()
     }
 
     private fun captureBitmap() = suspend {

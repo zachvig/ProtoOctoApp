@@ -44,6 +44,7 @@ class WebcamViewModel(
     private val uiStateMediator = MediatorLiveData<UiState>()
     val uiState = uiStateMediator.map { it }
     private val settingsLiveData = octoPreferences.updatedFlow.asLiveData()
+    private var webcamCount = 1
 
     init {
         uiStateMediator.addSource(settingsLiveData) { connect() }
@@ -52,16 +53,19 @@ class WebcamViewModel(
 
     private suspend fun getWebcamSettings(): Flow<Pair<ResolvedWebcamSettings?, Int>> {
         // Load settings
-        val activeWebcamIndex = octoPrintRepository.getActiveInstanceSnapshot()?.appSettings?.activeWebcamIndex ?: 0
-        return getWebcamSettingsUseCase.execute(null).map {
-            val preferredSettings = it.getOrNull(activeWebcamIndex)
-            val webcamSettings = preferredSettings ?: it.firstOrNull()
+        return getWebcamSettingsUseCase.execute(null)
+            .combine(octoPrintRepository.instanceInformationFlow()) { ws, info ->
+                val activeWebcamIndex = info?.appSettings?.activeWebcamIndex ?: 0
+                val preferredSettings = ws.getOrNull(activeWebcamIndex)
+                val webcamSettings = preferredSettings ?: ws.firstOrNull()
+                webcamCount = ws.size
 
-            if (preferredSettings == null) {
-                switchWebcam(0)
-            }
-            webcamSettings to (it.size)
-        }.distinctUntilChanged()
+                if (preferredSettings == null) {
+                    switchWebcam(0)
+                }
+
+                webcamSettings to (ws.size)
+            }.distinctUntilChanged()
     }
 
     fun connect() {
@@ -197,8 +201,8 @@ class WebcamViewModel(
 
     private fun switchWebcam(index: Int?) = viewModelScope.launch(coroutineExceptionHandler) {
         octoPrintRepository.updateAppSettingsForActive {
-            val activeIndex = index ?: it.activeWebcamIndex + 1
-            Timber.tag(tag).i("Switching to webcam $index")
+            val activeIndex = index ?: (it.activeWebcamIndex + 1) % webcamCount
+            Timber.tag(tag).i("Switching to webcam $activeIndex")
             it.copy(activeWebcamIndex = activeIndex)
         }
     }

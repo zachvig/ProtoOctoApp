@@ -153,7 +153,7 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
         imageRect.scale(scaleFactor, imageRect.centerX(), imageRect.centerY()).limitBounds(viewPortRect).flushToViews()
     }
 
-    fun beginInternalSizeTransition() {
+    private fun beginInternalSizeTransition() {
         if (!imageRect.isEmpty && !viewPortRect.isEmpty && children.any { it.width > 0 }) {
             TransitionManager.beginDelayedTransition(this@MatrixView, TransitionSet().apply {
                 addTransition(ChangeTransform())
@@ -187,8 +187,6 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
         }
 
         override fun onDoubleTap(e: MotionEvent): Boolean {
-            val input = matrixInput ?: return true
-
             // Determine new scale to fill. If we currently scale to fill, we are now not scale to fill
             // Determination based on current zoom
             val scaleToFillZoom = calculateScaleToFillZoom()
