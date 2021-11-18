@@ -12,7 +12,6 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -79,7 +78,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     var canSwitchWebcam: Boolean
         get() = binding.imageButtonSwitchCamera.isVisible
         set(value) {
-            binding.imageButtonSwitchCamera.isGatedVisible = value
+            binding.imageButtonSwitchCamera.isVisible = value
         }
     var fullscreenIconResource: Int
         get() = 0
@@ -250,10 +249,10 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 super.onIsPlayingChanged(eventTime, isPlaying)
                 Timber.v("onIsPlayingChanged: $isPlaying")
                 usedLiveIndicator?.isVisible = isPlaying
+                binding.loadingState.isVisible = !isPlaying
                 if (isPlaying) {
                     binding.errorState.isVisible = false
                     binding.reconnectingState.isVisible = false
-                    binding.loadingState.isVisible = false
                     usedLiveIndicator?.isVisible = true
                 }
             }
@@ -295,12 +294,12 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     }
 
     private fun invalidateMjpegFrame(frame: Bitmap) {
-        binding.playingState.isGatedVisible = true
-        binding.richSurface.isGatedVisible = false
-        binding.mjpegSurface.isGatedVisible = true
-        usedLiveIndicator?.isGatedVisible = true
-        binding.loadingState.isGatedVisible = false
-        binding.streamStalledIndicator.isGatedVisible = false
+        binding.playingState.isVisible = true
+        binding.richSurface.isVisible = false
+        binding.mjpegSurface.isVisible = true
+        usedLiveIndicator?.isVisible = true
+        binding.loadingState.isVisible = false
+        binding.streamStalledIndicator.isVisible = false
         binding.mjpegSurface.setImageBitmap(frame)
 
         // Hide live indicator if no new frame arrives within 3s
@@ -342,11 +341,11 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         binding.matrixView.beginInternalSizeTransition()
     }
 
-    private var View.isGatedVisible
-        get() = isVisible
+    private var View.isVisible: Boolean
+        get() = visibility == View.VISIBLE
         set(value) {
-            if (isVisible != value) {
-                isVisible = value
+            if ((value && visibility != View.VISIBLE) || (!value && visibility != View.GONE)) {
+                visibility = if (value) View.VISIBLE else View.GONE
             }
         }
 
