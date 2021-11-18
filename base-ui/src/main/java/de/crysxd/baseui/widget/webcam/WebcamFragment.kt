@@ -62,6 +62,7 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
                 isFullscreen = true
             )
         }
+        binding.webcamView.onShareImageClicked = { viewModel.shareImage(requireContext(), it) }
         binding.webcamView.onSwitchWebcamClicked = { viewModel.nextWebcam() }
         binding.webcamView.scaleToFill = viewModel.getScaleType(isFullscreen = true, ImageView.ScaleType.FIT_CENTER) != ImageView.ScaleType.FIT_CENTER
         binding.webcamView.onFullscreenClicked = {
