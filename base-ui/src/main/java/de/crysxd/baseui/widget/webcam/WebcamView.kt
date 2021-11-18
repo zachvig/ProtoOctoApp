@@ -197,6 +197,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         binding.resolutionIndicator.isVisible = false
         usedLiveIndicator?.isVisible = false
         richPlayer.setVideoTextureView(binding.richSurface)
+        binding.richSurface.alpha = 0f
         val mediaItem = MediaItem.fromUri(state.uri)
         val dataSourceFactory = DefaultHttpDataSource.Factory()
         state.authHeader?.let {
@@ -239,6 +240,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 if (isPlaying) {
                     binding.errorState.isVisible = false
                     binding.reconnectingState.isVisible = false
+                    binding.richSurface.alpha = 1f
 
                     liveIndicatorJob?.cancel()
                     liveIndicatorJob = coroutineScope.launchWhenCreated {
