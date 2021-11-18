@@ -53,19 +53,20 @@ class WebcamViewModel(
 
     private suspend fun getWebcamSettings(): Flow<Pair<ResolvedWebcamSettings?, Int>> {
         // Load settings
-        return getWebcamSettingsUseCase.execute(null)
-            .combine(octoPrintRepository.instanceInformationFlow()) { ws, info ->
-                val activeWebcamIndex = info?.appSettings?.activeWebcamIndex ?: 0
-                val preferredSettings = ws.getOrNull(activeWebcamIndex)
-                val webcamSettings = preferredSettings ?: ws.firstOrNull()
-                webcamCount = ws.size
+        val indexFlow = octoPrintRepository.instanceInformationFlow().distinctUntilChangedBy { it?.appSettings?.activeWebcamIndex }
+        val settingsFlow = getWebcamSettingsUseCase.execute(null)
+        return settingsFlow.combine(indexFlow) { ws, info ->
+            val activeWebcamIndex = info?.appSettings?.activeWebcamIndex ?: 0
+            val preferredSettings = ws.getOrNull(activeWebcamIndex)
+            val webcamSettings = preferredSettings ?: ws.firstOrNull()
+            webcamCount = ws.size
 
-                if (preferredSettings == null) {
-                    switchWebcam(0)
-                }
+            if (preferredSettings == null) {
+                switchWebcam(0)
+            }
 
-                webcamSettings to (ws.size)
-            }.distinctUntilChanged()
+            webcamSettings to (ws.size)
+        }.distinctUntilChanged()
     }
 
     fun connect() {

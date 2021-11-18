@@ -33,7 +33,7 @@ class GetWebcamSettingsUseCase @Inject constructor(
             octoPrintRepository.instanceInformationFlow().map { it?.settings ?: settingsSnapshot }
         } else {
             flowOf(settingsSnapshot)
-        }.distinctUntilChangedBy { it.webcam }
+        }.distinctUntilChangedBy { it.webcam.hashCode() + it.plugins.values.firstOrNull { it is Settings.MultiCamSettings }.hashCode() }
 
         // Compile webcam settings
         return activeWebUrlFlow.combine(settingsFlow) { activeWebUrl, settings ->
