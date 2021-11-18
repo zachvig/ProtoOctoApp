@@ -23,5 +23,6 @@
     <string name="cd_flow_rate" translatable="false">Flow rate</string>
     <string name="cd_fan_speed" translatable="false">Fan speed</string>
     <string name="cd_add_item" translatable="false">Add item</string>
+    <string name="cd_share" translatable="false">Share</string>
     <string name="cd_sort" translatable="false">Sort</string>
 </resources>

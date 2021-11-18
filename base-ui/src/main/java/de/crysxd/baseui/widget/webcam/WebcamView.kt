@@ -3,6 +3,7 @@ package de.crysxd.baseui.widget.webcam
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.net.Uri
 import android.os.Build
 import android.util.AttributeSet
@@ -47,6 +48,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     private val binding = WebcamViewBinding.inflate(LayoutInflater.from(context), this)
     lateinit var coroutineScope: LifecycleCoroutineScope
     private var liveIndicatorJob: Job? = null
+    private var grabBitmap: () -> Bitmap? = { null }
 
     private val richPlayer by lazy { ExoPlayer.Builder(context).build() }
     var lastRichPlayerListener: Player.Listener? = null
@@ -68,6 +70,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         }
 
     var onSwitchWebcamClicked: () -> Unit = {}
+    var onShareImageClicked: (suspend () -> Bitmap?) -> Unit = {}
     var onResolutionClicked: () -> Unit = {}
     var onResetConnection: () -> Unit = {}
     var onFullscreenClicked: () -> Unit = {}
@@ -105,6 +108,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         binding.imageButtonFullscreen.setOnClickListener { onFullscreenClicked() }
         binding.imageButtonSwitchCamera.setOnClickListener { onSwitchWebcamClicked() }
         binding.resolutionIndicator.setOnClickListener { onResolutionClicked() }
+        binding.imageButtonShare.setOnClickListener { onShareImageClicked(captureBitmap()) }
     }
 
     @SuppressLint("SetTextI18n")
@@ -112,7 +116,6 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         val w = if (rotate90) height else width
         val h = if (rotate90) width else height
         val ratio = "$w:$h"
-        Timber.i("native aspect ratio: $ratio $rotate90")
         if (w != lastNativeWidth || h != lastNativeHeight) {
             // Dispatch 
             Timber.i("Dispatching native aspect ratio: $ratio")
@@ -164,6 +167,8 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         if (oldState == null || oldState::class != newState::class) {
             Timber.i("Moving to state ${newState::class.java.simpleName} ($this)")
             children.filter { it != binding.loadingState && it != binding.imageButtonSwitchCamera }.forEach { it.isVisible = false }
+            lastNativeWidth = null
+            lastNativeHeight = null
         }
 
         if (state !is WebcamState.MjpegFrameReady) {
@@ -226,10 +231,10 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         richPlayer.prepare()
         richPlayer.play()
 
-        lastNativeWidth = null
-        lastNativeHeight = null
         lastRichPlayerListener?.let(richPlayer::removeListener)
         lastRichPlayerAnalyticsListener?.let(richPlayer::removeAnalyticsListener)
+
+        grabBitmap = { binding.richSurface.bitmap }
 
         lastRichPlayerListener = object : Player.Listener {
             override fun onVideoSizeChanged(videoSize: VideoSize) {
@@ -290,14 +295,26 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         this.state = WebcamState.Error(state.uri.toString())
     }
 
-    private fun invalidateMjpegFrame(frame: Bitmap) {
+    private fun displayMjpegFrame(newState: WebcamState.MjpegFrameReady) {
+        binding.matrixView.matrixInput = MatrixView.MatrixInput(
+            flipH = newState.flipH,
+            flipV = newState.flipV,
+            rotate90 = newState.rotate90,
+            contentHeight = newState.frame.height,
+            contentWidth = newState.frame.width,
+        )
+
+        dispatchNativeContentDimensionChanged(newState.frame.width, newState.frame.height, newState.rotate90)
+
+        grabBitmap = { newState.frame }
+
         binding.playingState.isVisible = true
         binding.richSurface.isVisible = false
         binding.mjpegSurface.isVisible = true
         usedLiveIndicator?.isVisible = true
         binding.loadingState.isVisible = false
         binding.streamStalledIndicator.isVisible = false
-        binding.mjpegSurface.setImageBitmap(frame)
+        binding.mjpegSurface.setImageBitmap(newState.frame)
 
         // Hide live indicator if no new frame arrives within 3s
         // Show stalled indicator if no new frame arrives within 10s
@@ -319,23 +336,20 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         invalidate()
     }
 
-    private fun displayMjpegFrame(newState: WebcamState.MjpegFrameReady) {
-        binding.matrixView.matrixInput = MatrixView.MatrixInput(
-            flipH = newState.flipH,
-            flipV = newState.flipV,
-            rotate90 = newState.rotate90,
-            contentHeight = newState.frame.height,
-            contentWidth = newState.frame.width,
-        )
-
-        lastNativeWidth = null
-        lastNativeHeight = null
-        dispatchNativeContentDimensionChanged(newState.frame.width, newState.frame.height, newState.rotate90)
-        invalidateMjpegFrame(newState.frame)
-    }
-
     fun requestSizeTransition() {
         binding.matrixView.beginInternalSizeTransition()
+    }
+
+    private fun captureBitmap() = suspend {
+        binding.matrixView.matrixInput?.let { mi ->
+            grabBitmap()?.let { bitmap ->
+                val matrix = Matrix()
+                if (mi.flipV) matrix.postScale(1f, -1f)
+                if (mi.flipH) matrix.postScale(-1f, 1f)
+                if (mi.rotate90) matrix.postRotate(90f)
+                Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+            }
+        }
     }
 
     private var View.isVisible: Boolean

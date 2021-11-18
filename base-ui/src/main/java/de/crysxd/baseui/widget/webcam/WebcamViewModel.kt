@@ -1,5 +1,6 @@
 package de.crysxd.baseui.widget.webcam
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.ImageView
@@ -11,17 +12,25 @@ import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_HLS_WEBCAM
 import de.crysxd.octoapp.base.data.models.ResolvedWebcamSettings
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.network.MjpegConnection2
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.base.usecase.HandleAutomaticLightEventUseCase
+import de.crysxd.octoapp.base.usecase.ShareImageUseCase
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import kotlin.math.roundToInt
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class WebcamViewModel(
     private val octoPrintRepository: OctoPrintRepository,
+    private val octoPrintProvider: OctoPrintProvider,
     private val octoPreferences: OctoPreferences,
+    private val shareImageUseCase: ShareImageUseCase,
     private val getWebcamSettingsUseCase: GetWebcamSettingsUseCase,
     private val handleAutomaticLightEventUseCase: HandleAutomaticLightEventUseCase
 ) : BaseViewModel() {
@@ -203,6 +212,20 @@ class WebcamViewModel(
     fun getInitialAspectRatio() = octoPrintRepository.getActiveInstanceSnapshot()?.let {
         it.appSettings?.webcamLastAspectRatio ?: it.settings?.webcam?.streamRatio
     } ?: "16:9"
+
+    fun shareImage(context: Context, imageFactory: suspend () -> Bitmap?) = viewModelScope.launch(Dispatchers.Default + coroutineExceptionHandler) {
+        val octoPrint = octoPrintRepository.getActiveInstanceSnapshot()
+        val current = octoPrintProvider.passiveCurrentMessageFlow("share-image").firstOrNull()
+        val isPrinting = current?.state?.flags?.isPrinting() == true
+        val imageName = listOfNotNull(
+            octoPrint?.label,
+            current?.job?.file?.name?.takeIf { isPrinting }?.split(".")?.firstOrNull(),
+            current?.progress?.let { "${it.completion.roundToInt()}percent" }?.takeIf { isPrinting },
+            SimpleDateFormat("yyyy-MM-dd__hh-mm-ss", Locale.ENGLISH).format(Date())
+        ).joinToString("__")
+        val bitmap = imageFactory() ?: return@launch
+        shareImageUseCase.execute(ShareImageUseCase.Params(context = context, bitmap = bitmap, imageName = imageName))
+    }
 
     sealed class UiState(open val canSwitchWebcam: Boolean) {
         object WebcamNotConfigured : UiState(false)

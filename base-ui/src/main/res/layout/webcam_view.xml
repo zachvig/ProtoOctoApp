@@ -31,21 +31,13 @@
                 android:importantForAccessibility="no"
                 tools:src="@tools:sample/backgrounds/scenic" />
 
-            <!--            <FrameLayout-->
-            <!--                android:layout_width="0dp"-->
-            <!--                android:foreground="#6AFF0000"-->
-            <!--                android:layout_height="0dp">-->
-
             <TextureView
                 android:id="@+id/rich_surface"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="gone" />
 
-            <!--            </FrameLayout>-->
-
         </de.crysxd.baseui.widget.webcam.MatrixView>
-
 
         <TextView
             android:id="@+id/liveIndicator"
@@ -76,6 +68,19 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_round_fullscreen_24"
+            app:tint="@color/text_colored_background" />
+
+        <ImageButton
+            android:id="@+id/imageButtonShare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cd_share"
+            android:padding="@dimen/margin_1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/imageButtonFullscreen"
+            app:srcCompat="@drawable/ic_round_share_24"
             app:tint="@color/text_colored_background" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

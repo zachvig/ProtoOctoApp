@@ -43,6 +43,9 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
         }
         binding.webcamView.onFullscreenClicked = ::openFullscreen
         binding.webcamView.supportsTroubleShooting = true
+        binding.webcamView.onShareImageClicked = {
+            baseViewModel.shareImage(context, it)
+        }
         binding.webcamView.onScaleToFillChanged = {
             baseViewModel.storeScaleType(
                 scaleType = if (it) ImageView.ScaleType.CENTER_CROP else ImageView.ScaleType.FIT_CENTER,

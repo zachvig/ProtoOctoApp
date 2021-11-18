@@ -61,6 +61,7 @@ import de.crysxd.octoapp.base.usecase.OpenOctoprintWebUseCase
 import de.crysxd.octoapp.base.usecase.RequestApiAccessUseCase
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
 import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
+import de.crysxd.octoapp.base.usecase.ShareImageUseCase
 import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
 import de.crysxd.octoapp.base.usecase.TakeScreenshotUseCase
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
@@ -163,5 +164,5 @@ interface BaseComponent {
     fun moveFileUseCase(): MoveFileUseCase
     fun createFolderUseCase(): CreateFolderUseCase
     fun downloadAndShareFileUseCase(): DownloadAndShareFileUseCase
-
+    fun shareImageUseCase(): ShareImageUseCase
 }
