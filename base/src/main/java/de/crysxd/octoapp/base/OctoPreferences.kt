@@ -201,7 +201,7 @@ class OctoPreferences(
         }
 
     var webcamAspectRatioSource
-        get() = sharedPreferences.getString(KEY_WEBCAM_ASPECT_RATIO_SOURCE, VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT) ?: VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT
+        get() = sharedPreferences.getString(KEY_WEBCAM_ASPECT_RATIO_SOURCE, VALUE_WEBCAM_ASPECT_RATIO_SOURCE_IMAGE) ?: VALUE_WEBCAM_ASPECT_RATIO_SOURCE_IMAGE
         set(value) {
             edit { putString(KEY_WEBCAM_ASPECT_RATIO_SOURCE, value) }
         }
