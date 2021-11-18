@@ -49,13 +49,13 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     private val richPlayer by lazy { ExoPlayer.Builder(context).build() }
     var lastRichPlayerListener: Player.Listener? = null
     var lastRichPlayerAnalyticsListener: AnalyticsListener? = null
-    var lastNativeAspectRatio: String? = null
+    var lastNativeWidth: Int? = null
+    var lastNativeHeight: Int? = null
 
     var supportsTroubleShooting = false
     var scaleToFill: Boolean
         get() = binding.matrixView.scaleToFill
         set(value) {
-            Timber.i("Scale to fill $value")
             binding.matrixView.scaleToFill = value
         }
 
@@ -105,13 +105,23 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         binding.resolutionIndicator.setOnClickListener { onResolutionClicked() }
     }
 
-    private fun dispatchNativeAspectRatioChanged(width: Int, height: Int, rotate90: Boolean) {
+    @SuppressLint("SetTextI18n")
+    private fun dispatchNativeContentDimensionChanged(width: Int, height: Int, rotate90: Boolean) {
         val w = if (rotate90) height else width
         val h = if (rotate90) width else height
         val ratio = "$w:$h"
-        if (lastNativeAspectRatio != ratio) {
-            lastNativeAspectRatio = ratio
-//            onNativeAspectRatioChanged(ratio, w, h)
+        Timber.i("native aspect ratio: $ratio $rotate90")
+        if (w != lastNativeWidth || h != lastNativeHeight) {
+            // Dispatch 
+            Timber.i("Dispatching native aspect ratio: $ratio")
+            lastNativeHeight = h
+            lastNativeWidth = w
+            onNativeAspectRatioChanged(ratio, w, h)
+
+
+            val size = min(w, h)
+            binding.resolutionIndicator.text = "${size}p"
+            binding.resolutionIndicator.isVisible = BaseInjector.get().octoPreferences().isShowWebcamResolution
         }
     }
 
@@ -214,6 +224,8 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         richPlayer.prepare()
         richPlayer.play()
 
+        lastNativeWidth = null
+        lastNativeHeight = null
         lastRichPlayerListener?.let(richPlayer::removeListener)
         lastRichPlayerAnalyticsListener?.let(richPlayer::removeAnalyticsListener)
 
@@ -227,7 +239,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                     contentHeight = videoSize.height,
                     contentWidth = videoSize.width,
                 )
-                dispatchNativeAspectRatioChanged(width, height, state.rotate90)
+                dispatchNativeContentDimensionChanged(videoSize.width, videoSize.height, state.rotate90)
             }
         }.also {
             richPlayer.addListener(it)
@@ -320,11 +332,9 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             contentWidth = newState.frame.width,
         )
 
-        val size = min(newState.frame.width, newState.frame.height)
-        @SuppressLint("SetTextI18n")
-        binding.resolutionIndicator.text = "${size}p"
-        dispatchNativeAspectRatioChanged(newState.frame.width, newState.frame.height, newState.rotate90)
-        binding.resolutionIndicator.isVisible = BaseInjector.get().octoPreferences().isShowWebcamResolution
+        lastNativeWidth = null
+        lastNativeHeight = null
+        dispatchNativeContentDimensionChanged(newState.frame.width, newState.frame.height, newState.rotate90)
         invalidateMjpegFrame(newState.frame)
     }
 

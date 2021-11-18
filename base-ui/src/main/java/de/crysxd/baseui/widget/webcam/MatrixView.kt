@@ -16,7 +16,6 @@ import androidx.core.graphics.transform
 import androidx.core.view.children
 import androidx.transition.ChangeTransform
 import androidx.transition.TransitionManager
-import de.crysxd.baseui.BuildConfig
 import timber.log.Timber
 import kotlin.math.absoluteValue
 import kotlin.math.max
@@ -53,7 +52,8 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
     }
 
     init {
-        setWillNotDraw(!BuildConfig.DEBUG)
+        // Set to false to see debug lines
+        setWillNotDraw(true)
     }
 
 

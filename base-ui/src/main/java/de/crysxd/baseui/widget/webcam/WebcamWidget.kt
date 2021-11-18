@@ -31,8 +31,9 @@ const val STALLED_IF_NO_FRAME_FOR_MS = 5000L
 class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding, WebcamViewModel>(context) {
     override val type = WidgetType.WebcamWidget
     override val binding = WebcamWidgetBinding.inflate(LayoutInflater.from(context))
-    private var lastAspectRatio: String? = null
+    private var lastAspectRatio: String = "16:9"
     private val observer = Observer(::onUiStateChanged)
+    private var enforcedAspectRatio: String? = null
 
     init {
         binding.webcamView.onResetConnection = {
@@ -85,6 +86,9 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
             UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
             is UiState.RichStreamDisabled -> WebcamView.WebcamState.RichStreamDisabled
             is UiState.FrameReady -> {
+                enforcedAspectRatio = state.enforcedAspectRatio
+                applyAspectRatio(lastAspectRatio)
+
                 WebcamView.WebcamState.MjpegFrameReady(
                     frame = state.frame,
                     flipH = state.flipH,
@@ -93,6 +97,9 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
                 )
             }
             is UiState.RichStreamReady -> {
+                enforcedAspectRatio = state.enforcedAspectRatio
+                applyAspectRatio(lastAspectRatio)
+
                 WebcamView.WebcamState.RichStreamReady(
                     uri = state.uri,
                     authHeader = state.authHeader,
@@ -122,20 +129,18 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
         recordInteraction()
     }
 
-    private fun applyAspectRatio(aspectRation: String) {
-        if (lastAspectRatio != null && aspectRation != lastAspectRatio) {
-            parent.requestTransition()
-        }
+    private fun applyAspectRatio(aspectRatio: String) {
+        val newAspectRatio = enforcedAspectRatio ?: aspectRatio
+        Timber.d("Calculating aspect ratio: aspectRatio=$aspectRatio enforcedAspectRatio=$enforcedAspectRatio lastAspectRatio=$lastAspectRatio")
 
-        if (lastAspectRatio != aspectRation) {
-            Timber.i("Applying aspect ratio: $aspectRation")
-            lastAspectRatio = aspectRation
+        if (newAspectRatio != lastAspectRatio) {
+            Timber.i("Applying aspect ratio: newAspectRatio=$newAspectRatio")
+            parent.requestTransition()
+
+            lastAspectRatio = newAspectRatio
             ConstraintSet().also {
                 it.clone(binding.webcamContent)
-                it.setDimensionRatio(
-                    R.id.webcamView,
-                    aspectRation
-                )
+                it.setDimensionRatio(R.id.webcamView, newAspectRatio)
             }.applyTo(binding.webcamContent)
         }
     }

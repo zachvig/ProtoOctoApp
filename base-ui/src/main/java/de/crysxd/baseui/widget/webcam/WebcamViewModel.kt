@@ -125,10 +125,13 @@ class WebcamViewModel(
                     flipV = webcamSettings.flipV,
                     flipH = webcamSettings.flipH,
                     rotate90 = webcamSettings.rotate90,
+                    enforcedAspectRatio = webcamSettings.streamRatio.takeIf { octoPreferences.isAspectRatioFromOctoPrint },
                 )
             )
         }
     }
+
+    private val OctoPreferences.isAspectRatioFromOctoPrint get() = webcamAspectRatioSource == OctoPreferences.VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT
 
     private suspend fun FlowCollector<UiState>.emitMjpegFlow(mjpegSettings: ResolvedWebcamSettings.MjpegSettings, canSwitchWebcam: Boolean) {
         delay(100)
@@ -141,6 +144,7 @@ class WebcamViewModel(
                     flipV = mjpegSettings.webcamSettings.flipV,
                     flipH = mjpegSettings.webcamSettings.flipH,
                     rotate90 = mjpegSettings.webcamSettings.rotate90,
+                    enforcedAspectRatio = mjpegSettings.webcamSettings.streamRatio.takeIf { octoPreferences.isAspectRatioFromOctoPrint },
                 )
             }
         }.catch {
@@ -224,6 +228,7 @@ class WebcamViewModel(
             val flipH: Boolean,
             val flipV: Boolean,
             val rotate90: Boolean,
+            val enforcedAspectRatio: String?,
         ) : UiState(canSwitchWebcam)
 
         data class FrameReady(
@@ -232,6 +237,7 @@ class WebcamViewModel(
             val flipH: Boolean,
             val flipV: Boolean,
             val rotate90: Boolean,
+            val enforcedAspectRatio: String?,
         ) : UiState(canSwitchWebcam)
 
     }
