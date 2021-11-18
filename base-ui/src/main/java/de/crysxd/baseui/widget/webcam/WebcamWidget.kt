@@ -136,6 +136,7 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
         if (newAspectRatio != lastAspectRatio) {
             Timber.i("Applying aspect ratio: newAspectRatio=$newAspectRatio")
             parent.requestTransition()
+            binding.webcamView.requestSizeTransition()
 
             lastAspectRatio = newAspectRatio
             ConstraintSet().also {

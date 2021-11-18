@@ -338,6 +338,10 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         invalidateMjpegFrame(newState.frame)
     }
 
+    fun requestSizeTransition() {
+        binding.matrixView.beginInternalSizeTransition()
+    }
+
     private var View.isGatedVisible
         get() = isVisible
         set(value) {

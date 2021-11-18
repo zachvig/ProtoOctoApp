@@ -14,8 +14,10 @@ import android.view.ScaleGestureDetector
 import android.view.ViewGroup
 import androidx.core.graphics.transform
 import androidx.core.view.children
+import androidx.transition.ChangeBounds
 import androidx.transition.ChangeTransform
 import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
 import timber.log.Timber
 import kotlin.math.absoluteValue
 import kotlin.math.max
@@ -151,6 +153,15 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
         imageRect.scale(scaleFactor, imageRect.centerX(), imageRect.centerY()).limitBounds(viewPortRect).flushToViews()
     }
 
+    fun beginInternalSizeTransition() {
+        if (!imageRect.isEmpty && !viewPortRect.isEmpty && children.any { it.width > 0 }) {
+            TransitionManager.beginDelayedTransition(this@MatrixView, TransitionSet().apply {
+                addTransition(ChangeTransform())
+                addTransition(ChangeBounds())
+            })
+        }
+    }
+
     inner class ScaleGestureListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
             // Limit the scale factor so we never go below min scale
@@ -192,7 +203,7 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
             }
 
             // Apply with animation
-            TransitionManager.beginDelayedTransition(this@MatrixView, ChangeTransform())
+            beginInternalSizeTransition()
             scaleToFill = newScaleToFill
 
             return true
