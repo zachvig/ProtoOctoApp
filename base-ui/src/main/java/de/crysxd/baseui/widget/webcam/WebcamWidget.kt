@@ -25,9 +25,6 @@ import de.crysxd.octoapp.base.data.models.WidgetType
 import de.crysxd.octoapp.base.ext.open
 import timber.log.Timber
 
-const val NOT_LIVE_IF_NO_FRAME_FOR_MS = 3000L
-const val STALLED_IF_NO_FRAME_FOR_MS = 5000L
-
 class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding, WebcamViewModel>(context) {
     override val type = WidgetType.WebcamWidget
     override val binding = WebcamWidgetBinding.inflate(LayoutInflater.from(context))

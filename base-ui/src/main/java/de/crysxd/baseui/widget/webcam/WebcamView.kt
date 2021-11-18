@@ -22,8 +22,6 @@ import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
-import com.google.android.exoplayer2.source.LoadEventInfo
-import com.google.android.exoplayer2.source.MediaLoadData
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.video.VideoSize
 import de.crysxd.baseui.R
@@ -41,9 +39,14 @@ import kotlin.math.min
 
 class WebcamView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, defStyle: Int = 0) : FrameLayout(context, attributeSet, defStyle) {
 
+    companion object {
+        const val LIVE_DELAY_THRESHOLD_MS = 3_000L
+        const val STALLED_THRESHOLD_MS = 5_000L
+    }
+
     private val binding = WebcamViewBinding.inflate(LayoutInflater.from(context), this)
     lateinit var coroutineScope: LifecycleCoroutineScope
-    private var hideLiveIndicatorJob: Job? = null
+    private var liveIndicatorJob: Job? = null
 
     private val richPlayer by lazy { ExoPlayer.Builder(context).build() }
     var lastRichPlayerListener: Player.Listener? = null
@@ -157,7 +160,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             return
         }
 
-        hideLiveIndicatorJob?.cancel()
+        liveIndicatorJob?.cancel()
         if (oldState == null || oldState::class != newState::class) {
             Timber.i("Moving to state ${newState::class.java.simpleName} ($this)")
             children.filter { it != binding.loadingState && it != binding.imageButtonSwitchCamera }.forEach { it.isVisible = false }
@@ -248,12 +251,25 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             override fun onIsPlayingChanged(eventTime: AnalyticsListener.EventTime, isPlaying: Boolean) {
                 super.onIsPlayingChanged(eventTime, isPlaying)
                 Timber.v("onIsPlayingChanged: $isPlaying")
-                usedLiveIndicator?.isVisible = isPlaying
+
                 binding.loadingState.isVisible = !isPlaying
+
                 if (isPlaying) {
                     binding.errorState.isVisible = false
                     binding.reconnectingState.isVisible = false
-                    usedLiveIndicator?.isVisible = true
+
+                    liveIndicatorJob?.cancel()
+                    liveIndicatorJob = coroutineScope.launchWhenCreated {
+                        while (isActive) {
+                            val isLive = richPlayer.isCurrentMediaItemLive
+                            val delay = richPlayer.currentLiveOffset
+                            usedLiveIndicator?.isVisible = isLive && delay < LIVE_DELAY_THRESHOLD_MS
+                            delay(1000)
+                        }
+                    }
+                } else {
+                    liveIndicatorJob?.cancel()
+                    usedLiveIndicator?.isVisible = false
                 }
             }
 
@@ -265,25 +281,6 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 binding.reconnectingState.isVisible = false
                 usedLiveIndicator?.isVisible = false
                 binding.errorDescription.text = context.getString(R.string.error_video_playback, state.uri, error.message)
-            }
-
-            override fun onLoadCompleted(eventTime: AnalyticsListener.EventTime, loadEventInfo: LoadEventInfo, mediaLoadData: MediaLoadData) {
-                super.onLoadCompleted(eventTime, loadEventInfo, mediaLoadData)
-                Timber.v("onLoadCompleted")
-                if (richPlayer.isPlaying) {
-                    binding.loadingState.isVisible = false
-                }
-                usedLiveIndicator?.isVisible = true
-                binding.reconnectingState.isVisible = false
-                binding.errorState.isVisible = false
-            }
-
-            override fun onLoadStarted(eventTime: AnalyticsListener.EventTime, loadEventInfo: LoadEventInfo, mediaLoadData: MediaLoadData) {
-                super.onLoadStarted(eventTime, loadEventInfo, mediaLoadData)
-                Timber.v("onLoadStarted")
-                if (!richPlayer.isPlaying) {
-                    binding.loadingState.isVisible = true
-                }
             }
         }.also {
             richPlayer.addAnalyticsListener(it)
@@ -304,13 +301,13 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
         // Hide live indicator if no new frame arrives within 3s
         // Show stalled indicator if no new frame arrives within 10s
-        hideLiveIndicatorJob?.cancel()
-        hideLiveIndicatorJob = coroutineScope.launchWhenCreated {
+        liveIndicatorJob?.cancel()
+        liveIndicatorJob = coroutineScope.launchWhenCreated {
             val start = System.currentTimeMillis()
-            delay(NOT_LIVE_IF_NO_FRAME_FOR_MS)
+            delay(LIVE_DELAY_THRESHOLD_MS)
             usedLiveIndicator?.isVisible = false
 
-            delay(STALLED_IF_NO_FRAME_FOR_MS - NOT_LIVE_IF_NO_FRAME_FOR_MS)
+            delay(STALLED_THRESHOLD_MS - LIVE_DELAY_THRESHOLD_MS)
             binding.streamStalledIndicator.isVisible = true
             do {
                 val seconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start)
