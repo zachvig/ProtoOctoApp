@@ -4,6 +4,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import de.crysxd.baseui.common.ViewBindingHolder
 import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.help.R
 import de.crysxd.octoapp.help.databinding.HelpPluginsLibraryItemBinding
 
 class PluginsLibraryListAdapter() : RecyclerView.Adapter<PluginsLibraryListAdapter.PluginItemViewHolder>() {
@@ -26,7 +28,9 @@ class PluginsLibraryListAdapter() : RecyclerView.Adapter<PluginsLibraryListAdapt
     override fun onBindViewHolder(holder: PluginItemViewHolder, position: Int) = category?.plugins?.get(position)?.let { item ->
         holder.binding.title.text = item.name
         holder.binding.description.text = item.description
-        holder.binding.status.isVisible = item.installed == true
+        holder.binding.status.isVisible = item.installed == true || item.highlight == true
+        holder.binding.status.setImageResource(if (item.installed == true) R.drawable.ic_round_verified_24 else R.drawable.ic_round_star_18)
+        holder.binding.status.setColorFilter(ContextCompat.getColor(holder.itemView.context, if (item.installed == true) R.color.green else R.color.yellow))
         holder.binding.pluginPage.isVisible = item.pluginPage != null
         holder.binding.pluginPage.setOnClickListener { it.openUri(item.pluginPage) }
         holder.binding.octoappTutorial.isVisible = item.octoAppTutorial != null

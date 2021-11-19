@@ -37,16 +37,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/margin_1"
                     android:gravity="center"
-                    android:paddingTop="@dimen/margin_4"
-                    android:text="Plugins**"
+                    android:paddingTop="@dimen/margin_5"
+                    android:text="@string/plugin_library___title"
                     android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin_3"
+                    android:layout_marginBottom="@dimen/margin_4"
                     android:gravity="center"
-                    android:text="OctoApp supports many OctoPrint plugins. You can use plugins to customize OctoApp and add more functionality to it.**" />
+                    android:text="@string/plugin_library___description" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -77,15 +77,7 @@
                     app:tabRippleColor="@color/accent"
                     app:tabSelectedTextColor="@color/text_colored_background"
                     app:tabTextAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
-                    app:tabTextColor="@color/accent">
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Remote access" />
-
-                </com.google.android.material.tabs.TabLayout>
-
+                    app:tabTextColor="@color/accent" />
 
             </FrameLayout>
 

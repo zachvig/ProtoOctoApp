@@ -60,7 +60,7 @@ class PluginsLibraryFragment : BaseFragment(), InsetAwareScreen {
             }
         })
 
-        viewModel.mutablePluginsIndex.observe(viewLifecycleOwner) {
+        viewModel.pluginsIndex.observe(viewLifecycleOwner) {
             createTabs(it)
             adapter.index = it
         }
