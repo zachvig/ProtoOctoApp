@@ -51,6 +51,7 @@ class MenuItemLibrary {
         MenuItems.MENU_ITEM_SHOW_WEBCAM_RESOLUTION to WebcamSettingsMenu.ShowResolutionMenuItem::class,
         MenuItems.MENU_ITEM_ENABLE_FULL_WEBCAM_RESOLUTION to WebcamSettingsMenu.EnableFullResolutionMenuItem::class,
         MenuItems.MENU_ITEM_CONFIRM_POWER_OFF to ConfirmPowerOffSettingsMenuItem::class,
+        MenuItems.MENU_ITEM_PLUGINS to ShowPluginLibraryOctoPrintMenuItem::class,
     )
 
     operator fun get(itemId: String): MenuItem? = when {

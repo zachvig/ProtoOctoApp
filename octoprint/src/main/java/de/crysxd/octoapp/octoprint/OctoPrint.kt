@@ -18,6 +18,7 @@ import de.crysxd.octoapp.octoprint.plugins.applicationkeys.ApplicationKeysPlugin
 import de.crysxd.octoapp.octoprint.plugins.companion.OctoAppCompanionApi
 import de.crysxd.octoapp.octoprint.plugins.materialmanager.MaterialManagerPluginsCollection
 import de.crysxd.octoapp.octoprint.plugins.octoeverywhere.OctoEverywhereApi
+import de.crysxd.octoapp.octoprint.plugins.pluginmanager.PluginManagerApi
 import de.crysxd.octoapp.octoprint.plugins.power.PowerPluginsCollection
 import de.crysxd.octoapp.octoprint.websocket.ContinuousOnlineCheck
 import de.crysxd.octoapp.octoprint.websocket.EventWebSocket
@@ -113,6 +114,9 @@ class OctoPrint(
 
     fun createSettingsApi(): SettingsApi =
         createRetrofit().create(SettingsApi::class.java)
+
+    fun createPluginManagerApi(): PluginManagerApi =
+        createRetrofit(".").create(PluginManagerApi::class.java)
 
     fun createPrinterProfileApi(): PrinterProfileApi =
         createRetrofit().create(PrinterProfileApi::class.java)

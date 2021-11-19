@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/input_background">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            app:contentScrim="@color/input_background"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/tab_layout_scrollable_height" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/toolbarContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/tab_layout_scrollable_height"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/margin_2"
+                app:layout_collapseMode="none">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin_1"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/margin_5"
+                    android:text="@string/plugin_library___title"
+                    android:textAppearance="@style/OctoTheme.TextAppearance.Title.Big" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin_4"
+                    android:gravity="center"
+                    android:text="@string/plugin_library___description" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <FrameLayout
+                android:id="@+id/tabsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                app:layout_collapseMode="pin">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/tab_layout_scrollable_height"
+                    android:layout_marginVertical="@dimen/margin_1"
+                    android:background="#01000000"
+                    android:clipToPadding="false"
+                    android:paddingHorizontal="@dimen/margin_2"
+                    app:tabGravity="start"
+                    app:tabIndicator="@drawable/bg_chip"
+                    app:tabIndicatorColor="@color/accent"
+                    app:tabIndicatorGravity="stretch"
+                    app:tabMode="scrollable"
+                    app:tabPaddingBottom="0dp"
+                    app:tabPaddingEnd="@dimen/margin_2"
+                    app:tabPaddingStart="@dimen/margin_2"
+                    app:tabPaddingTop="0dp"
+                    app:tabRippleColor="@color/accent"
+                    app:tabSelectedTextColor="@color/text_colored_background"
+                    app:tabTextAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
+                    app:tabTextColor="@color/accent" />
+
+            </FrameLayout>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

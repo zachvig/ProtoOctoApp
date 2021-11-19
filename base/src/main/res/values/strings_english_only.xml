@@ -107,4 +107,8 @@
     <string name="configure_remote_acces___manual___error_unable_to_verify" translatable="false">Unable to verify that the remote URL points to the same instance</string>
     <string name="configure_remote_acces___manual___error_unable_to_connect" translatable="false">Unable to connect</string>
     <string name="configure_remote_acces___manual___error_invalid_url" translatable="false">Please provide a valid URL (including http:// or https://)</string>
+    <string name="plugin_library___octoapp_tutorial">OctoApp Tutorial</string>
+    <string name="plugin_library___plugin_page">Plugin page</string>
+    <string name="plugin_library___title">Supported Plugins</string>
+    <string name="plugin_library___description">OctoApp supports many OctoPrint plugins. You can use plugins to customize OctoApp and add more functionality to it.</string>
 </resources>

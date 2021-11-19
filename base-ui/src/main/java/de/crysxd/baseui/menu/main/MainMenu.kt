@@ -23,10 +23,10 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.data.models.MenuId
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_NEWS
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_OCTOPRINT
+import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_PLUGINS
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_PRINTER_MENU
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_SETTINGS_MENU
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_TUTORIALS
-import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_YOUTUBE
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ext.purchaseOffers
@@ -41,7 +41,7 @@ class MainMenu : Menu {
             ShowPrinterMenuItem(),
             ShowSettingsMenuItem(),
             ShowOctoPrintMenuItem(),
-            ShowTutorialsMenuItem()
+            ShowTutorialsMenuItem(),
         )
 
         val library = MenuItemLibrary()
@@ -129,7 +129,7 @@ class ShowOctoPrintMenuItem : MenuItem {
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_octoprint_24px
 
-    override suspend fun getBadgeCount() = OctoPrintMenu.getAnnouncementCounter()
+    override suspend fun getBadgeCount() = OctoPrintMenu.getPluginAnnouncementCounter()
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_octoprint)
     override suspend fun onClicked(host: MenuHost?) {
         host?.pushMenu(OctoPrintMenu())
@@ -176,20 +176,20 @@ class ShowNewsMenuItem : MenuItem {
     }
 }
 
-class ShowYoutubeMenuItem : MenuItem {
-    override val itemId = MENU_ITEM_YOUTUBE
+class ShowPluginLibraryMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_PLUGINS
     override var groupId = "main_menu"
-    override val order = 22
+    override val order = 23
     override val showAsSubMenu = true
     override val showAsOutlined = true
     override val canBePinned = false
-    override val icon = R.drawable.ic_youtube_24px
+    override val icon = R.drawable.ic_round_extension_24
     override val style = MenuItemStyle.Neutral
 
-    override suspend fun getTitle(context: Context) = "YouTube"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___explore_support_plugins_short)
     override suspend fun onClicked(host: MenuHost?) {
         host?.getMenuActivity()?.let {
-            Uri.parse("https://www.youtube.com/channel/UCUFZW6bxLNYxl8uFp37IdPg").open(it)
+            UriLibrary.getPluginLibraryUri().open(it)
         }
     }
 }

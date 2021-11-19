@@ -45,6 +45,7 @@ import de.crysxd.octoapp.base.usecase.ExtrudeFilamentUseCase
 import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import de.crysxd.octoapp.base.usecase.GetAppLanguageUseCase
+import de.crysxd.octoapp.base.usecase.GetInstalledPluginsUseCase
 import de.crysxd.octoapp.base.usecase.GetMaterialsUseCase
 import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
@@ -165,4 +166,5 @@ interface BaseComponent {
     fun createFolderUseCase(): CreateFolderUseCase
     fun downloadAndShareFileUseCase(): DownloadAndShareFileUseCase
     fun shareImageUseCase(): ShareImageUseCase
+    fun getInstalledPluginsUseCase(): GetInstalledPluginsUseCase
 }

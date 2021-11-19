@@ -23,8 +23,8 @@ import de.crysxd.baseui.menu.MenuItemClickExecutor
 import de.crysxd.baseui.menu.MenuItemStyle
 import de.crysxd.baseui.menu.PreparedMenuItem
 import de.crysxd.baseui.menu.main.ShowNewsMenuItem
+import de.crysxd.baseui.menu.main.ShowPluginLibraryMenuItem
 import de.crysxd.baseui.menu.main.ShowTutorialsMenuItem
-import de.crysxd.baseui.menu.main.ShowYoutubeMenuItem
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ext.suspendedAwait
 import de.crysxd.octoapp.help.R
@@ -76,9 +76,9 @@ class HelpFragment : Fragment(), MenuHost {
             }
 
             val tutorial = listOf(
+                ShowPluginLibraryMenuItem(),
                 ShowTutorialsMenuItem(showAsHalfWidth = false),
                 ShowNewsMenuItem(),
-                ShowYoutubeMenuItem()
             ).prepare()
 
             val faq = try {
