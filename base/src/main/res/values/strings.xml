@@ -11,7 +11,8 @@
 
     <!-- Auto filled -->
     <string name="announcement___octoeverywhere_learn_more">"Connect now"</string>
-
+    <string name="main_menu___explore_support_plugins">Explore supported plugins</string>
+    <string name="main_menu___explore_support_plugins_short">Explore plugins</string>
     <!-- Auto filled -->
     <string name="announcement___octoeverywhere_title">"Octo(App)Everywhere!"</string>
     <string name="app_logs">"App logs"</string>

@@ -21,7 +21,8 @@ class PinnedMenuItemRepository(
             MenuItems.MENU_ITEM_CUSTOMIZE_WIDGETS,
             MenuItems.MENU_ITEM_EMERGENCY_STOP,
             MenuItems.MENU_ITEM_TURN_PSU_OFF,
-            MenuItems.MENU_ITEM_HELP
+            MenuItems.MENU_ITEM_HELP,
+            MenuItems.MENU_ITEM_PLUGINS
         ),
         MenuId.PrePrintWorkspace to setOf(
             MenuItems.MENU_ITEM_OPEN_OCTOPRINT,

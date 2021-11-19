@@ -10,7 +10,10 @@ import de.crysxd.baseui.menu.Menu
 import de.crysxd.baseui.menu.MenuHost
 import de.crysxd.baseui.menu.MenuItem
 import de.crysxd.baseui.menu.MenuItemStyle
+import de.crysxd.baseui.menu.main.OctoPrintMenu.Companion.hideCompanionAnnouncement
+import de.crysxd.baseui.menu.main.OctoPrintMenu.Companion.shouldAnnounceCompanion
 import de.crysxd.octoapp.base.UriLibrary
+import de.crysxd.octoapp.base.data.models.MenuItems
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_EXECUTE_SYSTEM_COMMAND
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_CONFIGURE_REMOTE_ACCESS
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_OPEN_OCTOPRINT
@@ -53,7 +56,7 @@ class OctoPrintMenu : Menu {
             return !companionInstalled && Date() > showNext && shouldShow
         }
 
-        fun getAnnouncementCounter(): Int {
+        fun getPluginAnnouncementCounter(): Int {
             var counter = 0
             if (shouldAnnounceCompanion()) counter++
             if (shouldAnnounceOctoEverywhere()) counter++
@@ -72,6 +75,7 @@ class OctoPrintMenu : Menu {
     override suspend fun getMenuItem() =
         listOfNotNull(
             listOf(
+                ShowPluginLibraryOctoPrintMenuItem(suppressBadge = false),
                 OpenOctoPrintMenuItem(),
                 ConfigureRemoteAccessMenuItem(suppressBadge = false),
                 ShowFilesMenuItem(),
@@ -91,14 +95,6 @@ class OctoPrintMenu : Menu {
     } else {
         ""
     }
-
-    override suspend fun getAnnouncement(context: Context) = Menu.Announcement(
-        title = context.getString(R.string.main_menu___companion_plugin_announcement___title),
-        subtitle = context.getString(R.string.main_menu___companion_plugin_announcement___subtitle),
-        learnMoreButton = context.getString(R.string.main_menu___companion_plugin_announcement___install),
-        hideButton = context.getString(R.string.hide),
-        learnMoreUri = UriLibrary.getCompanionPluginUri(),
-    ).takeIf { shouldAnnounceCompanion() }
 
     override fun onAnnouncementHidden() {
         super.onAnnouncementHidden()
@@ -122,8 +118,9 @@ class OpenOctoPrintMenuItem : MenuItem {
 
 class ConfigureRemoteAccessMenuItem(val suppressBadge: Boolean = true) : MenuItem {
     override val itemId = MENU_ITEM_CONFIGURE_REMOTE_ACCESS
-    override var groupId = ""
-    override val order = 201
+    override var groupId = "config"
+    override val order = 251
+    override val showAsSubMenu = true
     override val enforceSingleLine = false
     override val style = MenuItemStyle.OctoPrint
     override val icon = R.drawable.ic_round_cloud_24
@@ -143,6 +140,7 @@ class ShowFilesMenuItem : MenuItem {
     override val itemId = MENU_ITEM_SHOW_FILES
     override var groupId = ""
     override val order = 202
+    override val showAsSubMenu = true
     override val enforceSingleLine = false
     override val style = MenuItemStyle.OctoPrint
     override val icon = R.drawable.ic_round_folder_24
@@ -165,7 +163,7 @@ class ExecuteSystemCommandMenuItem(val source: String, val action: String) : Con
     }
 
     override val itemId = "$MENU_EXECUTE_SYSTEM_COMMAND/$source/$action"
-    override var groupId = ""
+    override var groupId = "system"
     override val order = 210
     override val style = MenuItemStyle.OctoPrint
     override val icon = when (systemCommand?.action) {
@@ -185,5 +183,23 @@ class ExecuteSystemCommandMenuItem(val source: String, val action: String) : Con
     override fun getConfirmPositiveAction(context: Context) = systemCommand?.name ?: context.getString(android.R.string.ok)
     override suspend fun onConfirmed(host: MenuHost?) {
         BaseInjector.get().executeSystemCommandUseCase().execute(systemCommand!!)
+    }
+}
+
+class ShowPluginLibraryOctoPrintMenuItem(private val suppressBadge: Boolean = true) : MenuItem {
+    override val itemId = MenuItems.MENU_ITEM_PLUGINS
+    override var groupId = "config"
+    override val order = 250
+    override val showAsSubMenu = true
+    override val canBePinned = false
+    override val icon = R.drawable.ic_round_extension_24
+    override val style = MenuItemStyle.OctoPrint
+    override suspend fun getBadgeCount() = if (shouldAnnounceCompanion() && !suppressBadge) 1 else 0
+    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___explore_support_plugins)
+    override suspend fun onClicked(host: MenuHost?) {
+        hideCompanionAnnouncement()
+        host?.getMenuActivity()?.let {
+            UriLibrary.getPluginLibraryUri().open(it)
+        }
     }
 }

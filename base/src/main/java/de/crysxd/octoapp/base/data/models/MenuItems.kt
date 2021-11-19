@@ -7,6 +7,7 @@ object MenuItems {
     const val MENU_ITEM_TUTORIALS = "main___tutorials"
     const val MENU_ITEM_NEWS = "main___news"
     const val MENU_ITEM_YOUTUBE = "main___youtube"
+    const val MENU_ITEM_PLUGINS = "main___plugins"
     const val MENU_ITEM_HELP = "settings___help"
     const val MENU_ITEM_CRASH_REPORTING = "privacy___crash_reporting"
     const val MENU_ITEM_ANALYTICS = "privacy___analytics"
