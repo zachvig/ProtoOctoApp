@@ -57,4 +57,15 @@
 
     </fragment>
 
+    <fragment
+        android:id="@+id/pluginLibrary"
+        android:name="de.crysxd.octoapp.help.plugins.PluginsLibraryFragment"
+        android:label="FaqFragment">
+
+        <deepLink
+            android:id="@+id/deepLink"
+            app:uri="@string/uri___plugin_library" />
+
+    </fragment>
+
 </navigation>

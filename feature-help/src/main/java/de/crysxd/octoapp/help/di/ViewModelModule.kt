@@ -12,6 +12,7 @@ import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
+import de.crysxd.octoapp.help.plugins.PluginsLibraryViewModel
 import de.crysxd.octoapp.help.troubleshoot.WebcamTroubleShootingViewModel
 import de.crysxd.octoapp.help.tutorials.TutorialsViewModel
 import javax.inject.Provider
@@ -46,4 +47,9 @@ open class ViewModelModule {
     ): ViewModel = TutorialsViewModel(
         tutorialsRepository = tutorialsRepository,
     )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(PluginsLibraryViewModel::class)
+    open fun providePluginsLibraryViewModel(): ViewModel = PluginsLibraryViewModel()
 }
