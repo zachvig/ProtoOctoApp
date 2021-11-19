@@ -47,20 +47,19 @@ class PluginsLibraryFragment : BaseFragment(), InsetAwareScreen {
             lastVerticalOffset = verticalOffset
         })
 
-        var firstSelection = true
+        var createdAt = System.currentTimeMillis()
         binding.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
             override fun onTabReselected(tab: TabLayout.Tab?) = Unit
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                if (firstSelection) {
-                    firstSelection = false
-                } else {
+                if (System.currentTimeMillis() - createdAt > 1000) {
                     binding.appBar.setExpanded(false, true)
                 }
             }
         })
 
         viewModel.pluginsIndex.observe(viewLifecycleOwner) {
+            createdAt = System.currentTimeMillis()
             createTabs(it)
             adapter.index = it
         }
