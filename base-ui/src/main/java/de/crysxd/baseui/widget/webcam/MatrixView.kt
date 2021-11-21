@@ -111,7 +111,7 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
         // Calculate scale to fit content and view bounds
         minZoom = min(w.toFloat() / cw, h.toFloat() / ch)
         currentZoom = minZoom
-        val rotation = if (input.rotate90) 90f else 0f
+        val rotation = if (input.rotate90) -90f else 0f
         val vw = input.contentWidth
         val vh = input.contentHeight
         val vx = w / 2 - vw / 2
