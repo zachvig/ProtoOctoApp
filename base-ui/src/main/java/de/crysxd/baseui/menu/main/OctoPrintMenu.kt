@@ -191,7 +191,6 @@ class ShowPluginLibraryOctoPrintMenuItem(private val suppressBadge: Boolean = tr
     override var groupId = "config"
     override val order = 250
     override val showAsSubMenu = true
-    override val canBePinned = false
     override val icon = R.drawable.ic_round_extension_24
     override val style = MenuItemStyle.OctoPrint
     override suspend fun getBadgeCount() = if (shouldAnnounceCompanion() && !suppressBadge) 1 else 0

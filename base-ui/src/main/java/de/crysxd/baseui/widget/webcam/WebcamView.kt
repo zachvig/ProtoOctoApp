@@ -321,7 +321,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 val matrix = Matrix()
                 if (mi.flipV) matrix.postScale(1f, -1f)
                 if (mi.flipH) matrix.postScale(-1f, 1f)
-                if (mi.rotate90) matrix.postRotate(90f)
+                if (mi.rotate90) matrix.postRotate(-90f)
                 Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
             }
         }

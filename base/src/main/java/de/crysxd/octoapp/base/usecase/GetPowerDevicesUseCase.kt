@@ -29,7 +29,7 @@ class GetPowerDevicesUseCase @Inject constructor(
         // If we should query power state do so and emit a second value
         if (param.queryState) {
             // Use withContext to split the stream in parallel
-            devices.forEach {
+            result.keys.forEach {
                 try {
                     result[it] = when (it.isOn()) {
                         true -> PowerState.On
