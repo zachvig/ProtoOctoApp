@@ -29,6 +29,7 @@ object OctoAnalytics {
         object UserId : UserProperty("user_id")
         object AndroidBuild : UserProperty("android_build")
         object OctoEverywhereUser : UserProperty("octoeverywhere_user")
+        object SpaghettiDetectiveUser : UserProperty("spaghetti_detective_user")
         object RemoteAccess : UserProperty("remote_access_configured")
     }
 
@@ -90,9 +91,13 @@ object OctoAnalytics {
         object RemoteConfigScreenOpened : Event("remote_config_screen_opened")
         object RemoteConfigManuallySet : Event("remote_config_manually_set")
         object RemoteConfigManuallySetFailed : Event("remote_config_manually_set_failed")
-        object OctoEverywhereConnectStarted: Event("octoeverywhere_connect_started")
-        object OctoEverywhereConnected: Event("octoeverywhere_connected")
-        object OctoEverywhereConnectFailed: Event("octoeverywhere_connect_failed")
-        object OctoEverywherePluginMissing: Event("octoeverywhere_plugin_missing")
+        object OctoEverywhereConnectStarted : Event("octoeverywhere_connect_started")
+        object OctoEverywhereConnected : Event("octoeverywhere_connected")
+        object OctoEverywhereConnectFailed : Event("octoeverywhere_connect_failed")
+        object OctoEverywherePluginMissing : Event("octoeverywhere_plugin_missing")
+        object SpaghettiDetectiveConnectStarted : Event("spaghetti_detective_connect_started")
+        object SpaghettiDetectiveConnected : Event("spaghetti_detective_connected")
+        object SpaghettiDetectiveConnectFailed : Event("spaghetti_detective_connect_failed")
+        object SpaghettiDetectivePluginMissing : Event("spaghetti_detective_plugin_missing")
     }
 }

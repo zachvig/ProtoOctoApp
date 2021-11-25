@@ -9,14 +9,14 @@
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/window_background">
+        android:background="@color/input_background">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
-            app:contentScrim="@color/window_background"
+            app:contentScrim="@color/input_background"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
             <androidx.appcompat.widget.Toolbar
@@ -85,7 +85,6 @@
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/input_background"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import de.crysxd.baseui.R
 import de.crysxd.baseui.databinding.ConfigureRemoteAccessManualFragmentBinding
@@ -30,11 +29,6 @@ class ConfigureRemoteAccessManualFragment : Fragment() {
                 bypassChecks = false
             )
         }
-
-        val inputTint = ContextCompat.getColor(requireContext(), R.color.input_background_alternative)
-        binding.webUrlInput.backgroundTint = inputTint
-        binding.basicPasswordInput.backgroundTint = inputTint
-        binding.basicUserInput.backgroundTint = inputTint
 
         viewModel.viewState.observe(viewLifecycleOwner) {
             binding.saveUrl.isEnabled = it !is ConfigureRemoteAccessViewModel.ViewState.Loading

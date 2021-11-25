@@ -79,8 +79,11 @@ private fun String.replaceIfNotEmpty(needle: String, replacement: String) = if (
 
 fun HttpUrl.isOctoEverywhereUrl() = host.endsWith(".octoeverywhere.com")
 
+fun HttpUrl.isSpaghettiDetectiveUrl() = host.endsWith("thespaghettidetective.com")
+
 fun HttpUrl.getConnectionType(default: ConnectionType) = when {
     isOctoEverywhereUrl() -> ConnectionType.OctoEverywhere
+    isSpaghettiDetectiveUrl() -> ConnectionType.SpaghettiDetective
     isNgrokUrl() -> ConnectionType.Ngrok
     isTailscale() -> ConnectionType.Tailscale
     else -> default

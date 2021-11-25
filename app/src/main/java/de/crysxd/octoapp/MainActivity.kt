@@ -7,8 +7,6 @@ import android.content.res.Configuration
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
@@ -52,7 +50,8 @@ import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_QUICK_SWITCH
 import de.crysxd.octoapp.base.data.models.WidgetType
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.usecase.OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH
+import de.crysxd.octoapp.base.usecase.GetConnectOctoEverywhereUrlUseCase.Companion.OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH
+import de.crysxd.octoapp.base.usecase.GetConnectOctoEverywhereUrlUseCase.Companion.SPAGHETTI_DETECTIVE_APP_PORTAL_CALLBACK_PATH
 import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
 import de.crysxd.octoapp.databinding.MainActivityBinding
 import de.crysxd.octoapp.notification.LiveNotificationManager
@@ -283,26 +282,23 @@ class MainActivity : OctoActivity() {
     }
 
     private fun handleDeepLink(uri: Uri) {
-        Handler(Looper.getMainLooper()).post {
-            if (UriLibrary.isActiveInstanceRequired(uri) && BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot() == null) {
-                Timber.i("Uri requires active instance, delaying")
-                viewModel.pendingUri = uri
-            } else {
-                if (uri.path == "/$OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH") {
-                    // Uh yeah, new OctoEverywhere connection
-                    lifecycleScope.launchWhenCreated {
-                        try {
-                            Timber.i("Handling OctoEverywhere connection")
-                            BaseInjector.get().handleOctoEverywhereAppPortalSuccessUseCase().execute(uri)
-                        } catch (e: Exception) {
-                            showDialog(e)
+        lifecycleScope.launchWhenCreated {
+            try {
+                if (UriLibrary.isActiveInstanceRequired(uri) && BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot() == null) {
+                    Timber.i("Uri requires active instance, delaying")
+                    viewModel.pendingUri = uri
+                } else {
+                    when (uri.path) {
+                        "/$OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH" -> BaseInjector.get().handleOctoEverywhereAppPortalSuccessUseCase().execute(uri)
+                        "/$SPAGHETTI_DETECTIVE_APP_PORTAL_CALLBACK_PATH" -> BaseInjector.get().handleSpaghettiDetectiveAppPortalSuccessUseCase().execute(uri)
+                        else -> {
+                            Timber.i("Handling generic URI: $uri")
+                            uri.open(this@MainActivity)
                         }
                     }
-                } else {
-                    // Generic link
-                    Timber.i("Handling generic URI: $uri")
-                    uri.open(this@MainActivity)
                 }
+            } catch (e: Exception) {
+                showDialog(e)
             }
         }
     }
@@ -369,7 +365,8 @@ class MainActivity : OctoActivity() {
             BillingManager.billingEventFlow().collectLatest {
                 it.consume { event ->
                     when (event) {
-                        BillingEvent.PurchaseCompleted -> de.crysxd.baseui.purchase.PurchaseConfirmationDialog().show(supportFragmentManager, "purchase-confirmation")
+                        BillingEvent.PurchaseCompleted -> de.crysxd.baseui.purchase.PurchaseConfirmationDialog()
+                            .show(supportFragmentManager, "purchase-confirmation")
                     }
                 }
             }
@@ -494,6 +491,14 @@ class MainActivity : OctoActivity() {
                 R.string.main___banner_connected_via_octoeverywhere,
                 R.drawable.ic_octoeverywhere_24px,
                 R.color.octoeverywhere,
+                showSpinner = false,
+                alreadyShrunken = alreadyShrunken
+            )
+
+            ConnectionType.SpaghettiDetective -> showBanner(
+                R.string.main___banner_connected_via_spaghetti_detective,
+                R.drawable.ic_spaghetti_detective_24px,
+                R.color.spaghetti_detective,
                 showSpinner = false,
                 alreadyShrunken = alreadyShrunken
             )

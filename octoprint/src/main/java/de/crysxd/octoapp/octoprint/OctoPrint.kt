@@ -21,6 +21,8 @@ import de.crysxd.octoapp.octoprint.plugins.materialmanager.MaterialManagerPlugin
 import de.crysxd.octoapp.octoprint.plugins.octoeverywhere.OctoEverywhereApi
 import de.crysxd.octoapp.octoprint.plugins.pluginmanager.PluginManagerApi
 import de.crysxd.octoapp.octoprint.plugins.power.PowerPluginsCollection
+import de.crysxd.octoapp.octoprint.plugins.thespaghettidetective.SpaghettiDetectiveApi
+import de.crysxd.octoapp.octoprint.plugins.thespaghettidetective.SpaghettiDetectiveApiWrapper
 import de.crysxd.octoapp.octoprint.websocket.ContinuousOnlineCheck
 import de.crysxd.octoapp.octoprint.websocket.EventWebSocket
 import okhttp3.Dns
@@ -151,6 +153,8 @@ class OctoPrint(
     fun createOctoEverywhereApi() = createRetrofit().create(OctoEverywhereApi::class.java)
 
     fun createOctoAppCompanionApi() = OctoAppCompanionApiWrapper(createRetrofit().create(OctoAppCompanionApi::class.java))
+
+    fun createSpaghettiDetectiveApi() = SpaghettiDetectiveApiWrapper(createRetrofit().create(SpaghettiDetectiveApi::class.java))
 
     fun getLogger(): Logger = OctoPrintLogger
 

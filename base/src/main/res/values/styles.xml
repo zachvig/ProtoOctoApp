@@ -291,8 +291,8 @@
         <item name="tabIndicatorGravity">stretch</item>
         <item name="tabMode">scrollable</item>
         <item name="tabPaddingBottom">0dp</item>
-        <item name="tabPaddingEnd">@dimen/margin_2</item>
-        <item name="tabPaddingStart">@dimen/margin_2</item>
+        <item name="tabPaddingEnd">@dimen/margin_1_2</item>
+        <item name="tabPaddingStart">@dimen/margin_1_2</item>
         <item name="tabPaddingTop">0dp</item>
         <item name="tabRippleColor">@color/accent</item>
         <item name="tabSelectedTextColor">@color/text_colored_background</item>

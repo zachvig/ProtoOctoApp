@@ -107,6 +107,10 @@
         <value>https://octoeverywhere.com/appportal/v1?appId=octoapp&amp;authType=enhanced&amp;returnUrl=octoapp%3A%2F%2Fapp.octoapp.eu%2F{{{callbackPath}}}&amp;printerId={{{printerid}}}&amp;appLogoUrl=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Foctoapp-4e438.appspot.com%2Fo%2Fresources%252Foctoeverywhere%252Flogo.png%3Falt%3Dmedia%26token%3D22e614ef-87a9-44a9-96d1-54a3f81dfcad</value>
     </entry>
     <entry>
+        <key>spaghetti_detective_app_portal_url</key>
+        <value>https://app.thespaghettidetective.com/tunnels/new/?app=OctoApp&amp;printer_id={{{printerid}}}&amp;success_redirect_url=octoapp%3A%2F%2Fapp.octoapp.eu%2F{{{callbackPath}}}</value>
+    </entry>
+    <entry>
         <key>notification_battery_saver</key>
         <value>true</value>
     </entry>

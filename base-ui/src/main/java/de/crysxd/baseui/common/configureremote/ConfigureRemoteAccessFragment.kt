@@ -31,7 +31,7 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
 
     override val viewModel by injectViewModel<ConfigureRemoteAccessViewModel>()
     private lateinit var binding: ConfigureRemoteAccessFragmentBinding
-    private val adapter by lazy { PagerAdapter(childFragmentManager, lifecycle) }
+    private val adapter by lazy { PagerAdapter(requireContext(), childFragmentManager, lifecycle) }
     private val helper = CollapsibleToolbarTabsHelper()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -84,7 +84,7 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
     private fun installTabs() {
         binding.viewPager.adapter = adapter
         TabLayoutMediator(binding.tabs, binding.viewPager) { tab, position ->
-            tab.text = adapter.getTitle(requireContext(), position)
+            tab.text = adapter.getTitle(position)
         }.attach()
         helper.install(
             octoActivity = requireOctoActivity(),
@@ -106,19 +106,15 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         helper.handleInsets(insets)
     }
 
-    private class PagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(fragmentManager, lifecycle) {
-        override fun getItemCount() = 2
+    private class PagerAdapter(context: Context, fragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(fragmentManager, lifecycle) {
+        private val tabs = listOf(
+            context.getString(R.string.configure_remote_acces___octoeverywhere___title) to { ConfigureRemoteAccessOctoEverywhereFragment() },
+            "Spaghetti Detective**" to { ConfigureRemoteAccessSpaghettiDetectiveFragment() },
+            context.getString(R.string.configure_remote_acces___manual___title) to { ConfigureRemoteAccessManualFragment() },
+        )
 
-        fun getTitle(context: Context, position: Int) = when (position) {
-            0 -> context.getString(R.string.configure_remote_acces___octoeverywhere___title)
-            1 -> context.getString(R.string.configure_remote_acces___manual___title)
-            else -> throw IllegalStateException("Unknown index $position")
-        }
-
-        override fun createFragment(position: Int) = when (position) {
-            0 -> ConfigureRemoteAccessOctoEverywhereFragment()
-            1 -> ConfigureRemoteAccessManualFragment()
-            else -> throw IllegalStateException("Unknown index $position")
-        }
+        override fun getItemCount() = tabs.size
+        override fun createFragment(position: Int) = tabs[position].second()
+        fun getTitle(position: Int) = tabs[position].first
     }
 }
