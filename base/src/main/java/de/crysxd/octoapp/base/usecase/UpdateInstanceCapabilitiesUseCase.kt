@@ -19,6 +19,7 @@ import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.plugins.companion.AppRegistrationBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
@@ -30,7 +31,6 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
     private val octoPrintRepository: OctoPrintRepository,
     private val octoPreferences: OctoPreferences,
     private val executeGcodeCommandUseCase: ExecuteGcodeCommandUseCase,
-    private val getCurrentPrinterProfileUseCase: GetCurrentPrinterProfileUseCase,
     private val context: Context,
 ) : UseCase<UpdateInstanceCapabilitiesUseCase.Params, Unit>() {
 
@@ -59,9 +59,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
 
             // Gather all info in parallel
             val settings = async {
-                val settings = octoPrint.createSettingsApi().getSettings()
-                registerWithCompanionPlugin(timber, settings, activeInstance.id, octoPrint)
-                settings
+                octoPrint.createSettingsApi().getSettings()
             }
             val commands = async {
                 try {
@@ -94,28 +92,15 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                     null
                 }
             }
-            val m115 = async {
-                try {
-                    val isPrinting = state?.flags?.isPrinting() != false
-                    val isRequired = BillingManager.isFeatureEnabled(BillingManager.FEATURE_GCODE_PREVIEW)
-                    val isSuppressed = octoPreferences.suppressM115Request
-                    val isRequested = param.updateM115
-                    val isCached = activeInstance.m115Response != null
-                    // Don't execute M115 if we suppress it manually (might cause issues on some machines) or if we don't use the Gcode preview (as this is where we use it)
-                    if (!isCached && isRequested && !isPrinting && isRequired && !isSuppressed) {
-                        executeM115()
-                    } else {
-                        Timber.i("Skipping M115: isCached=$isCached isPrinting=$isPrinting isRequired=$isRequired isSuppressed=$isSuppressed isRequested=$isRequested")
-                        null
-                    }
-                } catch (e: Exception) {
-                    Timber.e(e)
-                    null
-                }
+
+            val settingsResult = settings.await()
+
+            val m115Response = if (settingsResult.isCompanionInstalled()) {
+                octoPrint.createOctoAppCompanionApi().getFirmwareInfo()
+            } else {
+                null
             }
 
-            val m115Result = m115.await()
-            val settingsResult = settings.await()
             val commandsResult = commands.await()?.all
             val profileResult = profile.await()
             val systemInfoResult = systemInfo.await()
@@ -123,7 +108,7 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
             // Only start update after all network requests are done to prevent race conditions
             octoPrintRepository.update(activeInstance.id) { current ->
                 val updated = current.copy(
-                    m115Response = m115Result ?: current.m115Response,
+                    m115Response = m115Response ?: current.m115Response,
                     settings = settingsResult,
                     systemInfo = systemInfoResult ?: current.systemInfo,
                     activeProfile = profileResult ?: current.activeProfile,
@@ -137,12 +122,45 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
                 timber.i("Updated capabilities: $updated")
                 updated
             }
+
+            // Register with companion
+            registerWithCompanionPlugin(timber, settingsResult, activeInstance.id, octoPrint)
+
+            // As a second round, we will check the M115 status, but only after a delay to prevent interference with other things
+            val isPrinting = state?.flags?.isPrinting() != false
+            val isRequired = BillingManager.isFeatureEnabled(BillingManager.FEATURE_GCODE_PREVIEW)
+            val isSuppressed = octoPreferences.suppressM115Request
+            val isRequested = param.updateM115
+            val isCached = activeInstance.m115Response != null || m115Response != null
+            if (isCached || isRequested || isPrinting || isRequired || isSuppressed) {
+                Timber.i("Skipping M115: isCached=$isCached isPrinting=$isPrinting isRequired=$isRequired isSuppressed=$isSuppressed isRequested=$isRequested")
+                return@withContext
+            }
+
+            // Execute
+            val m115 = try {
+                timber.i("Will trigger M115 in 10s")
+                delay(10_000)
+                executeM115()
+            } catch (e: Exception) {
+                Timber.e(e)
+                null
+            }
+
+            // Update
+            octoPrintRepository.update(activeInstance.id) { current ->
+                timber.i("Storing M115 response")
+                current.copy(m115Response = m115 ?: current.m115Response)
+            }
         }
     }
 
+    private fun Settings.isCompanionInstalled() = plugins.values.any { it is Settings.OctoAppCompanionSettings }
+
+
     private suspend fun registerWithCompanionPlugin(timber: Timber.Tree, settings: Settings, instanceId: String, octoPrint: OctoPrint) {
         try {
-            if (settings.plugins.values.any { it is Settings.OctoAppCompanionSettings }) {
+            if (settings.isCompanionInstalled()) {
                 timber.i("Companion is installed, registering...")
                 val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
                 octoPrint.createOctoAppCompanionApi().registerApp(
