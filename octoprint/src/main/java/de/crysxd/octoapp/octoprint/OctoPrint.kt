@@ -16,6 +16,7 @@ import de.crysxd.octoapp.octoprint.models.socket.HistoricTemperatureData
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.octoprint.plugins.applicationkeys.ApplicationKeysPluginApi
 import de.crysxd.octoapp.octoprint.plugins.companion.OctoAppCompanionApi
+import de.crysxd.octoapp.octoprint.plugins.companion.OctoAppCompanionApiWrapper
 import de.crysxd.octoapp.octoprint.plugins.materialmanager.MaterialManagerPluginsCollection
 import de.crysxd.octoapp.octoprint.plugins.octoeverywhere.OctoEverywhereApi
 import de.crysxd.octoapp.octoprint.plugins.pluginmanager.PluginManagerApi
@@ -149,7 +150,7 @@ class OctoPrint(
 
     fun createOctoEverywhereApi() = createRetrofit().create(OctoEverywhereApi::class.java)
 
-    fun createOctoAppCompanionApi() = createRetrofit().create(OctoAppCompanionApi::class.java)
+    fun createOctoAppCompanionApi() = OctoAppCompanionApiWrapper(createRetrofit().create(OctoAppCompanionApi::class.java))
 
     fun getLogger(): Logger = OctoPrintLogger
 

@@ -66,6 +66,7 @@ import de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressWidget
 import de.crysxd.octoapp.printcontrols.ui.widget.tune.TuneWidget
 import de.crysxd.octoapp.signin.di.SignInInjector
 import de.crysxd.octoapp.widgets.updateAllWidgets
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
@@ -89,7 +90,8 @@ class MainActivity : OctoActivity() {
     override val rootLayout by lazy { binding.coordinator }
     override val navController get() = findNavController(R.id.mainNavController)
     private var enforceAutoamticNavigationAllowed = false
-    private var uiStoppedAt = 0L
+    private var uiStoppedAt: Long? = null
+    private var updateCapabilitiesJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -340,7 +342,8 @@ class MainActivity : OctoActivity() {
         super.onStart()
         Timber.i("UI started")
 
-        if ((System.currentTimeMillis() - uiStoppedAt) > 30_000) {
+        val stoppedAt = uiStoppedAt
+        if (stoppedAt != null && (System.currentTimeMillis() - stoppedAt) > 30_000) {
             // OctoPrint might not be available, this is more like a fire and forget
             // Don't bother user with error messages
             updateCapabilities("ui_start", updateM115 = false, escalateError = false)
@@ -353,8 +356,9 @@ class MainActivity : OctoActivity() {
 
     override fun onStop() {
         super.onStop()
-        uiStoppedAt = System.currentTimeMillis()
-        Timber.i("UI stopped at ${Date(uiStoppedAt)}")
+        val now = System.currentTimeMillis()
+        uiStoppedAt = now
+        Timber.i("UI stopped at ${Date(now)}")
     }
 
     override fun onResume() {
@@ -633,7 +637,7 @@ class MainActivity : OctoActivity() {
 
     private fun updateCapabilities(trigger: String, updateM115: Boolean = true, escalateError: Boolean = true) {
         Timber.i("Updating capabities (trigger=$trigger)")
-        lifecycleScope.launchWhenCreated {
+        updateCapabilitiesJob = lifecycleScope.launchWhenCreated {
             try {
                 viewModel.lastSuccessfulCapabilitiesUpdate = System.currentTimeMillis()
                 BaseInjector.get().updateInstanceCapabilitiesUseCase().execute(UpdateInstanceCapabilitiesUseCase.Params(updateM115 = updateM115))
