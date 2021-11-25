@@ -92,7 +92,8 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
             tabsContainer = binding.tabsContainer,
             appBar = binding.appBar,
             toolbar = binding.toolbar,
-            toolbarContainer = binding.toolbarContainer
+            toolbarContainer = binding.toolbarContainer,
+            showOctoInToolbar = false
         )
     }
 
