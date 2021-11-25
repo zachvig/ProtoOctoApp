@@ -17,6 +17,7 @@ class CollapsibleToolbarTabsHelper {
     private lateinit var octoActivity: OctoActivity
     private lateinit var tabsContainer: ViewGroup
     private lateinit var toolbarContainer: ViewGroup
+    private var showOctoInToolbar: Boolean = true
     private var lastVerticalOffset = 0
     private var createdAt = System.currentTimeMillis()
 
@@ -27,16 +28,18 @@ class CollapsibleToolbarTabsHelper {
         tabsContainer: ViewGroup,
         toolbarContainer: ViewGroup,
         tabs: TabLayout,
+        showOctoInToolbar: Boolean = true
     ) {
         this.toolbar = toolbar
         this.tabsContainer = tabsContainer
         this.toolbarContainer = toolbarContainer
         this.octoActivity = octoActivity
+        this.showOctoInToolbar = showOctoInToolbar
 
         appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
             if (lastVerticalOffset == 0 || verticalOffset == 0) {
                 val scrolled = verticalOffset != 0
-                octoActivity.octo.isVisible = !scrolled
+                octoActivity.octo.isVisible = !scrolled && showOctoInToolbar
                 toolbarContainer.animate().alpha(if (scrolled) 0f else 1f).start()
             }
 
@@ -60,7 +63,7 @@ class CollapsibleToolbarTabsHelper {
     }
 
     fun handleResume() {
-        octoActivity.octo.isVisible = lastVerticalOffset == 0
+        octoActivity.octo.isVisible = lastVerticalOffset == 0 && showOctoInToolbar
         octoActivity.octoToolbar.isVisible = false
     }
 
