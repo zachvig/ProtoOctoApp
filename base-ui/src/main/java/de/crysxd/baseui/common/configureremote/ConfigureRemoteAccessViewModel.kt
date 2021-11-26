@@ -29,15 +29,15 @@ class ConfigureRemoteAccessViewModel(
     val viewEvents = mutableViewEvents.map { it }
 
     init {
-        var lastOctoEverywhereConnection: OctoEverywhereConnection? = null
+        var lastRemoteUrl: HttpUrl? = null
         var first = true
         viewData = octoPrintRepository.instanceInformationFlow().map {
             // We did not have a octoeverywhere connection before but now we have one -> Freshly connected. Show success.
-            if (it?.octoEverywhereConnection != lastOctoEverywhereConnection && !first) {
+            if (it?.alternativeWebUrl != lastRemoteUrl && !first) {
                 mutableViewEvents.postValue(ViewEvent.Success())
             }
             first = false
-            lastOctoEverywhereConnection = it?.octoEverywhereConnection
+            lastRemoteUrl = it?.alternativeWebUrl
 
             ViewData(
                 remoteWebUrl = it?.alternativeWebUrl,
@@ -46,9 +46,13 @@ class ConfigureRemoteAccessViewModel(
         }.asLiveData()
     }
 
-    fun getOctoEverywhereAppPortalUrl() = viewModelScope.launch(coroutineExceptionHandler) {
+    fun getOctoEverywhereAppPortalUrl() = getRemoteServiceSetupUrl(GetConnectOctoEverywhereUrlUseCase.RemoteService.OctoEverywhere)
+
+    fun getSpaghettiDetectiveSetupUrl() = getRemoteServiceSetupUrl(GetConnectOctoEverywhereUrlUseCase.RemoteService.SpaghettiDetective)
+
+    private fun getRemoteServiceSetupUrl(service: GetConnectOctoEverywhereUrlUseCase.RemoteService) = viewModelScope.launch(coroutineExceptionHandler) {
         mutableViewState.postValue(ViewState.Loading)
-        val event = when (val result = getConnectOctoEverywhereUrlUseCase.execute(Unit)) {
+        val event = when (val result = getConnectOctoEverywhereUrlUseCase.execute(service)) {
             is GetConnectOctoEverywhereUrlUseCase.Result.Success -> ViewEvent.OpenUrl(result.url)
             is GetConnectOctoEverywhereUrlUseCase.Result.Error -> ViewEvent.ShowError(
                 message = result.errorMessage,

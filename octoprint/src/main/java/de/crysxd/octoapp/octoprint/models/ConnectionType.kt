@@ -6,4 +6,5 @@ sealed class ConnectionType {
     object OctoEverywhere : ConnectionType()
     object Ngrok : ConnectionType()
     object Tailscale : ConnectionType()
+    object SpaghettiDetective : ConnectionType()
 }

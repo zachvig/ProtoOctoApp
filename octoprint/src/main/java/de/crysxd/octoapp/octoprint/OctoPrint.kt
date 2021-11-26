@@ -21,6 +21,8 @@ import de.crysxd.octoapp.octoprint.plugins.materialmanager.MaterialManagerPlugin
 import de.crysxd.octoapp.octoprint.plugins.octoeverywhere.OctoEverywhereApi
 import de.crysxd.octoapp.octoprint.plugins.pluginmanager.PluginManagerApi
 import de.crysxd.octoapp.octoprint.plugins.power.PowerPluginsCollection
+import de.crysxd.octoapp.octoprint.plugins.thespaghettidetective.SpaghettiDetectiveApi
+import de.crysxd.octoapp.octoprint.plugins.thespaghettidetective.SpaghettiDetectiveApiWrapper
 import de.crysxd.octoapp.octoprint.websocket.ContinuousOnlineCheck
 import de.crysxd.octoapp.octoprint.websocket.EventWebSocket
 import okhttp3.Dns
@@ -152,6 +154,8 @@ class OctoPrint(
 
     fun createOctoAppCompanionApi() = OctoAppCompanionApiWrapper(createRetrofit().create(OctoAppCompanionApi::class.java))
 
+    fun createSpaghettiDetectiveApi() = SpaghettiDetectiveApiWrapper(createRetrofit().create(SpaghettiDetectiveApi::class.java))
+
     fun getLogger(): Logger = OctoPrintLogger
 
     private fun createHttpLogger(): Logger {
@@ -213,7 +217,7 @@ class OctoPrint(
         // 8. Logger needs to be lowest level, we need to log any change made in the stack above
         addInterceptor(
             HttpLoggingInterceptor(LoggingInterceptorLogger(logger))
-                .setLevel(if (debug) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.HEADERS)
+                .setLevel(if (debug) HttpLoggingInterceptor.Level.HEADERS else HttpLoggingInterceptor.Level.HEADERS)
         )
     }.build()
 }

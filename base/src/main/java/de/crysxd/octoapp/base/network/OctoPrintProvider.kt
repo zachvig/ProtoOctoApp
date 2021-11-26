@@ -13,8 +13,7 @@ import de.crysxd.octoapp.base.logging.TimberLogger
 import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.SubjectAlternativeNameCompatVerifier
-import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereConnectionNotFoundException
-import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereSubscriptionMissingException
+import de.crysxd.octoapp.octoprint.exceptions.RemoteServiceConnectionBrokenException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import kotlinx.coroutines.delay
@@ -155,9 +154,9 @@ class OctoPrintProvider(
     private fun handleNetworkException(e: Exception) = AppScope.launch {
         when (e) {
             // The OE connection is broken, remove. User will be informed by regular error dialog
-            is OctoEverywhereConnectionNotFoundException, is OctoEverywhereSubscriptionMissingException -> {
-                Timber.w("Caught OctoEverywhere exception, removing connection")
-                BaseInjector.get().handleOctoEverywhereExceptionUseCase().execute(e)
+            is RemoteServiceConnectionBrokenException -> {
+                Timber.w("Caught OctoEverywhere/SpaghettiDetective exception, removing connection")
+                BaseInjector.get().handleRemoteServiceConnectionBrokenException().execute(e)
             }
 
             else -> Unit

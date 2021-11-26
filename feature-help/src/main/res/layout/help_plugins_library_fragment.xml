@@ -62,22 +62,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/tab_layout_scrollable_height"
                     android:layout_marginVertical="@dimen/margin_1"
-                    android:background="#01000000"
-                    android:clipToPadding="false"
-                    android:paddingHorizontal="@dimen/margin_2"
-                    app:tabGravity="start"
-                    app:tabIndicator="@drawable/bg_chip"
-                    app:tabIndicatorColor="@color/accent"
-                    app:tabIndicatorGravity="stretch"
-                    app:tabMode="scrollable"
-                    app:tabPaddingBottom="0dp"
-                    app:tabPaddingEnd="@dimen/margin_2"
-                    app:tabPaddingStart="@dimen/margin_2"
-                    app:tabPaddingTop="0dp"
-                    app:tabRippleColor="@color/accent"
-                    app:tabSelectedTextColor="@color/text_colored_background"
-                    app:tabTextAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
-                    app:tabTextColor="@color/accent" />
+                    style="@style/OctoTheme.Widget.TabLayout.Scrollable" />
 
             </FrameLayout>
 

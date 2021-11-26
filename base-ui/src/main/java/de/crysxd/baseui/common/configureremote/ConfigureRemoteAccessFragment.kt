@@ -1,5 +1,6 @@
 package de.crysxd.baseui.common.configureremote
 
+import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Animatable2
 import android.net.Uri
@@ -8,28 +9,30 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.*
-import androidx.transition.TransitionManager
-import com.google.android.material.tabs.TabLayout
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.google.android.material.tabs.TabLayoutMediator
 import de.crysxd.baseui.BaseFragment
 import de.crysxd.baseui.InsetAwareScreen
 import de.crysxd.baseui.OctoActivity
 import de.crysxd.baseui.R
 import de.crysxd.baseui.common.LinkClickMovementMethod
-import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.databinding.ConfigureRemoteAccessFragmentBinding
 import de.crysxd.baseui.di.injectViewModel
 import de.crysxd.baseui.ext.requireOctoActivity
+import de.crysxd.baseui.utils.CollapsibleToolbarTabsHelper
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ext.toHtml
-import de.crysxd.octoapp.octoprint.extractAndRemoveBasicAuth
 
 class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
 
     override val viewModel by injectViewModel<ConfigureRemoteAccessViewModel>()
     private lateinit var binding: ConfigureRemoteAccessFragmentBinding
+    private val adapter by lazy { PagerAdapter(requireContext(), childFragmentManager, lifecycle) }
+    private val helper = CollapsibleToolbarTabsHelper()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         ConfigureRemoteAccessFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
@@ -37,18 +40,6 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigScreenOpened)
         super.onViewCreated(view, savedInstanceState)
-        binding.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                binding.tabsContent.getChildAt(tab.position).isVisible = true
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab) {
-                TransitionManager.beginDelayedTransition(binding.tabsContent)
-                binding.tabsContent.getChildAt(tab.position).isVisible = false
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab) = Unit
-        })
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             binding.header.postDelayed({
@@ -56,45 +47,10 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
             }, 1000)
         }
 
+        installTabs()
+
         binding.description.text = getString(R.string.configure_remote_acces___description).toHtml()
         binding.description.movementMethod = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(requireOctoActivity()))
-        binding.saveUrl.setOnClickListener {
-            viewModel.setRemoteUrl(
-                url = binding.webUrlInput.editText.text.toString(),
-                username = binding.basicUserInput.editText.text.toString(),
-                password = binding.basicPasswordInput.editText.text.toString(),
-                bypassChecks = false
-            )
-        }
-
-        binding.connectOctoEverywhere.setOnClickListener {
-            viewModel.getOctoEverywhereAppPortalUrl()
-        }
-
-        binding.disconnectOctoEverywhere.setOnClickListener {
-            viewModel.setRemoteUrl("", "", "", false)
-        }
-
-        val inputTint = ContextCompat.getColor(requireContext(), R.color.input_background_alternative)
-        binding.webUrlInput.backgroundTint = inputTint
-        binding.basicPasswordInput.backgroundTint = inputTint
-        binding.basicUserInput.backgroundTint = inputTint
-
-        viewModel.viewState.observe(viewLifecycleOwner) {
-            binding.saveUrl.isEnabled = it !is ConfigureRemoteAccessViewModel.ViewState.Loading
-            binding.saveUrl.setText(if (binding.saveUrl.isEnabled) R.string.configure_remote_acces___manual___button else R.string.loading)
-        }
-
-        viewModel.viewData.observe(viewLifecycleOwner) {
-            val oeConnected = it.remoteWebUrl != null && it.remoteWebUrl == it.octoEverywhereConnection?.fullUrl
-            binding.webUrlInput.editText.setText(it.remoteWebUrl?.extractAndRemoveBasicAuth()?.first.takeIf { !oeConnected }?.toString())
-            binding.basicPasswordInput.editText.setText(it.remoteWebUrl?.password?.takeIf { !oeConnected }?.toString())
-            binding.basicUserInput.editText.setText(it.remoteWebUrl?.username?.takeIf { !oeConnected }?.toString())
-            binding.octoEverywhereConnected.isVisible = oeConnected
-            binding.disconnectOctoEverywhere.isVisible = oeConnected
-            binding.connectOctoEverywhere.isVisible = !oeConnected
-            measureTabContents()
-        }
 
         viewModel.viewEvents.observe(viewLifecycleOwner) {
             if (it.consumed) {
@@ -111,7 +67,6 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
                 )
 
                 is ConfigureRemoteAccessViewModel.ViewEvent.Success -> {
-                    binding.webUrlInput.editText.clearFocus()
                     requireOctoActivity().showSnackbar(
                         OctoActivity.Message.SnackbarMessage(
                             text = { it.getString(R.string.configure_remote_acces___remote_access_configured) },
@@ -126,41 +81,40 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         }
     }
 
-    private fun measureTabContents() {
-        val tabContentHeight = binding.tabsContent.children.map {
-            it.measure(
-                View.MeasureSpec.makeMeasureSpec(binding.tabsContent.width, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-            )
-            it.measuredHeight
-        }.maxOrNull() ?: 0
-
-        binding.tabsContent.updateLayoutParams {
-            height = tabContentHeight
-        }
+    private fun installTabs() {
+        binding.viewPager.adapter = adapter
+        TabLayoutMediator(binding.tabs, binding.viewPager) { tab, position ->
+            tab.text = adapter.getTitle(position)
+        }.attach()
+        helper.install(
+            octoActivity = requireOctoActivity(),
+            tabs = binding.tabs,
+            tabsContainer = binding.tabsContainer,
+            appBar = binding.appBar,
+            toolbar = binding.toolbar,
+            toolbarContainer = binding.toolbarContainer,
+            showOctoInToolbar = false
+        )
     }
 
-    override fun onStart() {
-        super.onStart()
-        requireOctoActivity().octo.isVisible = false
-        requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
-        requireView().doOnLayout {
-            measureTabContents()
-        }
+    override fun onResume() {
+        super.onResume()
+        helper.handleResume()
     }
 
     override fun handleInsets(insets: Rect) {
-        val lastBottom = binding.root.paddingBottom
-        binding.root.updatePadding(
-            left = insets.left,
-            top = insets.top,
-            right = insets.right,
-            bottom = insets.bottom
+        helper.handleInsets(insets)
+    }
+
+    private class PagerAdapter(context: Context, fragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(fragmentManager, lifecycle) {
+        private val tabs = listOf(
+            context.getString(R.string.configure_remote_acces___octoeverywhere___title) to { ConfigureRemoteAccessOctoEverywhereFragment() },
+            "Spaghetti Detective**" to { ConfigureRemoteAccessSpaghettiDetectiveFragment() },
+            context.getString(R.string.configure_remote_acces___manual___title) to { ConfigureRemoteAccessManualFragment() },
         )
 
-        if (lastBottom != 0 && insets.bottom > lastBottom) {
-            // Keyboard opened
-            binding.root.smoothScrollTo(0, Int.MAX_VALUE)
-        }
+        override fun getItemCount() = tabs.size
+        override fun createFragment(position: Int) = tabs[position].second()
+        fun getTitle(position: Int) = tabs[position].first
     }
 }

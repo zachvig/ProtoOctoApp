@@ -7,32 +7,32 @@ import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.data.repository.NotificationIdRepository
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.utils.ExceptionReceivers
-import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereConnectionNotFoundException
-import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereSubscriptionMissingException
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintException
+import de.crysxd.octoapp.octoprint.exceptions.RemoteServiceConnectionBrokenException
 import timber.log.Timber
 import javax.inject.Inject
 
-class HandleOctoEverywhereExceptionUseCase @Inject constructor(
+class HandleRemoteServiceException @Inject constructor(
     private val octoPrintRepository: OctoPrintRepository,
     private val context: Context,
     private val notificationIdRepository: NotificationIdRepository,
 ) : UseCase<Exception, Unit>() {
 
     override suspend fun doExecute(param: Exception, timber: Timber.Tree) {
-        if (param is OctoEverywhereSubscriptionMissingException || param is OctoEverywhereConnectionNotFoundException) {
+        if (param is RemoteServiceConnectionBrokenException && param is OctoPrintException) {
             octoPrintRepository.updateActive {
                 it.copy(alternativeWebUrl = null, octoEverywhereConnection = null)
             }
+
             if (!ExceptionReceivers.dispatchException(param)) {
-                showErrorNotification(param as OctoPrintException)
+                showErrorNotification(param, param.remoteServiceName)
             }
         }
     }
 
-    private fun showErrorNotification(e: OctoPrintException) {
+    private fun showErrorNotification(e: OctoPrintException, serviceName: String) {
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val title = "Issue with OctoEverywhere"
+        val title = "Issue with $serviceName"
         val notification = NotificationCompat.Builder(context, context.getString(R.string.updates_notification_channel))
             .setContentTitle(title)
             .setContentText(e.userFacingMessage)

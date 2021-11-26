@@ -272,7 +272,7 @@ class TestFullNetworkStackUseCase @Inject constructor(
 
     sealed class Target(open val webUrl: String?) {
         // URL is a String here because it might come directly from user input. This way we can also test URL syntax
-        data class Webcam(val webcamSettings: ResolvedWebcamSettings.MjpegSettings) : Target(webcamSettings.urlString)
+        data class Webcam(val webcamSettings: ResolvedWebcamSettings.MjpegSettings) : Target(webcamSettings.url.toString())
         data class OctoPrint(override val webUrl: String, val apiKey: String) : Target(webUrl)
     }
 

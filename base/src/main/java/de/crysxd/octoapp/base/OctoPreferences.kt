@@ -43,7 +43,7 @@ class OctoPreferences(
         private const val KEY_WEBCAM_ASPECT_RATIO_SOURCE = "webcam_aspect_ratio_source"
         private const val KEY_SUPPRESS_M115 = "suppress_m115_request"
         private const val KEY_COMPANION_ANNOUNCEMENT_HIDDEN_AT = "companion_announcemenyt_hidden_at"
-        private const val KEY_OCTOEVERYWHERE_ANNOUNCEMENT_HIDDEN_AT = "octoeverywhere_announcemenyt_hidden_at"
+        private const val KEY_REMOTE_ACCESS_ANNOUNCEMENT_HIDDEN_AT = "octoeverywhere_announcemenyt_hidden_at"
         private const val KEY_TUTORIALS_SEEN_AT = "tutorials_seen_at"
         private const val KEY_ALLOW_TERMINAL_DURING_PRINT = "allow_terminal_during_print"
         private const val KEY_GCODE_PREVIEW = "gcode_preview"
@@ -114,10 +114,10 @@ class OctoPreferences(
             edit { putLong(KEY_COMPANION_ANNOUNCEMENT_HIDDEN_AT, value?.time ?: 0) }
         }
 
-    var octoEverywhereAnnouncementHiddenAt: Date?
-        get() = sharedPreferences.getLong(KEY_OCTOEVERYWHERE_ANNOUNCEMENT_HIDDEN_AT, 0).takeIf { it > 0 }?.let { Date(it) }
+    var remoteAccessAnnouncementHiddenAt: Date?
+        get() = sharedPreferences.getLong(KEY_REMOTE_ACCESS_ANNOUNCEMENT_HIDDEN_AT, 0).takeIf { it > 0 }?.let { Date(it) }
         set(value) {
-            edit { putLong(KEY_OCTOEVERYWHERE_ANNOUNCEMENT_HIDDEN_AT, value?.time ?: 0) }
+            edit { putLong(KEY_REMOTE_ACCESS_ANNOUNCEMENT_HIDDEN_AT, value?.time ?: 0) }
         }
 
     var tutorialsSeenAt: Date?

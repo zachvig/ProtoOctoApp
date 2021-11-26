@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_2"
+            android:layout_marginVertical="@dimen/margin_2"
+            android:gravity="center"
+            android:text="@string/configure_remote_acces___octoeverywhere___description_1"
+            android:textColor="@color/dark_text" />
+
+        <TextView
+            android:id="@+id/octoEverywhereConnected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawablePadding="@dimen/margin_1"
+            android:gravity="center"
+            android:text="@string/configure_remote_acces___octoeverywhere___connected"
+            android:textColor="@color/green"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_baseline_cloud_done_24"
+            app:drawableTint="@color/green"
+            tools:visibility="visible" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/disconnectOctoEverywhere"
+            style="@style/OctoTheme.Widget.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_2"
+            android:text="@string/configure_remote_acces___octoeverywhere___disconnect_button"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/connectOctoEverywhere"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_2"
+            android:backgroundTint="@color/octoeverywhere"
+            android:text="@string/configure_remote_acces___octoeverywhere___connect_button"
+            app:icon="@drawable/ic_octoeverywhere_24px"
+            app:iconTint="@null" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_2"
+            android:layout_marginVertical="@dimen/margin_2"
+            android:gravity="center"
+            android:text="@string/configure_remote_acces___octoeverywhere___description_2"
+            android:textColor="@color/dark_text" />
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.core.widget.NestedScrollView>
