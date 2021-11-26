@@ -37,14 +37,16 @@ class OctoPrintMenu : Menu {
     companion object {
         private const val HIDE_ANNOUNCEMENT_FOR_DAYS = 14L
 
-        fun shouldAnnounceOctoEverywhere(): Boolean {
+        fun shouldAnnounceRemoteAccess(): Boolean {
             val instance = BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()
-            val oeInstalled = instance.hasPlugin(Settings.OctoEverywhere::class)
-            val oeConfigured = instance?.alternativeWebUrl?.isOctoEverywhereUrl() == true || instance?.webUrl?.isOctoEverywhereUrl() == true
-            val hiddenAt = BaseInjector.get().octoPreferences().octoEverywhereAnnouncementHiddenAt ?: Date(0)
+            val remoteAccessInstalled = instance.hasPlugin(Settings.OctoEverywhere::class) ||
+                    instance.hasPlugin(Settings.SpaghettiDetective::class) ||
+                    instance.hasPlugin(Settings.Ngrok::class)
+            val remoteAccessConfigured = instance?.alternativeWebUrl != null || instance?.webUrl?.isOctoEverywhereUrl() == true
+            val hiddenAt = BaseInjector.get().octoPreferences().remoteAccessAnnouncementHiddenAt ?: Date(0)
             val showNext = Date(hiddenAt.time + TimeUnit.DAYS.toMillis(HIDE_ANNOUNCEMENT_FOR_DAYS))
-            val shouldShow = Firebase.remoteConfig.getBoolean("advertise_octoeverywhere")
-            return oeInstalled && Date() > showNext && !oeConfigured && shouldShow
+            val shouldShow = Firebase.remoteConfig.getBoolean("advertise_remote_access")
+            return remoteAccessInstalled && Date() > showNext && !remoteAccessConfigured && shouldShow
         }
 
         fun shouldAnnounceCompanion(): Boolean {
@@ -59,7 +61,7 @@ class OctoPrintMenu : Menu {
         fun getPluginAnnouncementCounter(): Int {
             var counter = 0
             if (shouldAnnounceCompanion()) counter++
-            if (shouldAnnounceOctoEverywhere()) counter++
+            if (shouldAnnounceRemoteAccess()) counter++
             return counter
         }
 
@@ -68,7 +70,7 @@ class OctoPrintMenu : Menu {
         }
 
         fun hideOctoEverywhereAnnouncement() {
-            BaseInjector.get().octoPreferences().octoEverywhereAnnouncementHiddenAt = Date()
+            BaseInjector.get().octoPreferences().remoteAccessAnnouncementHiddenAt = Date()
         }
     }
 
@@ -125,7 +127,7 @@ class ConfigureRemoteAccessMenuItem(val suppressBadge: Boolean = true) : MenuIte
     override val style = MenuItemStyle.OctoPrint
     override val icon = R.drawable.ic_round_cloud_24
 
-    override suspend fun getBadgeCount() = if (OctoPrintMenu.shouldAnnounceOctoEverywhere() && !suppressBadge) 1 else 0
+    override suspend fun getBadgeCount() = if (OctoPrintMenu.shouldAnnounceRemoteAccess() && !suppressBadge) 1 else 0
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___configure_remote_access)
     override suspend fun onClicked(host: MenuHost?) {
         OctoPrintMenu.hideOctoEverywhereAnnouncement()

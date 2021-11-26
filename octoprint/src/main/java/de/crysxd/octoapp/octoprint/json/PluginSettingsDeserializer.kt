@@ -37,6 +37,8 @@ class PluginSettingsDeserializer : JsonDeserializer<Settings.PluginSettingsGroup
         "ws281x_led_status" -> context.deserialize<Settings.WS281xSettings>(element, Settings.WS281xSettings::class.java)
         "wled" -> context.deserialize<Settings.WledSettings>(element, Settings.WledSettings::class.java)
         "mystromswitch" -> context.deserialize<Settings.MyStromSettings>(element, Settings.MyStromSettings::class.java)
+        "thespaghettidetective" -> context.deserialize<Settings.SpaghettiDetective>(element, Settings.SpaghettiDetective::class.java)
+        "ngrok" -> context.deserialize<Settings.Ngrok>(element, Settings.Ngrok::class.java)
         "discovery" -> context.deserialize<Settings.Discovery>(element, Settings.Discovery::class.java)
         "uploadanything" -> try {
             Settings.UploadAnything(element.asJsonObject.get("allowed").asString.replace(" ", "").split(","))
