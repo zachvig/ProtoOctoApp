@@ -47,6 +47,10 @@ class GenerateExceptionInterceptor(
                     605 -> throw OctoEverywhereSubscriptionMissingException(response.request.url)
                     607 -> throw generate413Exception(response)
 
+                    // Spaghetti Detective
+                    481 -> throw SpaghettiDetectiveTunnelUsageLimitReachedException(response.request.url)
+                    482 -> throw SpaghettiDetectiveTunnelNotFoundException(response.request.url)
+
                     else -> throw generateGenericException(response)
                 }
             } catch (e: ConnectException) {

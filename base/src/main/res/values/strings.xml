@@ -329,6 +329,7 @@ As soon as your OctoPrint can’t be reached directly, OctoApp will switch to th
 
     <!-- Auto filled -->
     <string name="main___banner_connected_via_octoeverywhere">"Connected via OctoEverywhere"</string>
+    <string name="main___banner_connected_via_spaghetti_detective">"Connected via Spaghetti Detective"</string>
 
     <!-- Auto filled -->
     <string name="main___banner_connection_lost_reconnecting">"Connection lost, reconnecting…"</string>

@@ -96,6 +96,10 @@ data class Settings(
 
     class MyStromSettings : PluginSettings
 
+    class Ngrok : PluginSettings
+
+    class SpaghettiDetective : PluginSettings
+
     data class OctoAppCompanionSettings(
         @SerializedName("encryptionKey") val encryptionKey: String?
     ) : PluginSettings

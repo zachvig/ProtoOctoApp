@@ -47,6 +47,7 @@ private val HttpUrl.redactedHost
         // OctoEverywhere and ngrok
         host.endsWith(".octoeverywhere.com") -> String.format("redacted-%x.octoeverywhere.com", host.hashCode())
         host.endsWith(".ngrok.com") -> String.format("redacted-%x.ngrok.com", host.hashCode())
+        host.endsWith(".tunnels.app.thespaghettidetective.com") -> String.format("redacted-%x.tunnels.app.thespaghettidetective.com", host.hashCode())
 
         // All other cases. Redact.
         else -> String.format("redacted-host-%x", host.hashCode())
@@ -79,8 +80,11 @@ private fun String.replaceIfNotEmpty(needle: String, replacement: String) = if (
 
 fun HttpUrl.isOctoEverywhereUrl() = host.endsWith(".octoeverywhere.com")
 
+fun HttpUrl.isSpaghettiDetectiveUrl() = host.endsWith("thespaghettidetective.com")
+
 fun HttpUrl.getConnectionType(default: ConnectionType) = when {
     isOctoEverywhereUrl() -> ConnectionType.OctoEverywhere
+    isSpaghettiDetectiveUrl() -> ConnectionType.SpaghettiDetective
     isNgrokUrl() -> ConnectionType.Ngrok
     isTailscale() -> ConnectionType.Tailscale
     else -> default

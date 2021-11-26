@@ -13,6 +13,7 @@ import de.crysxd.octoapp.base.data.models.ResolvedWebcamSettings
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.network.MjpegConnection2
 import de.crysxd.octoapp.base.network.OctoPrintProvider
+import de.crysxd.octoapp.base.network.SpaghettiDetectiveWebcamConnection
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.base.usecase.HandleAutomaticLightEventUseCase
 import de.crysxd.octoapp.base.usecase.ShareImageUseCase
@@ -82,7 +83,7 @@ class WebcamViewModel(
                             emit(UiState.Loading(false))
                             val (resolvedSettings, webcamCount) = ws
                             val canSwitchWebcam = webcamCount > 1
-                            Timber.tag(tag).i("Refresh with streamUrl: ${resolvedSettings?.urlString}")
+                            Timber.tag(tag).i("Refresh with streamUrl: ${resolvedSettings?.description}")
                             Timber.tag(tag).i("Webcam count: $webcamCount")
                             emit(UiState.Loading(canSwitchWebcam))
 
@@ -94,14 +95,14 @@ class WebcamViewModel(
                             // Open stream
                             when (resolvedSettings) {
                                 is ResolvedWebcamSettings.HlsSettings -> emitRichFlow(
-                                    url = resolvedSettings.urlString,
+                                    url = resolvedSettings.url.toString(),
                                     basicAuth = resolvedSettings.basicAuth,
                                     webcamSettings = resolvedSettings.webcamSettings,
                                     canSwitchWebcam = canSwitchWebcam
                                 )
 
                                 is ResolvedWebcamSettings.RtspSettings -> emitRichFlow(
-                                    url = resolvedSettings.urlString,
+                                    url = resolvedSettings.url,
                                     basicAuth = resolvedSettings.basicAuth,
                                     webcamSettings = resolvedSettings.webcamSettings,
                                     canSwitchWebcam = canSwitchWebcam
@@ -111,7 +112,12 @@ class WebcamViewModel(
                                     mjpegSettings = resolvedSettings,
                                     canSwitchWebcam = canSwitchWebcam
                                 )
-                            }
+
+                                is ResolvedWebcamSettings.SpaghettiCamSettings -> emitSpaghettiCam(
+                                    spaghettiSettings = resolvedSettings,
+                                    canSwitchWebcam = canSwitchWebcam
+                                )
+                            }.hashCode()
                         } catch (e: CancellationException) {
                             Timber.tag(tag).w("Webcam stream cancelled")
                         } catch (e: Exception) {
@@ -167,7 +173,46 @@ class WebcamViewModel(
             emit(
                 UiState.Error(
                     isManualReconnect = true,
-                    streamUrl = mjpegSettings.urlString,
+                    streamUrl = mjpegSettings.description,
+                    canSwitchWebcam = canSwitchWebcam,
+                )
+            )
+        }.onStart {
+            handleAutomaticLightEventUseCase.execute(HandleAutomaticLightEventUseCase.Event.WebcamVisible("webcam-vm"))
+        }.onCompletion {
+            // Execute blocking as a normal execute switches threads causing the task never to be done as the current scope
+            // is about to be terminated
+            handleAutomaticLightEventUseCase.executeBlocking(HandleAutomaticLightEventUseCase.Event.WebcamGone("webcam-vm"))
+        }.collect {
+            emit(it)
+        }
+    }
+
+    private suspend fun FlowCollector<UiState>.emitSpaghettiCam(spaghettiSettings: ResolvedWebcamSettings.SpaghettiCamSettings, canSwitchWebcam: Boolean) {
+        delay(100)
+        SpaghettiDetectiveWebcamConnection(
+            webcamIndex = spaghettiSettings.webcamIndex,
+            octoPrint = octoPrintProvider.octoPrint(),
+            name = tag
+        ).load().map {
+            when (it) {
+                is SpaghettiDetectiveWebcamConnection.SpaghettiCamSnapshot.Loading -> UiState.Loading(canSwitchWebcam)
+                is SpaghettiDetectiveWebcamConnection.SpaghettiCamSnapshot.Frame -> UiState.FrameReady(
+                    frame = it.frame,
+                    canSwitchWebcam = canSwitchWebcam,
+                    flipV = spaghettiSettings.webcamSettings.flipV,
+                    flipH = spaghettiSettings.webcamSettings.flipH,
+                    rotate90 = spaghettiSettings.webcamSettings.rotate90,
+                    enforcedAspectRatio = spaghettiSettings.webcamSettings.streamRatio.takeIf { octoPreferences.isAspectRatioFromOctoPrint },
+                )
+            }
+        }.catch {
+            Timber.tag(tag).i("ERROR")
+            Timber.e(it)
+            emit(
+                UiState.Error(
+                    isManualReconnect = true,
+                    streamUrl = spaghettiSettings.description,
                     canSwitchWebcam = canSwitchWebcam,
                 )
             )

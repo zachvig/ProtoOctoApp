@@ -51,7 +51,8 @@ import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.base.usecase.GetWebcamSnapshotUseCase
 import de.crysxd.octoapp.base.usecase.HandleOctoEverywhereAppPortalSuccessUseCase
-import de.crysxd.octoapp.base.usecase.HandleOctoEverywhereExceptionUseCase
+import de.crysxd.octoapp.base.usecase.HandleRemoteServiceException
+import de.crysxd.octoapp.base.usecase.HandleSpaghettiDetectiveAppPortalSuccessUseCase
 import de.crysxd.octoapp.base.usecase.HomePrintHeadUseCase
 import de.crysxd.octoapp.base.usecase.JogPrintHeadUseCase
 import de.crysxd.octoapp.base.usecase.LoadFileUseCase
@@ -157,7 +158,8 @@ interface BaseComponent {
     fun cyclePsuUseCase(): CyclePsuUseCase
     fun togglePsuUseCase(): TogglePsuUseCase
     fun handleOctoEverywhereAppPortalSuccessUseCase(): HandleOctoEverywhereAppPortalSuccessUseCase
-    fun handleOctoEverywhereExceptionUseCase(): HandleOctoEverywhereExceptionUseCase
+    fun handleSpaghettiDetectiveAppPortalSuccessUseCase(): HandleSpaghettiDetectiveAppPortalSuccessUseCase
+    fun handleRemoteServiceConnectionBrokenException(): HandleRemoteServiceException
     fun discoverOctoPrintUseCase(): DiscoverOctoPrintUseCase
     fun requestApiAccessUseCase(): RequestApiAccessUseCase
     fun testFullNetworkStackUseCase(): TestFullNetworkStackUseCase

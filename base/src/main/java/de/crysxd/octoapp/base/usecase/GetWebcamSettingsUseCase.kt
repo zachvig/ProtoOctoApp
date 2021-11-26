@@ -6,6 +6,7 @@ import de.crysxd.octoapp.base.data.models.ResolvedWebcamSettings
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.octoprint.extractAndRemoveBasicAuth
 import de.crysxd.octoapp.octoprint.isHlsStreamUrl
+import de.crysxd.octoapp.octoprint.isSpaghettiDetectiveUrl
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import de.crysxd.octoapp.octoprint.resolvePath
@@ -37,7 +38,8 @@ class GetWebcamSettingsUseCase @Inject constructor(
 
         // Compile webcam settings
         return activeWebUrlFlow.combine(settingsFlow) { activeWebUrl, settings ->
-            Timber.d("Compiling webcam settings")
+            Timber.d("Compiling webcam settings for $activeWebUrl")
+
             // Add all webcams from multicam plugin
             val webcamSettings = mutableListOf<WebcamSettings>()
             (settings.plugins.values.mapNotNull { it as? Settings.MultiCamSettings }.firstOrNull())?.profiles?.let { webcamSettings.addAll(it) }
@@ -47,55 +49,72 @@ class GetWebcamSettingsUseCase @Inject constructor(
                 webcamSettings.add(settings.webcam)
             }
 
-            val newSettings = webcamSettings.mapNotNull { ws ->
-                fun HttpUrl.toWebcamSettings() = extractAndRemoveBasicAuth().let {
-                    if (it.first.isHlsStreamUrl()) {
-                        ResolvedWebcamSettings.HlsSettings(url = it.first, webcamSettings = ws, basicAuth = it.second)
-                    } else {
-                        ResolvedWebcamSettings.MjpegSettings(url = this, webcamSettings = ws)
-                    }
-                }
-
-                try {
-                    val streamUrl = ws.streamUrl ?: return@mapNotNull null
-                    when {
-                        // Stream URL
-                        ws.streamUrl?.toHttpUrlOrNull() != null -> ws.streamUrl!!.toHttpUrl().toWebcamSettings()
-
-                        // RTSP URL
-                        ws.streamUrl?.startsWith("rtsp://") == true -> {
-                            val originalPrefix = "rtsp://"
-                            val fakePrefix = "http://"
-                            val fakeHttpUrl = (fakePrefix + ws.streamUrl!!.removePrefix(originalPrefix)).toHttpUrl()
-                            val (url, basicAuth) = fakeHttpUrl.extractAndRemoveBasicAuth()
-                            ResolvedWebcamSettings.RtspSettings(
-                                url = originalPrefix + url.toString().removePrefix(fakePrefix),
-                                webcamSettings = ws,
-                                basicAuth = basicAuth
-                            )
-                        }
-
-                        // No HTTP/S, no RTSP. Let's assume it's a HTTP path and resolve it
-                        else -> activeWebUrl.resolvePath(streamUrl).toWebcamSettings()
-                    }
-                } catch (e: Exception) {
-                    Timber.e(e)
-                    null
-                }
+            // If active URL is Spaghetti Tunnel, we need to use the dedicated Spaghetti stack
+            val newSettings = when {
+                activeWebUrl.isSpaghettiDetectiveUrl() -> buildSpaghettiSettings(webcamSettings)
+                else -> buildSettings(webcamSettings, activeWebUrl)
             }
-
-            OctoAnalytics.setUserProperty(
-                OctoAnalytics.UserProperty.WebCamAvailable,
-                when {
-                    newSettings.any { it is ResolvedWebcamSettings.RtspSettings } -> "rtsp"
-                    newSettings.any { it is ResolvedWebcamSettings.HlsSettings } -> "hls"
-                    newSettings.any { it is ResolvedWebcamSettings.MjpegSettings } -> "mjpeg"
-                    else -> "false"
-                }
-            )
 
             Timber.d("Settings: $newSettings")
             newSettings
         }
+    }
+
+    private fun buildSpaghettiSettings(webcamSettings: List<WebcamSettings>) = webcamSettings.mapIndexed { index, ws ->
+        ResolvedWebcamSettings.SpaghettiCamSettings(
+            webcamSettings = ws,
+            webcamIndex = index,
+        )
+    }
+
+    private fun buildSettings(webcamSettings: List<WebcamSettings>, activeWebUrl: HttpUrl): List<ResolvedWebcamSettings> {
+        val newSettings = webcamSettings.mapNotNull { ws ->
+            fun HttpUrl.toWebcamSettings() = extractAndRemoveBasicAuth().let {
+                if (it.first.isHlsStreamUrl()) {
+                    ResolvedWebcamSettings.HlsSettings(url = it.first, webcamSettings = ws, basicAuth = it.second)
+                } else {
+                    ResolvedWebcamSettings.MjpegSettings(url = this, webcamSettings = ws)
+                }
+            }
+
+            try {
+                val streamUrl = ws.streamUrl ?: return@mapNotNull null
+                when {
+                    // Stream URL
+                    ws.streamUrl?.toHttpUrlOrNull() != null -> ws.streamUrl!!.toHttpUrl().toWebcamSettings()
+
+                    // RTSP URL
+                    ws.streamUrl?.startsWith("rtsp://") == true -> {
+                        val originalPrefix = "rtsp://"
+                        val fakePrefix = "http://"
+                        val fakeHttpUrl = (fakePrefix + ws.streamUrl!!.removePrefix(originalPrefix)).toHttpUrl()
+                        val (url, basicAuth) = fakeHttpUrl.extractAndRemoveBasicAuth()
+                        ResolvedWebcamSettings.RtspSettings(
+                            url = originalPrefix + url.toString().removePrefix(fakePrefix),
+                            webcamSettings = ws,
+                            basicAuth = basicAuth
+                        )
+                    }
+
+                    // No HTTP/S, no RTSP. Let's assume it's a HTTP path and resolve it
+                    else -> activeWebUrl.resolvePath(streamUrl).toWebcamSettings()
+                }
+            } catch (e: Exception) {
+                Timber.e(e)
+                null
+            }
+        }
+
+        OctoAnalytics.setUserProperty(
+            OctoAnalytics.UserProperty.WebCamAvailable,
+            when {
+                newSettings.any { it is ResolvedWebcamSettings.RtspSettings } -> "rtsp"
+                newSettings.any { it is ResolvedWebcamSettings.HlsSettings } -> "hls"
+                newSettings.any { it is ResolvedWebcamSettings.MjpegSettings } -> "mjpeg"
+                else -> "false"
+            }
+        )
+
+        return newSettings
     }
 }
