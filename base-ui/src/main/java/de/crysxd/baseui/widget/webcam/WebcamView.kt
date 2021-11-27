@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
@@ -90,7 +91,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         set(value) {
             binding.imageButtonFullscreen.setImageResource(value)
         }
-    var usedLiveIndicator: View? = null
+    var usedLiveIndicator: TextView? = null
         set(value) {
             field = value
             if (value != binding.liveIndicator) {
@@ -196,6 +197,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         binding.mjpegSurface.isVisible = false
         binding.resolutionIndicator.isVisible = false
         usedLiveIndicator?.isVisible = false
+        usedLiveIndicator?.text = context.getString(R.string.app_widget___live)
         richPlayer.setVideoTextureView(binding.richSurface)
         binding.richSurface.alpha = 0f
         val mediaItem = MediaItem.fromUri(state.uri)
@@ -300,10 +302,23 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         liveIndicatorJob?.cancel()
         liveIndicatorJob = coroutineScope.launchWhenCreated {
             val start = System.currentTimeMillis()
-            delay(LIVE_DELAY_THRESHOLD_MS)
-            usedLiveIndicator?.isVisible = false
 
-            delay(STALLED_THRESHOLD_MS - LIVE_DELAY_THRESHOLD_MS)
+            // Wait until stream is stalled if this job is not cancelled (aka new frame arrived)
+            if (newState.nextFrameDelayMs == null) {
+                usedLiveIndicator?.text = context.getString(R.string.app_widget___live)
+                delay(LIVE_DELAY_THRESHOLD_MS)
+                usedLiveIndicator?.isVisible = false
+                delay(STALLED_THRESHOLD_MS - LIVE_DELAY_THRESHOLD_MS)
+            } else {
+                val end = (start + newState.nextFrameDelayMs * 1.2f).toLong()
+                while (end > System.currentTimeMillis()) {
+                    val nextFrameIn = (newState.nextFrameDelayMs - (System.currentTimeMillis() - start)).coerceIn(0, 9000) / 1000
+                    usedLiveIndicator?.text = context.getString(R.string.app_widget___live_x_seconds, nextFrameIn)
+                    delay(1_000)
+                }
+            }
+
+            // Stream is now stalled!
             binding.streamStalledIndicator.isVisible = true
             do {
                 val seconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start)
@@ -355,6 +370,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             val flipH: Boolean,
             val flipV: Boolean,
             val rotate90: Boolean,
+            val nextFrameDelayMs: Long?,
         ) : WebcamState()
     }
 }

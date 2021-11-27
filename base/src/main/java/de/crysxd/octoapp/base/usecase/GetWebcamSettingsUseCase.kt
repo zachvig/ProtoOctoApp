@@ -12,6 +12,7 @@ import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import de.crysxd.octoapp.octoprint.resolvePath
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -37,7 +38,7 @@ class GetWebcamSettingsUseCase @Inject constructor(
         }.distinctUntilChangedBy { it.webcam.hashCode() + it.plugins.values.firstOrNull { it is Settings.MultiCamSettings }.hashCode() }
 
         // Compile webcam settings
-        return activeWebUrlFlow.combine(settingsFlow) { activeWebUrl, settings ->
+        return activeWebUrlFlow.distinctUntilChanged().combine(settingsFlow) { activeWebUrl, settings ->
             Timber.d("Compiling webcam settings for $activeWebUrl")
 
             // Add all webcams from multicam plugin

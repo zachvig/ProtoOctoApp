@@ -36,6 +36,7 @@ The widget will always control the OctoPrint instance that is currently active i
     <string name="app_widget___link_widget__option_x">"Always „%s“"</string>
     <string name="app_widget___link_widget_title" translatable="false">"Which OctoPrint should this widget use?"</string>
     <string name="app_widget___live">"Live"</string>
+    <string name="app_widget___live_x_seconds">"Live (%ds)"</string>
     <string name="app_widget___live_for_x">"Live for %ds"</string>
     <string name="app_widget___no_data">"No data"</string>
     <string name="app_widget___no_image">"No image"</string>

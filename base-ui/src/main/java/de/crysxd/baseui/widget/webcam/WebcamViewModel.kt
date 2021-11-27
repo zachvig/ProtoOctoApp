@@ -168,8 +168,7 @@ class WebcamViewModel(
                 )
             }
         }.catch {
-            Timber.tag(tag).i("ERROR")
-            Timber.e(it)
+            Timber.tag(tag).e(it)
             emit(
                 UiState.Error(
                     isManualReconnect = true,
@@ -203,12 +202,12 @@ class WebcamViewModel(
                     flipV = spaghettiSettings.webcamSettings.flipV,
                     flipH = spaghettiSettings.webcamSettings.flipH,
                     rotate90 = spaghettiSettings.webcamSettings.rotate90,
+                    nextFrameDelayMs = it.nextFrameDelayMs,
                     enforcedAspectRatio = spaghettiSettings.webcamSettings.streamRatio.takeIf { octoPreferences.isAspectRatioFromOctoPrint },
                 )
             }
         }.catch {
-            Timber.tag(tag).i("ERROR")
-            Timber.e(it)
+            Timber.tag(tag).e(it)
             emit(
                 UiState.Error(
                     isManualReconnect = true,
@@ -310,6 +309,7 @@ class WebcamViewModel(
             val flipH: Boolean,
             val flipV: Boolean,
             val rotate90: Boolean,
+            val nextFrameDelayMs: Long? = null,
             val enforcedAspectRatio: String?,
         ) : UiState(canSwitchWebcam)
 

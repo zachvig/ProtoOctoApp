@@ -173,7 +173,7 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         fun getImportance(info: OctoPrintInstanceInformationV3) = listOf(
             if (isInstalled(info)) 2_000 else 0,
             if (isConnected(info)) 10_000 else 0,
-        ).sum()
+        ).sum() + importanceNonce
     }
 
     object OctoEverywhereTab : Tab(R.string.configure_remote_acces___octoeverywhere___title) {
