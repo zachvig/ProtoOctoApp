@@ -20,6 +20,8 @@ import de.crysxd.octoapp.base.usecase.ShareImageUseCase
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -46,6 +48,8 @@ class WebcamViewModel(
     val uiState = uiStateMediator.map { it }
     private val settingsLiveData = octoPreferences.updatedFlow.asLiveData()
     private var webcamCount = 1
+    private var connectJob: Job? = null
+    private var connectMutex = Mutex()
 
     init {
         uiStateMediator.addSource(settingsLiveData) { connect() }
@@ -71,10 +75,11 @@ class WebcamViewModel(
     }
 
     fun connect() {
-        viewModelScope.launch(coroutineExceptionHandler) {
-            Timber.tag(tag).i("Connecting")
-            previousSource?.let(uiStateMediator::removeSource)
+        // Already connecting? Drop!
+        if (connectJob?.isActive == true) return
 
+        connectJob = viewModelScope.launch(coroutineExceptionHandler) {
+            Timber.tag(tag).i("Connecting")
             val liveData = BillingManager.billingFlow()
                 .distinctUntilChangedBy { it.isPremiumActive }
                 .combine(getWebcamSettings()) { _, ws ->
@@ -127,9 +132,11 @@ class WebcamViewModel(
                     }.flowOn(Dispatchers.IO)
                 }.flatMapLatest { it }.asLiveData()
 
-            previousSource = liveData
-            uiStateMediator.addSource(liveData)
-            { uiStateMediator.postValue(it) }
+            connectMutex.withLock {
+                previousSource?.let(uiStateMediator::removeSource)
+                previousSource = liveData
+                uiStateMediator.addSource(liveData) { uiStateMediator.postValue(it) }
+            }
         }
     }
 

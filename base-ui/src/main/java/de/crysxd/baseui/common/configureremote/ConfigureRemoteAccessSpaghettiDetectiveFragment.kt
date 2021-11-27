@@ -41,7 +41,6 @@ class ConfigureRemoteAccessSpaghettiDetectiveFragment : Fragment() {
         binding.reloadDataUsage.setOnClickListener { tsdViewModel.fetchDataUsage() }
 
         viewModel.viewData.observe(viewLifecycleOwner) {
-            TransitionManager.beginDelayedTransition(binding.root)
             val tsdConnected = it.remoteWebUrl != null && it.remoteWebUrl.isSpaghettiDetectiveUrl()
             binding.connected.isVisible = tsdConnected
             binding.disconnected.isVisible = !binding.connected.isVisible

@@ -312,12 +312,11 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             } else {
                 val end = (start + newState.nextFrameDelayMs * 1.2f).toLong()
                 while (end > System.currentTimeMillis()) {
-                    val nextFrameIn = (newState.nextFrameDelayMs - (System.currentTimeMillis() - start)).coerceIn(0, 9000) / 1000
+                    val nextFrameIn = TimeUnit.MILLISECONDS.toSeconds((newState.nextFrameDelayMs - (System.currentTimeMillis() - start)).coerceIn(0, 9000))
                     usedLiveIndicator?.text = context.getString(R.string.app_widget___live_x_seconds, nextFrameIn)
                     delay(1_000)
                 }
             }
-
             // Stream is now stalled!
             binding.streamStalledIndicator.isVisible = true
             do {
