@@ -1006,7 +1006,7 @@ felice stampa!"</string>
     <string name="file_manager___upload___uploading_x">"Caricamento di %s"</string>
     <string name="file_manager___upload___starting_upload">"Iniziare il caricamento..."</string>
     <string name="file_manager___upload___x_files_pending">"%d file in sospeso"</string>
-    <string name="file_manager___upload___error_invalid_file_type"><![CDATA[Questo tipo di file non è supportato da OctoPrint.**<br><br><small>I tipi di file supportati: %s</small>]]></string>
+    <string name="file_manager___upload___error_invalid_file_type"><![CDATA[Questo tipo di file non è supportato da OctoPrint.<br><br><small>I tipi di file supportati: %s</small>]]></string>
     <string name="progress_widget___eta">"ETA"</string>
     <string name="progress_widget___z_height">"Altezza Z"</string>
     <string name="progress_widget___gcode_unavailable">"Non disponibile"</string>
