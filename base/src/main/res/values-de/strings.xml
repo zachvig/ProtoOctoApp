@@ -1010,7 +1010,7 @@ gutes Drucken!"</string>
     <string name="file_manager___upload___uploading_x">"%s wird hochgeladen"</string>
     <string name="file_manager___upload___starting_upload">"Uploads wird gestartet..."</string>
     <string name="file_manager___upload___x_files_pending">"%d ausstehende Dateien"</string>
-    <string name="file_manager___upload___error_invalid_file_type"><![CDATA[Dieser Dateityp wird von OctoPrint nicht unterstützt.**<br><br><small>Unterstützte Dateitypen: %s</small>]]></string>
+    <string name="file_manager___upload___error_invalid_file_type"><![CDATA[Dieser Dateityp wird von OctoPrint nicht unterstützt.<br><br><small>Unterstützte Dateitypen: %s</small>]]></string>
     <string name="progress_widget___eta">"ETA"</string>
     <string name="progress_widget___z_height">"Z Höhe"</string>
     <string name="progress_widget___gcode_unavailable">"Nicht verfügbar"</string>
