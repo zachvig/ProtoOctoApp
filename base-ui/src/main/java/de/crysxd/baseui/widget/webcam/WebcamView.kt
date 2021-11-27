@@ -34,6 +34,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import timber.log.Timber
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
 
@@ -311,12 +312,16 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 delay(STALLED_THRESHOLD_MS - LIVE_DELAY_THRESHOLD_MS)
             } else {
                 val end = (start + newState.nextFrameDelayMs * 1.2f).toLong()
+                Timber.i("start=${Date(start)} end=${Date(end)}")
+
                 while (end > System.currentTimeMillis()) {
                     val nextFrameIn = TimeUnit.MILLISECONDS.toSeconds((newState.nextFrameDelayMs - (System.currentTimeMillis() - start)).coerceIn(0, 9000))
                     usedLiveIndicator?.text = context.getString(R.string.app_widget___live_x_seconds, nextFrameIn)
                     delay(1_000)
                 }
             }
+
+            Timber.i("STALLED start=${Date(start)} delay=${newState.nextFrameDelayMs}")
             // Stream is now stalled!
             binding.streamStalledIndicator.isVisible = true
             do {
