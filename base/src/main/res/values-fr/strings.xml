@@ -996,7 +996,9 @@ bonne impression !"</string>
     <string name="file_manager___file_menu___rename_input_title">"Renommer %s"</string>
     <string name="file_manager___file_menu___rename_input_hint">"Nom du fichier"</string>
     <string name="file_manager___file_menu___rename_action">"Renommer"</string>
-    <string name="file_manager___sorting_menu___hide_printed">"Impression réussie du cache"</string>
+
+    <!-- Fuzzy -->
+    <string name="file_manager___sorting_menu___hide_printed">"Impression du cache réussie"</string>
     <string name="file_manager___sorting_menu___direction">"Direction"</string>
     <string name="file_manager___sorting_menu___direction_ascending">"ascendant"</string>
     <string name="file_manager___sorting_menu___direction_decending">"descendant"</string>
@@ -1008,7 +1010,7 @@ bonne impression !"</string>
     <string name="file_manager___upload___uploading_x">"Téléchargement de %s"</string>
     <string name="file_manager___upload___starting_upload">"Début du téléchargement..."</string>
     <string name="file_manager___upload___x_files_pending">"%d fichiers en attente"</string>
-    <string name="file_manager___upload___error_invalid_file_type">"&lt; ![CDATA[Ce type de fichier n'est pas pris en charge par OctoPrint.**&lt;br&gt;&lt;br&gt;&lt;small&gt;Types de fichiers pris en charge : %s&lt;/small&gt;]]&gt;."</string>
+    <string name="file_manager___upload___error_invalid_file_type"><![CDATA[Ce type de fichier n\'est pas pris en charge par OctoPrint.<br><br><small>Types de fichiers pris en charge : %s</small>]]></string>
     <string name="progress_widget___eta">"ETA"</string>
     <string name="progress_widget___z_height">"Hauteur Z"</string>
     <string name="progress_widget___gcode_unavailable">"Indisponible"</string>
@@ -1017,10 +1019,10 @@ bonne impression !"</string>
     <string name="progress_widget___settings___font_size">"Taille de la police"</string>
     <string name="progress_widget___settings___font_size_normal">"Normal"</string>
     <string name="progress_widget___settings___font_size_small">"Petit"</string>
-    <string name="progress_widget___settings___show_print_name">"Afficher le nom d'impression"</string>
+    <string name="progress_widget___settings___show_print_name">"Afficher le nom de l'impression"</string>
     <string name="progress_widget___settings___show_print_name_none">"Off"</string>
     <string name="progress_widget___settings___show_print_name_compact">"Compact"</string>
-    <string name="progress_widget___settings___show_print_name_full">"Full"</string>
+    <string name="progress_widget___settings___show_print_name_full">"Entier"</string>
     <string name="progress_widget___settings___show_eta">"Montrer ETA"</string>
     <string name="progress_widget___settings___show_eta_none">"Off"</string>
     <string name="progress_widget___settings___show_eta_compact">"Compact"</string>
