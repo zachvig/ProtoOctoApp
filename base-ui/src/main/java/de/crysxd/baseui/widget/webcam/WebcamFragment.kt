@@ -99,7 +99,8 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
                     frame = it.frame,
                     flipH = it.flipH,
                     flipV = it.flipV,
-                    rotate90 = it.rotate90
+                    rotate90 = it.rotate90,
+                    nextFrameDelayMs = it.nextFrameDelayMs,
                 )
                 is WebcamViewModel.UiState.RichStreamReady -> WebcamView.WebcamState.RichStreamReady(
                     uri = it.uri,

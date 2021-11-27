@@ -3,18 +3,8 @@
     <string name="announcement___new_version_detail">"This release adds a new tutorial section, makes OctoApp ready for Android 12 including support for the new Material You design and improves the notifications"</string>
 
     <!-- Auto filled -->
-    <string name="announcement___new_version_learn_more">"Watch the video"</string>
+    <string name="announcement___new_version_learn_more">"What's new?"</string>
     <string name="announcement___new_version_title">"Welcome to OctoApp 1.11! 🍾"</string>
-
-    <!-- Auto filled -->
-    <string name="announcement___octoeverywhere_detail">"You can now connect your OctoEverywhere subscription to use OctoApp when you are not at home."</string>
-
-    <!-- Auto filled -->
-    <string name="announcement___octoeverywhere_learn_more">"Connect now"</string>
-    <string name="main_menu___explore_support_plugins">Explore supported plugins</string>
-    <string name="main_menu___explore_support_plugins_short">Explore plugins</string>
-    <!-- Auto filled -->
-    <string name="announcement___octoeverywhere_title">"Octo(App)Everywhere!"</string>
     <string name="app_logs">"App logs"</string>
     <string name="app_name">"OctoApp"</string>
 
@@ -23,7 +13,7 @@
 
     <!-- Auto filled -->
     <string name="app_widget___edit_items_in_app">"Edit items in the app by long-pressing them"</string>
-    <string name="app_widget___free_widgets_exceeded_action">"@android:string/ok"</string>
+    <string name="app_widget___free_widgets_exceeded_action">"Ok"</string>
     <string name="app_widget___free_widgets_exceeded_message">"You can only have %d widgets without supporting OctoApp. You can support OctoApp from the app's main menu."</string>
     <string name="app_widget___idle">"%s ready"</string>
 
@@ -90,9 +80,7 @@ The widget will always control the OctoPrint instance that is currently active i
     <string name="configure_remote_acces___octoeverywhere___description_1">"OctoEverywhere is a plugin for OctoPrint which makes remote access for OctoApp very easy. Simply install the plugin, create an account and log in below."</string>
 
     <!-- Auto filled -->
-    <string name="configure_remote_acces___octoeverywhere___description_2">"Using a 3rd party app like OctoApp currently requires a paid subscription with OctoEverywhere to cover the server costs.
-
-As soon as your OctoPrint can’t be reached directly, OctoApp will switch to the remote connection provided bz OctoEverywhere. Back home? OctoApp will be able to reach your OctoPrint again and switch back to the faster direct connection."</string>
+    <string name="configure_remote_acces___octoeverywhere___description_2">"Using a 3rd party app like OctoApp currently requires a paid subscription with OctoEverywhere to cover the server costs."</string>
 
     <!-- Auto filled -->
     <string name="configure_remote_acces___octoeverywhere___disconnect_button">"Disconnect OctoEverywhere!"</string>
@@ -329,7 +317,6 @@ As soon as your OctoPrint can’t be reached directly, OctoApp will switch to th
 
     <!-- Auto filled -->
     <string name="main___banner_connected_via_octoeverywhere">"Connected via OctoEverywhere"</string>
-    <string name="main___banner_connected_via_spaghetti_detective">"Connected via Spaghetti Detective"</string>
 
     <!-- Auto filled -->
     <string name="main___banner_connection_lost_reconnecting">"Connection lost, reconnecting…"</string>
@@ -966,9 +953,6 @@ happy printing!"</string>
     <string name="main_menu___item_show_tutorials">"Tutorials"</string>
     <string name="retry_general">"Retry"</string>
     <string name="tutorials___header">"Tutorials"</string>
-    <string name="main_menu___companion_plugin_announcement___title">"Install the companion plugin"</string>
-    <string name="main_menu___companion_plugin_announcement___subtitle">"The OctoApp companion plugin allows push notifications over the internet with better reliability"</string>
-    <string name="main_menu___companion_plugin_announcement___install">"Install the plugin"</string>
     <string name="configure_remote_acces___octoeverywhere___error_no_connection">"The app can't reach your OctoPrint at the moment, but this is required for the initial setup of OctoEverywhere."</string>
     <string name="widget_gcode_send___confirmation_message">"Execute „%s“?"</string>
     <string name="widget_gcode_send___confirmation_action">"Execute"</string>
@@ -989,6 +973,8 @@ happy printing!"</string>
     <string name="gcode_preview_settings___quality_medium_description">"Balanced performance and visual fidelity (recommended)"</string>
     <string name="gcode_preview_settings___quality_ultra_description">"Highest visual fidelity with anti aliasing"</string>
     <string name="tune_print___z_baby_step">"Z baby step"</string>
+
+    <!-- Fuzzy -->
     <string name="tune_print___baby_step_explainer">"Baby stepping through the app can be delayed because the printer will always complete the active command before the baby step"</string>
     <string name="terminal___copied_x_to_clipboard">"Copied „%s“ to clipboard"</string>
     <string name="terminal___select_filters">"Select Filters"</string>
@@ -1029,12 +1015,9 @@ happy printing!"</string>
     <string name="file_manager___upload___uploading_x">"Uploading %s"</string>
     <string name="file_manager___upload___starting_upload">"Starting upload..."</string>
     <string name="file_manager___upload___x_files_pending">"%d files pending"</string>
-    <string name="file_manager___upload___error_invalid_file_type"><![CDATA[This file type is not supported by OctoPrint.**<br><br><small>Supported file types: %s</small>]]></string>
+    <string name="file_manager___upload___error_invalid_file_type"><![CDATA[This file type is not supported by OctoPrint.<br><br><small>Supported file types: %s</small>]]></string>
     <string name="progress_widget___eta">"ETA"</string>
-    <string name="hls_stream_disabled_title">"HLS webcam stream"</string>
-    <string name="hls_stream_disbaled_description">"HLS streams are disabled, enable them now to see your webcam image."</string>
-    <string name="progress_widget___z_height">"Z Height"</string>
-    <string name="progress_widget___layer">"Layer"</string>
+    <string name="progress_widget___z_height">"Z height"</string>
     <string name="progress_widget___gcode_unavailable">"Unavailable"</string>
     <string name="progress_widget___gcode_large_file">"Large file"</string>
     <string name="progress_widget___gcode_loading">"Loading…"</string>
@@ -1052,7 +1035,7 @@ happy printing!"</string>
     <string name="progress_widget___settings___show_time_used">"Show used time"</string>
     <string name="progress_widget___settings___show_time_left">"Show time left"</string>
     <string name="progress_widget___settings___show_layer">"Show layer information"</string>
-    <string name="progress_widget___settings___show_z_height">"Show Z Height"</string>
+    <string name="progress_widget___settings___show_z_height">"Show Z height"</string>
     <string name="progress_widget___settings___gcode_description">"Synced with the Gcode Preview, if text is „Unavailable“ or „Large file“, check the Gcode Preview for details"</string>
     <string name="progress_widget___settings___show_thumbnail">"Show thumbnail"</string>
     <string name="progress_widget___settings___thumbnail_description">"Thumbnails are generated by the Cura and Prusa Slicer plugins and only shown if available"</string>
@@ -1060,4 +1043,19 @@ happy printing!"</string>
     <string name="progress_widget___title">"Progress"</string>
     <string name="progress_widget___time_left">"Left"</string>
     <string name="progress_widget___time_spent">"Used"</string>
+    <string name="progress_widget___layer">"Layer"</string>
+    <string name="main_menu___explore_support_plugins">"Explore supported plugins"</string>
+    <string name="main_menu___explore_support_plugins_short">"Explore plugins"</string>
+    <string name="configure_remote_acces___spaghetti_detective___title">"Spaghetti Detective"</string>
+
+    <!-- Fuzzy -->
+    <string name="configure_remote_acces___spaghetti_detective___disconnect_button">"Disconnect TSD"</string>
+    <string name="configure_remote_acces___spaghetti_detective___connect_button">"Connect Spaghetti Detective"</string>
+    <string name="configure_remote_acces___spaghetti_detective___data_usage_limited">"Used %1$s of %2$s (resets in %3$s)"</string>
+    <string name="configure_remote_acces___spaghetti_detective___data_usage_failed">"Failed to fetch data usage"</string>
+    <string name="configure_remote_acces___spaghetti_detective___data_usafe">"Data usage"</string>
+    <string name="configure_remote_acces___spaghetti_detective___connected">"TSD is connected!"</string>
+    <string name="configure_remote_acces___spaghetti_detective___description">"The Spaghetti Detective allows you to remotely control and observe your prints. After you installed the plugin, you can sign in below to use OctoApp to control your printer from wherever you are!"</string>
+    <string name="app_widget___live_x_seconds">"Live (%ds)"</string>
+    <string name="main___banner_connected_via_spaghetti_detective">"Connected via Spaghetti Detective"</string>
 </resources>

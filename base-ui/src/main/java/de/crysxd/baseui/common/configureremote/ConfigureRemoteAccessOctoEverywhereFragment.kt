@@ -34,6 +34,8 @@ class ConfigureRemoteAccessOctoEverywhereFragment : Fragment() {
             binding.octoEverywhereConnected.isVisible = oeConnected
             binding.disconnectOctoEverywhere.isVisible = oeConnected
             binding.connectOctoEverywhere.isVisible = !oeConnected
+            binding.description1.isVisible = !oeConnected
+            binding.description2.isVisible = !oeConnected
         }
     }
 }

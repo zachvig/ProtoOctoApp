@@ -3,17 +3,8 @@
     <string name="announcement___new_version_detail">"Deze release voegt een nieuwe tutorial sectie toe, maakt OctoApp klaar voor Android 12 inclusief ondersteuning voor het nieuwe Material You thema en verbetert de meldingen"</string>
 
     <!-- Auto filled -->
-    <string name="announcement___new_version_learn_more">"Intro video"</string>
+    <string name="announcement___new_version_learn_more">"Wat is er nieuw?"</string>
     <string name="announcement___new_version_title">"Welkom in OctoApp 1.11! 🍾"</string>
-
-    <!-- Auto filled -->
-    <string name="announcement___octoeverywhere_detail">"U kunt nu uw OctoEverywhere abonnement aansluiten om OctoApp te gebruiken wanneer u niet thuis bent."</string>
-
-    <!-- Auto filled -->
-    <string name="announcement___octoeverywhere_learn_more">"Nu verbinden"</string>
-
-    <!-- Auto filled -->
-    <string name="announcement___octoeverywhere_title">"Octo(App)Everywhere!"</string>
     <string name="app_logs">"App logs"</string>
     <string name="app_name">"OctoApp"</string>
 
@@ -22,7 +13,7 @@
 
     <!-- Auto filled -->
     <string name="app_widget___edit_items_in_app">"Bewerk items in de app door er lang op te drukken"</string>
-    <string name="app_widget___free_widgets_exceeded_action">"@android:string/ok"</string>
+    <string name="app_widget___free_widgets_exceeded_action">"Ok"</string>
     <string name="app_widget___free_widgets_exceeded_message">"U kunt slechts %d widgets hebben zonder OctoApp te ondersteunen. U kunt OctoApp ondersteunen vanuit het hoofdmenu van de app."</string>
     <string name="app_widget___idle">"%s klaar"</string>
 
@@ -88,9 +79,7 @@ De widget zal altijd de OctoPrint instantie besturen die op dat moment actief is
     <string name="configure_remote_acces___octoeverywhere___description_1">"OctoEverywhere is een plugin voor OctoPrint die toegang op afstand voor OctoApp zeer eenvoudig maakt. Installeer gewoon de plugin, maak een account aan en log hieronder in."</string>
 
     <!-- Auto filled -->
-    <string name="configure_remote_acces___octoeverywhere___description_2">"Het gebruik van een 3rd party app zoals OctoApp vereist momenteel een betaald abonnement bij OctoEverywhere om de server kosten te dekken.
-
-Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over naar de externe verbinding die OctoEverywhere biedt. Bent u thuis? OctoApp kan uw OctoPrint weer bereiken en schakelt weer terug naar de snellere directe verbinding."</string>
+    <string name="configure_remote_acces___octoeverywhere___description_2">"Het gebruik van een 3rd party app zoals OctoApp vereist momenteel een betaald abonnement bij OctoEverywhere om de server kosten te dekken."</string>
 
     <!-- Auto filled -->
     <string name="configure_remote_acces___octoeverywhere___disconnect_button">"Ontkoppel OctoEverywhere!"</string>
@@ -213,7 +202,6 @@ Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over n
     <string name="error_unable_to_load_gcode">"Er is iets misgegaan, waardoor Gcode niet kon worden geladen"</string>
     <string name="error_video_playback">"Niet in staat om %1$s te spelen (%2$s)"</string>
     <string name="estimation">"Schatting"</string>
-    <string name="eta">"ETA"</string>
     <string name="eta_x">"ETA: %s"</string>
     <string name="extrude">"Extrudeer"</string>
     <string name="extrude_retract">"Extruderen / Terugtrekken"</string>
@@ -295,8 +283,12 @@ Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over n
 
     <!-- Fuzzy -->
     <string name="file_manager___file_details___history">"Geschiedenis"</string>
-    <string name="hls_stream_disabled_title">"HLS webcam"</string>
-    <string name="hls_stream_disbaled_description">"HLS webcams zijn uitgeschakeld, laat ze nu uw webcambeeld zien."</string>
+
+    <!-- Fuzzy -->
+    <string name="rich_stream_disabled_title">"HLS/RTSP webcam"</string>
+
+    <!-- Fuzzy -->
+    <string name="rich_stream_disbaled_description">"HLS/RTSP webcams zijn uitgeschakeld, laat ze nu uw webcambeeld zien."</string>
     <string name="information_about_your_octoprint">"Informatie over je OctoPrint"</string>
     <string name="information_about_your_phone">"Informatie over je telefoon"</string>
     <string name="insert">"Voeg in."</string>
@@ -600,7 +592,6 @@ Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over n
 
     <!-- Fuzzy -->
     <string name="file_manager___file_details___print_info">"Afdrukken"</string>
-    <string name="print_name">"Naam"</string>
     <string name="print_notification___cancelling_title">"Annuleren…"</string>
     <string name="print_notification___close">"Pauzeer meldingen"</string>
     <string name="print_notification___paused_title">"Gepauzeerd"</string>
@@ -613,7 +604,6 @@ Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over n
 
     <!-- Fuzzy -->
     <string name="file_manager___file_details___print_time">"Afdruktijd"</string>
-    <string name="progress">"Voortgang"</string>
 
     <!-- Fuzzy -->
     <string name="file_manager___thumbnail_info___popup_prusa">"Pruisen Slicer Plugin"</string>
@@ -630,7 +620,7 @@ Zodra uw OctoPrint niet rechtstreeks kan worden bereikt, schakelt OctoApp over n
     <string name="resume_print_confirmation_action">"Hervat afdrukken"</string>
     <string name="resume_print_confirmation_message">"Wil je de afdruk hervatten?"</string>
     <string name="screenshot_of_current_screen">"Screenshot van het huidige scherm"</string>
-    <string name="file_manager___file_list___your_files"></string>
+    <string name="file_manager___file_list___your_files">"Uw bestanden"</string>
     <string name="send_feedback">"Feedback sturen"</string>
     <string name="send_gcode">"Stuur Gcode"</string>
     <string name="sent_x">"Uitvoeren %s"</string>
@@ -808,9 +798,7 @@ gelukkig printen!"</string>
 
     <!-- Fuzzy -->
     <string name="file_manager___thumbnail_info___popup_message">"Installeer de onderstaande plugin voor je slicer om thumbnail previews van alle bestanden te krijgen!"</string>
-    <string name="time_left">"Overblijvend"</string>
     <string name="time_left_x">"Resterende tijd: %s"</string>
-    <string name="time_spent">"Gebruikt"</string>
     <string name="toggle_favorite">"Schakelaar vastgespeld"</string>
     <string name="trouble_shooting">"Problemen oplossen"</string>
     <string name="try_again">"Probeer het nog eens"</string>
@@ -958,35 +946,107 @@ gelukkig printen!"</string>
     <string name="main_menu___item_show_tutorials">"Tutorials"</string>
     <string name="retry_general">"Opnieuw proberen"</string>
     <string name="tutorials___header">"Tutorials"</string>
-    <string name="main_menu___companion_plugin_announcement___title">"Installeer de companion plugin"</string>
-    <string name="main_menu___companion_plugin_announcement___subtitle">"De OctoApp companion plugin maakt pushmeldingen over het internet mogelijk met een betere betrouwbaarheid"</string>
-    <string name="main_menu___companion_plugin_announcement___install">"Installeer de plugin"</string>
     <string name="configure_remote_acces___octoeverywhere___error_no_connection">"De app kan je OctoPrint momenteel niet bereiken, maar dit is nodig voor de eerste installatie van OctoEverywhere."</string>
     <string name="widget_gcode_send___confirmation_message">"\"%s\" uitvoeren?"</string>
     <string name="widget_gcode_send___confirmation_action">"uitvoeren"</string>
     <string name="print_notification___disconnected">"Losgekoppeld"</string>
     <string name="main___banner_connected_via_local">"Verbonden via lokaal netwerk"</string>
-    <string name="temperature_menu___item_preheat_hotend"></string>
-    <string name="temperature_menu___item_preheat_bed"></string>
-    <string name="temperature_menu___item_preheat_chamber"></string>
-    <string name="x_feedrate_mm_min"></string>
-    <string name="y_feedrate_mm_min"></string>
-    <string name="gcode_preview_settings___show_previous_layer"></string>
-    <string name="gcode_preview_settings___show_current_layer"></string>
-    <string name="gcode_preview_settings___quality_low"></string>
-    <string name="gcode_preview_settings___quiality_medium"></string>
-    <string name="gcode_preview_settings___quality_ultra"></string>
-    <string name="gcode_preview_settings___quality"></string>
-    <string name="gcode_preview_settings___quality_low_description"></string>
-    <string name="gcode_preview_settings___quality_medium_description"></string>
-    <string name="gcode_preview_settings___quality_ultra_description"></string>
-    <string name="tune_print___z_baby_step"></string>
-    <string name="tune_print___baby_step_explainer"></string>
-    <string name="terminal___copied_x_to_clipboard"></string>
-    <string name="terminal___select_filters"></string>
-    <string name="terminal___apply_filters"></string>
-    <string name="app_widget___cancelling_title"></string>
-    <string name="app_widget___paused_title"></string>
-    <string name="app_widget___pausing_title"></string>
-    <string name="app_widget___printing_title"></string>
+    <string name="temperature_menu___item_preheat_hotend">"Verwarm hotend voor %s"</string>
+    <string name="temperature_menu___item_preheat_bed">"Voorverwarm bed voor %s"</string>
+    <string name="temperature_menu___item_preheat_chamber">"Kamer voorverwarmen voor %s"</string>
+    <string name="x_feedrate_mm_min">"X voedingssnelheid (mm/min)"</string>
+    <string name="y_feedrate_mm_min">"Y voedingssnelheid (mm/min)"</string>
+    <string name="gcode_preview_settings___show_previous_layer">"Toon vorige laag"</string>
+    <string name="gcode_preview_settings___show_current_layer">"Toon huidige laag"</string>
+    <string name="gcode_preview_settings___quality_low">"Laag"</string>
+    <string name="gcode_preview_settings___quiality_medium">"Medium"</string>
+    <string name="gcode_preview_settings___quality_ultra">"Ultra"</string>
+    <string name="gcode_preview_settings___quality">"Tekenkwaliteit"</string>
+    <string name="gcode_preview_settings___quality_low_description">"Optimale prestaties, zelfs met grote Gcode-bestanden"</string>
+    <string name="gcode_preview_settings___quality_medium_description">"Evenwichtige prestaties en visuele getrouwheid (aanbevolen)"</string>
+    <string name="gcode_preview_settings___quality_ultra_description">"Hoogste visuele getrouwheid met anti-aliasing"</string>
+    <string name="tune_print___z_baby_step">"Z baby step"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___baby_step_explainer">"Baby stepping door de app kan worden vertraagd omdat de printer altijd de actieve opdracht zal voltooien vóór de baby step"</string>
+    <string name="terminal___copied_x_to_clipboard">"Gekopieerd \"%s\" naar klembord"</string>
+    <string name="terminal___select_filters">"Filters kiezen"</string>
+    <string name="terminal___apply_filters">"Uitvoeren"</string>
+    <string name="app_widget___cancelling_title">"Afzeggen..."</string>
+    <string name="app_widget___paused_title">"Pauzeer"</string>
+    <string name="app_widget___pausing_title">"Pauzeren..."</string>
+    <string name="app_widget___printing_title">"Afdrukken..."</string>
+    <string name="file_manager___file_menu___enable_all_options">"Alle opties inschakelen"</string>
+    <string name="file_manager___file_list___uploading">"Uploaden..."</string>
+    <string name="file_manager___file_list___currently_selected">"Momenteel geselecteerd"</string>
+    <string name="file_manager___file_list___paste_here">"Plak hier"</string>
+    <string name="file_manager___file_list___cancel_paste">"Annuleren"</string>
+    <string name="file_manager___add_menu___create_folder_title">"Maak een map"</string>
+    <string name="file_manager___add_menu___create_folder_input_hint">"Map naam"</string>
+    <string name="file_manager___add_menu___create_folder_action">"Maak"</string>
+    <string name="file_manager___add_menu___upload_file_title">"Een bestand uploaden"</string>
+    <string name="file_manager___add_menu___title">"Item toevoegen"</string>
+    <string name="file_manager___file_menu___copy">"Kopiëren"</string>
+    <string name="file_manager___file_menu___move">"Verplaats"</string>
+    <string name="file_manager___file_menu___download_and_share"><![CDATA[Download & Deel]]></string>
+    <string name="file_manager___file_menu___download_and_share_description">"Dit zal %s downloaden"</string>
+    <string name="file_manager___file_menu___rename">"Hernoemen"</string>
+    <string name="file_manager___file_menu___rename_input_title">"Hernoem %s"</string>
+    <string name="file_manager___file_menu___rename_input_hint">"Bestandsnaam"</string>
+    <string name="file_manager___file_menu___rename_action">"Hernoemen"</string>
+    <string name="file_manager___sorting_menu___hide_printed">"Verberg succesvol afgedrukt"</string>
+    <string name="file_manager___sorting_menu___direction">"Richting"</string>
+    <string name="file_manager___sorting_menu___direction_ascending">"oplopend"</string>
+    <string name="file_manager___sorting_menu___direction_decending">"aflopend"</string>
+    <string name="file_manager___sorting_menu___sort_by">"Sorteer op"</string>
+    <string name="file_manager___sorting_menu___sort_by_upload_time">"uploadtijd"</string>
+    <string name="file_manager___sorting_menu___sort_by_last_print_time">"laatste printtijd"</string>
+    <string name="file_manager___sorting_menu___sort_by_name">"naam"</string>
+    <string name="file_manager___sorting_menu___sort_by_file_size">"bestandsgrootte"</string>
+    <string name="file_manager___upload___uploading_x">"Uploaden van %s"</string>
+    <string name="file_manager___upload___starting_upload">"Beginnen met uploaden..."</string>
+    <string name="file_manager___upload___x_files_pending">"%d bestanden in afwachting"</string>
+    <string name="file_manager___upload___error_invalid_file_type"><![CDATA[Dit bestandstype wordt niet ondersteund door OctoPrint.**<br><br><small>Ondersteunde bestandstypen: %s</small>]]></string>
+    <string name="progress_widget___eta">"ETA"</string>
+    <string name="progress_widget___z_height">"Z hoogte"</string>
+    <string name="progress_widget___gcode_unavailable">"Niet beschikbaar"</string>
+    <string name="progress_widget___gcode_large_file">"Groot bestand"</string>
+    <string name="progress_widget___gcode_loading">"Laden..."</string>
+    <string name="progress_widget___settings___font_size">"Lettergrootte"</string>
+    <string name="progress_widget___settings___font_size_normal">"Normaal"</string>
+    <string name="progress_widget___settings___font_size_small">"Klein"</string>
+    <string name="progress_widget___settings___show_print_name">"Toon afdruknaam"</string>
+    <string name="progress_widget___settings___show_print_name_none">"Uit"</string>
+    <string name="progress_widget___settings___show_print_name_compact">"Compact"</string>
+    <string name="progress_widget___settings___show_print_name_full">"Volledig"</string>
+    <string name="progress_widget___settings___show_eta">"Toon ETA"</string>
+    <string name="progress_widget___settings___show_eta_none">"Uit"</string>
+    <string name="progress_widget___settings___show_eta_compact">"Compact"</string>
+    <string name="progress_widget___settings___show_eta_full">"Volledig"</string>
+    <string name="progress_widget___settings___show_time_used">"Toon gebruikte tijd"</string>
+    <string name="progress_widget___settings___show_time_left">"Toon tijd over"</string>
+    <string name="progress_widget___settings___show_layer">"Toon laaginformatie"</string>
+    <string name="progress_widget___settings___show_z_height">"Toon Z hoogte"</string>
+    <string name="progress_widget___settings___gcode_description">"Gesynchroniseerd met de Gcode Preview, als de tekst \"Unavailable\" of \"Large file\" is, controleer dan de Gcode Preview voor details"</string>
+    <string name="progress_widget___settings___show_thumbnail">"Toon thumbnail"</string>
+    <string name="progress_widget___settings___thumbnail_description">"Thumbnails worden gegenereerd door de Cura en Prusa Slicer plugins en worden alleen getoond indien beschikbaar"</string>
+    <string name="progress_widget___print_name">"Naam afdrukken"</string>
+    <string name="progress_widget___title">"Vooruitgang"</string>
+    <string name="progress_widget___time_left">"Links"</string>
+    <string name="progress_widget___time_spent">"Gebruikt"</string>
+    <string name="progress_widget___layer">"Laag"</string>
+    <string name="main_menu___explore_support_plugins">"Ontdek ondersteunde plugins"</string>
+    <string name="main_menu___explore_support_plugins_short">"Plugins verkennen"</string>
+    <string name="configure_remote_acces___spaghetti_detective___title">"Spaghetti Detective"</string>
+
+    <!-- Fuzzy -->
+    <string name="configure_remote_acces___spaghetti_detective___disconnect_button">"TSD loskoppelen"</string>
+    <string name="configure_remote_acces___spaghetti_detective___connect_button">"Connect Spaghetti Detective"</string>
+    <string name="configure_remote_acces___spaghetti_detective___data_usage_limited">"%1$s of %2$s gebruikt (reset in %3$s)"</string>
+    <string name="configure_remote_acces___spaghetti_detective___data_usage_failed">"Kan gegevensgebruik niet ophalen"</string>
+    <string name="configure_remote_acces___spaghetti_detective___data_usafe">"Data gebruik"</string>
+    <string name="configure_remote_acces___spaghetti_detective___connected">"TSD is aangesloten!"</string>
+    <string name="configure_remote_acces___spaghetti_detective___description">"Met de Spaghetti Detective kunt u uw afdrukken op afstand bedienen en observeren. Nadat je de plug-in hebt geïnstalleerd, kun je hieronder inloggen om OctoApp te gebruiken om je printer te bedienen, waar je ook bent!"</string>
+    <string name="app_widget___live_x_seconds">"Live (%ds)"</string>
+    <string name="main___banner_connected_via_spaghetti_detective">"Verbonden via Spaghetti Detective"</string>
 </resources>

@@ -217,7 +217,7 @@ class OctoPrint(
         // 8. Logger needs to be lowest level, we need to log any change made in the stack above
         addInterceptor(
             HttpLoggingInterceptor(LoggingInterceptorLogger(logger))
-                .setLevel(if (debug) HttpLoggingInterceptor.Level.HEADERS else HttpLoggingInterceptor.Level.HEADERS)
+                .setLevel(if (debug) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.HEADERS)
         )
     }.build()
 }

@@ -4,12 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import de.crysxd.baseui.R
 import de.crysxd.baseui.databinding.ConfigureRemoteAccessManualFragmentBinding
 import de.crysxd.baseui.di.injectParentViewModel
 import de.crysxd.octoapp.octoprint.extractAndRemoveBasicAuth
 import de.crysxd.octoapp.octoprint.isOctoEverywhereUrl
+import de.crysxd.octoapp.octoprint.isSpaghettiDetectiveUrl
 
 class ConfigureRemoteAccessManualFragment : Fragment() {
     private val viewModel by injectParentViewModel<ConfigureRemoteAccessViewModel>()
@@ -20,6 +22,11 @@ class ConfigureRemoteAccessManualFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val inputTint = ContextCompat.getColor(requireContext(), R.color.input_background_alternative)
+        binding.webUrlInput.backgroundTint = inputTint
+        binding.basicPasswordInput.backgroundTint = inputTint
+        binding.basicUserInput.backgroundTint = inputTint
 
         binding.saveUrl.setOnClickListener {
             viewModel.setRemoteUrl(
@@ -36,7 +43,7 @@ class ConfigureRemoteAccessManualFragment : Fragment() {
         }
 
         viewModel.viewData.observe(viewLifecycleOwner) {
-            val manualConnected = it.remoteWebUrl != null && !it.remoteWebUrl.isOctoEverywhereUrl()
+            val manualConnected = it.remoteWebUrl != null && !it.remoteWebUrl.isOctoEverywhereUrl() && !it.remoteWebUrl.isSpaghettiDetectiveUrl()
             binding.webUrlInput.editText.setText(it.remoteWebUrl?.extractAndRemoveBasicAuth()?.first.takeIf { manualConnected }?.toString())
             binding.basicPasswordInput.editText.setText(it.remoteWebUrl?.password?.takeIf { manualConnected }?.toString())
             binding.basicUserInput.editText.setText(it.remoteWebUrl?.username?.takeIf { manualConnected }?.toString())

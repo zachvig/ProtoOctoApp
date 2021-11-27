@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.isActive
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.ByteArrayOutputStream
 import java.util.concurrent.TimeUnit
@@ -30,11 +31,13 @@ class SpaghettiDetectiveWebcamConnection(
         return flow {
             emit(SpaghettiCamSnapshot.Loading)
 
-            val client = octoPrint.createOkHttpClient()
+            val client = OkHttpClient.Builder().build()
             val spaghettiApi = octoPrint.createSpaghettiDetectiveApi()
-            var bitmap: Bitmap? = null
+            var bitmaps: List<Bitmap>? = null
             val byteCache = ByteArrayOutputStream()
             val options = BitmapFactory.Options()
+            var sequenceNumber = 0
+            val extraDelay = 1_000
 
             while (coroutineContext.isActive) {
                 // Load frame URL
@@ -42,8 +45,10 @@ class SpaghettiDetectiveWebcamConnection(
                 val frameUrl = spaghettiApi.getSpaghettiCamFrameUrl(webcamIndex)
                 var delayMillis = 9_000L
 
+
                 // Load frame
                 frameUrl?.let {
+                    sequenceNumber++
                     try {
                         // Load image into memory
                         byteCache.reset()
@@ -54,24 +59,28 @@ class SpaghettiDetectiveWebcamConnection(
                         // Decode bounds and create bitmap
                         val bytes = byteCache.toByteArray()
                         options.inJustDecodeBounds = true
+                        options.inBitmap = null
                         BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
-                        if (options.outWidth != bitmap?.width || options.outHeight != bitmap?.height) {
-                            bitmap = Bitmap.createBitmap(options.outWidth, options.outHeight, Bitmap.Config.ARGB_8888)
+                        if (options.outWidth != bitmaps?.first()?.width || options.outHeight != bitmaps?.first()?.height) {
+                            bitmaps = listOf(
+                                Bitmap.createBitmap(options.outWidth, options.outHeight, Bitmap.Config.ARGB_8888),
+                                Bitmap.createBitmap(options.outWidth, options.outHeight, Bitmap.Config.ARGB_8888),
+                            )
                         }
 
                         // Create bitmap and emit
                         options.inJustDecodeBounds = false
-                        options.inBitmap = bitmap
+                        options.inBitmap = bitmaps?.get(sequenceNumber % 2)
                         val out = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
-                        emit(SpaghettiCamSnapshot.Frame(out))
+                        emit(SpaghettiCamSnapshot.Frame(out, delayMillis + extraDelay))
                     } catch (e: Exception) {
                         Timber.e(e)
                     }
-                }
+                } ?: Timber.d("No frame available")
 
                 // Publish and sleep
                 Timber.d("Waiting $delayMillis + 1000ms for before getting next frame")
-                delay(delayMillis + 1_000L)
+                delay(delayMillis + extraDelay)
             }
         }.retry(2) {
             Timber.e(it)
@@ -81,6 +90,6 @@ class SpaghettiDetectiveWebcamConnection(
 
     sealed class SpaghettiCamSnapshot {
         object Loading : SpaghettiCamSnapshot()
-        data class Frame(val frame: Bitmap) : SpaghettiCamSnapshot()
+        data class Frame(val frame: Bitmap, val nextFrameDelayMs: Long) : SpaghettiCamSnapshot()
     }
 }

@@ -20,6 +20,8 @@ import de.crysxd.octoapp.base.usecase.ShareImageUseCase
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -46,6 +48,8 @@ class WebcamViewModel(
     val uiState = uiStateMediator.map { it }
     private val settingsLiveData = octoPreferences.updatedFlow.asLiveData()
     private var webcamCount = 1
+    private var connectJob: Job? = null
+    private var connectMutex = Mutex()
 
     init {
         uiStateMediator.addSource(settingsLiveData) { connect() }
@@ -71,10 +75,11 @@ class WebcamViewModel(
     }
 
     fun connect() {
-        viewModelScope.launch(coroutineExceptionHandler) {
-            Timber.tag(tag).i("Connecting")
-            previousSource?.let(uiStateMediator::removeSource)
+        // Already connecting? Drop!
+        if (connectJob?.isActive == true) return
 
+        connectJob = viewModelScope.launch(coroutineExceptionHandler) {
+            Timber.tag(tag).i("Connecting")
             val liveData = BillingManager.billingFlow()
                 .distinctUntilChangedBy { it.isPremiumActive }
                 .combine(getWebcamSettings()) { _, ws ->
@@ -127,9 +132,11 @@ class WebcamViewModel(
                     }.flowOn(Dispatchers.IO)
                 }.flatMapLatest { it }.asLiveData()
 
-            previousSource = liveData
-            uiStateMediator.addSource(liveData)
-            { uiStateMediator.postValue(it) }
+            connectMutex.withLock {
+                previousSource?.let(uiStateMediator::removeSource)
+                previousSource = liveData
+                uiStateMediator.addSource(liveData) { uiStateMediator.postValue(it) }
+            }
         }
     }
 
@@ -168,8 +175,7 @@ class WebcamViewModel(
                 )
             }
         }.catch {
-            Timber.tag(tag).i("ERROR")
-            Timber.e(it)
+            Timber.tag(tag).e(it)
             emit(
                 UiState.Error(
                     isManualReconnect = true,
@@ -203,12 +209,12 @@ class WebcamViewModel(
                     flipV = spaghettiSettings.webcamSettings.flipV,
                     flipH = spaghettiSettings.webcamSettings.flipH,
                     rotate90 = spaghettiSettings.webcamSettings.rotate90,
+                    nextFrameDelayMs = it.nextFrameDelayMs,
                     enforcedAspectRatio = spaghettiSettings.webcamSettings.streamRatio.takeIf { octoPreferences.isAspectRatioFromOctoPrint },
                 )
             }
         }.catch {
-            Timber.tag(tag).i("ERROR")
-            Timber.e(it)
+            Timber.tag(tag).e(it)
             emit(
                 UiState.Error(
                     isManualReconnect = true,
@@ -310,6 +316,7 @@ class WebcamViewModel(
             val flipH: Boolean,
             val flipV: Boolean,
             val rotate90: Boolean,
+            val nextFrameDelayMs: Long? = null,
             val enforcedAspectRatio: String?,
         ) : UiState(canSwitchWebcam)
 
