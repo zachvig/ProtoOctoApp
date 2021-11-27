@@ -3,17 +3,8 @@
     <string name="announcement___new_version_detail">"Esta versión añade una nueva sección de tutoriales, hace que OctoApp esté preparada para Android 12 incluyendo soporte para el nuevo tema Material You y mejora las notificaciones"</string>
 
     <!-- Auto filled -->
-    <string name="announcement___new_version_learn_more">"Vídeo de introducción"</string>
+    <string name="announcement___new_version_learn_more">"¿Qué hay de nuevo?"</string>
     <string name="announcement___new_version_title">"¡Bienvenido a OctoApp 1.11! 🍾"</string>
-
-    <!-- Auto filled -->
-    <string name="announcement___octoeverywhere_detail">"Ahora puede conectar su suscripción OctoEverywhere para utilizar OctoApp cuando no esté en casa."</string>
-
-    <!-- Auto filled -->
-    <string name="announcement___octoeverywhere_learn_more">"Conéctate ahora"</string>
-
-    <!-- Auto filled -->
-    <string name="announcement___octoeverywhere_title">"Octo(App)Everywhere!"</string>
     <string name="app_logs">"Registros de aplicaciones"</string>
     <string name="app_name">"OctoApp"</string>
 
@@ -22,7 +13,7 @@
 
     <!-- Auto filled -->
     <string name="app_widget___edit_items_in_app">"Editar elementos en la aplicación pulsando prolongadamente sobre ellos"</string>
-    <string name="app_widget___free_widgets_exceeded_action">"@android:string/ok"</string>
+    <string name="app_widget___free_widgets_exceeded_action">"Ok"</string>
     <string name="app_widget___free_widgets_exceeded_message">"Sólo puede tener %d widgets sin soportar OctoApp. Puede soportar OctoApp desde el menú principal de la aplicación."</string>
     <string name="app_widget___idle">"%s listo"</string>
 
@@ -88,9 +79,7 @@ El widget siempre controlará la instancia de OctoPrint que está actualmente ac
     <string name="configure_remote_acces___octoeverywhere___description_1">"OctoEverywhere es un plugin para OctoPrint que facilita el acceso remoto a OctoApp. Simplemente instale el plugin, cree una cuenta e inicie sesión a continuación."</string>
 
     <!-- Auto filled -->
-    <string name="configure_remote_acces___octoeverywhere___description_2">"El uso de una aplicación de terceros como OctoApp requiere actualmente una suscripción de pago con OctoEverywhere para cubrir los costes del servidor.
-
-Tan pronto como su OctoPrint no pueda ser alcanzado directamente, OctoApp cambiará a la conexión remota proporcionada por OctoEverywhere. ¿De vuelta a casa? OctoApp podrá alcanzar su OctoPrint de nuevo y cambiar de nuevo a la conexión directa más rápida."</string>
+    <string name="configure_remote_acces___octoeverywhere___description_2">"El uso de una aplicación de terceros como OctoApp requiere actualmente una suscripción de pago con OctoEverywhere para cubrir los costes del servidor."</string>
 
     <!-- Auto filled -->
     <string name="configure_remote_acces___octoeverywhere___disconnect_button">"Desconecta OctoEverywhere!"</string>
@@ -218,7 +207,6 @@ Tan pronto como su OctoPrint no pueda ser alcanzado directamente, OctoApp cambia
     <string name="error_unable_to_load_gcode">"Algo salió mal, incapaz de cargar Gcode"</string>
     <string name="error_video_playback">"Incapaz de jugar %1$s (%2$s)"</string>
     <string name="estimation">"Estimación"</string>
-    <string name="eta">"ETA"</string>
     <string name="eta_x">"ETA: %s"</string>
     <string name="extrude">"Extrusión"</string>
     <string name="extrude_retract">"Extrudir / Retraer"</string>
@@ -300,8 +288,12 @@ Tan pronto como su OctoPrint no pueda ser alcanzado directamente, OctoApp cambia
 
     <!-- Fuzzy -->
     <string name="file_manager___file_details___history">"Historia"</string>
-    <string name="hls_stream_disabled_title">"HLS webcam"</string>
-    <string name="hls_stream_disbaled_description">"Las cámaras web HLS están deshabilitadas, habilítalas ahora para ver la imagen de tu cámara web."</string>
+
+    <!-- Fuzzy -->
+    <string name="rich_stream_disabled_title">"HLS/RTSP webcam"</string>
+
+    <!-- Fuzzy -->
+    <string name="rich_stream_disbaled_description">"Las cámaras web HLS/RTSP están deshabilitadas, habilítalas ahora para ver la imagen de tu cámara web."</string>
     <string name="information_about_your_octoprint">"Información sobre su OctoPrint"</string>
     <string name="information_about_your_phone">"Información sobre su teléfono"</string>
     <string name="insert">"Insertar"</string>
@@ -605,7 +597,6 @@ Tan pronto como su OctoPrint no pueda ser alcanzado directamente, OctoApp cambia
 
     <!-- Fuzzy -->
     <string name="file_manager___file_details___print_info">"Imprimir información"</string>
-    <string name="print_name">"Nombre en letra de molde"</string>
     <string name="print_notification___cancelling_title">"Cancelar…"</string>
     <string name="print_notification___close">"Poner en pausa las notificaciones"</string>
     <string name="print_notification___paused_title">"Pausado"</string>
@@ -618,7 +609,6 @@ Tan pronto como su OctoPrint no pueda ser alcanzado directamente, OctoApp cambia
 
     <!-- Fuzzy -->
     <string name="file_manager___file_details___print_time">"Tiempo de impresión"</string>
-    <string name="progress">"Progreso"</string>
 
     <!-- Fuzzy -->
     <string name="file_manager___thumbnail_info___popup_prusa">"Prussia Slicer Plugin"</string>
@@ -635,7 +625,7 @@ Tan pronto como su OctoPrint no pueda ser alcanzado directamente, OctoApp cambia
     <string name="resume_print_confirmation_action">"Reanudar la impresión"</string>
     <string name="resume_print_confirmation_message">"¿Quieres reanudar la impresión?"</string>
     <string name="screenshot_of_current_screen">"Captura de pantalla de la pantalla actual"</string>
-    <string name="file_manager___file_list___your_files"></string>
+    <string name="file_manager___file_list___your_files">"Sus archivos"</string>
     <string name="send_feedback">"Envíe sus comentarios."</string>
     <string name="send_gcode">"Envía a Gcode"</string>
     <string name="sent_x">"Ejecutando %s"</string>
@@ -813,9 +803,7 @@ feliz impresión!"</string>
 
     <!-- Fuzzy -->
     <string name="file_manager___thumbnail_info___popup_message">"Instale el siguiente plugin para su cortadora para obtener vistas previas en miniatura de todos los archivos!"</string>
-    <string name="time_left">"Resto"</string>
     <string name="time_left_x">"Tiempo restante: %s"</string>
-    <string name="time_spent">"Usado"</string>
     <string name="toggle_favorite">"El conmutador está bloqueado."</string>
     <string name="trouble_shooting">"Problemas de resolución de problemas"</string>
     <string name="try_again">"Inténtalo de nuevo."</string>
@@ -963,35 +951,107 @@ feliz impresión!"</string>
     <string name="main_menu___item_show_tutorials">"Tutoriales"</string>
     <string name="retry_general">"Reintentar"</string>
     <string name="tutorials___header">"Tutoriales"</string>
-    <string name="main_menu___companion_plugin_announcement___title">"Instalar el plugin complementario"</string>
-    <string name="main_menu___companion_plugin_announcement___subtitle">"El plugin complementario de OctoApp permite las notificaciones push a través de Internet con mayor fiabilidad"</string>
-    <string name="main_menu___companion_plugin_announcement___install">"Instalar el plugin"</string>
     <string name="configure_remote_acces___octoeverywhere___error_no_connection">"La aplicación no puede acceder a su OctoPrint en este momento, pero esto es necesario para la configuración inicial de OctoEverywhere."</string>
     <string name="widget_gcode_send___confirmation_message">"¿Ejecutar \"% s\"?"</string>
     <string name="widget_gcode_send___confirmation_action">"Ejecutar"</string>
     <string name="print_notification___disconnected">"Desconectado"</string>
     <string name="main___banner_connected_via_local">"Conectado a través de la red local"</string>
-    <string name="temperature_menu___item_preheat_hotend"></string>
-    <string name="temperature_menu___item_preheat_bed"></string>
-    <string name="temperature_menu___item_preheat_chamber"></string>
-    <string name="x_feedrate_mm_min"></string>
-    <string name="y_feedrate_mm_min"></string>
-    <string name="gcode_preview_settings___show_previous_layer"></string>
-    <string name="gcode_preview_settings___show_current_layer"></string>
-    <string name="gcode_preview_settings___quality_low"></string>
-    <string name="gcode_preview_settings___quiality_medium"></string>
-    <string name="gcode_preview_settings___quality_ultra"></string>
-    <string name="gcode_preview_settings___quality"></string>
-    <string name="gcode_preview_settings___quality_low_description"></string>
-    <string name="gcode_preview_settings___quality_medium_description"></string>
-    <string name="gcode_preview_settings___quality_ultra_description"></string>
-    <string name="tune_print___z_baby_step"></string>
-    <string name="tune_print___baby_step_explainer"></string>
-    <string name="terminal___copied_x_to_clipboard"></string>
-    <string name="terminal___select_filters"></string>
-    <string name="terminal___apply_filters"></string>
-    <string name="app_widget___cancelling_title"></string>
-    <string name="app_widget___paused_title"></string>
-    <string name="app_widget___pausing_title"></string>
-    <string name="app_widget___printing_title"></string>
+    <string name="temperature_menu___item_preheat_hotend">"Precalentar hotend para %s"</string>
+    <string name="temperature_menu___item_preheat_bed">"Precalentar cama para %s"</string>
+    <string name="temperature_menu___item_preheat_chamber">"Cámara de precalentamiento para %s"</string>
+    <string name="x_feedrate_mm_min">"X avance (mm/min)"</string>
+    <string name="y_feedrate_mm_min">"Avance Y (mm/min)"</string>
+    <string name="gcode_preview_settings___show_previous_layer">"Mostrar la capa anterior"</string>
+    <string name="gcode_preview_settings___show_current_layer">"Mostrar la capa actual"</string>
+    <string name="gcode_preview_settings___quality_low">"Bajo"</string>
+    <string name="gcode_preview_settings___quiality_medium">"Medio"</string>
+    <string name="gcode_preview_settings___quality_ultra">"Ultra"</string>
+    <string name="gcode_preview_settings___quality">"Calidad del dibujo"</string>
+    <string name="gcode_preview_settings___quality_low_description">"Rendimiento óptimo incluso con archivos Gcode de gran tamaño"</string>
+    <string name="gcode_preview_settings___quality_medium_description">"Rendimiento equilibrado y fidelidad visual (recomendado)"</string>
+    <string name="gcode_preview_settings___quality_ultra_description">"Máxima fidelidad visual con antialiasing"</string>
+    <string name="tune_print___z_baby_step">"Z baby step"</string>
+
+    <!-- Fuzzy -->
+    <string name="tune_print___baby_step_explainer">"El baby stepping a través de la aplicación puede retrasarse porque la impresora siempre completará el comando activo antes del baby stepping"</string>
+    <string name="terminal___copied_x_to_clipboard">"Copiado \"%s\" al portapapeles"</string>
+    <string name="terminal___select_filters">"Seleccione los filtros"</string>
+    <string name="terminal___apply_filters">"Aplique"</string>
+    <string name="app_widget___cancelling_title">"Cancelando..."</string>
+    <string name="app_widget___paused_title">"En pausa"</string>
+    <string name="app_widget___pausing_title">"Haciendo una pausa..."</string>
+    <string name="app_widget___printing_title">"Impresión..."</string>
+    <string name="file_manager___file_menu___enable_all_options">"Activar todas las opciones"</string>
+    <string name="file_manager___file_list___uploading">"Subiendo..."</string>
+    <string name="file_manager___file_list___currently_selected">"Actualmente seleccionado"</string>
+    <string name="file_manager___file_list___paste_here">"Pegar aquí"</string>
+    <string name="file_manager___file_list___cancel_paste">"Cancelar"</string>
+    <string name="file_manager___add_menu___create_folder_title">"Crear una carpeta"</string>
+    <string name="file_manager___add_menu___create_folder_input_hint">"Nombre de la carpeta"</string>
+    <string name="file_manager___add_menu___create_folder_action">"Crear"</string>
+    <string name="file_manager___add_menu___upload_file_title">"Cargar un archivo"</string>
+    <string name="file_manager___add_menu___title">"Añadir artículo"</string>
+    <string name="file_manager___file_menu___copy">"Copiar"</string>
+    <string name="file_manager___file_menu___move">"Mover"</string>
+    <string name="file_manager___file_menu___download_and_share"><![CDATA[Descargar y compartir]]></string>
+    <string name="file_manager___file_menu___download_and_share_description">"Esto descargará %s"</string>
+    <string name="file_manager___file_menu___rename">"Cambiar el nombre de"</string>
+    <string name="file_manager___file_menu___rename_input_title">"Renombrar %s"</string>
+    <string name="file_manager___file_menu___rename_input_hint">"Nombre del archivo"</string>
+    <string name="file_manager___file_menu___rename_action">"Cambiar el nombre de"</string>
+    <string name="file_manager___sorting_menu___hide_printed">"Ocultar impreso con éxito"</string>
+    <string name="file_manager___sorting_menu___direction">"Dirección"</string>
+    <string name="file_manager___sorting_menu___direction_ascending">"ascendente"</string>
+    <string name="file_manager___sorting_menu___direction_decending">"descendente"</string>
+    <string name="file_manager___sorting_menu___sort_by">"Ordenar por"</string>
+    <string name="file_manager___sorting_menu___sort_by_upload_time">"tiempo de carga"</string>
+    <string name="file_manager___sorting_menu___sort_by_last_print_time">"última hora de impresión"</string>
+    <string name="file_manager___sorting_menu___sort_by_name">"nombre"</string>
+    <string name="file_manager___sorting_menu___sort_by_file_size">"tamaño del archivo"</string>
+    <string name="file_manager___upload___uploading_x">"Cargando %s"</string>
+    <string name="file_manager___upload___starting_upload">"Empezando a subir..."</string>
+    <string name="file_manager___upload___x_files_pending">"%d archivos pendientes"</string>
+    <string name="file_manager___upload___error_invalid_file_type"><![CDATA[Este tipo de archivo no es compatible con OctoPrint.**<br><br><small>Tipos de archivo compatibles: %s</small>]]></string>
+    <string name="progress_widget___eta">"ETA"</string>
+    <string name="progress_widget___z_height">"Altura Z"</string>
+    <string name="progress_widget___gcode_unavailable">"No disponible"</string>
+    <string name="progress_widget___gcode_large_file">"Archivo grande"</string>
+    <string name="progress_widget___gcode_loading">"Cargando..."</string>
+    <string name="progress_widget___settings___font_size">"Tamaño de letra"</string>
+    <string name="progress_widget___settings___font_size_normal">"Normal"</string>
+    <string name="progress_widget___settings___font_size_small">"Pequeño"</string>
+    <string name="progress_widget___settings___show_print_name">"Mostrar nombre de impresión"</string>
+    <string name="progress_widget___settings___show_print_name_none">"Fuera de"</string>
+    <string name="progress_widget___settings___show_print_name_compact">"Compacto"</string>
+    <string name="progress_widget___settings___show_print_name_full">"Completo"</string>
+    <string name="progress_widget___settings___show_eta">"Mostrar ETA"</string>
+    <string name="progress_widget___settings___show_eta_none">"Fuera de"</string>
+    <string name="progress_widget___settings___show_eta_compact">"Compacto"</string>
+    <string name="progress_widget___settings___show_eta_full">"Completo"</string>
+    <string name="progress_widget___settings___show_time_used">"Mostrar el tiempo de uso"</string>
+    <string name="progress_widget___settings___show_time_left">"Queda tiempo de exposición"</string>
+    <string name="progress_widget___settings___show_layer">"Mostrar información de la capa"</string>
+    <string name="progress_widget___settings___show_z_height">"Mostrar altura Z"</string>
+    <string name="progress_widget___settings___gcode_description">"Sincronizado con la vista previa del Gcode, si el texto es \"No disponible\" o \"Archivo grande\", compruebe la vista previa del Gcode para obtener detalles"</string>
+    <string name="progress_widget___settings___show_thumbnail">"Mostrar imagen en miniatura"</string>
+    <string name="progress_widget___settings___thumbnail_description">"Las miniaturas son generadas por los plugins Cura y Prusa Slicer y sólo se muestran si están disponibles"</string>
+    <string name="progress_widget___print_name">"Imprimir nombre"</string>
+    <string name="progress_widget___title">"Progreso"</string>
+    <string name="progress_widget___time_left">"Izquierda"</string>
+    <string name="progress_widget___time_spent">"Usado"</string>
+    <string name="progress_widget___layer">"Capa"</string>
+    <string name="main_menu___explore_support_plugins">"Explorar los plugins compatibles"</string>
+    <string name="main_menu___explore_support_plugins_short">"Explorar los plugins"</string>
+    <string name="configure_remote_acces___spaghetti_detective___title">"Spaghetti Detective"</string>
+
+    <!-- Fuzzy -->
+    <string name="configure_remote_acces___spaghetti_detective___disconnect_button">"Desconecte TSD"</string>
+    <string name="configure_remote_acces___spaghetti_detective___connect_button">"Conecta el Spaghetti Detective"</string>
+    <string name="configure_remote_acces___spaghetti_detective___data_usage_limited">"Se usó% 1 $ s de% 2 $ s (se restablece en% 3 $ s)"</string>
+    <string name="configure_remote_acces___spaghetti_detective___data_usage_failed">"No se pudo recuperar el uso de datos"</string>
+    <string name="configure_remote_acces___spaghetti_detective___data_usafe">"Uso de datos"</string>
+    <string name="configure_remote_acces___spaghetti_detective___connected">"¡TSD está conectado!"</string>
+    <string name="configure_remote_acces___spaghetti_detective___description">"Spaghetti Detective le permite controlar y observar sus huellas de forma remota. Después de instalar el complemento, puede iniciar sesión a continuación para usar OctoApp para controlar su impresora desde cualquier lugar."</string>
+    <string name="app_widget___live_x_seconds">"En vivo (% ds)"</string>
+    <string name="main___banner_connected_via_spaghetti_detective">"Conectado a través de Spaghetti Detective"</string>
 </resources>
