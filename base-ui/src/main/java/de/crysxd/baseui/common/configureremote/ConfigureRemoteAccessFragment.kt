@@ -13,6 +13,8 @@ import androidx.core.view.*
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.adapter.FragmentViewHolder
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import de.crysxd.baseui.BaseFragment
 import de.crysxd.baseui.InsetAwareScreen
@@ -83,9 +85,21 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
 
     private fun installTabs() {
         binding.viewPager.adapter = adapter
+        binding.viewPager.offscreenPageLimit = 1
+        binding.viewPager.clipChildren = false
+
+        val nextItemVisiblePx = resources.getDimension(R.dimen.margin_1)
+        val currentItemHorizontalMarginPx = resources.getDimension(R.dimen.margin_2)
+        val pageTranslationX = nextItemVisiblePx + currentItemHorizontalMarginPx
+        val pageTransformer = ViewPager2.PageTransformer { page: View, position: Float ->
+            page.translationX = -pageTranslationX * position
+        }
+        binding.viewPager.setPageTransformer(pageTransformer)
+
         TabLayoutMediator(binding.tabs, binding.viewPager) { tab, position ->
             tab.text = adapter.getTitle(position)
         }.attach()
+
         helper.install(
             octoActivity = requireOctoActivity(),
             tabs = binding.tabs,
@@ -104,14 +118,26 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
 
     override fun handleInsets(insets: Rect) {
         helper.handleInsets(insets)
+        binding.root.updatePadding(bottom = insets.bottom)
     }
 
     private class PagerAdapter(context: Context, fragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(fragmentManager, lifecycle) {
         private val tabs = listOf(
             context.getString(R.string.configure_remote_acces___octoeverywhere___title) to { ConfigureRemoteAccessOctoEverywhereFragment() },
-            "Spaghetti Detective**" to { ConfigureRemoteAccessSpaghettiDetectiveFragment() },
+            context.getString(R.string.configure_remote_acces___spaghetti_detective___title) to { ConfigureRemoteAccessSpaghettiDetectiveFragment() },
             context.getString(R.string.configure_remote_acces___manual___title) to { ConfigureRemoteAccessManualFragment() },
         )
+
+        override fun onBindViewHolder(
+            holder: FragmentViewHolder,
+            position: Int,
+            payloads: MutableList<Any>
+        ) {
+            (holder.itemView as ViewGroup).clipChildren = false
+            (holder.itemView as ViewGroup).clipToPadding = false
+            (holder.itemView as ViewGroup).clipToOutline = false
+            super.onBindViewHolder(holder, position, payloads)
+        }
 
         override fun getItemCount() = tabs.size
         override fun createFragment(position: Int) = tabs[position].second()

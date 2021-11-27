@@ -61,6 +61,9 @@
         <item name="rippleColor">@color/white</item>
         <item name="android:stateListAnimator">@null</item>
         <item name="android:elevation">3dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="autoSizeMinTextSize">14dp</item>
+        <item name="autoSizeTextType">uniform</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
         <item name="android:insetLeft">0dp</item>

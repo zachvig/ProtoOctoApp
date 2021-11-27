@@ -12,6 +12,9 @@ interface SpaghettiDetectiveApi {
 
     @GET("/_tsd_/webcam/{webcamIndex}/")
     suspend fun getSpaghettiCamFrame(@Path("webcamIndex") webcamIndex: Int = 0): SpaghettiCamFrame
+
+    @GET("/_tsd_/tunnelusage/")
+    suspend fun getDataUsage(): SpaghettiDetectiveDataUsage
 }
 
 class SpaghettiDetectiveApiWrapper(private val api: SpaghettiDetectiveApi) {
@@ -19,5 +22,7 @@ class SpaghettiDetectiveApiWrapper(private val api: SpaghettiDetectiveApi) {
     suspend fun getLinkedPrinterId(): String? = api.getPluginStatus().linkedPrinter?.id
 
     suspend fun getSpaghettiCamFrameUrl(webcamIndex: Int = 0): String? = api.getSpaghettiCamFrame(webcamIndex).snapshot
+
+    suspend fun getDataUsage() = api.getDataUsage()
 
 }

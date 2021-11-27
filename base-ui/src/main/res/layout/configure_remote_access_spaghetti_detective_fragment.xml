@@ -1,57 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_margin="@dimen/margin_2"
+        app:cardCornerRadius="@dimen/common_corner_radius">
 
-        <TextView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin_2"
-            android:layout_marginVertical="@dimen/margin_2"
-            android:gravity="center"
-            android:text="TSD lorem ipsum dolor sit amet**"
-            android:textColor="@color/dark_text" />
+            android:layout_height="match_parent"
+            android:background="#FAF7FF">
 
-        <TextView
-            android:id="@+id/tsdConnected"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:drawablePadding="@dimen/margin_1"
-            android:gravity="center"
-            android:text="TSD is connected!**"
-            android:textColor="@color/green"
-            android:visibility="gone"
-            app:drawableStartCompat="@drawable/ic_baseline_cloud_done_24"
-            app:drawableTint="@color/green"
-            tools:visibility="visible" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/margin_2">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/disconnectTsd"
-            style="@style/OctoTheme.Widget.Button.Secondary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_2"
-            android:text="Disconnect TSD**"
-            android:visibility="gone" />
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:importantForAccessibility="no"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/spaghetti_header_background"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/connectTsd"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_2"
-            android:backgroundTint="@color/spaghetti_detective"
-            android:text="Connect Spaghetti Detective**"
-            app:icon="@drawable/ic_spaghetti_detective_24px"
-            app:iconTint="@null" />
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_margin="@dimen/margin_2"
+                    android:adjustViewBounds="true"
+                    android:importantForAccessibility="no"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/spaghetti_detective_logo"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_editor_absoluteX="20dp" />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_2"
+                    android:gravity="center"
+                    android:text="@string/configure_remote_acces___spaghetti_detective___description"
+                    android:textColor="@color/dark_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView3"
+                    app:layout_constraintVertical_chainStyle="packed" />
 
-</androidx.core.widget.NestedScrollView>
+
+                <TextView
+                    android:id="@+id/tsdConnected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/margin_2"
+                    android:drawablePadding="@dimen/margin_1"
+                    android:gravity="center"
+                    android:text="@string/configure_remote_acces___spaghetti_detective___connected"
+                    android:textColor="@color/green"
+                    app:drawableStartCompat="@drawable/ic_baseline_cloud_done_24"
+                    app:drawableTint="@color/green"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/imageView3"
+                    tools:visibility="visible" />
+
+                <ImageButton
+                    android:id="@+id/reloadDataUsage"
+                    style="@style/OctoTheme.Widget.Button.Image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_1"
+                    android:contentDescription="@string/cd_reload"
+                    app:layout_constraintBottom_toBottomOf="@+id/dataUsageBar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/dataUsageBar"
+                    app:srcCompat="@drawable/ic_round_refresh_24"
+                    app:tint="@color/spaghetti_detective" />
+
+                <ProgressBar
+                    android:id="@+id/dataUsageBar"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_2"
+                    android:indeterminate="false"
+                    android:indeterminateTint="@color/spaghetti_detective"
+                    android:progressBackgroundTint="@color/spaghetti_detective"
+                    android:progressTint="@color/spaghetti_detective"
+                    app:layout_constraintEnd_toStartOf="@+id/reloadDataUsage"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView6"
+                    tools:max="100"
+                    tools:progress="66" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/disconnectTsd"
+                    style="@style/OctoTheme.Widget.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_2"
+                    android:text="@string/configure_remote_acces___spaghetti_detective___disconnect_button"
+                    app:layout_constraintTop_toBottomOf="@+id/dataUsage"
+                    tools:layout_editor_absoluteX="16dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/connectTsd"
+                    style="@style/OctoTheme.Widget.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_2"
+                    android:backgroundTint="@color/spaghetti_detective"
+                    android:text="@string/configure_remote_acces___spaghetti_detective___connect_button"
+                    android:textColor="@color/text_colored_background"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView2"
+                    app:strokeColor="@android:color/transparent" />
+
+                <TextView
+                    android:id="@+id/dataUsage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/configure_remote_acces___spaghetti_detective___data_usage_limited"
+                    android:textAppearance="@style/OctoTheme.TextAppearance.Label"
+                    app:layout_constraintEnd_toEndOf="@+id/dataUsageBar"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="@+id/dataUsageBar"
+                    app:layout_constraintTop_toBottomOf="@+id/dataUsageBar" />
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_3"
+                    android:text="@string/configure_remote_acces___spaghetti_detective___data_usafe"
+                    android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
+                    app:layout_constraintEnd_toEndOf="@+id/dataUsageBar"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="@+id/dataUsageBar"
+                    app:layout_constraintTop_toBottomOf="@+id/tsdConnected" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/connected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="reloadDataUsage,textView6,dataUsageBar,dataUsage,disconnectTsd,tsdConnected" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/disconnected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:constraint_referenced_ids="textView2,connectTsd" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>
