@@ -53,8 +53,6 @@ class ConfigureRemoteAccessSpaghettiDetectiveFragment : Fragment() {
 
         binding.dataUsageBar.max = 100
         tsdViewModel.dataUsage.observe(viewLifecycleOwner) {
-            TransitionManager.beginDelayedTransition(binding.root)
-
             when (it) {
                 is ConfigureRemoteAccessSpaghettiDetectiveViewModel.DataUsageWrapper.Data -> {
                     binding.dataUsageBar.post {

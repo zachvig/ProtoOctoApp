@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.*
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -26,8 +27,13 @@ import de.crysxd.baseui.di.injectViewModel
 import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.utils.CollapsibleToolbarTabsHelper
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ext.toHtml
+import de.crysxd.octoapp.octoprint.isOctoEverywhereUrl
+import de.crysxd.octoapp.octoprint.isSpaghettiDetectiveUrl
+import de.crysxd.octoapp.octoprint.models.settings.Settings
 
 class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
 
@@ -84,6 +90,7 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
     }
 
     private fun installTabs() {
+        adapter.sort()
         binding.viewPager.adapter = adapter
         binding.viewPager.offscreenPageLimit = 1
         binding.viewPager.clipChildren = false
@@ -121,12 +128,26 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         binding.root.updatePadding(bottom = insets.bottom)
     }
 
-    private class PagerAdapter(context: Context, fragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(fragmentManager, lifecycle) {
-        private val tabs = listOf(
-            context.getString(R.string.configure_remote_acces___octoeverywhere___title) to { ConfigureRemoteAccessOctoEverywhereFragment() },
-            context.getString(R.string.configure_remote_acces___spaghetti_detective___title) to { ConfigureRemoteAccessSpaghettiDetectiveFragment() },
-            context.getString(R.string.configure_remote_acces___manual___title) to { ConfigureRemoteAccessManualFragment() },
+    private class PagerAdapter(val context: Context, fragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(fragmentManager, lifecycle) {
+        private var tabs = listOf(
+            OctoEverywhereTab,
+            SpaghettiDetectiveTab,
+            ManualTab
         )
+
+        fun sort() {
+            // Sort tabs by importance:
+            // - Connected one first
+            // - Installed one second
+            // - Manual always last if not connected
+            // - Tabs with similar importance are shuffled
+            val info = BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot() ?: return
+            tabs = tabs.groupBy { it.getImportance(info) }.map { it.key to it.value.shuffled() }.let {
+                it.sortedByDescending { it.first }.map { it.second }.flatten()
+            }
+
+            notifyItemRangeChanged(0, tabs.size)
+        }
 
         override fun onBindViewHolder(
             holder: FragmentViewHolder,
@@ -140,7 +161,41 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         }
 
         override fun getItemCount() = tabs.size
-        override fun createFragment(position: Int) = tabs[position].second()
-        fun getTitle(position: Int) = tabs[position].first
+        override fun createFragment(position: Int) = tabs[position].createFragment()
+        fun getTitle(position: Int) = context.getString(tabs[position].label)
+    }
+
+    abstract class Tab(val label: Int) {
+        abstract val importanceNonce: Int
+        abstract fun createFragment(): Fragment
+        abstract fun isInstalled(info: OctoPrintInstanceInformationV3): Boolean
+        abstract fun isConnected(info: OctoPrintInstanceInformationV3): Boolean
+        fun getImportance(info: OctoPrintInstanceInformationV3) = listOf(
+            if (isInstalled(info)) 2_000 else 0,
+            if (isConnected(info)) 10_000 else 0,
+        ).sum()
+    }
+
+    object OctoEverywhereTab : Tab(R.string.configure_remote_acces___octoeverywhere___title) {
+        override val importanceNonce = (0..1_000).random()
+        override fun createFragment() = ConfigureRemoteAccessOctoEverywhereFragment()
+        override fun isInstalled(info: OctoPrintInstanceInformationV3) = info.settings?.plugins?.any { it.value is Settings.OctoEverywhere } == true
+        override fun isConnected(info: OctoPrintInstanceInformationV3) = info.alternativeWebUrl?.isOctoEverywhereUrl() == true
+    }
+
+    object SpaghettiDetectiveTab : Tab(R.string.configure_remote_acces___spaghetti_detective___title) {
+        override val importanceNonce = (0..1_000).random()
+        override fun createFragment() = ConfigureRemoteAccessSpaghettiDetectiveFragment()
+        override fun isInstalled(info: OctoPrintInstanceInformationV3) = info.settings?.plugins?.any { it.value is Settings.SpaghettiDetective } == true
+        override fun isConnected(info: OctoPrintInstanceInformationV3) = info.alternativeWebUrl?.isSpaghettiDetectiveUrl() == true
+    }
+
+    object ManualTab : Tab(R.string.configure_remote_acces___manual___title) {
+        override val importanceNonce = 0
+        override fun createFragment() = ConfigureRemoteAccessManualFragment()
+        override fun isInstalled(info: OctoPrintInstanceInformationV3) = false
+        override fun isConnected(info: OctoPrintInstanceInformationV3) = info.alternativeWebUrl != null &&
+                !SpaghettiDetectiveTab.isConnected(info) &&
+                !OctoEverywhereTab.isConnected(info)
     }
 }

@@ -11,6 +11,7 @@ import de.crysxd.baseui.databinding.ConfigureRemoteAccessManualFragmentBinding
 import de.crysxd.baseui.di.injectParentViewModel
 import de.crysxd.octoapp.octoprint.extractAndRemoveBasicAuth
 import de.crysxd.octoapp.octoprint.isOctoEverywhereUrl
+import de.crysxd.octoapp.octoprint.isSpaghettiDetectiveUrl
 
 class ConfigureRemoteAccessManualFragment : Fragment() {
     private val viewModel by injectParentViewModel<ConfigureRemoteAccessViewModel>()
@@ -42,7 +43,7 @@ class ConfigureRemoteAccessManualFragment : Fragment() {
         }
 
         viewModel.viewData.observe(viewLifecycleOwner) {
-            val manualConnected = it.remoteWebUrl != null && !it.remoteWebUrl.isOctoEverywhereUrl()
+            val manualConnected = it.remoteWebUrl != null && !it.remoteWebUrl.isOctoEverywhereUrl() && !it.remoteWebUrl.isSpaghettiDetectiveUrl()
             binding.webUrlInput.editText.setText(it.remoteWebUrl?.extractAndRemoveBasicAuth()?.first.takeIf { manualConnected }?.toString())
             binding.basicPasswordInput.editText.setText(it.remoteWebUrl?.password?.takeIf { manualConnected }?.toString())
             binding.basicUserInput.editText.setText(it.remoteWebUrl?.username?.takeIf { manualConnected }?.toString())
