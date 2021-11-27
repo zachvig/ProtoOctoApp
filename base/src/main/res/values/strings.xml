@@ -1015,7 +1015,7 @@ happy printing!"</string>
     <string name="file_manager___upload___uploading_x">"Uploading %s"</string>
     <string name="file_manager___upload___starting_upload">"Starting upload..."</string>
     <string name="file_manager___upload___x_files_pending">"%d files pending"</string>
-    <string name="file_manager___upload___error_invalid_file_type"><![CDATA[This file type is not supported by OctoPrint.**<br><br><small>Supported file types: %s</small>]]></string>
+    <string name="file_manager___upload___error_invalid_file_type"><![CDATA[This file type is not supported by OctoPrint.<br><br><small>Supported file types: %s</small>]]></string>
     <string name="progress_widget___eta">"ETA"</string>
     <string name="progress_widget___z_height">"Z height"</string>
     <string name="progress_widget___gcode_unavailable">"Unavailable"</string>
