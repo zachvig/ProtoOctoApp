@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import de.crysxd.baseui.BaseViewModelFactory
 import de.crysxd.baseui.common.NetworkStateViewModel
+import de.crysxd.baseui.common.configureremote.ConfigureRemoteAccessSpaghettiDetectiveViewModel
 import de.crysxd.baseui.common.configureremote.ConfigureRemoteAccessViewModel
 import de.crysxd.baseui.common.enter_value.EnterValueViewModel
 import de.crysxd.baseui.common.feedback.SendFeedbackViewModel
@@ -207,5 +208,16 @@ open class ViewModelModule {
         pinnedMenuItemRepository: PinnedMenuItemRepository
     ): ViewModel = QuickAccessWidgetViewModel(
         pinnedMenuItemRepository = pinnedMenuItemRepository
+    )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(ConfigureRemoteAccessSpaghettiDetectiveViewModel::class)
+    fun provideConfigureRemoteAccessSpaghettiDetectiveViewModel(
+        octoPrintProvider: OctoPrintProvider,
+        octoPrintRepository: OctoPrintRepository,
+    ): ViewModel = ConfigureRemoteAccessSpaghettiDetectiveViewModel(
+        octoPrintProvider = octoPrintProvider,
+        octoPrintRepository = octoPrintRepository
     )
 }

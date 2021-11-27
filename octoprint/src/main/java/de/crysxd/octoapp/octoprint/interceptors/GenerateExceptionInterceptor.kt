@@ -2,6 +2,7 @@ package de.crysxd.octoapp.octoprint.interceptors
 
 import de.crysxd.octoapp.octoprint.api.UserApi
 import de.crysxd.octoapp.octoprint.exceptions.*
+import de.crysxd.octoapp.octoprint.isSpaghettiDetectiveUrl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -49,7 +50,7 @@ class GenerateExceptionInterceptor(
 
                     // Spaghetti Detective
                     481 -> throw SpaghettiDetectiveTunnelUsageLimitReachedException(response.request.url)
-                    482 -> throw SpaghettiDetectiveTunnelNotFoundException(response.request.url)
+                    482 -> throw SpaghettiDetectiveCantReachPrinterException(response.request.url)
 
                     else -> throw generateGenericException(response)
                 }
@@ -98,6 +99,12 @@ class GenerateExceptionInterceptor(
     )
 
     private fun generate401Exception(response: Response): IOException {
+        // Special case for TSD, here a 401 means the tunnel is gone (account deleted/printer removed/...)
+        if (response.request.url.isSpaghettiDetectiveUrl()) {
+            throw SpaghettiDetectiveTunnelNotFoundException(response.request.url)
+        }
+
+        // Standard case: Basic Auth
         val authHeader = response.headers["WWW-Authenticate"]
         return authHeader?.let {
             val realmMatcher = Pattern.compile("realm=\"([^\"]*)\"").matcher(it)

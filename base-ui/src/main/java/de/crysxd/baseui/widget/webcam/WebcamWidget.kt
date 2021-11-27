@@ -93,7 +93,8 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
                     frame = state.frame,
                     flipH = state.flipH,
                     flipV = state.flipV,
-                    rotate90 = state.rotate90
+                    rotate90 = state.rotate90,
+                    nextFrameDelayMs = state.nextFrameDelayMs,
                 )
             }
             is UiState.RichStreamReady -> {

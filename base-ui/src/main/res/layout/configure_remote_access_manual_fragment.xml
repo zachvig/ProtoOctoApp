@@ -1,63 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_margin="@dimen/margin_2"
+        app:cardCornerRadius="@dimen/common_corner_radius">
 
-        <TextView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin_2"
-            android:layout_marginVertical="@dimen/margin_2"
-            android:gravity="center"
-            android:text="@string/configure_remote_acces___manual___description"
-            android:textColor="@color/dark_text" />
+            android:layout_height="match_parent"
+            android:background="@color/input_background">
 
-        <de.crysxd.baseui.common.OctoTextInputLayout
-            android:id="@+id/webUrlInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin_2"
-            android:inputType="textUri"
-            app:example="e.g. https://mydomain.com:5000"
-            app:label="@string/sign_in___discover___web_url_hint"
-            app:labelActive="@string/sign_in___discover___web_url_hint_active" />
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <de.crysxd.baseui.common.OctoTextInputLayout
-            android:id="@+id/basicUserInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin_2"
-            android:layout_marginTop="@dimen/margin_1"
-            android:autofillHints="username"
-            android:inputType="textNoSuggestions"
-            app:label="@string/configure_remote_access___manual___username_hint"
-            app:labelActive="@string/configure_remote_access___manual___username_hint_active" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_2"
+                    android:layout_marginTop="@dimen/margin_3"
+                    android:gravity="center"
+                    android:text="Manual setup"
+                    android:textAppearance="@style/OctoTheme.TextAppearance.Title" />
 
-        <de.crysxd.baseui.common.OctoTextInputLayout
-            android:id="@+id/basicPasswordInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin_2"
-            android:layout_marginTop="@dimen/margin_1"
-            android:autofillHints="password"
-            android:inputType="textNoSuggestions"
-            app:forPassword="true"
-            app:label="@string/configure_remote_access___manual___password_hint"
-            app:labelActive="@string/configure_remote_access___manual___password_hint_active" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_2"
+                    android:layout_marginVertical="@dimen/margin_2"
+                    android:gravity="center"
+                    android:text="@string/configure_remote_acces___manual___description"
+                    android:textColor="@color/dark_text" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/saveUrl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_2"
-            android:text="@string/configure_remote_acces___manual___button" />
+                <de.crysxd.baseui.common.OctoTextInputLayout
+                    android:id="@+id/webUrlInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_2"
+                    android:inputType="textUri"
+                    app:example="e.g. https://mydomain.com:5000"
+                    app:label="@string/sign_in___discover___web_url_hint"
+                    app:labelActive="@string/sign_in___discover___web_url_hint_active" />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+                <de.crysxd.baseui.common.OctoTextInputLayout
+                    android:id="@+id/basicUserInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_2"
+                    android:layout_marginTop="@dimen/margin_1"
+                    android:autofillHints="username"
+                    android:inputType="textNoSuggestions"
+                    app:label="@string/configure_remote_access___manual___username_hint"
+                    app:labelActive="@string/configure_remote_access___manual___username_hint_active" />
 
-</androidx.core.widget.NestedScrollView>
+                <de.crysxd.baseui.common.OctoTextInputLayout
+                    android:id="@+id/basicPasswordInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_2"
+                    android:layout_marginTop="@dimen/margin_1"
+                    android:autofillHints="password"
+                    android:inputType="textNoSuggestions"
+                    app:forPassword="true"
+                    app:label="@string/configure_remote_access___manual___password_hint"
+                    app:labelActive="@string/configure_remote_access___manual___password_hint_active" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/saveUrl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_2"
+                    android:text="@string/configure_remote_acces___manual___button" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>
