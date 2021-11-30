@@ -40,6 +40,8 @@ class EnterValueFragment : BaseFragment() {
         binding.buttonSet.setOnClickListener { navigateBackWithResult() }
         binding.buttonSet.text = navArgs.action ?: getString(android.R.string.ok)
         binding.textViewTitle.text = navArgs.title
+        binding.textViewDescription.text = navArgs.description
+        binding.textViewDescription.isVisible = binding.textViewDescription.text.isNotBlank()
 
         binding.textInputLayout2.isVisible = navArgs.resultId2 >= 0
         binding.textInputLayout3.isVisible = navArgs.resultId3 >= 0
@@ -99,6 +101,7 @@ class EnterValueFragment : BaseFragment() {
             binding.textInputLayout.editText.requestFocusAndOpenSoftKeyboard()
         }, 300)
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
+        binding.root.setupWithToolbar(requireOctoActivity())
     }
 
     override fun onPause() {

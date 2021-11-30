@@ -76,7 +76,7 @@ class SpaghettiDetectiveWebcamConnection(
                     } catch (e: Exception) {
                         Timber.e(e)
                     }
-                } ?: Timber.d("No frame available")
+                } ?: emit(SpaghettiCamSnapshot.NotWatching)
 
                 // Publish and sleep
                 Timber.d("Waiting $delayMillis + 1000ms for before getting next frame")
@@ -90,6 +90,7 @@ class SpaghettiDetectiveWebcamConnection(
 
     sealed class SpaghettiCamSnapshot {
         object Loading : SpaghettiCamSnapshot()
+        object NotWatching : SpaghettiCamSnapshot()
         data class Frame(val frame: Bitmap, val nextFrameDelayMs: Long) : SpaghettiCamSnapshot()
     }
 }

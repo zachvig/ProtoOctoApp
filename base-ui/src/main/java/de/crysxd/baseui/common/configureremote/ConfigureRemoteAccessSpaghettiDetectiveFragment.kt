@@ -72,6 +72,7 @@ class ConfigureRemoteAccessSpaghettiDetectiveFragment : Fragment() {
                     val resetInMillis = TimeUnit.SECONDS.toMillis(it.dataUsage.resetInSeconds.toLong())
                     val resetDate = System.currentTimeMillis() + resetInMillis
                     val relativeString = DateUtils.getRelativeTimeSpanString(resetDate, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
+                        .toString().replaceFirstChar { it.lowercase() }
 
                     // Monthly cap bytes of -1 indicate no cap
                     binding.dataUsage.isVisible = it.dataUsage.monthlyCapBytes > 0

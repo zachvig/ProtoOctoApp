@@ -89,7 +89,6 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
             binding.webcamView.canSwitchWebcam = it.canSwitchWebcam
             binding.webcamView.state = when (it) {
                 is WebcamViewModel.UiState.Loading -> WebcamView.WebcamState.Loading
-                WebcamViewModel.UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
                 is WebcamViewModel.UiState.RichStreamDisabled -> {
                     // We can't launch the purchase flow in fullscreen. Close screen.
                     findNavController().popBackStack()
@@ -108,6 +107,9 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
                     flipH = it.flipH,
                     flipV = it.flipV,
                     rotate90 = it.rotate90
+                )
+                is WebcamViewModel.UiState.WebcamNotAvailable -> WebcamView.WebcamState.NotAvailable(
+                    text = it.text
                 )
                 is WebcamViewModel.UiState.Error -> if (it.isManualReconnect) {
                     WebcamView.WebcamState.Error(it.streamUrl)

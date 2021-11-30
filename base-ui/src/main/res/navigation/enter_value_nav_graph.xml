@@ -15,6 +15,11 @@
             android:defaultValue=""
             app:argType="string" />
         <argument
+            android:name="description"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
             android:name="action"
             android:defaultValue="@null"
             app:argType="string"
