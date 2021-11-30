@@ -1049,6 +1049,6 @@ gelukkig printen!"</string>
     <string name="configure_remote_acces___spaghetti_detective___description">"Met de Spaghetti Detective kunt u uw afdrukken op afstand bedienen en observeren. Nadat je de plug-in hebt geïnstalleerd, kun je hieronder inloggen om OctoApp te gebruiken om je printer te bedienen, waar je ook bent!"</string>
     <string name="app_widget___live_x_seconds">"Live (%ds)"</string>
     <string name="main___banner_connected_via_spaghetti_detective">"Verbonden via Spaghetti Detective"</string>
-    <string name="move_settings_description"></string>
-    <string name="configure_remote_acces___spaghetti_detective___webcam_not_watching"></string>
+    <string name="move_settings_description">"Deze instellingen zijn alleen van toepassing wanneer u de printkop handmatig verplaatst met OctoApp en hebben geen invloed op uw afdrukken"</string>
+    <string name="configure_remote_acces___spaghetti_detective___webcam_not_watching">"De Detective kijkt niet"</string>
 </resources>
