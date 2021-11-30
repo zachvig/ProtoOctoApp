@@ -1051,6 +1051,6 @@ gutes Drucken!"</string>
     <string name="configure_remote_acces___spaghetti_detective___description">"Mit dem Spaghetti Detective kannst du deinen Drucker aus der Ferne steuern und beobachten. Nachdem du das Plugin installiert hast, kannst du dich unten anmelden, um OctoApp zu verwenden, um deinen Drucker von überall aus zu steuern!"</string>
     <string name="app_widget___live_x_seconds">"Live (%ds)"</string>
     <string name="main___banner_connected_via_spaghetti_detective">"Verbunden über Spaghetti Detective"</string>
-    <string name="move_settings_description"></string>
-    <string name="configure_remote_acces___spaghetti_detective___webcam_not_watching"></string>
+    <string name="move_settings_description">"Diese Einstellungen gelten nur, wenn Sie den Druckkopf manuell mit OctoApp bewegen und haben keinen Einfluss auf Ihre Drucke"</string>
+    <string name="configure_remote_acces___spaghetti_detective___webcam_not_watching">"Der Detective schaut nicht zu"</string>
 </resources>
