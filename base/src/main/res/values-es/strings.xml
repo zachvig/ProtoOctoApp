@@ -1047,7 +1047,7 @@ feliz impresión!"</string>
     <!-- Fuzzy -->
     <string name="configure_remote_acces___spaghetti_detective___disconnect_button">"Desconecte TSD"</string>
     <string name="configure_remote_acces___spaghetti_detective___connect_button">"Conecta el Spaghetti Detective"</string>
-    <string name="configure_remote_acces___spaghetti_detective___data_usage_limited">"Se usó% 1 $ s de% 2 $ s (se restablece en% 3 $ s)"</string>
+    <string name="configure_remote_acces___spaghetti_detective___data_usage_limited">"Se usó %1$s de %2$s (se restablece en %3$s)"</string>
     <string name="configure_remote_acces___spaghetti_detective___data_usage_failed">"No se pudo recuperar el uso de datos"</string>
     <string name="configure_remote_acces___spaghetti_detective___data_usafe">"Uso de datos"</string>
     <string name="configure_remote_acces___spaghetti_detective___connected">"¡TSD está conectado!"</string>
