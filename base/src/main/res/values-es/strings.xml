@@ -1054,6 +1054,6 @@ feliz impresión!"</string>
     <string name="configure_remote_acces___spaghetti_detective___description">"Spaghetti Detective le permite controlar y observar sus huellas de forma remota. Después de instalar el complemento, puede iniciar sesión a continuación para usar OctoApp para controlar su impresora desde cualquier lugar."</string>
     <string name="app_widget___live_x_seconds">"En vivo (% ds)"</string>
     <string name="main___banner_connected_via_spaghetti_detective">"Conectado a través de Spaghetti Detective"</string>
-    <string name="move_settings_description"></string>
-    <string name="configure_remote_acces___spaghetti_detective___webcam_not_watching"></string>
+    <string name="move_settings_description">"Esta configuración solo se aplica cuando mueve manualmente el cabezal de impresión con OctoApp y no afecta sus impresiones"</string>
+    <string name="configure_remote_acces___spaghetti_detective___webcam_not_watching">"El Detective no está mirando"</string>
 </resources>
