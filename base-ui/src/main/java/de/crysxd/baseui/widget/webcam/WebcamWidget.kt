@@ -83,7 +83,6 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
         binding.webcamView.canSwitchWebcam = state.canSwitchWebcam
         binding.webcamView.state = when (state) {
             is Loading -> WebcamView.WebcamState.Loading
-            UiState.WebcamNotConfigured -> WebcamView.WebcamState.NotConfigured
             is UiState.RichStreamDisabled -> WebcamView.WebcamState.RichStreamDisabled
             is UiState.FrameReady -> {
                 enforcedAspectRatio = state.enforcedAspectRatio
@@ -109,6 +108,9 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
                     rotate90 = state.rotate90
                 )
             }
+            is UiState.WebcamNotAvailable -> WebcamView.WebcamState.NotAvailable(
+                text = state.text
+            )
             is Error -> {
                 if (state.isManualReconnect) {
                     WebcamView.WebcamState.Error(state.streamUrl)

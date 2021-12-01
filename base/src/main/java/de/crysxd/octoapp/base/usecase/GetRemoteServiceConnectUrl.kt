@@ -25,24 +25,20 @@ class GetConnectOctoEverywhereUrlUseCase @Inject constructor(
     override suspend fun doExecute(param: RemoteService, timber: Timber.Tree) = try {
         val printerId = param.getPrinterId(octoPrintProvider.octoPrint())
         val url = param.getConnectUrl()
-            .replace("{{{printerid}}}", printerId)
+            .replace("{{{printerid}}}", printerId ?: "")
             .replace("{{{callbackPath}}}", param.getCallbackPath())
         Result.Success(url)
     } catch (e: OctoEverywhereNotInstalledException) {
         OctoAnalytics.logEvent(OctoAnalytics.Event.OctoEverywherePluginMissing)
         Result.Error(BaseInjector.get().localizedContext().getString(R.string.configure_remote_acces___octoeverywhere___error_install_plugin), e)
-    } catch (e: SpaghettiDetectiveNotInstalledException) {
-        OctoAnalytics.logEvent(OctoAnalytics.Event.OctoEverywherePluginMissing)
-        Result.Error("The Spaghetti Detective plugin is not installed. Install it in the webinterface and make sure it's up to date before trying again.", e)
     } catch (e: OctoPrintUnavailableException) {
         Result.Error(BaseInjector.get().localizedContext().getString(R.string.configure_remote_acces___octoeverywhere___error_no_connection), e)
     }
 
     class OctoEverywhereNotInstalledException : IllegalStateException("OctoEverywhere not installed")
-    class SpaghettiDetectiveNotInstalledException : IllegalStateException("OctoEverywhere not installed")
 
     sealed class RemoteService {
-        abstract suspend fun getPrinterId(octoPrint: OctoPrint): String
+        abstract suspend fun getPrinterId(octoPrint: OctoPrint): String?
         abstract fun getConnectUrl(): String
         abstract fun getCallbackPath(): String
         abstract fun recordStartEvent()
@@ -66,11 +62,8 @@ class GetConnectOctoEverywhereUrlUseCase @Inject constructor(
             override suspend fun getPrinterId(octoPrint: OctoPrint) = try {
                 octoPrint.createSpaghettiDetectiveApi().getLinkedPrinterId() ?: ""
             } catch (e: OctoPrintApiException) {
-                if (e.responseCode == 400 || e.responseCode == 404) {
-                    throw SpaghettiDetectiveNotInstalledException()
-                } else {
-                    throw e
-                }
+                Timber.e(e)
+                null
             }
 
             override fun recordStartEvent() = OctoAnalytics.logEvent(OctoAnalytics.Event.SpaghettiDetectiveConnectStarted)

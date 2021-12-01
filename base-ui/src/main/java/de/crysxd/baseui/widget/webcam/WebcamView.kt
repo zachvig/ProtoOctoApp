@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.StringRes
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
@@ -160,14 +161,12 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
         when (newState) {
             WebcamState.Loading -> binding.loadingState.isVisible = true
-            WebcamState.NotConfigured -> {
-                binding.loadingState.isVisible = false
-                binding.notConfiguredState.isVisible = true
-            }
+
             WebcamState.Reconnecting -> {
                 binding.loadingState.isVisible = false
                 binding.reconnectingState.isVisible = true
             }
+
             WebcamState.RichStreamDisabled -> {
                 binding.loadingState.isVisible = false
                 binding.errorState.isVisible = true
@@ -175,6 +174,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 binding.errorDescription.text = context.getString(R.string.rich_stream_disbaled_description)
                 binding.buttonReconnect.text = context.getString(R.string.enable)
             }
+
             is WebcamState.Error -> {
                 binding.loadingState.isVisible = false
                 binding.errorState.isVisible = true
@@ -186,7 +186,15 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                     UriLibrary.getWebcamTroubleshootingUri().open(findFragment<Fragment>().requireOctoActivity())
                 }
             }
+
+            is WebcamState.NotAvailable -> {
+                binding.notConfiguredState.setText(newState.text)
+                binding.loadingState.isVisible = false
+                binding.notConfiguredState.isVisible = true
+            }
+
             is WebcamState.RichStreamReady -> displayHlsStream(newState)
+
             is WebcamState.MjpegFrameReady -> displayMjpegFrame(newState)
         }
     }
@@ -357,7 +365,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     sealed class WebcamState {
         object Loading : WebcamState()
         object Reconnecting : WebcamState()
-        object NotConfigured : WebcamState()
+        data class NotAvailable(@StringRes val text: Int) : WebcamState()
         object RichStreamDisabled : WebcamState()
         data class Error(val streamUrl: String?) : WebcamState()
 

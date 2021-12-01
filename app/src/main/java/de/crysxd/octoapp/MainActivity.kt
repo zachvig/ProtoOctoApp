@@ -423,7 +423,7 @@ class MainActivity : OctoActivity() {
                 e.exception is WebSocketMaybeBrokenException -> e.exception?.let(this::showDialog)
                 e.exception is WebSocketUpgradeFailedException -> e.exception?.let(this::showDialog)
                 !listOf(R.id.action_connect_printer, R.id.action_sign_in_required).contains(viewModel.lastNavigation) ->
-                    showBanner(R.string.main___banner_connection_lost_reconnecting, 0, R.color.color_error, showSpinner = true, alreadyShrunken = false)
+                    showBanner(R.string.main___banner_connection_lost_reconnecting, 0, R.color.yellow, showSpinner = true, alreadyShrunken = false)
                 else -> Unit
             }
         }
@@ -431,6 +431,9 @@ class MainActivity : OctoActivity() {
         is Event.Connected -> {
             Timber.w("Connection restored")
             updateAllWidgets()
+
+            // Start LiveNotification again, might have been stopped!
+            LiveNotificationManager.restartIfWasPaused(this)
         }
 
         is Event.MessageReceived -> {

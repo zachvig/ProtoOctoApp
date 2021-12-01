@@ -22,6 +22,20 @@ object LiveNotificationManager {
         }
     private var isHibernating = false
 
+    fun pauseNotificationsUntilNextLaunch(context: Context) {
+        Timber.i("Stopping notification until next launch")
+        BaseInjector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch = true
+        stop(context)
+        PrintNotificationController.instance.cancelUpdateNotifications()
+    }
+
+    fun restartIfWasPaused(context: Context) {
+        if (BaseInjector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch) {
+            Timber.i("Restarting notification after it was paused")
+            BaseInjector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch = false
+            start(context)
+        }
+    }
 
     fun start(context: Context) {
         // Guard: We can't start the service without an active instance
@@ -44,8 +58,7 @@ object LiveNotificationManager {
                 }
             }
         } else {
-            Timber.i("Skipping notification service start, disabled")
-
+            Timber.v("Skipping notification service start, disabled")
         }
     }
 

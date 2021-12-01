@@ -4,7 +4,7 @@
 
     <!-- Auto filled -->
     <string name="announcement___new_version_learn_more">"What's new?"</string>
-    <string name="announcement___new_version_title">"Welcome to OctoApp 1.11! 🍾"</string>
+    <string name="announcement___new_version_title">"Welcome to OctoApp 1.12! 🍾"</string>
     <string name="app_logs">"App logs"</string>
     <string name="app_name">"OctoApp"</string>
 
@@ -35,8 +35,6 @@ The widget will always control the OctoPrint instance that is currently active i
     <string name="app_widget___offline_since_x">"Offline since %s"</string>
     <string name="app_widget___update_failed">"Update failed"</string>
     <string name="app_widget___updating">"Updating…"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___apply">"Apply"</string>
     <string name="billing_unsupported_detail">"Only apps downlaoded from Google Play can activate features. Please reach out to hello@octoapp.eu!"</string>
     <string name="billing_unsupported_title">"Only supported for apps from Google Play"</string>
@@ -51,8 +49,6 @@ The widget will always control the OctoPrint instance that is currently active i
     <string name="change_filament_confirmation_message">"Do you want to change the filament?"</string>
     <string name="clear_lebel">"Clear label"</string>
     <string name="command">"Command"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___completed">"Completed"</string>
 
     <!-- Auto filled -->
@@ -177,8 +173,6 @@ The widget will always control the OctoPrint instance that is currently active i
     <string name="connect_printer___waiting_for_user_subtitle">"You can enable auto-connect in the settings"</string>
     <string name="connect_printer___waiting_for_user_title">"Connect when you are ready"</string>
     <string name="connection_failed">"Connection failed"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___thumbnail_info___popup_cura">"Cura Plugin"</string>
     <string name="distance_in_mm_negative_for_retract">"Distance in mm (negative for retract)"</string>
     <string name="done">"Done"</string>
@@ -209,47 +203,19 @@ The widget will always control the OctoPrint instance that is currently active i
     <string name="extrude">"Extrude"</string>
     <string name="extrude_retract">"Extrude / Retract"</string>
     <string name="extruding_x_mm">"Extruding %d mm"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___failures">"Failures"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___fan_speed_label">"Fan Speed (%)"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___fan_speed_label_active">"Fan speed from 0 to 100"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___feed_rate_label">"Feed Rate (%)"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___feed_rate_label_active">"Feed rate as number (100 is default)"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___filament_use">"Filament use"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___file">"File"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___tab_info">"Info"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___tab_preview">"Preview"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___file_location_local">"Local"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___file_location_sd_card">"SD card"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___file_location_unknown">"Unknown"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___flow_rate_label">"Flow Rate (%)"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___flow_rate_label_active">"Flow rate as number (100 is default)"</string>
     <string name="free_trial_x">"Free trial: %s"</string>
     <string name="fullscreen">"Fullscreen"</string>
@@ -283,27 +249,15 @@ The widget will always control the OctoPrint instance that is currently active i
     <!-- Auto filled -->
     <string name="help___content_not_available">"This content is currently not available. Try again later!"</string>
     <string name="hide">"Hide"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___history">"History"</string>
-
-    <!-- Fuzzy -->
     <string name="rich_stream_disabled_title">"HLS/RTSP webcam stream"</string>
-
-    <!-- Fuzzy -->
     <string name="rich_stream_disbaled_description">"HLS/RTSP streams are disabled, enable them now to see your webcam image."</string>
     <string name="information_about_your_octoprint">"Information about your OctoPrint"</string>
     <string name="information_about_your_phone">"Information about your phone"</string>
     <string name="insert">"Insert"</string>
     <string name="label_for_x">"Label for %s"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___last_print">"Last print"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___last_print_at_x_failure">"%s (failure)"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___last_print_at_x_success">"%s (success)"</string>
     <string name="layer">"Layer"</string>
     <string name="layer_progress">"Layer Progress"</string>
@@ -474,38 +428,27 @@ The widget will always control the OctoPrint instance that is currently active i
     <string name="mm_1">"1 mm"</string>
     <string name="mm_10">"10 mm"</string>
     <string name="mm_100">"100 mm"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___model_size">"Model size"</string>
     <string name="move">"Move"</string>
     <string name="move_settings">"Movement settings"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___never">"Never"</string>
 
     <!-- Auto filled -->
-    <!-- Fuzzy -->
     <string name="file_manager___file_list___no_files_on_octoprint_subtitle"><![CDATA[
     Upload files in the webinterface to get started!<br><br><small>Check out how <a href="https://www.youtube.com/watch?v=QB8MzoafnjY">Cura</a> and <a href="https://www.youtube.com/watch?v=V2PdG-Wx5Z0">Prusa Slicer</a> can store files in OctoPrint automatically.</small>
     ]]></string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_list___no_files_on_octoprint_title">"No files on OctoPrint"</string>
     <string name="no_frames_since_xs">"No frames since %ds"</string>
     <string name="no_preview_image_available">"No preview image available"</string>
     <string name="no_value_placeholder">"--"</string>
     <string name="no_wifi_warning_long">"Your phone is not connected to WiFi. In many cases, OctoPrint is only available over WiFi."</string>
     <string name="notification_channel___print_progress">"Print progress"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___disclaimer_detail">"OctoPrint can't query fan speed and rates. Values can only be shown if changes are witnessed."</string>
     <string name="one_gcode_per_line">"One Gcode command per line"</string>
     <string name="open_email">"Open Email"</string>
     <string name="open_octoprint">"Open OctoPrint"</string>
     <string name="open_terminal">"Open Terminal"</string>
     <string name="other">"Other"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___path">"Path"</string>
     <string name="pause">"Pause"</string>
     <string name="pause_print_confirmation_action">"Pause print"</string>
@@ -594,8 +537,6 @@ The widget will always control the OctoPrint instance that is currently active i
 
     <!-- Auto filled -->
     <string name="workspace___print">"Print"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___print_info">"Print info"</string>
     <string name="print_notification___cancelling_title">"Cancelling…"</string>
     <string name="print_notification___close">"Pause notifications"</string>
@@ -606,11 +547,7 @@ The widget will always control the OctoPrint instance that is currently active i
 
     <!-- Auto filled -->
     <string name="print_notification___reconnecting_title">"Reconnecting…"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___print_time">"Print time"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___thumbnail_info___popup_prusa">"Prusa Slicer Plugin"</string>
     <string name="purchase_dialog_button">"Back to the app"</string>
     <string name="purchase_dialog_subtitle">"All features have been unlocked"</string>
@@ -625,8 +562,6 @@ The widget will always control the OctoPrint instance that is currently active i
     <string name="resume_print_confirmation_action">"Resume print"</string>
     <string name="resume_print_confirmation_message">"Do you want to resume the print?"</string>
     <string name="screenshot_of_current_screen">"Screenshot of current screen"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_list___your_files">"Your files"</string>
     <string name="send_feedback">"Send Feedback"</string>
     <string name="send_gcode">"Send Gcode"</string>
@@ -780,8 +715,6 @@ happy printing!"</string>
 
     <!-- Auto filled -->
     <string name="sing_in___probe___trust_and_continue">"Trust &amp; Continue"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___file_size">"Size"</string>
     <string name="start_printing">"Start Printing"</string>
     <string name="stream_stalled">"Stream stalled"</string>
@@ -799,11 +732,7 @@ happy printing!"</string>
     <string name="temperature_x">"%1$s\u2009°C"</string>
     <string name="thank_you_for_sending_feedback_please_select_what_should_be_included_in_your_message">"Thank you for sending feedback. Please enter a message and select what should be attached."</string>
     <string name="this_file_exceeds_the_limit_for_mobile_downloads">"This file exceeds the limit for app downloads"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_list___no_files_in_folder">"This folder contains no files"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___thumbnail_info___popup_message">"Install the below plugin for your slicer to get thumbnail previews of all files!"</string>
     <string name="time_left_x">"Time left: %s"</string>
     <string name="toggle_favorite">"Toggle pinned"</string>
@@ -811,19 +740,11 @@ happy printing!"</string>
     <string name="try_again">"Try again"</string>
     <string name="try_restrating_the_app_or_octoprint">"Try restarting the app or OctoPrint"</string>
     <string name="tune">"Tune"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___disclaimer_action_hide">"Understood"</string>
     <string name="unknown">"Unknown"</string>
     <string name="update_settings">"Update settings"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___uploaded">"Uploaded"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___thumbnail_info___details">"Install a plugin to get thumbnail previews!"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___thumbnail_info___title">"Using Cura or Prusa Slicer?"</string>
     <string name="webcam">"Webcam"</string>
 
@@ -850,8 +771,6 @@ happy printing!"</string>
 
     <!-- Auto filled -->
     <string name="webcam_settings___title">"Webcam Settings"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___disclaimer_title">"Why are the values not always shown?"</string>
     <string name="widget_extrude">"Extrude"</string>
     <string name="widget_gcode_preview">"Gcode"</string>
@@ -941,14 +860,8 @@ happy printing!"</string>
     <string name="print_notifications_menu___bottom"><![CDATA[Learn more about live and remote notifications <a href="%s">here</a>.]]></string>
     <string name="main___banner_connected_via_ngrok">"Connected via ngrok"</string>
     <string name="main___banner_connected_via_tailscale">"Connected via Tailscale"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_menu___delete">"Delete"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_menu___delete_confirmation_message">"Do you wan to delete „%s“?"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_menu___delete_confirmation_action">"Delete"</string>
     <string name="main_menu___item_show_tutorials">"Tutorials"</string>
     <string name="retry_general">"Retry"</string>
@@ -973,16 +886,12 @@ happy printing!"</string>
     <string name="gcode_preview_settings___quality_medium_description">"Balanced performance and visual fidelity (recommended)"</string>
     <string name="gcode_preview_settings___quality_ultra_description">"Highest visual fidelity with anti aliasing"</string>
     <string name="tune_print___z_baby_step">"Z baby step"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___baby_step_explainer">"Baby stepping through the app can be delayed because the printer will always complete the active command before the baby step"</string>
     <string name="terminal___copied_x_to_clipboard">"Copied „%s“ to clipboard"</string>
     <string name="terminal___select_filters">"Select Filters"</string>
     <string name="terminal___apply_filters">"Apply"</string>
     <string name="app_widget___cancelling_title">"Cancelling…"</string>
     <string name="app_widget___paused_title">"Paused"</string>
-
-    <!-- Fuzzy -->
     <string name="app_widget___pausing_title">"Pausing…"</string>
     <string name="app_widget___printing_title">"Printing…"</string>
     <string name="file_manager___file_menu___enable_all_options">"Enable all options"</string>
@@ -1047,15 +956,16 @@ happy printing!"</string>
     <string name="main_menu___explore_support_plugins">"Explore supported plugins"</string>
     <string name="main_menu___explore_support_plugins_short">"Explore plugins"</string>
     <string name="configure_remote_acces___spaghetti_detective___title">"Spaghetti Detective"</string>
-
-    <!-- Fuzzy -->
     <string name="configure_remote_acces___spaghetti_detective___disconnect_button">"Disconnect TSD"</string>
     <string name="configure_remote_acces___spaghetti_detective___connect_button">"Connect Spaghetti Detective"</string>
-    <string name="configure_remote_acces___spaghetti_detective___data_usage_limited">"Used %1$s of %2$s (resets in %3$s)"</string>
+    <string name="configure_remote_acces___spaghetti_detective___data_usage_limited">"Used %1$s of %2$s (resets %3$s)"</string>
     <string name="configure_remote_acces___spaghetti_detective___data_usage_failed">"Failed to fetch data usage"</string>
     <string name="configure_remote_acces___spaghetti_detective___data_usafe">"Data usage"</string>
     <string name="configure_remote_acces___spaghetti_detective___connected">"TSD is connected!"</string>
+    <string name="configure_remote_acces___spaghetti_detective___live_notification_paused">Live notification paused, Spaghetti Detective tunnel has limited data</string>
     <string name="configure_remote_acces___spaghetti_detective___description">"The Spaghetti Detective allows you to remotely control and observe your prints. After you installed the plugin, you can sign in below to use OctoApp to control your printer from wherever you are!"</string>
     <string name="app_widget___live_x_seconds">"Live (%ds)"</string>
     <string name="main___banner_connected_via_spaghetti_detective">"Connected via Spaghetti Detective"</string>
+    <string name="move_settings_description">"This settings only apply when you manually move the print head with OctoApp and don't affect your prints"</string>
+    <string name="configure_remote_acces___spaghetti_detective___webcam_not_watching">"The Detective is not watching"</string>
 </resources>

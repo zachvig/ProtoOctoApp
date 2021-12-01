@@ -59,6 +59,7 @@ class MoveToolWidgetViewModel(
             R.id.action_enter_value,
             EnterValueFragmentArgs(
                 title = context.getString(R.string.move_settings),
+                description = context.getString(R.string.move_settings_description),
                 action = context.getString(R.string.update_settings),
                 selectAll = true,
 

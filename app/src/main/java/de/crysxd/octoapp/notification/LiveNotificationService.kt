@@ -4,12 +4,15 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.os.SystemClock
+import android.widget.Toast
 import de.crysxd.octoapp.R
+import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.data.models.hasPlugin
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_FILE_NAME
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_FILE_TIME
 import de.crysxd.octoapp.notification.PrintState.Companion.DEFAULT_PROGRESS
+import de.crysxd.octoapp.octoprint.isSpaghettiDetectiveUrl
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
@@ -97,15 +100,8 @@ class LiveNotificationService : Service() {
                 listenOnEventFlow()
             }
 
-            // Observe changes in preferences
-            coroutineScope.launch {
-                octoPreferences.updatedFlow.collectLatest {
-                    if (!octoPreferences.isLivePrintNotificationsEnabled || octoPreferences.activeInstanceId != instance.id) {
-                        Timber.i("Settings changed, restarting")
-                        LiveNotificationManager.restart(this@LiveNotificationService)
-                    }
-                }
-            }
+            observePreferences(instance)
+            observeConnectionChanges()
         } else {
             Timber.i("Notification service disabled, skipping creation")
             stop()
@@ -131,6 +127,32 @@ class LiveNotificationService : Service() {
     } catch (e: Exception) {
         Timber.e(e, "Failed to check preconditions")
         false
+    }
+
+    private fun observePreferences(instance: OctoPrintInstanceInformationV3) = coroutineScope.launch {
+        octoPreferences.updatedFlow.collectLatest {
+            if (!octoPreferences.isLivePrintNotificationsEnabled || octoPreferences.activeInstanceId != instance.id) {
+                Timber.i("Settings changed, restarting")
+                LiveNotificationManager.restart(this@LiveNotificationService)
+            }
+        }
+    }
+
+    private fun observeConnectionChanges() = coroutineScope.launch {
+        val octoPrint = BaseInjector.get().octoPrintProvider().octoPrint()
+        val context = this@LiveNotificationService
+        octoPrint.activeUrl.collect {
+            try {
+                if (it.isSpaghettiDetectiveUrl() && octoPrint.createSpaghettiDetectiveApi().getDataUsage().hasDataCap) {
+                    // Limited tunnel, we can't use cap
+                    Timber.i("Live notification paused, Spaghetti Detective tunnel has limited data")
+                    Toast.makeText(context, getString(R.string.configure_remote_acces___spaghetti_detective___live_notification_paused), Toast.LENGTH_SHORT).show()
+                    LiveNotificationManager.pauseNotificationsUntilNextLaunch(context)
+                }
+            } catch (e: java.lang.Exception) {
+                Timber.e(e)
+            }
+        }
     }
 
     private fun listenOnEventFlow() {

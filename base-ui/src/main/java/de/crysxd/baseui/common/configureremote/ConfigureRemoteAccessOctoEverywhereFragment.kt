@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import de.crysxd.baseui.R
 import de.crysxd.baseui.databinding.ConfigureRemoteAccessOctoeverywhereFragmentBinding
 import de.crysxd.baseui.di.injectParentViewModel
 import de.crysxd.octoapp.octoprint.isOctoEverywhereUrl
@@ -27,6 +28,16 @@ class ConfigureRemoteAccessOctoEverywhereFragment : Fragment() {
 
         binding.disconnectOctoEverywhere.setOnClickListener {
             viewModel.setRemoteUrl("", "", "", false)
+        }
+
+        viewModel.viewState.observe(viewLifecycleOwner) {
+            binding.connectOctoEverywhere.isEnabled = it !is ConfigureRemoteAccessViewModel.ViewState.Loading
+            binding.connectOctoEverywhere.text = getString(
+                when (it) {
+                    ConfigureRemoteAccessViewModel.ViewState.Idle -> R.string.configure_remote_acces___octoeverywhere___connect_button
+                    ConfigureRemoteAccessViewModel.ViewState.Loading -> R.string.loading
+                }
+            )
         }
 
         viewModel.viewData.observe(viewLifecycleOwner) {

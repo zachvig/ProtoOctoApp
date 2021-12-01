@@ -4,8 +4,10 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.ImageView
+import androidx.annotation.StringRes
 import androidx.lifecycle.*
 import de.crysxd.baseui.BaseViewModel
+import de.crysxd.baseui.R
 import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_HLS_WEBCAM
@@ -94,7 +96,12 @@ class WebcamViewModel(
 
                             // Check if webcam is configured
                             if (resolvedSettings == null || resolvedSettings.webcamSettings.webcamEnabled == false) {
-                                return@flow emit(UiState.WebcamNotConfigured)
+                                return@flow emit(
+                                    UiState.WebcamNotAvailable(
+                                        canSwitchWebcam = false,
+                                        text = R.string.please_configure_your_webcam_in_octoprint
+                                    )
+                                )
                             }
 
                             // Open stream
@@ -203,6 +210,10 @@ class WebcamViewModel(
         ).load().map {
             when (it) {
                 is SpaghettiDetectiveWebcamConnection.SpaghettiCamSnapshot.Loading -> UiState.Loading(canSwitchWebcam)
+                is SpaghettiDetectiveWebcamConnection.SpaghettiCamSnapshot.NotWatching -> UiState.WebcamNotAvailable(
+                    canSwitchWebcam = canSwitchWebcam,
+                    text = R.string.configure_remote_acces___spaghetti_detective___webcam_not_watching
+                )
                 is SpaghettiDetectiveWebcamConnection.SpaghettiCamSnapshot.Frame -> UiState.FrameReady(
                     frame = it.frame,
                     canSwitchWebcam = canSwitchWebcam,
@@ -284,7 +295,10 @@ class WebcamViewModel(
     }
 
     sealed class UiState(open val canSwitchWebcam: Boolean) {
-        object WebcamNotConfigured : UiState(false)
+        data class WebcamNotAvailable(
+            @StringRes val text: Int,
+            override val canSwitchWebcam: Boolean
+        ) : UiState(canSwitchWebcam)
 
         data class Loading(
             override val canSwitchWebcam: Boolean

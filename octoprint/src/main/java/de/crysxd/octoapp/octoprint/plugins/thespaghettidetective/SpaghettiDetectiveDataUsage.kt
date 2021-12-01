@@ -6,4 +6,6 @@ data class SpaghettiDetectiveDataUsage(
     @SerializedName("monthly_cap") val monthlyCapBytes: Int,
     @SerializedName("reset_in_seconds") val resetInSeconds: Double,
     @SerializedName("total") val totalBytes: Int
-)
+) {
+    val hasDataCap get() = monthlyCapBytes > -2
+}

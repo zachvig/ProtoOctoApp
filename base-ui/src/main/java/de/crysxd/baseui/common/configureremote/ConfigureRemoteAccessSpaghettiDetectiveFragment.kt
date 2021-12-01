@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.transition.TransitionManager
 import de.crysxd.baseui.R
 import de.crysxd.baseui.databinding.ConfigureRemoteAccessSpaghettiDetectiveFragmentBinding
 import de.crysxd.baseui.di.injectParentViewModel
@@ -50,6 +49,16 @@ class ConfigureRemoteAccessSpaghettiDetectiveFragment : Fragment() {
             }
         }
 
+        viewModel.viewState.observe(viewLifecycleOwner) {
+            binding.connectTsd.isEnabled = it !is ConfigureRemoteAccessViewModel.ViewState.Loading
+            binding.connectTsd.text = getString(
+                when (it) {
+                    ConfigureRemoteAccessViewModel.ViewState.Idle -> R.string.configure_remote_acces___spaghetti_detective___connect_button
+                    ConfigureRemoteAccessViewModel.ViewState.Loading -> R.string.loading
+                }
+            )
+        }
+
         binding.dataUsageBar.max = 100
         tsdViewModel.dataUsage.observe(viewLifecycleOwner) {
             when (it) {
@@ -63,8 +72,10 @@ class ConfigureRemoteAccessSpaghettiDetectiveFragment : Fragment() {
                     val resetInMillis = TimeUnit.SECONDS.toMillis(it.dataUsage.resetInSeconds.toLong())
                     val resetDate = System.currentTimeMillis() + resetInMillis
                     val relativeString = DateUtils.getRelativeTimeSpanString(resetDate, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
+                        .toString().replaceFirstChar { it.lowercase() }
 
-                    binding.dataUsage.isVisible = true
+                    // Monthly cap bytes of -1 indicate no cap
+                    binding.dataUsageGroup.isVisible = it.dataUsage.hasDataCap
                     binding.dataUsage.text = getString(
                         R.string.configure_remote_acces___spaghetti_detective___data_usage_limited,
                         it.dataUsage.totalBytes.toLong().asStyleFileSize(),

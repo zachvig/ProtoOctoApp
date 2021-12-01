@@ -1,6 +1,8 @@
 package de.crysxd.octoapp.octoprint.interceptors
 
 import de.crysxd.octoapp.octoprint.exceptions.AlternativeWebUrlException
+import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereCantReachPrinterException
+import de.crysxd.octoapp.octoprint.exceptions.SpaghettiDetectiveCantReachPrinterException
 import de.crysxd.octoapp.octoprint.getConnectionType
 import de.crysxd.octoapp.octoprint.models.ConnectionType
 import de.crysxd.octoapp.octoprint.withoutBasicAuth
@@ -82,5 +84,7 @@ class AlternativeWebUrlInterceptor constructor(
         fullAlternativeWebUrl?.getConnectionType(ConnectionType.Alternative) ?: ConnectionType.Primary
     }
 
-    private fun canSolveExceptionBySwitchingUrl(e: Exception) = e is IOException
+    private fun canSolveExceptionBySwitchingUrl(e: Exception) = e is IOException ||
+            e is SpaghettiDetectiveCantReachPrinterException ||
+            e is OctoEverywhereCantReachPrinterException
 }
