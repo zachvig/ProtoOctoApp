@@ -13,6 +13,13 @@ class PluginsLibraryViewModel(
     private val getInstalledPluginsUseCase: GetInstalledPluginsUseCase
 ) : BaseViewModel() {
 
+    companion object {
+        private val OCTOEVERYWHERE_ORDER = (100..1000).random()
+        private val SPAGHETTI_DETECTIVE_ORDER = (100..1000).random()
+        private val NGROK_ORDER = (0..100).random()
+        private val TAILSCALE_ORDER = (0..100).random()
+    }
+
     val pluginsIndex = MutableLiveData(
         PluginsIndex(
             listOf(
@@ -21,8 +28,9 @@ class PluginsLibraryViewModel(
                     plugins = listOf(
                         Plugin(
                             name = "OctoApp Companion",
-                            key = "CCCCCCCCCC",
+                            key = "octoapp",
                             highlight = true,
+                            order = 10_000,
                             description = "The Companion Plugin allows OctoApp to received notifications about your prints over the internet — more features coming soon!",
                             pluginPage = UriLibrary.getCompanionPluginUri(),
                         ),
@@ -30,6 +38,7 @@ class PluginsLibraryViewModel(
                             name = "PSU Control",
                             key = "psucontrol",
                             highlight = true,
+                            order = 9_999,
                             description = "Turn your printer on and off via the webinterface and OctoApp and let your printer turn off automatically after a print is done.",
                             pluginPage = Uri.parse("https://plugins.octoprint.org/plugins/psucontrol/"),
                         ),
@@ -37,37 +46,59 @@ class PluginsLibraryViewModel(
                             name = "OctoEverywhere",
                             highlight = true,
                             key = "octoeverywhere",
+                            order = OCTOEVERYWHERE_ORDER,
                             description = "Easy remote access to OctoPrint so you can use OctoApp from wherever you are!",
                             pluginPage = Uri.parse("https://plugins.octoprint.org/plugins/octoeverywhere/"),
                             octoAppTutorial = Uri.parse("https://www.youtube.com/watch?v=kvSLAsBHL00"),
                         ),
-                    )
+                        Plugin(
+                            name = "The Spaghetti Detective",
+                            highlight = true,
+                            order = SPAGHETTI_DETECTIVE_ORDER,
+                            key = "thespaghettidetective",
+                            description = "Use the Spaghetti Detective's tunnel to use OctoApp when you are not at home!",
+                            pluginPage = Uri.parse("https://plugins.octoprint.org/plugins/thespaghettidetective/"),
+//                            octoAppTutorial = Uri.parse("https://www.youtube.com/watch?v=kvSLAsBHL00"),
+                        ),
+                    ).sortedByDescending { it.order }
                 ),
                 PluginCategory(
                     name = "Remote access",
                     plugins = listOf(
                         Plugin(
-                            name = "OctoEverywhere",
-                            highlight = true,
-                            key = "octoeverywhere",
-                            description = "Easy remote access to OctoPrint so you can use OctoApp from wherever you are!",
-                            pluginPage = Uri.parse("https://plugins.octoprint.org/plugins/octoeverywhere/"),
-                            octoAppTutorial = Uri.parse("https://www.youtube.com/watch?v=kvSLAsBHL00"),
-                        ),
-                        Plugin(
                             name = "ngrok",
-                            key = "octoeverywhere",
+                            key = "ngrok",
+                            order = NGROK_ORDER,
                             description = "A plugin to securely access your OctoPrint instance remotely through ngrok",
                             pluginPage = Uri.parse("https://plugins.octoprint.org/plugins/octoeverywhere/"),
                             octoAppTutorial = Uri.parse("https://www.youtube.com/watch?v=Rskcyzujhps"),
                         ),
                         Plugin(
+                            name = "OctoEverywhere",
+                            highlight = true,
+                            key = "octoeverywhere",
+                            order = OCTOEVERYWHERE_ORDER,
+                            description = "Easy remote access to OctoPrint so you can use OctoApp from wherever you are!",
+                            pluginPage = Uri.parse("https://plugins.octoprint.org/plugins/octoeverywhere/"),
+                            octoAppTutorial = Uri.parse("https://www.youtube.com/watch?v=kvSLAsBHL00"),
+                        ),
+                        Plugin(
+                            name = "The Spaghetti Detective",
+                            highlight = true,
+                            key = "thespaghettidetective",
+                            order = SPAGHETTI_DETECTIVE_ORDER,
+                            description = "Use the Spaghetti Detective's tunnel to use OctoApp when you are not at home!",
+                            pluginPage = Uri.parse("https://plugins.octoprint.org/plugins/thespaghettidetective/"),
+//                            octoAppTutorial = Uri.parse("https://www.youtube.com/watch?v=kvSLAsBHL00"),
+                        ),
+                        Plugin(
                             name = "Tailscale",
                             key = "tailscale",
+                            order = TAILSCALE_ORDER,
                             description = "Not a plugin — but a great way to easily enabled remote access",
                             octoAppTutorial = Uri.parse("https://www.youtube.com/watch?v=2Ox1JJEEYoU"),
                         ),
-                    ).shuffled()
+                    ).sortedByDescending { it.order }
                 ),
                 PluginCategory(
                     name = "Power",
@@ -238,5 +269,6 @@ class PluginsLibraryViewModel(
         val pluginPage: Uri? = null,
         val octoAppTutorial: Uri? = null,
         val installed: Boolean? = null,
+        val order: Int = 0,
     )
 }

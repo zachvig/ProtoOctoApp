@@ -159,7 +159,7 @@
                     android:id="@+id/connected"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:constraint_referenced_ids="reloadDataUsage,textView6,dataUsageBar,dataUsage,disconnectTsd,tsdConnected" />
+                    app:constraint_referenced_ids="dataUsageGroup,disconnectTsd,tsdConnected" />
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/disconnected"
@@ -167,6 +167,12 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone"
                     app:constraint_referenced_ids="textView2,connectTsd" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/dataUsageGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="reloadDataUsage,dataUsage,textView6,dataUsageBar" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
