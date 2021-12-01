@@ -49,10 +49,7 @@ class PrintNotificationSupportBroadcastReceiver : BroadcastReceiver() {
     }
 
     private fun handleDisablePrintNotificationUntilNextLaunch(context: Context) {
-        Timber.i("Stopping notification until next launch")
-        BaseInjector.get().octoPreferences().wasPrintNotificationDisabledUntilNextLaunch = true
-        LiveNotificationManager.stop(context)
-        PrintNotificationController.instance.cancelUpdateNotifications()
+        LiveNotificationManager.pauseNotificationsUntilNextLaunch(context)
     }
 
     private suspend fun handleScreenOff(context: Context) {

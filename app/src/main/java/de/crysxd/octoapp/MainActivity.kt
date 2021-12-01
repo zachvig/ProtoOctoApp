@@ -431,6 +431,9 @@ class MainActivity : OctoActivity() {
         is Event.Connected -> {
             Timber.w("Connection restored")
             updateAllWidgets()
+
+            // Start LiveNotification again, might have been stopped!
+            LiveNotificationManager.restartIfWasPaused(this)
         }
 
         is Event.MessageReceived -> {

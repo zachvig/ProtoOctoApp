@@ -962,6 +962,7 @@ happy printing!"</string>
     <string name="configure_remote_acces___spaghetti_detective___data_usage_failed">"Failed to fetch data usage"</string>
     <string name="configure_remote_acces___spaghetti_detective___data_usafe">"Data usage"</string>
     <string name="configure_remote_acces___spaghetti_detective___connected">"TSD is connected!"</string>
+    <string name="configure_remote_acces___spaghetti_detective___live_notification_paused">Live notification paused, Spaghetti Detective tunnel has limited data</string>
     <string name="configure_remote_acces___spaghetti_detective___description">"The Spaghetti Detective allows you to remotely control and observe your prints. After you installed the plugin, you can sign in below to use OctoApp to control your printer from wherever you are!"</string>
     <string name="app_widget___live_x_seconds">"Live (%ds)"</string>
     <string name="main___banner_connected_via_spaghetti_detective">"Connected via Spaghetti Detective"</string>

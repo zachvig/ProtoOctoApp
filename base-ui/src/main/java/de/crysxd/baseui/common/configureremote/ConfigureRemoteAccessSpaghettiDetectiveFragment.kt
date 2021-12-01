@@ -75,7 +75,7 @@ class ConfigureRemoteAccessSpaghettiDetectiveFragment : Fragment() {
                         .toString().replaceFirstChar { it.lowercase() }
 
                     // Monthly cap bytes of -1 indicate no cap
-                    binding.dataUsageGroup.isVisible = it.dataUsage.monthlyCapBytes > 0
+                    binding.dataUsageGroup.isVisible = it.dataUsage.hasDataCap
                     binding.dataUsage.text = getString(
                         R.string.configure_remote_acces___spaghetti_detective___data_usage_limited,
                         it.dataUsage.totalBytes.toLong().asStyleFileSize(),
