@@ -4,7 +4,7 @@
 
     <!-- Auto filled -->
     <string name="announcement___new_version_learn_more">"Wat is er nieuw?"</string>
-    <string name="announcement___new_version_title">"Welkom in OctoApp 1.11! 🍾"</string>
+    <string name="announcement___new_version_title">"Welkom in OctoApp 1.12! 🍾"</string>
     <string name="app_logs">"App logs"</string>
     <string name="app_name">"OctoApp"</string>
 
@@ -1042,11 +1042,13 @@ gelukkig printen!"</string>
     <!-- Fuzzy -->
     <string name="configure_remote_acces___spaghetti_detective___disconnect_button">"TSD loskoppelen"</string>
     <string name="configure_remote_acces___spaghetti_detective___connect_button">"Connect Spaghetti Detective"</string>
-    <string name="configure_remote_acces___spaghetti_detective___data_usage_limited">"%1$s of %2$s gebruikt (reset in %3$s)"</string>
+    <string name="configure_remote_acces___spaghetti_detective___data_usage_limited">"%1$s of %2$s gebruikt (reset %3$s)"</string>
     <string name="configure_remote_acces___spaghetti_detective___data_usage_failed">"Kan gegevensgebruik niet ophalen"</string>
     <string name="configure_remote_acces___spaghetti_detective___data_usafe">"Data gebruik"</string>
     <string name="configure_remote_acces___spaghetti_detective___connected">"TSD is aangesloten!"</string>
     <string name="configure_remote_acces___spaghetti_detective___description">"Met de Spaghetti Detective kunt u uw afdrukken op afstand bedienen en observeren. Nadat je de plug-in hebt geïnstalleerd, kun je hieronder inloggen om OctoApp te gebruiken om je printer te bedienen, waar je ook bent!"</string>
     <string name="app_widget___live_x_seconds">"Live (%ds)"</string>
     <string name="main___banner_connected_via_spaghetti_detective">"Verbonden via Spaghetti Detective"</string>
+    <string name="move_settings_description">"Deze instellingen zijn alleen van toepassing wanneer u de printkop handmatig verplaatst met OctoApp en hebben geen invloed op uw afdrukken"</string>
+    <string name="configure_remote_acces___spaghetti_detective___webcam_not_watching">"De Detective kijkt niet"</string>
 </resources>

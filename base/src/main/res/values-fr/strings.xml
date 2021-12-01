@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- Fuzzy -->
-    <string name="announcement___new_version_detail">"Cette version ajoute une nouvelle section de didacticiels, rend OctoApp prêt pour Android 12, y compris la prise en charge du nouveau thème Material You, et améliore les notifications."</string>
+    <string name="announcement___new_version_detail">"Cette version ajoute une nouvelle section de tutoriels, rend OctoApp prêt pour Android 12, y compris la prise en charge du nouveau thème Material You, et améliore les notifications."</string>
 
     <!-- Auto filled -->
     <string name="announcement___new_version_learn_more">"Quoi de neuf ?"</string>
-    <string name="announcement___new_version_title">"Bienvenue dans OctoApp 1.11 ! 🍾"</string>
+    <string name="announcement___new_version_title">"Bienvenue dans OctoApp 1.12 ! 🍾"</string>
     <string name="app_logs">"Journaux d'application (logs)"</string>
     <string name="app_name">"OctoApp"</string>
 
@@ -36,8 +34,6 @@ Le widget contrôlera toujours l'instance OctoPrint qui est actuellement active 
     <string name="app_widget___offline_since_x">"Hors ligne depuis %s"</string>
     <string name="app_widget___update_failed">"Echec de la mise à jour"</string>
     <string name="app_widget___updating">"Mise à jour…"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___apply">"Appliquer"</string>
     <string name="billing_unsupported_detail">"Seules les applications téléchargées depuis Google Play peuvent activer des fonctionnalités. Veuillez contacter hello@octoapp.eu !"</string>
     <string name="billing_unsupported_title">"Uniquement pris en charge pour les applications de Google Play"</string>
@@ -52,8 +48,6 @@ Le widget contrôlera toujours l'instance OctoPrint qui est actuellement active 
     <string name="change_filament_confirmation_message">"Voulez-vous changer de filament ?"</string>
     <string name="clear_lebel">"Réinitialiser"</string>
     <string name="command">"Commande"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___completed">"Terminé"</string>
 
     <!-- Auto filled -->
@@ -176,8 +170,6 @@ Le widget contrôlera toujours l'instance OctoPrint qui est actuellement active 
     <string name="connect_printer___waiting_for_user_subtitle">"Vous pouvez activer l'auto-connexion dans les paramètres"</string>
     <string name="connect_printer___waiting_for_user_title">"Connectez vous quand vous êtes prêt"</string>
     <string name="connection_failed">"Échec de connexion"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___thumbnail_info___popup_cura">"Plugin Cura"</string>
     <string name="distance_in_mm_negative_for_retract">"Distance en mm (négative pour la rétraction)"</string>
     <string name="done">"Terminé"</string>
@@ -204,51 +196,23 @@ Le widget contrôlera toujours l'instance OctoPrint qui est actuellement active 
     <string name="error_unable_to_load_gcode">"Quelque chose s'est mal passé, impossible de charger le Gcode"</string>
     <string name="error_video_playback">"Impossible de lire %1$s (%2$s)"</string>
     <string name="estimation">"Estimation"</string>
-    <string name="eta_x">"ETA : %s"</string>
+    <string name="eta_x">"Heure de fin : %s"</string>
     <string name="extrude">"Extruder"</string>
     <string name="extrude_retract">"Extruder / Rétracter"</string>
     <string name="extruding_x_mm">"Extrusion de %d mm"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___failures">"Échecs"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___fan_speed_label">"Vitesse du ventilateur (%)"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___fan_speed_label_active">"Vitesse du ventilateur de 0 à 100"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___feed_rate_label">"Vitesse de l'extrudeur (%)"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___feed_rate_label_active">"Vitesse de l'extrudeur de 0 à 100(100 par défaut)"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___filament_use">"Utilisation du filament"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___file">"Fichier"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___tab_info">"Infos"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___tab_preview">"Aperçu"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___file_location_local">"Local"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___file_location_sd_card">"Carte SD"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___file_location_unknown">"Inconnu"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___flow_rate_label">"Débit de l'extrudeur (%)"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___flow_rate_label_active">"Débit de l'extrudeur de 0 à 100 (100 par défaut)"</string>
     <string name="free_trial_x">"Essai gratuit : %s"</string>
     <string name="fullscreen">"Plein écran"</string>
@@ -282,27 +246,15 @@ Le widget contrôlera toujours l'instance OctoPrint qui est actuellement active 
     <!-- Auto filled -->
     <string name="help___content_not_available">"Ce contenu n'est actuellement pas disponible. Réessayez plus tard !"</string>
     <string name="hide">"Cacher"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___history">"Historique"</string>
-
-    <!-- Fuzzy -->
-    <string name="rich_stream_disabled_title">"HLS/RTSP Webcam"</string>
-
-    <!-- Fuzzy -->
+    <string name="rich_stream_disabled_title">"Webcam HLS/RTSP"</string>
     <string name="rich_stream_disbaled_description">"Les webcams HLS/RTSP sont désactivées, activez-les pour voir l'image de votre webcam."</string>
     <string name="information_about_your_octoprint">"Informations sur votre OctoPrint"</string>
     <string name="information_about_your_phone">"Informations sur votre téléphone"</string>
     <string name="insert">"Insérer"</string>
     <string name="label_for_x">"Nom du raccourci pour %s"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___last_print">"Dernière impression"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___last_print_at_x_failure">"%s (échec)"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___last_print_at_x_success">"%s (réussie)"</string>
     <string name="layer">"Couche"</string>
     <string name="layer_progress">"Progression de la couche"</string>
@@ -473,36 +425,25 @@ Le widget contrôlera toujours l'instance OctoPrint qui est actuellement active 
     <string name="mm_1">"1 mm"</string>
     <string name="mm_10">"10 mm"</string>
     <string name="mm_100">"100 mm"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___model_size">"Taille du modèle"</string>
     <string name="move">"Déplacer"</string>
     <string name="move_settings">"Paramètres de déplacement"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___never">"Jamais"</string>
 
     <!-- Auto filled -->
-    <!-- Fuzzy -->
-    <string name="file_manager___file_list___no_files_on_octoprint_subtitle"><![CDATA[Importez des fichiers dans l\'interface web pour commencer !<br><br><small>Apprenez comment <a href="https://www.youtube.com/watch?v=QB8MzoafnjY">Cura</a> et <a href="https://www.youtube.com/watch?v=V2PdG-Wx5Z0">Prusa Slicer</a> peuvent stocker automatiquement des fichiers dans OctoPrint.</small>]]></string>
-
-    <!-- Fuzzy -->
+    <string name="file_manager___file_list___no_files_on_octoprint_subtitle"><![CDATA[Importez des fichiers dans l\'interface web pour commencer !<br><br><small>Apprenez comment <a href="https://www.youtube.com/watch?v=QB8MzoafnjY">Cura</a> et <a href="https://www.youtube.com/watch?v=V2PdG-Wx5Z0">Prusa Slicer</a> peuvent enregistrer automatiquement des fichiers dans OctoPrint.</small>]]></string>
     <string name="file_manager___file_list___no_files_on_octoprint_title">"Aucun fichier sur OctoPrint"</string>
     <string name="no_frames_since_xs">"Pas d'images depuis %ds"</string>
     <string name="no_preview_image_available">"Aucune prévisualisation disponible"</string>
     <string name="no_value_placeholder">"--"</string>
     <string name="no_wifi_warning_long">"Votre téléphone n'est pas connecté au WiFi. La plupart du temps, OctoPrint n'est disponible que en WiFi."</string>
     <string name="notification_channel___print_progress">"Impression en cours…"</string>
-
-    <!-- Fuzzy -->
-    <string name="tune_print___disclaimer_detail">"OctoPrint ne peut pas afficher la vitesse des ventilateurs et de l'extrudeur tout le temps. Les valeurs ne peuvent être affichées que si des changements sont constatés."</string>
+    <string name="tune_print___disclaimer_detail">"OctoPrint ne peut pas afficher la vitesse des ventilateurs et de l'extrudeur tout le temps. Les valeurs ne peuvent être affichées que si des changements sont faits."</string>
     <string name="one_gcode_per_line">"Une seule commande Gcode par ligne"</string>
     <string name="open_email">"Envoyer l' email"</string>
     <string name="open_octoprint">"Ouvrir OctoPrint"</string>
     <string name="open_terminal">"Ouvrir le terminal"</string>
     <string name="other">"Autre"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___path">"Répertoire"</string>
     <string name="pause">"Pause"</string>
     <string name="pause_print_confirmation_action">"Mettre en pause l'impression"</string>
@@ -591,8 +532,6 @@ Le widget contrôlera toujours l'instance OctoPrint qui est actuellement active 
 
     <!-- Auto filled -->
     <string name="workspace___print">"Imprimer"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___print_info">"Informations sur l'impression"</string>
     <string name="print_notification___cancelling_title">"Annulation…"</string>
     <string name="print_notification___close">"Mettre en pause les notifications"</string>
@@ -603,11 +542,7 @@ Le widget contrôlera toujours l'instance OctoPrint qui est actuellement active 
 
     <!-- Auto filled -->
     <string name="print_notification___reconnecting_title">"Reconnexion…"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___print_time">"Temps d'impression"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___thumbnail_info___popup_prusa">"Plugin Prusa Slicer"</string>
     <string name="purchase_dialog_button">"Retour à l'application"</string>
     <string name="purchase_dialog_subtitle">"Toutes les fonctionnalités ont été débloquées !"</string>
@@ -775,8 +710,6 @@ bonne impression !"</string>
 
     <!-- Auto filled -->
     <string name="sing_in___probe___trust_and_continue">"Faire confiance &amp; Continuer"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_details___file_size">"Taille"</string>
     <string name="start_printing">"Démarrer l'impression"</string>
     <string name="stream_stalled">"Flux bloqué"</string>
@@ -794,31 +727,19 @@ bonne impression !"</string>
     <string name="temperature_x">"%1$s\u2009°C"</string>
     <string name="thank_you_for_sending_feedback_please_select_what_should_be_included_in_your_message">"Merci d'envoyer vos commentaires. Veuillez entrer votre message et choisir ce qui doit être joint."</string>
     <string name="this_file_exceeds_the_limit_for_mobile_downloads">"Ce fichier dépasse la limite de téléchargement pour les téléphones portables"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_list___no_files_in_folder">"Ce dossier est vide"</string>
-
-    <!-- Fuzzy -->
-    <string name="file_manager___thumbnail_info___popup_message">"Installe le plugin ci-dessous pour ton slicer afin d'obtenir des aperçus de tous les fichiers sous forme de vignettes !"</string>
+    <string name="file_manager___thumbnail_info___popup_message">"Installez le plugin ci-dessous pour votre slicer afin d'obtenir des aperçus des fichiers sous forme de vignettes !"</string>
     <string name="time_left_x">"Temps restant : %s"</string>
     <string name="toggle_favorite">"Épingler / désépingler"</string>
     <string name="trouble_shooting">"Dépannage"</string>
     <string name="try_again">"Réessayer"</string>
     <string name="try_restrating_the_app_or_octoprint">"Veuillez essayer de redémarrer l'application ou OctoPrint"</string>
     <string name="tune">"Réglages"</string>
-
-    <!-- Fuzzy -->
     <string name="tune_print___disclaimer_action_hide">"Compris"</string>
     <string name="unknown">"Inconnu"</string>
     <string name="update_settings">"Mettre à jour les paramètres"</string>
-
-    <!-- Fuzzy -->
-    <string name="file_manager___file_details___uploaded">"Téléchargé"</string>
-
-    <!-- Fuzzy -->
+    <string name="file_manager___file_details___uploaded">"Enregistré"</string>
     <string name="file_manager___thumbnail_info___details">"Installez un plugin pour obtenir des aperçus en miniature !"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___thumbnail_info___title">"Vous utilisez Cura ou Prusa Slicer ?"</string>
     <string name="webcam">"Webcam"</string>
 
@@ -845,9 +766,7 @@ bonne impression !"</string>
 
     <!-- Auto filled -->
     <string name="webcam_settings___title">"Paramètres de la webcam"</string>
-
-    <!-- Fuzzy -->
-    <string name="tune_print___disclaimer_title">"Pourquoi les valuers ne sont-elles pas toujours affichées ?"</string>
+    <string name="tune_print___disclaimer_title">"Pourquoi les valeurs ne sont-elles pas toujours affichées ?"</string>
     <string name="widget_extrude">"Extruder"</string>
     <string name="widget_gcode_preview">"Gcode"</string>
     <string name="widget_gcode_send">"Envoyer le Gcode"</string>
@@ -936,14 +855,8 @@ bonne impression !"</string>
     <string name="print_notifications_menu___bottom"><![CDATA[En savoir plus sur les notifications en direct et à distance <a href="%s">ici</a>.]]></string>
     <string name="main___banner_connected_via_ngrok">"Connecté via ngrok"</string>
     <string name="main___banner_connected_via_tailscale">"Connecté via Tailscale"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_menu___delete">"Supprimer"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_menu___delete_confirmation_message">"Voulez-vous supprimer „%s“ ?"</string>
-
-    <!-- Fuzzy -->
     <string name="file_manager___file_menu___delete_confirmation_action">"Supprimer"</string>
     <string name="main_menu___item_show_tutorials">"Tutoriels"</string>
     <string name="retry_general">"Réessayer"</string>
@@ -968,9 +881,7 @@ bonne impression !"</string>
     <string name="gcode_preview_settings___quality_medium_description">"Moyennes performances et qualité d'image moyenne (recommandé)"</string>
     <string name="gcode_preview_settings___quality_ultra_description">"Très bonne qualité d'image avec de l'anticrénelage"</string>
     <string name="tune_print___z_baby_step">"Z baby step"</string>
-
-    <!-- Fuzzy -->
-    <string name="tune_print___baby_step_explainer">"Le baby stepping peut ne pas s'effectuer tout de suite car l'imprimante finit toujours la commande active avant le baby stepping."</string>
+    <string name="tune_print___baby_step_explainer">"Le babystepping peut ne pas s'effectuer tout de suite car l'imprimante finit toujours la commande en cours avant le babystepping."</string>
     <string name="terminal___copied_x_to_clipboard">"\"%s\" copié !"</string>
     <string name="terminal___select_filters">"Filtres"</string>
     <string name="terminal___apply_filters">"Appliquer"</string>
@@ -996,61 +907,59 @@ bonne impression !"</string>
     <string name="file_manager___file_menu___rename_input_title">"Renommer %s"</string>
     <string name="file_manager___file_menu___rename_input_hint">"Nom du fichier"</string>
     <string name="file_manager___file_menu___rename_action">"Renommer"</string>
-
-    <!-- Fuzzy -->
-    <string name="file_manager___sorting_menu___hide_printed">"Impression du cache réussie"</string>
-    <string name="file_manager___sorting_menu___direction">"Direction"</string>
+    <string name="file_manager___sorting_menu___hide_printed">"Cacher les impression réussies"</string>
+    <string name="file_manager___sorting_menu___direction">"Ordre"</string>
     <string name="file_manager___sorting_menu___direction_ascending">"ascendant"</string>
     <string name="file_manager___sorting_menu___direction_decending">"descendant"</string>
     <string name="file_manager___sorting_menu___sort_by">"Trier par"</string>
-    <string name="file_manager___sorting_menu___sort_by_upload_time">"temps de chargement"</string>
-    <string name="file_manager___sorting_menu___sort_by_last_print_time">"dernière heure d'impression"</string>
+    <string name="file_manager___sorting_menu___sort_by_upload_time">"heure d'enregistrement"</string>
+    <string name="file_manager___sorting_menu___sort_by_last_print_time">"dernier temps d'impression"</string>
     <string name="file_manager___sorting_menu___sort_by_name">"nom"</string>
     <string name="file_manager___sorting_menu___sort_by_file_size">"taille du fichier"</string>
-    <string name="file_manager___upload___uploading_x">"Téléchargement de %s"</string>
-    <string name="file_manager___upload___starting_upload">"Début du téléchargement..."</string>
+    <string name="file_manager___upload___uploading_x">"Envoi de %s"</string>
+    <string name="file_manager___upload___starting_upload">"Démarrage de l'envoi..."</string>
     <string name="file_manager___upload___x_files_pending">"%d fichiers en attente"</string>
     <string name="file_manager___upload___error_invalid_file_type"><![CDATA[Ce type de fichier n\'est pas pris en charge par OctoPrint.<br><br><small>Types de fichiers pris en charge : %s</small>]]></string>
-    <string name="progress_widget___eta">"ETA"</string>
+    <string name="progress_widget___eta">"Heure de fin"</string>
     <string name="progress_widget___z_height">"Hauteur Z"</string>
     <string name="progress_widget___gcode_unavailable">"Indisponible"</string>
-    <string name="progress_widget___gcode_large_file">"Gros fichier"</string>
+    <string name="progress_widget___gcode_large_file">"Fichier gros"</string>
     <string name="progress_widget___gcode_loading">"Chargement..."</string>
-    <string name="progress_widget___settings___font_size">"Taille de la police"</string>
-    <string name="progress_widget___settings___font_size_normal">"Normal"</string>
-    <string name="progress_widget___settings___font_size_small">"Petit"</string>
+    <string name="progress_widget___settings___font_size">"Taille de police"</string>
+    <string name="progress_widget___settings___font_size_normal">"Normale"</string>
+    <string name="progress_widget___settings___font_size_small">"Petite"</string>
     <string name="progress_widget___settings___show_print_name">"Afficher le nom de l'impression"</string>
     <string name="progress_widget___settings___show_print_name_none">"Off"</string>
     <string name="progress_widget___settings___show_print_name_compact">"Compact"</string>
     <string name="progress_widget___settings___show_print_name_full">"Entier"</string>
-    <string name="progress_widget___settings___show_eta">"Montrer ETA"</string>
+    <string name="progress_widget___settings___show_eta">"Montrer l'Heure de fin"</string>
     <string name="progress_widget___settings___show_eta_none">"Off"</string>
     <string name="progress_widget___settings___show_eta_compact">"Compact"</string>
-    <string name="progress_widget___settings___show_eta_full">"Full"</string>
-    <string name="progress_widget___settings___show_time_used">"Afficher le temps utilisé"</string>
-    <string name="progress_widget___settings___show_time_left">"Temps d'exposition restant"</string>
-    <string name="progress_widget___settings___show_layer">"Afficher les informations sur les couches"</string>
-    <string name="progress_widget___settings___show_z_height">"Montrer la hauteur Z"</string>
-    <string name="progress_widget___settings___gcode_description">"Synchronisé avec l'aperçu du Gcode, si le texte est \"Non disponible\" ou \"Fichier volumineux\", vérifiez l'aperçu du Gcode pour plus de détails."</string>
+    <string name="progress_widget___settings___show_eta_full">"Entier"</string>
+    <string name="progress_widget___settings___show_time_used">"Afficher le temps écoulé"</string>
+    <string name="progress_widget___settings___show_time_left">"Afficher le temps restant"</string>
+    <string name="progress_widget___settings___show_layer">"Afficher les informations sur la couches"</string>
+    <string name="progress_widget___settings___show_z_height">"Afficher la hauteur Z"</string>
+    <string name="progress_widget___settings___gcode_description">"Synchronisé avec l'aperçu du Gcode, si il y a \"Non disponible\" ou \"Fichier volumineux\", regardez l'aperçu du Gcode pour plus de détails."</string>
     <string name="progress_widget___settings___show_thumbnail">"Afficher la vignette"</string>
     <string name="progress_widget___settings___thumbnail_description">"Les vignettes sont générées par les plugins Cura et Prusa Slicer et ne sont affichées que si elles sont disponibles."</string>
-    <string name="progress_widget___print_name">"Nom en caractères d'imprimerie"</string>
+    <string name="progress_widget___print_name">"Nom de l'impression"</string>
     <string name="progress_widget___title">"Progrès"</string>
     <string name="progress_widget___time_left">"Gauche"</string>
-    <string name="progress_widget___time_spent">"Utilisé"</string>
+    <string name="progress_widget___time_spent">"Écoulé"</string>
     <string name="progress_widget___layer">"Couche"</string>
     <string name="main_menu___explore_support_plugins">"Explorer les plugins pris en charge"</string>
     <string name="main_menu___explore_support_plugins_short">"Explorer les plugins"</string>
     <string name="configure_remote_acces___spaghetti_detective___title">"Spaghetti Detective"</string>
-
-    <!-- Fuzzy -->
-    <string name="configure_remote_acces___spaghetti_detective___disconnect_button">"Déconnecter le TSD"</string>
+    <string name="configure_remote_acces___spaghetti_detective___disconnect_button">"Déconnecter TSD"</string>
     <string name="configure_remote_acces___spaghetti_detective___connect_button">"Connecter le Spaghetti Detective"</string>
-    <string name="configure_remote_acces___spaghetti_detective___data_usage_limited">"%1$s utilisés sur %2$s (réinitialise dans %3$s)"</string>
+    <string name="configure_remote_acces___spaghetti_detective___data_usage_limited">"%1$s utilisés sur %2$s (se réinitialise %3$s)"</string>
     <string name="configure_remote_acces___spaghetti_detective___data_usage_failed">"Échec de la récupération de l'utilisation des données"</string>
-    <string name="configure_remote_acces___spaghetti_detective___data_usafe">"L'utilisation de données"</string>
+    <string name="configure_remote_acces___spaghetti_detective___data_usafe">"Utilisation des données"</string>
     <string name="configure_remote_acces___spaghetti_detective___connected">"TSD est connecté !"</string>
-    <string name="configure_remote_acces___spaghetti_detective___description">"Le Spaghetti Detective vous permet de contrôler et d'observer à distance vos empreintes. Après avoir installé le plugin, vous pouvez vous connecter ci-dessous pour utiliser OctoApp pour contrôler votre imprimante où que vous soyez !"</string>
+    <string name="configure_remote_acces___spaghetti_detective___description">"The Spaghetti Detective vous permet de contrôler et d'observer à distance vos impressions. Après avoir installé le plugin, vous pouvez vous connecter ci-dessous pour utiliser OctoApp pour contrôler votre imprimante où que vous soyez !"</string>
     <string name="app_widget___live_x_seconds">"En direct (%ds)"</string>
-    <string name="main___banner_connected_via_spaghetti_detective">"Connecté via Détective Spaghetti"</string>
+    <string name="main___banner_connected_via_spaghetti_detective">"Connecté via The Spaghetti Detective"</string>
+    <string name="move_settings_description">"Ces paramètres ne s'appliquent que lorsque vous déplacez manuellement la tête d'impression avec OctoApp et n'affectent pas vos impressions"</string>
+    <string name="configure_remote_acces___spaghetti_detective___webcam_not_watching">"Le Détective ne regarde pas"</string>
 </resources>

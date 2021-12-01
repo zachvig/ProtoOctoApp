@@ -4,7 +4,7 @@
 
     <!-- Auto filled -->
     <string name="announcement___new_version_learn_more">"Cosa c'è di nuovo?"</string>
-    <string name="announcement___new_version_title">"Benvenuti a OctoApp 1.11! 🍾"</string>
+    <string name="announcement___new_version_title">"Benvenuti a OctoApp 1.12! 🍾"</string>
     <string name="app_logs">"Registri delle applicazioni"</string>
     <string name="app_name">"OctoApp"</string>
 
@@ -1042,11 +1042,13 @@ felice stampa!"</string>
     <!-- Fuzzy -->
     <string name="configure_remote_acces___spaghetti_detective___disconnect_button">"Disconnetti TSD"</string>
     <string name="configure_remote_acces___spaghetti_detective___connect_button">"Collega Spaghetti Detective"</string>
-    <string name="configure_remote_acces___spaghetti_detective___data_usage_limited">"Usato %1$s di %2$s (ripristina in %3$s)"</string>
+    <string name="configure_remote_acces___spaghetti_detective___data_usage_limited">"Usato %1$s di %2$s (ripristina %3$s)"</string>
     <string name="configure_remote_acces___spaghetti_detective___data_usage_failed">"Impossibile recuperare l'utilizzo dei dati"</string>
     <string name="configure_remote_acces___spaghetti_detective___data_usafe">"Utilizzo dei dati"</string>
     <string name="configure_remote_acces___spaghetti_detective___connected">"TSD è connesso!"</string>
     <string name="configure_remote_acces___spaghetti_detective___description">"Lo Spaghetti Detective ti consente di controllare e osservare a distanza le tue impronte. Dopo aver installato il plug-in, puoi accedere di seguito per utilizzare OctoApp per controllare la tua stampante ovunque tu sia!"</string>
     <string name="app_widget___live_x_seconds">"Dal vivo (%ds)"</string>
     <string name="main___banner_connected_via_spaghetti_detective">"Collegato tramite Spaghetti Detective"</string>
+    <string name="move_settings_description">"Queste impostazioni si applicano solo quando sposti manualmente la testina di stampa con OctoApp e non influiscono sulle tue stampe"</string>
+    <string name="configure_remote_acces___spaghetti_detective___webcam_not_watching">"Il Detective non sta guardando"</string>
 </resources>
