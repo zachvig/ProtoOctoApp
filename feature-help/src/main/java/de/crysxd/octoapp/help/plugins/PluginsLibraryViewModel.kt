@@ -161,7 +161,7 @@ class PluginsLibraryViewModel(
                         Plugin(
                             name = "OctoLight",
                             key = "octolight",
-                            description = "A simple plugin, that add's a button to the navbar, toggleing GPIO on the RPi. It can be used for turning on and off a light.",
+                            description = "A simple plugin, that add's a button to the navbar, toggling GPIO on the RPi. It can be used for turning on and off a light.",
                             pluginPage = Uri.parse("https://plugins.octoprint.org/plugins/octolight/"),
                         ),
                     )
