@@ -952,6 +952,7 @@ happy printing!"</string>
     <string name="progress_widget___title">"Progress"</string>
     <string name="progress_widget___time_left">"Left"</string>
     <string name="progress_widget___time_spent">"Used"</string>
+    <string name="purchase_dialog_text_2">Google needs some time to show this purchase on other devices! No need to buy it again 🙃</string>
     <string name="progress_widget___layer">"Layer"</string>
     <string name="main_menu___explore_support_plugins">"Explore supported plugins"</string>
     <string name="main_menu___explore_support_plugins_short">"Explore plugins"</string>
