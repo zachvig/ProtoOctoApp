@@ -11,5 +11,8 @@ interface YoutubeApi {
     }
 
     @GET("youtube/v3/playlistItems?part=snippet%2CcontentDetails&maxResults=100")
-    suspend fun getPlaylist(@Query("playlistId") playlistId: String, @Query("key") apiKey: String = API_KEY): YoutubePlaylist
+    suspend fun getPlaylist(
+        @Query("playlistId") playlistId: String,
+        @Query("key") apiKey: String = API_KEY,
+    ): YoutubePlaylist
 }

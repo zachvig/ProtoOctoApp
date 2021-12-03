@@ -74,7 +74,11 @@ class DataSourceModule {
 
     @Provides
     @BaseScope
-    fun provideRemoteTutorialsDataSource() = RemoteTutorialsDataSource()
+    fun provideRemoteTutorialsDataSource(
+        context: Context
+    ) = RemoteTutorialsDataSource(
+        context = context
+    )
 
     @Provides
     @BaseScope

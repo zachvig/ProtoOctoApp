@@ -155,7 +155,7 @@ class OctoApp : Application() {
         // Prefetch tutorials
         AppScope.launch {
             try {
-                BaseInjector.get().tutorialsRepository().getTutorials()
+                BaseInjector.get().tutorialsRepository().getTutorials(skipCache = false)
             } catch (e: Exception) {
                 Timber.w(e, "Unable to fetch tutorials")
             }
