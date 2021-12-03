@@ -79,6 +79,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
+    <TextView
+        android:id="@+id/content2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_3"
+        android:layout_marginTop="@dimen/margin_2"
+        android:gravity="center"
+        android:text="@string/purchase_dialog_text_2"
+        android:textColor="@color/dark_text"
+        android:textFontWeight="900"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/content" />
+
     <Button
         android:id="@+id/button"
         android:layout_width="0dp"
@@ -90,6 +104,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/content" />
+        app:layout_constraintTop_toBottomOf="@+id/content2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

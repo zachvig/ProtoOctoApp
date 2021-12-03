@@ -29,7 +29,7 @@ class TutorialsFragment : BaseFragment() {
             viewModel.createUri(it).open(requireActivity())
         }
         binding.list.adapter = adapter
-        binding.buttonRetry.setOnClickListener { viewModel.reloadPlaylist() }
+        binding.buttonRetry.setOnClickListener { viewModel.reloadPlaylist(true) }
         viewModel.viewState.observe(viewLifecycleOwner) {
             TransitionManager.beginDelayedTransition(binding.root)
             binding.list.isVisible = it is TutorialsViewModel.ViewState.Data

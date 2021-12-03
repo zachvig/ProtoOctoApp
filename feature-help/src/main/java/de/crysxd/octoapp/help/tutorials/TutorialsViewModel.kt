@@ -23,12 +23,12 @@ class TutorialsViewModel(
         reloadPlaylist()
     }
 
-    fun reloadPlaylist() = viewModelScope.launch(coroutineExceptionHandler) {
+    fun reloadPlaylist(skipCache: Boolean = false) = viewModelScope.launch(coroutineExceptionHandler) {
         try {
             mutableViewState.postValue(ViewState.Loading)
             mutableViewState.postValue(
                 ViewState.Data(
-                    videos = tutorialsRepository.getTutorials(),
+                    videos = tutorialsRepository.getTutorials(skipCache),
                     seenUpUntil = tutorialsRepository.getTutorialsSeenUpUntil()
                 )
             )

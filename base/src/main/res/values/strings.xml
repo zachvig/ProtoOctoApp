@@ -906,4 +906,5 @@ happy printing!"</string>
     <string name="gcode_preview_settings___quality_low_description">Optimal performance even with large Gcode files</string>
     <string name="gcode_preview_settings___quality_medium_description">Balanced performance and visual fidelity (recommended)</string>
     <string name="gcode_preview_settings___quality_ultra_description">Highest visual fidelity with anti aliasing</string>
+    <string name="purchase_dialog_text_2">Google needs some time to show this purchase on other devices! No need to buy it again 🙃</string>
 </resources>
