@@ -17,8 +17,8 @@ class TutorialsRepository(
     private var cached: List<YoutubePlaylist.PlaylistItem>? = null
     private val octoPreferences get() = BaseInjector.get().octoPreferences()
 
-    suspend fun getTutorials() = cached ?: let {
-        val new = dataSource.get(PLAYLIST_ID)
+    suspend fun getTutorials(skipCache: Boolean) = cached ?: let {
+        val new = dataSource.get(PLAYLIST_ID, skipCache)
         cached = new
         new
     }
