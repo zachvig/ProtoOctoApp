@@ -53,7 +53,7 @@
                     android:layout_marginHorizontal="@dimen/margin_2"
                     android:gravity="center"
                     android:text="@string/configure_remote_acces___spaghetti_detective___description"
-                    android:textColor="@color/dark_text"
+                    android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
@@ -140,6 +140,7 @@
                     android:textAppearance="@style/OctoTheme.TextAppearance.Label"
                     app:layout_constraintEnd_toEndOf="@+id/dataUsageBar"
                     app:layout_constraintHorizontal_bias="0.5"
+                    android:textColor="@color/dark_grey"
                     app:layout_constraintStart_toStartOf="@+id/dataUsageBar"
                     app:layout_constraintTop_toBottomOf="@+id/dataUsageBar" />
 
@@ -149,6 +150,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_3"
                     android:text="@string/configure_remote_acces___spaghetti_detective___data_usafe"
+                    android:textColor="@color/black"
                     android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
                     app:layout_constraintEnd_toEndOf="@+id/dataUsageBar"
                     app:layout_constraintHorizontal_bias="0.5"

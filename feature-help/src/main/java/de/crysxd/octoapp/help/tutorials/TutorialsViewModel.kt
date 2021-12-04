@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import de.crysxd.baseui.BaseViewModel
 import de.crysxd.octoapp.base.data.models.YoutubePlaylist
 import de.crysxd.octoapp.base.data.repository.TutorialsRepository
-import de.crysxd.octoapp.base.data.repository.TutorialsRepository.Companion.PLAYLIST_ID
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.Date
@@ -40,7 +39,7 @@ class TutorialsViewModel(
     }
 
     fun createUri(playlistItem: YoutubePlaylist.PlaylistItem): Uri = Uri.parse(
-        "https://www.youtube.com/watch?v=${playlistItem.contentDetails?.videoId}&list=$PLAYLIST_ID"
+        "https://www.youtube.com/watch?v=${playlistItem.contentDetails?.videoId}&list=PL1fjlNqlUKnUuWwB0Jb3wf70wBcF3u-wJ"
     )
 
     sealed class ViewState {
