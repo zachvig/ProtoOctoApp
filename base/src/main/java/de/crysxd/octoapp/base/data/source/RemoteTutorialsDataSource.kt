@@ -1,7 +1,7 @@
 package de.crysxd.octoapp.base.data.source
 
 import android.content.Context
-import de.crysxd.octoapp.base.api.YoutubeApi
+import de.crysxd.octoapp.base.api.TutorialsApi
 import de.crysxd.octoapp.base.data.models.YoutubePlaylist
 import de.crysxd.octoapp.base.logging.TimberLogger
 import de.crysxd.octoapp.octoprint.logging.LoggingInterceptorLogger
@@ -14,7 +14,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import java.io.File
 import java.util.Date
-import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
 class RemoteTutorialsDataSource(context: Context) {
@@ -33,28 +32,23 @@ class RemoteTutorialsDataSource(context: Context) {
                 builder.cacheControl(CacheControl.FORCE_NETWORK)
             }
             it.proceed(builder.build())
-        }.addNetworkInterceptor {
-            Timber.v("Cache miss")
-            it.proceed(it.request()).newBuilder()
-                .addHeader("Cache-Control", "public, max-age=${TimeUnit.DAYS.toSeconds(1)}")
-                .build()
         }.build()
 
     private val api = Retrofit.Builder()
         .client(client)
-        .baseUrl("https://youtube.googleapis.com/")
+        .baseUrl("https://octoapp.eu/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-        .create(YoutubeApi::class.java)
+        .create(TutorialsApi::class.java)
 
-    suspend fun get(playlistId: String, skipCache: Boolean): List<YoutubePlaylist.PlaylistItem> {
+    suspend fun get(skipCache: Boolean): List<YoutubePlaylist.PlaylistItem> {
         if (skipCache) {
             forceNetworkOnNext = true
         }
 
-        Timber.i("Loading playlist $playlistId")
+        Timber.i("Loading playlist")
 
-        val playlist = api.getPlaylist(playlistId)
+        val playlist = api.getPlaylist()
         require(!playlist.items.isNullOrEmpty()) { "Playlist is empty" }
 
         return playlist.items.sortedByDescending {
