@@ -39,7 +39,7 @@ class TutorialsViewModel(
     }
 
     fun createUri(playlistItem: YoutubePlaylist.PlaylistItem): Uri = Uri.parse(
-        "https://www.youtube.com/watch?v=${playlistItem.contentDetails?.videoId}&list=$playlistItem."
+        "https://www.youtube.com/watch?v=${playlistItem.contentDetails?.videoId}&list=PL1fjlNqlUKnUuWwB0Jb3wf70wBcF3u-wJ"
     )
 
     sealed class ViewState {
