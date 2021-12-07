@@ -103,7 +103,7 @@ class ShowSettingsMenuItem : SubMenuItem() {
     override val icon = R.drawable.ic_round_settings_24
     override val subMenu = SettingsMenu()
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_settings)
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_settings)
 }
 
 class ShowPrinterMenuItem : SubMenuItem() {
@@ -116,7 +116,7 @@ class ShowPrinterMenuItem : SubMenuItem() {
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_round_print_24
     override val subMenu = PrinterMenu()
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_printer)
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_printer)
 }
 
 class ShowOctoPrintMenuItem : MenuItem {
@@ -129,8 +129,8 @@ class ShowOctoPrintMenuItem : MenuItem {
     override val showAsHalfWidth = true
     override val icon = R.drawable.ic_octoprint_24px
 
-    override suspend fun getBadgeCount() = OctoPrintMenu.getPluginAnnouncementCounter()
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_octoprint)
+    override fun getBadgeCount() = OctoPrintMenu.getPluginAnnouncementCounter()
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_octoprint)
     override suspend fun onClicked(host: MenuHost?) {
         host?.pushMenu(OctoPrintMenu())
     }
@@ -148,8 +148,8 @@ class ShowTutorialsMenuItem(
     override val canBePinned = false
     override val icon = R.drawable.ic_round_school_24
 
-    override suspend fun getBadgeCount() = BaseInjector.get().tutorialsRepository().getNewTutorialsCount()
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_tutorials)
+    override fun getBadgeCount() = BaseInjector.get().tutorialsRepository().getNewTutorialsCount()
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_show_tutorials)
     override suspend fun onClicked(host: MenuHost?) {
         host?.getMenuActivity()?.let {
             UriLibrary.getTutorialsUri().open(it)
@@ -168,7 +168,7 @@ class ShowNewsMenuItem : MenuItem {
     override val icon = R.drawable.ic_twitter_24px
     override val style = MenuItemStyle.Neutral
 
-    override suspend fun getTitle(context: Context) = "Twitter"
+    override fun getTitle(context: Context) = "Twitter"
     override suspend fun onClicked(host: MenuHost?) {
         host?.getMenuActivity()?.let {
             Uri.parse("https://twitter.com/realoctoapp").open(it)
@@ -186,7 +186,7 @@ class ShowPluginLibraryMenuItem : MenuItem {
     override val icon = R.drawable.ic_round_extension_24
     override val style = MenuItemStyle.Neutral
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___explore_support_plugins_short)
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___explore_support_plugins_short)
     override suspend fun onClicked(host: MenuHost?) {
         host?.getMenuActivity()?.let {
             UriLibrary.getPluginLibraryUri().open(it)

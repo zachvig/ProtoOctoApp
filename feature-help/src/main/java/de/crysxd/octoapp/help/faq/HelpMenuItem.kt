@@ -12,6 +12,6 @@ class HelpMenuItem(override val style: MenuItemStyle, private val title: CharSeq
     override val icon: Int = 0
     override val showAsSubMenu = true
 
-    override suspend fun getTitle(context: Context) = title
+    override fun getTitle(context: Context) = title
     override suspend fun onClicked(host: MenuHost?) = onClick()
 }

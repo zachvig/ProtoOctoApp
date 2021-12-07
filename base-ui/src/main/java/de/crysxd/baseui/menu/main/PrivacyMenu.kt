@@ -53,8 +53,8 @@ class PrivacyMenu : Menu {
         override val style = MenuItemStyle.Neutral
         override val icon = R.drawable.ic_round_bug_report_24
         override val canBePinned = false
-        override suspend fun getTitle(context: Context) = context.getString(R.string.privacy_menu___crash_reporting_title)
-        override suspend fun getDescription(context: Context) = context.getString(R.string.privacy_menu___crash_reporting_description)
+        override fun getTitle(context: Context) = context.getString(R.string.privacy_menu___crash_reporting_title)
+        override fun getDescription(context: Context) = context.getString(R.string.privacy_menu___crash_reporting_description)
 
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             BaseInjector.get().octoPreferences().isCrashReportingEnabled = enabled
@@ -69,8 +69,8 @@ class PrivacyMenu : Menu {
         override val style = MenuItemStyle.Neutral
         override val icon = R.drawable.ic_round_insert_chart_outlined_24
         override val canBePinned = false
-        override suspend fun getTitle(context: Context) = context.getString(R.string.privacy_menu___analytics_title)
-        override suspend fun getDescription(context: Context) = context.getString(R.string.privacy_menu___analytics_description)
+        override fun getTitle(context: Context) = context.getString(R.string.privacy_menu___analytics_title)
+        override fun getDescription(context: Context) = context.getString(R.string.privacy_menu___analytics_description)
 
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             BaseInjector.get().octoPreferences().isAnalyticsEnabled = enabled

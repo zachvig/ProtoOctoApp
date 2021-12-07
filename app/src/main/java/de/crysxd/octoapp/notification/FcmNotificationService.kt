@@ -101,7 +101,7 @@ class FcmNotificationService : FirebaseMessagingService() {
         // Decrypt and decode data
         val key = BaseInjector.get().octorPrintRepository().get(instanceId)?.settings?.plugins?.values?.mapNotNull {
             it as? Settings.OctoAppCompanionSettings
-        }?.firstOrNull()?.encryptionKey ?: throw IllegalStateException("No encryption key present")
+        }?.firstOrNull()?.encryptionKey ?: return@launch Timber.w("No encryption key present")
         val decrypted = AESCipher(key).decrypt(raw)
         val data = Gson().fromJson(String(decrypted), FcmPrintEvent::class.java)
         Timber.i("Data: $data")

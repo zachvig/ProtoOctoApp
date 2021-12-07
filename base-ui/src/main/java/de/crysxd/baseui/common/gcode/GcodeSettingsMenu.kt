@@ -29,7 +29,7 @@ class GcodeSettingsMenu : Menu {
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_layers_24
 
-        override suspend fun getTitle(context: Context) = context.getString(R.string.gcode_preview_settings___show_previous_layer)
+        override fun getTitle(context: Context) = context.getString(R.string.gcode_preview_settings___show_previous_layer)
 
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             preferences.gcodePreviewSettings = preferences.gcodePreviewSettings.copy(showPreviousLayer = enabled)
@@ -46,7 +46,7 @@ class GcodeSettingsMenu : Menu {
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_layers_24
 
-        override suspend fun getTitle(context: Context) = context.getString(R.string.gcode_preview_settings___show_current_layer)
+        override fun getTitle(context: Context) = context.getString(R.string.gcode_preview_settings___show_current_layer)
 
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             preferences.gcodePreviewSettings = preferences.gcodePreviewSettings.copy(showCurrentLayer = enabled)
@@ -69,8 +69,8 @@ class GcodeSettingsMenu : Menu {
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_speed_24
 
-        override suspend fun getTitle(context: Context) = context.getString(R.string.gcode_preview_settings___quality)
-        override suspend fun getDescription(context: Context) = when (BaseInjector.get().octoPreferences().gcodePreviewSettings.quality) {
+        override fun getTitle(context: Context) = context.getString(R.string.gcode_preview_settings___quality)
+        override fun getDescription(context: Context) = when (BaseInjector.get().octoPreferences().gcodePreviewSettings.quality) {
             GcodePreviewSettings.Quality.Low -> context.getString(R.string.gcode_preview_settings___quality_low_description)
             GcodePreviewSettings.Quality.Medium -> context.getString(R.string.gcode_preview_settings___quality_medium_description)
             GcodePreviewSettings.Quality.Ultra -> context.getString(R.string.gcode_preview_settings___quality_ultra_description)

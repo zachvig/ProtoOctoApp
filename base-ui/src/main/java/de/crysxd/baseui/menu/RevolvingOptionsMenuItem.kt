@@ -7,7 +7,7 @@ abstract class RevolvingOptionsMenuItem : MenuItem {
     abstract val options: List<Option>
     override val canRunWithAppInBackground = false
 
-    override suspend fun getRightDetail(context: Context) = options.firstOrNull { it.value == activeValue }?.label
+    override fun getRightDetail(context: Context) = options.firstOrNull { it.value == activeValue }?.label
         ?: options.firstOrNull()?.label
 
     override suspend fun onClicked(host: MenuHost?) {

@@ -24,7 +24,8 @@ import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_TURN_PSU_OFF
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
-import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
+import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
+import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -53,8 +54,8 @@ class ShowTemperatureMenuItem : SubMenuItem() {
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_local_fire_department_24
     override val subMenu: Menu get() = TemperatureMenu()
-    override suspend fun isVisible(destinationId: Int) = destinationId != R.id.workspaceConnect
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_temperature_presets)
+    override fun isVisible(destinationId: Int) = destinationId != R.id.workspaceConnect
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_temperature_presets)
 }
 
 class ShowMaterialPluginMenuItem : SubMenuItem() {
@@ -67,8 +68,8 @@ class ShowMaterialPluginMenuItem : SubMenuItem() {
     override val subMenu: Menu
         get() = MaterialPluginMenu()
 
-    override suspend fun isVisible(destinationId: Int) = destinationId != R.id.workspaceConnect
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_materials)
+    override fun isVisible(destinationId: Int) = destinationId != R.id.workspaceConnect
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_materials)
 }
 
 class ShowWebcamMenuItem : MenuItem {
@@ -78,8 +79,8 @@ class ShowWebcamMenuItem : MenuItem {
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_videocam_24
 
-    override suspend fun isVisible(destinationId: Int) = BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()?.isWebcamSupported == true
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___show_webcam)
+    override fun isVisible(destinationId: Int) = BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()?.isWebcamSupported == true
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___show_webcam)
     override suspend fun onClicked(host: MenuHost?) {
         host?.getMenuActivity()?.let {
             UriLibrary.getWebcamUri().open(it)
@@ -95,7 +96,7 @@ class OpenPowerControlsMenuItem : SubMenuItem() {
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_power_settings_new_24
     override val subMenu = PowerControlsMenu()
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_power_controls)
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_power_controls)
 }
 
 class TurnPsuOffMenuItem : MenuItem {
@@ -105,11 +106,19 @@ class TurnPsuOffMenuItem : MenuItem {
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_power_off_24
 
-    override suspend fun isVisible(destinationId: Int) = BaseInjector.get().getPowerDevicesUseCase().execute(
-        GetPowerDevicesUseCase.Params(false)
-    ).isNotEmpty() && destinationId == R.id.workspacePrePrint
+    override fun isVisible(destinationId: Int): Boolean = runBlocking {
+        // Run blocking is not ideal...but we don't have any network requests here (not like before.....)
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_turn_psu_off)
+        if (destinationId != R.id.workspacePrint) {
+            return@runBlocking false
+        }
+
+        val settings = BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()?.settings ?: return@runBlocking false
+        val devices = BaseInjector.get().octoPrintProvider().octoPrint().createPowerPluginsCollection().getDevices(settings)
+        return@runBlocking devices.any { it.capabilities.contains(PowerDevice.Capability.ControlPrinterPower) }
+    }
+
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_turn_psu_off)
     override suspend fun onClicked(host: MenuHost?) {
         host?.pushMenu(PowerControlsMenu(PowerControlsMenu.DeviceType.PrinterPsu, PowerControlsMenu.Action.TurnOff))
     }
@@ -122,8 +131,8 @@ class OpenTerminalMenuItem : MenuItem {
     override val style = MenuItemStyle.Printer
     override val icon = R.drawable.ic_round_code_24
 
-    override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint || destinationId == R.id.workspacePrePrint
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_terminal)
+    override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint || destinationId == R.id.workspacePrePrint
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_terminal)
     override suspend fun onClicked(host: MenuHost?) {
         host?.getNavController()?.navigate(R.id.action_open_terminal)
         host?.closeMenu()
@@ -139,8 +148,8 @@ class EmergencyStopMenuItem : ConfirmedMenuItem() {
     override val icon = R.drawable.ic_round_offline_bolt_24
     override fun getConfirmMessage(context: Context) = context.getString(R.string.emergency_stop_confirmation_message)
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.emergency_stop_confirmation_action)
-    override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_emergency_stop)
+    override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_emergency_stop)
     override suspend fun onConfirmed(host: MenuHost?) {
         BaseInjector.get().emergencyStopUseCase().execute(Unit)
     }
@@ -155,8 +164,8 @@ class CancelPrintKeepTemperaturesMenuItem : ConfirmedMenuItem() {
 
     override fun getConfirmMessage(context: Context) = context.getString(R.string.cancel_print_confirmation_message)
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.cancel_print_confirmation_action)
-    override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_cancel_print_keep_temp)
+    override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_cancel_print_keep_temp)
     override suspend fun onConfirmed(host: MenuHost?) {
         BaseInjector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(restoreTemperatures = true))
     }
@@ -171,8 +180,8 @@ class CancelPrintMenuItem : ConfirmedMenuItem() {
 
     override fun getConfirmMessage(context: Context) = context.getString(R.string.cancel_print_confirmation_message)
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.cancel_print_confirmation_action)
-    override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_cancel_print)
+    override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrint
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_cancel_print)
     override suspend fun onConfirmed(host: MenuHost?) {
         BaseInjector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(restoreTemperatures = false))
     }

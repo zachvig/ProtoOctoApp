@@ -149,7 +149,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val order = 332
         override val style = MenuItemStyle.Printer
         override val icon = R.drawable.ic_round_power_settings_new_24
-        override suspend fun getTitle(context: Context) = name
+        override fun getTitle(context: Context) = name
     }
 
     class TurnPowerDeviceOffMenuItem(
@@ -173,7 +173,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val icon = R.drawable.ic_round_power_off_24
         private val needsConfirmation = BaseInjector.get().octoPreferences().confirmPowerOffDevices.contains(uniqueDeviceId)
 
-        override suspend fun getTitle(context: Context) =
+        override fun getTitle(context: Context) =
             if (showName) context.getString(R.string.power_menu___turn_x_off, name) else context.getString(R.string.power_menu___turn_off)
 
 
@@ -220,7 +220,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val style = MenuItemStyle.Printer
         override val icon = R.drawable.ic_round_power_24
 
-        override suspend fun getTitle(context: Context) =
+        override fun getTitle(context: Context) =
             if (showName) context.getString(R.string.power_menu___turn_x_on, name) else context.getString(R.string.power_menu___turn_on)
 
         override suspend fun onClicked(host: MenuHost?) {
@@ -256,7 +256,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val icon = R.drawable.ic_round_power_cycle_24px
         private val needsConfirmation = BaseInjector.get().octoPreferences().confirmPowerOffDevices.contains(uniqueDeviceId)
 
-        override suspend fun getTitle(context: Context) =
+        override fun getTitle(context: Context) =
             if (showName) context.getString(R.string.power_menu___toggle_x, name) else context.getString(R.string.power_menu___toggle)
 
         override fun getConfirmMessage(context: Context) = context.getString(R.string.power_menu___confirm_toggle_x, name)
@@ -303,7 +303,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
         override val icon = R.drawable.ic_round_power_cycle_24px
         private val needsConfirmation = BaseInjector.get().octoPreferences().confirmPowerOffDevices.contains(uniqueDeviceId)
 
-        override suspend fun getTitle(context: Context) =
+        override fun getTitle(context: Context) =
             if (showName) context.getString(R.string.power_menu___cycle_x, name) else context.getString(R.string.power_menu___cycle)
 
 

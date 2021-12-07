@@ -44,7 +44,7 @@ abstract class BaseApplyTemperaturePresetMenuItem(private val presetName: String
     override val style = MenuItemStyle.Printer
     override var groupId = ""
     override val icon = R.drawable.ic_round_local_fire_department_24
-    override suspend fun isVisible(destinationId: Int) = destinationId != R.id.workspaceConnect
+    override fun isVisible(destinationId: Int) = destinationId != R.id.workspaceConnect
     override suspend fun onClicked(host: MenuHost?) {
         BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()?.settings?.temperature?.profiles?.firstOrNull {
             it.name == presetName
@@ -63,7 +63,7 @@ class ApplyTemperaturePresetMenuItem(private val presetName: String) : BaseApply
 
     override val itemId = MENU_ITEM_APPLY_TEMPERATURE_PRESET + presetName
     override val order = 311
-    override suspend fun getTitle(context: Context) = context.getString(R.string.temperature_menu___item_preheat, presetName)
+    override fun getTitle(context: Context) = context.getString(R.string.temperature_menu___item_preheat, presetName)
     override val secondaryButtonIcon = R.drawable.ic_round_more_vert_24
 
     override suspend fun getTemperatures(profile: Settings.TemperatureProfile) = listOf(
@@ -87,7 +87,7 @@ class ApplyTemperaturePresetForAllMenuItem(private val presetName: String) : Bas
 
     override val itemId = MENU_ITEM_APPLY_TEMPERATURE_PRESET_ALL + presetName
     override val order = 312
-    override suspend fun getTitle(context: Context) = context.getString(R.string.temperature_menu___item_preheat, presetName)
+    override fun getTitle(context: Context) = context.getString(R.string.temperature_menu___item_preheat, presetName)
 
     override suspend fun getTemperatures(profile: Settings.TemperatureProfile) = listOf(
         SetTargetTemperaturesUseCase.Temperature(component = "tool0", temperature = profile.extruder),
@@ -107,7 +107,7 @@ class ApplyTemperaturePresetForHotendMenuItem(private val presetName: String) : 
 
     override val itemId = MENU_ITEM_APPLY_TEMPERATURE_PRESET_HOTEND + presetName
     override val order = 312
-    override suspend fun getTitle(context: Context) = context.getString(R.string.temperature_menu___item_preheat_hotend, presetName)
+    override fun getTitle(context: Context) = context.getString(R.string.temperature_menu___item_preheat_hotend, presetName)
 
     override suspend fun getTemperatures(profile: Settings.TemperatureProfile) = listOf(
         SetTargetTemperaturesUseCase.Temperature(component = "tool0", temperature = profile.extruder),
@@ -124,8 +124,8 @@ class ApplyTemperaturePresetForBedMenuItem(private val presetName: String) : Bas
 
     override val itemId = MENU_ITEM_APPLY_TEMPERATURE_PRESET_BED + presetName
     override val order = 313
-    override suspend fun getTitle(context: Context) = context.getString(R.string.temperature_menu___item_preheat_bed, presetName)
-    override suspend fun isVisible(destinationId: Int) = super.isVisible(destinationId) &&
+    override fun getTitle(context: Context) = context.getString(R.string.temperature_menu___item_preheat_bed, presetName)
+    override fun isVisible(destinationId: Int) = super.isVisible(destinationId) &&
             BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()?.activeProfile?.heatedBed != false
 
     override suspend fun getTemperatures(profile: Settings.TemperatureProfile) = listOf(
@@ -140,8 +140,8 @@ class ApplyTemperaturePresetForChamberMenuItem(private val presetName: String) :
 
     override val itemId = MENU_ITEM_APPLY_TEMPERATURE_PRESET_CHAMBER + presetName
     override val order = 314
-    override suspend fun getTitle(context: Context) = context.getString(R.string.temperature_menu___item_preheat_chamber, presetName)
-    override suspend fun isVisible(destinationId: Int) = super.isVisible(destinationId) &&
+    override fun getTitle(context: Context) = context.getString(R.string.temperature_menu___item_preheat_chamber, presetName)
+    override fun isVisible(destinationId: Int) = super.isVisible(destinationId) &&
             BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()?.activeProfile?.heatedChamber != false
 
     override suspend fun getTemperatures(profile: Settings.TemperatureProfile) = listOf(
