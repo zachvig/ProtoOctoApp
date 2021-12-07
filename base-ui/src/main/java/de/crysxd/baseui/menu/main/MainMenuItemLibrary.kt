@@ -24,7 +24,7 @@ class MenuItemLibrary {
         MenuItems.MENU_ITEM_TUTORIALS to ShowTutorialsMenuItem::class,
         MenuItems.MENU_ITEM_CHANGE_LANGUAGE to ChangeLanguageMenuItem::class,
         MenuItems.MENU_ITEM_OPEN_OCTOPRINT to OpenOctoPrintMenuItem::class,
-        MenuItems.MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE to ChangeOctoPrintInstanceMenuItem::class,
+        MenuItems.MENU_ITEM_SHOW_CHANGE_OCTOPRINT_MENU to ChangeOctoPrintInstanceMenuItem::class,
         MenuItems.MENU_ITEM_CANCEL_PRINT to CancelPrintMenuItem::class,
         MenuItems.MENU_ITEM_EMERGENCY_STOP to EmergencyStopMenuItem::class,
         MenuItems.MENU_ITEM_TURN_PSU_OFF to TurnPsuOffMenuItem::class,

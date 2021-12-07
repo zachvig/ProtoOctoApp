@@ -114,7 +114,7 @@ class OpenOctoPrintMenuItem : MenuItem {
     override val style = MenuItemStyle.OctoPrint
     override val icon = R.drawable.ic_round_open_in_browser_24
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_octoprint)
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_open_octoprint)
     override suspend fun onClicked(host: MenuHost?) {
         BaseInjector.get().openOctoPrintWebUseCase().execute(OpenOctoprintWebUseCase.Params())
     }
@@ -128,8 +128,8 @@ class ConfigureRemoteAccessMenuItem(val suppressBadge: Boolean = true) : MenuIte
     override val style = MenuItemStyle.OctoPrint
     override val icon = R.drawable.ic_round_cloud_24
 
-    override suspend fun getBadgeCount() = if (OctoPrintMenu.shouldAnnounceOctoEverywhere() && !suppressBadge) 1 else 0
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___configure_remote_access)
+    override fun getBadgeCount() = if (OctoPrintMenu.shouldAnnounceOctoEverywhere() && !suppressBadge) 1 else 0
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___configure_remote_access)
     override suspend fun onClicked(host: MenuHost?) {
         OctoPrintMenu.hideOctoEverywhereAnnouncement()
         host?.getMenuActivity()?.let {
@@ -147,7 +147,7 @@ class ShowFilesMenuItem : MenuItem {
     override val style = MenuItemStyle.OctoPrint
     override val icon = R.drawable.ic_round_folder_24
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___show_files)
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___show_files)
     override suspend fun onClicked(host: MenuHost?) {
         host?.getMenuActivity()?.let {
             UriLibrary.getFileManagerUri().open(it)
@@ -179,8 +179,8 @@ class ExecuteSystemCommandMenuItem(val source: String, val action: String) : Con
     private val systemCommand
         get() = sysCommands?.firstOrNull { it.source == source && it.action == action }
 
-    override suspend fun isVisible(destinationId: Int) = systemCommand != null
-    override suspend fun getTitle(context: Context) = systemCommand?.name ?: "Unknown system command"
+    override fun isVisible(destinationId: Int) = systemCommand != null
+    override fun getTitle(context: Context) = systemCommand?.name ?: "Unknown system command"
     override fun getConfirmMessage(context: Context) = systemCommand?.confirm ?: "Execute?"
     override fun getConfirmPositiveAction(context: Context) = systemCommand?.name ?: context.getString(android.R.string.ok)
     override suspend fun onConfirmed(host: MenuHost?) {

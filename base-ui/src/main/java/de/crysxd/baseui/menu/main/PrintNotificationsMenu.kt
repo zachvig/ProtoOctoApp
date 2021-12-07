@@ -43,8 +43,8 @@ class PrintNotificationsMenu : Menu {
         override val enforceSingleLine = false
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_notifications_active_24
-        override suspend fun getTitle(context: Context) = context.getString(R.string.print_notifications_menu___item_live_notification_on)
-        override suspend fun getDescription(context: Context) = context.getString(R.string.print_notifications_menu___item_live_notification_on_description).toHtml()
+        override fun getTitle(context: Context) = context.getString(R.string.print_notifications_menu___item_live_notification_on)
+        override fun getDescription(context: Context) = context.getString(R.string.print_notifications_menu___item_live_notification_on_description).toHtml()
 
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             BaseInjector.get().octoPreferences().isLivePrintNotificationsEnabled = enabled
@@ -69,9 +69,9 @@ class PrintNotificationsMenu : Menu {
         override val icon = R.drawable.ic_round_settings_24
 
         @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O)
-        override suspend fun isVisible(destinationId: Int) = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-        override suspend fun getTitle(context: Context) = context.getString(R.string.print_notifications_menu___item_system_settings)
-        override suspend fun getDescription(context: Context) = context.getString(R.string.print_notifications_menu___item_system_settings_description).toHtml()
+        override fun isVisible(destinationId: Int) = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+        override fun getTitle(context: Context) = context.getString(R.string.print_notifications_menu___item_system_settings)
+        override fun getDescription(context: Context) = context.getString(R.string.print_notifications_menu___item_system_settings_description).toHtml()
 
         override suspend fun onClicked(host: MenuHost?) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

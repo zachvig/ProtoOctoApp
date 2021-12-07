@@ -13,13 +13,11 @@ class PinnedMenuItemRepository(
 
     private val defaults = mapOf(
         MenuId.MainMenu to setOf(
-            MenuItems.MENU_ITEM_OPEN_OCTOPRINT,
             MenuItems.MENU_ITEM_OPEN_TERMINAL,
             MenuItems.MENU_ITEM_CANCEL_PRINT,
             MenuItems.MENU_ITEM_SHOW_FILES,
             MenuItems.MENU_ITEM_CONFIGURE_REMOTE_ACCESS,
             MenuItems.MENU_ITEM_CUSTOMIZE_WIDGETS,
-            MenuItems.MENU_ITEM_EMERGENCY_STOP,
             MenuItems.MENU_ITEM_TURN_PSU_OFF,
             MenuItems.MENU_ITEM_HELP
         ),

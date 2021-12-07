@@ -68,8 +68,8 @@ class AutomaticLightsSettingsMenu : Menu {
         override val canBePinned = false
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_widgets_24
-        override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_lights_for_widget)
-        override suspend fun getDescription(context: Context) = context.getString(R.string.main_menu___item_lights_for_widget_description)
+        override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_lights_for_widget)
+        override fun getDescription(context: Context) = context.getString(R.string.main_menu___item_lights_for_widget_description)
 
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             prefs.automaticLightsForWidgetRefresh = enabled
@@ -85,7 +85,7 @@ class AutomaticLightsSettingsMenu : Menu {
         override val canBePinned = false
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_wb_incandescent_24
-        override suspend fun getTitle(context: Context) = device.displayName
+        override fun getTitle(context: Context) = device.displayName
 
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             val base = prefs.automaticLights.toMutableSet()

@@ -44,7 +44,7 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, private val inse
     private class TogglePinnedMenuItem(repo: GcodeHistoryRepository, command: GcodeHistoryItem) : GcodeShortcutMenuItem(repo, command) {
         override val order = 1
         override val icon = R.drawable.ic_round_push_pin_24
-        override suspend fun getTitle(context: Context) = context.getString(R.string.toggle_favorite)
+        override fun getTitle(context: Context) = context.getString(R.string.toggle_favorite)
         override suspend fun onClicked(host: MenuHost?) {
             repo.setFavorite(command.command, !command.isFavorite)
             host?.closeMenu()
@@ -55,7 +55,7 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, private val inse
         GcodeShortcutMenuItem(repo, command) {
         override val order = 2
         override val icon = R.drawable.ic_round_content_paste_24
-        override suspend fun getTitle(context: Context) = context.getString(R.string.insert)
+        override fun getTitle(context: Context) = context.getString(R.string.insert)
         override suspend fun onClicked(host: MenuHost?) {
             callback(command)
             host?.closeMenu()
@@ -65,7 +65,7 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, private val inse
     private class SetLabelMenuItem(repo: GcodeHistoryRepository, command: GcodeHistoryItem) : GcodeShortcutMenuItem(repo, command) {
         override val order = 3
         override val icon = R.drawable.ic_round_label_24
-        override suspend fun getTitle(context: Context) = context.getString(R.string.enter_label)
+        override fun getTitle(context: Context) = context.getString(R.string.enter_label)
         override suspend fun onClicked(host: MenuHost?) {
             host ?: return
             val result = NavigationResultMediator.registerResultCallback<String?>()
@@ -96,7 +96,7 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, private val inse
     private class ClearLabelMenuItem(repo: GcodeHistoryRepository, command: GcodeHistoryItem) : GcodeShortcutMenuItem(repo, command) {
         override val order = 4
         override val icon = R.drawable.ic_round_label_off_24
-        override suspend fun getTitle(context: Context) = context.getString(R.string.clear_lebel)
+        override fun getTitle(context: Context) = context.getString(R.string.clear_lebel)
         override suspend fun onClicked(host: MenuHost?) {
             repo.setLabelForGcode(command.command, null)
             host?.closeMenu()
@@ -106,7 +106,7 @@ class GcodeShortcutsMenu(private val command: GcodeHistoryItem, private val inse
     private class RemoveMenuItem(repo: GcodeHistoryRepository, command: GcodeHistoryItem) : GcodeShortcutMenuItem(repo, command) {
         override val order = 5
         override val icon = R.drawable.ic_round_delete_24
-        override suspend fun getTitle(context: Context) = context.getString(R.string.remove_shortcut)
+        override fun getTitle(context: Context) = context.getString(R.string.remove_shortcut)
         override suspend fun onClicked(host: MenuHost?) {
             repo.removeEntry(command.command)
             host?.closeMenu()

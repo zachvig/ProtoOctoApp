@@ -27,7 +27,7 @@ class FileActionsMenu(val file: FileObject) : Menu {
         override val icon = R.drawable.ic_round_delete_24
         override val canBePinned = false
 
-        override suspend fun getTitle(context: Context) = context.getString(R.string.file_actions_menu___delete)
+        override fun getTitle(context: Context) = context.getString(R.string.file_actions_menu___delete)
         override fun getConfirmMessage(context: Context) = context.getString(R.string.file_actions_menu___delete_confirmation_message, file.display)
         override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.file_action_menu___delete_confirmation_action)
         override suspend fun onConfirmed(host: MenuHost?) {
