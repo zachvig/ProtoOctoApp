@@ -30,8 +30,8 @@ class OctoAppLabMenu : Menu {
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_battery_charging_full_24
 
-        override suspend fun getTitle(context: Context) = context.getString(R.string.lab_menu___allow_battery_saver_title)
-        override suspend fun getDescription(context: Context) = context.getString(R.string.lab_menu___allow_battery_saver_description)
+        override fun getTitle(context: Context) = context.getString(R.string.lab_menu___allow_battery_saver_title)
+        override fun getDescription(context: Context) = context.getString(R.string.lab_menu___allow_battery_saver_description)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             BaseInjector.get().octoPreferences().allowNotificationBatterySaver = enabled
         }
@@ -46,8 +46,8 @@ class OctoAppLabMenu : Menu {
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_screen_rotation_24
 
-        override suspend fun getTitle(context: Context) = context.getString(R.string.lab_menu___allow_to_rotate_title)
-        override suspend fun getDescription(context: Context) = context.getString(R.string.lab_menu___allow_to_rotate_description)
+        override fun getTitle(context: Context) = context.getString(R.string.lab_menu___allow_to_rotate_title)
+        override fun getDescription(context: Context) = context.getString(R.string.lab_menu___allow_to_rotate_description)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             BaseInjector.get().octoPreferences().allowAppRotation = enabled
         }
@@ -62,8 +62,8 @@ class OctoAppLabMenu : Menu {
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_block_24
 
-        override suspend fun getTitle(context: Context) = context.getString(R.string.lab_menu___suppress_m115_request_title)
-        override suspend fun getDescription(context: Context) = context.getString(R.string.lab_menu___suppress_m115_request_description)
+        override fun getTitle(context: Context) = context.getString(R.string.lab_menu___suppress_m115_request_title)
+        override fun getDescription(context: Context) = context.getString(R.string.lab_menu___suppress_m115_request_description)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             BaseInjector.get().octoPreferences().suppressM115Request = enabled
         }
@@ -78,8 +78,8 @@ class OctoAppLabMenu : Menu {
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_code_off_24
 
-        override suspend fun getTitle(context: Context) = context.getString(R.string.lab_menu___allow_terminal_during_print_title)
-        override suspend fun getDescription(context: Context) = context.getString(R.string.lab_menu___allow_terminal_during_print_description)
+        override fun getTitle(context: Context) = context.getString(R.string.lab_menu___allow_terminal_during_print_title)
+        override fun getDescription(context: Context) = context.getString(R.string.lab_menu___allow_terminal_during_print_description)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             BaseInjector.get().octoPreferences().allowTerminalDuringPrint = enabled
         }

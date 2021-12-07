@@ -41,7 +41,7 @@ class WebcamSettingsMenu : Menu {
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_photo_size_select_large_24
 
-        override suspend fun getTitle(context: Context) = context.getString(R.string.webcam_settings___show_resolution)
+        override fun getTitle(context: Context) = context.getString(R.string.webcam_settings___show_resolution)
 
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             BaseInjector.get().octoPreferences().isShowWebcamResolution = enabled
@@ -61,7 +61,7 @@ class WebcamSettingsMenu : Menu {
         override val icon = R.drawable.ic_round_image_aspect_ratio_24
         override val isEnabled = true
 
-        override suspend fun getTitle(context: Context) = context.getString(R.string.webcam_settings___aspect_ratio_source)
+        override fun getTitle(context: Context) = context.getString(R.string.webcam_settings___aspect_ratio_source)
         override fun handleOptionActivated(host: MenuHost?, option: Option) {
             BaseInjector.get().octoPreferences().webcamAspectRatioSource = option.value
         }
@@ -76,10 +76,10 @@ class WebcamSettingsMenu : Menu {
         override val canBePinned = false
         override val style = MenuItemStyle.Support
         override val icon = R.drawable.ic_round_favorite_24
-        override suspend fun isVisible(destinationId: Int) = !BillingManager.isFeatureEnabled(BillingManager.FEATURE_FULL_WEBCAM_RESOLUTION)
+        override fun isVisible(destinationId: Int) = !BillingManager.isFeatureEnabled(BillingManager.FEATURE_FULL_WEBCAM_RESOLUTION)
 
-        override suspend fun getTitle(context: Context) = context.getString(R.string.webcam_settings___enable_full_resolution)
-        override suspend fun getDescription(context: Context) = context.getString(R.string.webcam_settings___enable_full_resolution_explainer, maxResolution)
+        override fun getTitle(context: Context) = context.getString(R.string.webcam_settings___enable_full_resolution)
+        override fun getDescription(context: Context) = context.getString(R.string.webcam_settings___enable_full_resolution_explainer, maxResolution)
 
         override suspend fun onClicked(host: MenuHost?) {
             host?.getMenuActivity()?.let {

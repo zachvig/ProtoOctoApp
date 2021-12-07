@@ -18,17 +18,18 @@ import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_AUTOMATIC_LIGHTS
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_AUTO_CONNECT_PRINTER
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_CHANGE_LANGUAGE
-import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_CONFIRM_POWER_OFF
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_CUSTOMIZE_WIDGETS
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_HELP
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_LIVE_NOTIFICATION
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_NIGHT_THEME
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_SCREEN_ON_DURING_PRINT
+import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_SHOW_CHANGE_OCTOPRINT_MENU
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.usecase.GetPowerDevicesUseCase
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
+import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -79,7 +80,7 @@ class HelpMenuItem : MenuItem {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_help_outline_24
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_help_faq_and_feedback)
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_help_faq_and_feedback)
     override suspend fun onClicked(host: MenuHost?) {
         host?.getMenuActivity()?.let {
             UriLibrary.getHelpUri().open(it)
@@ -96,8 +97,14 @@ class ChangeLanguageMenuItem : MenuItem {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_translate_24
 
-    override suspend fun isVisible(destinationId: Int) = BaseInjector.get().getAppLanguageUseCase().execute(Unit).canSwitchLocale
-    override suspend fun getTitle(context: Context) = BaseInjector.get().getAppLanguageUseCase().execute(Unit).switchLanguageText ?: ""
+    override fun isVisible(destinationId: Int) = runBlocking {
+        BaseInjector.get().getAppLanguageUseCase().execute(Unit).canSwitchLocale
+    }
+
+    override fun getTitle(context: Context) = runBlocking {
+        BaseInjector.get().getAppLanguageUseCase().execute(Unit).switchLanguageText ?: ""
+    }
+
     override suspend fun onClicked(host: MenuHost?) {
         val newLocale = BaseInjector.get().getAppLanguageUseCase().execute(Unit).switchLanguageLocale
         host?.getMenuActivity()?.let {
@@ -115,8 +122,8 @@ class CustomizeWidgetsMenuItem : MenuItem {
     override val icon = R.drawable.ic_round_person_pin_24
     override val canRunWithAppInBackground = false
 
-    override suspend fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint || destinationId == R.id.workspacePrint
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_customize_widgets)
+    override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint || destinationId == R.id.workspacePrint
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_customize_widgets)
     override suspend fun onClicked(host: MenuHost?) {
         (host?.getHostFragment() as? WidgetHostFragment)?.startEdit()
         host?.closeMenu()
@@ -132,8 +139,8 @@ class NightThemeMenuItem : ToggleMenuItem() {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_dark_mode_24
 
-    override suspend fun isVisible(destinationId: Int) = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_use_dark_mode)
+    override fun isVisible(destinationId: Int) = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_use_dark_mode)
     override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
         BaseInjector.get().octoPreferences().isManualDarkModeEnabled = enabled
     }
@@ -147,7 +154,7 @@ class KeepScreenOnDuringPrintMenuItem : ToggleMenuItem() {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_brightness_high_24
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_keep_screen_on_during_pinrt_on)
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_keep_screen_on_during_pinrt_on)
     override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
         BaseInjector.get().octoPreferences().isKeepScreenOnDuringPrint = enabled
     }
@@ -161,7 +168,7 @@ class AutoConnectPrinterMenuItem : ToggleMenuItem() {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_hdr_auto_24px
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_auto_connect_printer)
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_auto_connect_printer)
     override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
         BaseInjector.get().octoPreferences().isAutoConnectPrinter = enabled
     }
@@ -175,7 +182,7 @@ class PrintNotificationMenuItem : SubMenuItem() {
     override val enforceSingleLine = false
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_notifications_active_24
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_print_notifications)
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_print_notifications)
 }
 
 class AutomaticLightsSettingsMenuItem : SubMenuItem() {
@@ -187,7 +194,7 @@ class AutomaticLightsSettingsMenuItem : SubMenuItem() {
     override val icon = R.drawable.ic_round_wb_incandescent_24
     override val subMenu: Menu get() = AutomaticLightsSettingsMenu()
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_automatic_lights)
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_automatic_lights)
 }
 
 class ConfirmPowerOffSettingsMenuItem : SubMenuItem() {
@@ -198,15 +205,12 @@ class ConfirmPowerOffSettingsMenuItem : SubMenuItem() {
     override val enforceSingleLine = false
     override val icon = R.drawable.ic_round_power_24
     override val subMenu: Menu get() = ConfirmPowerOffSettingsMenu()
-    override suspend fun isVisible(destinationId: Int) = BaseInjector.get().getPowerDevicesUseCase().execute(
-        GetPowerDevicesUseCase.Params(queryState = false)
-    ).isNotEmpty()
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___item_confirm_power_off)
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_confirm_power_off)
 }
 
 class ShowOctoAppLabMenuItem : SubMenuItem() {
-    override val itemId = MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE
+    override val itemId = MENU_ITEM_SHOW_CHANGE_OCTOPRINT_MENU
     override var groupId = ""
     override val order = 110
     override val style = MenuItemStyle.Settings
@@ -214,20 +218,20 @@ class ShowOctoAppLabMenuItem : SubMenuItem() {
     override val icon = R.drawable.ic_round_science_24px
     override val subMenu: Menu get() = OctoAppLabMenu()
 
-    override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___show_octoapp_lab)
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___show_octoapp_lab)
 }
 
 
 class ChangeOctoPrintInstanceMenuItem : SubMenuItem() {
-    override val itemId = MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE
-    override var groupId = ""
+    override val itemId = MENU_ITEM_SHOW_CHANGE_OCTOPRINT_MENU
+    override var groupId = "change"
     override val order = 151
     override val style = MenuItemStyle.Settings
     override val enforceSingleLine = false
     override val icon = R.drawable.ic_round_swap_horiz_24
     override val subMenu: Menu get() = SwitchOctoPrintMenu()
 
-    override suspend fun getTitle(context: Context) =
+    override fun getTitle(context: Context) =
         context.getString(
             if (BaseInjector.get().octorPrintRepository().getAll().size > 1) {
                 R.string.main_menu___item_change_octoprint_instance

@@ -34,7 +34,7 @@ class ConfirmPowerOffSettingsMenu : Menu {
         override val canBePinned = false
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_power_24
-        override suspend fun getTitle(context: Context) = device.displayName
+        override fun getTitle(context: Context) = device.displayName
 
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             val base = prefs.confirmPowerOffDevices.toMutableSet()

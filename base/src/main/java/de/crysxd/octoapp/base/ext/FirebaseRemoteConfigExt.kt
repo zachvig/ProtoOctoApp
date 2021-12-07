@@ -26,6 +26,6 @@ val FirebaseRemoteConfig.purchaseOffersForced: PurchaseOffers
         m.saleConfigs
         m
     } catch (e: Exception) {
-        Timber.e(e)
+        Timber.w(e)
         null
     } ?: PurchaseOffers.DEFAULT

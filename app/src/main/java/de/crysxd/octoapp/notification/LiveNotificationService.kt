@@ -76,7 +76,13 @@ class LiveNotificationService : Service() {
             notificationController.createServiceNotification(instance, getString(R.string.print_notification___connecting))
         }
         Timber.i("Starting foreground with: $notification")
-        startForeground(notificationId, notification)
+        try {
+            startForeground(notificationId, notification)
+        } catch (e: Exception) {
+            // Android 12 issue...we can't start a foreground service from an Activity sometimes?
+            Timber.e(e)
+            return stop()
+        }
 
         // Ensure instance is set from here on
         val instance = instance ?: return let {

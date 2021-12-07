@@ -66,7 +66,7 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
         override val order = 321
         override val style = MenuItemStyle.Printer
         override val icon = if (isActive) R.drawable.ic_round_layers_active_24 else R.drawable.ic_round_layers_24
-        override suspend fun getTitle(context: Context) =
+        override fun getTitle(context: Context) =
             if (startPrintAfterSelection != null) displayName else context.getString(R.string.material_menu___print_with_material, displayName)
 
         override suspend fun onClicked(host: MenuHost?) {
@@ -90,10 +90,10 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
         override var groupId = ""
         override val order = 322
         override val canBePinned = false
-        override suspend fun isVisible(destinationId: Int) = startPrintAfterSelection != null
+        override fun isVisible(destinationId: Int) = startPrintAfterSelection != null
         override val style = MenuItemStyle.Printer
         override val icon = R.drawable.ic_round_layers_clear_24
-        override suspend fun getTitle(context: Context) = context.getString(R.string.material_menu___print_without_selection)
+        override fun getTitle(context: Context) = context.getString(R.string.material_menu___print_without_selection)
         override suspend fun onClicked(host: MenuHost?) {
             startPrintAfterSelection?.let {
                 BaseInjector.get().startPrintJobUseCase().execute(StartPrintJobUseCase.Params(file = it, materialSelectionConfirmed = true))

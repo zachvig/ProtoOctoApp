@@ -48,7 +48,7 @@ class SortOptionsMenu : Menu {
             ),
         )
 
-        override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___sorting_menu___sort_by)
+        override fun getTitle(context: Context) = context.getString(R.string.file_manager___sorting_menu___sort_by)
 
         override fun handleOptionActivated(host: MenuHost?, option: Option) {
             BaseInjector.get().octoPreferences().fileManagerSettings = BaseInjector.get().octoPreferences().fileManagerSettings.copy(
@@ -57,7 +57,7 @@ class SortOptionsMenu : Menu {
         }
     }
 
-    class SortDirectionMenuItem(private val context: Context) : RevolvingOptionsMenuItem() {
+    class SortDirectionMenuItem(context: Context) : RevolvingOptionsMenuItem() {
 
         override val activeValue get() = BaseInjector.get().octoPreferences().fileManagerSettings.sortDirection.name
         override val canBePinned = false
@@ -78,7 +78,7 @@ class SortOptionsMenu : Menu {
             ),
         )
 
-        override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___sorting_menu___direction)
+        override fun getTitle(context: Context) = context.getString(R.string.file_manager___sorting_menu___direction)
 
         override fun handleOptionActivated(host: MenuHost?, option: Option) {
             BaseInjector.get().octoPreferences().fileManagerSettings = BaseInjector.get().octoPreferences().fileManagerSettings.copy(
@@ -95,7 +95,7 @@ class SortOptionsMenu : Menu {
         override val style = MenuItemStyle.Settings
         override val canBePinned = false
         override val icon: Int = R.drawable.ic_round_remove_done_24
-        override suspend fun getTitle(context: Context) = context.getString(R.string.file_manager___sorting_menu___hide_printed)
+        override fun getTitle(context: Context) = context.getString(R.string.file_manager___sorting_menu___hide_printed)
 
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             BaseInjector.get().octoPreferences().fileManagerSettings = BaseInjector.get().octoPreferences().fileManagerSettings.copy(
