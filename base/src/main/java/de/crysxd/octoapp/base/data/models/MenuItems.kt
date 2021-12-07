@@ -16,7 +16,7 @@ object MenuItems {
     const val MENU_ITEM_SHOW_FILES = "octoprint___show_files"
     const val MENU_EXECUTE_SYSTEM_COMMAND = "octoprint___execute_system_command"
     const val MENU_ITEM_NIGHT_THEME = "settings___night_theme"
-    const val MENU_ITEM_CHANGE_OCTOPRINT_INSTANCE = "settings___change_octoprint_instnace"
+    const val MENU_ITEM_SHOW_CHANGE_OCTOPRINT_MENU = "settings___change_octoprint_instnace"
     const val MENU_ITEM_AUTOMATIC_LIGHTS = "settings___automatic_lights"
     const val MENU_ITEM_CONFIRM_POWER_OFF = "settings___confirm_power_off"
     const val MENU_ITEM_SHOW_OCTOAPP_LAB = "settings___open_octoapp_lab"

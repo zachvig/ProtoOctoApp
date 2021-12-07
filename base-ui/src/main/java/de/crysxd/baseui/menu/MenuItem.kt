@@ -22,11 +22,12 @@ interface MenuItem {
     @get:DrawableRes
     val icon: Int
 
-    suspend fun getTitle(context: Context): CharSequence
-    suspend fun getRightDetail(context: Context): CharSequence? = null
-    suspend fun getDescription(context: Context): CharSequence? = null
-    suspend fun isVisible(@IdRes destinationId: Int) = true
     suspend fun onClicked(host: MenuHost?)
     suspend fun onSecondaryClicked(host: MenuHost?) = Unit
-    suspend fun getBadgeCount() = 0
+
+    fun getTitle(context: Context): CharSequence
+    fun getRightDetail(context: Context): CharSequence? = null
+    fun getDescription(context: Context): CharSequence? = null
+    fun isVisible(@IdRes destinationId: Int) = true
+    fun getBadgeCount() = 0
 }

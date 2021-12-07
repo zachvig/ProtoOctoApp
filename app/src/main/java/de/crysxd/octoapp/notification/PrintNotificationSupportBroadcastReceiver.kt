@@ -9,9 +9,11 @@ import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.utils.AppScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -99,7 +101,9 @@ class PrintNotificationSupportBroadcastReceiver : BroadcastReceiver() {
             LiveNotificationManager.start(context)
 
             // If WiFi got reconnected, the local URL could also be reachable again. Perform online check.
-            BaseInjector.get().octoPrintProvider().octoPrint().performOnlineCheck()
+            withContext(Dispatchers.IO) {
+                BaseInjector.get().octoPrintProvider().octoPrint().performOnlineCheck()
+            }
         } else {
             Timber.v("Not starting service (wasDisconnected=$wasDisconnected, hasWifi=$hasWifi)")
         }
