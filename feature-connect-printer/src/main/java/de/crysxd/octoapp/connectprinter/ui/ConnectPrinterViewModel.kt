@@ -127,6 +127,7 @@ class ConnectPrinterViewModel(
             Timber.d("PsuCycled: $psuCyclingState")
             Timber.d("PsuState: $isPsuTurnedOn")
             Timber.d("activeSince: ${activeSince}ms")
+            Timber.d("isAutoConnect: $isAutoConnect")
 
             if (connectionResponse != null || activeSince > MIN_LOADING_DELAY) {
                 return when {

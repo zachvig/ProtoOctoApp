@@ -32,6 +32,7 @@ class OctoPreferences(
         private const val KEY_ACTIVE_INSTANCE_WEB_URL = "active_instance_web_url"
         private const val KEY_ACTIVE_INSTANCE_ID = "active_instance_id"
         private const val KEY_AUTO_CONNECT_PRINTER = "auto_connect_printer"
+        private const val KEY_AUTO_CONNECT_PRINTER_INFO_SHOWN = "auto_connect_printer_info_shown"
         private const val KEY_CRASH_REPORTING = "crash_reporting_enabled"
         private const val KEY_ANALYTICS = "analytics_enabled"
         private const val KEY_PRINT_NOTIFICATION_WAS_DISCONNECTED = "print_notification_was_disconnected"
@@ -133,9 +134,15 @@ class OctoPreferences(
         }
 
     var isAutoConnectPrinter
-        get() = sharedPreferences.getBoolean(KEY_AUTO_CONNECT_PRINTER, true)
+        get() = sharedPreferences.getBoolean(KEY_AUTO_CONNECT_PRINTER, false)
         set(value) {
             edit { putBoolean(KEY_AUTO_CONNECT_PRINTER, value) }
+        }
+
+    var wasAutoConnectPrinterInfoShown
+        get() = sharedPreferences.getBoolean(KEY_AUTO_CONNECT_PRINTER_INFO_SHOWN, false)
+        set(value) {
+            edit { putBoolean(KEY_AUTO_CONNECT_PRINTER_INFO_SHOWN, value) }
         }
 
     var isLivePrintNotificationsEnabled

@@ -21,6 +21,7 @@ import de.crysxd.baseui.menu.MenuBottomSheetFragment
 import de.crysxd.baseui.menu.power.PowerControlsMenu
 import de.crysxd.baseui.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.octoapp.base.UriLibrary
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.connectprinter.R
 import de.crysxd.octoapp.connectprinter.databinding.ConnectPrinterFragmentBinding
@@ -83,14 +84,23 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
                 }
             }
             binding.buttonBeginConnect.setOnClickListener {
-                requireOctoActivity().showDialog(
-                    message = getString(R.string.connect_printer___begin_connection_confirmation_message),
-                    positiveButton = getString(R.string.connect_printer___begin_connection_cofirmation_positive),
-                    positiveAction = { viewModel.beginConnect() },
-                    neutralButton = getString(R.string.connect_printer___begin_connection_cofirmation_negative)
-                )
+                startManualConnection()
             }
         })
+    }
+
+    fun startManualConnection() {
+        val wasInfoShown = BaseInjector.get().octoPreferences().wasAutoConnectPrinterInfoShown
+        if (wasInfoShown) {
+            requireOctoActivity().showDialog(
+                message = getString(R.string.connect_printer___begin_connection_confirmation_message),
+                positiveButton = getString(R.string.connect_printer___begin_connection_cofirmation_positive),
+                positiveAction = { viewModel.beginConnect() },
+                neutralButton = getString(R.string.connect_printer___begin_connection_cofirmation_negative)
+            )
+        } else {
+            MenuBottomSheetFragment.createForMenu(AutoConnectPrinterInfoMenu()).show(childFragmentManager)
+        }
     }
 
     private fun showMenu() {
