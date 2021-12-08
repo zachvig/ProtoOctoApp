@@ -60,7 +60,7 @@ class LocalDnsResolver(
         cache.removeAll { it.validUntil < now }
 
         // Check cache
-        cache.firstOrNull { it.hostname == hostname }?.let {
+        cache.firstOrNull { it.hostname.equals(hostname, ignoreCase = true) }?.let {
             Timber.v("Cache hit for $hostname -> ${it.resolvedIp}")
             return@withLock it.resolvedIp
         }
@@ -102,7 +102,7 @@ class LocalDnsResolver(
             // Switch to a new thread so we can kill it on timeout without having issues with blocking IO operations
             val job = AppScope.launch {
                 try {
-                    OctoPrintUpnpDiscovery(context).discover {
+                    OctoPrintUpnpDiscovery(context, "LocalDns").discover {
                         if (it.upnpHostname == upnpHostname) {
                             channel.value = it.address
                         }
@@ -264,8 +264,8 @@ class LocalDnsResolver(
     }
 
     private fun addCacheEntry(entry: DnsEntry) {
-        cache.removeAll { it.hostname == entry.hostname }
-        cache.add(entry)
+        cache.removeAll { it.hostname.equals(entry.hostname, ignoreCase = true) }
+        cache.add(entry.copy(hostname = entry.hostname.lowercase()))
     }
 
     private data class DnsEntry(

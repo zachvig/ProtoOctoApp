@@ -25,7 +25,7 @@ abstract class UseCase<Param, Res> {
         internalExecute(param)
     }
 
-    private suspend fun internalExecute(param: Param) : Res {
+    private suspend fun internalExecute(param: Param): Res {
         val executionId = executionCounter.incrementAndGet()
         val start = System.currentTimeMillis()
         val name = this@UseCase::class.java.simpleName
