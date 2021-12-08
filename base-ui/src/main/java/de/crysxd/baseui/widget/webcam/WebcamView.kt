@@ -38,6 +38,7 @@ import timber.log.Timber
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
+import kotlin.math.roundToLong
 
 class WebcamView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, defStyle: Int = 0) : FrameLayout(context, attributeSet, defStyle) {
 
@@ -286,6 +287,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     }
 
     private fun displayMjpegFrame(newState: WebcamState.MjpegFrameReady) {
+        Timber.i("New frame: $newState")
         binding.matrixView.matrixInput = MatrixView.MatrixInput(
             flipH = newState.flipH,
             flipV = newState.flipV,
@@ -319,8 +321,9 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 usedLiveIndicator?.isVisible = false
                 delay(STALLED_THRESHOLD_MS - LIVE_DELAY_THRESHOLD_MS)
             } else {
-                val end = (start + newState.nextFrameDelayMs * 1.2f).toLong()
-                Timber.i("start=${Date(start)} end=${Date(end)}")
+                val delay = (newState.nextFrameDelayMs * 1.33f).roundToLong()
+                val end = start + delay
+                Timber.v("start=${Date(start)} delay=${newState.nextFrameDelayMs} end=${Date(end)}")
 
                 while (end > System.currentTimeMillis()) {
                     val nextFrameIn = TimeUnit.MILLISECONDS.toSeconds((newState.nextFrameDelayMs - (System.currentTimeMillis() - start)).coerceIn(0, 9000))
@@ -329,7 +332,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 }
             }
 
-            Timber.i("STALLED start=${Date(start)} delay=${newState.nextFrameDelayMs}")
+            Timber.d("STALLED start=${Date(start)} delay=${newState.nextFrameDelayMs}")
             // Stream is now stalled!
             binding.streamStalledIndicator.isVisible = true
             do {
