@@ -966,7 +966,7 @@ bonne impression !"</string>
     <string name="purchase_dialog_text_2">"Google a besoin d'un peu de temps pour montrer cet achat sur d'autres appareils ! 🙃"</string>
     <string name="connect_printer___octoprint_connected">"OctoPrint connecté"</string>
     <string name="connect_printer___auto_menu___title">"Se connecter automatiquement ?"</string>
-    <string name="connect_printer___auto_menu___subtitle">"&lt; ![CDATA[OctoApp peut connecter votre imprimante automatiquement lorsque vous ouvrez l'application. Cela vous fait gagner du temps, mais &lt;b&gt;peut perturber les impressions à partir des cartes SD.&lt;/b&gt;]]&gt;."</string>
+    <string name="connect_printer___auto_menu___subtitle"><![CDATA[OctoApp peut connecter votre imprimante automatiquement lorsque vous ouvrez l\'application. Cela vous fait gagner du temps, mais <b>peut perturber les impressions à partir des cartes SD.</b>]]></string>
     <string name="connect_printer___auto_menu___auto_option">"Connectez-vous automatiquement"</string>
     <string name="connect_printer___auto_menu___manual_option">"Connecter manuellement"</string>
 </resources>
