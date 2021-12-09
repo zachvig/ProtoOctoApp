@@ -21,6 +21,7 @@ import de.crysxd.octoapp.base.usecase.GetRemoteServiceConnectUrlUseCase
 import de.crysxd.octoapp.framework.MenuRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.WorkspaceRobot
+import de.crysxd.octoapp.framework.octoeverywhere.OctoEverywhereRobot
 import de.crysxd.octoapp.framework.rules.AbstractUseCaseMockRule
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
 import de.crysxd.octoapp.framework.rules.AutoConnectPrinterRule
@@ -28,7 +29,11 @@ import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.ResetDaggerRule
 import de.crysxd.octoapp.framework.rules.TestDocumentationRule
 import de.crysxd.octoapp.framework.waitFor
+import de.crysxd.octoapp.framework.waitForDialog
+import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereConnectionNotFoundException
+import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereSubscriptionMissingException
 import kotlinx.coroutines.runBlocking
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
@@ -62,6 +67,7 @@ class OctoEverywhereTest {
     @AllowFlaky(attempts = 3)
     fun WHEN_OctoEverywhere_is_connected_THEN_then_app_can_fall_back() {
         // GIVEN
+        OctoEverywhereRobot.setPremiumAccountActive(true)
         BaseInjector.get().octorPrintRepository().setActive(remoteTestEnv)
 
         // WHEN
@@ -76,6 +82,7 @@ class OctoEverywhereTest {
     @AllowFlaky(attempts = 3)
     fun WHEN_OctoEverywhere_is_not_connected_THEN_then_we_can_connect_it() {
         // GIVEN
+        OctoEverywhereRobot.setPremiumAccountActive(true)
         BaseInjector.get().octorPrintRepository().setActive(testEnv)
         baristaRule.launchActivity()
 
@@ -110,6 +117,49 @@ class OctoEverywhereTest {
         assertThat(info2).isNotNull()
         assertThat(info2!!.alternativeWebUrl).isNull()
         assertThat(info2.octoEverywhereConnection).isNull()
+    }
+
+    @Test(timeout = 30_000)
+    @AllowFlaky(attempts = 3)
+    fun WHEN_OctoEverywhere_premium_is_no_longer_available_THEN_then_we_disconnect_it() {
+        // GIVEN
+        OctoEverywhereRobot.setPremiumAccountActive(false)
+        BaseInjector.get().octorPrintRepository().setActive(remoteTestEnv)
+
+        // WHEN
+        baristaRule.launchActivity()
+
+        // THEN
+        waitForDialog(withText(OctoEverywhereSubscriptionMissingException("http://test.com".toHttpUrl()).userFacingMessage))
+        val info = BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()
+        assertThat(info).isNotNull()
+        assertThat(info!!.alternativeWebUrl).isNull()
+        assertThat(info.octoEverywhereConnection).isNull()
+
+        onView(withText(android.R.string.ok)).perform(click())
+        waitFor(allOf(isDisplayed(), withText(R.string.connect_printer___octoprint_not_available_title)))
+    }
+
+    @Test(timeout = 30_000)
+    @AllowFlaky(attempts = 3)
+    fun WHEN_OctoEverywhere_connection_was_deleted_THEN_then_we_disconnect_it() {
+        // GIVEN
+        OctoEverywhereRobot.setPremiumAccountActive(true)
+        BaseInjector.get().octorPrintRepository()
+            .setActive(remoteTestEnv.copy(alternativeWebUrl = "https://shared-C2WCLVUQYA7EW6HKGAVNWA16DSHPIFV2.octoeverywhere.com".toHttpUrl()))
+
+        // WHEN
+        baristaRule.launchActivity()
+
+        // THEN
+        waitForDialog(withText(OctoEverywhereConnectionNotFoundException("http://test.com".toHttpUrl()).userFacingMessage))
+        val info = BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()
+        assertThat(info).isNotNull()
+        assertThat(info!!.alternativeWebUrl).isNull()
+        assertThat(info.octoEverywhereConnection).isNull()
+
+        onView(withText(android.R.string.ok)).perform(click())
+        waitFor(allOf(isDisplayed(), withText(R.string.connect_printer___octoprint_not_available_title)))
     }
 
     inner class MockOctoEverywhereConnectionRule : AbstractUseCaseMockRule() {

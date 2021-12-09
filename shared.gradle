@@ -32,17 +32,12 @@ android {
     }
 
     defaultConfig {
-        if (project.hasProperty("testEnvDoamin")) {
-            buildConfigField "String", "TEST_ENV_DOMAIN", "\"${project.property("testEnvDoamin")}\""
-        } else {
-            buildConfigField "String", "TEST_ENV_DOMAIN", "\"192.168.1.31\""
-        }
-
-        if (project.hasProperty("failedTScreenshotDir")) {
-            buildConfigField "String", "FAILED_TEST_SCREENSHOT_DIR", "\"${project.property("failedTScreenshotDir")}\""
-        } else {
-            buildConfigField "String", "FAILED_TEST_SCREENSHOT_DIR", "\"/storage/emulated/0/Download/test-failures/\""
-        }
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        buildConfigField "String", "FAILED_TEST_SCREENSHOT_DIR", "\"${properties.getProperty('failedTScreenshotDir', '/storage/emulated/0/Download/test-failures/')}\""
+        buildConfigField "String", "TEST_ENV_DOMAIN", "\"${properties.getProperty('testEnvDoamin', '192.168.1.31')}\""
+        buildConfigField "String", "TEST_OCTOEVERYWHERE_PASSWORD", "\"${properties.getProperty('integrationTests.octoEevrywherePassword' ?: '')}\""
+        buildConfigField "String", "TEST_OCTOEVERYWHERE_USER", "\"${properties.getProperty('integrationTests.octoEverywhereUser', '')}\""
     }
 
     buildTypes {
@@ -144,6 +139,7 @@ dependencies {
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
     testImplementation 'com.google.truth:truth:1.0.1'
 
+    androidTestImplementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
     androidTestImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
     androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito-inline:2.28.1'
     androidTestImplementation 'androidx.test:runner:1.4.0'
