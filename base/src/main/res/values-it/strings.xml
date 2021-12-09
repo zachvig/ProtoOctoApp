@@ -1051,4 +1051,11 @@ felice stampa!"</string>
     <string name="main___banner_connected_via_spaghetti_detective">"Collegato tramite Spaghetti Detective"</string>
     <string name="move_settings_description">"Queste impostazioni si applicano solo quando sposti manualmente la testina di stampa con OctoApp e non influiscono sulle tue stampe"</string>
     <string name="configure_remote_acces___spaghetti_detective___webcam_not_watching">"Il Detective non sta guardando"</string>
+    <string name="configure_remote_acces___spaghetti_detective___live_notification_paused">"Notifica live in pausa, il tunnel di Spaghetti Detective ha dati limitati"</string>
+    <string name="purchase_dialog_text_2">"Google ha bisogno di un po' di tempo per mostrare questo acquisto su altri dispositivi! 🙃"</string>
+    <string name="connect_printer___octoprint_connected">"OctoPrint collegato"</string>
+    <string name="connect_printer___auto_menu___title">"Collegarsi automaticamente?"</string>
+    <string name="connect_printer___auto_menu___subtitle"><![CDATA[OctoApp può connettere la tua stampante automaticamente quando apri l\'applicazione. Questo ti fa risparmiare tempo, ma <b>può interrompere le stampe dalle schede SD.</b>]]></string>
+    <string name="connect_printer___auto_menu___auto_option">"Connettiti automaticamente"</string>
+    <string name="connect_printer___auto_menu___manual_option">"Collegare manualmente"</string>
 </resources>

@@ -1051,4 +1051,11 @@ gelukkig printen!"</string>
     <string name="main___banner_connected_via_spaghetti_detective">"Verbonden via Spaghetti Detective"</string>
     <string name="move_settings_description">"Deze instellingen zijn alleen van toepassing wanneer u de printkop handmatig verplaatst met OctoApp en hebben geen invloed op uw afdrukken"</string>
     <string name="configure_remote_acces___spaghetti_detective___webcam_not_watching">"De Detective kijkt niet"</string>
+    <string name="configure_remote_acces___spaghetti_detective___live_notification_paused">"Live melding gepauzeerd, Spaghetti Detective tunnel heeft beperkte data"</string>
+    <string name="purchase_dialog_text_2">"Google heeft wat tijd nodig om deze aankoop op andere toestellen te tonen! 🙃"</string>
+    <string name="connect_printer___octoprint_connected">"OctoPrint aangesloten"</string>
+    <string name="connect_printer___auto_menu___title">"Automatisch verbinden?"</string>
+    <string name="connect_printer___auto_menu___subtitle"><![CDATA[OctoApp kan uw printer automatisch verbinden wanneer u de app opent. Dit bespaart u wat tijd, maar <b>kan afdrukken van SD-kaarten verstoren.</b>]]></string>
+    <string name="connect_printer___auto_menu___auto_option">"Automatisch verbinden"</string>
+    <string name="connect_printer___auto_menu___manual_option">"Handmatig verbinden"</string>
 </resources>
