@@ -17,6 +17,8 @@ stages:
   - echo "signing.storeAlias=$RELEASE_KEY_ALIAS" >> local.properties
   - echo "signing.keyPassword=$RELEASE_KEY_PASSWORD" >> local.properties
   - echo "org.gradle.jvmargs=-Xmx4096m" >> local.properties
+  - echo "integrationTests.octoEevrywherePassword=$OCTOEVRYWHERE_PASSWORD" >> local.properties
+  - echo "integrationTests.octoEverywhereUser=$OCTOEVRYWHERE_USER" >> local.properties
   - eval "$DEBUGGING_STATEMENT_BEFORE"
 
 .default_after_script: &default_after_script
