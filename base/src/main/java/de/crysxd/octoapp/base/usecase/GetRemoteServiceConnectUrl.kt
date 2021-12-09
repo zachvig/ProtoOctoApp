@@ -13,9 +13,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class GetConnectOctoEverywhereUrlUseCase @Inject constructor(
+class GetRemoteServiceConnectUrlUseCase @Inject constructor(
     private val octoPrintProvider: OctoPrintProvider
-) : UseCase<GetConnectOctoEverywhereUrlUseCase.RemoteService, GetConnectOctoEverywhereUrlUseCase.Result>() {
+) : UseCase<GetRemoteServiceConnectUrlUseCase.RemoteService, GetRemoteServiceConnectUrlUseCase.Result>() {
 
     companion object {
         const val OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH = "connect-octoeverywhere"

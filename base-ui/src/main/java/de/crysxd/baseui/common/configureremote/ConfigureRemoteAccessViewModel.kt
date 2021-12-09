@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import de.crysxd.baseui.BaseViewModel
 import de.crysxd.octoapp.base.data.models.OctoEverywhereConnection
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.usecase.GetConnectOctoEverywhereUrlUseCase
+import de.crysxd.octoapp.base.usecase.GetRemoteServiceConnectUrlUseCase
 import de.crysxd.octoapp.base.usecase.SetAlternativeWebUrlUseCase
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -17,7 +17,7 @@ import okhttp3.HttpUrl
 class ConfigureRemoteAccessViewModel(
     octoPrintRepository: OctoPrintRepository,
     private val setAlternativeWebUrlUseCase: SetAlternativeWebUrlUseCase,
-    private val getConnectOctoEverywhereUrlUseCase: GetConnectOctoEverywhereUrlUseCase,
+    private val getRemoteServiceConnectUrlUseCase: GetRemoteServiceConnectUrlUseCase,
 ) : BaseViewModel() {
 
     private val mutableViewState = MutableLiveData<ViewState>()
@@ -46,15 +46,15 @@ class ConfigureRemoteAccessViewModel(
         }.asLiveData()
     }
 
-    fun getOctoEverywhereAppPortalUrl() = getRemoteServiceSetupUrl(GetConnectOctoEverywhereUrlUseCase.RemoteService.OctoEverywhere)
+    fun getOctoEverywhereAppPortalUrl() = getRemoteServiceSetupUrl(GetRemoteServiceConnectUrlUseCase.RemoteService.OctoEverywhere)
 
-    fun getSpaghettiDetectiveSetupUrl() = getRemoteServiceSetupUrl(GetConnectOctoEverywhereUrlUseCase.RemoteService.SpaghettiDetective)
+    fun getSpaghettiDetectiveSetupUrl() = getRemoteServiceSetupUrl(GetRemoteServiceConnectUrlUseCase.RemoteService.SpaghettiDetective)
 
-    private fun getRemoteServiceSetupUrl(service: GetConnectOctoEverywhereUrlUseCase.RemoteService) = viewModelScope.launch(coroutineExceptionHandler) {
+    private fun getRemoteServiceSetupUrl(service: GetRemoteServiceConnectUrlUseCase.RemoteService) = viewModelScope.launch(coroutineExceptionHandler) {
         mutableViewState.postValue(ViewState.Loading)
-        val event = when (val result = getConnectOctoEverywhereUrlUseCase.execute(service)) {
-            is GetConnectOctoEverywhereUrlUseCase.Result.Success -> ViewEvent.OpenUrl(result.url)
-            is GetConnectOctoEverywhereUrlUseCase.Result.Error -> ViewEvent.ShowError(
+        val event = when (val result = getRemoteServiceConnectUrlUseCase.execute(service)) {
+            is GetRemoteServiceConnectUrlUseCase.Result.Success -> ViewEvent.OpenUrl(result.url)
+            is GetRemoteServiceConnectUrlUseCase.Result.Error -> ViewEvent.ShowError(
                 message = result.errorMessage,
                 exception = result.exception,
                 ignoreAction = null

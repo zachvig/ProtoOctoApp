@@ -32,8 +32,8 @@ import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.ExtrudeFilamentUseCase
 import de.crysxd.octoapp.base.usecase.GenerateRenderStyleUseCase
-import de.crysxd.octoapp.base.usecase.GetConnectOctoEverywhereUrlUseCase
 import de.crysxd.octoapp.base.usecase.GetGcodeShortcutsUseCase
+import de.crysxd.octoapp.base.usecase.GetRemoteServiceConnectUrlUseCase
 import de.crysxd.octoapp.base.usecase.GetTerminalFiltersUseCase
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.base.usecase.HandleAutomaticLightEventUseCase
@@ -181,11 +181,11 @@ open class ViewModelModule {
     open fun provideConfigureRemoteAccessViewModel(
         octoPrintRepository: OctoPrintRepository,
         setAlternativeWebUrlUseCase: SetAlternativeWebUrlUseCase,
-        getConnectOctoEverywhereUrlUseCase: GetConnectOctoEverywhereUrlUseCase,
+        getRemoteServiceConnectUrlUseCase: GetRemoteServiceConnectUrlUseCase,
     ): ViewModel = ConfigureRemoteAccessViewModel(
         octoPrintRepository = octoPrintRepository,
         setAlternativeWebUrlUseCase = setAlternativeWebUrlUseCase,
-        getConnectOctoEverywhereUrlUseCase = getConnectOctoEverywhereUrlUseCase,
+        getRemoteServiceConnectUrlUseCase = getRemoteServiceConnectUrlUseCase,
     )
 
     @Provides

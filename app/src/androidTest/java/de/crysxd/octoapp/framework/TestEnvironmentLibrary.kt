@@ -38,4 +38,11 @@ object TestEnvironmentLibrary {
         webUrl = "http://${BuildConfig.TEST_ENV_DOMAIN}:5002".toHttpUrl(),
         apiKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
     )
+
+    val CorgiRemote = OctoPrintInstanceInformationV3(
+        id = "corgi",
+        webUrl = "http://${BuildConfig.TEST_ENV_DOMAIN}:5000".toHttpUrl(), // wrong port
+        alternativeWebUrl = "https://shared-82Q05YAKTQOAENDD98K3LYMA2S2QTKK7.octoeverywhere.com".toHttpUrl(),
+        apiKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    )
 }

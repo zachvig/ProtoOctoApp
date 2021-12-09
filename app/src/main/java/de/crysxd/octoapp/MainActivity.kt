@@ -50,8 +50,8 @@ import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_QUICK_SWITCH
 import de.crysxd.octoapp.base.data.models.WidgetType
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.usecase.GetConnectOctoEverywhereUrlUseCase.Companion.OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH
-import de.crysxd.octoapp.base.usecase.GetConnectOctoEverywhereUrlUseCase.Companion.SPAGHETTI_DETECTIVE_APP_PORTAL_CALLBACK_PATH
+import de.crysxd.octoapp.base.usecase.GetRemoteServiceConnectUrlUseCase.Companion.OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH
+import de.crysxd.octoapp.base.usecase.GetRemoteServiceConnectUrlUseCase.Companion.SPAGHETTI_DETECTIVE_APP_PORTAL_CALLBACK_PATH
 import de.crysxd.octoapp.base.usecase.UpdateInstanceCapabilitiesUseCase
 import de.crysxd.octoapp.databinding.MainActivityBinding
 import de.crysxd.octoapp.notification.LiveNotificationManager
@@ -257,9 +257,11 @@ class MainActivity : OctoActivity() {
 
         intent?.data?.let {
             Timber.i("Handling URI: $it")
-            if (it.host == "app.octoapp.eu") {
+            if (it.host == "app.octoapp.eu" || it.host == "test.octoapp.eu") {
                 // Give a second for everything to settle
                 handleDeepLink(it)
+            } else {
+                Timber.w("Dropping URI, host is ${it.host}")
             }
         }
 
@@ -270,6 +272,8 @@ class MainActivity : OctoActivity() {
                 if (uri.host == "app.octoapp.eu") {
                     // Give a second for everything to settle
                     handleDeepLink(uri)
+                } else {
+                    Timber.w("Dropping URI, host is ${uri.host}")
                 }
             } catch (e: Exception) {
                 Timber.e(e)
@@ -282,12 +286,15 @@ class MainActivity : OctoActivity() {
     }
 
     private fun handleDeepLink(uri: Uri) {
+        Timber.i("Hanlding deep link2")
+
         lifecycleScope.launchWhenCreated {
             try {
                 if (UriLibrary.isActiveInstanceRequired(uri) && BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot() == null) {
                     Timber.i("Uri requires active instance, delaying")
                     viewModel.pendingUri = uri
                 } else {
+                    Timber.i("Hanlding deep link")
                     when (uri.path) {
                         "/$OCTOEVERYWHERE_APP_PORTAL_CALLBACK_PATH" -> BaseInjector.get().handleOctoEverywhereAppPortalSuccessUseCase().execute(uri)
                         "/$SPAGHETTI_DETECTIVE_APP_PORTAL_CALLBACK_PATH" -> BaseInjector.get().handleSpaghettiDetectiveAppPortalSuccessUseCase().execute(uri)
