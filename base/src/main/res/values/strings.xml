@@ -952,7 +952,6 @@ happy printing!"</string>
     <string name="progress_widget___title">"Progress"</string>
     <string name="progress_widget___time_left">"Left"</string>
     <string name="progress_widget___time_spent">"Used"</string>
-    <string name="purchase_dialog_text_2">Google needs some time to show this purchase on other devices! No need to buy it again 🙃</string>
     <string name="progress_widget___layer">"Layer"</string>
     <string name="main_menu___explore_support_plugins">"Explore supported plugins"</string>
     <string name="main_menu___explore_support_plugins_short">"Explore plugins"</string>
@@ -963,15 +962,16 @@ happy printing!"</string>
     <string name="configure_remote_acces___spaghetti_detective___data_usage_failed">"Failed to fetch data usage"</string>
     <string name="configure_remote_acces___spaghetti_detective___data_usafe">"Data usage"</string>
     <string name="configure_remote_acces___spaghetti_detective___connected">"TSD is connected!"</string>
-    <string name="configure_remote_acces___spaghetti_detective___live_notification_paused">Live notification paused, Spaghetti Detective tunnel has limited data</string>
     <string name="configure_remote_acces___spaghetti_detective___description">"The Spaghetti Detective allows you to remotely control and observe your prints. After you installed the plugin, you can sign in below to use OctoApp to control your printer from wherever you are!"</string>
     <string name="app_widget___live_x_seconds">"Live (%ds)"</string>
-    <string name="connect_printer___octoprint_connected">OctoPrint connected</string>
-    <string name="connect_printer___auto_menu___title">Connect automatically?</string>
-    <string name="connect_printer___auto_menu___subtitle"><![CDATA[OctoApp can connect your printer automatically when you open the app. This saves you some time, but <b>can disrupt prints from SD cards.</b>]]></string>
-    <string name="connect_printer___auto_menu___auto_option">Connect automatically</string>
-    <string name="connect_printer___auto_menu___manual_option">Connect manually</string>
     <string name="main___banner_connected_via_spaghetti_detective">"Connected via Spaghetti Detective"</string>
     <string name="move_settings_description">"This settings only apply when you manually move the print head with OctoApp and don't affect your prints"</string>
     <string name="configure_remote_acces___spaghetti_detective___webcam_not_watching">"The Detective is not watching"</string>
+    <string name="configure_remote_acces___spaghetti_detective___live_notification_paused">"Live notification paused, Spaghetti Detective tunnel has limited data"</string>
+    <string name="purchase_dialog_text_2">"Google needs some time to show this purchase on other devices! 🙃"</string>
+    <string name="connect_printer___octoprint_connected">"OctoPrint connected"</string>
+    <string name="connect_printer___auto_menu___title">"Connect automatically?"</string>
+    <string name="connect_printer___auto_menu___subtitle"><![CDATA[OctoApp can connect your printer automatically when you open the app. This saves you some time, but <b>can disrupt prints from SD cards.</b>]]></string>
+    <string name="connect_printer___auto_menu___auto_option">"Connect automatically"</string>
+    <string name="connect_printer___auto_menu___manual_option">"Connect manually"</string>
 </resources>
