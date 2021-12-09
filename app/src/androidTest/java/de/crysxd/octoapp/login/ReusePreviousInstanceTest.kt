@@ -18,6 +18,7 @@ import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.WorkspaceRobot
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
+import de.crysxd.octoapp.framework.rules.AutoConnectPrinterRule
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.MockTestFullNetworkStackRule
@@ -43,6 +44,7 @@ class ReusePreviousInstanceTest {
         .around(IdleTestEnvironmentRule(testEnv))
         .around(TestDocumentationRule())
         .around(ResetDaggerRule())
+        .around(AutoConnectPrinterRule())
         .around(discoveryRule)
         .around(mockTestFullNetworkStackRule)
         .around(AcceptAllAccessRequestRule(testEnv))

@@ -26,6 +26,7 @@ import de.crysxd.octoapp.framework.SignInRobot.waitForManualToBeShown
 import de.crysxd.octoapp.framework.SignInRobot.waitForWelcomeTitleToBeShown
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
+import de.crysxd.octoapp.framework.rules.AutoConnectPrinterRule
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.MockTestFullNetworkStackRule
@@ -53,6 +54,7 @@ class ManualLoginTest {
         .around(IdleTestEnvironmentRule(testEnv))
         .around(TestDocumentationRule())
         .around(ResetDaggerRule())
+        .around(AutoConnectPrinterRule())
         .around(discoveryRule)
         .around(mockTestFullNetworkStackRule)
         .around(AcceptAllAccessRequestRule(testEnv))

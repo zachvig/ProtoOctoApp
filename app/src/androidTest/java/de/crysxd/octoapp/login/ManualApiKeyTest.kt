@@ -13,6 +13,7 @@ import de.crysxd.octoapp.R
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
+import de.crysxd.octoapp.framework.rules.AutoConnectPrinterRule
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.ResetDaggerRule
@@ -37,6 +38,7 @@ class ManualApiKeyTest {
         .around(TestDocumentationRule())
         .around(ResetDaggerRule())
         .around(discoveryRule)
+        .around(AutoConnectPrinterRule())
         .around(AcceptAllAccessRequestRule(testEnv))
 
     @Test(timeout = 60_000L)

@@ -966,6 +966,11 @@ happy printing!"</string>
     <string name="configure_remote_acces___spaghetti_detective___live_notification_paused">Live notification paused, Spaghetti Detective tunnel has limited data</string>
     <string name="configure_remote_acces___spaghetti_detective___description">"The Spaghetti Detective allows you to remotely control and observe your prints. After you installed the plugin, you can sign in below to use OctoApp to control your printer from wherever you are!"</string>
     <string name="app_widget___live_x_seconds">"Live (%ds)"</string>
+    <string name="connect_printer___octoprint_connected">OctoPrint connected</string>
+    <string name="connect_printer___auto_menu___title">Connect automatically?</string>
+    <string name="connect_printer___auto_menu___subtitle"><![CDATA[OctoApp can connect your printer automatically when you open the app. This saves you some time, but <b>can disrupt prints from SD cards.</b>]]></string>
+    <string name="connect_printer___auto_menu___auto_option">Connect automatically</string>
+    <string name="connect_printer___auto_menu___manual_option">Connect manually</string>
     <string name="main___banner_connected_via_spaghetti_detective">"Connected via Spaghetti Detective"</string>
     <string name="move_settings_description">"This settings only apply when you manually move the print head with OctoApp and don't affect your prints"</string>
     <string name="configure_remote_acces___spaghetti_detective___webcam_not_watching">"The Detective is not watching"</string>

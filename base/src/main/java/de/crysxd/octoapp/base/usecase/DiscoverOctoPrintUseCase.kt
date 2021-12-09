@@ -77,7 +77,7 @@ class DiscoverOctoPrintUseCase @Inject constructor(
         submitResult: (DiscoveredOctoPrint) -> Unit
     ) = scope.launch {
         val cache = mutableSetOf<String>()
-        OctoPrintUpnpDiscovery(context).discover {
+        OctoPrintUpnpDiscovery(context, "Discover").discover {
             // Gate to eliminate duplicates
             if (cache.contains(it.upnpId)) return@discover
             cache.add(it.upnpId)

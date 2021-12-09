@@ -19,6 +19,7 @@ import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.VirtualPrinterUtils.setVirtualPrinterEnabled
 import de.crysxd.octoapp.framework.WorkspaceRobot
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
+import de.crysxd.octoapp.framework.rules.AutoConnectPrinterRule
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.ResetDaggerRule
 import de.crysxd.octoapp.framework.rules.TestDocumentationRule
@@ -51,6 +52,7 @@ class ConnectPrinterTest {
         .around(TestDocumentationRule())
         .around(ResetDaggerRule())
         .around(AcceptAllAccessRequestRule(testEnv))
+        .around(AutoConnectPrinterRule())
 
     @Test(timeout = 30_000)
     @AllowFlaky(attempts = 3)
@@ -63,12 +65,13 @@ class ConnectPrinterTest {
         // Wait for ready to connect
         WorkspaceRobot.waitForConnectWorkspace()
         waitFor(allOf(withText(R.string.connect_printer___waiting_for_user_title)))
-        waitTime(2000) // Wait to see if we auto connect
+        waitTime(4000) // Wait to see if we auto connect
         onView(withText(R.string.connect_printer___begin_connection)).perform(click())
         waitForDialog(withText(R.string.connect_printer___begin_connection_cofirmation_positive))
         onView(withText(R.string.connect_printer___begin_connection_cofirmation_positive)).inRoot(isDialog()).perform(click())
         WorkspaceRobot.waitForPrepareWorkspace()
     }
+
 
     @Test(timeout = 30_000)
     @AllowFlaky(attempts = 3)
