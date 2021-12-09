@@ -1051,6 +1051,13 @@ gutes Drucken!"</string>
     <string name="configure_remote_acces___spaghetti_detective___description">"Mit dem Spaghetti Detective kannst du deinen Drucker aus der Ferne steuern und beobachten. Nachdem du das Plugin installiert hast, kannst du dich unten anmelden, um OctoApp zu verwenden, um deinen Drucker von überall aus zu steuern!"</string>
     <string name="app_widget___live_x_seconds">"Live (%ds)"</string>
     <string name="main___banner_connected_via_spaghetti_detective">"Verbunden über Spaghetti Detective"</string>
-    <string name="move_settings_description">"Diese Einstellungen gelten nur, wenn Sie den Druckkopf manuell mit OctoApp bewegen und haben keinen Einfluss auf Ihre Drucke"</string>
+    <string name="move_settings_description">"Diese Einstellungen gelten nur, wenn du den Druckkopf manuell mit OctoApp bewegst und haben keinen Einfluss auf deine Drucke"</string>
     <string name="configure_remote_acces___spaghetti_detective___webcam_not_watching">"Der Detective schaut nicht zu"</string>
+    <string name="configure_remote_acces___spaghetti_detective___live_notification_paused">"Live-Benachrichtigung pausiert, Spaghetti-Detektiv-Tunnel hat begrenzte Daten"</string>
+    <string name="purchase_dialog_text_2">"Google braucht etwas Zeit um diesen Kauf auf anderen Geräten zu zeigen! 🙃"</string>
+    <string name="connect_printer___octoprint_connected">"OctoPrint verbunden"</string>
+    <string name="connect_printer___auto_menu___title">"Automatisch verbinden?"</string>
+    <string name="connect_printer___auto_menu___subtitle"><![CDATA[OctoApp kann deinen Drucker automatisch verbinden, wenn du die App öffnest. Das spart etwas Zeit, kann aber <b>Drucke von SD-Karten unterbrechen.</b>]]></string>
+    <string name="connect_printer___auto_menu___auto_option">"Automatisch verbinden"</string>
+    <string name="connect_printer___auto_menu___manual_option">"Manuell verbinden"</string>
 </resources>
