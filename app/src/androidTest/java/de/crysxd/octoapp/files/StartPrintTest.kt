@@ -16,6 +16,7 @@ import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.framework.MenuRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.WorkspaceRobot
+import de.crysxd.octoapp.framework.rules.AutoConnectPrinterRule
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.ResetDaggerRule
 import de.crysxd.octoapp.framework.rules.TestDocumentationRule
@@ -37,6 +38,7 @@ class StartPrintTest {
         .around(IdleTestEnvironmentRule(testEnvSpoolManager, testEnvVanilla))
         .around(TestDocumentationRule())
         .around(ResetDaggerRule())
+        .around(AutoConnectPrinterRule())
 
     @Test(timeout = 120_000)
     @AllowFlaky(attempts = 3)

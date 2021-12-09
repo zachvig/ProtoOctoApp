@@ -12,6 +12,7 @@ import de.crysxd.octoapp.framework.MenuRobot
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.WorkspaceRobot
+import de.crysxd.octoapp.framework.rules.AutoConnectPrinterRule
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.ResetDaggerRule
@@ -36,6 +37,7 @@ class ChangePrinterTest {
         .around(IdleTestEnvironmentRule(testEnv1, testEnv2))
         .around(TestDocumentationRule())
         .around(ResetDaggerRule())
+        .around(AutoConnectPrinterRule())
         .around(discoveryRule)
 
     @Before

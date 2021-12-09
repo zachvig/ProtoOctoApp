@@ -11,6 +11,7 @@ import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.WorkspaceRobot
+import de.crysxd.octoapp.framework.rules.AutoConnectPrinterRule
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.ResetDaggerRule
 import de.crysxd.octoapp.framework.rules.TestDocumentationRule
@@ -31,6 +32,7 @@ class ShowFilesTest {
         .around(IdleTestEnvironmentRule(testEnv))
         .around(TestDocumentationRule())
         .around(ResetDaggerRule())
+        .around(AutoConnectPrinterRule())
 
     @Before
     fun setUp() {

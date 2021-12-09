@@ -8,6 +8,7 @@ import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.rules.AcceptAllAccessRequestRule
+import de.crysxd.octoapp.framework.rules.AutoConnectPrinterRule
 import de.crysxd.octoapp.framework.rules.IdleTestEnvironmentRule
 import de.crysxd.octoapp.framework.rules.MockDiscoveryRule
 import de.crysxd.octoapp.framework.rules.MockTestFullNetworkStackRule
@@ -30,6 +31,7 @@ class AutomatedLoginTest {
         .around(ResetDaggerRule())
         .around(discoveryRule)
         .around(MockTestFullNetworkStackRule())
+        .around(AutoConnectPrinterRule())
         .around(AcceptAllAccessRequestRule(testEnv))
 
     @Test(timeout = 30_000L)

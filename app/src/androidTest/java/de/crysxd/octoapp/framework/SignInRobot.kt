@@ -60,6 +60,7 @@ object SignInRobot {
             ),
             timeout = 5_000
         )
+        waitTime(1000)
     }
 
     fun waitForRequestAccessToBeShown() {
@@ -121,12 +122,14 @@ object SignInRobot {
 
     fun selectDiscoveryOptionWithText(text: String) {
         // Select discovered
-        onView(
-            allOf(
-                isAssignableFrom(DiscoverOptionView::class.java),
-                hasDescendant(withText(text))
-            )
-        ).perform(ViewActions.click())
+        val matchers = allOf(
+            isAssignableFrom(DiscoverOptionView::class.java),
+            hasDescendant(withText(text)),
+            isDisplayed()
+        )
+
+        waitFor(matchers)
+        onView(matchers).perform(ViewActions.click())
     }
 
     fun selectDiscoveryOptionWithText(@StringRes text: Int) {
