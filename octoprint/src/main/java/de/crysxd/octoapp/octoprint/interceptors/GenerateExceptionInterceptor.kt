@@ -72,7 +72,23 @@ class GenerateExceptionInterceptor(
     private fun generate403Exception(response: Response): Exception = runBlocking(Dispatchers.IO) {
         // Prevent a loop. We will below request the /currentuser endpoint to test the API key
         val invalidApiKeyException = InvalidApiKeyException(response.request.url)
-        if (response.request.url.pathSegments.last() == "currentuser" || userApiFactory == null) return@runBlocking invalidApiKeyException
+        when {
+            response.request.url.pathSegments.last() == "currentuser" -> return@runBlocking if (response.request.url.isSpaghettiDetectiveUrl()) {
+                Logger.getLogger("OctoPrint/HTTP").log(Level.WARNING, "Got 403 on currentuser endpoint from TSD -> tunnel no longer valid")
+                SpaghettiDetectiveTunnelNotFoundException(response.request.url)
+            } else {
+                Logger.getLogger("OctoPrint/HTTP").log(Level.WARNING, "Got 403 on currentuser endpoint -> assume API key no longer valid")
+                invalidApiKeyException
+            }
+
+            userApiFactory == null -> {
+                Logger.getLogger("OctoPrint/HTTP").log(Level.WARNING, "Got 403 without userApiFactory, assuming API key invalid")
+                return@runBlocking invalidApiKeyException
+            }
+
+            else -> Unit
+        }
+
         Logger.getLogger("OctoPrint/HTTP").log(Level.WARNING, "Got 403, trying to get user")
 
         // We don't know what caused the 403. Requesting the currentuser will tell us whether we are a guest, meaning the API
