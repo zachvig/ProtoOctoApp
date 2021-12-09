@@ -112,46 +112,6 @@ class OctoEverywhereTest {
         assertThat(info2.octoEverywhereConnection).isNull()
     }
 
-    @Test(timeout = 30_000)
-    @AllowFlaky(attempts = 3)
-    fun WHEN_OctoEverywhere_subscription_ended_THEN_then_we_disconnect_it() {
-        // GIVEN
-        BaseInjector.get().octorPrintRepository().setActive(remoteTestEnv)
-        baristaRule.launchActivity()
-
-        // WHEN
-        // Go to connect screen
-        WorkspaceRobot.waitForPrepareWorkspace()
-        MenuRobot.openMenuWithMoreButton()
-        MenuRobot.clickMenuButton(R.string.main_menu___configure_remote_access)
-
-        // Select OE tab
-        onView(withText(R.string.configure_remote_access___title)).check(matches(isDisplayed()))
-        onView(ViewMatchers.isAssignableFrom(CoordinatorLayout::class.java)).perform(swipeUp())
-        onView(withText(R.string.configure_remote_acces___octoeverywhere___title)).perform(click())
-        onView(withText(R.string.configure_remote_acces___octoeverywhere___connect_button)).perform(click())
-
-        // THEN
-        waitFor(allOf(isDisplayed(), withText(R.string.configure_remote_acces___remote_access_configured)))
-        val info = BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()
-        assertThat(info).isNotNull()
-        assertThat(info!!.alternativeWebUrl).isEqualTo(remoteTestEnv.alternativeWebUrl!!.newBuilder().username(USER).password(PASSWORD).build())
-        assertThat(info.octoEverywhereConnection).isNotNull()
-        assertThat(info.octoEverywhereConnection!!.apiToken).isEqualTo(API_KEY)
-        assertThat(info.octoEverywhereConnection!!.basicAuthPassword).isEqualTo(PASSWORD)
-        assertThat(info.octoEverywhereConnection!!.basicAuthUser).isEqualTo(USER)
-        assertThat(info.octoEverywhereConnection!!.bearerToken).isEqualTo(BEARER_TOKEN)
-        assertThat(info.octoEverywhereConnection!!.connectionId).isEqualTo(ID)
-
-        // WHEN
-        onView(withText(R.string.configure_remote_acces___octoeverywhere___disconnect_button)).perform(click())
-        waitFor(allOf(isDisplayed(), withText(R.string.configure_remote_acces___remote_access_configured)))
-        val info2 = BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()
-        assertThat(info2).isNotNull()
-        assertThat(info2!!.alternativeWebUrl).isNull()
-        assertThat(info2.octoEverywhereConnection).isNull()
-    }
-
     inner class MockOctoEverywhereConnectionRule : AbstractUseCaseMockRule() {
         override fun createBaseComponent(base: BaseComponent) = MockBaseComponent(base)
 
