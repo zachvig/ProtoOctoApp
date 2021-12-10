@@ -399,7 +399,6 @@ class MainActivity : OctoActivity() {
             val currentDestinationAllowsAutoNavigate = listOf(
                 R.id.splashFragment,
                 R.id.discoverFragment,
-                R.id.probeOctoPrintFragment,
                 R.id.requestAccessFragment,
                 R.id.signInSuccessFragment,
                 R.id.workspaceConnect,

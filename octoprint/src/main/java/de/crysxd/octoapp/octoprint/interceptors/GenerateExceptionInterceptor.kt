@@ -73,12 +73,10 @@ class GenerateExceptionInterceptor(
         // Prevent a loop. We will below request the /currentuser endpoint to test the API key
         val invalidApiKeyException = InvalidApiKeyException(response.request.url)
         when {
-            response.request.url.pathSegments.last() == "currentuser" -> return@runBlocking if (response.request.url.isSpaghettiDetectiveUrl()) {
-                Logger.getLogger("OctoPrint/HTTP").log(Level.WARNING, "Got 403 on currentuser endpoint from TSD -> tunnel no longer valid")
-                SpaghettiDetectiveTunnelNotFoundException(response.request.url)
-            } else {
-                Logger.getLogger("OctoPrint/HTTP").log(Level.WARNING, "Got 403 on currentuser endpoint -> assume API key no longer valid")
-                invalidApiKeyException
+            response.request.url.pathSegments.last() == "currentuser" -> {
+                Logger.getLogger("OctoPrint/HTTP")
+                    .log(Level.WARNING, "Got 403 on currentuser endpoint -> assume API key no longer valid but this is weird, preventing loop")
+                return@runBlocking invalidApiKeyException
             }
 
             userApiFactory == null -> {
@@ -102,6 +100,9 @@ class GenerateExceptionInterceptor(
                 Logger.getLogger("OctoPrint/HTTP").log(Level.WARNING, "Got 403, permission is missing")
                 MissingPermissionException(response.request.url)
             }
+        } catch (e: SpaghettiDetectiveTunnelNotFoundException) {
+            Logger.getLogger("OctoPrint/HTTP").log(Level.WARNING, "Got 403, caused by TSD tunnel deleted")
+            throw e
         } catch (e: Exception) {
             Logger.getLogger("OctoPrint/HTTP").log(Level.WARNING, "Got 403, failed to determine user status: $e")
             invalidApiKeyException
