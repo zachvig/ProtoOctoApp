@@ -1,7 +1,8 @@
-🤖  Ready for Android 12
-🎨  Support for Material You
-🔔  More reliable notifications
-📽  New tutorial section
+🕵️  Remote access via The Spaghetti Detective
+🔎  Better camera zoom
+📸  Share snapshots from the camera feed
+🗄  File management: Upload, copy, rename, download...
+📚  Plugin library to see which are supported
 🔥  As always, many improvements throughout the app
 
 Enjoy the app & happy printing! 🥳
