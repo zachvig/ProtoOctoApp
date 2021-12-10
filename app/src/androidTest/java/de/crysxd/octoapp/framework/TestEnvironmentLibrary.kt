@@ -41,7 +41,7 @@ object TestEnvironmentLibrary {
 
     val CorgiRemote = OctoPrintInstanceInformationV3(
         id = "corgi",
-        webUrl = "http://${BuildConfig.TEST_ENV_DOMAIN}:5000".toHttpUrl(), // wrong port
+        webUrl = "http://127.0.0.1:4444".toHttpUrl(),
         alternativeWebUrl = "https://shared-82Q05YAKTQOAENDD98K3LYMA2S2QTKK7.octoeverywhere.com".toHttpUrl(),
         apiKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
     )
