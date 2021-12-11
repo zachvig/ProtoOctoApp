@@ -7,6 +7,7 @@ import de.crysxd.octoapp.base.gcode.parse.models.LayerInfo
 import de.crysxd.octoapp.base.gcode.parse.models.Move
 import timber.log.Timber
 import java.io.InputStream
+import kotlin.math.absoluteValue
 import kotlin.math.acos
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -202,7 +203,7 @@ class GcodeParser(
 
         // Android Canvas seems to have issues with extremely small angles for arcs.
         // To circumvent this issue we approximate arcs with angles of less than a quarter degree with a line.
-        return if (sweepAngle < 1) {
+        return if (sweepAngle.absoluteValue < 1) {
             Move.LinearMove(
                 positionInFile = positionInFile,
                 positionInArray = 0,
