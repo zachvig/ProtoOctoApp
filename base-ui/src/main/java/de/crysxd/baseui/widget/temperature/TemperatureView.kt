@@ -19,8 +19,8 @@ import androidx.core.graphics.get
 import com.jjoe64.graphview.GridLabelRenderer
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
-import de.crysxd.baseui.databinding.ViewTemperatureBinding
 import de.crysxd.baseui.R
+import de.crysxd.baseui.databinding.ViewTemperatureBinding
 import de.crysxd.octoapp.base.data.repository.TemperatureDataRepository
 import timber.log.Timber
 
@@ -58,7 +58,7 @@ class TemperatureView @JvmOverloads constructor(context: Context, attrs: Attribu
             temperatureGradient = (ContextCompat.getDrawable(context, R.drawable.temp_grandient) as BitmapDrawable).bitmap
         }
 
-        setTemperature(null)
+        setTemperature(null, null)
         binding.chart.alpha = 0.2f
         binding.chart.scaleX = 1.1f
         binding.chart.scaleY = 1.2f
@@ -70,15 +70,15 @@ class TemperatureView @JvmOverloads constructor(context: Context, attrs: Attribu
         binding.chart.viewport.isScalable = false
     }
 
-    fun setTemperature(temperature: TemperatureDataRepository.TemperatureSnapshot?) {
+    fun setTemperature(temperature: TemperatureDataRepository.TemperatureSnapshot?, offset: Float?) {
         val actual = temperature?.current?.actual?.toInt()?.toString() ?: context.getString(R.string.no_value_placeholder)
         val target = temperature?.current?.target?.toInt()?.toString()
-        val offset = temperature?.current?.offset?.toInt()?.toString()
+        val offsetInt = offset?.toInt()?.toString()
         binding.textViewTemperature.text = context.getString(R.string.temperature_x, actual)
         binding.textViewTarget.text = when {
             target == null -> ""
             target == "0" -> context.getString(R.string.target_off)
-            offset != null && offset != "0" -> context.getString(R.string.target_x_offset_y, target, offset)
+            offsetInt != null && offsetInt != "0" -> context.getString(R.string.target_x_offset_y, target, offsetInt)
             else -> context.getString(R.string.target_x, target)
         }
 

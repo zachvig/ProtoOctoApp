@@ -20,6 +20,7 @@ sealed class Message {
         val state: PrinterState.State?,
         val progress: ProgressInformation?,
         val job: JobInformation?,
+        val offsets: Map<String, Float>?,
         val serverTime: Double,
         val isHistoryMessage: Boolean,
         val originHash: Int = 0,

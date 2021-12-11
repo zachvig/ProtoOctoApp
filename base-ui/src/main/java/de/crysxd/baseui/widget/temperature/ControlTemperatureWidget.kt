@@ -16,6 +16,7 @@ import de.crysxd.baseui.widget.BaseWidgetHostFragment
 import de.crysxd.baseui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.base.data.models.WidgetType
 import de.crysxd.octoapp.base.data.repository.TemperatureDataRepository
+import de.crysxd.octoapp.octoprint.models.socket.Message
 import timber.log.Timber
 import kotlin.math.absoluteValue
 
@@ -44,17 +45,19 @@ class ControlTemperatureWidget(context: Context) : RecyclableOctoWidget<Temperat
         MenuBottomSheetFragment.createForMenu(TemperatureMenu()).show(parent.childFragmentManager)
     }
 
-    private fun onTemperatureChanged(data: List<TemperatureDataRepository.TemperatureSnapshot>) {
-        if (data.isNotEmpty() && binding.root.childCount != data.size) {
-            Timber.i("UI has ${binding.root.childCount} controls, but ${data.size} are needed. Rebuilding UI. ($data)")
-            buildView(data.size)
+    private fun onTemperatureChanged(data: Pair<List<TemperatureDataRepository.TemperatureSnapshot>, Message.CurrentMessage>) {
+        val temps = data.first
+        val current = data.second
+        if (temps.isNotEmpty() && binding.root.childCount != temps.size) {
+            Timber.i("UI has ${binding.root.childCount} controls, but ${temps.size} are needed. Rebuilding UI. ($data)")
+            buildView(temps.size)
         }
 
-        data.forEachIndexed { index, it ->
+        temps.forEachIndexed { index, it ->
             val view = binding.root.getChildAt(index) as TemperatureView
             view.setComponentName(baseViewModel.getComponentName(parent.requireContext(), it.component))
             view.maxTemp = baseViewModel.getMaxTemp(it.component)
-            view.setTemperature(it)
+            view.setTemperature(it, current.offsets?.get(it.component))
             view.button.setOnClickListener { _ ->
                 baseViewModel.changeTemperature(parent.requireContext(), it.component)
             }
