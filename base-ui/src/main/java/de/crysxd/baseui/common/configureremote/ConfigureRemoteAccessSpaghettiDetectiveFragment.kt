@@ -8,12 +8,18 @@ import android.view.ViewGroup
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
+import androidx.transition.TransitionManager
 import de.crysxd.baseui.R
 import de.crysxd.baseui.databinding.ConfigureRemoteAccessSpaghettiDetectiveFragmentBinding
 import de.crysxd.baseui.di.injectParentViewModel
 import de.crysxd.baseui.di.injectViewModel
+import de.crysxd.baseui.utils.InstantAutoTransition
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.octoprint.isSpaghettiDetectiveUrl
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -41,8 +47,10 @@ class ConfigureRemoteAccessSpaghettiDetectiveFragment : Fragment() {
 
         viewModel.viewData.observe(viewLifecycleOwner) {
             val tsdConnected = it.remoteWebUrl != null && it.remoteWebUrl.isSpaghettiDetectiveUrl()
+            val wasDataUsageVisible = binding.dataUsageGroup.isVisible
             binding.connected.isVisible = tsdConnected
             binding.disconnected.isVisible = !binding.connected.isVisible
+            binding.dataUsageGroup.isVisible = wasDataUsageVisible && binding.connected.isVisible
 
             if (tsdConnected) {
                 tsdViewModel.fetchDataUsage()
@@ -50,6 +58,7 @@ class ConfigureRemoteAccessSpaghettiDetectiveFragment : Fragment() {
         }
 
         viewModel.viewState.observe(viewLifecycleOwner) {
+            TransitionManager.beginDelayedTransition(binding.root, InstantAutoTransition())
             binding.connectTsd.isEnabled = it !is ConfigureRemoteAccessViewModel.ViewState.Loading
             binding.connectTsd.text = getString(
                 when (it) {
@@ -60,7 +69,9 @@ class ConfigureRemoteAccessSpaghettiDetectiveFragment : Fragment() {
         }
 
         binding.dataUsageBar.max = 100
-        tsdViewModel.dataUsage.observe(viewLifecycleOwner) {
+        tsdViewModel.dataUsage.asFlow().onEach { delay(350) }.asLiveData().observe(viewLifecycleOwner) {
+            TransitionManager.beginDelayedTransition(binding.root, InstantAutoTransition(fadeText = true))
+
             when (it) {
                 is ConfigureRemoteAccessSpaghettiDetectiveViewModel.DataUsageWrapper.Data -> {
                     binding.dataUsageBar.post {
@@ -98,6 +109,7 @@ class ConfigureRemoteAccessSpaghettiDetectiveFragment : Fragment() {
                         binding.dataUsageBar.isIndeterminate = true
                     }
 
+                    binding.dataUsage.setText(R.string.loading)
                     binding.dataUsage.isInvisible = true
                 }
             }

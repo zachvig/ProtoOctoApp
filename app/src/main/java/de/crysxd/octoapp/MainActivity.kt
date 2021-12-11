@@ -28,6 +28,7 @@ import androidx.transition.Explode
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
+import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.crysxd.baseui.InsetAwareScreen
 import de.crysxd.baseui.OctoActivity
@@ -629,6 +630,7 @@ class MainActivity : OctoActivity() {
             addTransition(ChangeBounds())
             addTransition(Fade())
             excludeTarget(de.crysxd.baseui.R.id.widgetContainer, true)
+            excludeTarget(ViewPager2::class.java, true)
             excludeChildren(octoToolbar, true)
         })
 
