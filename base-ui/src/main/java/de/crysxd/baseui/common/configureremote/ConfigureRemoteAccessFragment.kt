@@ -39,7 +39,6 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
 
     override val viewModel by injectViewModel<ConfigureRemoteAccessViewModel>()
     private lateinit var binding: ConfigureRemoteAccessFragmentBinding
-    private val adapter by lazy { PagerAdapter(requireContext(), childFragmentManager, lifecycle) }
     private val helper = CollapsibleToolbarTabsHelper()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -55,7 +54,8 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
             }, 1000)
         }
 
-        installTabs()
+        val adapter = PagerAdapter(requireContext(), childFragmentManager, lifecycle)
+        installTabs(adapter)
 
         binding.description.text = getString(R.string.configure_remote_acces___description).toHtml()
         binding.description.movementMethod = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(requireOctoActivity()))
@@ -89,7 +89,7 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         }
     }
 
-    private fun installTabs() {
+    private fun installTabs(adapter: PagerAdapter) {
         adapter.sort()
         binding.viewPager.adapter = adapter
         binding.viewPager.offscreenPageLimit = 1
