@@ -69,7 +69,7 @@ interface FilesApi {
         suspend fun getAllFiles(origin: FileOrigin): FileList = wrapped.getAllFiles(origin)
 
         suspend fun deleteFile(file: FileObject) {
-            wrapped.deleteFile(origin = file.origin, path = file.path)
+            wrapped.deleteFile(origin = requireNotNull(file.origin), path = requireNotNull(file.path))
         }
 
         suspend fun createFolder(origin: FileOrigin, parent: FileObject.Folder?, name: String) {
@@ -95,7 +95,7 @@ interface FilesApi {
         }
 
         suspend fun getFiles(origin: FileOrigin, folder: FileObject.Folder?): FileList = if (folder != null) {
-            FileList(files = wrapped.getSubFolder(origin, folder.path).children ?: emptyList())
+            FileList(files = wrapped.getSubFolder(origin, requireNotNull(folder.path)).children ?: emptyList())
         } else {
             wrapped.getRootFolder(origin)
         }
@@ -103,7 +103,7 @@ interface FilesApi {
         suspend fun getFile(origin: FileOrigin, path: String) = wrapped.getFile(origin, path)
 
         suspend fun executeFileCommand(file: FileObject, command: FileCommand) {
-            wrapped.executeFileCommand(file.origin, file.path, command)
+            wrapped.executeFileCommand(requireNotNull(file.origin), requireNotNull(file.path), command)
         }
     }
 }

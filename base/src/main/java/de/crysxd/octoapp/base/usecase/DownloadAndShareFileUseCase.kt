@@ -18,7 +18,7 @@ class DownloadAndShareFileUseCase @Inject constructor(
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) = withContext(Dispatchers.IO) {
         // Create cache dir and make sure we delete all old files
-        val (file, uri) = publicFileFactory.createPublicFile(param.file.name)
+        val (file, uri) = publicFileFactory.createPublicFile(param.file.name ?: "unknown")
 
         try {
             // Download

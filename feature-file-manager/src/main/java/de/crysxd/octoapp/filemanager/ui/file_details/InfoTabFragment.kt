@@ -111,7 +111,7 @@ class InfoTabFragment : Fragment() {
             )
             addDetail(
                 label = R.string.file_manager___file_details___path,
-                value = "/" + file.path.removeSuffix(file.name).removeSuffix("/")
+                value = "/" + file.path?.removeSuffix(file.name ?: "")?.removeSuffix("/")
             )
             addDetail(
                 label = R.string.file_manager___file_details___file_size,

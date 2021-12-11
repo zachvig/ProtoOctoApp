@@ -115,7 +115,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_2"
                     android:text="@string/configure_remote_acces___spaghetti_detective___disconnect_button"
-                    app:layout_constraintTop_toBottomOf="@+id/dataUsage"
+                    app:layout_constraintTop_toBottomOf="@+id/reloadDataUsage"
                     tools:layout_editor_absoluteX="16dp" />
 
                 <com.google.android.material.button.MaterialButton
@@ -136,13 +136,14 @@
                     android:id="@+id/dataUsage"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/configure_remote_acces___spaghetti_detective___data_usage_limited"
                     android:textAppearance="@style/OctoTheme.TextAppearance.Label"
+                    android:text="@string/loading"
                     app:layout_constraintEnd_toEndOf="@+id/dataUsageBar"
                     app:layout_constraintHorizontal_bias="0.5"
-                    android:textColor="@color/dark_grey"
                     app:layout_constraintStart_toStartOf="@+id/dataUsageBar"
-                    app:layout_constraintTop_toBottomOf="@+id/dataUsageBar" />
+                    android:textColor="@color/dark_grey"
+                    app:layout_constraintTop_toBottomOf="@+id/dataUsageBar"
+                    tools:text="@string/configure_remote_acces___spaghetti_detective___data_usage_limited" />
 
                 <TextView
                     android:id="@+id/textView6"
@@ -150,8 +151,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_3"
                     android:text="@string/configure_remote_acces___spaghetti_detective___data_usafe"
-                    android:textColor="@color/black"
                     android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
+                    android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="@+id/dataUsageBar"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="@+id/dataUsageBar"

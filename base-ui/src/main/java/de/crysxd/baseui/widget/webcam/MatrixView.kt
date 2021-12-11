@@ -224,7 +224,7 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
     })
 
     private fun RectF.flushToViews() = children.forEach { view ->
-        if (isEmpty || view.width == 0) return
+        if (isEmpty || view.width == 0) return@forEach
 
         // Determine the rect dimensions in the view's orientation
         helperRect.copyFrom(this)
@@ -233,7 +233,7 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
         helperRect.transform(helperMatrix)
 
         // Calc scale required for view to fill rect
-        val scale = helperRect.width() / view.width
+        val scale = (helperRect.width() / view.width).takeIf { it.isFinite() } ?: return@forEach
         val inverseScale = 1 / scale
 
         // Apply inverse scale to rect

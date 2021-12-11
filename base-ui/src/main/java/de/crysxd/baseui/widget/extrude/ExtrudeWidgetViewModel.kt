@@ -11,6 +11,7 @@ import de.crysxd.baseui.R
 import de.crysxd.baseui.common.enter_value.EnterValueFragmentArgs
 import de.crysxd.baseui.utils.NavigationResultMediator
 import de.crysxd.octoapp.base.network.OctoPrintProvider
+import de.crysxd.octoapp.base.usecase.BaseChangeTemperaturesUseCase
 import de.crysxd.octoapp.base.usecase.ExtrudeFilamentUseCase
 import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
 import de.crysxd.octoapp.base.utils.AppScope
@@ -79,8 +80,8 @@ class ExtrudeWidgetViewModel(
                         AppScope.launch(coroutineExceptionHandler) {
                             Timber.i("Heating to ${e.minTemp} before extrusion")
                             setTargetTemperatureUseCase.execute(
-                                SetTargetTemperaturesUseCase.Params(
-                                    SetTargetTemperaturesUseCase.Temperature(
+                                BaseChangeTemperaturesUseCase.Params(
+                                    BaseChangeTemperaturesUseCase.Temperature(
                                         component = "tool0",
                                         temperature = e.minTemp + 5
                                     )

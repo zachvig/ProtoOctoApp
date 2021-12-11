@@ -36,9 +36,9 @@ class CancelPrintJobUseCase @Inject constructor(
             }.first()
 
             // Restore temps
-            val targets = SetTargetTemperaturesUseCase.Params(
+            val targets = BaseChangeTemperaturesUseCase.Params(
                 listOf("tool0", "tool0", "tool0", "tool0", "bed", "chamber").map {
-                    SetTargetTemperaturesUseCase.Temperature(component = it, temperature = temps?.components?.get(it)?.target?.toInt())
+                    BaseChangeTemperaturesUseCase.Temperature(component = it, temperature = temps?.components?.get(it)?.target?.toInt())
                 }
             )
             setTargetTemperaturesUseCase.execute(targets)

@@ -51,17 +51,20 @@ class ConfigureRemoteAccessViewModel(
     fun getSpaghettiDetectiveSetupUrl() = getRemoteServiceSetupUrl(GetRemoteServiceConnectUrlUseCase.RemoteService.SpaghettiDetective)
 
     private fun getRemoteServiceSetupUrl(service: GetRemoteServiceConnectUrlUseCase.RemoteService) = viewModelScope.launch(coroutineExceptionHandler) {
-        mutableViewState.postValue(ViewState.Loading)
-        val event = when (val result = getRemoteServiceConnectUrlUseCase.execute(service)) {
-            is GetRemoteServiceConnectUrlUseCase.Result.Success -> ViewEvent.OpenUrl(result.url)
-            is GetRemoteServiceConnectUrlUseCase.Result.Error -> ViewEvent.ShowError(
-                message = result.errorMessage,
-                exception = result.exception,
-                ignoreAction = null
-            )
+        try {
+            mutableViewState.postValue(ViewState.Loading)
+            val event = when (val result = getRemoteServiceConnectUrlUseCase.execute(service)) {
+                is GetRemoteServiceConnectUrlUseCase.Result.Success -> ViewEvent.OpenUrl(result.url)
+                is GetRemoteServiceConnectUrlUseCase.Result.Error -> ViewEvent.ShowError(
+                    message = result.errorMessage,
+                    exception = result.exception,
+                    ignoreAction = null
+                )
+            }
+            mutableViewEvents.postValue(event)
+        } finally {
+            mutableViewState.postValue(ViewState.Idle)
         }
-        mutableViewEvents.postValue(event)
-        mutableViewState.postValue(ViewState.Idle)
     }
 
     fun setRemoteUrl(url: String, username: String, password: String, bypassChecks: Boolean) {

@@ -33,7 +33,6 @@ data class PrinterState(
 
     data class ComponentTemperature(
         val actual: Float,
-        val offset: Float,
         val target: Float
     )
 }

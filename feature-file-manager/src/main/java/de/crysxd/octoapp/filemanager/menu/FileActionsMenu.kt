@@ -84,16 +84,18 @@ class FileActionsMenu(val file: FileObject) : Menu {
 
         override fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___rename)
         override suspend fun onClicked(host: MenuHost?) {
+            val originalPath = requireNotNull(file.path)
+            val fullOriginalName = requireNotNull(file.name)
             val result = NavigationResultMediator.registerResultCallback<String>()
             val navController = host?.getNavController() ?: return
             val extension = (file as? FileObject.File)?.extension?.let { ".$it" } ?: ""
-            val originalName = file.name.removeSuffix(extension)
+            val originalName = fullOriginalName.removeSuffix(extension)
             val context = host.requireContext()
 
             navController.navigate(
                 de.crysxd.baseui.R.id.action_enter_value,
                 EnterValueFragmentArgs(
-                    title = context.getString(R.string.file_manager___file_menu___rename_input_title),
+                    title = context.getString(R.string.file_manager___file_menu___rename_input_title, originalName),
                     hint = context.getString(R.string.file_manager___file_menu___rename_input_hint),
                     action = context.getString(R.string.file_manager___file_menu___rename_action),
                     selectAll = true,
@@ -105,7 +107,7 @@ class FileActionsMenu(val file: FileObject) : Menu {
             )
 
             val name = result.second.asFlow().first()?.takeIf { it.isNotEmpty() } ?: return
-            val newPath = file.path.removeSuffix(file.name) + name + extension
+            val newPath = originalPath.removeSuffix(fullOriginalName) + name + extension
             if (file.path != newPath) {
                 BaseInjector.get().moveFileUseCase().execute(MoveFileUseCase.Params(file = file, newPath = newPath))
             }
@@ -167,7 +169,7 @@ class FileActionsMenu(val file: FileObject) : Menu {
 
         override fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___download_and_share)
         override fun getDescription(context: Context) =
-            context.getString(R.string.file_manager___file_menu___download_and_share_description, file.size.asStyleFileSize())
+            context.getString(R.string.file_manager___file_menu___download_and_share_description, file.size?.asStyleFileSize())
 
         override suspend fun onClicked(host: MenuHost?) {
             host?.getMenuActivity()?.let {

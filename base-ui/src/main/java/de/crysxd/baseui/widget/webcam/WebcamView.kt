@@ -287,7 +287,6 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     }
 
     private fun displayMjpegFrame(newState: WebcamState.MjpegFrameReady) {
-        Timber.i("New frame: $newState")
         binding.matrixView.matrixInput = MatrixView.MatrixInput(
             flipH = newState.flipH,
             flipV = newState.flipV,

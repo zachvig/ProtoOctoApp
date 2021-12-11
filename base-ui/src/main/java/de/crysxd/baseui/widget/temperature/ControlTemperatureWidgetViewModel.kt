@@ -12,7 +12,10 @@ import de.crysxd.baseui.utils.NavigationResultMediator
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.data.repository.TemperatureDataRepository
 import de.crysxd.octoapp.base.ext.rateLimit
+import de.crysxd.octoapp.base.network.OctoPrintProvider
+import de.crysxd.octoapp.base.usecase.BaseChangeTemperaturesUseCase
 import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
+import de.crysxd.octoapp.base.usecase.SetTemperatureOffsetUseCase
 import de.crysxd.octoapp.base.utils.AnimationTestUtils
 import de.crysxd.octoapp.octoprint.models.profiles.PrinterProfiles
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +32,8 @@ import timber.log.Timber
 class ControlTemperatureWidgetViewModel(
     temperatureDataRepository: TemperatureDataRepository,
     private val octoPrintRepository: OctoPrintRepository,
+    private val octoPrintProvider: OctoPrintProvider,
+    private val setTemperatureOffsetUseCase: SetTemperatureOffsetUseCase,
     private val setTargetTemperaturesUseCase: SetTargetTemperaturesUseCase,
 ) : BaseViewModel() {
 
@@ -54,6 +59,8 @@ class ControlTemperatureWidgetViewModel(
         }
 
         output
+    }.combine(octoPrintProvider.passiveCurrentMessageFlow("temperatures")) { temps, current ->
+        temps to current
     }.let {
         // Slow down update rate for test
         if (AnimationTestUtils.animationsDisabled) {
@@ -77,33 +84,66 @@ class ControlTemperatureWidgetViewModel(
 
     private suspend fun setTemperature(temp: Int, component: String) {
         setTargetTemperaturesUseCase.execute(
-            SetTargetTemperaturesUseCase.Params(
-                SetTargetTemperaturesUseCase.Temperature(temperature = temp, component = component)
+            BaseChangeTemperaturesUseCase.Params(
+                BaseChangeTemperaturesUseCase.Temperature(temperature = temp, component = component)
+            )
+        )
+    }
+
+    private suspend fun setOffset(offset: Int, component: String) {
+        setTemperatureOffsetUseCase.execute(
+            BaseChangeTemperaturesUseCase.Params(
+                BaseChangeTemperaturesUseCase.Temperature(temperature = offset, component = component)
             )
         )
     }
 
     fun changeTemperature(context: Context, component: String) = viewModelScope.launch(coroutineExceptionHandler) {
-        val result = NavigationResultMediator.registerResultCallback<String?>()
-        val current = temperature.value?.firstOrNull { it.component == component }?.current?.actual?.toInt()?.toString()
+        val targetResult = NavigationResultMediator.registerResultCallback<String?>()
+        val offsetResult = NavigationResultMediator.registerResultCallback<String?>()
+        val (target, offset) = octoPrintProvider.passiveCurrentMessageFlow("change-temperature").first().let {
+            val target = it.temps.maxByOrNull { it.time }?.components?.get(component)?.target?.toInt()
+            val offset = it.offsets?.get(component)?.toInt()
+            target to offset
+        }
 
         navContoller.navigate(
             R.id.action_enter_value,
             EnterValueFragmentArgs(
                 title = context.getString(R.string.x_temperature, getComponentName(context, component)),
-                hint = context.getString(R.string.target_temperature),
                 action = context.getString(R.string.set_temperature),
-                resultId = result.first,
-                value = current,
+                resultId = targetResult.first,
+                hint = context.getString(R.string.target_temperature),
+                value = target?.toString(),
                 inputType = InputType.TYPE_CLASS_NUMBER,
+                resultId2 = offsetResult.first,
+                hint2 = context.getString(R.string.temperature_widget___change_offset),
+                value2 = offset?.toString(),
+                inputType2 = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_SIGNED,
                 selectAll = true
             ).toBundle()
         )
 
         withContext(Dispatchers.Default) {
-            result.second.asFlow().first()
+            targetResult.second.asFlow().first()
         }?.let { temp ->
-            setTemperature(temp.toInt(), component)
+            val tempInt = temp.toIntOrNull()
+            if (tempInt != null && tempInt != target) {
+                setTemperature(tempInt, component)
+            } else {
+                Timber.i("No change, dropping target change to $temp")
+            }
+        }
+
+        withContext(Dispatchers.Default) {
+            offsetResult.second.asFlow().first()
+        }?.let { temp ->
+            val tempInt = temp.toIntOrNull()
+            if (tempInt != null && tempInt != target) {
+                setOffset(tempInt, component)
+            } else {
+                Timber.i("No change, dropping offset change to $temp")
+            }
         }
     }
 

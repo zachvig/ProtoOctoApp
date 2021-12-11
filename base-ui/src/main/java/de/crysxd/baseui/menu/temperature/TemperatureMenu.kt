@@ -12,7 +12,7 @@ import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_APPLY_TEMPERATURE_
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_APPLY_TEMPERATURE_PRESET_CHAMBER
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_APPLY_TEMPERATURE_PRESET_HOTEND
 import de.crysxd.octoapp.base.di.BaseInjector
-import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
+import de.crysxd.octoapp.base.usecase.BaseChangeTemperaturesUseCase
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import kotlinx.parcelize.Parcelize
 
@@ -49,11 +49,11 @@ abstract class BaseApplyTemperaturePresetMenuItem(private val presetName: String
         BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()?.settings?.temperature?.profiles?.firstOrNull {
             it.name == presetName
         }?.let {
-            BaseInjector.get().setTargetTemperatureUseCase().execute(SetTargetTemperaturesUseCase.Params(getTemperatures(it)))
+            BaseInjector.get().setTargetTemperatureUseCase().execute(BaseChangeTemperaturesUseCase.Params(getTemperatures(it)))
         }
     }
 
-    abstract suspend fun getTemperatures(profile: Settings.TemperatureProfile): List<SetTargetTemperaturesUseCase.Temperature>
+    abstract suspend fun getTemperatures(profile: Settings.TemperatureProfile): List<BaseChangeTemperaturesUseCase.Temperature>
 }
 
 class ApplyTemperaturePresetMenuItem(private val presetName: String) : BaseApplyTemperaturePresetMenuItem(presetName) {
@@ -67,12 +67,12 @@ class ApplyTemperaturePresetMenuItem(private val presetName: String) : BaseApply
     override val secondaryButtonIcon = R.drawable.ic_round_more_vert_24
 
     override suspend fun getTemperatures(profile: Settings.TemperatureProfile) = listOf(
-        SetTargetTemperaturesUseCase.Temperature(component = "tool0", temperature = profile.extruder),
-        SetTargetTemperaturesUseCase.Temperature(component = "tool1", temperature = profile.extruder),
-        SetTargetTemperaturesUseCase.Temperature(component = "tool2", temperature = profile.extruder),
-        SetTargetTemperaturesUseCase.Temperature(component = "tool3", temperature = profile.extruder),
-        SetTargetTemperaturesUseCase.Temperature(component = "bed", temperature = profile.bed),
-        SetTargetTemperaturesUseCase.Temperature(component = "chamber", temperature = profile.chamber),
+        BaseChangeTemperaturesUseCase.Temperature(component = "tool0", temperature = profile.extruder),
+        BaseChangeTemperaturesUseCase.Temperature(component = "tool1", temperature = profile.extruder),
+        BaseChangeTemperaturesUseCase.Temperature(component = "tool2", temperature = profile.extruder),
+        BaseChangeTemperaturesUseCase.Temperature(component = "tool3", temperature = profile.extruder),
+        BaseChangeTemperaturesUseCase.Temperature(component = "bed", temperature = profile.bed),
+        BaseChangeTemperaturesUseCase.Temperature(component = "chamber", temperature = profile.chamber),
     )
 
     override suspend fun onSecondaryClicked(host: MenuHost?) {
@@ -90,12 +90,12 @@ class ApplyTemperaturePresetForAllMenuItem(private val presetName: String) : Bas
     override fun getTitle(context: Context) = context.getString(R.string.temperature_menu___item_preheat, presetName)
 
     override suspend fun getTemperatures(profile: Settings.TemperatureProfile) = listOf(
-        SetTargetTemperaturesUseCase.Temperature(component = "tool0", temperature = profile.extruder),
-        SetTargetTemperaturesUseCase.Temperature(component = "tool1", temperature = profile.extruder),
-        SetTargetTemperaturesUseCase.Temperature(component = "tool2", temperature = profile.extruder),
-        SetTargetTemperaturesUseCase.Temperature(component = "tool3", temperature = profile.extruder),
-        SetTargetTemperaturesUseCase.Temperature(component = "bed", temperature = profile.bed),
-        SetTargetTemperaturesUseCase.Temperature(component = "chamber", temperature = profile.chamber),
+        BaseChangeTemperaturesUseCase.Temperature(component = "tool0", temperature = profile.extruder),
+        BaseChangeTemperaturesUseCase.Temperature(component = "tool1", temperature = profile.extruder),
+        BaseChangeTemperaturesUseCase.Temperature(component = "tool2", temperature = profile.extruder),
+        BaseChangeTemperaturesUseCase.Temperature(component = "tool3", temperature = profile.extruder),
+        BaseChangeTemperaturesUseCase.Temperature(component = "bed", temperature = profile.bed),
+        BaseChangeTemperaturesUseCase.Temperature(component = "chamber", temperature = profile.chamber),
     )
 }
 
@@ -110,10 +110,10 @@ class ApplyTemperaturePresetForHotendMenuItem(private val presetName: String) : 
     override fun getTitle(context: Context) = context.getString(R.string.temperature_menu___item_preheat_hotend, presetName)
 
     override suspend fun getTemperatures(profile: Settings.TemperatureProfile) = listOf(
-        SetTargetTemperaturesUseCase.Temperature(component = "tool0", temperature = profile.extruder),
-        SetTargetTemperaturesUseCase.Temperature(component = "tool1", temperature = profile.extruder),
-        SetTargetTemperaturesUseCase.Temperature(component = "tool2", temperature = profile.extruder),
-        SetTargetTemperaturesUseCase.Temperature(component = "tool3", temperature = profile.extruder),
+        BaseChangeTemperaturesUseCase.Temperature(component = "tool0", temperature = profile.extruder),
+        BaseChangeTemperaturesUseCase.Temperature(component = "tool1", temperature = profile.extruder),
+        BaseChangeTemperaturesUseCase.Temperature(component = "tool2", temperature = profile.extruder),
+        BaseChangeTemperaturesUseCase.Temperature(component = "tool3", temperature = profile.extruder),
     )
 }
 
@@ -129,7 +129,7 @@ class ApplyTemperaturePresetForBedMenuItem(private val presetName: String) : Bas
             BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()?.activeProfile?.heatedBed != false
 
     override suspend fun getTemperatures(profile: Settings.TemperatureProfile) = listOf(
-        SetTargetTemperaturesUseCase.Temperature(component = "bed", temperature = profile.bed),
+        BaseChangeTemperaturesUseCase.Temperature(component = "bed", temperature = profile.bed),
     )
 }
 
@@ -145,6 +145,6 @@ class ApplyTemperaturePresetForChamberMenuItem(private val presetName: String) :
             BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()?.activeProfile?.heatedChamber != false
 
     override suspend fun getTemperatures(profile: Settings.TemperatureProfile) = listOf(
-        SetTargetTemperaturesUseCase.Temperature(component = "chamber", temperature = profile.chamber),
+        BaseChangeTemperaturesUseCase.Temperature(component = "chamber", temperature = profile.chamber),
     )
 }

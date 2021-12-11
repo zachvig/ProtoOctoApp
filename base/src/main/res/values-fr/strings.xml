@@ -718,7 +718,7 @@ bonne impression !"</string>
     <string name="target_off">"Off"</string>
     <string name="target_temperature">"Température cible (en °C)"</string>
     <string name="target_x">"%1$s\u2009°C cible"</string>
-    <string name="target_x_offset_y">"%1$s\u2009°C (%2$s\u2009°C décalage)"</string>
+    <string name="target_x_offset_y">"%1$s\u2009°C (décalage %2$s\u2009°C )"</string>
     <string name="temperature_menu___applied_confirmation">"Préchauffage %s appliqué"</string>
     <string name="temperature_menu___applied_error">"Préchauffage %s non trouvé, impossible de l'appliquer"</string>
     <string name="temperature_menu___item_preheat">"Préchauffage %s"</string>
@@ -969,4 +969,5 @@ bonne impression !"</string>
     <string name="connect_printer___auto_menu___subtitle"><![CDATA[OctoApp peut connecter votre imprimante automatiquement lorsque vous ouvrez l\'application. Cela vous fait gagner du temps, mais <b>peut perturber les impressions à partir des cartes SD.</b>]]></string>
     <string name="connect_printer___auto_menu___auto_option">"Connectez-vous automatiquement"</string>
     <string name="connect_printer___auto_menu___manual_option">"Connecter manuellement"</string>
+    <string name="temperature_widget___change_offset"></string>
 </resources>

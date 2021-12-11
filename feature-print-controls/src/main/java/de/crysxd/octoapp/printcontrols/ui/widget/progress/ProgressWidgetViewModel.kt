@@ -40,9 +40,10 @@ class ProgressWidgetViewModel(
 
     private fun resolveFile(fileObject: FileObject) = viewModelScope.launch {
         try {
+            val origin = fileObject.origin ?: return@launch
             resolvingFile = true
             Timber.i("Resolving file for current job: ${fileObject.path}")
-            resolvedFile = octoPrintProvider.octoPrint().createFilesApi().getFile(fileObject.origin, fileObject.path)
+            resolvedFile = octoPrintProvider.octoPrint().createFilesApi().getFile(origin, requireNotNull(fileObject.path))
             fileLoadedTrigger.value++
             Timber.i("Resolved file for current job: ${fileObject.path} -> thumbnail=${resolvedFile?.thumbnail}")
         } catch (e: Exception) {

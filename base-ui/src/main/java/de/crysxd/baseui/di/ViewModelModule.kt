@@ -40,6 +40,7 @@ import de.crysxd.octoapp.base.usecase.HandleAutomaticLightEventUseCase
 import de.crysxd.octoapp.base.usecase.OpenEmailClientForFeedbackUseCase
 import de.crysxd.octoapp.base.usecase.SetAlternativeWebUrlUseCase
 import de.crysxd.octoapp.base.usecase.SetTargetTemperaturesUseCase
+import de.crysxd.octoapp.base.usecase.SetTemperatureOffsetUseCase
 import de.crysxd.octoapp.base.usecase.ShareImageUseCase
 import javax.inject.Provider
 
@@ -55,12 +56,16 @@ open class ViewModelModule {
     @ViewModelKey(ControlTemperatureWidgetViewModel::class)
     open fun provideControlToolTemperatureViewModel(
         temperatureDataRepository: TemperatureDataRepository,
+        setTemperatureOffsetUseCase: SetTemperatureOffsetUseCase,
         octoPrintRepository: OctoPrintRepository,
+        octoPrintProvider: OctoPrintProvider,
         setTargetTemperaturesUseCase: SetTargetTemperaturesUseCase,
     ): ViewModel = ControlTemperatureWidgetViewModel(
         temperatureDataRepository = temperatureDataRepository,
         setTargetTemperaturesUseCase = setTargetTemperaturesUseCase,
         octoPrintRepository = octoPrintRepository,
+        setTemperatureOffsetUseCase = setTemperatureOffsetUseCase,
+        octoPrintProvider = octoPrintProvider,
     )
 
     @Provides

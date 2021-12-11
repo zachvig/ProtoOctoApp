@@ -116,7 +116,6 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
 
     companion object {
         private suspend fun MenuHost.handleAction(action: Action, deviceType: DeviceType, device: PowerDevice) {
-            (getHostFragment() as? PowerControlsCallback)?.onPowerActionCompleted(action, device)
             if (isCheckBoxChecked()) {
                 BaseInjector.get().octorPrintRepository().updateAppSettingsForActive {
                     it.copy(
@@ -127,7 +126,10 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
                     )
                 }
             }
-            closeMenu()
+
+            (getHostFragment() as? PowerControlsCallback)?.onPowerActionCompleted(action, device)?.let {
+                closeMenu()
+            }
         }
     }
 
