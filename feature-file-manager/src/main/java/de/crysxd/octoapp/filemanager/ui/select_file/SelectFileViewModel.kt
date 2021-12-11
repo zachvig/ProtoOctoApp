@@ -91,7 +91,7 @@ class SelectFileViewModel(
 
         val folders = allFiles.filterIsInstance<FileObject.Folder>()
             .map { FileWrapper.FileObjectWrapper(it) }
-            .sortedBy { it.fileObject.display.lowercase() }
+            .sortedBy { it.fileObject.display?.lowercase() }
 
         val files = listOf(
             allFiles.filterIsInstance<FileObject.File>().map { FileWrapper.FileObjectWrapper(it) },
@@ -170,7 +170,8 @@ class SelectFileViewModel(
                 if (lastSelectedFile?.path == it.path) {
                     emit(lastSelectedFile)
                 } else {
-                    lastSelectedFile = loadFileUseCase.execute(LoadFileUseCase.Params(fileOrigin, it.path))
+                    val path = it.path ?: return@flow
+                    lastSelectedFile = loadFileUseCase.execute(LoadFileUseCase.Params(fileOrigin, path))
                     Timber.i("Downloaded details for selected file: $lastSelectedFile")
                     emit(lastSelectedFile)
                 }
@@ -215,9 +216,9 @@ class SelectFileViewModel(
 
     sealed class FileWrapper {
         abstract val date: Long
-        abstract val path: String
-        abstract val name: String
-        abstract val size: Long
+        abstract val path: String?
+        abstract val name: String?
+        abstract val size: Long?
         abstract val lastPrintDate: Long
         abstract val wasPrinted: Boolean
 

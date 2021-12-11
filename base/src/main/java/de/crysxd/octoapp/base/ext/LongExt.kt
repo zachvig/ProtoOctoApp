@@ -2,7 +2,9 @@ package de.crysxd.octoapp.base.ext
 
 import java.text.DecimalFormat
 
-fun Long.asStyleFileSize(): String {
+fun Long?.asStyleFileSize(): String {
+    this ?: return "??? MiB"
+
     val kb = this / 1024f
     val mb = kb / 1024f
     val gb = mb / 1024f

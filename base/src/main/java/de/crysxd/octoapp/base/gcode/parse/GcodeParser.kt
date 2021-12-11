@@ -59,7 +59,7 @@ class GcodeParser(
             positionInFile += line.length
 
             val progress = (positionInFile / totalSize.toFloat())
-            val percent = (progress * 100).roundToInt()
+            val percent = (progress * 100).roundToInt().coerceIn(0..100)
             if (lastUpdatePercent != percent) {
                 progressUpdate(progress)
                 lastUpdatePercent = percent

@@ -31,7 +31,7 @@ class RemoteGcodeFileDataSource(
                 Timber.i("Current network is metered: $onMeteredNetwork -> max file size for direct download is ${it?.asStyleFileSize()}")
             }
 
-        if (maxFileSize != null && !allowLargeFileDownloads && file.size > maxFileSize) {
+        if (maxFileSize != null && !allowLargeFileDownloads && (file.size ?: Long.MAX_VALUE) > maxFileSize) {
             return@flow emit(GcodeFileDataSource.LoadState.FailedLargeFileDownloadRequired)
         }
 
@@ -43,7 +43,7 @@ class RemoteGcodeFileDataSource(
                     localDataSource.createCacheForFile(file).use { cache ->
                         GcodeParser(
                             content = input,
-                            totalSize = file.size,
+                            totalSize = file.size ?: Long.MAX_VALUE,
                             progressUpdate = { progress ->
                                 emit(GcodeFileDataSource.LoadState.Loading(progress))
                             },

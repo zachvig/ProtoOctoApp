@@ -3,13 +3,13 @@ package de.crysxd.octoapp.octoprint.models.files
 import java.io.Serializable
 
 sealed class FileObject(
-    open val display: String,
-    open val name: String,
-    open val origin: FileOrigin,
-    open val path: String,
+    open val display: String?,
+    open val name: String?,
+    open val origin: FileOrigin?,
+    open val path: String?,
     open val type: String?,
     open val typePath: List<String>?,
-    val size: Long,
+    val size: Long?,
     open val ref: Reference?
 ) : Serializable {
 
@@ -30,7 +30,7 @@ sealed class FileObject(
         val gcodeAnalysis: GcodeAnalysis?,
         val prints: PrintHistory?
     ) : FileObject(display, name, origin, path, type, typePath, size, ref) {
-        val extension get() = name.split(".").takeIf { it.size > 1 }?.lastOrNull()
+        val extension get() = name?.split(".")?.takeIf { it.size > 1 }?.lastOrNull()
     }
 
     class Folder(

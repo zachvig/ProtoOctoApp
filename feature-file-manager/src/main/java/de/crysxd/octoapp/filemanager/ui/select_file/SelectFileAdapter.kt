@@ -79,7 +79,7 @@ class SelectFileAdapter(
             when (it) {
                 is SelectFileViewModel.FileWrapper.FileObjectWrapper -> DataItem.File(
                     file = it.fileObject,
-                    name = it.fileObject.display,
+                    name = it.fileObject.display ?: "unkown",
                     detail = when (it.fileObject) {
                         is FileObject.File -> context.getString(R.string.x_y, Date(it.fileObject.date * 1000).format(), it.fileObject.size.asStyleFileSize())
                         is FileObject.Folder -> null
@@ -111,7 +111,7 @@ class SelectFileAdapter(
 
                 is SelectFileViewModel.FileWrapper.SelectedFileObjectWrapper -> DataItem.File(
                     file = it.fileObject,
-                    name = it.fileObject.name,
+                    name = it.fileObject.name ?: "",
                     detail = context.getString(R.string.file_manager___file_list___currently_selected),
                     iconUrl = it.fileObject.thumbnail,
                     iconPlaceholder = printableFileIcon,
