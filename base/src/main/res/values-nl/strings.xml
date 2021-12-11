@@ -783,7 +783,7 @@ gelukkig printen!"</string>
     <string name="target_off">"Uit"</string>
     <string name="target_temperature">"Gewenste temperatuur °C"</string>
     <string name="target_x">"%1$s\u2009°C doel"</string>
-    <string name="target_x_offset_y">"%1$s\u2009°C (%2$s\u2009°C offset)"</string>
+    <string name="target_x_offset_y">"%1$s\u2009°C (offset %2$s\u2009°C)"</string>
     <string name="temperature_menu___applied_confirmation">"%s toegepast"</string>
     <string name="temperature_menu___applied_error">"%s niet gevonden, kon niet worden toegepast"</string>
     <string name="temperature_menu___item_preheat">"Verwarm %s"</string>
@@ -1058,4 +1058,5 @@ gelukkig printen!"</string>
     <string name="connect_printer___auto_menu___subtitle"><![CDATA[OctoApp kan uw printer automatisch verbinden wanneer u de app opent. Dit bespaart u wat tijd, maar <b>kan afdrukken van SD-kaarten verstoren.</b>]]></string>
     <string name="connect_printer___auto_menu___auto_option">"Automatisch verbinden"</string>
     <string name="connect_printer___auto_menu___manual_option">"Handmatig verbinden"</string>
+    <string name="temperature_widget___change_offset"></string>
 </resources>
