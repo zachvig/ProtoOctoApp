@@ -723,7 +723,7 @@ happy printing!"</string>
     <string name="target_off">"Off"</string>
     <string name="target_temperature">"Target temperature °C"</string>
     <string name="target_x">"%1$s\u2009°C target"</string>
-    <string name="target_x_offset_y">"%1$s\u2009°C (%2$s\u2009°C offset)"</string>
+    <string name="target_x_offset_y">"%1$s\u2009°C (offset %2$s\u2009°C )"</string>
     <string name="temperature_menu___applied_confirmation">"Applied %s"</string>
     <string name="temperature_menu___applied_error">"%s not found, could not apply"</string>
     <string name="temperature_menu___item_preheat">"Preheat %s"</string>
@@ -974,4 +974,5 @@ happy printing!"</string>
     <string name="connect_printer___auto_menu___subtitle"><![CDATA[OctoApp can connect your printer automatically when you open the app. This saves you some time, but <b>can disrupt prints from SD cards.</b>]]></string>
     <string name="connect_printer___auto_menu___auto_option">"Connect automatically"</string>
     <string name="connect_printer___auto_menu___manual_option">"Connect manually"</string>
+    <string name="temperature_widget___change_offset">"Offset added to Gcode temperatures"</string>
 </resources>
