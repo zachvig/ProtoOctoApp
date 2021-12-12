@@ -969,5 +969,6 @@ bonne impression !"</string>
     <string name="connect_printer___auto_menu___subtitle"><![CDATA[OctoApp peut connecter votre imprimante automatiquement lorsque vous ouvrez l\'application. Cela vous fait gagner du temps, mais <b>peut perturber les impressions à partir des cartes SD.</b>]]></string>
     <string name="connect_printer___auto_menu___auto_option">"Connectez-vous automatiquement"</string>
     <string name="connect_printer___auto_menu___manual_option">"Connecter manuellement"</string>
-    <string name="temperature_widget___change_offset"></string>
+    <string name="temperature_widget___change_offset">"Décalage ajouté aux températures du Gcode"</string>
+    <string name="main_menu___item_cool_down">"Retour au calme"</string>
 </resources>
