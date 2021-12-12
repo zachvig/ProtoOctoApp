@@ -1061,4 +1061,5 @@ gutes Drucken!"</string>
     <string name="connect_printer___auto_menu___auto_option">"Automatisch verbinden"</string>
     <string name="connect_printer___auto_menu___manual_option">"Manuell verbinden"</string>
     <string name="temperature_widget___change_offset">"Versatz zu Gcode Temperaturen"</string>
+    <string name="main_menu___item_cool_down">"Abkühlen"</string>
 </resources>
