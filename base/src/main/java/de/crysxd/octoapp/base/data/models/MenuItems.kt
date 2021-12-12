@@ -28,6 +28,7 @@ object MenuItems {
     const val MENU_ITEM_SCREEN_ON_DURING_PRINT = "settings___keep_screen_on_during__print"
     const val MENU_ITEM_AUTO_CONNECT_PRINTER = "settings___auto_connect_printer"
     const val MENU_ITEM_CANCEL_PRINT = "printer___cancel_print"
+    const val MENU_ITEM_COOL_DOWN = "printer___cool_down"
     const val MENU_ITEM_OPEN_TERMINAL = "printer___open_terminal"
     const val MENU_ITEM_CANCEL_PRINT_KEEP_TEMPS = "printer___cancel_print_keep_temps"
     const val MENU_ITEM_SHOW_WEBCAM = "printer___show_webcam"
