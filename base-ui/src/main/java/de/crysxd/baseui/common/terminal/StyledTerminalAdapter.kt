@@ -36,9 +36,10 @@ class StyledTerminalAdapter(
         }
 
         withContext(Dispatchers.Main) {
+            notifyItemRangeRemoved(0, serialCommunications.size)
             serialCommunications.clear()
             serialCommunications.addAll(new)
-            notifyDataSetChanged()
+            notifyItemRangeInserted(0, serialCommunications.size)
         }
     }
 

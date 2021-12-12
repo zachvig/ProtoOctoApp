@@ -16,6 +16,7 @@ import de.crysxd.octoapp.octoprint.SubjectAlternativeNameCompatVerifier
 import de.crysxd.octoapp.octoprint.exceptions.RemoteServiceConnectionBrokenException
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
+import de.crysxd.octoapp.octoprint.websocket.EventFlowConfiguration
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -126,8 +127,8 @@ class OctoPrintProvider(
         .onStart { Timber.i("Started current message flow for $tag") }
         .onCompletion { Timber.i("Completed current message flow for $tag") }
 
-    fun eventFlow(tag: String) = octoPrintFlow()
-        .flatMapLatest { it?.getEventWebSocket()?.eventFlow(tag) ?: emptyFlow() }
+    fun eventFlow(tag: String, config: EventFlowConfiguration = EventFlowConfiguration()) = octoPrintFlow()
+        .flatMapLatest { it?.getEventWebSocket()?.eventFlow(tag, config) ?: emptyFlow() }
         .catch { e -> Timber.e(e) }
 
     private fun updateAnalyticsProfileWithEvents(event: Event) {
