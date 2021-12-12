@@ -263,7 +263,7 @@ class LocalDnsResolver(
         )
     }
 
-    private fun addCacheEntry(entry: DnsEntry) {
+    private fun addCacheEntry(entry: DnsEntry) = resolveLock.withLock {
         cache.removeAll { it.hostname.equals(entry.hostname, ignoreCase = true) }
         cache.add(entry.copy(hostname = entry.hostname.lowercase()))
     }
