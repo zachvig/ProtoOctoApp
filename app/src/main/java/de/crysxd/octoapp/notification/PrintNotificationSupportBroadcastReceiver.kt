@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.notification
 
+import android.app.BackgroundServiceStartNotAllowedException
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -7,6 +8,7 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
+import android.os.Build
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.utils.AppScope
 import kotlinx.coroutines.Dispatchers
@@ -45,6 +47,13 @@ class PrintNotificationSupportBroadcastReceiver : BroadcastReceiver() {
                     ACTION_DISABLE_PRINT_NOTIFICATION_UNTIL_NEXT_LAUNCH -> handleDisablePrintNotificationUntilNextLaunch(context)
                 }
             } catch (e: Exception) {
+                // I don't dare to combine those two...let's keep it separate and secure
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (e is BackgroundServiceStartNotAllowedException) {
+                        return@launch Timber.w(e, "Unable to process broadcast ${intent.action} as app is in background")
+                    }
+                }
+
                 Timber.e(e)
             }
         }

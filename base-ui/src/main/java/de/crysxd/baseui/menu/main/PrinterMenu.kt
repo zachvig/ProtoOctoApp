@@ -14,6 +14,7 @@ import de.crysxd.baseui.menu.temperature.TemperatureMenu
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_CANCEL_PRINT
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_CANCEL_PRINT_KEEP_TEMPS
+import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_COOL_DOWN
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_EMERGENCY_STOP
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_MATERIAL_MENU
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_OPEN_TERMINAL
@@ -23,6 +24,7 @@ import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_TEMPERATURE_MENU
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_TURN_PSU_OFF
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.usecase.BaseChangeTemperaturesUseCase
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.octoprint.plugins.power.PowerDevice
 import kotlinx.coroutines.runBlocking
@@ -40,6 +42,7 @@ class PrinterMenu : Menu {
         OpenPowerControlsMenuItem(),
         ShowMaterialPluginMenuItem(),
         OpenTerminalMenuItem(),
+        CoolDownMenuItem(),
     )
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.main_menu___menu_printer_title)
@@ -184,5 +187,30 @@ class CancelPrintMenuItem : ConfirmedMenuItem() {
     override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_cancel_print)
     override suspend fun onConfirmed(host: MenuHost?) {
         BaseInjector.get().cancelPrintJobUseCase().execute(CancelPrintJobUseCase.Params(restoreTemperatures = false))
+    }
+}
+
+class CoolDownMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_COOL_DOWN
+    override var groupId = ""
+    override val order = 333
+    override val style = MenuItemStyle.Printer
+    override val icon = R.drawable.ic_round_ac_unit_24
+
+    override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_cool_down)
+    override suspend fun onClicked(host: MenuHost?) {
+        BaseInjector.get().setTargetTemperatureUseCase().execute(
+            BaseChangeTemperaturesUseCase.Params(
+                listOf(
+                    BaseChangeTemperaturesUseCase.Temperature(component = "tool0", temperature = 0),
+                    BaseChangeTemperaturesUseCase.Temperature(component = "tool1", temperature = 0),
+                    BaseChangeTemperaturesUseCase.Temperature(component = "tool2", temperature = 0),
+                    BaseChangeTemperaturesUseCase.Temperature(component = "tool3", temperature = 0),
+                    BaseChangeTemperaturesUseCase.Temperature(component = "bed", temperature = 0),
+                    BaseChangeTemperaturesUseCase.Temperature(component = "chamber", temperature = 0),
+                )
+            )
+        )
     }
 }

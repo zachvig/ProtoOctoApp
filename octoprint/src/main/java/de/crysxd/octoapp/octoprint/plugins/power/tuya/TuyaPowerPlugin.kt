@@ -16,7 +16,7 @@ class TuyaPowerPlugin(
     }
 
     internal suspend fun isOn(device: TuyaPowerDevice) =
-        api.sendCommandWithResponse(TuyaCommand.GetDeviceStatus(device))?.currentState == TuyaResponse.State.ON
+        api.sendCommandWithResponse(TuyaCommand.GetDeviceStatus(device)).body()?.let { it.currentState == TuyaResponse.State.ON }
 
     override fun getDevices(settings: Settings) =
         settings.plugins.values.mapNotNull {
