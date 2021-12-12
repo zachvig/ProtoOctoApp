@@ -24,6 +24,5 @@ data class TuyaPowerDevice(
         ?: throw IllegalStateException("Acquire this class from TuyaPowerPlugin!")
 
     override suspend fun isOn() = plugin?.isOn(this)
-        ?: throw IllegalStateException("Acquire this class from TuyaPowerPlugin!")
 
 }

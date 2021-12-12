@@ -10,6 +10,6 @@ interface TuyaApi {
     suspend fun sendCommand(@Body command: TuyaCommand): Response<Unit>
 
     @POST("plugin/tuyasmartplug")
-    suspend fun sendCommandWithResponse(@Body command: TuyaCommand): TuyaResponse?
+    suspend fun sendCommandWithResponse(@Body command: TuyaCommand): Response<TuyaResponse?>
 
 }
