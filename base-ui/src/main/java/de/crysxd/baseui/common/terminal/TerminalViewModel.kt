@@ -18,7 +18,10 @@ import de.crysxd.octoapp.base.usecase.GetTerminalFiltersUseCase
 import de.crysxd.octoapp.octoprint.models.printer.GcodeCommand
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.models.socket.Event
+import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.octoprint.models.socket.Message.EventMessage.SettingsUpdated
+import de.crysxd.octoapp.octoprint.websocket.EventFlowConfiguration
+import de.crysxd.octoapp.octoprint.websocket.EventFlowConfiguration.Companion.ALL_LOGS
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -55,7 +58,8 @@ class TerminalViewModel(
         }
 
     private var clearedFrom: Date = Date(0)
-    private val printStateFlow = octoPrintProvider.passiveCurrentMessageFlow("terminal")
+    private val printStateFlow = octoPrintProvider.eventFlow("terminal", EventFlowConfiguration(requestTerminalLogs = listOf(ALL_LOGS)))
+        .mapNotNull { (it as? Event.MessageReceived)?.message as? Message.CurrentMessage }
         .mapNotNull { it.state?.flags }
         .map { it.pausing || it.cancelling || it.printing }
     val uiState = flow {
@@ -105,7 +109,7 @@ class TerminalViewModel(
 
         Pair(
             serialCommunicationLogsRepository.all().filter { it.date > clearedFrom }.filter(::filter),
-            serialCommunicationLogsRepository.flow(false).filter { filter(it) }
+            serialCommunicationLogsRepository.passiveFlow(false).filter { filter(it) }
         )
     }
 

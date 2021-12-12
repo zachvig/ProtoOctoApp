@@ -5,11 +5,15 @@ import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
+import de.crysxd.octoapp.octoprint.websocket.EventFlowConfiguration
+import de.crysxd.octoapp.octoprint.websocket.EventFlowConfiguration.Companion.ALL_LOGS
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flow
@@ -80,12 +84,29 @@ class SerialCommunicationLogsRepository(
         )
     }
 
-    fun flow(includeOld: Boolean = false) = flow {
+    fun passiveFlow(includeOld: Boolean = false) = flow {
         if (includeOld) {
             all().forEach { emit(it) }
         }
         emitAll(flow)
     }.filterNotNull()
+
+    fun activeFlow(includeOld: Boolean = false): Flow<SerialCommunication> {
+        val flow = flow {
+            if (includeOld) {
+                all().forEach { emit(it) }
+            }
+            emitAll(flow.filterNotNull())
+        }
+
+        return octoPrintProvider.eventFlow(
+            tag = "activeTerminalFlow",
+            config = EventFlowConfiguration(requestTerminalLogs = listOf(ALL_LOGS))
+        ).combine(flow) { _, v ->
+            Timber.i(v.content)
+            v
+        }
+    }
 
     fun all() = logs.toList()
 

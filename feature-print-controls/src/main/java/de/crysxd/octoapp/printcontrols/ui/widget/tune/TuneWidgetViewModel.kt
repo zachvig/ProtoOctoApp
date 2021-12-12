@@ -45,7 +45,8 @@ class TuneWidgetViewModel(
     // Matches all of
     // "M106 S255" -> M106 command to set fan
     // "M107" -> M107 command to turn fan off
-    private val fanSpeedPattern = Pattern.compile("(M106|M107)( S(\\d+))?")
+    private val fanSpeedPattern = Pattern.compile("M106( S(\\d+))?")
+    private val fanOffPattern = Pattern.compile("M107")
 
     // Matches all of
     // "Recv: echo:Probe OffsetZ: 0.01" -> Response to offset change
@@ -60,13 +61,13 @@ class TuneWidgetViewModel(
 
     init {
         uiStateMediator.addSource(
-            serialCommunicationLogsRepository.flow(includeOld = true)
+            serialCommunicationLogsRepository.passiveFlow(includeOld = true)
                 .onEach {
-                extractValues(it)
-            }
-            .retry { Timber.e(it); delay(100); true }
-            .flowOn(Dispatchers.Default)
-            .asLiveData()
+                    extractValues(it)
+                }
+                .retry { Timber.e(it); delay(100); true }
+                .flowOn(Dispatchers.Default)
+                .asLiveData()
         ) {
 
         }
@@ -77,7 +78,8 @@ class TuneWidgetViewModel(
     private suspend fun extractValues(comm: SerialCommunication) {
         extractValue(flowRatePattern.matcher(comm.content), 2) { state, value -> state.copy(flowRate = value.toInt()) }
         extractValue(feedRatePattern.matcher(comm.content), 2) { state, value -> state.copy(feedRate = value.toInt()) }
-        extractValue(fanSpeedPattern.matcher(comm.content), 3) { state, value -> state.copy(fanSpeed = ((value.toInt() / 255f) * 100f).toInt()) }
+        extractValue(fanSpeedPattern.matcher(comm.content), 2) { state, value -> state.copy(fanSpeed = ((value.toInt() / 255f) * 100f).toInt()) }
+        extractValue(fanOffPattern.matcher(comm.content), 0) { state, _ -> state.copy(fanSpeed = 0) }
         extractValue(zOffsetPattern.matcher(comm.content), 1) { state, value -> state.copy(zOffsetMm = value.toFloat()) }
     }
 

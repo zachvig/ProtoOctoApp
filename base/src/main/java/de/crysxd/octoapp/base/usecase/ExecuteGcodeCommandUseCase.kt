@@ -66,7 +66,7 @@ class ExecuteGcodeCommandUseCase @Inject constructor(
 
                 // Collect all lines from when we see `Send: $command` until we see `Recv: ok`
                 val list = serialCommunicationLogsRepository
-                    .flow(false)
+                    .activeFlow(false)
                     .map { it.content }
                     .onEach {
                         if (!wasExecuted) {

@@ -7,6 +7,7 @@ import de.crysxd.octoapp.octoprint.models.ConnectionType
 import de.crysxd.octoapp.octoprint.models.socket.Event
 import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.octoprint.resolvePath
+import de.crysxd.octoapp.octoprint.websocket.EventFlowConfiguration.Companion.ALL_LOGS
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,8 +22,10 @@ import okhttp3.WebSocket
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.locks.ReentrantLock
 import java.util.logging.Level
 import java.util.logging.Logger
+import kotlin.concurrent.withLock
 
 const val RECONNECT_DELAY_MS = 1000L
 
@@ -50,6 +53,7 @@ class EventWebSocket(
     private var webSocketListener: EventWebSocket.WebSocketListener? = null
     private var isConnected = AtomicBoolean(false)
     private var reconnectCounter = 0
+    private var eventFilters = mutableListOf<EventFlowConfiguration>()
 
     private var lastCurrentMessage: Message.CurrentMessage? = null
     private val eventFlow = MutableSharedFlow<Event>(15)
@@ -62,25 +66,47 @@ class EventWebSocket(
         }
 
     fun start() {
-        if (subscriberCount.get() > 0 && isConnected.compareAndSet(false, true)) {
-            job.cancel()
-            job = SupervisorJob()
+        if (subscriberCount.get() > 0) {
+            if (isConnected.compareAndSet(false, true)) {
+                job.cancel()
+                job = SupervisorJob()
 
-            val request = Request.Builder()
-                .url(webSocketUrl)
-                .build()
-
-            webSocketListener?.dispose()
-            webSocketListener = WebSocketListener().also {
-                webSocket = httpClient.newBuilder()
-                    .pingInterval(pingPongTimeoutMs, TimeUnit.MILLISECONDS)
-                    .connectTimeout(connectionTimeoutMs, TimeUnit.MILLISECONDS)
+                val request = Request.Builder()
+                    .url(webSocketUrl)
                     .build()
-                    .newWebSocket(request, it)
+
+                webSocketListener?.dispose()
+                webSocketListener = WebSocketListener().also {
+                    webSocket = httpClient.newBuilder()
+                        .pingInterval(pingPongTimeoutMs, TimeUnit.MILLISECONDS)
+                        .connectTimeout(connectionTimeoutMs, TimeUnit.MILLISECONDS)
+                        .build()
+                        .newWebSocket(request, it)
+                }
+
+                logger.log(Level.INFO, "[$webSocketId] Opening web socket")
+                onStart()
             }
 
-            logger.log(Level.INFO, "[$webSocketId] Opening web socket")
-            onStart()
+            eventFilters.takeIf { it.isNotEmpty() }?.let { filters ->
+                val config = EventWebSocketConfiguration(
+                    throttle = EventWebSocketConfiguration.Throttle(filters.minOf { it.throttle }),
+                    subscription = EventWebSocketConfiguration.Subscribe(
+                        Subscription(
+                            state = Subscription.State(
+                                logs = filters.map { it.requestTerminalLogs }.flatten().distinct().let {
+                                    when {
+                                        it.isEmpty() -> false
+                                        it.contains(ALL_LOGS) -> true
+                                        else -> "(${it.joinToString("|")})"
+                                    }
+                                }
+                            )
+                        )
+                    )
+                )
+                webSocketListener?.configure(config)
+            }
         }
     }
 
@@ -103,16 +129,17 @@ class EventWebSocket(
 
     fun passiveEventFlow(): Flow<Event> = eventFlow.asSharedFlow()
 
-    fun eventFlow(tag: String): Flow<Event> {
-        return eventFlow.onStart {
-            logger.log(Level.INFO, "[$webSocketId] onStart for Flow (tag=$tag, webSocket=${this@EventWebSocket})")
-            subscriberCount.incrementAndGet()
-            start()
-        }.onCompletion {
-            logger.log(Level.INFO, "[$webSocketId] onCompletion for Flow (tag=$tag, webSocket=${this@EventWebSocket})")
-            subscriberCount.decrementAndGet()
-            stop()
-        }
+    fun eventFlow(tag: String, filter: EventFlowConfiguration = EventFlowConfiguration()) = eventFlow.onStart {
+        logger.log(Level.INFO, "[$webSocketId] onStart for Flow (tag=$tag, webSocket=${this@EventWebSocket}, filters=$filter)")
+        subscriberCount.incrementAndGet()
+        eventFilters.add(filter)
+        start()
+    }.onCompletion {
+        logger.log(Level.INFO, "[$webSocketId] onCompletion for Flow (tag=$tag, webSocket=${this@EventWebSocket})")
+        subscriberCount.decrementAndGet()
+        eventFilters.remove(filter)
+        start()
+        stop()
     }
 
     private fun dispatchEvent(event: Event) {
@@ -139,11 +166,15 @@ class EventWebSocket(
         start()
     }
 
-    inner class WebSocketListener : okhttp3.WebSocketListener() {
+    private inner class WebSocketListener : okhttp3.WebSocketListener() {
         var isOpen = true
         val listenerId = "$webSocketId/${listenerCounter++}"
         private var currentMessageCounter = 0
         private var firstMessage = true
+        private var pendingConfiguration: EventWebSocketConfiguration? = null
+        private var webSocket: WebSocket? = null
+        private var lastConfig: EventWebSocketConfiguration? = null
+        private val configLock = ReentrantLock()
 
         init {
             logger.log(Level.INFO, "[$listenerId] Web socket created")
@@ -154,12 +185,20 @@ class EventWebSocket(
             isOpen = false
         }
 
+        fun configure(config: EventWebSocketConfiguration) {
+            webSocket.sendConfiguration(config)
+        }
+
         private fun shouldLogCurrentMessage(text: String) = !text.startsWith("{\"history") && currentMessageCounter++ % 20 == 0
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
             isOpen = true
             firstMessage = true
+            this.webSocket = webSocket
+            configLock.withLock {
+                pendingConfiguration?.let { webSocket.sendConfiguration(it) }
+            }
 
             // Handle open event
             logger.log(Level.INFO, "[$listenerId] Web socket open")
@@ -167,7 +206,7 @@ class EventWebSocket(
             // In order to receive any messages on OctoPrint instances with authentication set up,
             // we need to perform a login and sen the "auth" message
             val login = runBlocking { loginApi.passiveLogin() }
-            logger.log(Level.INFO, "Sending auth message for user \"${login.name}\"")
+            logger.log(Level.INFO, "[$listenerId] Sending auth message for user \"${login.name}\"")
             webSocket.send("{\"auth\": \"${login.name}:${login.session}\"}")
         }
 
@@ -219,6 +258,7 @@ class EventWebSocket(
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             super.onClosed(webSocket, code, reason)
+            this.webSocket = null
             handleClosure()
             isOpen = false
         }
@@ -255,8 +295,34 @@ class EventWebSocket(
                 }
 
                 if (reconnectCounter > 1 || reportImmediately) {
-                    logger.log(Level.SEVERE, "Reporting disconnect", t)
+                    logger.log(Level.SEVERE, "[$listenerId] Reporting disconnect", t)
                     dispatchEvent(Event.Disconnected(t))
+                }
+            }
+        }
+
+        private fun WebSocket?.sendConfiguration(config: EventWebSocketConfiguration) = configLock.withLock {
+            when {
+                config == lastConfig -> Unit
+
+                this == null -> {
+                    logger.log(Level.INFO, "[$listenerId] Not ready to send config, setting as pending")
+                    pendingConfiguration = config
+                }
+
+                else -> {
+                    val subscription = gson.toJson(config.subscription)
+                    val throttle = gson.toJson(config.throttle)
+                    logger.log(Level.INFO, "[$listenerId] Sending configuration: $subscription")
+                    logger.log(Level.INFO, "[$listenerId] Sending configuration: $throttle")
+                    if (send(subscription) && send(throttle)) {
+                        logger.log(Level.INFO, "[$listenerId] Send success")
+                        pendingConfiguration = null
+                        lastConfig = config
+                    } else {
+                        logger.log(Level.INFO, "[$listenerId] Send failure")
+                        pendingConfiguration = config
+                    }
                 }
             }
         }
