@@ -975,4 +975,5 @@ happy printing!"</string>
     <string name="connect_printer___auto_menu___auto_option">"Connect automatically"</string>
     <string name="connect_printer___auto_menu___manual_option">"Connect manually"</string>
     <string name="temperature_widget___change_offset">"Offset added to Gcode temperatures"</string>
+    <string name="main_menu___item_cool_down">"Cool down"</string>
 </resources>
