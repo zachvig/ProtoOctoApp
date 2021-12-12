@@ -1063,5 +1063,6 @@ feliz impresión!"</string>
     <string name="connect_printer___auto_menu___subtitle"><![CDATA[OctoApp puede conectar su impresora automáticamente cuando abre la aplicación. Esto le ahorra algo de tiempo, pero <b>puede interrumpir las impresiones desde las tarjetas SD.</b>]]>"."</string>
     <string name="connect_printer___auto_menu___auto_option">"Conectar automáticamente"</string>
     <string name="connect_printer___auto_menu___manual_option">"Conectar manualmente"</string>
-    <string name="temperature_widget___change_offset"></string>
+    <string name="temperature_widget___change_offset">"Desplazamiento añadido a las temperaturas del Gcode"</string>
+    <string name="main_menu___item_cool_down">"Enfriamiento"</string>
 </resources>
