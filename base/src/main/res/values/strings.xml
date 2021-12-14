@@ -976,4 +976,10 @@ happy printing!"</string>
     <string name="connect_printer___auto_menu___manual_option">"Connect manually"</string>
     <string name="temperature_widget___change_offset">"Offset added to Gcode temperatures"</string>
     <string name="main_menu___item_cool_down">"Cool down"</string>
+    <string name="progress_widget___printer_message">"Printer message"</string>
+    <string name="progress_widget___settings___show_printer_message">"Show printer message"</string>
+
+    <!-- Fuzzy -->
+    <string name="progress_widget___settings___printer_message_description">"Requires Companion Plugin to be installed on your OctoPrint. Messages come from M117 Gcode commands."</string>
+    <string name="progress_widget___printer_message_no_message">"No message"</string>
 </resources>

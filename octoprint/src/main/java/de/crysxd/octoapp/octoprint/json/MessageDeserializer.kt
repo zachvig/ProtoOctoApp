@@ -26,6 +26,7 @@ class MessageDeserializer(
             o.has("reauthRequired") -> Message.ReAuthRequired
             o.has("plugin") -> when (o["plugin"].asJsonObject["plugin"].asString) {
                 "psucontrol" -> Message.PsuControlPluginMessage(o["plugin"].asJsonObject["data"].asJsonObject["isPSUOn"].asBoolean)
+                "octoapp" -> context.deserialize<Message.CompanionPluginMessage>(o["plugin"].asJsonObject["data"], Message.CompanionPluginMessage::class.java)
                 else -> Message.UnknownPluginMessage(o["plugin"].asJsonObject)
             }
             o.has("event") -> deserializeEventMessage(o["event"].asJsonObject)

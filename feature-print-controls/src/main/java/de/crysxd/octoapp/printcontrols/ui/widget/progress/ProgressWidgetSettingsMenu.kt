@@ -23,6 +23,7 @@ class ProgressWidgetSettingsMenu : Menu {
         ShowThumbnailMenuItem(octoPreferences),
         ShowTimeUsedMenuItem(octoPreferences),
         ShowTimeLeftMenuItem(octoPreferences),
+        ShowPrinterMessage(octoPreferences),
         EtaStyleMenuItem(octoPreferences, context),
         PrintNameStyleMenuItem(octoPreferences, context),
         FontSizeMenuItem(octoPreferences, context),
@@ -82,7 +83,7 @@ class ProgressWidgetSettingsMenu : Menu {
     class EtaStyleMenuItem(private val prefs: OctoPreferences, private val context: Context) : RevolvingOptionsMenuItem() {
         override val itemId = "etaStyle"
         override var groupId = "time"
-        override val order = 2
+        override val order = 3
         override val canBePinned = false
         override val style = MenuItemStyle.Settings
         override val icon: Int = R.drawable.ic_round_calendar_today_24
@@ -107,7 +108,7 @@ class ProgressWidgetSettingsMenu : Menu {
     class ShowTimeUsedMenuItem(private val prefs: OctoPreferences) : ToggleMenuItem() {
         override val itemId = "timeUsed"
         override var groupId = "time"
-        override val order = 3
+        override val order = 4
         override val canBePinned = false
         override val style = MenuItemStyle.Settings
         override val icon: Int = R.drawable.ic_round_restore_24
@@ -121,7 +122,7 @@ class ProgressWidgetSettingsMenu : Menu {
     class ShowTimeLeftMenuItem(private val prefs: OctoPreferences) : ToggleMenuItem() {
         override val itemId = "timeLeft"
         override var groupId = "time"
-        override val order = 4
+        override val order = 5
         override val canBePinned = false
         override val style = MenuItemStyle.Settings
         override val icon: Int = R.drawable.ic_round_update_24
@@ -135,7 +136,7 @@ class ProgressWidgetSettingsMenu : Menu {
     class ShowLayerInfoMenuItem(private val prefs: OctoPreferences) : ToggleMenuItem() {
         override val itemId = "layerInfo"
         override var groupId = "gcode"
-        override val order = 5
+        override val order = 6
         override val canBePinned = false
         override val style = MenuItemStyle.Settings
         override val icon: Int = R.drawable.ic_round_layers_24
@@ -150,7 +151,7 @@ class ProgressWidgetSettingsMenu : Menu {
     class ShowZHeightMenuItem(private val prefs: OctoPreferences) : ToggleMenuItem() {
         override val itemId = "zHeight"
         override var groupId = "gcode"
-        override val order = 6
+        override val order = 7
         override val canBePinned = false
         override val style = MenuItemStyle.Settings
         override val icon: Int = R.drawable.ic_round_height_24
@@ -168,7 +169,7 @@ class ProgressWidgetSettingsMenu : Menu {
     class ShowThumbnailMenuItem(private val prefs: OctoPreferences) : ToggleMenuItem() {
         override val itemId = "thumbnail"
         override var groupId = "thumb"
-        override val order = 7
+        override val order = 8
         override val canBePinned = false
         override val style = MenuItemStyle.Settings
         override val icon: Int = R.drawable.ic_round_image_24
@@ -177,6 +178,21 @@ class ProgressWidgetSettingsMenu : Menu {
         override fun getDescription(context: Context) = context.getString(R.string.progress_widget___settings___thumbnail_description)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             prefs.progressWidgetSettings = prefs.progressWidgetSettings.copy(showThumbnail = enabled)
+        }
+    }
+
+    class ShowPrinterMessage(private val prefs: OctoPreferences) : ToggleMenuItem() {
+        override val itemId = "message"
+        override var groupId = "message"
+        override val order = 10
+        override val canBePinned = false
+        override val style = MenuItemStyle.Settings
+        override val icon: Int = R.drawable.ic_round_chat_bubble_24
+        override val isChecked get() = prefs.progressWidgetSettings.showPrinterMessage
+        override fun getTitle(context: Context) = context.getString(R.string.progress_widget___settings___show_printer_message)
+        override fun getDescription(context: Context) = "Requires Companion plugin"
+        override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
+            prefs.progressWidgetSettings = prefs.progressWidgetSettings.copy(showPrinterMessage = enabled)
         }
     }
 }

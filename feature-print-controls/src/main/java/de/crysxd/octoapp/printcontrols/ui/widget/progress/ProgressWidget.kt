@@ -32,7 +32,6 @@ import de.crysxd.octoapp.base.ext.asPrintTimeLeftImageResource
 import de.crysxd.octoapp.base.ext.asPrintTimeLeftOriginColor
 import de.crysxd.octoapp.base.usecase.FormatDurationUseCase
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
-import de.crysxd.octoapp.octoprint.models.socket.Message
 import de.crysxd.octoapp.printcontrols.R
 import de.crysxd.octoapp.printcontrols.databinding.ProgressWidgetBinding
 import de.crysxd.octoapp.printcontrols.di.injectActivityViewModel
@@ -136,8 +135,8 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
         binding.zHeight.value = zHeight
     }
 
-    private fun updateView(pair: Pair<Message.CurrentMessage, ProgressWidgetSettings>) {
-        val (message, settings) = pair
+    private fun updateView(data: ProgressWidgetViewModel.ViewState) {
+        val (settings, message, companion) = data
         parent.lifecycleScope.launchWhenStarted {
             Timber.i("Received progress message ${message.copy(logs = emptyList(), temps = emptyList())}")
             val progressPercent = message.progress?.completion ?: 0f
@@ -199,12 +198,14 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
 
             binding.printName.smallFont = settings.fontSize == ProgressWidgetSettings.FontSize.Small
             binding.eta.smallFont = binding.printName.smallFont
+            binding.m117Message.smallFont = binding.printName.smallFont
             binding.timeLeft.smallFont = binding.printName.smallFont
             binding.timeUsed.smallFont = binding.printName.smallFont
             binding.layer.smallFont = binding.printName.smallFont
             binding.zHeight.smallFont = binding.printName.smallFont
             val gap = context.resources.getDimensionPixelSize(if (binding.printName.smallFont) R.dimen.margin_1 else R.dimen.margin_2)
             binding.printName.updatePadding(top = gap / 2)
+            binding.m117Message.updatePadding(top = gap / 2)
             binding.itemsFlow.setVerticalGap(gap / 2)
 
             binding.progressBarFill.backgroundTintList = ColorStateList.valueOf(ColorTheme.activeColorTheme.dark)
@@ -213,6 +214,7 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
             binding.printName.valueMaxLines = if (settings.printNameStyle == ProgressWidgetSettings.PrintNameStyle.Full) 10 else 1
             binding.eta.value = formattedEta
             binding.timeUsed.value = formattedSpent
+            binding.m117Message.value = companion?.m117?.takeIf { it.isNotBlank() } ?: context.getString(R.string.progress_widget___printer_message_no_message)
             binding.timeLeft.value = formattedLeft
             binding.eta.labelIcon = ContextCompat.getDrawable(context, message.progress?.printTimeLeftOrigin.asPrintTimeLeftImageResource()).also {
                 it?.setTint(ContextCompat.getColor(context, message.progress?.printTimeLeftOrigin.asPrintTimeLeftOriginColor()))
@@ -222,6 +224,7 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
             binding.eta.isVisible = settings.etaStyle != ProgressWidgetSettings.EtaStyle.None
             binding.timeUsed.isVisible = settings.showUsedTime
             binding.timeLeft.isVisible = settings.showLeftTime
+            binding.m117Message.isVisible = settings.showPrinterMessage
             binding.zHeight.isVisible = settings.showZHeight && hasLayerInfo
             binding.layer.isVisible = settings.showLayer && hasLayerInfo
             binding.printName.isVisible = settings.printNameStyle != ProgressWidgetSettings.PrintNameStyle.None

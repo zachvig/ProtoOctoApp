@@ -4,6 +4,7 @@ data class ProgressWidgetSettings(
     val showUsedTime: Boolean = true,
     val showLeftTime: Boolean = true,
     val showThumbnail: Boolean = false,
+    val showPrinterMessage: Boolean = false,
     val showLayer: Boolean = false,
     val showZHeight: Boolean = false,
     val etaStyle: EtaStyle = EtaStyle.Compact,
