@@ -50,11 +50,13 @@ class PrintNotificationSupportBroadcastReceiver : BroadcastReceiver() {
                 // I don't dare to combine those two...let's keep it separate and secure
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     if (e is BackgroundServiceStartNotAllowedException) {
-                        return@launch Timber.w(e, "Unable to process broadcast ${intent.action} as app is in background")
+                        Timber.w(e, "Unable to process broadcast ${intent.action} as app is in background")
+                    } else {
+                        Timber.e(e)
                     }
+                } else {
+                    Timber.e(e)
                 }
-
-                Timber.e(e)
             }
         }
     }
