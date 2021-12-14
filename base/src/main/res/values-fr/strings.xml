@@ -945,7 +945,7 @@ bonne impression !"</string>
     <string name="progress_widget___settings___thumbnail_description">"Les vignettes sont générées par les plugins Cura et Prusa Slicer et ne sont affichées que si elles sont disponibles."</string>
     <string name="progress_widget___print_name">"Nom de l'impression"</string>
     <string name="progress_widget___title">"Progrès"</string>
-    <string name="progress_widget___time_left">"Gauche"</string>
+    <string name="progress_widget___time_left">"Reste"</string>
     <string name="progress_widget___time_spent">"Écoulé"</string>
     <string name="progress_widget___layer">"Couche"</string>
     <string name="main_menu___explore_support_plugins">"Explorer les plugins pris en charge"</string>
