@@ -19,6 +19,7 @@ import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.di.modules.FileModule
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.forLogging
+import de.crysxd.octoapp.octoprint.redactLoggingString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
@@ -155,7 +156,10 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor(
                 ) as? JsonObject ?: JsonObject()
                 json.addProperty("octoprint_version", octoPrintVersion)
                 json.add("installed_plugins", Gson().toJsonTree(pluginList))
-                write(gson.toJson(json))
+                val l0 = gson.toJson(json)
+                val l1 = info?.webUrl?.redactLoggingString(l0) ?: l0
+                val l2 = info?.alternativeWebUrl?.redactLoggingString(l1) ?: l1
+                write(l2)
                 flush()
             }
             zipStream.closeEntry()

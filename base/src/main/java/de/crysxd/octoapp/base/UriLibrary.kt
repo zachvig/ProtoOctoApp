@@ -37,8 +37,8 @@ object UriLibrary {
     fun getWebcamUri(): Uri =
         getUri(R.string.uri___webcam)
 
-    fun getPluginLibraryUri(): Uri =
-        getUri(R.string.uri___plugin_library)
+    fun getPluginLibraryUri(category: String? = null): Uri =
+        getUri(R.string.uri___plugin_library, "{category}", category ?: "")
 
     fun getFixOctoPrintConnectionUri(baseUrl: HttpUrl, instanceId: String): Uri =
         getUri(

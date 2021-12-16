@@ -3,11 +3,11 @@ package de.crysxd.octoapp.base.logging
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigClientException
-import de.crysxd.octoapp.base.data.models.exceptions.SuppressedException
 import de.crysxd.octoapp.base.network.MjpegConnection2
 import de.crysxd.octoapp.base.usecase.GetRemoteServiceConnectUrlUseCase
 import de.crysxd.octoapp.base.usecase.SetAlternativeWebUrlUseCase
 import de.crysxd.octoapp.base.utils.AppScope
+import de.crysxd.octoapp.octoprint.exceptions.SuppressedException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

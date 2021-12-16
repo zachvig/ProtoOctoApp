@@ -7,6 +7,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_FULL_WEBCAM_RESOLUTION
+import de.crysxd.octoapp.base.data.models.exceptions.SuppressedIllegalStateException
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.logging.TimberLogger
@@ -128,7 +129,7 @@ class MjpegConnection2(
     private fun readNextImage(cache: ByteCache, boundary: String, input: InputStream, dropCount: Int = 0): Bitmap {
         var boundaryStart: Int?
         var boundaryEnd: Int?
-        require(dropCount < 5) { "Too many dropped frames" }
+        require(dropCount < 5) { SuppressedIllegalStateException("Too many dropped frames") }
         do {
             //Timber.i("Available: ${input.available().toLong().asStyleFileSize()}")
             val read = input.read(tempCache)

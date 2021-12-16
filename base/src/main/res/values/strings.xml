@@ -52,7 +52,7 @@ The widget will always control the OctoPrint instance that is currently active i
     <string name="file_manager___file_details___completed">"Completed"</string>
 
     <!-- Auto filled -->
-    <string name="configure_remote_acces___description"><![CDATA[Not at home? On it’s own, OctoApp can’t reach your OctoPrint as it is only available in your home network. You need to make OctoPrint available over the internet so that OctoApp can access it from wherever you are. Learn more <a href="https://app.octoapp.eu/help/use_remotely">here</a>.]]></string>
+    <string name="configure_remote_acces___description"><![CDATA[Not at home? On it’s own, OctoApp can’t reach your OctoPrint as it is only available in your home network. You need to make OctoPrint available over the internet so that OctoApp can access it from wherever you are. Learn more <a href="https://app.octoapp.eu/help/faq/use_remotely">here</a>.]]></string>
 
     <!-- Auto filled -->
     <string name="configure_remote_acces___ignore_issue">"Ignore and continue"</string>
@@ -173,7 +173,6 @@ The widget will always control the OctoPrint instance that is currently active i
     <string name="connect_printer___waiting_for_user_subtitle">"You can enable auto-connect in the settings"</string>
     <string name="connect_printer___waiting_for_user_title">"Connect when you are ready"</string>
     <string name="connection_failed">"Connection failed"</string>
-    <string name="file_manager___thumbnail_info___popup_cura">"Cura Plugin"</string>
     <string name="distance_in_mm_negative_for_retract">"Distance in mm (negative for retract)"</string>
     <string name="done">"Done"</string>
     <string name="download_x">"Download %s"</string>
@@ -374,7 +373,7 @@ The widget will always control the OctoPrint instance that is currently active i
     <string name="main_menu___title_quick_switch_disabled">"Quick switch disabled"</string>
 
     <!-- Auto filled -->
-    <string name="material_menu___bottom_text"><![CDATA[<small>„A“ means activated. Materials are provided by <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> or <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> and can be edited in the web interface.</small>]]></string>
+    <string name="material_menu___bottom_text"><![CDATA[<small>„A“ means activated. Materials are provided by a <b><a href=\"http://app.octoapp.eu/help/pluginLibrary?category=materials\">supported plugin</a></b>. <b>Empty spools and templates</b> are not shown.]]></string>
 
     <!-- Auto filled -->
     <string name="material_menu___empty_state">"OctoApp integrates with the FilamentManager and the SpoolManager plugins to let you keep track of your materials. Once set up, you'll find your spools here."</string>
@@ -469,7 +468,7 @@ The widget will always control the OctoPrint instance that is currently active i
     <string name="power_controls___x_offline">"%s (offline)"</string>
 
     <!-- Auto filled -->
-    <string name="power_menu___bottom_text"><![CDATA[<small>Power devices are provided by a <a href="https://app.octoapp.eu/help/supported_plugin">supported plugin</a></small>]]></string>
+    <string name="power_menu___bottom_text"><![CDATA[<small>Power devices are provided by a <a href="https://app.octoapp.eu/help/pluginLibrary?category=power">supported plugin</a></small>]]></string>
 
     <!-- Auto filled -->
     <string name="power_menu___checkbox_label">"Always use this device in the future"</string>
@@ -548,7 +547,6 @@ The widget will always control the OctoPrint instance that is currently active i
     <!-- Auto filled -->
     <string name="print_notification___reconnecting_title">"Reconnecting…"</string>
     <string name="file_manager___file_details___print_time">"Print time"</string>
-    <string name="file_manager___thumbnail_info___popup_prusa">"Prusa Slicer Plugin"</string>
     <string name="purchase_dialog_button">"Back to the app"</string>
     <string name="purchase_dialog_subtitle">"All features have been unlocked"</string>
     <string name="purchase_dialog_text">"Your support allows me to continue the development of OctoApp! If you have any suggestions, issues or thoughts, please reach out to %s at any time!"</string>
@@ -733,7 +731,6 @@ happy printing!"</string>
     <string name="thank_you_for_sending_feedback_please_select_what_should_be_included_in_your_message">"Thank you for sending feedback. Please enter a message and select what should be attached."</string>
     <string name="this_file_exceeds_the_limit_for_mobile_downloads">"This file exceeds the limit for app downloads"</string>
     <string name="file_manager___file_list___no_files_in_folder">"This folder contains no files"</string>
-    <string name="file_manager___thumbnail_info___popup_message">"Install the below plugin for your slicer to get thumbnail previews of all files!"</string>
     <string name="time_left_x">"Time left: %s"</string>
     <string name="toggle_favorite">"Toggle pinned"</string>
     <string name="trouble_shooting">"Trouble shooting"</string>
@@ -976,4 +973,10 @@ happy printing!"</string>
     <string name="connect_printer___auto_menu___manual_option">"Connect manually"</string>
     <string name="temperature_widget___change_offset">"Offset added to Gcode temperatures"</string>
     <string name="main_menu___item_cool_down">"Cool down"</string>
+    <string name="progress_widget___printer_message">"Printer message"</string>
+    <string name="progress_widget___settings___show_printer_message">"Show printer message"</string>
+
+    <!-- Fuzzy -->
+    <string name="progress_widget___settings___printer_message_description">"Requires Companion Plugin to be installed on your OctoPrint. Messages come from M117 Gcode commands."</string>
+    <string name="progress_widget___printer_message_no_message">"No message"</string>
 </resources>

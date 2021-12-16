@@ -31,10 +31,10 @@ import de.crysxd.octoapp.framework.rules.TestDocumentationRule
 import de.crysxd.octoapp.framework.waitFor
 import de.crysxd.octoapp.framework.waitForDialog
 import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereConnectionNotFoundException
-import de.crysxd.octoapp.octoprint.exceptions.OctoEverywhereSubscriptionMissingException
 import kotlinx.coroutines.runBlocking
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.containsString
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -130,7 +130,7 @@ class OctoEverywhereTest {
         baristaRule.launchActivity()
 
         // THEN
-        waitForDialog(withText(OctoEverywhereSubscriptionMissingException("http://test.com".toHttpUrl()).userFacingMessage))
+        waitForDialog(withText(containsString("OctoEverywhere disabled")))
         val info = BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()
         assertThat(info).isNotNull()
         assertThat(info!!.alternativeWebUrl).isNull()

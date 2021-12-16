@@ -76,7 +76,7 @@ class PowerControlsMenu(val type: DeviceType = DeviceType.Unspecified, val actio
 
     override fun getEmptyStateIcon() = R.drawable.octo_power_devices
     override fun getEmptyStateActionText(context: Context) = context.getString(R.string.power_menu___empty_state_action)
-    override fun getEmptyStateActionUrl(context: Context) = UriLibrary.getFaqUri("supported_plugin").toString()
+    override fun getEmptyStateActionUrl(context: Context) = UriLibrary.getPluginLibraryUri(category = "power").toString()
     override fun getCheckBoxText(context: Context) =
         context.getString(R.string.power_menu___checkbox_label).takeIf { type != DeviceType.Unspecified && action != Action.Unspecified }
 

@@ -85,7 +85,7 @@
             android:textAppearance="@style/OctoTheme.TextAppearance.Button.Menu"
             android:textColor="@color/dark_text"
             app:autoSizeMaxTextSize="18sp"
-            app:autoSizeMinTextSize="14dp"
+            app:autoSizeMinTextSize="14sp"
             app:autoSizeTextType="uniform"
             app:layout_constraintBottom_toBottomOf="@+id/button"
             app:layout_constraintEnd_toStartOf="@+id/right"
@@ -97,7 +97,7 @@
 
         <TextView
             android:id="@+id/right"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/margin_0_1"
             android:layout_marginEnd="@dimen/margin_1"
@@ -108,7 +108,7 @@
             android:textAppearance="@style/OctoTheme.TextAppearance.SectionHeader"
             android:textColor="@color/normal_text"
             app:autoSizeMaxTextSize="18sp"
-            app:autoSizeMinTextSize="14dp"
+            app:autoSizeMinTextSize="14sp"
             app:autoSizeTextType="uniform"
             app:layout_constraintBottom_toBottomOf="@+id/button"
             app:layout_constraintEnd_toStartOf="@+id/toggle"

@@ -4,10 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
+import android.widget.FrameLayout
 import androidx.annotation.ChecksSdkIntAtLeast
+import androidx.core.view.updatePadding
 import de.crysxd.baseui.OctoActivity
 import de.crysxd.baseui.R
+import de.crysxd.baseui.common.AnnouncementView
 import de.crysxd.baseui.common.LinkClickMovementMethod
+import de.crysxd.baseui.ext.checkRemoteNotificationDisabledVisible
 import de.crysxd.baseui.menu.Menu
 import de.crysxd.baseui.menu.MenuHost
 import de.crysxd.baseui.menu.MenuItem
@@ -34,6 +38,18 @@ class PrintNotificationsMenu : Menu {
     override suspend fun getSubtitle(context: Context) = context.getString(R.string.print_notifications_menu___subtitle).toHtml()
     override fun getBottomText(context: Context) = context.getString(R.string.print_notifications_menu___bottom, UriLibrary.getFaqUri("print_notifications")).toHtml()
     override fun getBottomMovementMethod(host: MenuHost) = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(host.getMenuActivity()))
+
+    override fun getCustomHeaderView(host: MenuHost) = if (BaseInjector.get().octoPreferences().suppressRemoteMessageInitialization) {
+        val view = AnnouncementView(host.requireContext())
+        val container = FrameLayout(host.requireContext())
+        val padding = container.resources.getDimension(R.dimen.margin_2).toInt()
+        container.updatePadding(top = padding, left = padding, right = padding)
+        view.checkRemoteNotificationDisabledVisible(canHide = false, id = "remote_notification_disabled_in_menu")
+        container.addView(view)
+        container
+    } else {
+        null
+    }
 
     class LiveNotificationMenuItem : ToggleMenuItem() {
         override val isChecked get() = BaseInjector.get().octoPreferences().isLivePrintNotificationsEnabled

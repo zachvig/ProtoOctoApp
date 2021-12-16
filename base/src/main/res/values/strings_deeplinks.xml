@@ -4,8 +4,8 @@
     <string name="uri___help" translatable="false">app.octoapp.eu/help</string>
     <string name="uri___tutorials" translatable="false">app.octoapp.eu/help/tutorials</string>
     <string name="uri___webcam_troubleshooting" translatable="false">app.octoapp.eu/webcam-troubleshooting</string>
-    <string name="uri___faq" translatable="false">app.octoapp.eu/help/{faqId}</string>
-    <string name="uri___plugin_library" translatable="false">app.octoapp.eu/help/pluginLibrary</string>
+    <string name="uri___faq" translatable="false">app.octoapp.eu/help/faq/{faqId}</string>
+    <string name="uri___plugin_library" translatable="false">app.octoapp.eu/help/pluginLibrary?category={category}</string>
     <string name="uri___webcam" translatable="false">app.octoapp.eu/webcam</string>
     <string name="uri___troubleshoot" translatable="false">app.octoapp.eu/troubleshoot?baseUrl={baseUrl}&amp;apiKey={apiKey}</string>
     <string name="uri___purchase" translatable="false">app.octoapp.eu/become-supporter</string>
