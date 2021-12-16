@@ -62,7 +62,6 @@ class GcodeSettingsMenu : Menu {
             Option(label = context.getString(R.string.gcode_preview_settings___quiality_medium), value = GcodePreviewSettings.Quality.Medium.name),
             Option(label = context.getString(R.string.gcode_preview_settings___quality_ultra), value = GcodePreviewSettings.Quality.Ultra.name)
         )
-        override val isEnabled = true
         override val itemId = "quality"
         override var groupId = "none"
         override val order = 2

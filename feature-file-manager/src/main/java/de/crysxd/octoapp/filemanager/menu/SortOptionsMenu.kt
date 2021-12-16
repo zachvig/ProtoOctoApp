@@ -27,7 +27,6 @@ class SortOptionsMenu : Menu {
         override var groupId = "none"
         override val order = 1
         override val style = MenuItemStyle.Settings
-        override val isEnabled = true
         override val icon: Int = R.drawable.ic_round_sort_24
         override val options = listOf(
             Option(
@@ -65,7 +64,6 @@ class SortOptionsMenu : Menu {
         override var groupId = "none"
         override val order = 2
         override val style = MenuItemStyle.Settings
-        override val isEnabled = true
         override val icon: Int = R.drawable.ic_round_swap_vert_24
         override val options = listOf(
             Option(

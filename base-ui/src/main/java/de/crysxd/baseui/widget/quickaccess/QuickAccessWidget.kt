@@ -73,7 +73,7 @@ abstract class QuickAccessWidget(
                         right = it.getRightDetail(context),
                         description = it.getDescription(context),
                         isVisible = it.isVisible(currentNavDestination),
-                        isEnabled = it.isEnabled,
+                        isEnabled = it.isEnabled(currentNavDestination),
                         badgeCount = it.getBadgeCount()
                     )
                 }

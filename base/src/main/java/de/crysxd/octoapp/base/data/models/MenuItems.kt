@@ -56,4 +56,12 @@ object MenuItems {
     const val MENU_ITEM_SHOW_WEBCAM_RESOLUTION = "webcam___show_resolution"
     const val MENU_ITEM_WEBCAM_ASPECT_RATIO_SOURCE = "webcam___aspect_ratio_source"
     const val MENU_ITEM_ENABLE_FULL_WEBCAM_RESOLUTION = "webcam___enable_full_resolution"
+    const val MENU_ITEM_TIMELAPSE_MENU = "octoprint___show_timelapse"
+    const val MENU_ITEM_TIMELAPSE_ASK_BEFORE_PRINT = "timelapse___ask_before_print"
+    const val MENU_ITEM_TIMELAPSE_MODE = "timelapse___mode"
+    const val MENU_ITEM_TIMELAPSE_INTERVAL = "timelapse___interval"
+    const val MENU_ITEM_TIMELAPSE_MINIMUM_INTERVAL = "timelapse___minimum_interval"
+    const val MENU_ITEM_TIMELAPSE_FRAME_RATE = "timelapse___frame_rate"
+    const val MENU_ITEM_TIMELAPSE_POST_ROLL = "timelapse___post_roll"
+    const val MENU_ITEM_TIMELAPSE_ = "timelapse___post_roll"
 }

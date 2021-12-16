@@ -191,6 +191,8 @@ class MenuAdapter(
         holder.binding.icon.setColorFilter(foreground.defaultColor)
         holder.binding.button.strokeColor = if (item.showAsOutlined) foreground else transparent
         holder.binding.button.rippleColor = if (item.showAsOutlined) foreground else background
+        holder.binding.toggle.thumbDrawable.setTint(foreground.defaultColor)
+        holder.binding.toggle.trackDrawable.setTint(background.defaultColor)
         holder.root.alpha = if (preparedItem.isEnabled) 1f else 0.5f
     }
 }

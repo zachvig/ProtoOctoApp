@@ -59,7 +59,6 @@ class WebcamSettingsMenu : Menu {
         override val order = 160
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_image_aspect_ratio_24
-        override val isEnabled = true
 
         override fun getTitle(context: Context) = context.getString(R.string.webcam_settings___aspect_ratio_source)
         override fun handleOptionActivated(host: MenuHost?, option: Option) {

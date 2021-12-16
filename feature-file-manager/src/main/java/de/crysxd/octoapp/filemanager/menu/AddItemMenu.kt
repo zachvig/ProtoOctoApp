@@ -41,8 +41,8 @@ class AddItemMenu(private val origin: FileOrigin, private val folder: FileObject
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_create_new_folder_24
         override val canBePinned = false
-        override val isEnabled get() = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
 
+        override fun isEnabled(destinationId: Int) = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
         override fun getTitle(context: Context) = context.getString(R.string.file_manager___add_menu___create_folder_title)
 
         override suspend fun onClicked(host: MenuHost?) {
@@ -82,10 +82,9 @@ class AddItemMenu(private val origin: FileOrigin, private val folder: FileObject
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_upload_file_24
         override val canBePinned = false
-        override val isEnabled get() = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
 
         override fun getTitle(context: Context) = context.getString(R.string.file_manager___add_menu___upload_file_title)
-
+        override fun isEnabled(destinationId: Int) = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
         override suspend fun onClicked(host: MenuHost?) {
             // Let user pick file
             val result = NavigationResultMediator.registerResultCallback<Uri>()

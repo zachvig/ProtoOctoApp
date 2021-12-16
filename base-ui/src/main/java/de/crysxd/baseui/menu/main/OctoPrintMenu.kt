@@ -10,8 +10,10 @@ import de.crysxd.baseui.menu.Menu
 import de.crysxd.baseui.menu.MenuHost
 import de.crysxd.baseui.menu.MenuItem
 import de.crysxd.baseui.menu.MenuItemStyle
+import de.crysxd.baseui.menu.SubMenuItem
 import de.crysxd.baseui.menu.main.OctoPrintMenu.Companion.hideCompanionAnnouncement
 import de.crysxd.baseui.menu.main.OctoPrintMenu.Companion.shouldAnnounceCompanion
+import de.crysxd.baseui.timelapse.TimelapseMenu
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.data.models.MenuItems
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_EXECUTE_SYSTEM_COMMAND
@@ -81,6 +83,7 @@ class OctoPrintMenu : Menu {
                 OpenOctoPrintMenuItem(),
                 ConfigureRemoteAccessMenuItem(suppressBadge = false),
                 ShowFilesMenuItem(),
+                ShowTimelapseMenuItem(),
             ),
             sysCommands?.map {
                 ExecuteSystemCommandMenuItem(source = it.source ?: "Unknown", action = it.action ?: "Unknown")
@@ -203,4 +206,15 @@ class ShowPluginLibraryOctoPrintMenuItem(private val suppressBadge: Boolean = tr
             UriLibrary.getPluginLibraryUri().open(it)
         }
     }
+}
+
+class ShowTimelapseMenuItem(private val suppressBadge: Boolean = true) : SubMenuItem() {
+    override val itemId = "show_timelapse_menu"
+    override var groupId = "config"
+    override val order = 251
+    override val showAsSubMenu = true
+    override val icon = R.drawable.ic_round_videocam_24
+    override val style = MenuItemStyle.OctoPrint
+    override val subMenu get() = TimelapseMenu()
+    override fun getTitle(context: Context) = "Timelapse**"
 }
