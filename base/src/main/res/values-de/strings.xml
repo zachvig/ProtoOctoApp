@@ -414,7 +414,7 @@ Das Widget steuert immer die OctoPrint-Instanz, die gerade in der App aktiv ist"
     <string name="main_menu___title_quick_switch_disabled">"Schnellwechsel deaktiviert"</string>
 
     <!-- Auto filled -->
-    <string name="material_menu___bottom_text"><![CDATA[<small>„A“ bedeutet aktiviert. Materialien werden von <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> oder <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> bereitgestellt und können in der Weboberfläche bearbeitet werden.</small>]]></string>
+    <string name="material_menu___bottom_text"></string>
 
     <!-- Auto filled -->
     <string name="material_menu___empty_state">"OctoApp ist mit den Plugins FilamentManager und SpoolManager integriert, damit du den Überblick über deine Werkstoffe behälst. Einmal eingerichtet, finden du deine Spulen hier."</string>
