@@ -370,7 +370,7 @@ Le widget contrôlera toujours l'instance OctoPrint qui est actuellement active 
     <string name="main_menu___title_quick_switch_disabled">"Changement rapide d'OctoPrint désactivé"</string>
 
     <!-- Auto filled -->
-    <string name="material_menu___bottom_text"><![CDATA[<small> „A“ signifie activé. Le filament est fourni par <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> ou <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> et peut être édité dans l\'interface web.</small>]]></string>
+    <string name="material_menu___bottom_text"></string>
 
     <!-- Auto filled -->
     <string name="material_menu___empty_state">"OctoApp intègre les plugins FilamentManager et SpoolManager pour vous permettre de suivre vos matériaux. Une fois configuré, vous trouverez vos bobines ici."</string>
