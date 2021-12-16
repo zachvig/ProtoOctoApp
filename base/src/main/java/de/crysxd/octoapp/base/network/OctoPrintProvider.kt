@@ -7,6 +7,7 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.BuildConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.models.exceptions.SuppressedIllegalStateException
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.logging.TimberLogger
@@ -107,7 +108,7 @@ class OctoPrintProvider(
     }
 
     suspend fun octoPrint(): OctoPrint = octoPrintMutex.withLock {
-        octoPrintCache?.second ?: throw IllegalStateException("OctoPrint not available")
+        octoPrintCache?.second ?: throw SuppressedIllegalStateException("OctoPrint not available")
     }
 
     fun passiveConnectionEventFlow(tag: String) = connectEventFlow.filterNotNull()
