@@ -11,4 +11,5 @@
     <string name="uri___purchase" translatable="false">app.octoapp.eu/become-supporter</string>
     <string name="uri___file_manager" translatable="false">app.octoapp.eu/files</string>
     <string name="uri___fix_octoprint_connection" translatable="false">app.octoapp.eu/fix-connection?baseUrl={baseUrl}&amp;instanceId={instanceId}</string>
+    <string name="uri___play_services_error_info" translatable="false">app.octoapp.eu/help/playServicesCrash</string>
 </resources>
