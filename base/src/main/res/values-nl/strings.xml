@@ -55,7 +55,7 @@ De widget zal altijd de OctoPrint instantie besturen die op dat moment actief is
     <string name="file_manager___file_details___completed">"Voltooid"</string>
 
     <!-- Auto filled -->
-    <string name="configure_remote_acces___description"><![CDATA[Niet thuis? Op zichzelf kan OctoApp uw OctoPrint niet bereiken, omdat deze alleen beschikbaar is in uw thuisnetwerk. U moet OctoPrint beschikbaar maken via het internet, zodat OctoApp er toegang toe heeft, waar u ook bent. Meer informatie <a href="https://app.octoapp.eu/help/use_remotely">hier</a>.]]></string>
+    <string name="configure_remote_acces___description"><![CDATA[Niet thuis? Op zichzelf kan OctoApp uw OctoPrint niet bereiken, omdat deze alleen beschikbaar is in uw thuisnetwerk. U moet OctoPrint beschikbaar maken via het internet, zodat OctoApp er toegang toe heeft, waar u ook bent. Meer informatie <a href="https://app.octoapp.eu/help/faq/use_remotely">hier</a>.]]></string>
 
     <!-- Auto filled -->
     <string name="configure_remote_acces___ignore_issue">"Negeer en ga verder"</string>
@@ -174,9 +174,6 @@ De widget zal altijd de OctoPrint instantie besturen die op dat moment actief is
     <string name="connect_printer___waiting_for_user_subtitle">"U kunt auto-connect inschakelen in de instellingen"</string>
     <string name="connect_printer___waiting_for_user_title">"Maak verbinding als je er klaar voor bent"</string>
     <string name="connection_failed">"Verbinding mislukt"</string>
-
-    <!-- Fuzzy -->
-    <string name="file_manager___thumbnail_info___popup_cura">"Plugin Heling"</string>
     <string name="distance_in_mm_negative_for_retract">"Afstand in mm (negatief voor retract)"</string>
     <string name="done">"Klaar"</string>
     <string name="download_x">"Download %s"</string>
@@ -521,7 +518,7 @@ De widget zal altijd de OctoPrint instantie besturen die op dat moment actief is
     <string name="power_controls___x_offline">"%s (offline)"</string>
 
     <!-- Auto filled -->
-    <string name="power_menu___bottom_text"><![CDATA[<small>Voedingsapparaten worden geleverd door een <a href="https://app.octoapp.eu/help/supported_plugin">ondersteunde plugin</a></small>]]>" ."</string>
+    <string name="power_menu___bottom_text"><![CDATA[<small>Voedingsapparaten worden geleverd door een <a href="https://app.octoapp.eu/help/pluginLibrary?category=power">ondersteunde plugin</a></small>]]>" ."</string>
 
     <!-- Auto filled -->
     <string name="power_menu___checkbox_label">"Gebruik dit apparaat altijd in de toekomst"</string>
@@ -604,9 +601,6 @@ De widget zal altijd de OctoPrint instantie besturen die op dat moment actief is
 
     <!-- Fuzzy -->
     <string name="file_manager___file_details___print_time">"Afdruktijd"</string>
-
-    <!-- Fuzzy -->
-    <string name="file_manager___thumbnail_info___popup_prusa">"Pruisen Slicer Plugin"</string>
     <string name="purchase_dialog_button">"Terug naar de app"</string>
     <string name="purchase_dialog_subtitle">"Alle functies zijn ontgrendeld"</string>
     <string name="purchase_dialog_text">"Dankzij jouw ondersteuning kan ik de ontwikkeling van OctoApp voortzetten! Als je suggesties, problemen of gedachten hebt, kun je te allen tijde contact opnemen met %s!"</string>
@@ -795,10 +789,7 @@ gelukkig printen!"</string>
 
     <!-- Fuzzy -->
     <string name="file_manager___file_list___no_files_in_folder">"Deze map bevat geen bestanden"</string>
-
-    <!-- Fuzzy -->
-    <string name="file_manager___thumbnail_info___popup_message">"Installeer de onderstaande plugin voor je slicer om thumbnail previews van alle bestanden te krijgen!"</string>
-    <string name="time_left_x">"Resterende tijd: %s"</string>
+    <string name="time_left_x">"Overblijvende tijd: %s"</string>
     <string name="toggle_favorite">"Schakelaar vastgespeld"</string>
     <string name="trouble_shooting">"Problemen oplossen"</string>
     <string name="try_again">"Probeer het nog eens"</string>
@@ -1032,7 +1023,7 @@ gelukkig printen!"</string>
     <string name="progress_widget___settings___thumbnail_description">"Thumbnails worden gegenereerd door de Cura en Prusa Slicer plugins en worden alleen getoond indien beschikbaar"</string>
     <string name="progress_widget___print_name">"Naam afdrukken"</string>
     <string name="progress_widget___title">"Vooruitgang"</string>
-    <string name="progress_widget___time_left">"Links"</string>
+    <string name="progress_widget___time_left">"Overblijvend"</string>
     <string name="progress_widget___time_spent">"Gebruikt"</string>
     <string name="progress_widget___layer">"Laag"</string>
     <string name="main_menu___explore_support_plugins">"Ontdek ondersteunde plugins"</string>
@@ -1060,4 +1051,8 @@ gelukkig printen!"</string>
     <string name="connect_printer___auto_menu___manual_option">"Handmatig verbinden"</string>
     <string name="temperature_widget___change_offset">"Offset toegevoegd aan Gcode temperaturen"</string>
     <string name="main_menu___item_cool_down">"Afkoelen"</string>
+    <string name="progress_widget___printer_message"></string>
+    <string name="progress_widget___settings___show_printer_message"></string>
+    <string name="progress_widget___settings___printer_message_description"></string>
+    <string name="progress_widget___printer_message_no_message"></string>
 </resources>
