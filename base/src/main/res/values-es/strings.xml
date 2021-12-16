@@ -55,7 +55,7 @@ El widget siempre controlará la instancia de OctoPrint que está actualmente ac
     <string name="file_manager___file_details___completed">"Completado"</string>
 
     <!-- Auto filled -->
-    <string name="configure_remote_acces___description"><![CDATA[¿No está en casa? Por sí solo, OctoApp no puede llegar a su OctoPrint ya que sólo está disponible en su red doméstica. Tiene que hacer que OctoPrint esté disponible en Internet para que OctoApp pueda acceder a él desde cualquier lugar. Más información <a href="https://app.octoapp.eu/help/use_remotely">aquí</a>.]]></string>
+    <string name="configure_remote_acces___description"><![CDATA[¿No está en casa? Por sí solo, OctoApp no puede llegar a su OctoPrint ya que sólo está disponible en su red doméstica. Tiene que hacer que OctoPrint esté disponible en Internet para que OctoApp pueda acceder a él desde cualquier lugar. Más información <a href="https://app.octoapp.eu/help/faq/use_remotely">aquí</a>.]]></string>
 
     <!-- Auto filled -->
     <string name="configure_remote_acces___ignore_issue">"Ignorar y continuar"</string>
@@ -174,9 +174,6 @@ El widget siempre controlará la instancia de OctoPrint que está actualmente ac
     <string name="connect_printer___waiting_for_user_subtitle">"Puedes activar la conexión automática en los ajustes"</string>
     <string name="connect_printer___waiting_for_user_title">"Conéctese cuando esté listo"</string>
     <string name="connection_failed">"La conexión falló"</string>
-
-    <!-- Fuzzy -->
-    <string name="file_manager___thumbnail_info___popup_cura">"Curación con enchufes"</string>
     <string name="distance_in_mm_negative_for_retract">"Distancia en mm (negativo para retracción)"</string>
     <string name="done">"Hecho"</string>
     <string name="download_x">"Descargar %s"</string>
@@ -526,7 +523,7 @@ El widget siempre controlará la instancia de OctoPrint que está actualmente ac
     <string name="power_controls___x_offline">"%s (offline)"</string>
 
     <!-- Auto filled -->
-    <string name="power_menu___bottom_text"><![CDATA[<small>Los dispositivos de alimentación son proporcionados por un <a href="https://app.octoapp.eu/help/supported_plugin">supported plugin</a></small>]]></string>
+    <string name="power_menu___bottom_text"><![CDATA[<small>Los dispositivos de alimentación son proporcionados por un <a href="https://app.octoapp.eu/help/pluginLibrary?category=power">supported plugin</a></small>]]></string>
 
     <!-- Auto filled -->
     <string name="power_menu___checkbox_label">"Utilice siempre este dispositivo en el futuro"</string>
@@ -609,9 +606,6 @@ El widget siempre controlará la instancia de OctoPrint que está actualmente ac
 
     <!-- Fuzzy -->
     <string name="file_manager___file_details___print_time">"Tiempo de impresión"</string>
-
-    <!-- Fuzzy -->
-    <string name="file_manager___thumbnail_info___popup_prusa">"Prussia Slicer Plugin"</string>
     <string name="purchase_dialog_button">"Volver a la aplicación"</string>
     <string name="purchase_dialog_subtitle">"Todas las características han sido desbloqueadas"</string>
     <string name="purchase_dialog_text">"¡Su apoyo me permite continuar con el desarrollo de OctoApp! ¡Si tiene alguna sugerencia, problema o idea, por favor contacte con %s en cualquier momento!"</string>
@@ -800,9 +794,6 @@ feliz impresión!"</string>
 
     <!-- Fuzzy -->
     <string name="file_manager___file_list___no_files_in_folder">"Esta carpeta no contiene archivos"</string>
-
-    <!-- Fuzzy -->
-    <string name="file_manager___thumbnail_info___popup_message">"Instale el siguiente plugin para su cortadora para obtener vistas previas en miniatura de todos los archivos!"</string>
     <string name="time_left_x">"Tiempo restante: %s"</string>
     <string name="toggle_favorite">"El conmutador está bloqueado."</string>
     <string name="trouble_shooting">"Problemas de resolución de problemas"</string>
@@ -876,7 +867,7 @@ feliz impresión!"</string>
     <string name="x_hours_y_mins">"%1$02d:%2$02d h"</string>
 
     <!-- Auto filled -->
-    <string name="x_left">"quedan %s"</string>
+    <string name="x_left">"%s restantes"</string>
     <string name="x_mins">"%2$d min"</string>
     <string name="x_mm">"%s mm"</string>
     <plurals name="x_months">
@@ -1037,7 +1028,7 @@ feliz impresión!"</string>
     <string name="progress_widget___settings___thumbnail_description">"Las miniaturas son generadas por los plugins Cura y Prusa Slicer y sólo se muestran si están disponibles"</string>
     <string name="progress_widget___print_name">"Imprimir nombre"</string>
     <string name="progress_widget___title">"Progreso"</string>
-    <string name="progress_widget___time_left">"Izquierda"</string>
+    <string name="progress_widget___time_left">"Restante"</string>
     <string name="progress_widget___time_spent">"Usado"</string>
     <string name="progress_widget___layer">"Capa"</string>
     <string name="main_menu___explore_support_plugins">"Explorar los plugins compatibles"</string>
@@ -1065,4 +1056,8 @@ feliz impresión!"</string>
     <string name="connect_printer___auto_menu___manual_option">"Conectar manualmente"</string>
     <string name="temperature_widget___change_offset">"Desplazamiento añadido a las temperaturas del Gcode"</string>
     <string name="main_menu___item_cool_down">"Enfriamiento"</string>
+    <string name="progress_widget___printer_message"></string>
+    <string name="progress_widget___settings___show_printer_message"></string>
+    <string name="progress_widget___settings___printer_message_description"></string>
+    <string name="progress_widget___printer_message_no_message"></string>
 </resources>
