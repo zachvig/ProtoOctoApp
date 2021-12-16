@@ -414,7 +414,7 @@ De widget zal altijd de OctoPrint instantie besturen die op dat moment actief is
     <string name="main_menu___title_quick_switch_disabled">"Snelwissel uitgeschakeld"</string>
 
     <!-- Auto filled -->
-    <string name="material_menu___bottom_text"><![CDATA[<small>„A“  betekent geactiveerd. Materialen worden aangeleverd door <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> of <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> en kunnen worden bewerkt in de webinterface.</small>]]></string>
+    <string name="material_menu___bottom_text"></string>
 
     <!-- Auto filled -->
     <string name="material_menu___empty_state">"OctoApp integreert met de FilamentManager en de SpoolManager plugins, zodat u uw materialen kunt bijhouden. Eenmaal ingesteld, vindt u uw spoelen hier."</string>
