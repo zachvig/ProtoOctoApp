@@ -419,7 +419,7 @@ El widget siempre controlará la instancia de OctoPrint que está actualmente ac
     <string name="main_menu___title_quick_switch_disabled">"Interruptor rápido desactivado"</string>
 
     <!-- Auto filled -->
-    <string name="material_menu___bottom_text"><![CDATA[<small>„A“ significa activado. Los materiales son proporcionados por <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> o <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> y se pueden editar en la interfaz web.</small>]]></string>
+    <string name="material_menu___bottom_text"></string>
 
     <!-- Auto filled -->
     <string name="material_menu___empty_state">"OctoApp se integra con los plugins FilamentManager y SpoolManager para permitirle hacer un seguimiento de sus materiales. Una vez configurado, encontrará sus carretes aquí."</string>
