@@ -91,7 +91,7 @@ class PluginsLibraryViewModel(
                             order = SPAGHETTI_DETECTIVE_ORDER,
                             description = "Use the Spaghetti Detective's tunnel to use OctoApp when you are not at home!",
                             pluginPage = Uri.parse("https://plugins.octoprint.org/plugins/thespaghettidetective/"),
-//                            octoAppTutorial = Uri.parse("https://www.youtube.com/watch?v=kvSLAsBHL00"),
+                            octoAppTutorial = Uri.parse("https://www.youtube.com/watch?v=kOfhlZgye10"),
                         ),
                         Plugin(
                             name = "Tailscale",
