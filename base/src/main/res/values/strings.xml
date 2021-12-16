@@ -373,7 +373,7 @@ The widget will always control the OctoPrint instance that is currently active i
     <string name="main_menu___title_quick_switch_disabled">"Quick switch disabled"</string>
 
     <!-- Auto filled -->
-    <string name="material_menu___bottom_text"><![CDATA[<small>„A“ means activated. Materials are provided by <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> or <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> and can be edited in the web interface.</small>]]></string>
+    <string name="material_menu___bottom_text"><![CDATA[<small>„A“ means activated. Materials are provided by a <b><a href=\"http://app.octoapp.eu/help/pluginLibrary?category=materials\">supported plugin</a></b>. <b>Empty spools and templates</b> are not shown.]]></string>
 
     <!-- Auto filled -->
     <string name="material_menu___empty_state">"OctoApp integrates with the FilamentManager and the SpoolManager plugins to let you keep track of your materials. Once set up, you'll find your spools here."</string>
