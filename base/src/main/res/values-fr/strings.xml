@@ -51,7 +51,7 @@ Le widget contrôlera toujours l'instance OctoPrint qui est actuellement active 
     <string name="file_manager___file_details___completed">"Terminé"</string>
 
     <!-- Auto filled -->
-    <string name="configure_remote_acces___description"><![CDATA[Pas à la maison ? Seul, OctoApp ne peut pas se connecter à votre OctoPrint car vous n\'êtes pas sur votre réseau domestique. Vous devez rendre OctoPrint disponible sur internet afin que OctoApp puisse y accéder où que vous soyez ! Pour en savoir plus <a href="https://app.octoapp.eu/help/use_remotely">ici</a>.]]>" ."</string>
+    <string name="configure_remote_acces___description"><![CDATA[Pas à la maison ? Seul, OctoApp ne peut pas se connecter à votre OctoPrint car vous n\'êtes pas sur votre réseau domestique. Vous devez rendre OctoPrint disponible sur internet afin que OctoApp puisse y accéder où que vous soyez ! Pour en savoir plus <a href="https://app.octoapp.eu/help/faq/use_remotely">ici</a>.]]>" ."</string>
 
     <!-- Auto filled -->
     <string name="configure_remote_acces___ignore_issue">"Ignorer et continuer"</string>
@@ -170,7 +170,6 @@ Le widget contrôlera toujours l'instance OctoPrint qui est actuellement active 
     <string name="connect_printer___waiting_for_user_subtitle">"Vous pouvez activer l'auto-connexion dans les paramètres"</string>
     <string name="connect_printer___waiting_for_user_title">"Connectez vous quand vous êtes prêt"</string>
     <string name="connection_failed">"Échec de connexion"</string>
-    <string name="file_manager___thumbnail_info___popup_cura">"Plugin Cura"</string>
     <string name="distance_in_mm_negative_for_retract">"Distance en mm (négative pour la rétraction)"</string>
     <string name="done">"Terminé"</string>
     <string name="download_x">"Télécharger %s"</string>
@@ -371,7 +370,7 @@ Le widget contrôlera toujours l'instance OctoPrint qui est actuellement active 
     <string name="main_menu___title_quick_switch_disabled">"Changement rapide d'OctoPrint désactivé"</string>
 
     <!-- Auto filled -->
-    <string name="material_menu___bottom_text"><![CDATA[<small> „A“ signifie activé. Le filament est fourni par <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> ou <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> et peut être édité dans l\'interface web.</small>]]></string>
+    <string name="material_menu___bottom_text"></string>
 
     <!-- Auto filled -->
     <string name="material_menu___empty_state">"OctoApp intègre les plugins FilamentManager et SpoolManager pour vous permettre de suivre vos matériaux. Une fois configuré, vous trouverez vos bobines ici."</string>
@@ -464,7 +463,7 @@ Le widget contrôlera toujours l'instance OctoPrint qui est actuellement active 
     <string name="power_controls___x_offline">"%s (déconnecté)"</string>
 
     <!-- Auto filled -->
-    <string name="power_menu___bottom_text"><![CDATA[<small>Les dispositifs de puissance sont fournis par un <a href="https://app.octoapp.eu/help/supported_plugin">plugin supporté</a></small>]]></string>
+    <string name="power_menu___bottom_text"><![CDATA[<small>Les dispositifs de puissance sont fournis par un <a href="https://app.octoapp.eu/help/pluginLibrary?category=power">plugin supporté</a></small>]]></string>
 
     <!-- Auto filled -->
     <string name="power_menu___checkbox_label">"Utilisez toujours cet appareil à l'avenir"</string>
@@ -543,7 +542,6 @@ Le widget contrôlera toujours l'instance OctoPrint qui est actuellement active 
     <!-- Auto filled -->
     <string name="print_notification___reconnecting_title">"Reconnexion…"</string>
     <string name="file_manager___file_details___print_time">"Temps d'impression"</string>
-    <string name="file_manager___thumbnail_info___popup_prusa">"Plugin Prusa Slicer"</string>
     <string name="purchase_dialog_button">"Retour à l'application"</string>
     <string name="purchase_dialog_subtitle">"Toutes les fonctionnalités ont été débloquées !"</string>
     <string name="purchase_dialog_text">"Votre soutien me permet de continuer le développement d'OctoApp ! Si vous avez des suggestions, des problèmes ou des réflexions, n'hésitez pas à me contacter %s à tout moment !"</string>
@@ -728,7 +726,6 @@ bonne impression !"</string>
     <string name="thank_you_for_sending_feedback_please_select_what_should_be_included_in_your_message">"Merci d'envoyer vos commentaires. Veuillez entrer votre message et choisir ce qui doit être joint."</string>
     <string name="this_file_exceeds_the_limit_for_mobile_downloads">"Ce fichier dépasse la limite de téléchargement pour les téléphones portables"</string>
     <string name="file_manager___file_list___no_files_in_folder">"Ce dossier est vide"</string>
-    <string name="file_manager___thumbnail_info___popup_message">"Installez le plugin ci-dessous pour votre slicer afin d'obtenir des aperçus des fichiers sous forme de vignettes !"</string>
     <string name="time_left_x">"Temps restant : %s"</string>
     <string name="toggle_favorite">"Épingler / désépingler"</string>
     <string name="trouble_shooting">"Dépannage"</string>
@@ -971,4 +968,8 @@ bonne impression !"</string>
     <string name="connect_printer___auto_menu___manual_option">"Connecter manuellement"</string>
     <string name="temperature_widget___change_offset">"Décalage ajouté aux températures du Gcode"</string>
     <string name="main_menu___item_cool_down">"Retour au calme"</string>
+    <string name="progress_widget___printer_message"></string>
+    <string name="progress_widget___settings___show_printer_message"></string>
+    <string name="progress_widget___settings___printer_message_description"></string>
+    <string name="progress_widget___printer_message_no_message"></string>
 </resources>
