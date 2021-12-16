@@ -35,7 +35,7 @@ class GenerateExceptionInterceptor(
                 return when (response.code) {
                     // OctoPrint / Generic
                     101 -> response
-                    in 200..204 -> response
+                    in 200..204 -> throw OctoEverywhereSubscriptionMissingException(request.url)
                     409 -> throw PrinterNotOperationalException(response.request.url)
                     401 -> throw generate401Exception(response)
                     403 -> throw generate403Exception(response)

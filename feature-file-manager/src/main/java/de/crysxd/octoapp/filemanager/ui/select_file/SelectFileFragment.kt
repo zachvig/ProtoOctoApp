@@ -11,12 +11,12 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionManager
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.baseui.BaseFragment
 import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.menu.MenuBottomSheetFragment
-import de.crysxd.octoapp.filemanager.R
+import de.crysxd.octoapp.base.UriLibrary
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.filemanager.databinding.SelectFileFragmentBinding
 import de.crysxd.octoapp.filemanager.di.injectActivityViewModel
 import de.crysxd.octoapp.filemanager.di.injectViewModel
@@ -57,16 +57,7 @@ class SelectFileFragment : BaseFragment() {
             onRetry = { viewModel.reload() },
             onAddItemClicked = { MenuBottomSheetFragment.createForMenu(AddItemMenu(viewModel.fileOrigin, navArgs.folder)).show(childFragmentManager) },
             onShowThumbnailInfo = {
-                MaterialAlertDialogBuilder(requireContext())
-                    .setMessage(getString(R.string.file_manager___thumbnail_info___popup_message))
-                    .setPositiveButton(R.string.file_manager___thumbnail_info___popup_cura) { _, _ ->
-                        openLink("https://plugins.octoprint.org/plugins/UltimakerFormatPackage/")
-                    }
-                    .setNegativeButton(R.string.file_manager___thumbnail_info___popup_prusa) { _, _ ->
-                        openLink("https://plugins.octoprint.org/plugins/prusaslicerthumbnails/")
-                    }
-                    .setNeutralButton(R.string.cancel, null)
-                    .show()
+                UriLibrary.getPluginLibraryUri(category = "files").open(requireOctoActivity())
             },
         )
 

@@ -30,7 +30,7 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
         context.getString(R.string.material_menu___empty_state)
 
     override fun getEmptyStateActionText(context: Context) = context.getString(R.string.material_menu___empty_state_action)
-    override fun getEmptyStateActionUrl(context: Context) = UriLibrary.getFaqUri("supported_plugin").toString()
+    override fun getEmptyStateActionUrl(context: Context) = UriLibrary.getPluginLibraryUri().toString()
     override fun getEmptyStateIcon() = R.drawable.octo_materials
 
     override fun getBottomText(context: Context) = HtmlCompat.fromHtml(
