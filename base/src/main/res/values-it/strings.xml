@@ -414,7 +414,7 @@ Il widget controllerà sempre l'istanza OctoPrint attualmente attiva nell'applic
     <string name="main_menu___title_quick_switch_disabled">"Interruttore rapido disattivato"</string>
 
     <!-- Auto filled -->
-    <string name="material_menu___bottom_text"><![CDATA[<small>„A“ significa attivato. I materiali sono forniti da <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> o <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> e possono essere modificati nell\'interfaccia web.</small>]]></string>
+    <string name="material_menu___bottom_text"></string>
 
     <!-- Auto filled -->
     <string name="material_menu___empty_state">"OctoApp si integra con i plugin FilamentManager e SpoolManager per permetterti di tenere traccia dei tuoi materiali. Una volta impostato, troverai le tue bobine qui."</string>
