@@ -19,6 +19,7 @@ import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.data.repository.PinnedMenuItemRepository
 import de.crysxd.octoapp.base.data.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.data.repository.TemperatureDataRepository
+import de.crysxd.octoapp.base.data.repository.TimelapseRepository
 import de.crysxd.octoapp.base.data.repository.TutorialsRepository
 import de.crysxd.octoapp.base.data.repository.WidgetPreferencesRepository
 import de.crysxd.octoapp.base.data.source.DataSource
@@ -147,5 +148,13 @@ open class OctoPrintModule {
     ) = MediaFileRepository(
         localDataSource = localMediaFileDataSource,
         remoteDataSource = remoteMediaFileDataSource
+    )
+
+    @BaseScope
+    @Provides
+    open fun provideTimelapseRepository(
+        octoPrintProvider: OctoPrintProvider
+    ) = TimelapseRepository(
+        octoPrintProvider = octoPrintProvider
     )
 }

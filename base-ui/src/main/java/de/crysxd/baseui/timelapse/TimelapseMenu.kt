@@ -8,31 +8,32 @@ import de.crysxd.baseui.menu.MenuItem
 import de.crysxd.baseui.menu.MenuItemStyle
 import de.crysxd.baseui.menu.RevolvingOptionsMenuItem
 import de.crysxd.baseui.menu.ToggleMenuItem
+import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.octoprint.models.timelapse.TimelapseConfig
 import kotlinx.parcelize.Parcelize
+import java.text.NumberFormat
 
 @Parcelize
 class TimelapseMenu : Menu {
 
-    companion object {
-        private var mode: String = "off"
+    override suspend fun getTitle(context: Context) = "Timelapse**"
+
+    override suspend fun getMenuItem(): List<MenuItem> {
+        val config = BaseInjector.get().timelapseRepository().fetchLatest().config
+        requireNotNull(config)
+        return listOf(
+            AskForTimelapseBeforePrintingMenuItem(),
+            TimelapseModeMenuItem(config),
+            TimelapseMinimumIntervalMenuItem(config),
+            TimelapseZHopMenuItem(config),
+            TimelapseFrameRateMenuItem(config),
+            TimelapsePostRollMenuItem(config),
+            TimelapseIntervalItem(config)
+        )
     }
 
-    override suspend fun getTitle(context: Context) = "Timelapse**"
-    override suspend fun getSubtitle(context: Context) = "You can configure a timelapse before starting a print."
-
-    override suspend fun getMenuItem() = listOf(
-        AskForTimelapseBeforePrintingMenuItem(),
-        TimelapseModeMenuItem(),
-        TimelapseMinimumIntervalMenuItem(),
-        TimelapseZHopMenuItem(),
-        TimelapseFrameRateMenuItem(),
-        TimelapsePostRollMenuItem(),
-        TimelapseIntervalItem(),
-        TimelapseArchiveMenuItem()
-    )
-
     class AskForTimelapseBeforePrintingMenuItem : ToggleMenuItem() {
-        override val isChecked = true
+        override val isChecked get() = BaseInjector.get().octoPreferences().askForTimelapseBeforePrinting
         override val itemId = "timelapse_ask_before_printing"
         override var groupId = "prep"
         override val order = 261
@@ -41,33 +42,35 @@ class TimelapseMenu : Menu {
         override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint
         override fun getTitle(context: Context) = "Ask before printing**"
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
-            TODO("Not yet implemented")
+            BaseInjector.get().octoPreferences().askForTimelapseBeforePrinting = enabled
         }
     }
 
-    class TimelapseModeMenuItem : RevolvingOptionsMenuItem() {
+    class TimelapseModeMenuItem(private val config: TimelapseConfig) : RevolvingOptionsMenuItem() {
         override val itemId = "timelapse_mode"
         override var groupId = "settings"
         override val order = 262
         override val canBePinned = false
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_videocam_24
-        override val activeValue get() = mode
+        override val activeValue get() = (config.type ?: TimelapseConfig.Type.Off).name
         override val options = listOf(
-            Option(label = "Off**", value = "off"),
-            Option(label = "Timed**", value = "timed"),
-            Option(label = "On Z change**", value = "zchange"),
+            Option(label = "Off**", value = TimelapseConfig.Type.Off.name),
+            Option(label = "Timed**", value = TimelapseConfig.Type.Timed.name),
+            Option(label = "On Z change**", value = TimelapseConfig.Type.ZChange.name),
         )
 
         override fun isEnabled(destinationId: Int) = destinationId == R.id.workspacePrePrint
         override fun getTitle(context: Context) = "Mode**"
-        override fun handleOptionActivated(host: MenuHost?, option: Option) {
-            mode = option.value
+        override suspend fun handleOptionActivated(host: MenuHost?, option: Option) {
+            BaseInjector.get().timelapseRepository().update {
+                copy(type = TimelapseConfig.Type.valueOf(option.value))
+            }
             host?.reloadMenu()
         }
     }
 
-    class TimelapseMinimumIntervalMenuItem : MenuItem {
+    class TimelapseMinimumIntervalMenuItem(private val config: TimelapseConfig) : MenuItem {
         override val itemId = "timelapse_minimum_interval"
         override var groupId = "settings"
         override val order = 263
@@ -76,15 +79,17 @@ class TimelapseMenu : Menu {
         override val icon = R.drawable.ic_round_access_time_24
 
         override fun getTitle(context: Context) = "Minimum interval**"
-        override fun isVisible(destinationId: Int) = mode == "zchange"
-        override fun isEnabled(destinationId: Int) = destinationId == R.id.workspacePrePrint
-        override fun getRightDetail(context: Context) = "5s"
+        override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint && config.type == TimelapseConfig.Type.ZChange
+        override fun getRightDetail(context: Context) = config.minDelay?.let { context.getString(R.string.x_secs, it) }
         override suspend fun onClicked(host: MenuHost?) {
-            TODO("Not yet implemented")
+            BaseInjector.get().timelapseRepository().update {
+                copy(minDelay = 44)
+            }
+            host?.reloadMenu()
         }
     }
 
-    class TimelapseIntervalItem : MenuItem {
+    class TimelapseIntervalItem(private val config: TimelapseConfig) : MenuItem {
         override val itemId = "timelapse_interval"
         override var groupId = "settings"
         override val order = 263
@@ -93,15 +98,17 @@ class TimelapseMenu : Menu {
         override val canBePinned = false
 
         override fun getTitle(context: Context) = "Interval**"
-        override fun isEnabled(destinationId: Int) = destinationId == R.id.workspacePrePrint
-        override fun isVisible(destinationId: Int) = mode == "timed"
-        override fun getRightDetail(context: Context) = "10s"
+        override fun isVisible(destinationId: Int) = config.type == TimelapseConfig.Type.Timed && destinationId == R.id.workspacePrePrint
+        override fun getRightDetail(context: Context) = config.interval?.let { context.getString(R.string.x_secs, it) }
         override suspend fun onClicked(host: MenuHost?) {
-            TODO("Not yet implemented")
+            BaseInjector.get().timelapseRepository().update {
+                copy(interval = 44)
+            }
+            host?.reloadMenu()
         }
     }
 
-    class TimelapseZHopMenuItem : MenuItem {
+    class TimelapseZHopMenuItem(private val config: TimelapseConfig) : MenuItem {
         override val itemId = "timelapse_z_hop"
         override var groupId = "settings"
         override val order = 264
@@ -110,15 +117,17 @@ class TimelapseMenu : Menu {
         override val canBePinned = false
 
         override fun getTitle(context: Context) = "Retraction Z-Hop**"
-        override fun isVisible(destinationId: Int) = mode == "zchange"
-        override fun isEnabled(destinationId: Int) = destinationId == R.id.workspacePrePrint
-        override fun getRightDetail(context: Context) = "5s"
+        override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint && config.type == TimelapseConfig.Type.ZChange
+        override fun getRightDetail(context: Context) = config.retractionZHop?.let { context.getString(R.string.x_mm, NumberFormat.getInstance().format(it)) }
         override suspend fun onClicked(host: MenuHost?) {
-            TODO("Not yet implemented")
+            BaseInjector.get().timelapseRepository().update {
+                copy(retractionZHop = 44.4f)
+            }
+            host?.reloadMenu()
         }
     }
 
-    class TimelapseFrameRateMenuItem : MenuItem {
+    class TimelapseFrameRateMenuItem(private val config: TimelapseConfig) : MenuItem {
         override val itemId = "timelapse_frame_rate"
         override var groupId = "settings"
         override val order = 265
@@ -127,14 +136,18 @@ class TimelapseMenu : Menu {
         override val canBePinned = false
 
         override fun getTitle(context: Context) = "Frame rate**"
-        override fun isEnabled(destinationId: Int) = destinationId == R.id.workspacePrePrint && mode != "off"
-        override fun getRightDetail(context: Context) = "25 FPS"
+        override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint
+        override fun isEnabled(destinationId: Int) = config.type != TimelapseConfig.Type.Off
+        override fun getRightDetail(context: Context) = config.fps?.let { context.getString(R.string.x_fps, it) }
         override suspend fun onClicked(host: MenuHost?) {
-            TODO("Not yet implemented")
+            BaseInjector.get().timelapseRepository().update {
+                copy(fps = 44)
+            }
+            host?.reloadMenu()
         }
     }
 
-    class TimelapsePostRollMenuItem : MenuItem {
+    class TimelapsePostRollMenuItem(private val config: TimelapseConfig) : MenuItem {
         override val itemId = "timelapse_post_roll"
         override var groupId = "settings"
         override val order = 266
@@ -143,24 +156,14 @@ class TimelapseMenu : Menu {
         override val canBePinned = false
 
         override fun getTitle(context: Context) = "Post roll**"
-        override fun isEnabled(destinationId: Int) = destinationId == R.id.workspacePrePrint && mode != "off"
-        override fun getRightDetail(context: Context) = "10s"
+        override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint
+        override fun isEnabled(destinationId: Int) = config.type != TimelapseConfig.Type.Off
+        override fun getRightDetail(context: Context) = config.postRoll?.let { context.getString(R.string.x_secs, it) }
         override suspend fun onClicked(host: MenuHost?) {
-            TODO("Not yet implemented")
-        }
-    }
-
-    class TimelapseArchiveMenuItem : MenuItem {
-        override val itemId = "timelapse_archive"
-        override var groupId = "archive"
-        override val order = 268
-        override val showAsSubMenu = true
-        override val style = MenuItemStyle.OctoPrint
-        override val icon = R.drawable.ic_round_video_library_24
-
-        override fun getTitle(context: Context) = "Timelapse archive**"
-        override suspend fun onClicked(host: MenuHost?) {
-            TODO("Not yet implemented")
+            BaseInjector.get().timelapseRepository().update {
+                copy(postRoll = 44)
+            }
+            host?.reloadMenu()
         }
     }
 }

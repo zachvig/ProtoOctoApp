@@ -13,6 +13,7 @@ import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.data.repository.PinnedMenuItemRepository
 import de.crysxd.octoapp.base.data.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.data.repository.TemperatureDataRepository
+import de.crysxd.octoapp.base.data.repository.TimelapseRepository
 import de.crysxd.octoapp.base.data.repository.TutorialsRepository
 import de.crysxd.octoapp.base.data.repository.WidgetPreferencesRepository
 import de.crysxd.octoapp.base.data.source.LocalGcodeFileDataSource
@@ -125,6 +126,7 @@ interface BaseComponent {
     fun temperatureDataRepository(): TemperatureDataRepository
     fun tutorialsRepository(): TutorialsRepository
     fun mediaFileRepository(): MediaFileRepository
+    fun timelapseRepository(): TimelapseRepository
 
     // UseCaseModule
     fun setTargetTemperatureUseCase(): SetTargetTemperaturesUseCase

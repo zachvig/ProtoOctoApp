@@ -61,7 +61,7 @@ class WebcamSettingsMenu : Menu {
         override val icon = R.drawable.ic_round_image_aspect_ratio_24
 
         override fun getTitle(context: Context) = context.getString(R.string.webcam_settings___aspect_ratio_source)
-        override fun handleOptionActivated(host: MenuHost?, option: Option) {
+        override suspend fun handleOptionActivated(host: MenuHost?, option: Option) {
             BaseInjector.get().octoPreferences().webcamAspectRatioSource = option.value
         }
     }

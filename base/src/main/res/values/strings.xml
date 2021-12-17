@@ -799,7 +799,9 @@ happy printing!"</string>
     <!-- Auto filled -->
     <string name="x_left">"%s left"</string>
     <string name="x_mins">"%2$d min"</string>
+    <string name="x_secs">"%d sec"</string>
     <string name="x_mm">"%s mm"</string>
+    <string name="x_fps">"%d FPS"</string>
     <plurals name="x_months">
         <item quantity="one">"One month"</item>
         <item quantity="other">"%d months"</item>

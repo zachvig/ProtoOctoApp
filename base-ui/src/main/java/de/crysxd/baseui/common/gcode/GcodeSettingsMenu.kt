@@ -75,7 +75,7 @@ class GcodeSettingsMenu : Menu {
             GcodePreviewSettings.Quality.Ultra -> context.getString(R.string.gcode_preview_settings___quality_ultra_description)
         }
 
-        override fun handleOptionActivated(host: MenuHost?, option: Option) {
+        override suspend fun handleOptionActivated(host: MenuHost?, option: Option) {
             preferences.gcodePreviewSettings = preferences.gcodePreviewSettings.copy(quality = GcodePreviewSettings.Quality.valueOf(option.value))
         }
     }
