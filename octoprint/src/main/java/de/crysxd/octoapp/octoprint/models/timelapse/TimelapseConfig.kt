@@ -6,6 +6,7 @@ data class TimelapseConfig(
     val type: Type?,
     val fps: Int?,
     val postRoll: Int?,
+    val save: Boolean?,
     val minDelay: Int?,
     val interval: Int?,
     val retractionZHop: Float?,
