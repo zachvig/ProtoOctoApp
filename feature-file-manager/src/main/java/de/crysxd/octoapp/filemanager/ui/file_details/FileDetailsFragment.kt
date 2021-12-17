@@ -20,6 +20,7 @@ import de.crysxd.baseui.ext.optionallyRequestOctoActivity
 import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.menu.MenuBottomSheetFragment
 import de.crysxd.baseui.menu.material.MaterialPluginMenu
+import de.crysxd.baseui.timelapse.TimelapseMenu
 import de.crysxd.octoapp.filemanager.R
 import de.crysxd.octoapp.filemanager.databinding.FileDetailsFragmentBinding
 import de.crysxd.octoapp.filemanager.di.injectViewModel
@@ -53,9 +54,11 @@ class FileDetailsFragment : BaseFragment(), InsetAwareScreen {
             if (!it.isConsumed) {
                 it.isConsumed = true
                 when (it) {
+                    is FileDetailsViewModel.ViewEvent.TimelapseConfigRequired ->
+                        MenuBottomSheetFragment.createForMenu(TimelapseMenu(startPrintResultId = it.resultId)).show(childFragmentManager)
+
                     is FileDetailsViewModel.ViewEvent.MaterialSelectionRequired ->
-                        MenuBottomSheetFragment.createForMenu(MaterialPluginMenu(startPrintAfterSelection = args.file))
-                            .show(childFragmentManager)
+                        MenuBottomSheetFragment.createForMenu(MaterialPluginMenu(startPrintResultId = it.resultId)).show(childFragmentManager)
 
                     is FileDetailsViewModel.ViewEvent.PrintStarted -> {
                         // We started a print. Soon OctoPrint will report the print as started. We want to automatically

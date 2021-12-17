@@ -19,23 +19,35 @@ import kotlinx.parcelize.Parcelize
 import java.text.NumberFormat
 
 @Parcelize
-class TimelapseMenu : Menu {
+class TimelapseMenu(private val startPrintResultId: Int? = null) : Menu {
 
     override suspend fun getTitle(context: Context) = "Timelapse Config**"
 
     override suspend fun getMenuItem(): List<MenuItem> {
         val config = BaseInjector.get().timelapseRepository().fetchLatest().config
         requireNotNull(config)
-        return listOf(
-            AskForTimelapseBeforePrintingMenuItem(),
+        return listOfNotNull(
+
             TimelapseModeMenuItem(config),
             TimelapseMinimumIntervalMenuItem(config),
             TimelapseZHopMenuItem(config),
             TimelapseFrameRateMenuItem(config),
             TimelapsePostRollMenuItem(config),
             TimelapseIntervalItem(config),
+
+            AskForTimelapseBeforePrintingMenuItem(),
             PersistTimelapseConfigMenuItem(),
+            startPrintResultId?.let { StartPrintMenuItem(startPrintResultId) },
         )
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        // If we already sent a result (by clicking start print) this won't do anything as only one result can be send
+        startPrintResultId?.let {
+            NavigationResultMediator.postResult(it, false)
+        }
     }
 
     companion object {
@@ -84,7 +96,6 @@ class TimelapseMenu : Menu {
             Option(label = "On Z change**", value = TimelapseConfig.Type.ZChange.name),
         )
 
-        override fun isEnabled(destinationId: Int) = destinationId == R.id.workspacePrePrint
         override fun getTitle(context: Context) = "Mode**"
         override suspend fun handleOptionActivated(host: MenuHost?, option: Option) {
             BaseInjector.get().timelapseRepository().update { copy(type = TimelapseConfig.Type.valueOf(option.value)) }
@@ -101,7 +112,7 @@ class TimelapseMenu : Menu {
         override val icon = R.drawable.ic_round_access_time_24
 
         override fun getTitle(context: Context) = "Minimum interval**"
-        override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint && config.type == TimelapseConfig.Type.ZChange
+        override fun isVisible(destinationId: Int) = config.type == TimelapseConfig.Type.ZChange
         override fun getRightDetail(context: Context) = config.minDelay?.let { context.getString(R.string.x_secs, it) }
         override suspend fun onClicked(host: MenuHost?) {
             askForValue(host = host, value = config.minDelay?.toString() ?: "") { newValue, config ->
@@ -119,7 +130,7 @@ class TimelapseMenu : Menu {
         override val canBePinned = false
 
         override fun getTitle(context: Context) = "Interval**"
-        override fun isVisible(destinationId: Int) = config.type == TimelapseConfig.Type.Timed && destinationId == R.id.workspacePrePrint
+        override fun isVisible(destinationId: Int) = config.type == TimelapseConfig.Type.Timed
         override fun getRightDetail(context: Context) = config.interval?.let { context.getString(R.string.x_secs, it) }
         override suspend fun onClicked(host: MenuHost?) {
             askForValue(host = host, value = config.interval?.toString() ?: "") { newValue, config ->
@@ -137,7 +148,7 @@ class TimelapseMenu : Menu {
         override val canBePinned = false
 
         override fun getTitle(context: Context) = "Retraction Z-Hop**"
-        override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint && config.type == TimelapseConfig.Type.ZChange
+        override fun isVisible(destinationId: Int) = config.type == TimelapseConfig.Type.ZChange
         override fun getRightDetail(context: Context) = config.retractionZHop?.let { context.getString(R.string.x_mm, NumberFormat.getInstance().format(it)) }
         override suspend fun onClicked(host: MenuHost?) {
             askForValue(
@@ -159,7 +170,6 @@ class TimelapseMenu : Menu {
         override val canBePinned = false
 
         override fun getTitle(context: Context) = "Frame rate**"
-        override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint
         override fun isEnabled(destinationId: Int) = config.type != TimelapseConfig.Type.Off
         override fun getRightDetail(context: Context) = config.fps?.let { context.getString(R.string.x_fps, it) }
         override suspend fun onClicked(host: MenuHost?) {
@@ -178,7 +188,6 @@ class TimelapseMenu : Menu {
         override val canBePinned = false
 
         override fun getTitle(context: Context) = "Post roll**"
-        override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint
         override fun isEnabled(destinationId: Int) = config.type != TimelapseConfig.Type.Off
         override fun getRightDetail(context: Context) = config.postRoll?.let { context.getString(R.string.x_secs, it) }
         override suspend fun onClicked(host: MenuHost?) {
@@ -195,14 +204,13 @@ class TimelapseMenu : Menu {
         override val order = 270
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_control_camera_24
-        override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint
         override fun getTitle(context: Context) = "Ask before printing**"
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             BaseInjector.get().octoPreferences().askForTimelapseBeforePrinting = enabled
         }
     }
 
-    class PersistTimelapseConfigMenuItem : MenuItem {
+    class PersistTimelapseConfigMenuItem() : MenuItem {
         override val itemId = "timelapse_persist"
         override var groupId = "settings"
         override val order = 271
@@ -212,13 +220,27 @@ class TimelapseMenu : Menu {
 
         override fun getTitle(context: Context) = "Save as default**"
         override fun getDescription(context: Context) =
-            "The timelapse config is reset when OctoPrint restarts. This option allows you to set the current config as default across restarts**"
+            "The timelapse config is reset when OctoPrint restarts. This option allows you to set the current config as default across restarts.**"
 
-        override fun isVisible(destinationId: Int) = destinationId == R.id.workspacePrePrint
         override suspend fun onClicked(host: MenuHost?) {
             BaseInjector.get().timelapseRepository().update {
                 copy(save = true)
             }
+        }
+    }
+
+    class StartPrintMenuItem(private val resultId: Int) : MenuItem {
+        override val itemId = "timelapse_start_print"
+        override var groupId = "print"
+        override val order = 272
+        override val style = MenuItemStyle.OctoPrint
+        override val icon = R.drawable.ic_round_send_24
+        override val canBePinned = false
+
+        override fun getTitle(context: Context) = "Start print**"
+
+        override suspend fun onClicked(host: MenuHost?) {
+            NavigationResultMediator.postResult(resultId, true)
         }
     }
 }
