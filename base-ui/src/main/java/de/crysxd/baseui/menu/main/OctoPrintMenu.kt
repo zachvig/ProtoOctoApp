@@ -81,6 +81,7 @@ class OctoPrintMenu : Menu {
     override suspend fun getMenuItem() =
         listOfNotNull(
             listOf(
+                ChangeOctoPrintInstanceMenuItem2(),
                 ShowPluginLibraryOctoPrintMenuItem(suppressBadge = false),
                 OpenOctoPrintMenuItem(),
                 ConfigureRemoteAccessMenuItem(suppressBadge = false),
@@ -108,6 +109,13 @@ class OctoPrintMenu : Menu {
         super.onAnnouncementHidden()
         hideCompanionAnnouncement()
     }
+}
+
+class ChangeOctoPrintInstanceMenuItem2 : ChangeOctoPrintInstanceMenuItem() {
+    override val itemId = MenuItems.MENU_ITEM_SHOW_CHANGE_OCTOPRINT_MENU
+    override var groupId = "change"
+    override val order = 252
+    override val style = MenuItemStyle.OctoPrint
 }
 
 class OpenOctoPrintMenuItem : MenuItem {

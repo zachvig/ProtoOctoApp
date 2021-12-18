@@ -9,6 +9,7 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.baseui.BaseViewModel
 import de.crysxd.baseui.R
 import de.crysxd.baseui.databinding.AnnouncementWidgetBinding
+import de.crysxd.baseui.ext.checkRemoteNotificationDisabledVisible
 import de.crysxd.baseui.widget.BaseWidgetHostFragment
 import de.crysxd.baseui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.base.UriLibrary
@@ -69,6 +70,12 @@ class AnnouncementWidget(context: Context) : RecyclableOctoWidget<AnnouncementWi
         )
     }
 
+    private fun isPlayServicesErrorVisible() = if (BaseInjector.get().octoPreferences().suppressRemoteMessageInitialization) {
+        binding.announcement.checkRemoteNotificationDisabledVisible()
+    } else {
+        false
+    }
+
     override fun onResume(lifecycleOwner: LifecycleOwner) {
         super.onResume(lifecycleOwner)
         isVisible()
@@ -76,7 +83,7 @@ class AnnouncementWidget(context: Context) : RecyclableOctoWidget<AnnouncementWi
 
     override fun isVisible(): Boolean {
         // Check all announcements and show the most important one
-        val isVisible = isSaleAnnouncementVisible() || isWhatsNewVisible()
+        val isVisible = isPlayServicesErrorVisible() || isSaleAnnouncementVisible() || isWhatsNewVisible()
 
         Timber.i("visible=$isVisible this=$this")
         return isVisible

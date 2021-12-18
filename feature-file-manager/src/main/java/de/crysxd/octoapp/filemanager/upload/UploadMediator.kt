@@ -4,13 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.OpenableColumns
-import de.crysxd.octoapp.base.data.models.exceptions.SuppressedException
 import de.crysxd.octoapp.base.data.models.exceptions.UserMessageException
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.filemanager.R
 import de.crysxd.octoapp.filemanager.di.FileManagerScope
+import de.crysxd.octoapp.octoprint.exceptions.SuppressedException
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import de.crysxd.octoapp.octoprint.models.files.FileOrigin
 import de.crysxd.octoapp.octoprint.models.settings.Settings

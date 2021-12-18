@@ -3,6 +3,7 @@
     <string name="public_file_dir_name" translatable="false">public_files</string>
     <string name="updates_notification_channel" translatable="false">updates</string>
     <string name="pref_key_version_announcement" translatable="false">announcement_1.12</string>
+    <string name="pref_key_play_services_error_announcement" translatable="false">announcement_play_services_error_</string>
     <string name="version_announcement_learn_more_link" translatable="false">https://youtu.be/brLrETRYYV8</string>
     <string name="quick_access_tutorial_learn_more_link" translatable="false">https://youtu.be/-gXtKqAfNRM</string>
 </resources>
