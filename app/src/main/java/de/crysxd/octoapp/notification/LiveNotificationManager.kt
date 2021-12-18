@@ -1,6 +1,8 @@
 package de.crysxd.octoapp.notification
 
 import android.app.Activity
+import android.app.BackgroundServiceStartNotAllowedException
+import android.app.ForegroundServiceStartNotAllowedException
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -38,27 +40,35 @@ object LiveNotificationManager {
     }
 
     fun start(context: Context) {
-        // Guard: We can't start the service without an active instance
-        BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()
-            ?: return Timber.w("Rejecting start of service: No active instance")
+        try {
+            // Guard: We can't start the service without an active instance
+            BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()
+                ?: return Timber.w("Rejecting start of service: No active instance")
 
-        if (isNotificationEnabled) {
-            // Already running?
-            if (isHibernating) {
-                wakeUp(context)
-            } else if (!isNotificationShowing) {
-                startTime = System.currentTimeMillis()
-                val intent = Intent(context, LiveNotificationService::class.java)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && context !is Activity) {
-                    Timber.i("Starting notification service as foreground")
-                    context.startForegroundService(intent)
-                } else {
-                    Timber.i("Starting notification service")
-                    context.startService(intent)
+            if (isNotificationEnabled) {
+                // Already running?
+                if (isHibernating) {
+                    wakeUp(context)
+                } else if (!isNotificationShowing) {
+                    startTime = System.currentTimeMillis()
+                    val intent = Intent(context, LiveNotificationService::class.java)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && context !is Activity) {
+                        Timber.i("Starting notification service as foreground")
+                        context.startForegroundService(intent)
+                    } else {
+                        Timber.i("Starting notification service")
+                        context.startService(intent)
+                    }
                 }
+            } else {
+                Timber.v("Skipping notification service start, disabled")
             }
-        } else {
-            Timber.v("Skipping notification service start, disabled")
+        } catch (e: Exception) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && e is ForegroundServiceStartNotAllowedException) {
+                Timber.w("Foreground service not allowed, can't start")
+            } else {
+                throw e
+            }
         }
     }
 
@@ -83,13 +93,21 @@ object LiveNotificationManager {
     }
 
     fun hibernate(context: Context) {
-        val isHibernationEnabled = BaseInjector.get().octoPreferences().allowNotificationBatterySaver
-        if (isHibernationEnabled && isNotificationShowing) {
-            Timber.i("Sending service into hibernation")
-            isHibernating = true
-            val intent = Intent(context, LiveNotificationService::class.java)
-            intent.action = LiveNotificationService.ACTION_HIBERNATE
-            context.startService(intent)
+        try {
+            val isHibernationEnabled = BaseInjector.get().octoPreferences().allowNotificationBatterySaver
+            if (isHibernationEnabled && isNotificationShowing) {
+                Timber.i("Sending service into hibernation")
+                isHibernating = true
+                val intent = Intent(context, LiveNotificationService::class.java)
+                intent.action = LiveNotificationService.ACTION_HIBERNATE
+                context.startService(intent)
+            }
+        } catch (e: Exception) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && e is BackgroundServiceStartNotAllowedException) {
+                Timber.w("Unable to perform hibernation, background service not allowed")
+            } else {
+                throw e
+            }
         }
     }
 
