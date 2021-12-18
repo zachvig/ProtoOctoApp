@@ -11,6 +11,7 @@ data class Announcement(
     val actionText: Context.() -> CharSequence?,
     val actionUri: Context.() -> Uri?,
     val id: String,
+    val canHide: Boolean = true,
     @ColorRes val backgroundColor: Int = R.color.input_background,
     @ColorRes val foregroundColor: Int = R.color.accent,
 )

@@ -3,6 +3,7 @@ package de.crysxd.baseui
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -30,6 +31,7 @@ import de.crysxd.octoapp.base.ext.composeErrorMessage
 import de.crysxd.octoapp.base.ext.composeMessageStack
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.utils.ExceptionReceivers
+import de.crysxd.octoapp.octoprint.exceptions.OctoPrintException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
@@ -150,12 +152,24 @@ abstract class OctoActivity : LocalizedActivity() {
 
     fun showDialog(e: Throwable) {
         // Safeguard that we don't show an error for cancellation exceptions
+        val hasLearnMoreLink = e is OctoPrintException && e.learnMoreLink != null
         if (e !is CancellationException) {
             Timber.e(e)
             showDialog(
                 message = e.composeErrorMessage(this),
-                neutralAction = { showErrorDetailsDialog(e) },
-                neutralButton = getString(R.string.show_details)
+                neutralAction = {
+                    if (hasLearnMoreLink) {
+                        Uri.parse((e as OctoPrintException).learnMoreLink).open(this)
+                    } else {
+                        showErrorDetailsDialog(e)
+                    }
+                },
+                neutralButton = if (hasLearnMoreLink) {
+                    getString(R.string.learn_more)
+                } else {
+                    getString(R.string.show_details)
+                },
+                highPriority = hasLearnMoreLink
             )
         }
     }

@@ -27,7 +27,6 @@ import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_SCREEN_ON_DURING_P
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_SHOW_CHANGE_OCTOPRINT_MENU
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
-import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.usecase.SetAppLanguageUseCase
 import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.Parcelize
@@ -222,11 +221,11 @@ class ShowOctoAppLabMenuItem : SubMenuItem() {
 }
 
 
-class ChangeOctoPrintInstanceMenuItem : SubMenuItem() {
+open class ChangeOctoPrintInstanceMenuItem : SubMenuItem() {
     override val itemId = MENU_ITEM_SHOW_CHANGE_OCTOPRINT_MENU
     override var groupId = "change"
     override val order = 151
-    override val style = MenuItemStyle.Settings
+    override val style: MenuItemStyle = MenuItemStyle.Settings
     override val enforceSingleLine = false
     override val icon = R.drawable.ic_round_swap_horiz_24
     override val subMenu: Menu get() = SwitchOctoPrintMenu()

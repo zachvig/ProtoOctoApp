@@ -45,6 +45,9 @@ class OctoApp : Application() {
             wrapped?.uncaughtException(t, e)
         }
 
+        // Setup Firebase crash fix
+        setupFirebaseCrashFix()
+
         // Setup Dagger
         BaseInjector.init(this)
         initializeDagger()

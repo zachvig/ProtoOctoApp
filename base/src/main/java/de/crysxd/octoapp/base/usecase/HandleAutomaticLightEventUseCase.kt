@@ -39,9 +39,9 @@ class HandleAutomaticLightEventUseCase @Inject constructor(
 
             // Determine new state
             val prevCounter = keepOnCounter
-            when (param) {
-                is Event.WebcamVisible -> keepOnCounter++
-                is Event.WebcamGone -> keepOnCounter--
+            keepOnCounter = when (param) {
+                is Event.WebcamVisible -> keepOnCounter + 1
+                is Event.WebcamGone -> keepOnCounter - 1
             }.coerceAtLeast(0)
 
             val newState = when {

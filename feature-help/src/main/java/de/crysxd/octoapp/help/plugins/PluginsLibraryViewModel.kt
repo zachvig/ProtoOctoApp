@@ -25,6 +25,7 @@ class PluginsLibraryViewModel(
             listOf(
                 PluginCategory(
                     name = "Recommended",
+                    id = null,
                     plugins = listOf(
                         Plugin(
                             name = "OctoApp Companion",
@@ -64,6 +65,7 @@ class PluginsLibraryViewModel(
                 ),
                 PluginCategory(
                     name = "Remote access",
+                    id = "remoteAccess",
                     plugins = listOf(
                         Plugin(
                             name = "ngrok",
@@ -89,7 +91,7 @@ class PluginsLibraryViewModel(
                             order = SPAGHETTI_DETECTIVE_ORDER,
                             description = "Use the Spaghetti Detective's tunnel to use OctoApp when you are not at home!",
                             pluginPage = Uri.parse("https://plugins.octoprint.org/plugins/thespaghettidetective/"),
-//                            octoAppTutorial = Uri.parse("https://www.youtube.com/watch?v=kvSLAsBHL00"),
+                            octoAppTutorial = Uri.parse("https://www.youtube.com/watch?v=kOfhlZgye10"),
                         ),
                         Plugin(
                             name = "Tailscale",
@@ -102,6 +104,7 @@ class PluginsLibraryViewModel(
                 ),
                 PluginCategory(
                     name = "Power",
+                    id = "power",
                     plugins = listOf(
                         Plugin(
                             name = "PSU Control",
@@ -168,6 +171,7 @@ class PluginsLibraryViewModel(
                 ),
                 PluginCategory(
                     name = "Materials",
+                    id = "materials",
                     plugins = listOf(
                         Plugin(
                             name = "FilamentManager",
@@ -185,6 +189,7 @@ class PluginsLibraryViewModel(
                 ),
                 PluginCategory(
                     name = "Files",
+                    id = "files",
                     plugins = listOf(
                         Plugin(
                             name = "Cura Thumbnails",
@@ -208,6 +213,7 @@ class PluginsLibraryViewModel(
                 ),
                 PluginCategory(
                     name = "Others",
+                    id = "others",
                     plugins = listOf(
                         Plugin(
                             name = "PrintTimeGenius",
@@ -258,6 +264,7 @@ class PluginsLibraryViewModel(
 
     data class PluginCategory(
         val plugins: List<Plugin>,
+        val id: String?,
         val name: String,
     )
 

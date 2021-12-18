@@ -160,26 +160,28 @@ class UpdateInstanceCapabilitiesUseCase @Inject constructor(
 
     private suspend fun registerWithCompanionPlugin(timber: Timber.Tree, settings: Settings, instanceId: String, octoPrint: OctoPrint) {
         try {
-            if (settings.isCompanionInstalled()) {
-                timber.i("Companion is installed, registering...")
-                val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-                octoPrint.createOctoAppCompanionApi().registerApp(
-                    AppRegistrationBody(
-                        fcmToken = FirebaseMessaging.getInstance().token.suspendedAwait(),
-                        displayName = "${Build.BRAND.replaceFirstChar { it.uppercase() }} ${Build.MODEL.replaceFirstChar { it.uppercase() }}",
-                        model = Build.MODEL,
-                        instanceId = instanceId,
-                        appVersion = packageInfo.versionName,
-                        appLanguage = BaseInjector.get().getAppLanguageUseCase().execute().appLanguageLocale?.language ?: "en",
-                        appBuild = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                            packageInfo.longVersionCode
-                        } else {
-                            packageInfo.versionCode.toLong()
-                        }
+            when {
+                !settings.isCompanionInstalled() -> timber.i("Companion is not installed")
+                octoPreferences.suppressRemoteMessageInitialization -> timber.i("Remote notifications suppressed")
+                else -> {
+                    timber.i("Companion is installed, registering...")
+                    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                    octoPrint.createOctoAppCompanionApi().registerApp(
+                        AppRegistrationBody(
+                            fcmToken = FirebaseMessaging.getInstance().token.suspendedAwait(),
+                            displayName = "${Build.BRAND.replaceFirstChar { it.uppercase() }} ${Build.MODEL.replaceFirstChar { it.uppercase() }}",
+                            model = Build.MODEL,
+                            instanceId = instanceId,
+                            appVersion = packageInfo.versionName,
+                            appLanguage = BaseInjector.get().getAppLanguageUseCase().execute().appLanguageLocale?.language ?: "en",
+                            appBuild = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                packageInfo.longVersionCode
+                            } else {
+                                packageInfo.versionCode.toLong()
+                            }
+                        )
                     )
-                )
-            } else {
-                timber.i("Companion is not installed")
+                }
             }
         } catch (e: Exception) {
             Timber.e(e)

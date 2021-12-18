@@ -79,14 +79,6 @@
         <value>5000</value>
     </entry>
     <entry>
-        <key>help_url_power_devices</key>
-        <value>https://app.octoapp.eu/help/supported_plugin</value>
-    </entry>
-    <entry>
-        <key>help_url_materials</key>
-        <value>https://app.octoapp.eu/help/supported_plugin</value>
-    </entry>
-    <entry>
         <key>introduction_video_url</key>
         <value>https://youtu.be/lKJhWnLUrHA</value>
     </entry>

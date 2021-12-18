@@ -28,11 +28,9 @@ class GetRemoteServiceConnectUrlUseCase @Inject constructor(
             .replace("{{{printerid}}}", printerId ?: "")
             .replace("{{{callbackPath}}}", param.getCallbackPath())
         Result.Success(url)
-    } catch (e: OctoEverywhereNotInstalledException) {
-        OctoAnalytics.logEvent(OctoAnalytics.Event.OctoEverywherePluginMissing)
-        Result.Error(BaseInjector.get().localizedContext().getString(R.string.configure_remote_acces___octoeverywhere___error_install_plugin), e)
-    } catch (e: OctoPrintUnavailableException) {
-        Result.Error(BaseInjector.get().localizedContext().getString(R.string.configure_remote_acces___octoeverywhere___error_no_connection), e)
+    } catch (e: Exception) {
+        val message = param.getMessageForException(e) ?: R.string.error_general
+        Result.Error(BaseInjector.get().localizedContext().getString(message), e)
     }
 
     class OctoEverywhereNotInstalledException : IllegalStateException("OctoEverywhere not installed")
@@ -42,6 +40,7 @@ class GetRemoteServiceConnectUrlUseCase @Inject constructor(
         abstract fun getConnectUrl(): String
         abstract fun getCallbackPath(): String
         abstract fun recordStartEvent()
+        abstract fun getMessageForException(e: Exception): Int?
 
         object OctoEverywhere : RemoteService() {
             override fun getConnectUrl() = Firebase.remoteConfig.getString("octoeverywhere_app_portal_url")
@@ -51,10 +50,17 @@ class GetRemoteServiceConnectUrlUseCase @Inject constructor(
                 octoPrint.createOctoEverywhereApi().getInfo().printerId
             } catch (e: OctoPrintApiException) {
                 if (e.responseCode == 400 || e.responseCode == 404) {
+                    OctoAnalytics.logEvent(OctoAnalytics.Event.OctoEverywherePluginMissing)
                     throw OctoEverywhereNotInstalledException()
                 } else {
                     throw e
                 }
+            }
+
+            override fun getMessageForException(e: java.lang.Exception) = when (e) {
+                is OctoEverywhereNotInstalledException -> R.string.configure_remote_acces___octoeverywhere___error_install_plugin
+                is OctoPrintUnavailableException -> R.string.configure_remote_acces___octoeverywhere___error_no_connection
+                else -> null
             }
         }
 
@@ -69,6 +75,7 @@ class GetRemoteServiceConnectUrlUseCase @Inject constructor(
             override fun recordStartEvent() = OctoAnalytics.logEvent(OctoAnalytics.Event.SpaghettiDetectiveConnectStarted)
             override fun getCallbackPath() = SPAGHETTI_DETECTIVE_APP_PORTAL_CALLBACK_PATH
             override fun getConnectUrl() = Firebase.remoteConfig.getString("spaghetti_detective_app_portal_url")
+            override fun getMessageForException(e: Exception): Int? = null
         }
     }
 

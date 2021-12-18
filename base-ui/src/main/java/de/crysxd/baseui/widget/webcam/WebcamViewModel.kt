@@ -42,6 +42,7 @@ class WebcamViewModel(
 
     companion object {
         private var instanceCounter = 0
+        private var connectionCounter = 0
     }
 
     private val tag = "WebcamViewModel/${instanceCounter++}"
@@ -169,6 +170,7 @@ class WebcamViewModel(
 
     private suspend fun FlowCollector<UiState>.emitMjpegFlow(mjpegSettings: ResolvedWebcamSettings.MjpegSettings, canSwitchWebcam: Boolean) {
         delay(100)
+        val connectionId = connectionCounter++
         MjpegConnection2(streamUrl = mjpegSettings.url, name = tag).load().map {
             when (it) {
                 is MjpegConnection2.MjpegSnapshot.Loading -> UiState.Loading(canSwitchWebcam)
@@ -191,11 +193,11 @@ class WebcamViewModel(
                 )
             )
         }.onStart {
-            handleAutomaticLightEventUseCase.execute(HandleAutomaticLightEventUseCase.Event.WebcamVisible("webcam-vm"))
+            handleAutomaticLightEventUseCase.execute(HandleAutomaticLightEventUseCase.Event.WebcamVisible("mjpeg-webcam-vm-$connectionId"))
         }.onCompletion {
             // Execute blocking as a normal execute switches threads causing the task never to be done as the current scope
             // is about to be terminated
-            handleAutomaticLightEventUseCase.executeBlocking(HandleAutomaticLightEventUseCase.Event.WebcamGone("webcam-vm"))
+            handleAutomaticLightEventUseCase.executeBlocking(HandleAutomaticLightEventUseCase.Event.WebcamGone("mjpeg-webcam-vm-$connectionId"))
         }.collect {
             emit(it)
         }
@@ -203,6 +205,7 @@ class WebcamViewModel(
 
     private suspend fun FlowCollector<UiState>.emitSpaghettiCam(spaghettiSettings: ResolvedWebcamSettings.SpaghettiCamSettings, canSwitchWebcam: Boolean) {
         delay(100)
+        val connectionId = connectionCounter++
         SpaghettiDetectiveWebcamConnection(
             webcamIndex = spaghettiSettings.webcamIndex,
             octoPrint = octoPrintProvider.octoPrint(),
@@ -234,11 +237,11 @@ class WebcamViewModel(
                 )
             )
         }.onStart {
-            handleAutomaticLightEventUseCase.execute(HandleAutomaticLightEventUseCase.Event.WebcamVisible("webcam-vm"))
+            handleAutomaticLightEventUseCase.execute(HandleAutomaticLightEventUseCase.Event.WebcamVisible("tsd-webcam-vm-$connectionId"))
         }.onCompletion {
             // Execute blocking as a normal execute switches threads causing the task never to be done as the current scope
             // is about to be terminated
-            handleAutomaticLightEventUseCase.executeBlocking(HandleAutomaticLightEventUseCase.Event.WebcamGone("webcam-vm"))
+            handleAutomaticLightEventUseCase.executeBlocking(HandleAutomaticLightEventUseCase.Event.WebcamGone("tsd-webcam-vm-$connectionId"))
         }.collect {
             emit(it)
         }
