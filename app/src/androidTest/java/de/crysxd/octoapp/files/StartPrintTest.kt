@@ -53,24 +53,24 @@ class StartPrintTest {
         // Wait for print workspace to be shown
         verifyPrinting()
 
-//        // Pause and resume
-//        onView(withText(R.string.pause)).perform(click())
-//        waitForDialog(withText(R.string.pause_print_confirmation_message))
-//        onView(withText(R.string.pause_print_confirmation_action)).inRoot(isDialog()).perform(click())
-//        waitFor(allOf(withText(R.string.pausing), isDisplayed()))
-//        waitFor(allOf(withText(R.string.resume), isDisplayed()), timeout = 45_000)
-//        onView(withText(R.string.resume)).perform(click())
-//        waitForDialog(withText(R.string.resume_print_confirmation_message))
-//        onView(withText(R.string.resume_print_confirmation_action)).inRoot(isDialog()).perform(click())
-//        waitFor(allOf(withText(R.string.pause), isDisplayed()), timeout = 10_000)
-//
-//        // Cancel print
-//        MenuRobot.openMenuWithMoreButton()
-//        MenuRobot.clickMenuButton(R.string.main_menu___item_cancel_print)
-//        waitForDialog(withText(R.string.cancel_print_confirmation_message))
-//        onView(withText(R.string.cancel_print_confirmation_action)).inRoot(isDialog()).perform(click())
-//        MenuRobot.waitForMenuToBeClosed()
-//        WorkspaceRobot.waitForPrepareWorkspace()
+        // Pause and resume
+        onView(withText(R.string.pause)).perform(click())
+        waitForDialog(withText(R.string.pause_print_confirmation_message))
+        onView(withText(R.string.pause_print_confirmation_action)).inRoot(isDialog()).perform(click())
+        waitFor(allOf(withText(R.string.pausing), isDisplayed()))
+        waitFor(allOf(withText(R.string.resume), isDisplayed()), timeout = 45_000)
+        onView(withText(R.string.resume)).perform(click())
+        waitForDialog(withText(R.string.resume_print_confirmation_message))
+        onView(withText(R.string.resume_print_confirmation_action)).inRoot(isDialog()).perform(click())
+        waitFor(allOf(withText(R.string.pause), isDisplayed()), timeout = 10_000)
+
+        // Cancel print
+        MenuRobot.openMenuWithMoreButton()
+        MenuRobot.clickMenuButton(R.string.main_menu___item_cancel_print)
+        waitForDialog(withText(R.string.cancel_print_confirmation_message))
+        onView(withText(R.string.cancel_print_confirmation_action)).inRoot(isDialog()).perform(click())
+        MenuRobot.waitForMenuToBeClosed()
+        WorkspaceRobot.waitForPrepareWorkspace()
     }
 
     @Test(timeout = 60_000)
