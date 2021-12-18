@@ -49,6 +49,7 @@ class SwitchOctoPrintMenu : Menu {
         listOf(static, items).flatten()
     } else {
         listOf(
+            AddInstanceMenuItem(),
             SignOutMenuItem(),
             EnableQuickSwitchMenuItem()
         )
@@ -101,7 +102,8 @@ class AddInstanceMenuItem : MenuItem {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_add_24
 
-    override fun isVisible(destinationId: Int) = isQuickSwitchEnabled && isAnyActive
+    override val isEnabled = isQuickSwitchEnabled
+    override fun isVisible(destinationId: Int) = isAnyActive
     override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_add_instance)
     override suspend fun onClicked(host: MenuHost?) {
         BaseInjector.get().octorPrintRepository().clearActive()
@@ -110,8 +112,8 @@ class AddInstanceMenuItem : MenuItem {
 
 class SignOutMenuItem : MenuItem {
     override val itemId = MENU_ITEM_SIGN_OUT
-    override var groupId = ""
-    override val order = 150
+    override var groupId = "sign_out"
+    override val order = 151
     override val canBePinned = false
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_login_24
@@ -126,7 +128,7 @@ class SignOutMenuItem : MenuItem {
 class EnableQuickSwitchMenuItem : MenuItem {
     override val itemId = MENU_ITEM_ENABLE_QUICK_SWITCH
     override var groupId = ""
-    override val order = 151
+    override val order = 149
     override val canBePinned = false
     override val style = MenuItemStyle.Support
     override val icon = R.drawable.ic_round_favorite_24
