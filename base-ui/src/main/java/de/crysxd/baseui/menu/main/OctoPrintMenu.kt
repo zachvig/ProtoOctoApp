@@ -240,6 +240,6 @@ class TimelapseArchiveMenuItem : MenuItem {
 
     override fun getTitle(context: Context) = "Timelapse archive**"
     override suspend fun onClicked(host: MenuHost?) {
-        TODO("Not yet implemented")
+        host?.getMenuActivity()?.let { UriLibrary.getTimelapseArchiveUri().open(it) }
     }
 }

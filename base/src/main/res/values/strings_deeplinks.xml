@@ -9,6 +9,7 @@
     <string name="uri___webcam" translatable="false">app.octoapp.eu/webcam</string>
     <string name="uri___troubleshoot" translatable="false">app.octoapp.eu/troubleshoot?baseUrl={baseUrl}&amp;apiKey={apiKey}</string>
     <string name="uri___purchase" translatable="false">app.octoapp.eu/become-supporter</string>
+    <string name="uri___timelapse_archive" translatable="false">app.octoapp.eu/timelapse-archive</string>
     <string name="uri___file_manager" translatable="false">app.octoapp.eu/files</string>
     <string name="uri___fix_octoprint_connection" translatable="false">app.octoapp.eu/fix-connection?baseUrl={baseUrl}&amp;instanceId={instanceId}</string>
 </resources>

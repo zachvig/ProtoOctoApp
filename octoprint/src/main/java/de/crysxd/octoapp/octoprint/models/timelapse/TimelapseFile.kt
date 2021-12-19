@@ -5,7 +5,7 @@ data class TimelapseFile(
     val url: String?,
     val date: String?,
     val size: String?,
-    val byes: Long?,
+    val bytes: Long?,
     val processing: Boolean?,
     val rendering: Boolean?,
     val recording: Boolean?,

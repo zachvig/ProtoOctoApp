@@ -15,7 +15,7 @@ interface TimelapseApi {
     @POST("timelapse")
     suspend fun updateConfig(@Body config: TimelapseConfig): TimelapseStatus
 
-    @GET("timelapse")
+    @GET("timelapse?unrendered=true")
     suspend fun getStatus(): TimelapseStatus
 
     @DELETE("timelapse/{filename}")

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/timelapse_archive_nav_graph"
+    app:startDestination="@id/timelapseArchiveFragment">
+
+    <deepLink
+        android:id="@+id/deepLink4"
+        app:uri="@string/uri___timelapse_archive" />
+
+    <fragment
+        android:id="@+id/timelapseArchiveFragment"
+        android:name="de.crysxd.baseui.timelapse.TimelapseArchiveFragment"
+        android:label="TimelapseArchiveFragment" />
+
+</navigation>
