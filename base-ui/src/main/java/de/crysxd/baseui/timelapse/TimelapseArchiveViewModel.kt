@@ -14,7 +14,9 @@ class TimelapseArchiveViewModel(
     private val timelapseRepository: TimelapseRepository
 ) : BaseViewModel() {
 
-    val viewData = timelapseRepository.flow().map { it?.files ?: emptyList() }.asLiveData()
+    val viewData = timelapseRepository.flow().map { status ->
+        listOfNotNull(status?.files, status?.unrendered).flatten().sortedByDescending { it.unixDate }.takeIf { status != null }
+    }.asLiveData()
     private val mutableViewState = MutableLiveData<ViewState>()
     val viewState = mutableViewState.map { it }
 

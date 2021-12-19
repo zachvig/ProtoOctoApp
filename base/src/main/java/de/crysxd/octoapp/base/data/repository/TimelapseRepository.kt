@@ -1,5 +1,6 @@
 package de.crysxd.octoapp.base.data.repository
 
+import de.crysxd.octoapp.base.data.source.LocalMediaFileDataSource
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.octoprint.models.socket.Event
@@ -18,6 +19,7 @@ import timber.log.Timber
 
 class TimelapseRepository(
     private val octoPrintProvider: OctoPrintProvider,
+    private val localMediaFileDataSource: LocalMediaFileDataSource,
 ) {
 
     private val state = MutableStateFlow<TimelapseStatus?>(null)

@@ -153,8 +153,10 @@ open class OctoPrintModule {
     @BaseScope
     @Provides
     open fun provideTimelapseRepository(
-        octoPrintProvider: OctoPrintProvider
+        octoPrintProvider: OctoPrintProvider,
+        localMediaFileDataSource: LocalMediaFileDataSource
     ) = TimelapseRepository(
-        octoPrintProvider = octoPrintProvider
+        octoPrintProvider = octoPrintProvider,
+        localMediaFileDataSource = localMediaFileDataSource,
     )
 }

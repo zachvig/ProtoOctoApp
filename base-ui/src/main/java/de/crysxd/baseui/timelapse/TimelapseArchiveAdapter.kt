@@ -10,6 +10,7 @@ import de.crysxd.baseui.R
 import de.crysxd.baseui.common.ViewBindingHolder
 import de.crysxd.baseui.databinding.TimelapseArchiveItemBinding
 import de.crysxd.octoapp.base.ext.asStyleFileSize
+import de.crysxd.octoapp.base.ext.format
 import de.crysxd.octoapp.octoprint.models.timelapse.TimelapseFile
 
 class TimelapseArchiveAdapter : RecyclerView.Adapter<TimelapseArchiveAdapter.TimelapseViewHolder>() {
@@ -33,9 +34,9 @@ class TimelapseArchiveAdapter : RecyclerView.Adapter<TimelapseArchiveAdapter.Tim
         holder.binding.subtitle.text = when {
             item.recording == true -> "Recording...**"
             item.rendering == true -> "Rendering...**"
-            else -> listOf(item.date, item.bytes?.asStyleFileSize()).joinToString()
+            else -> holder.itemView.context.getString(R.string.x_y, item.unixDate?.format(), item.bytes.asStyleFileSize())
         }
-        holder.binding.progress.isVisible = item.rendering == true || item.rendering == true
+        holder.binding.progress.isVisible = item.rendering == true || item.recording == true
         if (holder.binding.progress.isVisible) {
             holder.binding.thumb.setImageDrawable(null)
         } else {

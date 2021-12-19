@@ -54,12 +54,12 @@ class TimelapseArchiveFragment : BaseFragment(), InsetAwareScreen {
             binding.errorState.isVisible = it is Error || (binding.errorState.isVisible && it is Loading)
             binding.recycler.isVisible = it is Idle || (binding.recycler.isVisible && it is Loading)
             binding.swipeLayout.isRefreshing = it is Loading
-            binding.errorMessage.text = (it as? Error)?.exception?.composeErrorMessage(requireContext())
+            binding.errorMessage.text = (it as? Error)?.exception?.composeErrorMessage(requireContext()) ?: binding.errorMessage.text
             binding.retry.setOnClickListener { viewModel.fetchLatest() }
         }
         viewModel.viewData.observe(viewLifecycleOwner) {
-            adapter.items = it
-            binding.errorState.isVisible = true
+            adapter.items = it ?: emptyList()
+            binding.errorState.isVisible = it?.isEmpty() == true
             binding.errorMessage.text = "No timelapses found**"
         }
     }
