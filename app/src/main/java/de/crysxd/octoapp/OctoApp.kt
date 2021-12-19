@@ -173,6 +173,7 @@ class OctoApp : Application() {
         // Delete all cache files
         AppScope.launch {
             BaseInjector.get().publicFileDirectory().deleteRecursively()
+            BaseInjector.get().localMediaFileDataSource().cleanUp()
         }
     }
 }

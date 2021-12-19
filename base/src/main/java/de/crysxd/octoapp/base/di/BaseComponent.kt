@@ -17,6 +17,7 @@ import de.crysxd.octoapp.base.data.repository.TimelapseRepository
 import de.crysxd.octoapp.base.data.repository.TutorialsRepository
 import de.crysxd.octoapp.base.data.repository.WidgetPreferencesRepository
 import de.crysxd.octoapp.base.data.source.LocalGcodeFileDataSource
+import de.crysxd.octoapp.base.data.source.LocalMediaFileDataSource
 import de.crysxd.octoapp.base.di.modules.AndroidModule
 import de.crysxd.octoapp.base.di.modules.DataSourceModule
 import de.crysxd.octoapp.base.di.modules.FileModule
@@ -39,6 +40,7 @@ import de.crysxd.octoapp.base.usecase.CyclePsuUseCase
 import de.crysxd.octoapp.base.usecase.DeleteFileUseCase
 import de.crysxd.octoapp.base.usecase.DiscoverOctoPrintUseCase
 import de.crysxd.octoapp.base.usecase.DownloadAndShareFileUseCase
+import de.crysxd.octoapp.base.usecase.DownloadAndShareTimelapseUseCase
 import de.crysxd.octoapp.base.usecase.EmergencyStopUseCase
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.ExecuteSystemCommandUseCase
@@ -101,6 +103,7 @@ interface BaseComponent {
 
     // FileModule
     fun publicFileDirectory(): File
+    fun localMediaFileDataSource(): LocalMediaFileDataSource
 
     // SslModule
     fun sslKeyStoreHandler(): SslKeyStoreHandler
@@ -170,6 +173,7 @@ interface BaseComponent {
     fun moveFileUseCase(): MoveFileUseCase
     fun createFolderUseCase(): CreateFolderUseCase
     fun downloadAndShareFileUseCase(): DownloadAndShareFileUseCase
+    fun downloadAndShareTimelapseUseCase(): DownloadAndShareTimelapseUseCase
     fun shareImageUseCase(): ShareImageUseCase
     fun getInstalledPluginsUseCase(): GetInstalledPluginsUseCase
     fun getConnectOctoEverywhereUrlUseCase(): GetRemoteServiceConnectUrlUseCase

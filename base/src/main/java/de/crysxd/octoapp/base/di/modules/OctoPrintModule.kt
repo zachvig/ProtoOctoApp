@@ -154,9 +154,11 @@ open class OctoPrintModule {
     @Provides
     open fun provideTimelapseRepository(
         octoPrintProvider: OctoPrintProvider,
-        localMediaFileDataSource: LocalMediaFileDataSource
+        localMediaFileDataSource: LocalMediaFileDataSource,
+        remoteMediaFileDataSource: RemoteMediaFileDataSource,
     ) = TimelapseRepository(
         octoPrintProvider = octoPrintProvider,
         localMediaFileDataSource = localMediaFileDataSource,
+        remoteMediaFileDataSource = remoteMediaFileDataSource,
     )
 }

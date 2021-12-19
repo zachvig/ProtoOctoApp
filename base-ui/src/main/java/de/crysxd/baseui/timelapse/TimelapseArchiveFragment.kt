@@ -47,7 +47,10 @@ class TimelapseArchiveFragment : BaseFragment(), InsetAwareScreen {
             true
         }
 
-        val adapter = TimelapseArchiveAdapter()
+        val adapter = TimelapseArchiveAdapter {
+            MenuBottomSheetFragment.createForMenu(TimelapseArchiveMenu(it)).show(childFragmentManager)
+        }
+
         binding.recycler.adapter = adapter
         binding.swipeLayout.setOnRefreshListener { viewModel.fetchLatest() }
         viewModel.viewState.observe(viewLifecycleOwner) {
@@ -61,6 +64,9 @@ class TimelapseArchiveFragment : BaseFragment(), InsetAwareScreen {
             adapter.items = it ?: emptyList()
             binding.errorState.isVisible = it?.isEmpty() == true
             binding.errorMessage.text = "No timelapses found**"
+        }
+        viewModel.picasso.observe(viewLifecycleOwner) {
+            adapter.picasso = it
         }
     }
 

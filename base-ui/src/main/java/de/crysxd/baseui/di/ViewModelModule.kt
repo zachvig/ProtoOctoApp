@@ -1,7 +1,9 @@
 package de.crysxd.baseui.di
 
 import android.app.Application
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
@@ -233,7 +235,9 @@ open class ViewModelModule {
     @ViewModelKey(TimelapseArchiveViewModel::class)
     fun provideTimelapseArchiveViewModel(
         timelapseRepository: TimelapseRepository,
+        picasso: LiveData<Picasso?>,
     ): ViewModel = TimelapseArchiveViewModel(
         timelapseRepository = timelapseRepository,
+        picasso = picasso,
     )
 }
