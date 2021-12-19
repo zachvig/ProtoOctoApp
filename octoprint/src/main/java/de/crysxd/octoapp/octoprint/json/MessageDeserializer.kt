@@ -75,6 +75,12 @@ class MessageDeserializer(
 
         "SettingsUpdated" -> Message.EventMessage.SettingsUpdated()
 
+        "MovieRendering" -> Message.EventMessage.MovieRendering()
+
+        "MovieDone" -> Message.EventMessage.MovieDone()
+
+        "MovieFailed" -> Message.EventMessage.MovieFailed()
+
         else -> {
             Message.EventMessage.Unknown(o["type"].asString)
         }

@@ -56,4 +56,6 @@ object MenuItems {
     const val MENU_ITEM_SHOW_WEBCAM_RESOLUTION = "webcam___show_resolution"
     const val MENU_ITEM_WEBCAM_ASPECT_RATIO_SOURCE = "webcam___aspect_ratio_source"
     const val MENU_ITEM_ENABLE_FULL_WEBCAM_RESOLUTION = "webcam___enable_full_resolution"
+    const val MENU_ITEM_TIMELAPSE_CONFIG = "octoprint___show_timelapse_config_menu"
+    const val MENU_ITEM_TIMELAPSE_ARCHIVE = "timelapse___archive"
 }

@@ -25,6 +25,9 @@ object UriLibrary {
     fun getHelpUri(): Uri =
         getUri(R.string.uri___help)
 
+    fun getTimelapseArchiveUri(): Uri =
+        getUri(R.string.uri___timelapse_archive)
+
     fun getTutorialsUri(): Uri =
         getUri(R.string.uri___tutorials)
 

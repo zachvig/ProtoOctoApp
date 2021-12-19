@@ -27,7 +27,6 @@ class SortOptionsMenu : Menu {
         override var groupId = "none"
         override val order = 1
         override val style = MenuItemStyle.Settings
-        override val isEnabled = true
         override val icon: Int = R.drawable.ic_round_sort_24
         override val options = listOf(
             Option(
@@ -50,7 +49,7 @@ class SortOptionsMenu : Menu {
 
         override fun getTitle(context: Context) = context.getString(R.string.file_manager___sorting_menu___sort_by)
 
-        override fun handleOptionActivated(host: MenuHost?, option: Option) {
+        override suspend fun handleOptionActivated(host: MenuHost?, option: Option) {
             BaseInjector.get().octoPreferences().fileManagerSettings = BaseInjector.get().octoPreferences().fileManagerSettings.copy(
                 sortBy = FileManagerSettings.SortBy.valueOf(option.value)
             )
@@ -65,7 +64,6 @@ class SortOptionsMenu : Menu {
         override var groupId = "none"
         override val order = 2
         override val style = MenuItemStyle.Settings
-        override val isEnabled = true
         override val icon: Int = R.drawable.ic_round_swap_vert_24
         override val options = listOf(
             Option(
@@ -80,7 +78,7 @@ class SortOptionsMenu : Menu {
 
         override fun getTitle(context: Context) = context.getString(R.string.file_manager___sorting_menu___direction)
 
-        override fun handleOptionActivated(host: MenuHost?, option: Option) {
+        override suspend fun handleOptionActivated(host: MenuHost?, option: Option) {
             BaseInjector.get().octoPreferences().fileManagerSettings = BaseInjector.get().octoPreferences().fileManagerSettings.copy(
                 sortDirection = FileManagerSettings.SortDirection.valueOf(option.value)
             )

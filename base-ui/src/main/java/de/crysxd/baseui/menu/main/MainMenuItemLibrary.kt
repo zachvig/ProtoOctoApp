@@ -53,6 +53,8 @@ class MenuItemLibrary {
         MenuItems.MENU_ITEM_CONFIRM_POWER_OFF to ConfirmPowerOffSettingsMenuItem::class,
         MenuItems.MENU_ITEM_PLUGINS to ShowPluginLibraryOctoPrintMenuItem::class,
         MenuItems.MENU_ITEM_COOL_DOWN to CoolDownMenuItem::class,
+        MenuItems.MENU_ITEM_TIMELAPSE_CONFIG to TimelapseConfigMenuItem::class,
+        MenuItems.MENU_ITEM_TIMELAPSE_ARCHIVE to TimelapseArchiveMenuItem::class,
     )
 
     operator fun get(itemId: String): MenuItem? = when {

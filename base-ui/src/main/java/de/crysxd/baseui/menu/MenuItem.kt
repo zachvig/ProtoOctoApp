@@ -17,7 +17,6 @@ interface MenuItem {
     val enforceSingleLine: Boolean get() = true
     val secondaryButtonIcon: Int? get() = null
     val canRunWithAppInBackground: Boolean get() = true
-    val isEnabled: Boolean get() = true
 
     @get:DrawableRes
     val icon: Int
@@ -29,5 +28,6 @@ interface MenuItem {
     fun getRightDetail(context: Context): CharSequence? = null
     fun getDescription(context: Context): CharSequence? = null
     fun isVisible(@IdRes destinationId: Int) = true
+    fun isEnabled(@IdRes destinationId: Int) = true
     fun getBadgeCount() = 0
 }

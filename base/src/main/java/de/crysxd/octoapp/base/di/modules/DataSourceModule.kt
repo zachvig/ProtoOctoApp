@@ -99,5 +99,11 @@ class DataSourceModule {
 
     @Provides
     @BaseScope
-    fun provideRemoteMediaFileDataSource() = RemoteMediaFileDataSource()
+    fun provideRemoteMediaFileDataSource(
+        octoPrintProvider: OctoPrintProvider,
+        octoPrintRepository: OctoPrintRepository,
+    ) = RemoteMediaFileDataSource(
+        octoPrintRepository = octoPrintRepository,
+        octoPrintProvider = octoPrintProvider,
+    )
 }

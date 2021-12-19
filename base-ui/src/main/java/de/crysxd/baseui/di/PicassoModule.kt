@@ -26,21 +26,24 @@ class PicassoModule {
                     .downloader(OkHttp3Downloader(octoPrint.createOkHttpClient()))
                     .memoryCache(LruCache(context))
                     .requestTransformer { request ->
-                        request.uri?.let { uri ->
-                            val newUri = octoPrint.webUrl
-                                .resolvePath(uri.path)
-                                .newBuilder()
-                                .query(uri.query)
-                                .build()
+                        if (request.uri.scheme == "file") {
+                            request
+                        } else {
+                            request.uri?.let { uri ->
+                                val newUri = octoPrint.webUrl
+                                    .resolvePath(uri.path)
+                                    .newBuilder()
+                                    .query(uri.query)
+                                    .build()
 
-                            Timber.d("Mapping $uri -> $newUri")
+                                Timber.d("Mapping $uri -> $newUri")
 
-                            request.buildUpon()
-                                .setUri(Uri.parse(newUri.toString()))
-                                .build()
-                        } ?: request
-                    }
-                    .build()
+                                request.buildUpon()
+                                    .setUri(Uri.parse(newUri.toString()))
+                                    .build()
+                            } ?: request
+                        }
+                    }.build()
             }
         }
 }

@@ -121,6 +121,12 @@ sealed class Message {
 
         class SettingsUpdated : EventMessage()
 
+        class MovieRendering : EventMessage()
+
+        class MovieDone : EventMessage()
+
+        class MovieFailed : EventMessage()
+
         object Disconnected : EventMessage()
 
         data class Unknown(val type: String) : EventMessage()

@@ -10,14 +10,18 @@ import de.crysxd.baseui.menu.Menu
 import de.crysxd.baseui.menu.MenuHost
 import de.crysxd.baseui.menu.MenuItem
 import de.crysxd.baseui.menu.MenuItemStyle
+import de.crysxd.baseui.menu.SubMenuItem
 import de.crysxd.baseui.menu.main.OctoPrintMenu.Companion.hideCompanionAnnouncement
 import de.crysxd.baseui.menu.main.OctoPrintMenu.Companion.shouldAnnounceCompanion
+import de.crysxd.baseui.timelapse.TimelapseMenu
 import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.data.models.MenuItems
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_EXECUTE_SYSTEM_COMMAND
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_CONFIGURE_REMOTE_ACCESS
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_OPEN_OCTOPRINT
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_SHOW_FILES
+import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_TIMELAPSE_ARCHIVE
+import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_TIMELAPSE_CONFIG
 import de.crysxd.octoapp.base.data.models.hasPlugin
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.open
@@ -82,6 +86,8 @@ class OctoPrintMenu : Menu {
                 OpenOctoPrintMenuItem(),
                 ConfigureRemoteAccessMenuItem(suppressBadge = false),
                 ShowFilesMenuItem(),
+                TimelapseConfigMenuItem(),
+                TimelapseArchiveMenuItem()
             ),
             sysCommands?.map {
                 ExecuteSystemCommandMenuItem(source = it.source ?: "Unknown", action = it.action ?: "Unknown")
@@ -210,5 +216,30 @@ class ShowPluginLibraryOctoPrintMenuItem(private val suppressBadge: Boolean = tr
         host?.getMenuActivity()?.let {
             UriLibrary.getPluginLibraryUri().open(it)
         }
+    }
+}
+
+class TimelapseConfigMenuItem : SubMenuItem() {
+    override val itemId = MENU_ITEM_TIMELAPSE_CONFIG
+    override var groupId = ""
+    override val order = 203
+    override val showAsSubMenu = true
+    override val icon = R.drawable.ic_round_video_settings_24
+    override val style = MenuItemStyle.OctoPrint
+    override val subMenu get() = TimelapseMenu()
+    override fun getTitle(context: Context) = "Timelapse config**"
+}
+
+class TimelapseArchiveMenuItem : MenuItem {
+    override val itemId = MENU_ITEM_TIMELAPSE_ARCHIVE
+    override var groupId = ""
+    override val order = 204
+    override val showAsSubMenu = true
+    override val style = MenuItemStyle.OctoPrint
+    override val icon = R.drawable.ic_round_video_library_24
+
+    override fun getTitle(context: Context) = "Timelapse archive**"
+    override suspend fun onClicked(host: MenuHost?) {
+        host?.getMenuActivity()?.let { UriLibrary.getTimelapseArchiveUri().open(it) }
     }
 }

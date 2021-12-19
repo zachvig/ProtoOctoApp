@@ -20,6 +20,7 @@ interface Menu : Parcelable {
     fun getCheckBoxText(context: Context): CharSequence? = null
     fun getBottomText(context: Context): CharSequence? = null
     fun getBottomMovementMethod(host: MenuHost): MovementMethod? = null
+    fun onDestroy() = Unit
 
     suspend fun getAnnouncement(context: Context): Announcement? = null
     fun onAnnouncementHidden() = Unit
