@@ -18,6 +18,7 @@ import de.crysxd.baseui.common.terminal.TerminalViewModel
 import de.crysxd.baseui.menu.MenuBottomSheetViewModel
 import de.crysxd.baseui.purchase.PurchaseViewModel
 import de.crysxd.baseui.timelapse.TimelapseArchiveViewModel
+import de.crysxd.baseui.timelapse.TimelapsePlaybackViewModel
 import de.crysxd.baseui.widget.EditWidgetsViewModel
 import de.crysxd.baseui.widget.extrude.ExtrudeWidgetViewModel
 import de.crysxd.baseui.widget.gcode.SendGcodeWidgetViewModel
@@ -240,4 +241,9 @@ open class ViewModelModule {
         timelapseRepository = timelapseRepository,
         picasso = picasso,
     )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(TimelapsePlaybackViewModel::class)
+    fun provideTimelapsePlaybackViewModel(): ViewModel = TimelapsePlaybackViewModel()
 }

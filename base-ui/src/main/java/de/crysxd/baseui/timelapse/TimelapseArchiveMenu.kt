@@ -1,6 +1,7 @@
 package de.crysxd.baseui.timelapse
 
 import android.content.Context
+import androidx.core.net.toUri
 import de.crysxd.baseui.R
 import de.crysxd.baseui.menu.ConfirmedMenuItem
 import de.crysxd.baseui.menu.Menu
@@ -47,14 +48,15 @@ class TimelapseArchiveMenu(private val timelapseFile: TimelapseFile) : Menu {
     class PlayTimelapseMenuItem(private val file: TimelapseFile) : MenuItem {
         override val itemId = "play_timelapse"
         override var groupId = ""
-        override val order = 1
+        override val order = 3
         override val canBePinned = false
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_play_arrow_24
 
         override fun getTitle(context: Context) = "Download & play timelapse**"
         override suspend fun onClicked(host: MenuHost?) {
-            host?.closeMenu()
+            val uri = requireNotNull(BaseInjector.get().timelapseRepository().download(file)?.toUri()) { "Failed to get file" }
+            host?.getNavController()?.navigate(TimelapseArchiveFragmentDirections.actionPlayTimelapse(uri))
         }
     }
 

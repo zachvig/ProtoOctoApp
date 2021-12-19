@@ -4,8 +4,9 @@ apply from: '../shared.gradle'
 dependencies {
     implementation project(':base')
     implementation "androidx.browser:browser:1.4.0"
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.16.0'
-    implementation 'com.google.android.exoplayer:exoplayer-hls:2.16.0'
-    implementation 'com.google.android.exoplayer:exoplayer-rtsp:2.16.0'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.16.1'
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.16.1'
+    implementation 'com.google.android.exoplayer:exoplayer-rtsp:2.16.1'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.16.1'
     implementation 'com.jjoe64:graphview:4.2.2'
 }
