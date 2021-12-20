@@ -21,14 +21,14 @@ import java.text.NumberFormat
 @Parcelize
 class TimelapseMenu(private val startPrintResultId: Int? = null) : Menu {
 
-    override suspend fun getTitle(context: Context) = "Timelapse Config**"
+    override suspend fun getTitle(context: Context) = context.getString(R.string.timelapse_config___title)
 
     override suspend fun getMenuItem(): List<MenuItem> {
         val config = BaseInjector.get().timelapseRepository().fetchLatest().config
         requireNotNull(config)
         return listOfNotNull(
 
-            TimelapseModeMenuItem(config),
+            TimelapseModeMenuItem(BaseInjector.get().localizedContext(), config),
             TimelapseMinimumIntervalMenuItem(config),
             TimelapseZHopMenuItem(config),
             TimelapseFrameRateMenuItem(config),
@@ -64,7 +64,7 @@ class TimelapseMenu(private val startPrintResultId: Int? = null) : Menu {
                 R.id.action_enter_value,
                 EnterValueFragmentArgs(
                     title = getTitle(context).toString(),
-                    action = "Update**",
+                    action = context.getString(R.string.timelapse_config___change),
                     resultId = result.first,
                     hint = getTitle(context).toString(),
                     value = value,
@@ -82,7 +82,7 @@ class TimelapseMenu(private val startPrintResultId: Int? = null) : Menu {
         }
     }
 
-    class TimelapseModeMenuItem(private val config: TimelapseConfig) : RevolvingOptionsMenuItem() {
+    class TimelapseModeMenuItem(context: Context, private val config: TimelapseConfig) : RevolvingOptionsMenuItem() {
         override val itemId = "timelapse_mode"
         override var groupId = ""
         override val order = 262
@@ -91,12 +91,12 @@ class TimelapseMenu(private val startPrintResultId: Int? = null) : Menu {
         override val icon = R.drawable.ic_round_videocam_24
         override val activeValue get() = (config.type ?: TimelapseConfig.Type.Off).name
         override val options = listOf(
-            Option(label = "Off**", value = TimelapseConfig.Type.Off.name),
-            Option(label = "Timed**", value = TimelapseConfig.Type.Timed.name),
-            Option(label = "On Z change**", value = TimelapseConfig.Type.ZChange.name),
+            Option(label = context.getString(R.string.timelapse_config___mode___off), value = TimelapseConfig.Type.Off.name),
+            Option(label = context.getString(R.string.timelapse_config___mode___timed), value = TimelapseConfig.Type.Timed.name),
+            Option(label = context.getString(R.string.timelapse_config___mode___zchange), value = TimelapseConfig.Type.ZChange.name),
         )
 
-        override fun getTitle(context: Context) = "Mode**"
+        override fun getTitle(context: Context) = context.getString(R.string.timelapse_config___mode)
         override suspend fun handleOptionActivated(host: MenuHost?, option: Option) {
             BaseInjector.get().timelapseRepository().update { copy(type = TimelapseConfig.Type.valueOf(option.value)) }
             host?.reloadMenu()
@@ -111,7 +111,7 @@ class TimelapseMenu(private val startPrintResultId: Int? = null) : Menu {
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_access_time_24
 
-        override fun getTitle(context: Context) = "Minimum interval**"
+        override fun getTitle(context: Context) = context.getString(R.string.timelapse_config___min_interval)
         override fun isVisible(destinationId: Int) = config.type == TimelapseConfig.Type.ZChange
         override fun getRightDetail(context: Context) = config.minDelay?.let { context.getString(R.string.x_secs, it) }
         override suspend fun onClicked(host: MenuHost?) {
@@ -129,7 +129,7 @@ class TimelapseMenu(private val startPrintResultId: Int? = null) : Menu {
         override val icon = R.drawable.ic_round_access_time_24
         override val canBePinned = false
 
-        override fun getTitle(context: Context) = "Interval**"
+        override fun getTitle(context: Context) = context.getString(R.string.timelapse_config___interval)
         override fun isVisible(destinationId: Int) = config.type == TimelapseConfig.Type.Timed
         override fun getRightDetail(context: Context) = config.interval?.let { context.getString(R.string.x_secs, it) }
         override suspend fun onClicked(host: MenuHost?) {
@@ -147,7 +147,7 @@ class TimelapseMenu(private val startPrintResultId: Int? = null) : Menu {
         override val icon = R.drawable.ic_round_height_24
         override val canBePinned = false
 
-        override fun getTitle(context: Context) = "Retraction Z-Hop**"
+        override fun getTitle(context: Context) = context.getString(R.string.timelapse_config___retraction_z_hop)
         override fun isVisible(destinationId: Int) = config.type == TimelapseConfig.Type.ZChange
         override fun getRightDetail(context: Context) = config.retractionZHop?.let { context.getString(R.string.x_mm, NumberFormat.getInstance().format(it)) }
         override suspend fun onClicked(host: MenuHost?) {
@@ -169,7 +169,7 @@ class TimelapseMenu(private val startPrintResultId: Int? = null) : Menu {
         override val icon = R.drawable.ic_round_burst_mode_24
         override val canBePinned = false
 
-        override fun getTitle(context: Context) = "Frame rate**"
+        override fun getTitle(context: Context) = context.getString(R.string.timelapse_config___frame_rate)
         override fun isEnabled(destinationId: Int) = config.type != TimelapseConfig.Type.Off
         override fun getRightDetail(context: Context) = config.fps?.let { context.getString(R.string.x_fps, it) }
         override suspend fun onClicked(host: MenuHost?) {
@@ -187,7 +187,7 @@ class TimelapseMenu(private val startPrintResultId: Int? = null) : Menu {
         override val icon = R.drawable.ic_round_update_24
         override val canBePinned = false
 
-        override fun getTitle(context: Context) = "Post roll**"
+        override fun getTitle(context: Context) = context.getString(R.string.timelapse_config___post_roll)
         override fun isEnabled(destinationId: Int) = config.type != TimelapseConfig.Type.Off
         override fun getRightDetail(context: Context) = config.postRoll?.let { context.getString(R.string.x_secs, it) }
         override suspend fun onClicked(host: MenuHost?) {
@@ -204,7 +204,7 @@ class TimelapseMenu(private val startPrintResultId: Int? = null) : Menu {
         override val order = 270
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_control_camera_24
-        override fun getTitle(context: Context) = "Ask before printing**"
+        override fun getTitle(context: Context) = context.getString(R.string.timelapse_config___ask_before_printing)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             BaseInjector.get().octoPreferences().askForTimelapseBeforePrinting = enabled
         }
@@ -218,9 +218,8 @@ class TimelapseMenu(private val startPrintResultId: Int? = null) : Menu {
         override val icon = R.drawable.ic_round_save_24
         override val canBePinned = false
 
-        override fun getTitle(context: Context) = "Save as default**"
-        override fun getDescription(context: Context) =
-            "The timelapse config is reset when OctoPrint restarts. This option allows you to set the current config as default across restarts.**"
+        override fun getTitle(context: Context) = context.getString(R.string.timelapse_config___save_as_default)
+        override fun getDescription(context: Context) = context.getString(R.string.timelapse_config___save_as_default___description)
 
         override suspend fun onClicked(host: MenuHost?) {
             BaseInjector.get().timelapseRepository().update {
@@ -237,7 +236,7 @@ class TimelapseMenu(private val startPrintResultId: Int? = null) : Menu {
         override val icon = R.drawable.ic_round_send_24
         override val canBePinned = false
 
-        override fun getTitle(context: Context) = "Start print**"
+        override fun getTitle(context: Context) = context.getString(R.string.timelapse_config___start_print)
 
         override suspend fun onClicked(host: MenuHost?) {
             NavigationResultMediator.postResult(resultId, true)
