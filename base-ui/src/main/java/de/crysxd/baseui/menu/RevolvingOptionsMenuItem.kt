@@ -16,7 +16,7 @@ abstract class RevolvingOptionsMenuItem : MenuItem {
         handleOptionActivated(host, options[next])
     }
 
-    abstract fun handleOptionActivated(host: MenuHost?, option: Option)
+    abstract suspend fun handleOptionActivated(host: MenuHost?, option: Option)
 
     data class Option(
         val label: CharSequence,

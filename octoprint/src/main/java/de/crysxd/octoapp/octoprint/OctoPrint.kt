@@ -137,6 +137,9 @@ class OctoPrint(
     fun createPrinterApi(): PrinterApi.Wrapper =
         PrinterApi.Wrapper(createRetrofit().create(PrinterApi::class.java))
 
+    fun createTimelapseApi(): TimelapseApi.Wrapper =
+        TimelapseApi.Wrapper(createRetrofit().create(TimelapseApi::class.java))
+
     fun createPowerPluginsCollection() = PowerPluginsCollection(createRetrofit())
 
     fun createMaterialManagerPluginsCollection() = MaterialManagerPluginsCollection(createRetrofit("."))

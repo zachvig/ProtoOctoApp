@@ -48,17 +48,20 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         OctoAnalytics.logEvent(OctoAnalytics.Event.RemoteConfigScreenOpened)
         super.onViewCreated(view, savedInstanceState)
 
+        binding.appBarLayout.header.isVisible = true
+        binding.appBarLayout.header.setImageResource(R.drawable.octo_remote)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            binding.header.postDelayed({
-                (binding.header.drawable as? Animatable2)?.start()
+            binding.appBarLayout.header.postDelayed({
+                (binding.appBarLayout.header.drawable as? Animatable2)?.start()
             }, 1000)
         }
 
         val adapter = PagerAdapter(requireContext(), childFragmentManager, lifecycle)
         installTabs(adapter)
 
-        binding.description.text = getString(R.string.configure_remote_acces___description).toHtml()
-        binding.description.movementMethod = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(requireOctoActivity()))
+        binding.appBarLayout.title.setText(R.string.configure_remote_access___title)
+        binding.appBarLayout.subtitle.text = getString(R.string.configure_remote_acces___description).toHtml()
+        binding.appBarLayout.subtitle.movementMethod = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(requireOctoActivity()))
 
         viewModel.viewEvents.observe(viewLifecycleOwner) {
             if (it.consumed) {
@@ -103,17 +106,13 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         }
         binding.viewPager.setPageTransformer(pageTransformer)
 
-        TabLayoutMediator(binding.tabs, binding.viewPager) { tab, position ->
+        TabLayoutMediator(binding.appBarLayout.tabs, binding.viewPager) { tab, position ->
             tab.text = adapter.getTitle(position)
         }.attach()
 
         helper.install(
             octoActivity = requireOctoActivity(),
-            tabs = binding.tabs,
-            tabsContainer = binding.tabsContainer,
-            appBar = binding.appBar,
-            toolbar = binding.toolbar,
-            toolbarContainer = binding.toolbarContainer,
+            binding = binding.appBarLayout,
             showOctoInToolbar = false
         )
     }

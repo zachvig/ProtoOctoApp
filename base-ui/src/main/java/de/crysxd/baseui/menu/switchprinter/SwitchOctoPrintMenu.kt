@@ -1,6 +1,7 @@
 package de.crysxd.baseui.menu.switchprinter
 
 import android.content.Context
+import androidx.annotation.IdRes
 import androidx.core.os.bundleOf
 import de.crysxd.baseui.OctoActivity
 import de.crysxd.baseui.R
@@ -102,7 +103,7 @@ class AddInstanceMenuItem : MenuItem {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_add_24
 
-    override val isEnabled = isQuickSwitchEnabled
+    override fun isEnabled(@IdRes destinationId: Int): Boolean = isQuickSwitchEnabled
     override fun isVisible(destinationId: Int) = isAnyActive
     override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_add_instance)
     override suspend fun onClicked(host: MenuHost?) {

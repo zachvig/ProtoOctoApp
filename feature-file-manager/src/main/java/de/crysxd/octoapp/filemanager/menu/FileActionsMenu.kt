@@ -80,7 +80,7 @@ class FileActionsMenu(val file: FileObject) : Menu {
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_edit_24
         override val canBePinned = false
-        override val isEnabled get() = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
+        override fun isEnabled(destinationId: Int) = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
 
         override fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___rename)
         override suspend fun onClicked(host: MenuHost?) {
@@ -123,7 +123,7 @@ class FileActionsMenu(val file: FileObject) : Menu {
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_content_copy_24
         override val canBePinned = false
-        override val isEnabled get() = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
+        override fun isEnabled(destinationId: Int) = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
 
         override fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___copy)
         override suspend fun onClicked(host: MenuHost?) {
@@ -144,7 +144,7 @@ class FileActionsMenu(val file: FileObject) : Menu {
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_content_cut_24
         override val canBePinned = false
-        override val isEnabled get() = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
+        override fun isEnabled(destinationId: Int) = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
 
         override fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___move)
         override suspend fun onClicked(host: MenuHost?) {
@@ -165,7 +165,7 @@ class FileActionsMenu(val file: FileObject) : Menu {
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_share_24
         override val canBePinned = false
-        override val isEnabled get() = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
+        override fun isEnabled(destinationId: Int) = BillingManager.isFeatureEnabled(BillingManager.FEATURE_FILE_MANAGEMENT)
 
         override fun getTitle(context: Context) = context.getString(R.string.file_manager___file_menu___download_and_share)
         override fun getDescription(context: Context) =

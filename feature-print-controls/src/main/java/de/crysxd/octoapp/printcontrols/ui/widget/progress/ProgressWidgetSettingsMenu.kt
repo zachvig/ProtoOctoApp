@@ -50,7 +50,7 @@ class ProgressWidgetSettingsMenu : Menu {
             )
         }
 
-        override fun handleOptionActivated(host: MenuHost?, option: Option) {
+        override suspend fun handleOptionActivated(host: MenuHost?, option: Option) {
             prefs.progressWidgetSettings = prefs.progressWidgetSettings.copy(fontSize = ProgressWidgetSettings.FontSize.valueOf(option.value))
         }
     }
@@ -75,7 +75,7 @@ class ProgressWidgetSettingsMenu : Menu {
             )
         }
 
-        override fun handleOptionActivated(host: MenuHost?, option: Option) {
+        override suspend fun handleOptionActivated(host: MenuHost?, option: Option) {
             prefs.progressWidgetSettings = prefs.progressWidgetSettings.copy(printNameStyle = ProgressWidgetSettings.PrintNameStyle.valueOf(option.value))
         }
     }
@@ -100,7 +100,7 @@ class ProgressWidgetSettingsMenu : Menu {
             )
         }
 
-        override fun handleOptionActivated(host: MenuHost?, option: Option) {
+        override suspend fun handleOptionActivated(host: MenuHost?, option: Option) {
             prefs.progressWidgetSettings = prefs.progressWidgetSettings.copy(etaStyle = ProgressWidgetSettings.EtaStyle.valueOf(option.value))
         }
     }

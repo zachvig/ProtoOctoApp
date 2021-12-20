@@ -191,6 +191,14 @@ class MenuAdapter(
         holder.binding.icon.setColorFilter(foreground.defaultColor)
         holder.binding.button.strokeColor = if (item.showAsOutlined) foreground else transparent
         holder.binding.button.rippleColor = if (item.showAsOutlined) foreground else background
+        holder.binding.toggle.thumbTintList = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
+            intArrayOf(foreground.defaultColor, ContextCompat.getColor(context, R.color.light_grey))
+        )
+        holder.binding.toggle.trackTintList = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
+            intArrayOf(background.defaultColor, ContextCompat.getColor(context, R.color.light_grey_translucent))
+        )
         holder.root.alpha = if (preparedItem.isEnabled) 1f else 0.5f
     }
 }

@@ -63,6 +63,11 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.menuBackStack.forEach { it.onDestroy() }
+    }
+
     private val rootMenu get() = arguments?.getParcelable<Menu>(KEY_MENU) ?: MainMenu()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -129,7 +134,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
                                 right = it.getRightDetail(context),
                                 description = it.getDescription(context),
                                 isVisible = it.isVisible(currentDestination),
-                                isEnabled = it.isEnabled,
+                                isEnabled = it.isEnabled(currentDestination),
                                 badgeCount = it.getBadgeCount()
                             )
                         }.filter {
@@ -229,6 +234,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
 
     private fun abortShowMenu(showPrevious: Boolean = true) {
         if (!popMenu(showPrevious)) {
+            viewModel.menuBackStack.last().onDestroy()
             dismissAllowingStateLoss()
         }
     }
@@ -236,7 +242,7 @@ open class MenuBottomSheetFragment : BaseBottomSheetDialogFragment(), MenuHost {
     private fun popMenu(showPrevious: Boolean = true): Boolean = if (viewModel.menuBackStack.size <= 1) {
         false
     } else {
-        viewModel.menuBackStack.removeLast()
+        viewModel.menuBackStack.removeLast().onDestroy()
         if (showPrevious) {
             showMenu(viewModel.menuBackStack.last())
         }
