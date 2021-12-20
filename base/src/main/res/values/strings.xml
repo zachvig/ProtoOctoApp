@@ -1001,4 +1001,6 @@ happy printing!"</string>
     <string name="timelapse_archive___no_timelapse_found">"No timelapses found"</string>
     <string name="timelapse_archive___title">"Timelapse Archive"</string>
     <string name="timelapse_archive___subtitle"><![CDATA[OctoPrint let\'s you create timelapses of your prints. You can see the recordings below, manage your settings <a href="">here</a>.]]></string>
+    <string name="x_secs">"%d sec"</string>
+    <string name="x_fps">"%d FPS"</string>
 </resources>
