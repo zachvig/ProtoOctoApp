@@ -45,6 +45,9 @@ class OctoApp : Application() {
             wrapped?.uncaughtException(t, e)
         }
 
+        // Setup Firebase crash fix
+        setupFirebaseCrashFix()
+
         // Setup Dagger
         BaseInjector.init(this)
         initializeDagger()
@@ -170,6 +173,7 @@ class OctoApp : Application() {
         // Delete all cache files
         AppScope.launch {
             BaseInjector.get().publicFileDirectory().deleteRecursively()
+            BaseInjector.get().localMediaFileDataSource().cleanUp()
         }
     }
 }

@@ -34,6 +34,10 @@ sealed class Message {
         val isPsuOn: Boolean
     ) : Message()
 
+    data class CompanionPluginMessage(
+        val m117: String? = null
+    ) : Message()
+
     object ReAuthRequired : Message()
 
     data class RawMessage(
@@ -116,6 +120,12 @@ sealed class Message {
         ) : EventMessage()
 
         class SettingsUpdated : EventMessage()
+
+        class MovieRendering : EventMessage()
+
+        class MovieDone : EventMessage()
+
+        class MovieFailed : EventMessage()
 
         object Disconnected : EventMessage()
 

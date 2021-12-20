@@ -25,6 +25,9 @@ object UriLibrary {
     fun getHelpUri(): Uri =
         getUri(R.string.uri___help)
 
+    fun getTimelapseArchiveUri(): Uri =
+        getUri(R.string.uri___timelapse_archive)
+
     fun getTutorialsUri(): Uri =
         getUri(R.string.uri___tutorials)
 
@@ -37,8 +40,8 @@ object UriLibrary {
     fun getWebcamUri(): Uri =
         getUri(R.string.uri___webcam)
 
-    fun getPluginLibraryUri(): Uri =
-        getUri(R.string.uri___plugin_library)
+    fun getPluginLibraryUri(category: String? = null): Uri =
+        getUri(R.string.uri___plugin_library, "{category}", category ?: "")
 
     fun getFixOctoPrintConnectionUri(baseUrl: HttpUrl, instanceId: String): Uri =
         getUri(

@@ -55,7 +55,7 @@ Das Widget steuert immer die OctoPrint-Instanz, die gerade in der App aktiv ist"
     <string name="file_manager___file_details___completed">"Abgeschlossen"</string>
 
     <!-- Auto filled -->
-    <string name="configure_remote_acces___description"><![CDATA[Nicht zu Hause? Alleine kann OctoApp dein OctoPrint nicht erreichen, da es nur in Ihrem Heimnetzwerk verfügbar ist. Du musst OctoPrint über das Internet verfügbar machen, damit OctoApp von überall darauf zugreifen kann. Erfahre mehr <a href="https://app.octoapp.eu/help/use_remotely">hier</a>.]]></string>
+    <string name="configure_remote_acces___description"><![CDATA[Nicht zu Hause? Alleine kann OctoApp dein OctoPrint nicht erreichen, da es nur in Ihrem Heimnetzwerk verfügbar ist. Du musst OctoPrint über das Internet verfügbar machen, damit OctoApp von überall darauf zugreifen kann. Erfahre mehr <a href="https://app.octoapp.eu/help/faq/use_remotely">hier</a>.]]></string>
 
     <!-- Auto filled -->
     <string name="configure_remote_acces___ignore_issue">"Ignorieren und fortfahren"</string>
@@ -174,9 +174,6 @@ Das Widget steuert immer die OctoPrint-Instanz, die gerade in der App aktiv ist"
     <string name="connect_printer___waiting_for_user_subtitle">"Du kannst die automatische Verbindung in den Einstellungen aktivieren"</string>
     <string name="connect_printer___waiting_for_user_title">"Verbinde, wenn du bereit bist"</string>
     <string name="connection_failed">"Verbindung fehlgeschlagen"</string>
-
-    <!-- Fuzzy -->
-    <string name="file_manager___thumbnail_info___popup_cura">"Cura Plugin"</string>
     <string name="distance_in_mm_negative_for_retract">"Abstand in mm (negativ für Zurückziehen)"</string>
     <string name="done">"Erledigt"</string>
     <string name="download_x">"Herunterladen %s"</string>
@@ -417,7 +414,7 @@ Das Widget steuert immer die OctoPrint-Instanz, die gerade in der App aktiv ist"
     <string name="main_menu___title_quick_switch_disabled">"Schnellwechsel deaktiviert"</string>
 
     <!-- Auto filled -->
-    <string name="material_menu___bottom_text"><![CDATA[<small>„A“ bedeutet aktiviert. Materialien werden von <a href="https://plugins.octoprint.org/plugins/SpoolManager/">SpoolManager</a> oder <a href="https://plugins.octoprint.org/plugins/filamentmanager/">FilamentManager</a> bereitgestellt und können in der Weboberfläche bearbeitet werden.</small>]]></string>
+    <string name="material_menu___bottom_text"></string>
 
     <!-- Auto filled -->
     <string name="material_menu___empty_state">"OctoApp ist mit den Plugins FilamentManager und SpoolManager integriert, damit du den Überblick über deine Werkstoffe behälst. Einmal eingerichtet, finden du deine Spulen hier."</string>
@@ -521,7 +518,7 @@ Das Widget steuert immer die OctoPrint-Instanz, die gerade in der App aktiv ist"
     <string name="power_controls___x_offline">"%s (offline)"</string>
 
     <!-- Auto filled -->
-    <string name="power_menu___bottom_text"><![CDATA[<small>Stromgeräte werden von einem <a href="https://app.octoapp.eu/help/supported_plugin">unterstützten Plugin</a></small> bereitgestellt]]></string>
+    <string name="power_menu___bottom_text"><![CDATA[<small>Stromgeräte werden von einem <a href="https://app.octoapp.eu/help/pluginLibrary?category=power">unterstützten Plugin</a></small> bereitgestellt]]></string>
 
     <!-- Auto filled -->
     <string name="power_menu___checkbox_label">"Gerät in Zukunft immer verwenden"</string>
@@ -604,9 +601,6 @@ Das Widget steuert immer die OctoPrint-Instanz, die gerade in der App aktiv ist"
 
     <!-- Fuzzy -->
     <string name="file_manager___file_details___print_time">"Druckzeit"</string>
-
-    <!-- Fuzzy -->
-    <string name="file_manager___thumbnail_info___popup_prusa">"Prusa Slicer Plugin"</string>
     <string name="purchase_dialog_button">"Zurück zur App"</string>
     <string name="purchase_dialog_subtitle">"Alle Features wurden freigeschaltet"</string>
     <string name="purchase_dialog_text">"Deine Unterstützung ermöglicht es mir, die Entwicklung von OctoApp fortzusetzen! Wenn du Vorschläge, Probleme oder Gedanken hast, kannst du dich jederzeit an %s wenden!"</string>
@@ -797,9 +791,6 @@ gutes Drucken!"</string>
 
     <!-- Fuzzy -->
     <string name="file_manager___file_list___no_files_in_folder">"Dieser Ordner enthält keine Dateien"</string>
-
-    <!-- Fuzzy -->
-    <string name="file_manager___thumbnail_info___popup_message">"Installiere das untenstehende Plugin für deinen Slicer, um Vorschaubilder aller Dateien zu erhalten!"</string>
     <string name="time_left_x">"Verbleibende Zeit: %s"</string>
     <string name="toggle_favorite">"Favorit umschalten"</string>
     <string name="trouble_shooting">"Fehlersuche"</string>
@@ -1062,4 +1053,8 @@ gutes Drucken!"</string>
     <string name="connect_printer___auto_menu___manual_option">"Manuell verbinden"</string>
     <string name="temperature_widget___change_offset">"Versatz zu Gcode Temperaturen"</string>
     <string name="main_menu___item_cool_down">"Abkühlen"</string>
+    <string name="progress_widget___printer_message"></string>
+    <string name="progress_widget___settings___show_printer_message"></string>
+    <string name="progress_widget___settings___printer_message_description"></string>
+    <string name="progress_widget___printer_message_no_message"></string>
 </resources>

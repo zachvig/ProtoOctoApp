@@ -1,8 +1,9 @@
 package de.crysxd.octoapp.base.usecase
 
 import de.crysxd.octoapp.base.OctoAnalytics
-import de.crysxd.octoapp.base.network.OctoPrintProvider
+import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.models.files.FileCommand
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import timber.log.Timber
@@ -11,15 +12,21 @@ import javax.inject.Inject
 class StartPrintJobUseCase @Inject constructor(
     private val octoPrintProvider: OctoPrintProvider,
     private val octoPrintRepository: OctoPrintRepository,
+    private val octoPreferences: OctoPreferences,
 ) : UseCase<StartPrintJobUseCase.Params, StartPrintJobUseCase.Result>() {
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree): Result {
         val octoprint = octoPrintProvider.octoPrint()
         val settings = octoPrintRepository.getActiveInstanceSnapshot()?.settings ?: octoprint.createSettingsApi().getSettings()
         val materialManagerAvailable = octoprint.createMaterialManagerPluginsCollection().isMaterialManagerAvailable(settings)
+        val timelapseConfigRequired = octoPreferences.askForTimelapseBeforePrinting
 
         if (materialManagerAvailable && !param.materialSelectionConfirmed) {
             return Result.MaterialSelectionRequired
+        }
+
+        if (timelapseConfigRequired && !param.timelapseConfigConfirmed) {
+            return Result.TimelapseConfigRequired
         }
 
         OctoAnalytics.logEvent(OctoAnalytics.Event.PrintStartedByApp)
@@ -29,11 +36,13 @@ class StartPrintJobUseCase @Inject constructor(
 
     data class Params(
         val file: FileObject.File,
-        val materialSelectionConfirmed: Boolean
+        val materialSelectionConfirmed: Boolean,
+        val timelapseConfigConfirmed: Boolean,
     )
 
     sealed class Result {
         object PrintStarted : Result()
         object MaterialSelectionRequired : Result()
+        object TimelapseConfigRequired : Result()
     }
 }

@@ -47,9 +47,11 @@ class OctoPreferences(
         private const val KEY_REMOTE_ACCESS_ANNOUNCEMENT_HIDDEN_AT = "octoeverywhere_announcemenyt_hidden_at"
         private const val KEY_TUTORIALS_SEEN_AT = "tutorials_seen_at"
         private const val KEY_ALLOW_TERMINAL_DURING_PRINT = "allow_terminal_during_print"
+        private const val KEY_SUPPRESS_REMOTE_NOTIFICATIONS_INIT = "suppress_remote_notification_init"
         private const val KEY_GCODE_PREVIEW = "gcode_preview"
         private const val KEY_FILE_MANAGER = "file_manager"
         private const val KEY_PROGRESS_WIDGET = "progress_widget"
+        private const val KEY_ASK_FOR_TIMELAPSE_BEFORE_PRINTING = "ask_for_timelapse_before_printing"
 
         const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_OCTOPRINT = "octprint"
         const val VALUE_WEBCAM_ASPECT_RATIO_SOURCE_IMAGE = "native_image"
@@ -222,6 +224,18 @@ class OctoPreferences(
         get() = sharedPreferences.getBoolean(KEY_ALLOW_TERMINAL_DURING_PRINT, false)
         set(value) {
             edit { putBoolean(KEY_ALLOW_TERMINAL_DURING_PRINT, value) }
+        }
+
+    var suppressRemoteMessageInitialization
+        get() = sharedPreferences.getBoolean(KEY_SUPPRESS_REMOTE_NOTIFICATIONS_INIT, false)
+        set(value) {
+            edit { putBoolean(KEY_SUPPRESS_REMOTE_NOTIFICATIONS_INIT, value) }
+        }
+
+    var askForTimelapseBeforePrinting
+        get() = sharedPreferences.getBoolean(KEY_ASK_FOR_TIMELAPSE_BEFORE_PRINTING, false)
+        set(value) {
+            edit { putBoolean(KEY_ASK_FOR_TIMELAPSE_BEFORE_PRINTING, value) }
         }
 
     var gcodePreviewSettings: GcodePreviewSettings

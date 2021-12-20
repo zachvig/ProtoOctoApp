@@ -188,6 +188,7 @@ class SelectFileAdapter(
             holder.binding.imageViewArrow.isVisible = file.file is FileObject.Folder
             holder.binding.progress.isVisible = file.file == null
             holder.binding.highlightBackground.isVisible = file.highlight
+            holder.binding.separator.isVisible = !holder.binding.highlightBackground.isVisible
             val imagePadding = context.resources.getDimensionPixelSize(if (holder.binding.progress.isVisible) R.dimen.margin_1_2 else R.dimen.margin_1)
             holder.binding.imageViewFileIcon.setPadding(imagePadding, imagePadding, imagePadding, imagePadding)
 

@@ -129,4 +129,15 @@
         app:value="This_is_a_file_withsdi fh sdif hsdiof hdsihf s dfhossdu fhsduo fh.gcode"
         app:valueMaxLines="3" />
 
+    <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
+        android:id="@+id/m117Message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:label="@string/progress_widget___print_name"
+        app:layout_constraintEnd_toEndOf="@id/itemsFlow"
+        app:layout_constraintStart_toStartOf="@id/itemsFlow"
+        app:layout_constraintTop_toBottomOf="@id/printName"
+        app:value="This_is_a_file_withsdi fh sdif hsdiof hdsihf s dfhossdu fhsduo fh.gcode"
+        app:valueMaxLines="1" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

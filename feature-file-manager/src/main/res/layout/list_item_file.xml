@@ -103,4 +103,13 @@
         app:srcCompat="@drawable/ic_round_keyboard_arrow_right_24"
         app:tint="?android:attr/textColorPrimary" />
 
+    <View
+        android:id="@+id/separator"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/input_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/textViewTitle" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

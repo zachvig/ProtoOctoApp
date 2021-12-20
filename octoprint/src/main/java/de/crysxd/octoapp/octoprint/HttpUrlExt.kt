@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.octoprint
 
 import de.crysxd.octoapp.octoprint.exceptions.IllegalBasicAuthConfigurationException
+import de.crysxd.octoapp.octoprint.exceptions.InvalidPathException
 import de.crysxd.octoapp.octoprint.models.ConnectionType
 import okhttp3.Credentials
 import okhttp3.HttpUrl
@@ -17,7 +18,7 @@ fun HttpUrl.withoutBasicAuth() = newBuilder()
 fun HttpUrl.resolvePath(path: String?) = path?.let {
     // This is similar to the old behaviour when we did not use HttpUrl
     val sanitized = (newBuilder().query(null).toString().removeSuffix("/") + "/").toHttpUrl()
-    sanitized.newBuilder(it)?.build() ?: throw IllegalStateException("Builder was null for input $this + $path")
+    sanitized.newBuilder(it)?.build() ?: throw InvalidPathException()
 } ?: this
 
 fun HttpUrl.forLogging() = newBuilder()

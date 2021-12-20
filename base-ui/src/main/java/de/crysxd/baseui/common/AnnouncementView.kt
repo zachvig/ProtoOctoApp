@@ -65,6 +65,7 @@ class AnnouncementView @JvmOverloads constructor(context: Context, attributeSet:
             }
             b.buttonOpen.isVisible = !actionText.isNullOrBlank()
             b.buttonOpen.text = actionText
+            b.buttonClose.isVisible = announcement.canHide
             b.buttonOpen.setOnClickListener {
                 announcement.actionUri(it.context)?.open(findFragment<Fragment>().requireOctoActivity())
             }

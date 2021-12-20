@@ -1,7 +1,9 @@
 package de.crysxd.baseui.di
 
 import android.app.Application
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
@@ -15,6 +17,8 @@ import de.crysxd.baseui.common.gcode.GcodePreviewViewModel
 import de.crysxd.baseui.common.terminal.TerminalViewModel
 import de.crysxd.baseui.menu.MenuBottomSheetViewModel
 import de.crysxd.baseui.purchase.PurchaseViewModel
+import de.crysxd.baseui.timelapse.TimelapseArchiveViewModel
+import de.crysxd.baseui.timelapse.TimelapsePlaybackViewModel
 import de.crysxd.baseui.widget.EditWidgetsViewModel
 import de.crysxd.baseui.widget.extrude.ExtrudeWidgetViewModel
 import de.crysxd.baseui.widget.gcode.SendGcodeWidgetViewModel
@@ -27,6 +31,7 @@ import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.data.repository.PinnedMenuItemRepository
 import de.crysxd.octoapp.base.data.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.data.repository.TemperatureDataRepository
+import de.crysxd.octoapp.base.data.repository.TimelapseRepository
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
@@ -225,4 +230,20 @@ open class ViewModelModule {
         octoPrintProvider = octoPrintProvider,
         octoPrintRepository = octoPrintRepository
     )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(TimelapseArchiveViewModel::class)
+    fun provideTimelapseArchiveViewModel(
+        timelapseRepository: TimelapseRepository,
+        picasso: LiveData<Picasso?>,
+    ): ViewModel = TimelapseArchiveViewModel(
+        timelapseRepository = timelapseRepository,
+        picasso = picasso,
+    )
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(TimelapsePlaybackViewModel::class)
+    fun provideTimelapsePlaybackViewModel(): ViewModel = TimelapsePlaybackViewModel()
 }

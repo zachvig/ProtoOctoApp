@@ -26,6 +26,7 @@ class MessageDeserializer(
             o.has("reauthRequired") -> Message.ReAuthRequired
             o.has("plugin") -> when (o["plugin"].asJsonObject["plugin"].asString) {
                 "psucontrol" -> Message.PsuControlPluginMessage(o["plugin"].asJsonObject["data"].asJsonObject["isPSUOn"].asBoolean)
+                "octoapp" -> context.deserialize<Message.CompanionPluginMessage>(o["plugin"].asJsonObject["data"], Message.CompanionPluginMessage::class.java)
                 else -> Message.UnknownPluginMessage(o["plugin"].asJsonObject)
             }
             o.has("event") -> deserializeEventMessage(o["event"].asJsonObject)
@@ -73,6 +74,12 @@ class MessageDeserializer(
         "FirmwareData" -> gson.fromJson(o["payload"].asJsonObject["data"], Message.EventMessage.FirmwareData::class.java)
 
         "SettingsUpdated" -> Message.EventMessage.SettingsUpdated()
+
+        "MovieRendering" -> Message.EventMessage.MovieRendering()
+
+        "MovieDone" -> Message.EventMessage.MovieDone()
+
+        "MovieFailed" -> Message.EventMessage.MovieFailed()
 
         else -> {
             Message.EventMessage.Unknown(o["type"].asString)

@@ -27,13 +27,16 @@ import java.io.RandomAccessFile
 import kotlin.math.absoluteValue
 
 
-private const val MAX_CACHE_SIZE = 128 * 1024 * 1024L // 128 MB
 
 class LocalGcodeFileDataSource(
     context: Context,
     private val gson: Gson,
     private val sharedPreferences: SharedPreferences
 ) {
+
+    companion object {
+        private const val MAX_CACHE_SIZE = 128 * 1024 * 1024L // 128 MB
+    }
 
     private val cacheRoot = File(context.cacheDir, "gcode4")
     private val oldCacheRoots = listOf(

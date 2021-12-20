@@ -18,6 +18,9 @@ internal data class Subscription(
         "PrintFailed",
         "FirmwareData",
         "SettingsUpdated",
+        "MovieRendering",
+        "MovieDone",
+        "MovieFailed"
     ),
 ) {
     data class State(

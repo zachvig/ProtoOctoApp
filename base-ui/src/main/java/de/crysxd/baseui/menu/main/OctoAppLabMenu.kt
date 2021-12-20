@@ -16,6 +16,7 @@ class OctoAppLabMenu : Menu {
         NotificationBatterySaver(),
         SuppressM115Request(),
         AllowTerminalDuringPrint(),
+        SuppressRemoteNotificationInitialization(),
     )
 
     override suspend fun getTitle(context: Context) = context.getString(R.string.lab_menu___title)
@@ -82,6 +83,22 @@ class OctoAppLabMenu : Menu {
         override fun getDescription(context: Context) = context.getString(R.string.lab_menu___allow_terminal_during_print_description)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             BaseInjector.get().octoPreferences().allowTerminalDuringPrint = enabled
+        }
+    }
+
+    class SuppressRemoteNotificationInitialization : ToggleMenuItem() {
+        override val isChecked get() = BaseInjector.get().octoPreferences().suppressRemoteMessageInitialization
+        override val itemId = "suppress_remote"
+        override var groupId = ""
+        override val canBePinned = false
+        override val order = 165
+        override val style = MenuItemStyle.Settings
+        override val icon = R.drawable.ic_round_notifications_off_24
+
+        override fun getTitle(context: Context) = context.getString(R.string.lab_menu___suppress_remote_notification_init)
+        override fun getDescription(context: Context) = context.getString(R.string.lab_menu___suppress_remote_notification_init_description)
+        override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
+            BaseInjector.get().octoPreferences().suppressRemoteMessageInitialization = enabled
         }
     }
 }

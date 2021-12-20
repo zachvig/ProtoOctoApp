@@ -7,6 +7,7 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.BuildConfig
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.data.models.exceptions.SuppressedIllegalStateException
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.logging.TimberLogger
@@ -47,6 +48,7 @@ class OctoPrintProvider(
     private val octoPrintMutex = Mutex()
     private var octoPrintCache: Pair<OctoPrintInstanceInformationV3, OctoPrint>? = null
     private val currentMessageFlow = MutableStateFlow<Message.CurrentMessage?>(null)
+    private val companionMessageFlow = MutableStateFlow<Message.CompanionPluginMessage?>(null)
     private val connectEventFlow = MutableStateFlow<Event.Connected?>(null)
 
     init {
@@ -55,17 +57,27 @@ class OctoPrintProvider(
         AppScope.launch {
             passiveEventFlow().onEach { event ->
                 updateAnalyticsProfileWithEvents(event)
-                ((event as? Event.MessageReceived)?.message as? Message.CurrentMessage)?.let { message ->
-                    // If the last message had data the new one is lacking, upgrade the new one so the cached message
-                    // is always holding all information required
-                    val last = currentMessageFlow.value
-                    val new = message.copy(
-                        temps = message.temps.takeIf { it.isNotEmpty() } ?: last?.temps ?: emptyList(),
-                        progress = message.progress ?: last?.progress,
-                        state = message.state ?: last?.state,
-                        job = message.job ?: last?.job,
-                    )
-                    currentMessageFlow.value = new
+                (event as? Event.MessageReceived)?.let {
+                    when (val message = (event as? Event.MessageReceived)?.message) {
+                        is Message.CurrentMessage -> {
+                            // If the last message had data the new one is lacking, upgrade the new one so the cached message
+                            // is always holding all information required
+                            val last = currentMessageFlow.value
+                            val new = message.copy(
+                                temps = message.temps.takeIf { it.isNotEmpty() } ?: last?.temps ?: emptyList(),
+                                progress = message.progress ?: last?.progress,
+                                state = message.state ?: last?.state,
+                                job = message.job ?: last?.job,
+                            )
+                            currentMessageFlow.value = new
+                        }
+
+                        is Message.CompanionPluginMessage -> {
+                            companionMessageFlow.value = message
+                        }
+
+                        else -> Unit
+                    }
                 }
 
                 ((event as? Event.Connected))?.let {
@@ -76,6 +88,7 @@ class OctoPrintProvider(
                     connectEventFlow.value = null
                     it.exception?.let(detectBrokenSetupInterceptor::handleException)
                 }
+
             }.retry { delay(1000); true }.collect()
         }
     }
@@ -108,7 +121,7 @@ class OctoPrintProvider(
     }
 
     suspend fun octoPrint(): OctoPrint = octoPrintMutex.withLock {
-        octoPrintCache?.second ?: throw IllegalStateException("OctoPrint not available")
+        octoPrintCache?.second ?: throw SuppressedIllegalStateException("OctoPrint not available")
     }
 
     fun passiveConnectionEventFlow(tag: String) = connectEventFlow.filterNotNull()
@@ -126,6 +139,10 @@ class OctoPrintProvider(
     fun passiveCurrentMessageFlow(tag: String) = currentMessageFlow.filterNotNull()
         .onStart { Timber.i("Started current message flow for $tag") }
         .onCompletion { Timber.i("Completed current message flow for $tag") }
+
+    fun passiveCompanionMessageFlow(tag: String) = companionMessageFlow
+        .onStart { Timber.i("Started companion message flow for $tag") }
+        .onCompletion { Timber.i("Completed companion message flow for $tag") }
 
     fun eventFlow(tag: String, config: EventFlowConfiguration = EventFlowConfiguration()) = octoPrintFlow()
         .flatMapLatest { it?.getEventWebSocket()?.eventFlow(tag, config) ?: emptyFlow() }
