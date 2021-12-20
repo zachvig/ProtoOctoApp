@@ -979,4 +979,26 @@ happy printing!"</string>
     <!-- Fuzzy -->
     <string name="progress_widget___settings___printer_message_description">"Requires Companion Plugin to be installed on your OctoPrint. Messages come from M117 Gcode commands."</string>
     <string name="progress_widget___printer_message_no_message">"No message"</string>
+    <string name="timelapse_archive___menu___play"><![CDATA[Download & play timelapse]]></string>
+    <string name="timelapse_archive___menu___share"><![CDATA[Download & share timelapse]]></string>
+    <string name="timelapse_archive___menu___delete">"Delete timelapse"</string>
+    <string name="timelapse_archive___menu___subtitle">"Playing or sharing will download %s"</string>
+    <string name="timelapse_config___title">"Timelapse Config"</string>
+    <string name="timelapse_config___change">"Update"</string>
+    <string name="timelapse_config___mode___off">"Off"</string>
+    <string name="timelapse_config___mode___timed">"Timed"</string>
+    <string name="timelapse_config___mode___zchange">"On Z change"</string>
+    <string name="timelapse_config___mode">"Mode"</string>
+    <string name="timelapse_config___min_interval">"Minimum interval"</string>
+    <string name="timelapse_config___interval">"Interval"</string>
+    <string name="timelapse_config___retraction_z_hop">"Retraction Z-Hop"</string>
+    <string name="timelapse_config___frame_rate">"Frame rate"</string>
+    <string name="timelapse_config___post_roll">"Post roll"</string>
+    <string name="timelapse_config___ask_before_printing">"Ask before printing"</string>
+    <string name="timelapse_config___save_as_default">"Save as default"</string>
+    <string name="timelapse_config___save_as_default___description">"The timelapse config is reset when OctoPrint restarts. This option allows you to set the current config as default across restarts."</string>
+    <string name="timelapse_config___start_print">"Start print"</string>
+    <string name="timelapse_archive___no_timelapse_found">"No timelapses found"</string>
+    <string name="timelapse_archive___title">"Timelapse Archive"</string>
+    <string name="timelapse_archive___subtitle"><![CDATA[OctoPrint let\'s you create timelapses of your prints. You can see the recordings below, manage your settings <a href="">here</a>.]]></string>
 </resources>
