@@ -2,6 +2,7 @@ package de.crysxd.octoapp.connect
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -29,6 +30,7 @@ import de.crysxd.octoapp.framework.waitTime
 import de.crysxd.octoapp.octoprint.plugins.power.psucontrol.PsuControlPowerPlugin
 import kotlinx.coroutines.runBlocking
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
@@ -64,11 +66,32 @@ class ConnectPrinterTest {
 
         // Wait for ready to connect
         WorkspaceRobot.waitForConnectWorkspace()
-        waitFor(allOf(withText(R.string.connect_printer___waiting_for_user_title)))
         waitTime(4000) // Wait to see if we auto connect
+        waitFor(allOf(withText(R.string.connect_printer___waiting_for_user_title)))
         onView(withText(R.string.connect_printer___begin_connection)).perform(click())
         waitForDialog(withText(R.string.connect_printer___begin_connection_cofirmation_positive))
         onView(withText(R.string.connect_printer___begin_connection_cofirmation_positive)).inRoot(isDialog()).perform(click())
+        onView(withText(R.string.connect_printer___action_turn_psu_off)).check(matches(not(isDisplayed())))
+        onView(withText(R.string.connect_printer___action_turn_psu_on)).check(matches(not(isDisplayed())))
+        WorkspaceRobot.waitForPrepareWorkspace()
+    }
+
+    @Test(timeout = 30_000)
+    @AllowFlaky(attempts = 3)
+    fun WHEN_auto_connect_is_disabled_and_PSU_can_be_controlled_THEN_connect_button_can_be_used() {
+        // GIVEN
+        BaseInjector.get().octorPrintRepository().setActive(powerControlsTestEnv)
+        BaseInjector.get().octoPreferences().isAutoConnectPrinter = false
+        baristaRule.launchActivity()
+
+        // Wait for ready to connect
+        WorkspaceRobot.waitForConnectWorkspace()
+        waitTime(4000) // Wait to see if we auto connect
+        waitFor(allOf(withText(R.string.connect_printer___waiting_for_user_title)))
+        onView(withText(R.string.connect_printer___begin_connection)).perform(click())
+        waitForDialog(withText(R.string.connect_printer___begin_connection_cofirmation_positive))
+        onView(withText(R.string.connect_printer___begin_connection_cofirmation_positive)).inRoot(isDialog()).perform(click())
+        onView(withText(R.string.connect_printer___action_turn_psu_off)).check(matches(isDisplayed()))
         WorkspaceRobot.waitForPrepareWorkspace()
     }
 
