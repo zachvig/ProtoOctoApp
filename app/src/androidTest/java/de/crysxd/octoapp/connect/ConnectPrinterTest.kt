@@ -82,6 +82,7 @@ class ConnectPrinterTest {
         // GIVEN
         BaseInjector.get().octorPrintRepository().setActive(powerControlsTestEnv)
         BaseInjector.get().octoPreferences().isAutoConnectPrinter = false
+        powerControlsTestEnv.setVirtualPrinterEnabled(false)
         baristaRule.launchActivity()
 
         // Wait for ready to connect
@@ -91,7 +92,13 @@ class ConnectPrinterTest {
         onView(withText(R.string.connect_printer___begin_connection)).perform(click())
         waitForDialog(withText(R.string.connect_printer___begin_connection_cofirmation_positive))
         onView(withText(R.string.connect_printer___begin_connection_cofirmation_positive)).inRoot(isDialog()).perform(click())
-        onView(withText(R.string.connect_printer___action_turn_psu_off)).check(matches(isDisplayed()))
+
+        // Turn on printer (simulate by turning on virtual printer)
+        waitFor(allOf(withText(R.string.connect_printer___action_turn_psu_on), isDisplayed()))
+        onView(withText(R.string.connect_printer___action_turn_psu_on)).perform(click())
+        MenuRobot.waitForMenuToBeClosed()
+        waitFor(allOf(withText(R.string.connect_printer___action_turn_psu_off), isDisplayed()), timeout = 8000)
+        powerControlsTestEnv.setVirtualPrinterEnabled(true)
         WorkspaceRobot.waitForPrepareWorkspace()
     }
 
