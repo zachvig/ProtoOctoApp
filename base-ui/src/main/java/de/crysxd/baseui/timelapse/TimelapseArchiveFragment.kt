@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import de.crysxd.baseui.BaseFragment
 import de.crysxd.baseui.InsetAwareScreen
+import de.crysxd.baseui.R
 import de.crysxd.baseui.common.LinkClickMovementMethod
 import de.crysxd.baseui.databinding.TimelapseArchiveFragmentBinding
 import de.crysxd.baseui.di.injectViewModel
@@ -39,9 +40,8 @@ class TimelapseArchiveFragment : BaseFragment(), InsetAwareScreen {
         )
         helper.removeTabs()
 
-        binding.appBarLayout.title.text = "Timelapse Archive**"
-        binding.appBarLayout.subtitle.text =
-            "OctoPrint let's you create timelapses of your prints. You can see the recordings below, manage your settings <a href=\"\">here</a>.**".toHtml()
+        binding.appBarLayout.title.text = getString(R.string.timelapse_archive___title)
+        binding.appBarLayout.subtitle.text = getString(R.string.timelapse_archive___subtitle).toHtml()
         binding.appBarLayout.subtitle.movementMethod = LinkClickMovementMethod { _, _ ->
             MenuBottomSheetFragment.createForMenu(TimelapseMenu()).show(childFragmentManager)
             true
@@ -63,7 +63,7 @@ class TimelapseArchiveFragment : BaseFragment(), InsetAwareScreen {
         viewModel.viewData.observe(viewLifecycleOwner) {
             adapter.items = it ?: emptyList()
             binding.errorState.isVisible = it?.isEmpty() == true
-            binding.errorMessage.text = "No timelapses found**"
+            binding.errorMessage.text = getString(R.string.timelapse_archive___no_timelapse_found)
         }
         viewModel.picasso.observe(viewLifecycleOwner) {
             adapter.picasso = it

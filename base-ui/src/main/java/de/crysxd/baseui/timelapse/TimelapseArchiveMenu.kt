@@ -26,7 +26,7 @@ class TimelapseArchiveMenu(private val timelapseFile: TimelapseFile) : Menu {
     )
 
     override suspend fun getTitle(context: Context) = timelapseFile.name
-    override suspend fun getSubtitle(context: Context) = "Playing or sharing will download ${timelapseFile.bytes?.asStyleFileSize()}**"
+    override suspend fun getSubtitle(context: Context) = context.getString(R.string.timelapse_archive___menu___subtitle, timelapseFile.bytes.asStyleFileSize())
 
     class DeleteTimelapse(private val file: TimelapseFile) : ConfirmedMenuItem() {
         override val itemId = "delete_timelapse"
@@ -38,7 +38,7 @@ class TimelapseArchiveMenu(private val timelapseFile: TimelapseFile) : Menu {
 
         override fun getConfirmMessage(context: Context) = context.getString(R.string.file_manager___file_menu___delete_confirmation_message, file.name)
         override fun getConfirmPositiveAction(context: Context) = getTitle(context)
-        override fun getTitle(context: Context) = "Delete timelapse**"
+        override fun getTitle(context: Context) = context.getString(R.string.timelapse_archive___menu___delete)
         override suspend fun onConfirmed(host: MenuHost?) {
             BaseInjector.get().timelapseRepository().delete(file)
             host?.closeMenu()
@@ -53,7 +53,7 @@ class TimelapseArchiveMenu(private val timelapseFile: TimelapseFile) : Menu {
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_play_arrow_24
 
-        override fun getTitle(context: Context) = "Download & play timelapse**"
+        override fun getTitle(context: Context) = context.getString(R.string.timelapse_archive___menu___play)
         override suspend fun onClicked(host: MenuHost?) {
             val uri = requireNotNull(BaseInjector.get().timelapseRepository().download(file)?.toUri()) { "Failed to get file" }
             host?.getNavController()?.navigate(TimelapseArchiveFragmentDirections.actionPlayTimelapse(uri))
@@ -68,7 +68,7 @@ class TimelapseArchiveMenu(private val timelapseFile: TimelapseFile) : Menu {
         override val style = MenuItemStyle.OctoPrint
         override val icon = R.drawable.ic_round_share_24
 
-        override fun getTitle(context: Context) = "Download & share timelapse**"
+        override fun getTitle(context: Context) = context.getString(R.string.timelapse_archive___menu___share)
         override suspend fun onClicked(host: MenuHost?) {
             host?.requireContext()?.let {
                 BaseInjector.get().downloadAndShareTimelapseUseCase().execute(
