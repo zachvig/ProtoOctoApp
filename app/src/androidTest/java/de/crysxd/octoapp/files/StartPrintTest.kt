@@ -54,6 +54,7 @@ class StartPrintTest {
         verifyPrinting()
 
         // Pause and resume
+        waitFor(allOf(withText("1 %"), isDisplayed()), timeout = 45_000)
         onView(withText(R.string.pause)).perform(click())
         waitForDialog(withText(R.string.pause_print_confirmation_message))
         onView(withText(R.string.pause_print_confirmation_action)).inRoot(isDialog()).perform(click())
@@ -108,7 +109,9 @@ class StartPrintTest {
     private fun triggerPrint() {
         WorkspaceRobot.waitForPrepareWorkspace()
         onView(withText(R.string.start_printing)).perform(click())
+        waitFor(allOf(withText("layers.gcode"), isDisplayed()))
         onView(withText("layers.gcode")).perform(click())
+        waitFor(allOf(withText(R.string.start_printing), isDisplayed()))
         onView(withText(R.string.start_printing)).perform(click())
     }
 
@@ -118,7 +121,7 @@ class StartPrintTest {
 
         // Wait for print data to show up
         waitFor(allOf(withText(R.string.less_than_a_minute), isDisplayed()), timeout = 10_000)
-        onView(withText("layers.gcode")).check(matches(isDisplayed()))
+        waitFor(allOf(withText("layers.gcode"), isDisplayed()), timeout = 10_000)
     }
 
     private fun verifyMaterialSelection() {
