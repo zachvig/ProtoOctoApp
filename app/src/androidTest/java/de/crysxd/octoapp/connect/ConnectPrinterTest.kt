@@ -15,6 +15,7 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.framework.MenuRobot
+import de.crysxd.octoapp.framework.PsuUtils.turnAllOff
 import de.crysxd.octoapp.framework.SignInRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.VirtualPrinterUtils.setVirtualPrinterEnabled
@@ -27,8 +28,6 @@ import de.crysxd.octoapp.framework.rules.TestDocumentationRule
 import de.crysxd.octoapp.framework.waitFor
 import de.crysxd.octoapp.framework.waitForDialog
 import de.crysxd.octoapp.framework.waitTime
-import de.crysxd.octoapp.octoprint.plugins.power.psucontrol.PsuControlPowerPlugin
-import kotlinx.coroutines.runBlocking
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matchers.allOf
@@ -82,6 +81,7 @@ class ConnectPrinterTest {
         // GIVEN
         BaseInjector.get().octorPrintRepository().setActive(powerControlsTestEnv)
         BaseInjector.get().octoPreferences().isAutoConnectPrinter = false
+        powerControlsTestEnv.turnAllOff()
         powerControlsTestEnv.setVirtualPrinterEnabled(false)
         baristaRule.launchActivity()
 
@@ -142,23 +142,20 @@ class ConnectPrinterTest {
 
     @Test(timeout = 30_000)
     @AllowFlaky(attempts = 3)
-    fun WHEN_power_controls_are_available_THEN_psu_can_be_turned_on() = runBlocking {
+    fun WHEN_power_controls_are_available_THEN_psu_can_be_turned_on() {
         // GIVEN
         // We need a bit of wait before/after changing virtual printer, OctoPrint otherwise gets overloaded...
         // Also make sure PSU is turned off
         BaseInjector.get().octorPrintRepository().setActive(powerControlsTestEnv)
+        powerControlsTestEnv.turnAllOff()
         powerControlsTestEnv.setVirtualPrinterEnabled(false)
-        val octoPrint = BaseInjector.get().octoPrintProvider().createAdHocOctoPrint(powerControlsTestEnv)
-        val settings = octoPrint.createSettingsApi().getSettings()
-        octoPrint.createPowerPluginsCollection().plugins.first { it is PsuControlPowerPlugin }
-            .getDevices(settings).first().turnOff()
         baristaRule.launchActivity()
 
         // Wait for ready and turn on PSU
         WorkspaceRobot.waitForConnectWorkspace()
 
         // Turn on printer (simulate by turning on virtual printer)
-        waitFor(allOf(withText(R.string.connect_printer___action_turn_psu_on), isDisplayed()))
+        waitFor(allOf(withText(R.string.connect_printer___action_turn_psu_on), isDisplayed()), timeout = 10_000)
         onView(withText(R.string.connect_printer___action_turn_psu_on)).perform(click())
         MenuRobot.waitForMenuToBeClosed()
         waitFor(allOf(withText(R.string.connect_printer___action_turn_psu_off), isDisplayed()), timeout = 8000)
