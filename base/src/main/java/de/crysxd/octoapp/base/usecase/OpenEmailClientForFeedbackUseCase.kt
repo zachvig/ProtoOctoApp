@@ -188,6 +188,19 @@ class OpenEmailClientForFeedbackUseCase @Inject constructor(
             zipStream.closeEntry()
         }
 
+        Firebase.remoteConfig.let {
+            zipStream.putNextEntry(ZipEntry("config.json"))
+            zipStream.writer().apply {
+                val o = mapOf(
+                    "data" to it.all.map { it.key to it.value.asString() }.toMap(),
+                    "info" to it.info
+                )
+                write(gson.toJson(o))
+                flush()
+            }
+            zipStream.closeEntry()
+        }
+
         zipStream.close()
 
         val intent = Intent(Intent.ACTION_SEND).also {
