@@ -115,6 +115,7 @@ class ConnectPrinterFragment : BaseFragment(), PowerControlsMenu.PowerControlsCa
     private fun handleUiStateUpdate(state: ConnectPrinterViewModel.UiState) {
         binding.psuTurnOnControls.isVisible = false
         binding.psuTurnOffControls.isVisible = false
+        binding.beginConnectControls.isVisible = false
         binding.octoprintNotAvailableControls.isVisible = false
         binding.octoprintConnectedInfo.isVisible = !listOf(
             ConnectPrinterViewModel.UiState.Initializing,
