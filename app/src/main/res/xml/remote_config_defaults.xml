@@ -118,4 +118,8 @@
         <key>companion_plugin_url</key>
         <value>https://github.com/crysxd/OctoApp-Plugin</value>
     </entry>
+    <entry>
+        <key>use_cached_dns_resolver</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>
