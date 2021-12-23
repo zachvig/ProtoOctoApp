@@ -58,6 +58,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     var lastNativeWidth: Int? = null
     var lastNativeHeight: Int? = null
 
+    var suppressResolutionIndicator = false
     var supportsTroubleShooting = false
     var scaleToFill: Boolean
         get() = binding.matrixView.scaleToFill
@@ -129,7 +130,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
             val size = min(w, h)
             binding.resolutionIndicator.text = "${size}p"
-            binding.resolutionIndicator.isVisible = BaseInjector.get().octoPreferences().isShowWebcamResolution
+            binding.resolutionIndicator.isVisible = BaseInjector.get().octoPreferences().isShowWebcamResolution && !suppressResolutionIndicator
         }
     }
 
