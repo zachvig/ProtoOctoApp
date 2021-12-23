@@ -118,6 +118,19 @@
                     app:layout_constraintTop_toBottomOf="@+id/reloadDataUsage"
                     tools:layout_editor_absoluteX="16dp" />
 
+                <TextView
+                    android:id="@+id/customInstance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:padding="@dimen/margin_1"
+                    android:text="@string/configure_remote_acces___spaghetti_detective___custom_button"
+                    android:textAppearance="@style/OctoTheme.TextAppearance.Label"
+                    android:textColor="@color/spaghetti_detective"
+                    app:layout_constraintEnd_toEndOf="@+id/connectTsd"
+                    app:layout_constraintStart_toStartOf="@+id/connectTsd"
+                    app:layout_constraintTop_toBottomOf="@id/connectTsd" />
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/connectTsd"
                     style="@style/OctoTheme.Widget.Button.Secondary"
@@ -162,14 +175,15 @@
                     android:id="@+id/connected"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     app:constraint_referenced_ids="dataUsageGroup,disconnectTsd,tsdConnected" />
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/disconnected"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:constraint_referenced_ids="textView2,connectTsd" />
+                    android:visibility="visible"
+                    app:constraint_referenced_ids="textView2,connectTsd,customInstance" />
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/dataUsageGroup"
