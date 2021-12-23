@@ -49,6 +49,7 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
         super.onViewCreated(view, savedInstanceState)
         Timber.i("create")
 
+        binding.webcamView.suppressResolutionIndicator = true
         binding.webcamView.coroutineScope = viewLifecycleOwner.lifecycleScope
         binding.webcamView.onResetConnection = viewModel::connect
         binding.webcamView.fullscreenIconResource = R.drawable.ic_round_fullscreen_exit_24

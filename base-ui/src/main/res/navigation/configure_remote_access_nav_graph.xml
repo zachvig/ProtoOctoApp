@@ -9,10 +9,22 @@
         android:id="@+id/deepLink"
         app:uri="@string/uri___configure_remote_access" />
 
+    <include app:graph="@navigation/enter_value_nav_graph" />
+
     <fragment
         android:id="@+id/configureRemoteAccessFragment"
         android:name="de.crysxd.baseui.common.configureremote.ConfigureRemoteAccessFragment"
         android:label="ConfigureRemoteAccessFragment"
-        tools:layout="@layout/configure_remote_access_fragment" />
+        tools:layout="@layout/configure_remote_access_fragment">
+
+        <action
+            android:id="@id/action_enter_value"
+            app:destination="@id/enter_value_nav_graph"
+            app:enterAnim="@anim/enterAnim"
+            app:exitAnim="@anim/exitAnim"
+            app:popEnterAnim="@anim/popEnterAnim"
+            app:popExitAnim="@anim/popExitAnim" />
+
+    </fragment>
 
 </navigation>

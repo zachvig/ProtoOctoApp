@@ -134,7 +134,6 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
 
     private fun applyAspectRatio(aspectRatio: String) {
         val newAspectRatio = enforcedAspectRatio ?: aspectRatio
-        Timber.d("Calculating aspect ratio: aspectRatio=$aspectRatio enforcedAspectRatio=$enforcedAspectRatio lastAspectRatio=$lastAspectRatio")
 
         if (newAspectRatio != lastAspectRatio) {
             Timber.i("Applying aspect ratio: newAspectRatio=$newAspectRatio")

@@ -117,4 +117,9 @@
     <string name="plugin_library___plugin_page">Plugin page</string>
     <string name="plugin_library___title">Supported Plugins</string>
     <string name="plugin_library___description">OctoApp supports many OctoPrint plugins. You can use plugins to customize OctoApp and add more functionality to it.</string>
+    <string name="configure_remote_acces___spaghetti_detective___custom_button">Use custom instance</string>
+    <string name="configure_remote_acces___spaghetti_detective___custom_title">Use custom TSD</string>
+    <string name="configure_remote_acces___spaghetti_detective___custom_action">Connect</string>
+    <string name="configure_remote_acces___spaghetti_detective___custom_hint">Base URL</string>
+    <string name="configure_remote_acces___spaghetti_detective___custom_error">Enter a valid HTTP(S) URL</string>
 </resources>

@@ -12,6 +12,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.StringRes
+import androidx.annotation.VisibleForTesting
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
@@ -45,6 +46,12 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     companion object {
         const val LIVE_DELAY_THRESHOLD_MS = 3_000L
         const val STALLED_THRESHOLD_MS = 5_000L
+
+        @VisibleForTesting
+        var frame1Callback: (View) -> Unit = {}
+
+        @VisibleForTesting
+        var frame1000Callback: (View) -> Unit = {}
     }
 
     private val binding = WebcamViewBinding.inflate(LayoutInflater.from(context), this)
@@ -58,6 +65,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     var lastNativeWidth: Int? = null
     var lastNativeHeight: Int? = null
 
+    var suppressResolutionIndicator = false
     var supportsTroubleShooting = false
     var scaleToFill: Boolean
         get() = binding.matrixView.scaleToFill
@@ -102,6 +110,9 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             }
         }
 
+    @VisibleForTesting
+    private var frameCounter = 0
+
     init {
         setWillNotDraw(false)
         applyState(null, state)
@@ -129,7 +140,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
             val size = min(w, h)
             binding.resolutionIndicator.text = "${size}p"
-            binding.resolutionIndicator.isVisible = BaseInjector.get().octoPreferences().isShowWebcamResolution
+            binding.resolutionIndicator.isVisible = BaseInjector.get().octoPreferences().isShowWebcamResolution && !suppressResolutionIndicator
         }
     }
 
@@ -286,6 +297,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         this.state = WebcamState.Error(state.uri.toString())
     }
 
+
     private fun displayMjpegFrame(newState: WebcamState.MjpegFrameReady) {
         binding.matrixView.matrixInput = MatrixView.MatrixInput(
             flipH = newState.flipH,
@@ -294,6 +306,14 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             contentHeight = newState.frame.height,
             contentWidth = newState.frame.width,
         )
+
+        if (frameCounter == 0) {
+            frame1Callback(this)
+        }
+        if (frameCounter == 1_000) {
+            frame1000Callback(this)
+        }
+        frameCounter++
 
         dispatchNativeContentDimensionChanged(newState.frame.width, newState.frame.height, newState.rotate90)
 
