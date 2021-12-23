@@ -2,7 +2,6 @@ package de.crysxd.octoapp.base.data.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import kotlin.reflect.KClass
 
 @Parcelize
 data class WidgetPreferences(
@@ -18,7 +17,7 @@ data class WidgetPreferences(
     )
 
     fun prepare(list: List<WidgetType>) = list.sortedBy {
-        items.indexOf(it)
+        items.indexOf(it).takeIf { it >= 0 } ?: Int.MAX_VALUE
     }.map {
         it to hidden.contains(it)
     }.toMap()
