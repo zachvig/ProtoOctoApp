@@ -12,14 +12,15 @@
         android:layout_height="match_parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dataContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_black_shade_gradient"
         android:orientation="vertical"
         android:paddingLeft="@dimen/margin_2"
         android:paddingTop="@dimen/margin_2"
         android:paddingRight="@dimen/margin_2"
-        android:paddingBottom="@dimen/margin_2">
+        android:paddingBottom="@dimen/margin_2"
+        tools:background="@drawable/bg_black_shade_gradient">
 
         <TextView
             android:id="@+id/textViewProgress"
@@ -38,9 +39,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|start"
+            android:layout_marginStart="@dimen/margin_1"
             android:textAppearance="@style/OctoTheme.TextAppearance"
             android:textColor="@color/text_colored_background"
-            android:layout_marginStart="@dimen/margin_1"
             app:layout_constraintStart_toEndOf="@id/textViewProgress"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="1:45h left" />

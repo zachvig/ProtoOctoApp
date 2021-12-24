@@ -91,6 +91,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             binding.matrixView.onScaleToFillChanged = value
         }
 
+    var canUseDoubleTapToFullscreen = false
     var canSwitchWebcam: Boolean
         get() = binding.imageButtonSwitchCamera.isVisible
         set(value) {
@@ -123,6 +124,11 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         binding.imageButtonSwitchCamera.setOnClickListener { onSwitchWebcamClicked() }
         binding.resolutionIndicator.setOnClickListener { onResolutionClicked() }
         binding.imageButtonShare.setOnClickListener { onShareImageClicked(captureBitmap()) }
+        binding.matrixView.abandonedDoubleTapCallback = {
+            if (canUseDoubleTapToFullscreen) {
+                onFullscreenClicked()
+            }
+        }
     }
 
     @SuppressLint("SetTextI18n")
