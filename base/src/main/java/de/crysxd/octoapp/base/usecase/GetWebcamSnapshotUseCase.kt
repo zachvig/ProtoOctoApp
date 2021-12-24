@@ -51,8 +51,11 @@ class GetWebcamSnapshotUseCase @Inject constructor(
                     val transformed = applyWebcamTransformationsUseCase.execute(
                         ApplyWebcamTransformationsUseCase.Params(it.frame, settings = webcamSettings.webcamSettings)
                     )
-                    val width = transformed.width.coerceAtMost(param.maxWidthPx)
-                    val height = ((width / transformed.width.toFloat()) * transformed.height).toInt()
+                    val maxWidthScale = (param.maxSizePx / transformed.width.toFloat())
+                    val maxHeightScale = (param.maxSizePx / transformed.height.toFloat())
+                    val scale = minOf(maxWidthScale, maxHeightScale)
+                    val width = (transformed.width * scale).toInt()
+                    val height = (transformed.height * scale).toInt()
                     val final = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
                     final.applyCanvas {
                         val clip = Path()
@@ -82,7 +85,7 @@ class GetWebcamSnapshotUseCase @Inject constructor(
 
     data class Params(
         val instanceInfo: OctoPrintInstanceInformationV3?,
-        val maxWidthPx: Int,
+        val maxSizePx: Int,
         val sampleRateMs: Long,
         val cornerRadiusPx: Float,
         val illuminateIfPossible: Boolean

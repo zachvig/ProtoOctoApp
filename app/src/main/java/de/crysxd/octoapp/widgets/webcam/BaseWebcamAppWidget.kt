@@ -52,7 +52,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
     companion object {
         private const val LIVE_FOR_MS = 30_000L
         private const val FETCH_TIMEOUT_MS = 15_000L
-        private const val BITMAP_WIDTH = 1080
+        private const val MAX_BITMAP_SIZE = 1080
         private const val WEBCAM_LIVE_SAMPLE_RATE_MS = 500L
         private var lastUpdateJobs = mutableMapOf<Int, WeakReference<Job>>()
 
@@ -225,7 +225,7 @@ abstract class BaseWebcamAppWidget : AppWidgetProvider() {
             BaseInjector.get().getWebcamSnapshotUseCase().execute(
                 GetWebcamSnapshotUseCase.Params(
                     instanceInfo = octoPrintInfo,
-                    maxWidthPx = BITMAP_WIDTH,
+                    maxSizePx = MAX_BITMAP_SIZE,
                     sampleRateMs = sampleRateMs,
                     cornerRadiusPx = calculateCornerRadius(context, appWidgetId),
                     illuminateIfPossible = illuminateIfPossible
