@@ -139,10 +139,12 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
                     binding.textViewEta.text = message.progress?.printTimeLeft?.let {
                         BaseInjector.get().formatEtaUseCase().execute(FormatEtaUseCase.Params(it.toLong(), useCompactDate = compactEtaDate))
                     }
+                    binding.dataContainer.setBackgroundResource(R.drawable.bg_black_shade_gradient)
                 } else {
                     binding.textViewProgress.text = ""
                     binding.textViewTimeLeft.text = ""
                     binding.textViewEta.text = ""
+                    binding.dataContainer.setBackgroundResource(0)
                 }
             }
         }

@@ -53,6 +53,7 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
             )
         }
         binding.webcamView.onSwitchWebcamClicked = { baseViewModel.nextWebcam() }
+        binding.webcamView.canUseDoubleTapToFullscreen = true
     }
 
     override fun getActionIcon() = R.drawable.ic_round_settings_24

@@ -92,32 +92,34 @@ object LiveNotificationManager {
         }
     }
 
-    fun hibernate(context: Context) {
-        try {
-            val isHibernationEnabled = BaseInjector.get().octoPreferences().allowNotificationBatterySaver
-            if (isHibernationEnabled && isNotificationShowing) {
-                Timber.i("Sending service into hibernation")
-                isHibernating = true
-                val intent = Intent(context, LiveNotificationService::class.java)
-                intent.action = LiveNotificationService.ACTION_HIBERNATE
-                context.startService(intent)
-            }
-        } catch (e: Exception) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && e is BackgroundServiceStartNotAllowedException) {
-                Timber.w("Unable to perform hibernation, background service not allowed")
-            } else {
-                throw e
-            }
+    fun hibernate(context: Context) = runCatchingServiceExceptions {
+        val isHibernationEnabled = BaseInjector.get().octoPreferences().allowNotificationBatterySaver
+        if (isHibernationEnabled && isNotificationShowing) {
+            Timber.i("Sending service into hibernation")
+            isHibernating = true
+            val intent = Intent(context, LiveNotificationService::class.java)
+            intent.action = LiveNotificationService.ACTION_HIBERNATE
+            context.startService(intent)
         }
     }
 
-    fun wakeUp(context: Context) {
+    fun wakeUp(context: Context) = runCatchingServiceExceptions {
         if (isHibernating) {
             Timber.i("Resuming service")
             isHibernating = false
             val intent = Intent(context, LiveNotificationService::class.java)
             intent.action = LiveNotificationService.ACTION_WAKE_UP
             context.startService(intent)
+        }
+    }
+
+    private fun runCatchingServiceExceptions(block: () -> Unit) = try {
+        block()
+    } catch (e: java.lang.Exception) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && e is BackgroundServiceStartNotAllowedException) {
+            Timber.w("Unable to perform hibernation, background service not allowed")
+        } else {
+            throw e
         }
     }
 }

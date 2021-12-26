@@ -111,6 +111,8 @@ class OctoPrintProvider(
         octoPrintCache?.second ?: throw SuppressedIllegalStateException("OctoPrint not available")
     }
 
+    val currentConnection = connectEventFlow.value
+
     fun passiveConnectionEventFlow(tag: String) = connectEventFlow.filterNotNull()
         .onStart { Timber.i("Started connection event flow for $tag") }
         .onCompletion { Timber.i("Completed connection event flow for $tag") }

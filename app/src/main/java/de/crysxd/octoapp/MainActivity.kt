@@ -289,7 +289,7 @@ class MainActivity : OctoActivity() {
     private fun handleDeepLink(uri: Uri) {
         Timber.i("Hanlding deep link2")
 
-        lifecycleScope.launchWhenCreated {
+        lifecycleScope.launchWhenResumed {
             try {
                 if (UriLibrary.isActiveInstanceRequired(uri) && BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot() == null) {
                     Timber.i("Uri requires active instance, delaying")

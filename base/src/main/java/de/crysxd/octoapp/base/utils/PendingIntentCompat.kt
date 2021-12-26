@@ -10,6 +10,12 @@ object PendingIntentCompat {
         PendingIntent.FLAG_UPDATE_CURRENT
     }
 
+    val FLAG_UPDATE_CURRENT_MUTABLE = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+    } else {
+        PendingIntent.FLAG_UPDATE_CURRENT
+    }
+
     val FLAG_IMMUTABLE = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         PendingIntent.FLAG_IMMUTABLE
     } else {

@@ -1,7 +1,9 @@
 package de.crysxd.octoapp.notification
 
+import android.app.ForegroundServiceStartNotAllowedException
 import android.app.Service
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import android.os.SystemClock
 import android.widget.Toast
@@ -79,8 +81,12 @@ class LiveNotificationService : Service() {
         try {
             startForeground(notificationId, notification)
         } catch (e: Exception) {
-            // Android 12 issue...we can't start a foreground service from an Activity sometimes?
-            Timber.e(e)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && e is ForegroundServiceStartNotAllowedException) {
+                // Android 12 issue...we can't start a foreground service from an Activity sometimes?
+                Timber.w(e, "Unable to start foreground service at the moment")
+            } else {
+                Timber.e(e)
+            }
             return stop()
         }
 

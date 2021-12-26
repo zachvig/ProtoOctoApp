@@ -47,6 +47,7 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 requestLayout()
             }
         }
+    var abandonedDoubleTapCallback: () -> Unit = {}
 
     private val debugPaint = Paint().also {
         it.strokeWidth = 20f
@@ -190,14 +191,17 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
             // Determine new scale to fill. If we currently scale to fill, we are now not scale to fill
             // Determination based on current zoom
             val scaleToFillZoom = calculateScaleToFillZoom()
+            val zoomChangeRequired = (currentZoom - scaleToFillZoom).absoluteValue < 0.01f
             val newScaleToFill = when {
-                (currentZoom - scaleToFillZoom).absoluteValue < 0.001f -> false
+                zoomChangeRequired -> false
                 else -> true
             }
 
             // Flush new value if changed
-            if (newScaleToFill != scaleToFill) {
+            if (newScaleToFill != scaleToFill && zoomChangeRequired) {
                 onScaleToFillChanged(newScaleToFill)
+            } else {
+                abandonedDoubleTapCallback()
             }
 
             // Apply with animation
