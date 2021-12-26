@@ -8,19 +8,23 @@ class InstantAutoTransition(
     explode: Boolean = false,
     quickTransition: Boolean = false,
     explodeEpicenter: Rect? = null,
-    fadeText: Boolean = true
+    fadeText: Boolean = true,
+    changeBounds: Boolean = true,
 ) : TransitionSet() {
 
     init {
         duration = if (quickTransition) 150 else 300
 
-        addTransition(ChangeBounds())
+        if (changeBounds) {
+            addTransition(ChangeBounds())
+            addTransition(ChangeClipBounds())
+            addTransition(ChangeTransform())
+            addTransition(ChangeScroll())
+            addTransition(ChangeImageTransform())
+            addTransition(ChangeTextSizeTransform())
+        }
+
         addTransition(Fade())
-        addTransition(ChangeTransform())
-        addTransition(ChangeScroll())
-        addTransition(ChangeImageTransform())
-        addTransition(ChangeClipBounds())
-        addTransition(ChangeTextSizeTransform())
 
         if (fadeText) {
             addTransition(ChangeText().apply {

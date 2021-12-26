@@ -1,55 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="de.crysxd.baseui.OctoActivity">
 
-    <!--
-    We use the scroll state to animate the button on the bottom.
-    RecyclerView's estimation of the scroll position is to rough to do that, thus we wrap it
-    -->
-    <de.crysxd.baseui.common.OctoScrollView
-        android:id="@+id/widgetListScroller"
+    <de.crysxd.baseui.widget.WidgetLayout
+        android:id="@+id/widgetList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:clipToPadding="false"
+        android:nestedScrollingEnabled="false"
         android:paddingTop="@dimen/common_view_top_padding"
-        android:paddingBottom="@dimen/common_view_top_padding">
+        android:paddingBottom="@dimen/margin_2"
+        app:layout_constraintBottom_toTopOf="@+id/bottomToolbar"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <de.crysxd.baseui.widget.WidgetLayout
-            android:id="@+id/widgetList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:nestedScrollingEnabled="false" />
-
-    </de.crysxd.baseui.common.OctoScrollView>
-
-    <LinearLayout
-        android:id="@+id/bottomAction"
+    <de.crysxd.baseui.common.BottomToolbarView
+        android:id="@+id/bottomToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:clipToPadding="false"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="@dimen/margin_2">
+        android:background="@color/window_background"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-        <Button
-            android:id="@+id/mainButton"
-            style="@style/OctoTheme.Widget.Button.WithMore"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/start_printing" />
+    <de.crysxd.baseui.common.BottomToolbarSwipeButtonView
+        android:id="@+id/swipeButtons"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_gravity="bottom"
+        android:background="@color/window_background"
+        android:elevation="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-        <Button
-            android:id="@+id/buttonMore"
-            style="@style/OctoTheme.Widget.Button.More"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-    </LinearLayout>
-
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

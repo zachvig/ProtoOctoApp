@@ -149,6 +149,7 @@ class ProgressWidget(context: Context) : RecyclableOctoWidget<ProgressWidgetBind
             val formattedEta = printTimeLeft?.let { formatEta(it, settings.etaStyle == ProgressWidgetSettings.EtaStyle.Compact) }
             val progressText = when {
                 message.state?.flags?.cancelling == true -> context.getString(R.string.cancelling)
+                message.state?.flags?.paused == true -> context.getString(R.string.pause)
                 loading -> context.getString(R.string.loading)
                 else -> context.getString(R.string.x_percent, progress * 100f)
             }

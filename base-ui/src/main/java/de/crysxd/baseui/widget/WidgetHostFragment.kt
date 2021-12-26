@@ -30,8 +30,7 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
     }
 
     private lateinit var binding: WidgetHostFragmentBinding
-    protected val mainButton get() = binding.mainButton
-    protected val moreButton get() = binding.buttonMore
+    protected val bottomToolbar get() = binding.bottomToolbar
     abstract val destinationId: String
     abstract val toolbarState: OctoToolbar.State
     private var lastWidgetList: List<WidgetType> = emptyList()
@@ -71,7 +70,7 @@ abstract class WidgetHostFragment() : BaseWidgetHostFragment() {
         Timber.i("Starting")
         requireOctoActivity().octoToolbar.state = toolbarState
         requireOctoActivity().octo.isVisible = true
-        binding.widgetListScroller.setupWithToolbar(requireOctoActivity(), binding.bottomAction)
+        binding.widgetList.setupWithToolbar(requireOctoActivity())
         reloadWidgets("host-start")
     }
 

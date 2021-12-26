@@ -163,7 +163,7 @@ class CancelPrintKeepTemperaturesMenuItem : ConfirmedMenuItem() {
     override var groupId = ""
     override val order = 351
     override val style = MenuItemStyle.Printer
-    override val icon = R.drawable.ic_round_cancel_24
+    override val icon = R.drawable.ic_round_stop_24
 
     override fun getConfirmMessage(context: Context) = context.getString(R.string.cancel_print_confirmation_message)
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.cancel_print_confirmation_action)
@@ -179,7 +179,7 @@ class CancelPrintMenuItem : ConfirmedMenuItem() {
     override var groupId = ""
     override val order = 352
     override val style = MenuItemStyle.Printer
-    override val icon = R.drawable.ic_round_cancel_24
+    override val icon = R.drawable.ic_round_stop_24
 
     override fun getConfirmMessage(context: Context) = context.getString(R.string.cancel_print_confirmation_message)
     override fun getConfirmPositiveAction(context: Context) = context.getString(R.string.cancel_print_confirmation_action)

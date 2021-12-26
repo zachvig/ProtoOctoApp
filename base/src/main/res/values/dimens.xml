@@ -17,6 +17,9 @@
     <dimen name="max_bottom_sheet_width">600dp</dimen>
     <dimen name="eta_estimation_ball_diameter">10dp</dimen>
 
+    <dimen name="bottom_toolbar_separator_height">25dp</dimen>
+    <dimen name="bottom_toolbar_separator_width">1dp</dimen>
+
     <dimen name="margin_0">2dp</dimen>
     <dimen name="margin_0_1">5dp</dimen>
     <dimen name="margin_1">10dp</dimen>
