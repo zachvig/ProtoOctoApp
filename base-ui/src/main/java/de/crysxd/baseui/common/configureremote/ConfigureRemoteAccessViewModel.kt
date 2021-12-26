@@ -1,18 +1,30 @@
 package de.crysxd.baseui.common.configureremote
 
+import android.content.Context
+import android.text.InputType
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import de.crysxd.baseui.BaseViewModel
+import de.crysxd.baseui.R
+import de.crysxd.baseui.common.enter_value.EnterValueFragment
+import de.crysxd.baseui.common.enter_value.EnterValueFragmentArgs
+import de.crysxd.baseui.utils.NavigationResultMediator
 import de.crysxd.octoapp.base.data.models.OctoEverywhereConnection
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.usecase.GetRemoteServiceConnectUrlUseCase
 import de.crysxd.octoapp.base.usecase.SetAlternativeWebUrlUseCase
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 class ConfigureRemoteAccessViewModel(
     octoPrintRepository: OctoPrintRepository,
@@ -48,7 +60,30 @@ class ConfigureRemoteAccessViewModel(
 
     fun getOctoEverywhereAppPortalUrl() = getRemoteServiceSetupUrl(GetRemoteServiceConnectUrlUseCase.RemoteService.OctoEverywhere)
 
-    fun getSpaghettiDetectiveSetupUrl() = getRemoteServiceSetupUrl(GetRemoteServiceConnectUrlUseCase.RemoteService.SpaghettiDetective)
+    fun getSpaghettiDetectiveSetupUrl(customInstance: Boolean = false) = viewModelScope.launch(coroutineExceptionHandler) {
+        val params = if (customInstance) {
+            val (id, result) = NavigationResultMediator.registerResultCallback<String>()
+            val context = BaseInjector.get().localizedContext()
+            navContoller.navigate(
+                R.id.action_enter_value,
+                EnterValueFragmentArgs(
+                    title = context.getString(R.string.configure_remote_acces___spaghetti_detective___custom_title),
+                    action = context.getString(R.string.configure_remote_acces___spaghetti_detective___custom_action),
+                    resultId = id,
+                    hint = context.getString(R.string.configure_remote_acces___spaghetti_detective___custom_hint),
+                    validator = UrlValidator(context.getString(R.string.configure_remote_acces___spaghetti_detective___custom_error)),
+                    inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI,
+                    selectAll = true
+                ).toBundle()
+            )
+            val url = result.asFlow().first() ?: return@launch
+            GetRemoteServiceConnectUrlUseCase.RemoteService.SpaghettiDetective(url.toHttpUrl())
+        } else {
+            GetRemoteServiceConnectUrlUseCase.RemoteService.SpaghettiDetective()
+        }
+
+        getRemoteServiceSetupUrl(params)
+    }
 
     private fun getRemoteServiceSetupUrl(service: GetRemoteServiceConnectUrlUseCase.RemoteService) = viewModelScope.launch(coroutineExceptionHandler) {
         try {
@@ -114,4 +149,9 @@ class ConfigureRemoteAccessViewModel(
 
     data class ViewData(val remoteWebUrl: HttpUrl?, val octoEverywhereConnection: OctoEverywhereConnection?)
 
+    @Parcelize
+    private class UrlValidator(private val error: String) : EnterValueFragment.ValueValidator {
+        override fun validate(context: Context, value: String) = if (value.toHttpUrlOrNull() == null) error else null
+    }
 }
+

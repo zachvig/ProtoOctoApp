@@ -39,6 +39,10 @@ class ConfigureRemoteAccessSpaghettiDetectiveFragment : Fragment() {
             viewModel.getSpaghettiDetectiveSetupUrl()
         }
 
+        binding.customInstance.setOnClickListener {
+            viewModel.getSpaghettiDetectiveSetupUrl(customInstance = true)
+        }
+
         binding.disconnectTsd.setOnClickListener {
             viewModel.setRemoteUrl("", "", "", false)
         }

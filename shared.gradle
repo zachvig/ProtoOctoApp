@@ -34,8 +34,8 @@ android {
     defaultConfig {
         Properties properties = new Properties()
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
-        buildConfigField "String", "FAILED_TEST_SCREENSHOT_DIR", "\"${properties.getProperty('failedTScreenshotDir', '/storage/emulated/0/Download/test-failures/')}\""
-        buildConfigField "String", "TEST_ENV_DOMAIN", "\"${properties.getProperty('testEnvDoamin', '192.168.1.31')}\""
+        buildConfigField "String", "FAILED_TEST_SCREENSHOT_DIR", "\"${properties.getProperty('integrationTests.failedTScreenshotDir', '/storage/emulated/0/Download/test-failures/')}\""
+        buildConfigField "String", "TEST_ENV_DOMAIN", "\"${properties.getProperty('integrationTests.testEnvDoamin', '192.168.1.31')}\""
         buildConfigField "String", "TEST_OCTOEVERYWHERE_PASSWORD", "\"${properties.getProperty('integrationTests.octoEevrywherePassword' ?: '')}\""
         buildConfigField "String", "TEST_OCTOEVERYWHERE_USER", "\"${properties.getProperty('integrationTests.octoEverywhereUser', '')}\""
     }

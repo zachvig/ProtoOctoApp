@@ -73,9 +73,10 @@ class ExecuteWidgetActionActivity : LocalizedActivity(), MenuHost {
                 id.hashCode(),
                 Intent(context, ExecuteWidgetActionActivity::class.java).also {
                     it.putExtra(EXTRA_TASK, task)
+                    it.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     intentUpdate(it)
                 },
-                PendingIntentCompat.FLAG_UPDATE_CURRENT_IMMUTABLE
+                PendingIntentCompat.FLAG_UPDATE_CURRENT_MUTABLE
             )
     }
 
