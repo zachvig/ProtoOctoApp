@@ -199,8 +199,76 @@ object BillingManager {
         }
     }
 
-    private suspend fun handlePurchases(purchases: List<Purchase>) {
-        Timber.i("Handling ${purchases.size} purchases")
+    private suspend fun handlePurchases(purchases: List<Purchase>) = if (Firebase.remoteConfig.getBoolean("handle_purchases_legacy")) {
+        handlePurchasesLegacy(purchases)
+    } else {
+        handlePurchasesPatched(purchases)
+    }
+
+    private suspend fun handlePurchasesPatched(purchases: List<Purchase>) {
+        Timber.i("Handling ${purchases.size} purchases PATCHED")
+        try {
+            // Collect all purchases, we cache purchases in the current session to prevent hick ups
+            val allPurchases = billingChannel.value.rawPurchases.toMutableMap().apply {
+                putAll(purchases.map { purchase -> purchase.orderId to purchase })
+            }.values
+
+            Timber.i("Looking at ${allPurchases.size} purchases in total: ${allPurchases.map { it.orderId }}")
+
+            // Check if premium is active
+            val premiumActive = allPurchases.any {
+                Purchase.PurchaseState.PURCHASED == it.purchaseState
+            }
+            val fromSubscription = allPurchases.any {
+                Purchase.PurchaseState.PURCHASED == it.purchaseState && it.skus.any { sku -> sku.contains("_sub_") }
+            }
+
+            OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.PremiumUser, premiumActive.toString())
+            OctoAnalytics.setUserProperty(OctoAnalytics.UserProperty.PremiumSubUser, fromSubscription.toString())
+
+            billingChannel.update {
+                it.copy(
+                    isPremiumActive = premiumActive,
+                    isPremiumFromSubscription = fromSubscription,
+                    purchases = it.purchases.toMutableSet().apply {
+                        addAll(purchases.map { purchase -> purchase.orderId })
+                    },
+                    rawPurchases = it.rawPurchases.toMutableMap().apply {
+                        putAll(purchases.map { purchase -> purchase.orderId to purchase })
+                    }
+                )
+            }
+
+            // Activate purchases
+            var purchaseEventSent = false
+            purchases.forEach { purchase ->
+                if (!purchase.isAcknowledged) {
+                    if (!purchaseEventSent) {
+                        purchaseEventSent = true
+                        billingEventChannel.value = BillingEvent.PurchaseCompleted
+                    }
+
+                    val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
+                        .setPurchaseToken(purchase.purchaseToken)
+                    val billingResult = withContext(Dispatchers.IO) {
+                        billingClient?.acknowledgePurchase(acknowledgePurchaseParams.build())
+                    } ?: return Timber.w("BillingClient was not ready, unable to handle purchases")
+                    if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
+                        logError("Failed to acknowledge purchase ${purchase.orderId}", billingResult)
+                    } else {
+                        Timber.i("Confirmed purchase ${purchase.orderId}")
+                    }
+                }
+            }
+
+
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
+    private suspend fun handlePurchasesLegacy(purchases: List<Purchase>) {
+        Timber.i("Handling ${purchases.size} purchases LEGACY")
         try {
             // Check if premium is active
             val premiumActive = purchases.any {
