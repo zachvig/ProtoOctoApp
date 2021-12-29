@@ -74,6 +74,8 @@ class MessageDeserializer(
 
         "SettingsUpdated" -> Message.EventMessage.SettingsUpdated()
 
+        "PrinterProfileModified" -> Message.EventMessage.PrinterProfileModified()
+
         else -> {
             Message.EventMessage.Unknown(o["type"].asString)
         }

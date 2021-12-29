@@ -585,7 +585,9 @@ class MainActivity : OctoActivity() {
     }
 
     private fun onEventMessageReceived(e: SocketMessage.EventMessage) = when (e) {
-        is SocketMessage.EventMessage.Connected, is SocketMessage.EventMessage.SettingsUpdated -> {
+        is SocketMessage.EventMessage.Connected,
+        is SocketMessage.EventMessage.PrinterProfileModified,
+        is SocketMessage.EventMessage.SettingsUpdated -> {
             // New printer connected or settings updated, let's update capabilities
             updateCapabilities("settings_updated", updateM115 = false)
         }

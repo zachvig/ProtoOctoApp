@@ -11,8 +11,9 @@ data class PrinterProfiles(
         val default: Boolean = false,
         val model: String = "fallback",
         val name: String = "Fallback",
-        val volume: Volume = Volume(200f, 200f, 200f, PrinterProfiles.Origin.LowerLeft),
-        val extruder: Extruder = Extruder(0.4f, 1 , false),
+        val volume: Volume = Volume(200f, 200f, 200f, Origin.LowerLeft),
+        val axes: Axes? = null,
+        val extruder: Extruder = Extruder(0.4f, 1, false),
         val heatedChamber: Boolean = false,
         val heatedBed: Boolean = true,
     )
@@ -22,6 +23,18 @@ data class PrinterProfiles(
         val width: Float,
         val height: Float,
         val origin: Origin,
+    )
+
+    data class Axes(
+        val e: Axis?,
+        val x: Axis?,
+        val y: Axis?,
+        val z: Axis?,
+    )
+
+    data class Axis(
+        val inverted: Boolean?,
+        val speed: Float?,
     )
 
     data class Extruder(
