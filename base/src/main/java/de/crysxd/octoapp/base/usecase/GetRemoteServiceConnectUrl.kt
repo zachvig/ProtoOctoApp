@@ -9,6 +9,8 @@ import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintApiException
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintUnavailableException
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -64,7 +66,7 @@ class GetRemoteServiceConnectUrlUseCase @Inject constructor(
             }
         }
 
-        object SpaghettiDetective : RemoteService() {
+        data class SpaghettiDetective(val baseUrl: HttpUrl = "https://app.thespaghettidetective.com/".toHttpUrl()) : RemoteService() {
             override suspend fun getPrinterId(octoPrint: OctoPrint) = try {
                 octoPrint.createSpaghettiDetectiveApi().getLinkedPrinterId() ?: ""
             } catch (e: OctoPrintApiException) {
@@ -74,7 +76,7 @@ class GetRemoteServiceConnectUrlUseCase @Inject constructor(
 
             override fun recordStartEvent() = OctoAnalytics.logEvent(OctoAnalytics.Event.SpaghettiDetectiveConnectStarted)
             override fun getCallbackPath() = SPAGHETTI_DETECTIVE_APP_PORTAL_CALLBACK_PATH
-            override fun getConnectUrl() = Firebase.remoteConfig.getString("spaghetti_detective_app_portal_url")
+            override fun getConnectUrl() = baseUrl.resolve(Firebase.remoteConfig.getString("spaghetti_detective_app_portal_url")).toString()
             override fun getMessageForException(e: Exception): Int? = null
         }
     }

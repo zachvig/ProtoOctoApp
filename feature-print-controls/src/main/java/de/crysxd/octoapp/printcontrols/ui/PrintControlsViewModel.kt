@@ -6,6 +6,7 @@ import de.crysxd.baseui.BaseViewModel
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ext.filterEventsForMessageType
 import de.crysxd.octoapp.base.network.OctoPrintProvider
+import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.base.usecase.TogglePausePrintJobUseCase
 import de.crysxd.octoapp.base.usecase.execute
 import de.crysxd.octoapp.octoprint.models.socket.Message.CurrentMessage
@@ -18,6 +19,7 @@ class PrintControlsViewModel(
     octoPrintRepository: OctoPrintRepository,
     octoPrintProvider: OctoPrintProvider,
     private val togglePausePrintJobUseCase: TogglePausePrintJobUseCase,
+    private val cancelPrintJobUseCase: CancelPrintJobUseCase,
 ) : BaseViewModel() {
 
     val printState = octoPrintProvider.eventFlow("printcontrols")
@@ -32,5 +34,9 @@ class PrintControlsViewModel(
 
     fun togglePausePrint() = viewModelScope.launch(coroutineExceptionHandler) {
         togglePausePrintJobUseCase.execute()
+    }
+
+    fun cancelPrint() = viewModelScope.launch(coroutineExceptionHandler) {
+        cancelPrintJobUseCase.execute(CancelPrintJobUseCase.Params(restoreTemperatures = false))
     }
 }

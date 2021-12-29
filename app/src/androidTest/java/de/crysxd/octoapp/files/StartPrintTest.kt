@@ -6,6 +6,7 @@ import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import com.adevinta.android.barista.rule.BaristaRule
@@ -13,6 +14,7 @@ import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import de.crysxd.octoapp.MainActivity
 import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.framework.BottomToolbarRobot
 import de.crysxd.octoapp.framework.MenuRobot
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.WorkspaceRobot
@@ -23,6 +25,7 @@ import de.crysxd.octoapp.framework.rules.TestDocumentationRule
 import de.crysxd.octoapp.framework.waitFor
 import de.crysxd.octoapp.framework.waitForDialog
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.not
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -41,7 +44,7 @@ class StartPrintTest {
         .around(AutoConnectPrinterRule())
 
     @Test(timeout = 120_000)
-    @AllowFlaky(attempts = 3)
+    @AllowFlaky(attempts = 1)
     fun WHEN_a_print_is_started_THEN_the_app_shows_printing() {
         // GIVEN
         BaseInjector.get().octorPrintRepository().setActive(testEnvVanilla)
@@ -53,24 +56,27 @@ class StartPrintTest {
         // Wait for print workspace to be shown
         verifyPrinting()
 
-        // Pause and resume
-        waitFor(allOf(withText("1 %"), isDisplayed()), timeout = 45_000)
-        onView(withText(R.string.pause)).perform(click())
-        waitForDialog(withText(R.string.pause_print_confirmation_message))
-        onView(withText(R.string.pause_print_confirmation_action)).inRoot(isDialog()).perform(click())
-        waitFor(allOf(withText(R.string.pausing), isDisplayed()))
-        waitFor(allOf(withText(R.string.resume), isDisplayed()), timeout = 45_000)
-        onView(withText(R.string.resume)).perform(click())
-        waitForDialog(withText(R.string.resume_print_confirmation_message))
-        onView(withText(R.string.resume_print_confirmation_action)).inRoot(isDialog()).perform(click())
-        waitFor(allOf(withText(R.string.pause), isDisplayed()), timeout = 10_000)
+        // Pause
+        waitFor(allOf(withId(R.id.status), withText("1 %"), isDisplayed()), timeout = 60_000)
+        onView(withId(R.id.pause_print)).check(matches(isDisplayed()))
+        onView(withId(R.id.cancel_print)).check(matches(isDisplayed()))
+        onView(withId(R.id.resume_print)).check(matches(not(isDisplayed())))
+        BottomToolbarRobot.confirmButtonWithSwipe(R.id.pause_print)
 
-        // Cancel print
-        MenuRobot.openMenuWithMoreButton()
-        MenuRobot.clickMenuButton(R.string.main_menu___item_cancel_print)
-        waitForDialog(withText(R.string.cancel_print_confirmation_message))
-        onView(withText(R.string.cancel_print_confirmation_action)).inRoot(isDialog()).perform(click())
-        MenuRobot.waitForMenuToBeClosed()
+        // Wait for paused and resume
+        waitFor(allOf(withText(R.string.pausing), isDisplayed()))
+        waitFor(allOf(withText(R.string.paused), isDisplayed()), timeout = 45_000)
+        onView(withId(R.id.pause_print)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.cancel_print)).check(matches(isDisplayed()))
+        onView(withId(R.id.resume_print)).check(matches(isDisplayed()))
+        BottomToolbarRobot.confirmButtonWithSwipe(R.id.resume_print)
+
+        // Wait for resume and cancel
+        waitFor(allOf(withId(R.id.status), withText("2 %"), isDisplayed()), timeout = 45_000)
+        onView(withId(R.id.pause_print)).check(matches(isDisplayed()))
+        onView(withId(R.id.cancel_print)).check(matches(isDisplayed()))
+        onView(withId(R.id.resume_print)).check(matches(not(isDisplayed())))
+        BottomToolbarRobot.confirmButtonWithSwipe(R.id.cancel_print)
         WorkspaceRobot.waitForPrepareWorkspace()
     }
 

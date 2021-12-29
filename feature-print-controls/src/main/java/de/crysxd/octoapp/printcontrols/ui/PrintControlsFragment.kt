@@ -3,9 +3,8 @@ package de.crysxd.octoapp.printcontrols.ui
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import androidx.annotation.StringRes
+import androidx.core.view.isVisible
 import androidx.lifecycle.asLiveData
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.menu.MenuBottomSheetFragment
 import de.crysxd.baseui.widget.WidgetHostFragment
@@ -24,37 +23,62 @@ class PrintControlsFragment : WidgetHostFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        moreButton.setOnClickListener { MenuBottomSheetFragment().show(childFragmentManager) }
+        bottomToolbar.menuButton.setOnClickListener { MenuBottomSheetFragment().show(childFragmentManager) }
         viewModel.webCamSupported.observe(viewLifecycleOwner) { reloadWidgets("webcam-suppport-change") }
 
-        viewModel.printState.observe(viewLifecycleOwner) {
-            val isPaused = it.state?.flags?.paused == true
-            mainButton.isEnabled = true
-            mainButton.setText(
-                when {
-                    isPaused -> R.string.resume
+        val cancelAction = bottomToolbar.addAction(
+            icon = R.drawable.ic_round_stop_24,
+            title = R.string.cancel_print,
+            needsSwipe = true,
+            id = R.id.cancel_print,
+            action = viewModel::cancelPrint
+        )
+        val pauseAction = bottomToolbar.addAction(
+            icon = R.drawable.ic_round_pause_24,
+            title = R.string.pause,
+            needsSwipe = true,
+            id = R.id.pause_print,
+            action = viewModel::togglePausePrint
+        )
+        val resumeAction = bottomToolbar.addAction(
+            icon = R.drawable.ic_round_play_arrow_24,
+            title = R.string.resume,
+            id = R.id.resume_print,
+            needsSwipe = true,
+            action = viewModel::togglePausePrint
+        )
 
-                    it.state?.flags?.pausing == true -> {
-                        mainButton.isEnabled = false
-                        R.string.pausing
-                    }
 
-                    it.state?.flags?.cancelling == true -> {
-                        mainButton.isEnabled = false
-                        R.string.cancelling
-                    }
+        var lastStatus: String? = "initial"
+        viewModel.printState.observe(viewLifecycleOwner) { msg ->
+            val printing = msg.state?.flags?.printing == true
+            val paused = msg.state?.flags?.paused == true
+            val pausing = msg.state?.flags?.pausing == true
+            val cancelling = msg.state?.flags?.cancelling == true
+            val status = when {
+                pausing -> getString(R.string.pausing)
+                cancelling -> getString(R.string.cancelling)
+                paused -> getString(R.string.paused)
+                printing && msg.progress?.completion != null -> getString(R.string.x_percent_int, msg.progress?.completion?.toInt())
+                else -> null
+            }
 
-                    else -> R.string.pause
-                }
-            )
+            val cancelActionVisible = printing || paused
+            val pauseActionVisible = printing && !pausing
+            val resumeActionVisible = paused && !cancelling
 
-            mainButton.setOnClickListener {
-                doAfterConfirmation(
-                    message = if (isPaused) R.string.resume_print_confirmation_message else R.string.pause_print_confirmation_message,
-                    button = if (isPaused) R.string.resume_print_confirmation_action else R.string.pause_print_confirmation_action
-                ) {
-                    viewModel.togglePausePrint()
-                }
+            if (
+                lastStatus != status ||
+                cancelActionVisible != cancelAction.isVisible ||
+                pauseActionVisible != pauseAction.isVisible ||
+                resumeActionVisible != resumeAction.isVisible
+            ) {
+                bottomToolbar.startDelayedTransition()
+                bottomToolbar.setStatus(status)
+                lastStatus = status
+                cancelAction.isVisible = cancelActionVisible
+                pauseAction.isVisible = pauseActionVisible
+                resumeAction.isVisible = resumeActionVisible
             }
         }
 
@@ -62,6 +86,10 @@ class PrintControlsFragment : WidgetHostFragment() {
             updateKeepScreenOn()
         }
     }
+
+    private var List<View>.isVisible: Boolean
+        get() = all { it.isVisible }
+        set(value) = forEach { it.isVisible = value }
 
     override fun doReloadWidgets() {
         val webcamSupported = viewModel.webCamSupported.value == true
@@ -102,13 +130,5 @@ class PrintControlsFragment : WidgetHostFragment() {
     override fun onStop() {
         super.onStop()
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    }
-
-    private fun doAfterConfirmation(@StringRes message: Int, @StringRes button: Int, action: () -> Unit) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setMessage(message)
-            .setPositiveButton(button) { _, _ -> action() }
-            .setNegativeButton(R.string.cancel, null)
-            .show()
     }
 }

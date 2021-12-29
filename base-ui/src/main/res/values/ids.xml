@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="pause_print" type="id" />
+    <item name="cancel_print" type="id" />
+    <item name="resume_print" type="id" />
+</resources>

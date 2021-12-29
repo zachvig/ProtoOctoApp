@@ -6,7 +6,6 @@ import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.OctoPrint
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import okhttp3.HttpUrl
 import timber.log.Timber
 import javax.inject.Inject
@@ -32,7 +31,7 @@ class GetActiveHttpUrlUseCase @Inject constructor(
             o to s
         } ?: let {
             val o = octoPrintProvider.octoPrint()
-            val connection = octoPrintProvider.passiveConnectionEventFlow("webcam-settings").firstOrNull()?.connectionType
+            val connection = octoPrintProvider.currentConnection
             val s = octoPrintRepository.getActiveInstanceSnapshot()?.settings?.takeIf { connection != null } ?: o.createSettingsApi().getSettings()
             timber.i("Using default connection (connection=$connection)")
             o to s

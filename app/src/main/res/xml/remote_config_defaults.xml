@@ -100,7 +100,7 @@
     </entry>
     <entry>
         <key>spaghetti_detective_app_portal_url</key>
-        <value>https://app.thespaghettidetective.com/tunnels/new/?app=OctoApp&amp;printer_id={{{printerid}}}&amp;success_redirect_url=octoapp%3A%2F%2Fapp.octoapp.eu%2F{{{callbackPath}}}</value>
+        <value>tunnels/new/?app=OctoApp&amp;printer_id={{{printerid}}}&amp;success_redirect_url=octoapp%3A%2F%2Fapp.octoapp.eu%2F{{{callbackPath}}}</value>
     </entry>
     <entry>
         <key>notification_battery_saver</key>
@@ -117,5 +117,13 @@
     <entry>
         <key>companion_plugin_url</key>
         <value>https://github.com/crysxd/OctoApp-Plugin</value>
+    </entry>
+    <entry>
+        <key>use_cached_dns_resolver</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>handle_purchases_legacy</key>
+        <value>false</value>
     </entry>
 </defaultsMap>

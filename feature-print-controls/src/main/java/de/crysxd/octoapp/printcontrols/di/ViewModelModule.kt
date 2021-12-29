@@ -11,6 +11,7 @@ import de.crysxd.octoapp.base.data.repository.SerialCommunicationLogsRepository
 import de.crysxd.octoapp.base.di.ViewModelFactory
 import de.crysxd.octoapp.base.di.ViewModelKey
 import de.crysxd.octoapp.base.network.OctoPrintProvider
+import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.base.usecase.ExecuteGcodeCommandUseCase
 import de.crysxd.octoapp.base.usecase.TogglePausePrintJobUseCase
 import de.crysxd.octoapp.base.usecase.TunePrintUseCase
@@ -34,10 +35,12 @@ open class ViewModelModule {
         octoPrintRepository: OctoPrintRepository,
         octoPrintProvider: OctoPrintProvider,
         togglePausePrintJobUseCase: TogglePausePrintJobUseCase,
+        cancelPrintJobUseCase: CancelPrintJobUseCase,
     ): ViewModel = PrintControlsViewModel(
         octoPrintRepository = octoPrintRepository,
         octoPrintProvider = octoPrintProvider,
         togglePausePrintJobUseCase = togglePausePrintJobUseCase,
+        cancelPrintJobUseCase = cancelPrintJobUseCase,
     )
 
     @Provides
