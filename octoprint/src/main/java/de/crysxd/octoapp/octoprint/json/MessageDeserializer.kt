@@ -75,6 +75,8 @@ class MessageDeserializer(
 
         "SettingsUpdated" -> Message.EventMessage.SettingsUpdated()
 
+        "PrinterProfileModified" -> Message.EventMessage.PrinterProfileModified()
+
         "MovieRendering" -> Message.EventMessage.MovieRendering()
 
         "MovieDone" -> Message.EventMessage.MovieDone()
