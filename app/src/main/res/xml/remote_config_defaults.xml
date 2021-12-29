@@ -122,4 +122,8 @@
         <key>use_cached_dns_resolver</key>
         <value>false</value>
     </entry>
+    <entry>
+        <key>handle_purchases_legacy</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>
