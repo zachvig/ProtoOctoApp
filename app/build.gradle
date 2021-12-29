@@ -20,7 +20,7 @@ play {
     defaultToAppBundles.set(true)
     resolutionStrategy.set(ResolutionStrategy.IGNORE)
     releaseStatus.set(ReleaseStatus.COMPLETED)
-    updatePriority.set(2)
+    updatePriority.set(1)
     userFraction.set(1d)
 }
 
