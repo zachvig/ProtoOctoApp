@@ -136,7 +136,7 @@ class WebcamTest {
 
             // This is only to wait until the idle resource is idle (aka enough frames received)
             onView(isAssignableFrom(WebcamView::class.java)).check(matches(withId(R.id.webcamView)))
-            assertThat(fps).isAtLeast(20)
+            assertThat(fps).isAtLeast(15)
         } finally {
             BillingManager.enabledForTest = null
 
