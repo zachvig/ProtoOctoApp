@@ -30,17 +30,20 @@ class PrintControlsFragment : WidgetHostFragment() {
             icon = R.drawable.ic_round_stop_24,
             title = R.string.cancel_print,
             needsSwipe = true,
+            id = R.id.cancel_print,
             action = viewModel::cancelPrint
         )
         val pauseAction = bottomToolbar.addAction(
             icon = R.drawable.ic_round_pause_24,
             title = R.string.pause,
             needsSwipe = true,
+            id = R.id.pause_print,
             action = viewModel::togglePausePrint
         )
         val resumeAction = bottomToolbar.addAction(
             icon = R.drawable.ic_round_play_arrow_24,
             title = R.string.resume,
+            id = R.id.resume_print,
             needsSwipe = true,
             action = viewModel::togglePausePrint
         )

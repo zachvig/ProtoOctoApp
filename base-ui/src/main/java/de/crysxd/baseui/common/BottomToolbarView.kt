@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.annotation.DrawableRes
+import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -37,7 +38,7 @@ class BottomToolbarView @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    fun addAction(@DrawableRes icon: Int, @StringRes title: Int, needsSwipe: Boolean, action: () -> Unit): List<View> {
+    fun addAction(@DrawableRes icon: Int, @StringRes title: Int, @IdRes id: Int, needsSwipe: Boolean, action: () -> Unit): List<View> {
         val group = mutableListOf<View>()
 
         if (binding.flow.referencedIds.size > initialFlowViewCount) {
@@ -57,7 +58,7 @@ class BottomToolbarView @JvmOverloads constructor(context: Context, attrs: Attri
 
         val button = AppCompatImageButton(ContextThemeWrapper(context, R.style.OctoTheme_Widget_Button_Image))
         button.setImageResource(icon)
-        button.id = ViewCompat.generateViewId()
+        button.id = id
         button.contentDescription = context.getString(title)
         addView(button)
         binding.flow.addView(button)

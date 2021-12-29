@@ -2,6 +2,7 @@ package de.crysxd.octoapp.preprintcontrols.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.ViewCompat
 import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.menu.MenuBottomSheetFragment
@@ -27,6 +28,7 @@ class PrePrintControlsFragment : WidgetHostFragment() {
         bottomToolbar.addAction(
             icon = R.drawable.ic_round_local_fire_department_24,
             title = R.string.temperature_menu___title,
+            id = ViewCompat.generateViewId(),
             needsSwipe = false,
         ) {
             MenuBottomSheetFragment.createForMenu(TemperatureMenu()).show(childFragmentManager)
