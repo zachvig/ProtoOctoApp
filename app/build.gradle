@@ -9,14 +9,14 @@ import com.github.triplet.gradle.androidpublisher.*
 android {
     defaultConfig{
         applicationId "de.crysxd.octoapp"
-        versionCode 1_12_27
-        versionName "1.12.8"
+        versionCode 1_12_28
+        versionName "1.12.9"
     }
 }
 
 play {
     serviceAccountCredentials.set(file("service-account.json"))
-    track.set("beta")
+    track.set("internal")
     defaultToAppBundles.set(true)
     resolutionStrategy.set(ResolutionStrategy.IGNORE)
     releaseStatus.set(ReleaseStatus.COMPLETED)
