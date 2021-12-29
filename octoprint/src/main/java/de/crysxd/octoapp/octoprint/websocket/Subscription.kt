@@ -5,6 +5,7 @@ internal data class Subscription(
     val plugins: List<String> = listOf(),
     val events: List<String> = listOf(
         "PrinterStateChanged",
+        "PrinterProfileModified",
         "Connecting",
         "Connected",
         "Disconnected",
@@ -20,7 +21,7 @@ internal data class Subscription(
         "SettingsUpdated",
         "MovieRendering",
         "MovieDone",
-        "MovieFailed"
+        "MovieFailed",
     ),
 ) {
     data class State(

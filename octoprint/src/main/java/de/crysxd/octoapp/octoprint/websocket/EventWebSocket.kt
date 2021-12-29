@@ -229,7 +229,7 @@ class EventWebSocket(
                 dispatchEvent(Event.Connected(getCurrentConnectionType()))
             }
 
-            logger.log(Level.FINEST, "[$listenerId] Message received: ${text.substring(0, 32.coerceAtMost(text.length))} ")
+            logger.log(Level.FINEST, "[$listenerId] Message received: ${text.substring(0, 64.coerceAtMost(text.length))} ")
 
             try {
                 when (val message = gson.fromJson(text, Message::class.java)) {
