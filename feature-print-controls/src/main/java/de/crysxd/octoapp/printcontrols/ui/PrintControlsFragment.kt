@@ -125,10 +125,13 @@ class PrintControlsFragment : WidgetHostFragment() {
     override fun onStart() {
         super.onStart()
         updateKeepScreenOn()
+        Timber.i("Start")
+
     }
 
     override fun onStop() {
         super.onStop()
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        Timber.i("Stop")
     }
 }
