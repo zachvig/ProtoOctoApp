@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.SeekBar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -21,6 +22,7 @@ import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.menu.MenuBottomSheetFragment
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.gcode.parse.models.Move
@@ -145,7 +147,26 @@ class GcodePreviewFragment : BaseFragment() {
         if (isStandaloneScreen) {
             requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
             requireOctoActivity().octo.isVisible = false
+            updateKeepScreenOn()
+            Timber.i("Start")
         }
+    }
+
+
+    private fun updateKeepScreenOn() {
+        if (BaseInjector.get().octoPreferences().isKeepScreenOnDuringPrint) {
+            Timber.i("Keeping screen on")
+            requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            Timber.i("Not keeping screen on")
+            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        Timber.i("Stop")
     }
 
     private fun updateViewState(state: GcodePreviewViewModel.ViewState) {

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
@@ -155,6 +156,7 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
         requireOctoActivity().octoToolbar.state = OctoToolbar.State.Hidden
         requireOctoActivity().octo.isVisible = false
         requireActivity().requestedOrientation = orientationViewModel.preferredOrientation
+        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             var flags = requireActivity().window.decorView.systemUiVisibility
@@ -173,6 +175,7 @@ class WebcamFragment : Fragment(), InsetAwareScreen {
         super.onStop()
         requireActivity().requestedOrientation = orientationViewModel.requestedOrientationBackup
         requireActivity().window.decorView.systemUiVisibility = systemUiFlagsBackup
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun handleInsets(insets: Rect) {
