@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import de.crysxd.baseui.BaseFragment
 import de.crysxd.baseui.common.NetworkStateViewModel
+import de.crysxd.baseui.common.feedback.SendFeedbackDialog
 import de.crysxd.baseui.di.BaseUiInjector
 import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.octoapp.base.UriLibrary
@@ -65,6 +66,10 @@ class ProbeOctoPrintFragment : BaseFragment() {
 
         binding.loading.subtitle.isVisible = false
         binding.loading.title.text = getString(R.string.sign_in___probe___probing_active_title)
+        binding.loading.title.setOnLongClickListener {
+            SendFeedbackDialog.create(isForBugReport = true).show(childFragmentManager, "feedback")
+            true
+        }
 
         wifiViewModel.networkState.observe(viewLifecycleOwner) {
             Timber.i("Wifi state: $it")
