@@ -27,7 +27,6 @@ import java.io.RandomAccessFile
 import kotlin.math.absoluteValue
 
 
-
 class LocalGcodeFileDataSource(
     context: Context,
     private val gson: Gson,
@@ -92,6 +91,13 @@ class LocalGcodeFileDataSource(
                 }
             } catch (e: OutOfMemoryError) {
                 throw IOException(e)
+            }
+
+            var index = -1
+            try {
+                gcode.layers.forEachIndexed { i, it -> index = i; it.positionInFile }
+            } catch (e: Exception) {
+                Timber.i("Failed to access each layer in restored file. Failed at index=$index size=${gcode.layers.size}")
             }
 
             emit(GcodeFileDataSource.LoadState.Ready(gcode))
