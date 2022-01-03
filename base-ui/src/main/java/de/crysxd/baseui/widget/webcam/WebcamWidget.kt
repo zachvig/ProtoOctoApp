@@ -43,6 +43,7 @@ class WebcamWidget(context: Context) : RecyclableOctoWidget<WebcamWidgetBinding,
         }
         binding.webcamView.onFullscreenClicked = ::openFullscreen
         binding.webcamView.supportsTroubleShooting = true
+        binding.webcamView.allowTouch = false
         binding.webcamView.onShareImageClicked = {
             baseViewModel.shareImage(context, it)
         }

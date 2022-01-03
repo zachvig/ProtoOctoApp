@@ -34,6 +34,7 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
     private val viewPortRect = RectF()
     private val helperRect = RectF()
     private val helperMatrix = Matrix()
+    var allowTouch = true
     var onScaleToFillChanged: (Boolean) -> Unit = {}
     var scaleToFill: Boolean = false
         set(value) {
@@ -47,7 +48,6 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
                 requestLayout()
             }
         }
-    var abandonedDoubleTapCallback: () -> Unit = {}
 
     private val debugPaint = Paint().also {
         it.strokeWidth = 20f
@@ -71,12 +71,21 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        scaleGestureDetector.onTouchEvent(event)
-        if (!scaleGestureDetector.isInProgress) {
-            gestureDetector.onTouchEvent(event)
+        // Play nice with control center overlay. This view gets touch priority
+        parent.requestDisallowInterceptTouchEvent(allowTouch)
+
+        return if (allowTouch) {
+            scaleGestureDetector.onTouchEvent(event)
+            if (!scaleGestureDetector.isInProgress) {
+                gestureDetector.onTouchEvent(event)
+            }
+            true
+        } else {
+            false
         }
-        return true
     }
+
+    private fun canScroll() = currentZoom > minZoom
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -190,23 +199,17 @@ class MatrixView @JvmOverloads constructor(context: Context, attributeSet: Attri
         override fun onDoubleTap(e: MotionEvent): Boolean {
             // Determine new scale to fill. If we currently scale to fill, we are now not scale to fill
             // Determination based on current zoom
-            val scaleToFillZoom = calculateScaleToFillZoom()
-            val zoomChangeRequired = (currentZoom - scaleToFillZoom).absoluteValue < 0.01f
-            val newScaleToFill = when {
-                zoomChangeRequired -> false
-                else -> true
-            }
+            val newZoom = if (scaleToFill) minZoom else calculateScaleToFillZoom()
+            val zoomChangeRequired = (currentZoom - newZoom).absoluteValue < 0.01f
 
             // Flush new value if changed
-            if (newScaleToFill != scaleToFill && zoomChangeRequired) {
-                onScaleToFillChanged(newScaleToFill)
-            } else {
-                abandonedDoubleTapCallback()
+            if (zoomChangeRequired) {
+                onScaleToFillChanged(!scaleToFill)
             }
 
             // Apply with animation
             beginInternalSizeTransition()
-            scaleToFill = newScaleToFill
+            scaleToFill = !scaleToFill
 
             return true
         }

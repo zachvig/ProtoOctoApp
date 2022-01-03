@@ -6,7 +6,9 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
 import android.util.AttributeSet
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -65,6 +67,18 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     var lastNativeWidth: Int? = null
     var lastNativeHeight: Int? = null
 
+    private val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+        override fun onDoubleTap(e: MotionEvent?): Boolean {
+            onFullscreenClicked()
+            return true
+        }
+    })
+
+    var allowTouch
+        get() = binding.matrixView.allowTouch
+        set(value) {
+            binding.matrixView.allowTouch = value
+        }
     var suppressResolutionIndicator = false
     var supportsTroubleShooting = false
     var scaleToFill: Boolean
@@ -124,11 +138,12 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         binding.imageButtonSwitchCamera.setOnClickListener { onSwitchWebcamClicked() }
         binding.resolutionIndicator.setOnClickListener { onResolutionClicked() }
         binding.imageButtonShare.setOnClickListener { onShareImageClicked(captureBitmap()) }
-        binding.matrixView.abandonedDoubleTapCallback = {
-            if (canUseDoubleTapToFullscreen) {
-                onFullscreenClicked()
-            }
-        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        gestureDetector.onTouchEvent(event)
+        return true
     }
 
     @SuppressLint("SetTextI18n")

@@ -82,9 +82,13 @@ class BottomToolbarSwipeButtonView @JvmOverloads constructor(
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
-            MotionEvent.ACTION_UP -> stopSwipeButton()
+            MotionEvent.ACTION_UP -> {
+                parent.requestDisallowInterceptTouchEvent(false)
+                stopSwipeButton()
+            }
 
             MotionEvent.ACTION_MOVE -> doOnLayout {
+                parent.requestDisallowInterceptTouchEvent(true)
                 val timeOk = System.currentTimeMillis() > (swipeButtonShownAt + 200)
                 val distanceOk = event.x > swipeAreaRect.left + swipeAreaRect.width() * 0.05f
                 val wasConfirmed = isConfirmed()
