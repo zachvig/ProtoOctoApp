@@ -66,9 +66,12 @@ class ProbeOctoPrintFragment : BaseFragment() {
 
         binding.loading.subtitle.isVisible = false
         binding.loading.title.text = getString(R.string.sign_in___probe___probing_active_title)
-        binding.loading.title.setOnLongClickListener {
-            SendFeedbackDialog.create(isForBugReport = true).show(childFragmentManager, "feedback")
-            true
+
+        val isBeta = (requireContext().packageManager.getPackageInfo(requireContext().packageName, 0).versionName ?: "").contains("beta")
+        if (isBeta) {
+            binding.contentWrapper.setOnClickListener {
+                SendFeedbackDialog.create(isForBugReport = true).show(childFragmentManager, "feedback")
+            }
         }
 
         wifiViewModel.networkState.observe(viewLifecycleOwner) {
@@ -118,7 +121,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
         // Octo is now in a neutral position, we can animate states
         val extras = FragmentNavigatorExtras(binding.octoView to "octoView", binding.octoBackground to "octoBackground")
         val directions = ProbeOctoPrintFragmentDirections.requestAccess(UriLibrary.secureEncode(webUrl.toString()))
-        findNavController().navigate(directions, extras)
+//        findNavController().navigate(directions, extras)
     }
 
     private fun continueWithPresentApiKey(finding: TestFullNetworkStackUseCase.Finding.OctoPrintReady) {
