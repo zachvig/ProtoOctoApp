@@ -28,19 +28,19 @@ interface FilesApi {
     suspend fun getAllFiles(@Path("origin") origin: FileOrigin): FileList
 
     @GET("files/{origin}/{path}")
-    suspend fun getFile(@Path("origin") origin: FileOrigin, @Path("path") path: String): FileObject.File
+    suspend fun getFile(@Path("origin") origin: FileOrigin, @Path("path", encoded = true) path: String): FileObject.File
 
     @GET("files/{origin}")
     suspend fun getRootFolder(@Path("origin") origin: FileOrigin): FileList
 
     @GET("files/{origin}/{path}")
-    suspend fun getSubFolder(@Path("origin") origin: FileOrigin, @Path("path") path: String): FileObject.Folder
+    suspend fun getSubFolder(@Path("origin") origin: FileOrigin, @Path("path", encoded = true) path: String): FileObject.Folder
 
     @POST("files/{origin}/{path}")
-    suspend fun executeFileCommand(@Path("origin") origin: FileOrigin, @Path("path") path: String, @Body command: Any): Response<Unit>
+    suspend fun executeFileCommand(@Path("origin") origin: FileOrigin, @Path("path", encoded = true) path: String, @Body command: Any): Response<Unit>
 
     @DELETE("files/{origin}/{path}")
-    suspend fun deleteFile(@Path("origin") origin: FileOrigin, @Path("path") path: String): Response<Unit>
+    suspend fun deleteFile(@Path("origin") origin: FileOrigin, @Path("path", encoded = true) path: String): Response<Unit>
 
     @POST("files/{origin}")
     suspend fun uploadObject(@Path("origin") origin: FileOrigin, @Body body: MultipartBody): Response<Unit>

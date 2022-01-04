@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.first
 import timber.log.Timber
 import java.io.File
 import java.io.FileNotFoundException
+import java.io.IOException
 import java.net.InetAddress
 import java.net.UnknownHostException
 import java.util.*
@@ -143,14 +144,24 @@ class CachedLocalDnsResolver(
                         }
                     }
                 } catch (e: Exception) {
-                    Timber.e(e)
                     channel.value = e
                 }
             }
 
             try {
-                val address = when (val res = withTimeout(TimeUnit.SECONDS.toMillis(RESOLVE_TIMEOUT)) { channel.filterNotNull().first() }) {
-                    is Throwable -> throw res
+                val address = when (val res = withTimeoutOrNull(TimeUnit.SECONDS.toMillis(RESOLVE_TIMEOUT)) { channel.filterNotNull().first() }) {
+                    null -> {
+                        Timber.w("Timed out waiting")
+                        return@withTimeoutOrNull null
+                    }
+                    is Throwable -> {
+                        if (res is IOException && res.message?.contains("EPERM") == true) {
+                            Timber.w("UPnP search failed with exception because we are on mobile network (${res::class.qualifiedName}: ${res.message})")
+                        } else {
+                            Timber.e(res, "UPnP resolve failed with exception")
+                        }
+                        throw res
+                    }
                     is InetAddress -> res
                     else -> throw Exception("Unexpected result $res")
                 }
