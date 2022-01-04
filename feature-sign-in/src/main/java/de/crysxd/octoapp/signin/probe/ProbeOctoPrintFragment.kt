@@ -66,9 +66,12 @@ class ProbeOctoPrintFragment : BaseFragment() {
 
         binding.loading.subtitle.isVisible = false
         binding.loading.title.text = getString(R.string.sign_in___probe___probing_active_title)
-        binding.loading.title.setOnLongClickListener {
-            SendFeedbackDialog.create(isForBugReport = true).show(childFragmentManager, "feedback")
-            true
+
+        val isBeta = (requireContext().packageManager.getPackageInfo(requireContext().packageName, 0).versionName ?: "").contains("beta")
+        if (isBeta) {
+            binding.contentWrapper.setOnClickListener {
+                SendFeedbackDialog.create(isForBugReport = true).show(childFragmentManager, "feedback")
+            }
         }
 
         wifiViewModel.networkState.observe(viewLifecycleOwner) {
