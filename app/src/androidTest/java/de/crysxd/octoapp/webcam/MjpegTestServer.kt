@@ -36,21 +36,26 @@ class MjpegTestServer(val port: Int = 8000) {
     fun start(context: Context) = AppScope.launch(Dispatchers.IO) {
         require(ss == null)
         ss = ServerSocket(port)
-        val s = requireNotNull(ss).accept()
-        val out = s.getOutputStream().buffered()
-        val writer = out.bufferedWriter()
-        writer.write(HEADERS)
-        Timber.i("Sent headers")
-        val imageFormat = "webcam_test_1080_%d"
         while (true) {
-            Timber.i("Sending frames...")
-            (1..frameCount).forEach { i ->
-                val id = context.resources.getIdentifier(String.format(imageFormat, i), "raw", context.packageName)
-                context.resources.openRawResource(id).use {
-                    writer.write(String.format(SEPARATOR, it.available()))
-                    writer.flush()
-                    it.copyTo(out)
+            try {
+                val s = requireNotNull(ss).accept()
+                val out = s.getOutputStream().buffered()
+                val writer = out.bufferedWriter()
+                writer.write(HEADERS)
+                Timber.i("Sent headers")
+                val imageFormat = "webcam_test_1080_%d"
+                while (true) {
+                    Timber.i("Sending frames...")
+                    (1..frameCount).forEach { i ->
+                        val id = context.resources.getIdentifier(String.format(imageFormat, i), "raw", context.packageName)
+                        context.resources.openRawResource(id).use {
+                            writer.write(String.format(SEPARATOR, it.available()))
+                            writer.flush()
+                            it.copyTo(out)
+                        }
+                    }
                 }
+            } catch (e: Exception) {
             }
         }
     }
