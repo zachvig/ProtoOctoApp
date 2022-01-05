@@ -38,15 +38,15 @@ class OctoPrintRepository(
             octoPreferences.activeInstanceWebUrl = null
         }
 
-        postActiveInstance(octoPreferences.activeInstanceId?.let(::get))
+        postActiveInstance()
     }
 
     fun instanceInformationFlow() = instanceInformationChannel.asStateFlow()
 
     fun getActiveInstanceSnapshot() = instanceInformationChannel.value
 
-    private fun postActiveInstance(activeInstance: OctoPrintInstanceInformationV3?) {
-        octoPreferences.activeInstanceId = activeInstance?.id
+    private fun postActiveInstance(instance: OctoPrintInstanceInformationV3? = null) {
+        val activeInstance = instance ?: octoPreferences.activeInstanceId?.let(::get)
         Timber.i("Activating ${activeInstance?.id} (${activeInstance?.label})")
         activeInstance?.let { sensitiveDataMask.registerInstance(it) }
         instanceInformationChannel.value = activeInstance
@@ -66,7 +66,7 @@ class OctoPrintRepository(
         storeOctoprintInstanceInformation(instance.id, instance)
         octoPreferences.activeInstanceId = instance.id
         Timber.i("Setting as active: ${instance.webUrl}")
-        postActiveInstance(instance)
+        postActiveInstance()
     }
 
     suspend fun updateActive(block: suspend (OctoPrintInstanceInformationV3) -> OctoPrintInstanceInformationV3?) {
@@ -97,7 +97,8 @@ class OctoPrintRepository(
 
     fun clearActive() {
         Timber.i("Clearing active")
-        postActiveInstance(null)
+        octoPreferences.activeInstanceId = null
+        postActiveInstance()
     }
 
     fun remove(id: String) {
