@@ -1,7 +1,6 @@
 package de.crysxd.octoapp.base.data.repository
 
 import de.crysxd.octoapp.base.OctoPreferences
-import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue
 import de.crysxd.octoapp.base.data.models.AppSettings
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.data.source.DataSource
@@ -46,8 +45,8 @@ class OctoPrintRepository(
 
     fun getActiveInstanceSnapshot() = instanceInformationChannel.value
 
-    private fun postActiveInstance() {
-        val activeInstance = octoPreferences.activeInstanceId?.let(::get)
+    private fun postActiveInstance(instance: OctoPrintInstanceInformationV3? = null) {
+        val activeInstance = instance ?: octoPreferences.activeInstanceId?.let(::get)
         Timber.i("Activating ${activeInstance?.id} (${activeInstance?.label})")
         activeInstance?.let { sensitiveDataMask.registerInstance(it) }
         instanceInformationChannel.value = activeInstance
@@ -59,7 +58,7 @@ class OctoPrintRepository(
         instance?.let { updated.add(it) }
         dataSource.store(updated)
         if (id == octoPreferences.activeInstanceId) {
-            postActiveInstance()
+            postActiveInstance(instance)
         }
     }
 
@@ -106,13 +105,6 @@ class OctoPrintRepository(
         Timber.i("Removing $id")
         val all = getAll().filter { it.id != id }
         dataSource.store(all)
-    }
-
-    suspend fun reportIssueWithActiveInstance(issue: ActiveInstanceIssue) {
-        Timber.w("Issue reported with")
-        updateActive {
-            it.copy(apiKey = it.apiKey.takeUnless { issue == ActiveInstanceIssue.INVALID_API_KEY } ?: "", issue = issue)
-        }
     }
 
     fun get(id: String) = dataSource.get()?.firstOrNull { it.id == id }
