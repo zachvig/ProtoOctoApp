@@ -1,7 +1,6 @@
 package de.crysxd.octoapp.base.data.repository
 
 import de.crysxd.octoapp.base.OctoPreferences
-import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue
 import de.crysxd.octoapp.base.data.models.AppSettings
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.data.source.DataSource
@@ -39,15 +38,15 @@ class OctoPrintRepository(
             octoPreferences.activeInstanceWebUrl = null
         }
 
-        postActiveInstance()
+        postActiveInstance(octoPreferences.activeInstanceId?.let(::get))
     }
 
     fun instanceInformationFlow() = instanceInformationChannel.asStateFlow()
 
     fun getActiveInstanceSnapshot() = instanceInformationChannel.value
 
-    private fun postActiveInstance() {
-        val activeInstance = octoPreferences.activeInstanceId?.let(::get)
+    private fun postActiveInstance(activeInstance: OctoPrintInstanceInformationV3?) {
+        octoPreferences.activeInstanceId = activeInstance?.id
         Timber.i("Activating ${activeInstance?.id} (${activeInstance?.label})")
         activeInstance?.let { sensitiveDataMask.registerInstance(it) }
         instanceInformationChannel.value = activeInstance
@@ -59,7 +58,7 @@ class OctoPrintRepository(
         instance?.let { updated.add(it) }
         dataSource.store(updated)
         if (id == octoPreferences.activeInstanceId) {
-            postActiveInstance()
+            postActiveInstance(instance)
         }
     }
 
@@ -67,7 +66,7 @@ class OctoPrintRepository(
         storeOctoprintInstanceInformation(instance.id, instance)
         octoPreferences.activeInstanceId = instance.id
         Timber.i("Setting as active: ${instance.webUrl}")
-        postActiveInstance()
+        postActiveInstance(instance)
     }
 
     suspend fun updateActive(block: suspend (OctoPrintInstanceInformationV3) -> OctoPrintInstanceInformationV3?) {
@@ -98,21 +97,13 @@ class OctoPrintRepository(
 
     fun clearActive() {
         Timber.i("Clearing active")
-        octoPreferences.activeInstanceId = null
-        postActiveInstance()
+        postActiveInstance(null)
     }
 
     fun remove(id: String) {
         Timber.i("Removing $id")
         val all = getAll().filter { it.id != id }
         dataSource.store(all)
-    }
-
-    suspend fun reportIssueWithActiveInstance(issue: ActiveInstanceIssue) {
-        Timber.w("Issue reported with")
-        updateActive {
-            it.copy(apiKey = it.apiKey.takeUnless { issue == ActiveInstanceIssue.INVALID_API_KEY } ?: "", issue = issue)
-        }
     }
 
     fun get(id: String) = dataSource.get()?.firstOrNull { it.id == id }
