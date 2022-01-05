@@ -104,7 +104,12 @@ class OctoPrint(
 
     fun getEventWebSocket() = webSocket
 
-    suspend fun probeConnection() = createRetrofit(".").create(ProbeApi::class.java).probe().code()
+    // For the probe API we use a call timeout to prevent the app from being "stuck".
+    // We don't expect large downloads here, so using a call timeout is fine
+    suspend fun probeConnection() = createRetrofit(
+        path = ".",
+        okHttpClient = okHttpClient.newBuilder().callTimeout(readWriteTimeout, TimeUnit.MILLISECONDS).build()
+    ).create(ProbeApi::class.java).probe().code()
 
     fun createUserApi(retrofit: Retrofit = createRetrofit()): UserApi =
         retrofit.create(UserApi::class.java)
