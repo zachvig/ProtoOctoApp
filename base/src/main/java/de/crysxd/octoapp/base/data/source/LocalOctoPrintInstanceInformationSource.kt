@@ -60,13 +60,10 @@ class LocalOctoPrintInstanceInformationSource(
         }
 
         // Load
-        gson.fromJson<List<OctoPrintInstanceInformationV3>>(
+        gson.fromJson(
             sharedPreferences.getString(KEY_INSTANCE_INFORMATION_V3, "[]"),
             object : TypeToken<List<OctoPrintInstanceInformationV3>>() {}.type
-        ).map {
-            // We don't want to persist the instance issues. They might be solved on their own, if they occur again we can set it again
-            it.copy(issue = null)
-        }
+        )
     } catch (e: Exception) {
         Timber.e(e)
         emptyList()

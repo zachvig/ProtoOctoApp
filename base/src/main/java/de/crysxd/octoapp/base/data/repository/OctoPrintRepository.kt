@@ -45,8 +45,8 @@ class OctoPrintRepository(
 
     fun getActiveInstanceSnapshot() = instanceInformationChannel.value
 
-    private fun postActiveInstance(instance: OctoPrintInstanceInformationV3? = null) {
-        val activeInstance = instance ?: octoPreferences.activeInstanceId?.let(::get)
+    private fun postActiveInstance() {
+        val activeInstance = octoPreferences.activeInstanceId?.let(::get)
         Timber.i("Activating ${activeInstance?.id} (${activeInstance?.label})")
         activeInstance?.let { sensitiveDataMask.registerInstance(it) }
         instanceInformationChannel.value = activeInstance
@@ -58,7 +58,7 @@ class OctoPrintRepository(
         instance?.let { updated.add(it) }
         dataSource.store(updated)
         if (id == octoPreferences.activeInstanceId) {
-            postActiveInstance(instance)
+            postActiveInstance()
         }
     }
 

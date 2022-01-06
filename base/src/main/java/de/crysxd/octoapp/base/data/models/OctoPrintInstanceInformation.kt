@@ -71,8 +71,6 @@ data class OctoPrintInstanceInformationV3(
     val webUrl: HttpUrl,
     val alternativeWebUrl: HttpUrl? = null,
     val apiKey: String,
-    val issue: ActiveInstanceIssue? = null,
-    val issueMessage: String? = null,
     val m115Response: String? = null,
     val systemInfo: SystemInfo.Info? = null,
     val settings: Settings? = null,
@@ -87,7 +85,6 @@ data class OctoPrintInstanceInformationV3(
         notificationId = null,
         alternativeWebUrl = legacy.alternativeWebUrl?.toHttpUrl(),
         apiKey = legacy.apiKey,
-        issue = legacy.issue,
         m115Response = legacy.m115Response,
         settings = legacy.settings,
         activeProfile = legacy.activeProfile,
@@ -115,6 +112,8 @@ data class OctoPrintInstanceInformationV3(
         }
 
     fun isForWebUrl(webUrl: HttpUrl) = webUrl.isBasedOn(this.webUrl) || webUrl.isBasedOn(this.alternativeWebUrl)
+    fun isForPrimaryWebUrl(webUrl: HttpUrl) = webUrl.isBasedOn(this.webUrl)
+    fun isForAlternativeWebUrl(webUrl: HttpUrl) = webUrl.isBasedOn(this.alternativeWebUrl)
 
     override fun toString() = StringBuilder().also {
         it.append("OctoPrintInstanceInformationV3(")
@@ -123,7 +122,6 @@ data class OctoPrintInstanceInformationV3(
         it.append("alternativeWebUrl=$alternativeWebUrl ")
         it.append("notificationId=$notificationId ")
         it.append("apiKey=$apiKey ")
-        it.append("issue=$issue ")
         it.append("m115Response=${if (m115Response == null) null else "..."} ")
         it.append("settings=$settings ")
         it.append("activeProfile=$activeProfile ")

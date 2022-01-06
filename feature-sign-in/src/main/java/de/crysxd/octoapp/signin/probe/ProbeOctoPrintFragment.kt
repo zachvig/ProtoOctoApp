@@ -20,6 +20,7 @@ import de.crysxd.octoapp.base.UriLibrary
 import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.base.network.DetectBrokenSetupInterceptor
 import de.crysxd.octoapp.base.usecase.TestFullNetworkStackUseCase
 import de.crysxd.octoapp.base.utils.ThemePlugin
 import de.crysxd.octoapp.signin.R
@@ -54,6 +55,10 @@ class ProbeOctoPrintFragment : BaseFragment() {
         sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
         sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.sign_in_shard_element)
         viewModel.probe(initialWebUrl)
+
+        // While probing the connection we disable the global broken setup interceptor to prevent
+        // error messages to pop up while probing
+        DetectBrokenSetupInterceptor.enabled = false
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -141,7 +146,7 @@ class ProbeOctoPrintFragment : BaseFragment() {
 
             // Clearing and setting the instance will ensure we reset the navigation
             BaseInjector.get().octorPrintRepository().clearActive()
-            BaseInjector.get().octorPrintRepository().setActive(instance.copy(issue = null))
+            BaseInjector.get().octorPrintRepository().setActive(instance)
         }
     }
 
@@ -236,5 +241,10 @@ class ProbeOctoPrintFragment : BaseFragment() {
     override fun onStart() {
         super.onStart()
         requireOctoActivity().octo.isVisible = false
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        DetectBrokenSetupInterceptor.enabled = true
     }
 }

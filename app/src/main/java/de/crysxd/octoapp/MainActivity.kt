@@ -144,50 +144,31 @@ class MainActivity : OctoActivity() {
             }
         }
 
-        SignInInjector.get().octoprintRepository().instanceInformationFlow()
-            .filter {
-                val webUrlAndApiKey = "${it?.webUrl}:${it?.apiKey}:${it?.issue}"
-                val pass = viewModel.lastWebUrlAndApiKey != webUrlAndApiKey
-                viewModel.lastWebUrlAndApiKey = webUrlAndApiKey
-                Timber.i("Instance information filter $it => $pass")
-                pass
-            }
-            .asLiveData()
-            .observe(this) { instance ->
-                when {
-                    instance != null && (instance.apiKey.isBlank() || instance.issue != null) -> {
-                        Timber.i("Instance information received without API key: $instance")
-                        showDialog(
-                            message = getString(instance.issue?.messageRes ?: R.string.sign_in___broken_setup___api_key_revoked, instance.issueMessage ?: ""),
-                            positiveAction = {
-                                if (instance.issue?.isForAlternative != true) {
-                                    UriLibrary.getFixOctoPrintConnectionUri(baseUrl = instance.webUrl, instanceId = instance.id).open(this)
-                                } else {
-                                    UriLibrary.getConfigureRemoteAccessUri().open(this)
-                                }
-                            },
-                            positiveButton = getString(R.string.sign_in___continue),
-                            highPriority = true
-                        )
-                    }
-
-                    instance != null && instance.apiKey.isNotBlank() -> {
-                        Timber.i("Instance information received $this")
-                        updateCapabilities("instance_change", updateM115 = true, escalateError = false)
-                        navigate(R.id.action_connect_printer)
-                        viewModel.pendingUri?.let {
-                            viewModel.pendingUri = null
-                            handleDeepLink(it)
-                        }
-                    }
-
-                    else -> {
-                        Timber.i("No instance active $this")
-                        navigate(R.id.action_sign_in_required)
-                        LiveNotificationManager.stop(this)
+        SignInInjector.get().octoprintRepository().instanceInformationFlow().filter {
+            val webUrlAndApiKey = "${it?.webUrl}:${it?.apiKey}"
+            val pass = viewModel.lastWebUrlAndApiKey != webUrlAndApiKey
+            viewModel.lastWebUrlAndApiKey = webUrlAndApiKey
+            Timber.i("Instance information filter $it => $pass")
+            pass
+        }.asLiveData().observe(this) { instance ->
+            when {
+                instance != null && instance.apiKey.isNotBlank() -> {
+                    Timber.i("Instance information received $this")
+                    updateCapabilities("instance_change", updateM115 = true, escalateError = false)
+                    navigate(R.id.action_connect_printer)
+                    viewModel.pendingUri?.let {
+                        viewModel.pendingUri = null
+                        handleDeepLink(it)
                     }
                 }
+
+                else -> {
+                    Timber.i("No instance active $this")
+                    navigate(R.id.action_sign_in_required)
+                    LiveNotificationManager.stop(this)
+                }
             }
+        }
 
         SignInInjector.get().octoprintRepository().instanceInformationFlow()
             .distinctUntilChangedBy { it?.settings?.appearance?.color }
