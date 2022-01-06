@@ -1,73 +1,56 @@
 package de.crysxd.octoapp.base.network
 
-import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue
-import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue.BASIC_AUTH_REQUIRED
-import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue.BASIC_AUTH_REQUIRED_FOR_ALTERNATIVE
-import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue.HTTP_ISSUE
-import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue.HTTP_ISSUE_FOR_ALTERNATIVE
-import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue.INVALID_API_KEY
-import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue.WEBSOCKET_UPGRADE_FAILED
-import de.crysxd.octoapp.base.data.models.ActiveInstanceIssue.WEBSOCKET_UPGRADE_FAILED_FOR_ALTERNATIVE
+import android.content.Context
+import de.crysxd.octoapp.base.R
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.utils.AppScope
+import de.crysxd.octoapp.base.utils.ExceptionReceivers
 import de.crysxd.octoapp.octoprint.exceptions.BasicAuthRequiredException
 import de.crysxd.octoapp.octoprint.exceptions.InvalidApiKeyException
+import de.crysxd.octoapp.octoprint.exceptions.OctoPrintException
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintHttpsException
 import de.crysxd.octoapp.octoprint.exceptions.WebSocketUpgradeFailedException
-import kotlinx.coroutines.launch
-import okhttp3.HttpUrl
 import okhttp3.Interceptor
-import timber.log.Timber
 
 class DetectBrokenSetupInterceptor(
-    private val octoPrintRepository: OctoPrintRepository
+    private val context: Context,
+    private val octoPrintRepository: OctoPrintRepository,
 ) : Interceptor {
+
+    companion object {
+        var enabled = true
+    }
 
     override fun intercept(chain: Interceptor.Chain) = try {
         chain.proceed(chain.request())
-    } catch (e: InvalidApiKeyException) {
-        handleException(e)
-        throw e
-    } catch (e: BasicAuthRequiredException) {
-        handleException(e)
-        throw e
-    } catch (e: OctoPrintHttpsException) {
+    } catch (e: Throwable) {
         handleException(e)
         throw e
     }
+
+    private fun isBrokenSetup(e: Throwable) =
+        e is BasicAuthRequiredException || e is OctoPrintHttpsException || e is WebSocketUpgradeFailedException || e is InvalidApiKeyException
 
     fun handleException(e: Throwable) {
-        when (e) {
-            is InvalidApiKeyException -> {
-                Timber.w(e, "Caught InvalidApiKeyException, setup broken (${e.webUrl})")
-                reportIssue(e.webUrl, webUrlIssue = INVALID_API_KEY, alternativeWebUrlIssue = INVALID_API_KEY)
-            }
+        if (enabled && e is OctoPrintException && isBrokenSetup(e)) {
+            val active = octoPrintRepository.getActiveInstanceSnapshot() ?: return
+            val isForPrimary = active.isForPrimaryWebUrl(e.webUrl)
+            val isForAlternative = active.isForAlternativeWebUrl(e.webUrl)
 
-            is BasicAuthRequiredException -> {
-                Timber.w(e, "Caught BasicAuthRequiredException, setup broken (${e.webUrl})")
-                reportIssue(e.webUrl, webUrlIssue = BASIC_AUTH_REQUIRED, alternativeWebUrlIssue = BASIC_AUTH_REQUIRED_FOR_ALTERNATIVE)
-            }
-
-            is OctoPrintHttpsException -> {
-                Timber.e(e, "Caught OctoPrintHttpsException, setup broken (${e.webUrl})")
-                reportIssue(e.webUrl, webUrlIssue = HTTP_ISSUE, alternativeWebUrlIssue = HTTP_ISSUE_FOR_ALTERNATIVE, throwable = e.originalCause)
-            }
-
-            is WebSocketUpgradeFailedException -> {
-                Timber.e(e, "Caught WebSocketUpgradeFailedException, setup broken (${e.webUrl})")
-                reportIssue(e.webUrl, webUrlIssue = WEBSOCKET_UPGRADE_FAILED, alternativeWebUrlIssue = WEBSOCKET_UPGRADE_FAILED_FOR_ALTERNATIVE, throwable = e)
-            }
-        }
-    }
-
-    private fun reportIssue(url: HttpUrl, webUrlIssue: ActiveInstanceIssue, alternativeWebUrlIssue: ActiveInstanceIssue, throwable: Throwable? = null) {
-        AppScope.launch {
-            octoPrintRepository.findInstances(url).forEach { res ->
-                octoPrintRepository.update(res.first.id) {
-                    val issue = if (res.second) alternativeWebUrlIssue else webUrlIssue
-                    Timber.w("Reporting $issue from $throwable")
-                    it.copy(issue = issue, issueMessage = throwable?.let { t -> "${t::class.java.simpleName}: ${t.message}" })
-                }
+            if (isForAlternative || isForPrimary) {
+                ExceptionReceivers.dispatchException(
+                    BrokenSetupException(
+                        original = e,
+                        instance = active,
+                        isForPrimary = isForPrimary,
+                        userMessage = when (e) {
+                            is OctoPrintHttpsException -> context.getString(R.string.sign_in___broken_setup___https_issue, e.originalCause?.message ?: e.message)
+                            is BasicAuthRequiredException -> context.getString(R.string.sign_in___broken_setup___basic_auth_required)
+                            is InvalidApiKeyException -> context.getString(R.string.sign_in___broken_setup___api_key_revoked)
+                            is WebSocketUpgradeFailedException -> context.getString(R.string.sign_in___broken_setup___websocket_upgrade_failed)
+                            else -> e.userFacingMessage
+                        }
+                    )
+                )
             }
         }
     }

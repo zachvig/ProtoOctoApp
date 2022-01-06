@@ -1,7 +1,6 @@
 package de.crysxd.baseui
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -30,6 +29,7 @@ import de.crysxd.octoapp.base.data.models.Event
 import de.crysxd.octoapp.base.ext.composeErrorMessage
 import de.crysxd.octoapp.base.ext.composeMessageStack
 import de.crysxd.octoapp.base.ext.open
+import de.crysxd.octoapp.base.network.BrokenSetupException
 import de.crysxd.octoapp.base.utils.ExceptionReceivers
 import de.crysxd.octoapp.octoprint.exceptions.OctoPrintException
 import kotlinx.coroutines.CancellationException
@@ -55,7 +55,6 @@ abstract class OctoActivity : LocalizedActivity() {
     abstract val navController: NavController
     private val handler = Handler(Looper.getMainLooper())
     private val snackbarMessageChannel = MutableStateFlow<Message.SnackbarMessage?>(null)
-    val resultFlow = MutableStateFlow<Triple<Int, Int, Intent>?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         instance = this
@@ -83,11 +82,6 @@ abstract class OctoActivity : LocalizedActivity() {
     override fun onDestroy() {
         super.onDestroy()
         instance = null
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
     fun observeErrorEvents(events: LiveData<Event<Throwable>>) = events.observe(this) {
@@ -155,22 +149,38 @@ abstract class OctoActivity : LocalizedActivity() {
         val hasLearnMoreLink = e is OctoPrintException && e.learnMoreLink != null
         if (e !is CancellationException) {
             Timber.e(e)
-            showDialog(
-                message = e.composeErrorMessage(this),
-                neutralAction = {
-                    if (hasLearnMoreLink) {
-                        Uri.parse((e as OctoPrintException).learnMoreLink).open(this)
+
+            if (e is BrokenSetupException) {
+                showDialog(
+                    message = e.userMessage,
+                    positiveAction = {
+                        if (e.isForPrimary) {
+                            UriLibrary.getFixOctoPrintConnectionUri(baseUrl = e.instance.webUrl, instanceId = e.instance.id).open(this)
+                        } else {
+                            UriLibrary.getConfigureRemoteAccessUri().open(this)
+                        }
+                    },
+                    positiveButton = getString(R.string.sign_in___continue),
+                    highPriority = true
+                )
+            } else {
+                showDialog(
+                    message = e.composeErrorMessage(this),
+                    neutralAction = {
+                        if (hasLearnMoreLink) {
+                            Uri.parse((e as OctoPrintException).learnMoreLink).open(this)
+                        } else {
+                            showErrorDetailsDialog(e)
+                        }
+                    },
+                    neutralButton = if (hasLearnMoreLink) {
+                        getString(R.string.learn_more)
                     } else {
-                        showErrorDetailsDialog(e)
-                    }
-                },
-                neutralButton = if (hasLearnMoreLink) {
-                    getString(R.string.learn_more)
-                } else {
-                    getString(R.string.show_details)
-                },
-                highPriority = hasLearnMoreLink
-            )
+                        getString(R.string.show_details)
+                    },
+                    highPriority = hasLearnMoreLink
+                )
+            }
         }
     }
 
