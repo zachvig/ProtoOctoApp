@@ -64,8 +64,16 @@ open class OctoPrintModule {
         octoPrintRepository: OctoPrintRepository,
         analytics: FirebaseAnalytics,
         sslKeyStoreHandler: SslKeyStoreHandler,
-        localDnsResolver: LocalDnsResolver
-    ) = OctoPrintProvider(detectBrokenSetupInterceptor, octoPrintRepository, analytics, sslKeyStoreHandler, localDnsResolver)
+        localDnsResolver: LocalDnsResolver,
+        octoPreferences: OctoPreferences,
+    ) = OctoPrintProvider(
+        detectBrokenSetupInterceptor = detectBrokenSetupInterceptor,
+        octoPrintRepository = octoPrintRepository,
+        analytics = analytics,
+        sslKeyStoreHandler = sslKeyStoreHandler,
+        localDnsResolver = localDnsResolver,
+        octoPreferences = octoPreferences
+    )
 
     @BaseScope
     @Provides
