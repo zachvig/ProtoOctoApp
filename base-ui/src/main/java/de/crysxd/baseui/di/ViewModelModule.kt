@@ -11,6 +11,7 @@ import de.crysxd.baseui.BaseViewModelFactory
 import de.crysxd.baseui.common.NetworkStateViewModel
 import de.crysxd.baseui.common.configureremote.ConfigureRemoteAccessSpaghettiDetectiveViewModel
 import de.crysxd.baseui.common.configureremote.ConfigureRemoteAccessViewModel
+import de.crysxd.baseui.common.controlcenter.ControlCenterViewModel
 import de.crysxd.baseui.common.enter_value.EnterValueViewModel
 import de.crysxd.baseui.common.feedback.SendFeedbackViewModel
 import de.crysxd.baseui.common.gcode.GcodePreviewViewModel
@@ -246,4 +247,14 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(TimelapsePlaybackViewModel::class)
     fun provideTimelapsePlaybackViewModel(): ViewModel = TimelapsePlaybackViewModel()
+
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(ControlCenterViewModel::class)
+    fun provideControlCenterViewModel(
+        octoPrintRepository: OctoPrintRepository
+    ): ViewModel = ControlCenterViewModel(
+        octoPrintRepository = octoPrintRepository
+    )
 }

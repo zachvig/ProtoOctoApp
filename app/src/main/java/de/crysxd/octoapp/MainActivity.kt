@@ -34,6 +34,7 @@ import de.crysxd.baseui.InsetAwareScreen
 import de.crysxd.baseui.OctoActivity
 import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.common.OctoView
+import de.crysxd.baseui.common.controlcenter.ControlCenterFragment
 import de.crysxd.baseui.utils.ColorTheme
 import de.crysxd.baseui.utils.colorTheme
 import de.crysxd.baseui.widget.announcement.AnnouncementWidget
@@ -102,6 +103,8 @@ class MainActivity : OctoActivity() {
 
         binding = MainActivityBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
+        binding.root.controlCenterFragment = ControlCenterFragment()
+        binding.root.fragmentManager = supportFragmentManager
 
         // Fix fullscreen layout under system bars for frame layout
         rootLayout.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -314,14 +317,13 @@ class MainActivity : OctoActivity() {
                 )
             )
         } else {
-            screen.view?.updatePadding(
-                top = topOverwrite ?: bannerHeight ?: lastInsets.top,
-                bottom = lastInsets.bottom,
-                left = lastInsets.left,
-                right = lastInsets.right
-            )
+            screen.view?.let { applyInsetsToView(it) }
+            screen.view?.updatePadding(top = topOverwrite ?: bannerHeight ?: screen.view?.paddingTop ?: 0)
         }
     }
+
+    override fun applyInsetsToView(view: View) = view.updatePadding(top = lastInsets.top, bottom = lastInsets.bottom, left = lastInsets.left, right = lastInsets.right)
+
 
     override fun onStart() {
         super.onStart()

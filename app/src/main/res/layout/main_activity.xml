@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<de.crysxd.baseui.common.controlcenter.ControlCenterLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<de.crysxd.baseui.common.controlcenter.ControlCenterHostLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/controlCenter"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#D9000000" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/updateChecker"
@@ -54,4 +60,4 @@
         android:visibility="gone"
         tools:visibility="gone" />
 
-</de.crysxd.baseui.common.controlcenter.ControlCenterLayout>
+</de.crysxd.baseui.common.controlcenter.ControlCenterHostLayout>

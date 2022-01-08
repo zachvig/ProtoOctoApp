@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="@dimen/margin_0_1"
+    android:orientation="horizontal"
+    tools:background="@color/black">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/bg_control_center_item"
+        android:backgroundTint="@color/window_background"
+        android:outlineProvider="background">
+
+        <de.crysxd.baseui.widget.webcam.WebcamView
+            android:id="@+id/webcam"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#000"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/colorStrip"
+            android:layout_width="2dp"
+            android:layout_height="0dp"
+            android:background="@color/yellow_color_scheme"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/webcam"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/label"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_1"
+            android:layout_marginEnd="@dimen/margin_1"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
+            android:textColor="@color/dark_text"
+            tools:text="Name" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="4dp"
+            android:indeterminate="false"
+            tools:max="100"
+            tools:progress="20"
+            tools:progressTint="@color/yellow_color_scheme" />
+
+        <TextView
+            android:id="@+id/details"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_1"
+            android:layout_marginEnd="@dimen/margin_1"
+            android:lines="2"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Label"
+            android:textColor="@color/normal_text"
+            tools:text="Name" />
+
+        <androidx.constraintlayout.helper.widget.Flow
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/margin_1"
+            app:constraint_referenced_ids="label,progress,details"
+            app:flow_maxElementsWrap="1"
+            app:flow_verticalAlign="center"
+            app:flow_verticalGap="@dimen/margin_0_1"
+            app:flow_verticalStyle="packed"
+            app:flow_wrapMode="chain"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/colorStrip"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageButton
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/margin_1"
+        android:background="@drawable/bg_control_center_button"
+        android:backgroundTint="@color/white_translucent"
+        android:src="@drawable/ic_round_swap_horiz_24"
+        app:tint="@color/text_colored_background" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

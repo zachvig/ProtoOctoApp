@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.Gravity
+import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -87,6 +88,8 @@ abstract class OctoActivity : LocalizedActivity() {
     fun observeErrorEvents(events: LiveData<Event<Throwable>>) = events.observe(this) {
         it.value?.let(this::showDialog)
     }
+
+    abstract fun applyInsetsToView(view: View)
 
     abstract fun enforceAllowAutomaticNavigationFromCurrentDestination()
 
