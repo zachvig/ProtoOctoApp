@@ -1,7 +1,12 @@
 package de.crysxd.octoapp.base.network
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
+import androidx.core.app.ShareCompat
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -36,6 +41,9 @@ import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
@@ -75,6 +83,11 @@ class MjpegConnection2(
 
             cache.reset()
             val inputStream = localResponse.body!!.byteStream().buffered(bufferSize * 4)
+
+            if (BaseInjector.get().octoPreferences().recordWebcamForDebug) {
+                recordWebcamForDebug(inputStream)
+            }
+
             while (true) {
                 emit(
                     MjpegSnapshot.Frame(
@@ -317,6 +330,51 @@ class MjpegConnection2(
         }
     }
 
+    private fun recordWebcamForDebug(input: InputStream) {
+        Timber.i("Recording Mjpeg....")
+
+        // Create file and store image
+        val fileName = "recording-${SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(Date())}.mjpg"
+        val (file, uri) = BaseInjector.get().publicFileFactory().createPublicFile(fileName)
+        file.outputStream().use { output ->
+            val buffer = ByteArray(8196)
+            var total = 0
+            var read: Int
+            var lastMajor = -1
+            val majorDivider = 1024 * 1024
+            val totalEnd = 4 * 1024 * 1024
+            val totalMajor = totalEnd / majorDivider
+            val start = System.currentTimeMillis()
+            do {
+                read = input.read(buffer)
+                output.write(buffer, 0, read)
+                total += read
+                val major = total / majorDivider
+                if (major > lastMajor) {
+                    lastMajor = major
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(BaseInjector.get().localizedContext(), "Recording webcam $major/$totalMajor", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            } while (read > 0 && total < totalEnd)
+            val end = System.currentTimeMillis()
+            output.write("Took ${end - start}ms".toByteArray())
+        }
+
+        // Share
+        val mimeType = "x-octet-stream/*"
+        Timber.i("Mjpeg recording ready, sharing...")
+        val intent = ShareCompat.IntentBuilder(BaseInjector.get().localizedContext())
+            .setStream(uri)
+            .setChooserTitle("Webcam recording")
+            .setType(mimeType)
+            .createChooserIntent()
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        BaseInjector.get().localizedContext().startActivity(intent)
+
+        BaseInjector.get().octoPreferences().recordWebcamForDebug = false
+    }
 
     sealed class MjpegSnapshot {
         object Loading : MjpegSnapshot()
