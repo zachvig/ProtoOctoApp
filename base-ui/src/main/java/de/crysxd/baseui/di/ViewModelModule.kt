@@ -253,8 +253,10 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(ControlCenterViewModel::class)
     fun provideControlCenterViewModel(
-        octoPrintRepository: OctoPrintRepository
+        octoPrintRepository: OctoPrintRepository,
+        octoPrintProvider: OctoPrintProvider,
     ): ViewModel = ControlCenterViewModel(
-        octoPrintRepository = octoPrintRepository
+        octoPrintRepository = octoPrintRepository,
+        octoPrintProvider = octoPrintProvider,
     )
 }

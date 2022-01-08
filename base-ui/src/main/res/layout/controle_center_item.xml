@@ -41,30 +41,60 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/margin_1"
+            android:layout_marginTop="@dimen/margin_1"
             android:layout_marginEnd="@dimen/margin_1"
             android:gravity="center_vertical"
             android:maxLines="1"
             android:textAppearance="@style/OctoTheme.TextAppearance.SubTitle"
             android:textColor="@color/dark_text"
+            app:layout_constraintEnd_toStartOf="@+id/percent"
+            app:layout_constraintStart_toEndOf="@id/colorStrip"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="Name" />
+
+        <TextView
+            android:id="@+id/percent"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/margin_1"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:textAppearance="@style/OctoTheme.TextAppearance"
+            android:textColor="@color/dark_text"
+            app:layout_constraintBottom_toBottomOf="@+id/label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/label"
+            app:layout_goneMarginStart="@dimen/margin_1"
+            tools:text="12%" />
 
         <ProgressBar
             android:id="@+id/progress"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="0dp"
-            android:layout_height="4dp"
+            android:layout_height="wrap_content"
             android:indeterminate="false"
             tools:max="100"
             tools:progress="20"
             tools:progressTint="@color/yellow_color_scheme" />
 
         <TextView
-            android:id="@+id/details"
+            android:id="@+id/detail1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/margin_1"
             android:layout_marginEnd="@dimen/margin_1"
-            android:lines="2"
+            android:maxLines="1"
+            android:textAppearance="@style/OctoTheme.TextAppearance.Label"
+            android:textColor="@color/normal_text"
+            tools:text="Name" />
+
+        <TextView
+            android:id="@+id/detail2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_1"
+            android:layout_marginEnd="@dimen/margin_1"
+            android:maxLines="1"
             android:textAppearance="@style/OctoTheme.TextAppearance.Label"
             android:textColor="@color/normal_text"
             tools:text="Name" />
@@ -72,27 +102,28 @@
         <androidx.constraintlayout.helper.widget.Flow
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_margin="@dimen/margin_1"
-            app:constraint_referenced_ids="label,progress,details"
+            android:layout_marginStart="@dimen/margin_1"
+            android:layout_marginEnd="@dimen/margin_1"
+            android:layout_marginBottom="@dimen/margin_1"
+            app:constraint_referenced_ids="progress,detail1,detail2"
             app:flow_maxElementsWrap="1"
             app:flow_verticalAlign="center"
-            app:flow_verticalGap="@dimen/margin_0_1"
             app:flow_verticalStyle="packed"
             app:flow_wrapMode="chain"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/colorStrip"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/label" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageButton
+        android:id="@+id/activate"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="@dimen/margin_1"
         android:background="@drawable/bg_control_center_button"
-        android:backgroundTint="@color/white_translucent"
         android:src="@drawable/ic_round_swap_horiz_24"
         app:tint="@color/text_colored_background" />
 

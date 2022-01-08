@@ -10,7 +10,7 @@
         android:id="@+id/controlCenter"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#D9000000" />
+        android:background="@drawable/bg_control_center" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/updateChecker"

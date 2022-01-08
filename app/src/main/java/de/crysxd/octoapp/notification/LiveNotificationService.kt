@@ -55,7 +55,7 @@ class LiveNotificationService : Service() {
         // Instance is fixed for this service. When the active instance is changed the service restarts due to settings change
         BaseInjector.get().octorPrintRepository().getActiveInstanceSnapshot()
     }
-    private val eventFlow = BaseInjector.get().octoPrintProvider().eventFlow("notification-service", EventFlowConfiguration(throttle = 10))
+    private val eventFlow = BaseInjector.get().octoPrintProvider().eventFlow(tag = "notification-service", config = EventFlowConfiguration(throttle = 10))
 
     private val coroutineJob = SupervisorJob()
     private val coroutineScope = CoroutineScope(coroutineJob + Dispatchers.Main.immediate)
