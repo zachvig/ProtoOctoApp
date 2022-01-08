@@ -102,6 +102,14 @@
     <string name="lab_menu___allow_terminal_during_print_description" translatable="false">Usually OctoApp does not allow you to send Gcode commands from the terminal if a print is active. Enabling this setting bypasses the check. Be cautious.</string>
     <string name="lab_menu___suppress_remote_notification_init" translatable="false">Suppress remote notifications</string>
     <string name="lab_menu___suppress_remote_notification_init_description" translatable="false">On some devices with after-market Google Play services OctoApp can crash while setting up remote notifications. This options suppresses remote notifications from being initialized, thus preventing the crash.</string>
+    <string name="lab_menu___debug_network_logging" translatable="false">Debug network logging</string>
+    <string name="lab_menu___debug_network_logging_description" translatable="false">Enabled extended logging around network requests and DNS. This will also remove the obfuscation of IP addresses and hostnames in logs and crash reports. Only enable this when asked to, takes affect after restart.</string>
+    <string name="lab_menu___use_custom_dns" translatable="false">Use custom DNS</string>
+    <string name="lab_menu___use_custom_dns_description" translatable="false">Disabling will remove OctoApp\'s custom DNS implementation which wraps around Android\'s default DNS. Without the custom DNS, mDNS and UPnP will not work! Applies after restart.</string>
+    <string name="lab_menu___use_legacy_webcam" translatable="false">Use legacy webcam</string>
+    <string name="lab_menu___use_legacy_webcam_description" translatable="false">Uses an older implementation of OctoApp\'s MJPEG connection. Applies right away.</string>
+    <string name="lab_menu___record_webcam_traffic_for_debug" translatable="false">Record webcam traffic</string>
+    <string name="lab_menu___record_webcam_traffic_for_debug_description" translatable="false">Records 5MiB of raw network traffic for debug purposes of the MJPEG connection and opens a share dialog. This happens when the webcam is shown next or right away if already shown.</string>
 
     <!-- Play services -->
     <string name="announcement_play_services_error___text" translatable="false">Remote notifications disabled because Play Services crashed</string>

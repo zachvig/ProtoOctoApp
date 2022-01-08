@@ -44,7 +44,6 @@ class MenuItemLibrary {
         MenuItems.MENU_ITEM_CUSTOMIZE_WIDGETS to CustomizeWidgetsMenuItem::class,
         MenuItems.MENU_ITEM_OPEN_TERMINAL to OpenTerminalMenuItem::class,
         MenuItems.MENU_ITEM_SHOW_OCTOAPP_LAB to ShowOctoAppLabMenuItem::class,
-        MenuItems.MENU_ITEM_ROTATE_APP to OctoAppLabMenu.RotationMenuItem::class,
         MenuItems.MENU_ITEM_CONFIGURE_REMOTE_ACCESS to ConfigureRemoteAccessMenuItem::class,
         MenuItems.MENU_ITEM_SHOW_FILES to ShowFilesMenuItem::class,
         MenuItems.MENU_ITEM_AUTOMATIC_LIGHTS to AutomaticLightsSettingsMenuItem::class,

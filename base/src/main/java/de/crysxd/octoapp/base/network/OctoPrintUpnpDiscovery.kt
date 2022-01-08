@@ -7,9 +7,11 @@ import de.crysxd.octoapp.octoprint.UPNP_ADDRESS_PREFIX
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.internal.closeQuietly
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
@@ -45,8 +47,6 @@ class OctoPrintUpnpDiscovery(
         try {
             lock.acquire()
             discoverWithMulticastLock(callback)
-        } catch (e: Exception) {
-            Timber.e(e)
         } finally {
             lock.release()
         }
@@ -56,31 +56,31 @@ class OctoPrintUpnpDiscovery(
         Timber.i("Opening port $PORT for UPnP, searching for ${DISCOVER_TIMEOUT}ms")
         val start = System.currentTimeMillis()
         DatagramSocket(PORT).use { socket ->
+            val job = SupervisorJob()
             try {
-                val job = SupervisorJob()
-                val cancelJob = launch(job) {
+                val cancelJob = async(job) {
                     delay(DISCOVER_TIMEOUT)
                     Timber.w("Force closing socket")
-                    socket.close()
+                    socket.closeQuietly()
                 }
 
-                val discoverJob = launch(job) {
+                val discoverJob = async(job) {
                     socket.reuseAddress = true
                     val group = InetAddress.getByName(ADDRESS)
                     val queryBytes = QUERY.toByteArray()
                     val datagramPacketRequest = DatagramPacket(queryBytes, queryBytes.size, group, PORT)
                     socket.soTimeout = SOCKET_TIMEOUT
                     socket.send(datagramPacketRequest)
-
                     while (!socket.isClosed) {
                         readNextResponse(socket, callback)
                     }
                 }
 
-                cancelJob.join()
-                discoverJob.join()
+                discoverJob.await()
+                cancelJob.cancelAndJoin()
             } finally {
-                Timber.i("Closing port $PORT for UPnP after ${System.currentTimeMillis() - start}")
+                job.cancel()
+                Timber.i("Closing port $PORT for UPnP after ${System.currentTimeMillis() - start}ms")
             }
         }
     }

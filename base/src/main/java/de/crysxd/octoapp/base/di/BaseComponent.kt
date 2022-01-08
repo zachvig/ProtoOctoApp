@@ -175,6 +175,7 @@ interface BaseComponent {
     fun downloadAndShareFileUseCase(): DownloadAndShareFileUseCase
     fun downloadAndShareTimelapseUseCase(): DownloadAndShareTimelapseUseCase
     fun shareImageUseCase(): ShareImageUseCase
+    fun publicFileFactory(): FileModule.PublicFileFactory
     fun getInstalledPluginsUseCase(): GetInstalledPluginsUseCase
     fun getConnectOctoEverywhereUrlUseCase(): GetRemoteServiceConnectUrlUseCase
 }

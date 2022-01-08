@@ -1,9 +1,16 @@
 package de.crysxd.octoapp.octoprint.ext
 
+import okhttp3.Call
+import okhttp3.EventListener
 import okhttp3.OkHttpClient
+import java.net.InetAddress
 import java.security.KeyStore
 import java.security.SecureRandom
-import javax.net.ssl.*
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.KeyManagerFactory
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.X509TrustManager
 
 fun OkHttpClient.Builder.withSslKeystore(keyStore: KeyStore?): OkHttpClient.Builder {
     keyStore?.let { ks ->
@@ -28,4 +35,18 @@ fun OkHttpClient.Builder.withHostnameVerifier(hostnameVerifier: HostnameVerifier
         hostnameVerifier(it)
     }
     return this
+}
+
+fun OkHttpClient.Builder.setDnsLoggingEnabled(enabled: Boolean) {
+    eventListener(
+        object : EventListener() {
+            override fun dnsStart(call: Call, domainName: String) {
+                super.dnsStart(call, domainName)
+            }
+
+            override fun dnsEnd(call: Call, domainName: String, inetAddressList: List<InetAddress>) {
+                super.dnsEnd(call, domainName, inetAddressList)
+            }
+        }
+    )
 }

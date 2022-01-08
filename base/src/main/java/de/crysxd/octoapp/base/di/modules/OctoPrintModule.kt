@@ -40,6 +40,7 @@ import de.crysxd.octoapp.base.network.DetectBrokenSetupInterceptor
 import de.crysxd.octoapp.base.network.LocalDnsResolver
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.network.SslKeyStoreHandler
+import javax.inject.Named
 
 @Module
 open class OctoPrintModule {
@@ -63,14 +64,26 @@ open class OctoPrintModule {
         octoPrintRepository: OctoPrintRepository,
         analytics: FirebaseAnalytics,
         sslKeyStoreHandler: SslKeyStoreHandler,
-        localDnsResolver: LocalDnsResolver
-    ) = OctoPrintProvider(detectBrokenSetupInterceptor, octoPrintRepository, analytics, sslKeyStoreHandler, localDnsResolver)
+        localDnsResolver: LocalDnsResolver,
+        octoPreferences: OctoPreferences,
+    ) = OctoPrintProvider(
+        detectBrokenSetupInterceptor = detectBrokenSetupInterceptor,
+        octoPrintRepository = octoPrintRepository,
+        analytics = analytics,
+        sslKeyStoreHandler = sslKeyStoreHandler,
+        localDnsResolver = localDnsResolver,
+        octoPreferences = octoPreferences
+    )
 
     @BaseScope
     @Provides
     open fun provideInvalidApiKeyInterceptor(
-        octoPrintRepository: OctoPrintRepository
-    ) = DetectBrokenSetupInterceptor(octoPrintRepository)
+        @Named(AndroidModule.LOCALIZED) context: Context,
+        octoPrintRepository: OctoPrintRepository,
+    ) = DetectBrokenSetupInterceptor(
+        context = context,
+        octoPrintRepository = octoPrintRepository
+    )
 
     @BaseScope
     @Provides

@@ -12,7 +12,7 @@ class MjpegTestServer(val port: Int = 8000) {
 
     companion object {
         private val BOUNDARY = "BOUNDARYDONOTCROSS"
-        private val NL = "\n"
+        private val NL = "\r\n"
         private val HEADERS = """
             HTTP/1.1 200 OK
             Connection: close

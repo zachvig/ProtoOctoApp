@@ -48,6 +48,10 @@ class OctoPreferences(
         private const val KEY_TUTORIALS_SEEN_AT = "tutorials_seen_at"
         private const val KEY_ALLOW_TERMINAL_DURING_PRINT = "allow_terminal_during_print"
         private const val KEY_SUPPRESS_REMOTE_NOTIFICATIONS_INIT = "suppress_remote_notification_init"
+        private const val KEY_DEBUG_NETWORK_LOGGING = "debug_network_logging"
+        private const val KEY_USE_CUSTOM_DNS = "use_custom_dns"
+        private const val KEY_USE_LEGACY_WEBCAM = "use_legacy_webcam"
+        private const val KEY_RECORD_WEBCAM_FOR_DEBUG = "record_webcam_for_debug"
         private const val KEY_GCODE_PREVIEW = "gcode_preview"
         private const val KEY_FILE_MANAGER = "file_manager"
         private const val KEY_PROGRESS_WIDGET = "progress_widget"
@@ -230,6 +234,30 @@ class OctoPreferences(
         get() = sharedPreferences.getBoolean(KEY_SUPPRESS_REMOTE_NOTIFICATIONS_INIT, false)
         set(value) {
             edit { putBoolean(KEY_SUPPRESS_REMOTE_NOTIFICATIONS_INIT, value) }
+        }
+
+    var debugNetworkLogging
+        get() = sharedPreferences.getBoolean(KEY_DEBUG_NETWORK_LOGGING, false)
+        set(value) {
+            edit { putBoolean(KEY_DEBUG_NETWORK_LOGGING, value) }
+        }
+
+    var useCustomDns
+        get() = sharedPreferences.getBoolean(KEY_USE_CUSTOM_DNS, true)
+        set(value) {
+            edit { putBoolean(KEY_USE_CUSTOM_DNS, value) }
+        }
+
+    var useLegacyWebcam
+        get() = sharedPreferences.getBoolean(KEY_USE_LEGACY_WEBCAM, false)
+        set(value) {
+            edit { putBoolean(KEY_USE_LEGACY_WEBCAM, value) }
+        }
+
+    var recordWebcamForDebug
+        get() = sharedPreferences.getBoolean(KEY_RECORD_WEBCAM_FOR_DEBUG, false)
+        set(value) {
+            edit { putBoolean(KEY_RECORD_WEBCAM_FOR_DEBUG, value) }
         }
 
     var askForTimelapseBeforePrinting

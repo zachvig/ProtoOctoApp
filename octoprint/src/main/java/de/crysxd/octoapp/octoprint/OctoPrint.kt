@@ -26,6 +26,7 @@ import de.crysxd.octoapp.octoprint.plugins.thespaghettidetective.SpaghettiDetect
 import de.crysxd.octoapp.octoprint.websocket.ContinuousOnlineCheck
 import de.crysxd.octoapp.octoprint.websocket.EventWebSocket
 import okhttp3.Dns
+import okhttp3.EventListener
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -48,6 +49,7 @@ class OctoPrint(
     private val keyStore: KeyStore? = null,
     private val hostnameVerifier: HostnameVerifier? = null,
     private val networkExceptionListener: (Exception) -> Unit = { },
+    private val httpEventListener: EventListener? = null,
     val readWriteTimeout: Long = 5000,
     val connectTimeoutMs: Long = 10000,
     val webSocketConnectionTimeout: Long = 5000,
@@ -104,7 +106,12 @@ class OctoPrint(
 
     fun getEventWebSocket() = webSocket
 
-    suspend fun probeConnection() = createRetrofit(".").create(ProbeApi::class.java).probe().code()
+    // For the probe API we use a call timeout to prevent the app from being "stuck".
+    // We don't expect large downloads here, so using a call timeout is fine
+    suspend fun probeConnection() = createRetrofit(
+        path = ".",
+        okHttpClient = okHttpClient.newBuilder().callTimeout(readWriteTimeout, TimeUnit.MILLISECONDS).build()
+    ).create(ProbeApi::class.java).probe().code()
 
     fun createUserApi(retrofit: Retrofit = createRetrofit()): UserApi =
         retrofit.create(UserApi::class.java)
@@ -188,6 +195,7 @@ class OctoPrint(
 
     fun createOkHttpClient(): OkHttpClient = OkHttpClient.Builder().apply {
         val logger = createHttpLogger()
+        httpEventListener?.let(::eventListener)
 
         withHostnameVerifier(hostnameVerifier)
         withSslKeystore(keyStore)
