@@ -1,6 +1,7 @@
 package de.crysxd.octoapp.base.logging
 
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
+import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.octoprint.models.settings.Settings
 import de.crysxd.octoapp.octoprint.redactLoggingString
 import okhttp3.HttpUrl
@@ -14,8 +15,10 @@ class SensitiveDataMask {
     private val masks = mutableMapOf<String, (String) -> String>()
 
     fun registerWebUrl(webUrl: HttpUrl?) = lock.withLock {
-        masks[webUrl.toString()] = {
-            webUrl?.redactLoggingString(it) ?: it
+        if (!BaseInjector.get().octoPreferences().debugNetworkLogging) {
+            masks[webUrl.toString()] = {
+                webUrl?.redactLoggingString(it) ?: it
+            }
         }
     }
 
@@ -48,9 +51,4 @@ class SensitiveDataMask {
     }
 
     private fun redact(input: String, sensitiveData: String, replacement: String): String = input.replace(sensitiveData, "\${${replacement}}")
-
-    data class SensitiveData(
-        val sensitiveData: String,
-        val replacement: String
-    )
 }

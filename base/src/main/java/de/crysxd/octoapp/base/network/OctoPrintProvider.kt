@@ -6,6 +6,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import de.crysxd.octoapp.base.BuildConfig
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.data.models.exceptions.SuppressedIllegalStateException
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
@@ -40,6 +41,7 @@ import timber.log.Timber
 class OctoPrintProvider(
     private val detectBrokenSetupInterceptor: DetectBrokenSetupInterceptor,
     private val octoPrintRepository: OctoPrintRepository,
+    private val octoPreferences: OctoPreferences,
     private val analytics: FirebaseAnalytics,
     private val sslKeyStoreHandler: SslKeyStoreHandler,
     private val localDnsResolver: LocalDnsResolver,
@@ -183,23 +185,23 @@ class OctoPrintProvider(
         }
     }
 
-    fun createAdHocOctoPrint(it: OctoPrintInstanceInformationV3) =
-        OctoPrint(
-            rawWebUrl = it.webUrl,
-            rawAlternativeWebUrl = it.alternativeWebUrl,
-            apiKey = it.apiKey,
-            highLevelInterceptors = listOf(detectBrokenSetupInterceptor),
-            customDns = localDnsResolver,
-            keyStore = sslKeyStoreHandler.loadKeyStore(),
-            hostnameVerifier = SubjectAlternativeNameCompatVerifier().takeIf { _ -> sslKeyStoreHandler.isWeakVerificationForHost(it.webUrl) },
-            networkExceptionListener = ::handleNetworkException,
-            connectTimeoutMs = Firebase.remoteConfig.getLong("connection_timeout_ms"),
-            readWriteTimeout = Firebase.remoteConfig.getLong("read_write_timeout_ms"),
-            webSocketConnectionTimeout = Firebase.remoteConfig.getLong("web_socket_connect_timeout_ms"),
-            webSocketPingPongTimeout = Firebase.remoteConfig.getLong("web_socket_ping_pong_timeout_ms"),
-            debug = BuildConfig.DEBUG,
-        ).also { octoPrint ->
-            // Setup logger to use timber
-            TimberLogger(octoPrint.getLogger())
-        }
+    fun createAdHocOctoPrint(it: OctoPrintInstanceInformationV3) = OctoPrint(
+        rawWebUrl = it.webUrl,
+        rawAlternativeWebUrl = it.alternativeWebUrl,
+        apiKey = it.apiKey,
+        highLevelInterceptors = listOf(detectBrokenSetupInterceptor),
+        customDns = localDnsResolver.takeIf { octoPreferences.useCustomDns },
+        keyStore = sslKeyStoreHandler.loadKeyStore(),
+        hostnameVerifier = SubjectAlternativeNameCompatVerifier().takeIf { _ -> sslKeyStoreHandler.isWeakVerificationForHost(it.webUrl) },
+        networkExceptionListener = ::handleNetworkException,
+        connectTimeoutMs = Firebase.remoteConfig.getLong("connection_timeout_ms"),
+        readWriteTimeout = Firebase.remoteConfig.getLong("read_write_timeout_ms"),
+        webSocketConnectionTimeout = Firebase.remoteConfig.getLong("web_socket_connect_timeout_ms"),
+        webSocketPingPongTimeout = Firebase.remoteConfig.getLong("web_socket_ping_pong_timeout_ms"),
+        debug = BuildConfig.DEBUG,
+        httpEventListener = NetworkDebugLogger().takeIf { octoPreferences.debugNetworkLogging }
+    ).also { octoPrint ->
+        // Setup logger to use timber
+        TimberLogger(octoPrint.getLogger())
+    }
 }

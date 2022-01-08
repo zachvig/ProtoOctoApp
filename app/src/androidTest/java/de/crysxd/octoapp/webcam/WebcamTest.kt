@@ -99,6 +99,7 @@ class WebcamTest {
         val serverJob = server.start(context)
         BaseInjector.get().octorPrintRepository().setActive(testEnv)
         BaseInjector.get().octoPreferences().isAutoConnectPrinter = true
+        BaseInjector.get().octoPreferences().useLegacyWebcam = true
         BaseInjector.get().octoPreferences().wasAutoConnectPrinterInfoShown = true
         BillingManager.enabledForTest = true
 
