@@ -45,7 +45,7 @@ import kotlin.math.roundToInt
 
 const val NOT_LIVE_IF_NO_UPDATE_FOR_MS = 5000L
 private const val KEY_HIDDEN_AT = "gcode_preview_hidden_at"
-private val HIDDEN_FOR_MILLIS = TimeUnit.DAYS.toMillis(30L)
+private val HIDDEN_FOR_MILLIS = TimeUnit.DAYS.toMillis(150)
 
 class GcodePreviewWidget(context: Context) : RecyclableOctoWidget<GcodePreviewWidgetBinding, GcodePreviewViewModel>(context) {
     override val type = WidgetType.GcodePreviewWidget
