@@ -13,14 +13,12 @@ import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.billing.BillingManager.FEATURE_HLS_WEBCAM
 import de.crysxd.octoapp.base.data.models.ResolvedWebcamSettings
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
-import de.crysxd.octoapp.base.network.MjpegConnection
 import de.crysxd.octoapp.base.network.MjpegConnection2
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.network.SpaghettiDetectiveWebcamConnection
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
 import de.crysxd.octoapp.base.usecase.HandleAutomaticLightEventUseCase
 import de.crysxd.octoapp.base.usecase.ShareImageUseCase
-import de.crysxd.octoapp.octoprint.extractAndRemoveBasicAuth
 import de.crysxd.octoapp.octoprint.models.settings.WebcamSettings
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -173,13 +171,7 @@ class WebcamViewModel(
     private suspend fun FlowCollector<UiState>.emitMjpegFlow(mjpegSettings: ResolvedWebcamSettings.MjpegSettings, canSwitchWebcam: Boolean) {
         delay(100)
         val connectionId = connectionCounter++
-        val base = if (octoPreferences.useLegacyWebcam) {
-            val (url, _) = mjpegSettings.url.extractAndRemoveBasicAuth()
-            MjpegConnection(streamUrl = url.toString(), name = tag).load()
-        } else {
-            MjpegConnection2(streamUrl = mjpegSettings.url, name = tag).load()
-        }
-        base.map {
+        MjpegConnection2(streamUrl = mjpegSettings.url, name = tag).load().map {
             when (it) {
                 is MjpegConnection2.MjpegSnapshot.Loading -> UiState.Loading(canSwitchWebcam)
                 is MjpegConnection2.MjpegSnapshot.Frame -> UiState.FrameReady(
