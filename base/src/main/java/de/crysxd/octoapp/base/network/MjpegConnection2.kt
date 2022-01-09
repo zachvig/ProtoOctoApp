@@ -16,6 +16,7 @@ import de.crysxd.octoapp.base.data.models.exceptions.SuppressedIllegalStateExcep
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.ext.asStyleFileSize
 import de.crysxd.octoapp.base.logging.TimberLogger
+import de.crysxd.octoapp.base.utils.ByteArrayOutputStream2
 import de.crysxd.octoapp.octoprint.SubjectAlternativeNameCompatVerifier
 import de.crysxd.octoapp.octoprint.ext.withHostnameVerifier
 import de.crysxd.octoapp.octoprint.ext.withSslKeystore
@@ -38,7 +39,6 @@ import okhttp3.Response
 import okhttp3.internal.closeQuietly
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
-import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.text.SimpleDateFormat
@@ -46,6 +46,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
+import kotlin.system.measureNanoTime
 
 class MjpegConnection2(
     private val streamUrl: HttpUrl,
@@ -68,8 +69,13 @@ class MjpegConnection2(
     fun load(): Flow<MjpegSnapshot> {
         var hasBeenConnected = false
         var lastImageTime = System.currentTimeMillis()
+
         var imageTimes = 0L
         var imageCounter = 0
+        var readTimeNs = 0L
+        var searchTimeNs = 0L
+        var decodeTimeNs = 0L
+
         return flow {
             emit(MjpegSnapshot.Loading)
 
@@ -89,11 +95,8 @@ class MjpegConnection2(
             }
 
             while (true) {
-                emit(
-                    MjpegSnapshot.Frame(
-                        readNextImage(cache, boundary, inputStream)
-                    )
-                )
+                val (frame, analytics) = readNextImage(cache, boundary, inputStream)
+                emit(MjpegSnapshot.Frame(frame, analytics))
             }
         }.onCompletion {
             Timber.tag(tag).i("Stopped stream")
@@ -127,32 +130,65 @@ class MjpegConnection2(
                 }
             }
         }.onEach {
-            imageCounter++
-            val time = System.currentTimeMillis() - lastImageTime
-            imageTimes += time
-            lastImageTime = System.currentTimeMillis()
-            if (imageCounter > 100) {
-                Timber.tag(tag).i("FPS: %.1f", 1000 / (imageTimes / imageCounter.toFloat()))
-                imageCounter = 0
-                imageTimes = 0
+            if (it is MjpegSnapshot.Frame) {
+                val time = System.currentTimeMillis() - lastImageTime
+
+                imageCounter++
+                imageTimes += time
+                searchTimeNs += it.analytics.searchTimeNs
+                readTimeNs += it.analytics.readTimeNs
+                decodeTimeNs += it.analytics.decodeTimeNs
+
+                lastImageTime = System.currentTimeMillis()
+
+                if (imageCounter > 20) {
+                    Timber.tag(tag).i(
+                        "FPS: %.1f (readTime=%.02f searchTime=%.02f decodeTime=%.02f)",
+                        1000 / (imageTimes / imageCounter.toFloat()),
+                        readTimeNs / 1_000_000f,
+                        searchTimeNs / 1_000_000f,
+                        decodeTimeNs / 1_000_000f,
+                    )
+                    imageCounter = 0
+                    imageTimes = 0
+                    readTimeNs = 0
+                    searchTimeNs = 0
+                    decodeTimeNs = 0
+                }
             }
         }.flowOn(Dispatchers.IO)
     }
 
-    private fun readNextImage(cache: ByteCache, boundary: String, input: InputStream, dropCount: Int = 0): Bitmap {
-        var boundaryStart: Int?
-        var boundaryEnd: Int?
+    private fun readNextImage(cache: ByteCache, boundary: String, input: InputStream, dropCount: Int = 0): Pair<Bitmap, Analytics> {
+        var boundaryStart: Int? = null
+        var boundaryEnd: Int? = null
+        var nextOffset = 0
         require(dropCount < 5) { SuppressedIllegalStateException("Too many dropped frames") }
+        var readTime = 0L
+        var searchTime = 0L
+
         do {
-            //Timber.i("Available: ${input.available().toLong().asStyleFileSize()}")
-            val read = input.read(tempCache)
+            val read: Int
+            readTime += measureNanoTime { read = input.read(tempCache) }
             if (read < 0) throw IOException("Connection broken")
             cache.push(tempCache, read)
-            val bounds = cache.indexOf(boundary)
-            boundaryStart = bounds.first
-            boundaryEnd = bounds.second
+            val bounds: IndexResult
+            searchTime += measureNanoTime { bounds = cache.indexOf(nextOffset, boundary) }
+            boundaryStart = bounds.start
+            boundaryEnd = bounds.end
+            nextOffset = bounds.nextOffset
         } while (boundaryStart == null || boundaryEnd == null)
-        return cache.readImage(boundaryStart, boundaryEnd) ?: readNextImage(cache, boundary, input, dropCount + 1)
+
+        val frame: Bitmap?
+        val decodeTime = measureNanoTime { frame = cache.readImage(boundaryStart, boundaryEnd) }
+        return frame?.let {
+            it to Analytics(
+                readTimeNs = readTime,
+                searchTimeNs = searchTime,
+                decodeTimeNs = decodeTime,
+                dropCount = dropCount,
+            )
+        } ?: readNextImage(cache, boundary, input, dropCount + 1)
     }
 
     private fun connect(): Response {
@@ -206,7 +242,7 @@ class MjpegConnection2(
 
     private class ByteCache {
         private val maxSize = 1024 * 1024 * 10L
-        private val array = ByteArrayOutputStream()
+        private val array = ByteArrayOutputStream2()
         private var bitmaps = emptyList<Bitmap>()
         private var lastBitmapUsed = 0
         private val bitmapPoolSize = 3
@@ -268,6 +304,8 @@ class MjpegConnection2(
                 if (width != ops.outWidth || height != ops.outHeight) {
                     Timber.i("Native resolution of ${ops.outWidth}x${ops.outHeight}px exceeds maximum edge length of $maxSize")
                     Timber.i("Using sampleSize=$sampleSize, resulting in ${width}x${height}px")
+                } else {
+                    Timber.i("Resolution is ${ops.outWidth}x${ops.outHeight}px")
                 }
 
                 bitmaps = (0 until bitmapPoolSize).map {
@@ -287,12 +325,13 @@ class MjpegConnection2(
             array.write(buf)
         }
 
-        fun indexOf(boundaryStart: String): Pair<Int?, Int?> {
+        fun indexOf(offset: Int, boundaryStart: String): IndexResult {
             // Search start
             var startIndex = 0
             var startFound = false
+            val length = array.size()
             val array = array.toByteArray()
-            for (i in array.indices) {
+            for (i in offset until length) {
                 if (array[i].toInt().toChar() == boundaryStart[startIndex]) {
                     startIndex++
                 } else {
@@ -306,11 +345,11 @@ class MjpegConnection2(
                 }
             }
 
-            if (!startFound) return null to null
+            if (!startFound) return IndexResult(nextOffset = length - boundaryStart.length)
 
-            // Search end
             var endIndex = -1
-            for (i in startIndex until array.size) {
+            // Search end
+            for (i in startIndex until length) {
                 val c1 = array.getOrNull(i + 0)?.toInt()?.toChar()
                 val c2 = array.getOrNull(i + 1)?.toInt()?.toChar()
                 val c3 = array.getOrNull(i + 2)?.toInt()?.toChar()
@@ -325,8 +364,7 @@ class MjpegConnection2(
                 }
             }
 
-            if (endIndex < 0) return null to null
-            return startIndex to endIndex
+            return if (endIndex < 0) IndexResult(nextOffset = startIndex) else IndexResult(start = startIndex, end = endIndex, nextOffset = startIndex)
         }
     }
 
@@ -376,9 +414,22 @@ class MjpegConnection2(
         BaseInjector.get().octoPreferences().recordWebcamForDebug = false
     }
 
+    private data class IndexResult(
+        val start: Int? = null,
+        val end: Int? = null,
+        val nextOffset: Int,
+    )
+
+    data class Analytics(
+        val readTimeNs: Long,
+        val searchTimeNs: Long,
+        val decodeTimeNs: Long,
+        val dropCount: Int,
+    )
+
     sealed class MjpegSnapshot {
         object Loading : MjpegSnapshot()
-        data class Frame(val frame: Bitmap) : MjpegSnapshot()
+        data class Frame constructor(val frame: Bitmap, val analytics: Analytics) : MjpegSnapshot()
     }
 
     class NoImageResourceException(mimeType: String) : IllegalStateException("No image resource: $mimeType")
