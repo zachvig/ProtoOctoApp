@@ -20,7 +20,6 @@ class OctoAppLabMenu : Menu {
         SuppressRemoteNotificationInitialization(),
         DebugNetworkLogging(),
         UseCustomDns(),
-        UseLegacyWebcam(),
         RecordWebcam(),
     )
 
@@ -136,22 +135,6 @@ class OctoAppLabMenu : Menu {
         override fun getDescription(context: Context) = context.getString(R.string.lab_menu___use_custom_dns_description)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
             BaseInjector.get().octoPreferences().useCustomDns = enabled
-        }
-    }
-
-    private class UseLegacyWebcam : ToggleMenuItem() {
-        override val isChecked get() = BaseInjector.get().octoPreferences().useLegacyWebcam
-        override val itemId = "legacy_webcam"
-        override var groupId = "webcam"
-        override val canBePinned = false
-        override val order = 51
-        override val style = MenuItemStyle.Settings
-        override val icon = R.drawable.ic_round_videocam_24
-
-        override fun getTitle(context: Context) = context.getString(R.string.lab_menu___use_legacy_webcam)
-        override fun getDescription(context: Context) = context.getString(R.string.lab_menu___use_legacy_webcam_description)
-        override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
-            BaseInjector.get().octoPreferences().useLegacyWebcam = enabled
         }
     }
 
