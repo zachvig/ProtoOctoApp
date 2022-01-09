@@ -69,7 +69,7 @@ class GetRemoteServiceConnectUrlUseCase @Inject constructor(
         data class SpaghettiDetective(val baseUrl: HttpUrl = "https://app.thespaghettidetective.com/".toHttpUrl()) : RemoteService() {
             override suspend fun getPrinterId(octoPrint: OctoPrint) = try {
                 octoPrint.createSpaghettiDetectiveApi().getLinkedPrinterId() ?: ""
-            } catch (e: OctoPrintApiException) {
+            } catch (e: Exception) {
                 Timber.e(e)
                 null
             }
