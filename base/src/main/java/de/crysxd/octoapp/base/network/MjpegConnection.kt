@@ -83,7 +83,7 @@ class MjpegConnection(private val streamUrl: String, private val name: String) {
                             val outputImg = BitmapFactory.decodeByteArray(image, 0, image.size)
                             if (outputImg != null) {
                                 lostFrameCount = 0
-                                emit(MjpegSnapshot.Frame(outputImg))
+                                emit(MjpegSnapshot.Frame(outputImg, MjpegConnection2.Analytics(0, 0, 0, 0)))
                                 hasBeenConnected = true
                             } else {
                                 lostFrameCount++
