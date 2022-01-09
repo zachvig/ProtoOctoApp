@@ -9,6 +9,6 @@ inline fun <T> measureTime(traceName: String, block: () -> T): T {
         block()
     } finally {
         val end = System.nanoTime()
-        Timber.tag("Performance").v("[$traceName] completed in %.2f ms", (end - start) / 1_000_000f)
+        Timber.tag("Performance").v("[$traceName] completed in %.3f ms", (end - start) / 1_000_000f)
     }
 }
