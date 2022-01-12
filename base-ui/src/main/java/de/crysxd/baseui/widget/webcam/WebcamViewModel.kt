@@ -53,11 +53,19 @@ class WebcamViewModel(
     private var webcamCount = 1
     private var connectJob: Job? = null
     private var connectMutex = Mutex()
+    private var lastOctoPreferencesHash = 0
 
     init {
-        uiStateMediator.addSource(settingsLiveData) { connect() }
         uiStateMediator.postValue(UiState.Loading(false))
+        uiStateMediator.addSource(settingsLiveData) {
+            if (getOctoPreferncesHash() != lastOctoPreferencesHash) {
+                connect()
+            }
+        }
     }
+
+    // Hash of all fields in octoPreferences that should cause webcam to reconnect
+    private fun getOctoPreferncesHash() = octoPreferences.isAspectRatioFromOctoPrint.hashCode()
 
     private suspend fun getWebcamSettings(): Flow<Pair<ResolvedWebcamSettings?, Int>> {
         // Load settings
@@ -78,11 +86,15 @@ class WebcamViewModel(
     }
 
     fun connect() {
+        Timber.tag(tag).i("Connect")
+
         // Already connecting? Drop!
         if (connectJob?.isActive == true) return
+        Timber.tag(tag).i("Connect 2")
 
         connectJob = viewModelScope.launch(coroutineExceptionHandler) {
             Timber.tag(tag).i("Connecting")
+            lastOctoPreferencesHash = getOctoPreferncesHash()
             val liveData = BillingManager.billingFlow()
                 .distinctUntilChangedBy { it.isPremiumActive }
                 .combine(getWebcamSettings()) { _, ws ->
@@ -138,7 +150,9 @@ class WebcamViewModel(
                             emit(UiState.Error(true, canSwitchWebcam = false))
                         }
                     }.flowOn(Dispatchers.IO)
-                }.flatMapLatest { it }.asLiveData()
+                }.flatMapLatest { it }.catch {
+                    emit(UiState.Error(true, canSwitchWebcam = true))
+                }.asLiveData()
 
             connectMutex.withLock {
                 previousSource?.let(uiStateMediator::removeSource)

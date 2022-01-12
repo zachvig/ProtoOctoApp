@@ -19,7 +19,7 @@ class OpenOctoprintWebUseCase @Inject constructor(
 ) : UseCase<OpenOctoprintWebUseCase.Params, Unit>() {
 
     override suspend fun doExecute(param: Params, timber: Timber.Tree) {
-        val webUrl = param.octoPrintWebUrl ?: getActiveHttpUrlUseCase.execute(null).activeUrl.first()
+        val webUrl = param.octoPrintWebUrl ?: getActiveHttpUrlUseCase.execute(null).first()
         val host = webUrl.host
         val resolvedUrl = if (host.startsWith(UPNP_ADDRESS_PREFIX) || host.endsWith(".local")) {
             val resolvedHost = withContext(Dispatchers.IO) { localDnsResolver.lookup(host).first() }

@@ -49,7 +49,7 @@ class OctoPreferences(
         private const val KEY_ALLOW_TERMINAL_DURING_PRINT = "allow_terminal_during_print"
         private const val KEY_SUPPRESS_REMOTE_NOTIFICATIONS_INIT = "suppress_remote_notification_init"
         private const val KEY_DEBUG_NETWORK_LOGGING = "debug_network_logging"
-        private const val KEY_USE_CUSTOM_DNS = "use_custom_dns"
+        private const val KEY_ENFORCE_IP_V4 = "enforce_ip_v4"
         private const val KEY_RECORD_WEBCAM_FOR_DEBUG = "record_webcam_for_debug"
         private const val KEY_GCODE_PREVIEW = "gcode_preview"
         private const val KEY_FILE_MANAGER = "file_manager"
@@ -241,10 +241,10 @@ class OctoPreferences(
             edit { putBoolean(KEY_DEBUG_NETWORK_LOGGING, value) }
         }
 
-    var useCustomDns
-        get() = sharedPreferences.getBoolean(KEY_USE_CUSTOM_DNS, true)
+    var enforceIPv4
+        get() = sharedPreferences.getBoolean(KEY_ENFORCE_IP_V4, false)
         set(value) {
-            edit { putBoolean(KEY_USE_CUSTOM_DNS, value) }
+            edit { putBoolean(KEY_ENFORCE_IP_V4, value) }
         }
 
     var recordWebcamForDebug

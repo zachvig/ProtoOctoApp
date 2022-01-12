@@ -11,7 +11,6 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import de.crysxd.baseui.OctoActivity
 import de.crysxd.baseui.R
-import timber.log.Timber
 import kotlin.math.roundToInt
 
 open class OctoRecyclerView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, @StyleRes defStyle: Int = 0) :
@@ -115,7 +114,6 @@ open class OctoRecyclerView @JvmOverloads constructor(context: Context, attribut
     override fun onDrawForeground(canvas: Canvas) {
         super.onDrawForeground(canvas)
 
-        Timber.i("sy=$scaleY")
         if (topShadowAlpha > 0 && topShadowDrawable != null) {
             topShadowDrawable.alpha = (topShadowAlpha * 255).roundToInt()
             topShadowDrawable.setBounds(0, 0, width, topShadowDrawable.intrinsicHeight)

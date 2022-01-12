@@ -6,8 +6,6 @@ import com.github.druk.dnssd.DNSSD
 import com.github.druk.dnssd.DNSSDBindable
 import com.github.druk.dnssd.DNSSDEmbedded
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.ktx.remoteConfig
 import dagger.Module
 import dagger.Provides
 import de.crysxd.octoapp.base.OctoPreferences
@@ -35,7 +33,6 @@ import de.crysxd.octoapp.base.data.source.WidgetPreferencesDataSource
 import de.crysxd.octoapp.base.di.BaseScope
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.base.network.CachedLocalDnsResolver
-import de.crysxd.octoapp.base.network.DefaultLocalDnsResolver
 import de.crysxd.octoapp.base.network.DetectBrokenSetupInterceptor
 import de.crysxd.octoapp.base.network.LocalDnsResolver
 import de.crysxd.octoapp.base.network.OctoPrintProvider
@@ -145,11 +142,12 @@ open class OctoPrintModule {
     open fun provideLocalDnsResolver(
         context: Context,
         dnssd: DNSSD,
-    ): LocalDnsResolver = if (Firebase.remoteConfig.getBoolean("use_cached_dns_resolver")) {
-        CachedLocalDnsResolver(context, dnssd)
-    } else {
-        DefaultLocalDnsResolver(context, dnssd)
-    }
+        octoPreferences: OctoPreferences,
+    ): LocalDnsResolver = CachedLocalDnsResolver(
+        context = context,
+        dnssd = dnssd,
+        octoPreferences = octoPreferences
+    )
 
     @BaseScope
     @Provides

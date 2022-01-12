@@ -19,7 +19,7 @@ class OctoAppLabMenu : Menu {
         AllowTerminalDuringPrint(),
         SuppressRemoteNotificationInitialization(),
         DebugNetworkLogging(),
-        UseCustomDns(),
+        EnforceIPv4(),
         RecordWebcam(),
     )
 
@@ -122,8 +122,8 @@ class OctoAppLabMenu : Menu {
         }
     }
 
-    private class UseCustomDns : ToggleMenuItem() {
-        override val isChecked get() = BaseInjector.get().octoPreferences().useCustomDns
+    private class EnforceIPv4 : ToggleMenuItem() {
+        override val isChecked get() = BaseInjector.get().octoPreferences().enforceIPv4
         override val itemId = "user_custom_dns"
         override var groupId = "network"
         override val canBePinned = false
@@ -131,10 +131,10 @@ class OctoAppLabMenu : Menu {
         override val style = MenuItemStyle.Settings
         override val icon = R.drawable.ic_round_dns_24
 
-        override fun getTitle(context: Context) = context.getString(R.string.lab_menu___use_custom_dns)
-        override fun getDescription(context: Context) = context.getString(R.string.lab_menu___use_custom_dns_description)
+        override fun getTitle(context: Context) = context.getString(R.string.lab_menu___enforce_ip_v4)
+        override fun getDescription(context: Context) = context.getString(R.string.lab_menu___enforce_ip_v4_description)
         override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
-            BaseInjector.get().octoPreferences().useCustomDns = enabled
+            BaseInjector.get().octoPreferences().enforceIPv4 = enabled
         }
     }
 
