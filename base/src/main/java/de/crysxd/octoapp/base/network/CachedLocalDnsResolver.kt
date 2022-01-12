@@ -11,6 +11,7 @@ import com.qiniu.android.dns.DnsManager
 import com.qiniu.android.dns.NetworkInfo
 import com.qiniu.android.dns.local.Resolver
 import de.crysxd.octoapp.base.OctoAnalytics
+import de.crysxd.octoapp.base.OctoPreferences
 import de.crysxd.octoapp.base.utils.AppScope
 import de.crysxd.octoapp.base.utils.measureTime
 import de.crysxd.octoapp.octoprint.UPNP_ADDRESS_PREFIX
@@ -22,6 +23,7 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.net.Inet4Address
 import java.net.InetAddress
 import java.net.UnknownHostException
 import java.util.*
@@ -32,6 +34,7 @@ import kotlin.concurrent.withLock
 class CachedLocalDnsResolver(
     private val context: Context,
     private val dnssd: DNSSD,
+    private val octoPreferences: OctoPreferences,
 ) : LocalDnsResolver {
 
     companion object {
@@ -84,6 +87,8 @@ class CachedLocalDnsResolver(
             return localLookup(hostname)
         }
 
+        val enforceIpv4 = octoPreferences.enforceIPv4
+
         return try {
             // Use default Android DNS system, let's give it a try
             InetAddress.getAllByName(hostname).toList()
@@ -91,6 +96,8 @@ class CachedLocalDnsResolver(
             // Up to us now....
             Timber.v("Android failed to resolve $hostname, falling back")
             localLookup(hostname)
+        }.filter {
+            it is Inet4Address || !enforceIpv4
         }
     }
 

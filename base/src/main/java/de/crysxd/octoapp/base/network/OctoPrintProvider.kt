@@ -190,7 +190,7 @@ class OctoPrintProvider(
         rawAlternativeWebUrl = it.alternativeWebUrl,
         apiKey = it.apiKey,
         highLevelInterceptors = listOf(detectBrokenSetupInterceptor),
-        customDns = localDnsResolver.takeIf { octoPreferences.useCustomDns },
+        customDns = localDnsResolver,
         keyStore = sslKeyStoreHandler.loadKeyStore(),
         hostnameVerifier = SubjectAlternativeNameCompatVerifier().takeIf { _ -> sslKeyStoreHandler.isWeakVerificationForHost(it.webUrl) },
         networkExceptionListener = ::handleNetworkException,
