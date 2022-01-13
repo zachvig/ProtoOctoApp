@@ -7,8 +7,10 @@ data class Material(
     val vendor: String,
     val material: String,
     val color: String?,
+    val colorName: String?,
     val pluginDisplayName: String,
-    val isActivated: Boolean
+    val isActivated: Boolean,
+    val weightGrams: Float?,
 ) {
     val uniqueId
         get() = "$pluginId:$id"

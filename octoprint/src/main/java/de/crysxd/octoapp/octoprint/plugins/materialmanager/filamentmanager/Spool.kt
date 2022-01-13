@@ -4,6 +4,7 @@ data class Spool(
     val id: String,
     val name: String,
     val profile: Profile,
+    val weight: Float? = null,
 ) {
     data class Profile(
         val vendor: String?,
