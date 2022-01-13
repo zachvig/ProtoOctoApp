@@ -1,6 +1,7 @@
 package de.crysxd.baseui.menu.material
 
 import android.content.Context
+import android.graphics.Color
 import androidx.core.text.HtmlCompat
 import de.crysxd.baseui.OctoActivity
 import de.crysxd.baseui.R
@@ -16,6 +17,7 @@ import de.crysxd.octoapp.base.usecase.ActivateMaterialUseCase
 import de.crysxd.octoapp.base.usecase.StartPrintJobUseCase
 import de.crysxd.octoapp.octoprint.models.files.FileObject
 import kotlinx.parcelize.Parcelize
+import timber.log.Timber
 
 @Parcelize
 class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) : Menu {
@@ -43,7 +45,7 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
 
     override suspend fun getMenuItem() = listOf(
         BaseInjector.get().getMaterialsUseCase().execute(Unit).map {
-            ActivateMaterialMenuItem(it.uniqueId, it.displayName, it.isActivated, startPrintAfterSelection)
+            ActivateMaterialMenuItem(it.uniqueId, it.displayName, it.weightGrams, it.color, it.isActivated, startPrintAfterSelection)
         },
         listOf(PrintWithoutMaterialSelection(startPrintAfterSelection))
     ).flatten()
@@ -51,6 +53,8 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
     class ActivateMaterialMenuItem(
         private val uniqueMaterialId: String,
         private val displayName: String,
+        private val weightGrams: Float? = null,
+        private val colorHex: String? = null,
         isActive: Boolean = false,
         private val startPrintAfterSelection: FileObject.File? = null
     ) : MenuItem {
@@ -68,6 +72,15 @@ class MaterialPluginMenu(val startPrintAfterSelection: FileObject.File? = null) 
         override val icon = if (isActive) R.drawable.ic_round_layers_active_24 else R.drawable.ic_round_layers_24
         override fun getTitle(context: Context) =
             if (startPrintAfterSelection != null) displayName else context.getString(R.string.material_menu___print_with_material, displayName)
+
+        override fun getRightDetail(context: Context) = weightGrams?.let { context.getString(R.string.x_grams, it.toInt()) }
+
+        override fun getIconColorOverwrite(context: Context) = try {
+            colorHex?.let { Color.parseColor(it) }
+        } catch (e: Exception) {
+            Timber.e(e)
+            null
+        }
 
         override suspend fun onClicked(host: MenuHost?) {
             BaseInjector.get().activateMaterialUseCase().execute(ActivateMaterialUseCase.Params(uniqueMaterialId))

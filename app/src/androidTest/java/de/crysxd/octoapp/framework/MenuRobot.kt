@@ -5,10 +5,13 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.NoMatchingRootException
 import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
+import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withParentIndex
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import de.crysxd.octoapp.R
 import junit.framework.AssertionFailedError
@@ -24,6 +27,20 @@ object MenuRobot {
         onView(withText(R.string.main_menu___item_show_settings)).check(matches(isDisplayed()))
         onView(withText(R.string.main_menu___item_show_octoprint)).check(matches(isDisplayed()))
         onView(withText(R.string.main_menu___item_show_tutorials)).check(matches(isDisplayed()))
+    }
+
+    fun checkHasMenuButton(text: String, index: Int, exists: Boolean = true) {
+        onView(
+            allOf(
+                withText(text),
+                isDescendantOfA(
+                    allOf(
+                        withId(R.id.menuItemRoot),
+                        if (exists) withParentIndex(index) else withId(R.id.menuItemRoot)
+                    )
+                )
+            )
+        ).inRoot(isDialog()).check(if (exists) matches(isDisplayed()) else doesNotExist())
     }
 
     fun clickMenuButton(label: Int) {

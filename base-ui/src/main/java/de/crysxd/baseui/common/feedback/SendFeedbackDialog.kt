@@ -15,7 +15,7 @@ import de.crysxd.baseui.databinding.SendFeedbackDialogBinding
 import de.crysxd.baseui.di.injectViewModel
 import timber.log.Timber
 import java.text.DateFormat
-import java.util.Calendar
+import java.util.Date
 import java.util.TimeZone
 
 
@@ -48,8 +48,7 @@ class SendFeedbackDialog : DialogFragment() {
 
         try {
             val tz = Firebase.remoteConfig.getString("contact_timezone")
-            val time = Calendar.getInstance(TimeZone.getTimeZone(tz)).time
-            val formattedTime = DateFormat.getTimeInstance(DateFormat.SHORT).format(time)
+            val formattedTime = DateFormat.getTimeInstance(DateFormat.SHORT).also { it.timeZone = TimeZone.getTimeZone(tz) }.format(Date())
             binding.contactTime.text = getString(R.string.help___contact_detail_information, formattedTime, tz)
         } catch (e: java.lang.Exception) {
             Timber.e(e)

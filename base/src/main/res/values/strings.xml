@@ -10,6 +10,7 @@
 
     <!-- Auto filled -->
     <string name="app_widget___controlling_x">"Controlling %s"</string>
+    <string name="x_grams">%dg</string>
 
     <!-- Auto filled -->
     <string name="app_widget___edit_items_in_app">"Edit items in the app by long-pressing them"</string>

@@ -30,15 +30,12 @@ class GetMaterialsUseCase @Inject constructor(
             // Alter names to append material
             val materialNames = sameNames.map { it.displayName + it.material }
             val vendorNames = sameNames.map { it.displayName + it.vendor }
-            val materialVendorNames = sameNames.map { it.displayName + it.vendor + it.material }
             val materialNamesAreDistinct = materialNames.distinct().size == sameNames.size
             val vendorNamesAreDistinct = vendorNames.distinct().size == sameNames.size
-            val materialVendorNamesAreDistinct = materialVendorNames.distinct().size == sameNames.size
             duplicateNameResolutions[m.displayName] = when {
                 materialNamesAreDistinct -> NameConflictResolution.AddMaterial
                 vendorNamesAreDistinct -> NameConflictResolution.AddVendor
-                materialVendorNamesAreDistinct -> NameConflictResolution.AddMaterialAndVendor
-                else -> NameConflictResolution.AddMaterialAndVendorAndId
+                else -> NameConflictResolution.AddMaterialAndVendor
             }
         }
 
@@ -48,9 +45,10 @@ class GetMaterialsUseCase @Inject constructor(
                 NameConflictResolution.AddMaterial -> it.copy(displayName = "${it.displayName} (${it.material})")
                 NameConflictResolution.AddVendor -> it.copy(displayName = "${it.displayName} (${it.vendor})")
                 NameConflictResolution.AddMaterialAndVendor -> it.copy(displayName = "${it.displayName} (${it.material}, ${it.vendor})")
-                NameConflictResolution.AddMaterialAndVendorAndId -> it.copy(displayName = "${it.displayName} (${it.material}, ${it.vendor}, ${it.id})")
                 null -> it
             }
+        }.sortedBy {
+            it.displayName
         }
     }
 
@@ -58,6 +56,5 @@ class GetMaterialsUseCase @Inject constructor(
         object AddVendor : NameConflictResolution()
         object AddMaterial : NameConflictResolution()
         object AddMaterialAndVendor : NameConflictResolution()
-        object AddMaterialAndVendorAndId : NameConflictResolution()
     }
 }
