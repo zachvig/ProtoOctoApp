@@ -319,12 +319,14 @@ class MjpegConnection2(
 
         private fun dropUntil(until: Int) {
             val length = array.size() - until
-            if (length > 0) {
+            if (length >= 0) {
                 val buf = ByteArray(length)
                 System.arraycopy(array.toByteArray(), until, buf, 0, length)
                 array.reset()
                 array.write(buf)
             } else {
+                // This shouldn't happen, length is negative. This indicates an issue in index search...resetting the array
+                // will cause next frame to fail to decode but after that we should be back on track
                 array.reset()
             }
         }
@@ -358,11 +360,11 @@ class MjpegConnection2(
                 val c2 = array.getOrNull(i + 1)?.toInt()?.toChar()
                 val c3 = array.getOrNull(i + 2)?.toInt()?.toChar()
                 val c4 = array.getOrNull(i + 3)?.toInt()?.toChar()
-                if (c1 == '\n' && c2 == '\n') {
+                if (c1 == '\n' && c2 == '\n' && i < length - 2) {
                     endIndex = i + 2
                     break
                 }
-                if (c1 == '\r' && c2 == '\n' && c3 == '\r' && c4 == '\n') {
+                if (c1 == '\r' && c2 == '\n' && c3 == '\r' && c4 == '\n' && i < length - 4) {
                     endIndex = i + 4
                     break
                 }
