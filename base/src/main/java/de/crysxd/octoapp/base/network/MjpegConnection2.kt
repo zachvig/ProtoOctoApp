@@ -319,10 +319,14 @@ class MjpegConnection2(
 
         private fun dropUntil(until: Int) {
             val length = array.size() - until
-            val buf = ByteArray(array.size() - until)
-            System.arraycopy(array.toByteArray(), until, buf, 0, length)
-            array.reset()
-            array.write(buf)
+            if (length > 0) {
+                val buf = ByteArray(length)
+                System.arraycopy(array.toByteArray(), until, buf, 0, length)
+                array.reset()
+                array.write(buf)
+            } else {
+                array.reset()
+            }
         }
 
         fun indexOf(offset: Int, boundaryStart: String): IndexResult {
@@ -364,7 +368,11 @@ class MjpegConnection2(
                 }
             }
 
-            return if (endIndex < 0) IndexResult(nextOffset = startIndex) else IndexResult(start = startIndex, end = endIndex, nextOffset = startIndex)
+            return if (endIndex < 0) {
+                IndexResult(nextOffset = startIndex)
+            } else {
+                IndexResult(start = startIndex, end = endIndex, nextOffset = startIndex)
+            }
         }
     }
 

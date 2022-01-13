@@ -4,6 +4,7 @@ import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.data.models.ResolvedWebcamSettings
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
+import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.octoprint.extractAndRemoveBasicAuth
 import de.crysxd.octoapp.octoprint.isHlsStreamUrl
 import de.crysxd.octoapp.octoprint.isSpaghettiDetectiveUrl
@@ -23,18 +24,19 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class GetWebcamSettingsUseCase @Inject constructor(
+    private val octoPrintProvider: OctoPrintProvider,
     private val octoPrintRepository: OctoPrintRepository,
     private val getActiveHttpUrlUseCase: GetActiveHttpUrlUseCase,
 ) : UseCase<OctoPrintInstanceInformationV3?, Flow<List<ResolvedWebcamSettings>>>() {
 
     override suspend fun doExecute(param: OctoPrintInstanceInformationV3?, timber: Timber.Tree): Flow<List<ResolvedWebcamSettings>> {
-        val (_, settingsSnapshot, activeWebUrlFlow) = getActiveHttpUrlUseCase.execute(param)
+        val activeWebUrlFlow = getActiveHttpUrlUseCase.execute(param)
 
         // If we use the active instance, consume the settings flow. Otherwise use the snapshot we have.
         val settingsFlow = if (param == null) {
-            octoPrintRepository.instanceInformationFlow().map { it?.settings ?: settingsSnapshot }
+            octoPrintRepository.instanceInformationFlow().map { it?.settings ?: octoPrintProvider.octoPrint().createSettingsApi().getSettings() }
         } else {
-            flowOf(settingsSnapshot)
+            flowOf(octoPrintProvider.createAdHocOctoPrint(param).createSettingsApi().getSettings())
         }.distinctUntilChangedBy { it.webcam.hashCode() + it.plugins.values.firstOrNull { it is Settings.MultiCamSettings }.hashCode() }
 
         // Compile webcam settings
