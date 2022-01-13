@@ -11,6 +11,9 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import kotlin.math.absoluteValue
 
 class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null) : FrameLayout(context, attributeSet) {
@@ -40,6 +43,25 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
             }
         }
 
+    fun disableForLifecycle(lifecycle: Lifecycle) {
+        lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onPause(owner: LifecycleOwner) {
+                super.onPause(owner)
+                isEnabled = true
+            }
+
+            override fun onResume(owner: LifecycleOwner) {
+                super.onResume(owner)
+                isEnabled = false
+            }
+
+            override fun onDestroy(owner: LifecycleOwner) {
+                super.onDestroy(owner)
+                lifecycle.removeObserver(this)
+            }
+        })
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -53,12 +75,12 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent) = when {
-        ev.action == MotionEvent.ACTION_MOVE && ev.historySize > 0 && dragStartPoint.x != 0f && dragStartPoint.y != 0f -> {
+        isEnabled && ev.action == MotionEvent.ACTION_MOVE && ev.historySize > 0 && dragStartPoint.x != 0f && dragStartPoint.y != 0f -> {
             controlCenterFragment
             ev.isAccepted()
         }
 
-        ev.action == MotionEvent.ACTION_DOWN -> {
+        isEnabled && ev.action == MotionEvent.ACTION_DOWN -> {
             dragStartPoint.x = ev.x
             dragStartPoint.y = ev.y
             dragStartProgress = if (controlCenterView.isVisible) 1f else 0f
@@ -67,7 +89,7 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
 
         else -> {
             if (ev.isAccepted()) rejectDrag()
-            false
+            super.onInterceptTouchEvent(ev)
         }
     }
 

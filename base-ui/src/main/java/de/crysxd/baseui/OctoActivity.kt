@@ -23,6 +23,7 @@ import com.google.android.material.snackbar.Snackbar
 import de.crysxd.baseui.common.LinkClickMovementMethod
 import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.common.OctoView
+import de.crysxd.baseui.common.controlcenter.ControlCenterHostLayout
 import de.crysxd.baseui.widget.OctoWidgetRecycler
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
@@ -52,6 +53,7 @@ abstract class OctoActivity : LocalizedActivity() {
     private var dialogHasHighPriority = false
     abstract val octoToolbar: OctoToolbar
     abstract val octo: OctoView
+    abstract val controlCenter: ControlCenterHostLayout
     abstract val rootLayout: FrameLayout
     abstract val navController: NavController
     private val handler = Handler(Looper.getMainLooper())

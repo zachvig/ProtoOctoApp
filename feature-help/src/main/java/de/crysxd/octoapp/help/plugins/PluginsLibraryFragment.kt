@@ -46,6 +46,7 @@ class PluginsLibraryFragment : BaseFragment(), InsetAwareScreen {
         helper.install(
             octoActivity = requireOctoActivity(),
             binding = binding.appBarLayout,
+            viewLifecycleOwner = viewLifecycleOwner,
         )
 
         viewModel.pluginsIndex.observe(viewLifecycleOwner) {
@@ -68,11 +69,6 @@ class PluginsLibraryFragment : BaseFragment(), InsetAwareScreen {
             tab.text = index.categories[position].name
         }
         previousMediator?.attach()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        helper.handleResume()
     }
 
     override fun handleInsets(insets: Rect) {

@@ -36,7 +36,8 @@ class TimelapseArchiveFragment : BaseFragment(), InsetAwareScreen {
 
         helper.install(
             octoActivity = requireOctoActivity(),
-            binding = binding.appBarLayout
+            binding = binding.appBarLayout,
+            viewLifecycleOwner = viewLifecycleOwner,
         )
         helper.removeTabs()
 
@@ -68,11 +69,6 @@ class TimelapseArchiveFragment : BaseFragment(), InsetAwareScreen {
         viewModel.picasso.observe(viewLifecycleOwner) {
             adapter.picasso = it
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        helper.handleResume()
     }
 
     override fun handleInsets(insets: Rect) {

@@ -113,13 +113,9 @@ class ConfigureRemoteAccessFragment : BaseFragment(), InsetAwareScreen {
         helper.install(
             octoActivity = requireOctoActivity(),
             binding = binding.appBarLayout,
-            showOctoInToolbar = false
+            showOctoInToolbar = false,
+            viewLifecycleOwner = viewLifecycleOwner,
         )
-    }
-
-    override fun onResume() {
-        super.onResume()
-        helper.handleResume()
     }
 
     override fun handleInsets(insets: Rect) {

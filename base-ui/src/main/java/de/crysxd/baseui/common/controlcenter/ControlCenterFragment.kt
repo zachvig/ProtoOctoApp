@@ -105,8 +105,8 @@ class ControlCenterFragment : BaseFragment() {
     }
 
     private fun createItem() = ControleCenterItemBinding.inflate(LayoutInflater.from(requireContext()), binding.list, false).apply {
-        webcam.smallMode = true
-        webcam.canSwitchWebcam = false
+//        webcam.smallMode = true
+//        webcam.canSwitchWebcam = false
         content.clipToOutline = true
         Timber.i("Create new item")
     }

@@ -35,6 +35,7 @@ import de.crysxd.baseui.OctoActivity
 import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.common.OctoView
 import de.crysxd.baseui.common.controlcenter.ControlCenterFragment
+import de.crysxd.baseui.common.controlcenter.ControlCenterHostLayout
 import de.crysxd.baseui.utils.ColorTheme
 import de.crysxd.baseui.utils.colorTheme
 import de.crysxd.baseui.widget.announcement.AnnouncementWidget
@@ -87,6 +88,7 @@ class MainActivity : OctoActivity() {
     private val viewModel by lazy { ViewModelProvider(this)[MainActivityViewModel::class.java] }
     private val lastInsets = Rect()
     override val octoToolbar: OctoToolbar by lazy { binding.toolbar }
+    override val controlCenter: ControlCenterHostLayout by lazy { binding.root }
     override val octo: OctoView by lazy { binding.toolbarOctoView }
     override val rootLayout by lazy { binding.coordinator }
     override val navController get() = findNavController(R.id.mainNavController)
