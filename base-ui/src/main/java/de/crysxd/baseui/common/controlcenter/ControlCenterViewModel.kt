@@ -2,6 +2,7 @@ package de.crysxd.baseui.common.controlcenter
 
 import androidx.lifecycle.asLiveData
 import de.crysxd.baseui.BaseViewModel
+import de.crysxd.baseui.databinding.ControlCenterFragmentBinding
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ext.rateLimit
@@ -22,6 +23,7 @@ class ControlCenterViewModel(
     octoPrintProvider: OctoPrintProvider,
 ) : BaseViewModel() {
 
+    var viewPool: ControlCenterFragmentBinding? = null
     val viewState = octoPrintRepository.instanceInformationFlow().flatMapLatest { _ ->
         val flows = octoPrintRepository.getAll().map { instance ->
             flow {

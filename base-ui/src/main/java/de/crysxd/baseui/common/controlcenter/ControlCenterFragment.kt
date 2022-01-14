@@ -12,26 +12,25 @@ import de.crysxd.baseui.BaseFragment
 import de.crysxd.baseui.R
 import de.crysxd.baseui.databinding.ControlCenterFragmentBinding
 import de.crysxd.baseui.databinding.ControleCenterItemBinding
-import de.crysxd.baseui.di.injectViewModel
+import de.crysxd.baseui.di.injectActivityViewModel
 import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.utils.colorTheme
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
-import timber.log.Timber
 
 class ControlCenterFragment : BaseFragment() {
-    override val viewModel by injectViewModel<ControlCenterViewModel>()
+    override val viewModel by injectActivityViewModel<ControlCenterViewModel>()
     private lateinit var binding: ControlCenterFragmentBinding
     private val formatEtaUseCase by lazy { BaseInjector.get().formatEtaUseCase() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
-        ControlCenterFragmentBinding.inflate(inflater, container, false).also {
+        (viewModel.viewPool ?: ControlCenterFragmentBinding.inflate(inflater, container, false)).also {
+            viewModel.viewPool = it
             binding = it
         }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Timber.i("CREATE")
         requireOctoActivity().applyInsetsToView(binding.root)
 
         binding.imageButton.setOnClickListener {
@@ -43,6 +42,11 @@ class ControlCenterFragment : BaseFragment() {
                 bindList(it.instances.sortedBy { i -> i.info.colorTheme.order }, it.activeId)
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (binding.root.parent as? ViewGroup)?.removeView(binding.root)
     }
 
     private fun bindList(instances: List<ControlCenterViewModel.Instance>, activeId: String?) {
@@ -108,16 +112,5 @@ class ControlCenterFragment : BaseFragment() {
 //        webcam.smallMode = true
 //        webcam.canSwitchWebcam = false
         content.clipToOutline = true
-        Timber.i("Create new item")
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Timber.i("START")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Timber.i("STOP")
     }
 }
