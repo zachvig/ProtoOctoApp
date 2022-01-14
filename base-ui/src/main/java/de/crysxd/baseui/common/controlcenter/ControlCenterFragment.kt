@@ -78,7 +78,7 @@ class ControlCenterFragment : BaseFragment() {
         binding.label.text = instance.info.label
 
         // Button
-        binding.activate.setOnClickListener { if (!isActive) activate(instance) }
+        binding.activate.setOnClickListener { if (!isActive) activate(instance, it) }
         binding.activate.backgroundTintList = ColorStateList.valueOf(instance.info.colorTheme.dark).takeIf { isActive }
         binding.activate.setImageResource(if (isActive) R.drawable.ic_round_check_24 else R.drawable.ic_round_swap_horiz_24)
 
@@ -113,15 +113,23 @@ class ControlCenterFragment : BaseFragment() {
         }
     }
 
-    private fun activate(instance: ControlCenterViewModel.Instance) {
+    private fun activate(instance: ControlCenterViewModel.Instance, trigger: View) {
         rippleDrawable = RippleDrawable(ColorStateList.valueOf(instance.info.colorTheme.dark), null, null).also {
             binding.rippleView.background = it
             it.state = intArrayOf(android.R.attr.state_pressed, android.R.attr.state_enabled)
 
+            val backgroundLocation = IntArray(2)
+            val triggerLocation = IntArray(2)
+            trigger.getLocationInWindow(triggerLocation)
+            binding.rippleView.getLocationInWindow(backgroundLocation)
+            val x = triggerLocation.first() - backgroundLocation.first()
+            val y = triggerLocation.last() - backgroundLocation.last()
+            it.setHotspot(x.toFloat(), y.toFloat())
+
             rippleJob = viewLifecycleOwner.lifecycleScope.launchWhenResumed {
                 delay(300)
                 viewModel.active(instance)
-                delay(1000)
+                delay(300)
                 it.state = intArrayOf()
             }
         }
