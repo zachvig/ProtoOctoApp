@@ -136,6 +136,11 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
         controlCenterFragment.view?.translationX = (maxXDistance - minXDistance) * (1 - dragProgress) * direction1 * direction2
     }
 
+    fun dismiss() {
+        dragStartProgress = 0f
+        rejectDrag()
+    }
+
     private fun rejectDrag() {
         ValueAnimator.ofFloat(dragProgress, dragStartProgress).also {
             it.addUpdateListener {

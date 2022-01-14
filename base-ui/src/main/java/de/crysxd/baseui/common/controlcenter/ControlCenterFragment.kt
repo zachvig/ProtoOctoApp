@@ -14,6 +14,7 @@ import de.crysxd.baseui.R
 import de.crysxd.baseui.databinding.ControlCenterFragmentBinding
 import de.crysxd.baseui.databinding.ControleCenterItemBinding
 import de.crysxd.baseui.di.injectActivityViewModel
+import de.crysxd.baseui.ext.findParent
 import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.utils.colorTheme
 import de.crysxd.octoapp.base.di.BaseInjector
@@ -131,6 +132,8 @@ class ControlCenterFragment : BaseFragment() {
                 viewModel.active(instance)
                 delay(300)
                 it.state = intArrayOf()
+                delay(300)
+                requireView().findParent<ControlCenterHostLayout>()?.dismiss()
             }
         }
     }
