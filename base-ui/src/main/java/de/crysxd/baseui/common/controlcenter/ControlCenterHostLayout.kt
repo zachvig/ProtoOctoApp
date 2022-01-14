@@ -19,7 +19,7 @@ import kotlin.math.absoluteValue
 class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null) : FrameLayout(context, attributeSet) {
 
     companion object {
-        private const val MAX_DRAG_DISTANCE = 0.20f
+        private const val MAX_DRAG_DISTANCE = 0.25f
         private const val MIN_DRAG_DISTANCE = 0.05f
     }
 
@@ -28,6 +28,7 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
     lateinit var fragmentManager: FragmentManager
 
     private var dragStartPoint = PointF()
+    private var dragEndPoint = PointF()
     private var dragStartProgress = 0f
     private var dragProgress = 0f
         set(value) {
@@ -37,6 +38,7 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
             val wasVisible = controlCenterView.isVisible
             val isVisible = dragProgress > 0
             controlCenterView.isVisible = isVisible
+            synchronizeViewTranslationWithTouch()
 
             if (isVisible != wasVisible) {
                 fragmentManager.beginTransaction().let { if (isVisible) it.attach(controlCenterFragment) else it.detach(controlCenterFragment) }.commit()
@@ -97,6 +99,8 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
     override fun onTouchEvent(ev: MotionEvent): Boolean = when (ev.action) {
         MotionEvent.ACTION_MOVE -> {
             // We consume this event if we move primarily sideways and if we moved the min distance
+            dragEndPoint.x = ev.x
+            dragEndPoint.y = ev.y
             dragProgress = if (ev.isAccepted()) ev.dragProgress() else dragStartProgress
             true
         }
@@ -122,6 +126,14 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
         val maxXDistance = width * MAX_DRAG_DISTANCE
         val progress = ((distanceX - minXDistance) / maxXDistance).coerceIn(0f, 1f)
         return if (dragStartProgress == 1f) 1 - progress else progress
+    }
+
+    private fun synchronizeViewTranslationWithTouch() {
+        val minXDistance = width * MIN_DRAG_DISTANCE
+        val maxXDistance = width * MAX_DRAG_DISTANCE
+        val direction1 = if (dragEndPoint.x > dragStartPoint.x) -1f else 1f
+        val direction2 = if (dragStartProgress == 1f) -1f else 1f
+        controlCenterFragment.view?.translationX = (maxXDistance - minXDistance) * (1 - dragProgress) * direction1 * direction2
     }
 
     private fun rejectDrag() {
