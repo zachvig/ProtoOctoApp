@@ -1,6 +1,7 @@
 package de.crysxd.baseui.common.controlcenter
 
 import android.content.res.ColorStateList
+import android.graphics.drawable.RippleDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,11 +18,19 @@ import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.utils.colorTheme
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 
 class ControlCenterFragment : BaseFragment() {
     override val viewModel by injectActivityViewModel<ControlCenterViewModel>()
     private lateinit var binding: ControlCenterFragmentBinding
     private val formatEtaUseCase by lazy { BaseInjector.get().formatEtaUseCase() }
+    private var rippleDrawable: RippleDrawable? = null
+    private var rippleJob: Job? = null
+        set(value) {
+            field?.cancel()
+            field = value
+        }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         (viewModel.viewPool ?: ControlCenterFragmentBinding.inflate(inflater, container, false)).also {
@@ -69,7 +78,7 @@ class ControlCenterFragment : BaseFragment() {
         binding.label.text = instance.info.label
 
         // Button
-        binding.activate.setOnClickListener { if (!isActive) viewModel.active(instance) }
+        binding.activate.setOnClickListener { if (!isActive) activate(instance) }
         binding.activate.backgroundTintList = ColorStateList.valueOf(instance.info.colorTheme.dark).takeIf { isActive }
         binding.activate.setImageResource(if (isActive) R.drawable.ic_round_check_24 else R.drawable.ic_round_swap_horiz_24)
 
@@ -101,6 +110,20 @@ class ControlCenterFragment : BaseFragment() {
             }
         } else {
             "Connecting..."
+        }
+    }
+
+    private fun activate(instance: ControlCenterViewModel.Instance) {
+        rippleDrawable = RippleDrawable(ColorStateList.valueOf(instance.info.colorTheme.dark), null, null).also {
+            binding.rippleView.background = it
+            it.state = intArrayOf(android.R.attr.state_pressed, android.R.attr.state_enabled)
+
+            rippleJob = viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+                delay(300)
+                viewModel.active(instance)
+                delay(1000)
+                it.state = intArrayOf()
+            }
         }
     }
 

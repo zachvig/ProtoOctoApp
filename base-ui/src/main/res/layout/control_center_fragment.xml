@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:background="#D9000000">
 
+    <View
+        android:id="@+id/rippleView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <TextView
         android:id="@+id/textView5"
         android:layout_width="0dp"
