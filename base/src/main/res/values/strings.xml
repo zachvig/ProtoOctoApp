@@ -1005,4 +1005,5 @@ happy printing!"</string>
     <string name="x_fps">"%d FPS"</string>
     <string name="control_center___title">Quick switch</string>
     <string name="control_center___subtitle"><![CDATA[See tips & tricks to work with multiple printers <a href="https://app.octoapp.eu/help/faq/multiple-octoprint">here.</a>]]></string>
+    <string name="control_center___announcement">Swipe left or right on the screen to switch between your OctoPrints!</string>
 </resources>

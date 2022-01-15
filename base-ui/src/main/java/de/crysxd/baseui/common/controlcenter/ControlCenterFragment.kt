@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -115,7 +116,8 @@ class ControlCenterFragment : BaseFragment() {
 
         // Button
         binding.root.setOnClickListener { if (!isActive) activate(instance, it) }
-        binding.activate.backgroundTintList = ColorStateList.valueOf(instance.info.colorTheme.dark).takeIf { isActive }
+        binding.activate.backgroundTintList =
+            ColorStateList.valueOf(if (isActive) instance.info.colorTheme.dark else ContextCompat.getColor(requireContext(), R.color.white_color_scheme_light))
         binding.activate.setImageResource(if (isActive) R.drawable.ic_round_check_24 else R.drawable.ic_round_swap_horiz_24)
 
         // Colors
