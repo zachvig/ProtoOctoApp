@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.children
 import androidx.lifecycle.lifecycleScope
 import de.crysxd.baseui.BaseFragment
@@ -16,6 +15,8 @@ import de.crysxd.baseui.databinding.ControleCenterItemBinding
 import de.crysxd.baseui.di.injectActivityViewModel
 import de.crysxd.baseui.ext.findParent
 import de.crysxd.baseui.ext.requireOctoActivity
+import de.crysxd.baseui.menu.MenuBottomSheetFragment
+import de.crysxd.baseui.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.baseui.utils.colorTheme
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
@@ -44,7 +45,7 @@ class ControlCenterFragment : BaseFragment() {
         requireOctoActivity().applyInsetsToView(binding.root)
 
         binding.imageButton.setOnClickListener {
-            Toast.makeText(requireContext(), "Hello world!", Toast.LENGTH_SHORT).show()
+            MenuBottomSheetFragment.createForMenu(SwitchOctoPrintMenu()).show(childFragmentManager)
         }
 
         viewModel.viewState.observe(viewLifecycleOwner) {

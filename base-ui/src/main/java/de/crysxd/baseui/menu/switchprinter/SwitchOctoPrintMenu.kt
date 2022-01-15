@@ -5,6 +5,7 @@ import androidx.annotation.IdRes
 import androidx.core.os.bundleOf
 import de.crysxd.baseui.OctoActivity
 import de.crysxd.baseui.R
+import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.menu.Menu
 import de.crysxd.baseui.menu.MenuHost
 import de.crysxd.baseui.menu.MenuItem
@@ -27,6 +28,8 @@ private val isAnyActive get() = BaseInjector.get().octorPrintRepository().getAct
 
 @Parcelize
 class SwitchOctoPrintMenu : Menu {
+
+    override fun shouldLoadBlocking() = true
 
     override suspend fun getTitle(context: Context) = context.getString(
         if (isQuickSwitchEnabled) R.string.main_menu___title_quick_switch else R.string.main_menu___title_quick_switch_disabled
@@ -80,6 +83,7 @@ class SwitchInstanceMenuItem(private val instanceId: String, val showDelte: Bool
     override suspend fun onClicked(host: MenuHost?) {
         val repo = BaseInjector.get().octorPrintRepository()
         instanceInfo?.let { repo.setActive(it) }
+        host?.closeMenu()
     }
 
     override suspend fun onSecondaryClicked(host: MenuHost?) {
@@ -108,6 +112,8 @@ class AddInstanceMenuItem : MenuItem {
     override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_add_instance)
     override suspend fun onClicked(host: MenuHost?) {
         BaseInjector.get().octorPrintRepository().clearActive()
+        host?.closeMenu()
+        host?.getHostFragment()?.requireOctoActivity()?.controlCenter?.dismiss()
     }
 }
 
@@ -123,6 +129,8 @@ class SignOutMenuItem : MenuItem {
     override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_sign_out)
     override suspend fun onClicked(host: MenuHost?) {
         BaseInjector.get().octorPrintRepository().clearActive()
+        host?.closeMenu()
+        host?.getHostFragment()?.requireOctoActivity()?.controlCenter?.dismiss()
     }
 }
 

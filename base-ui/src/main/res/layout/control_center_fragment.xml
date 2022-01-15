@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/margin_1"
         android:contentDescription="@string/cd_settings"
-        android:src="@drawable/ic_round_more_vert_24"
+        android:src="@drawable/ic_round_edit_24"
         app:layout_constraintBottom_toBottomOf="@+id/textView5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView5"
