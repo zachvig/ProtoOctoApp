@@ -23,6 +23,7 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
         private const val MIN_DRAG_DISTANCE = 0.05f
     }
 
+    private val disableLifecycles = mutableListOf<Lifecycle>()
     private val controlCenterView by lazy { getChildAt(0) }
     lateinit var controlCenterFragment: Fragment
     lateinit var fragmentManager: FragmentManager
@@ -46,22 +47,28 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
         }
 
     fun disableForLifecycle(lifecycle: Lifecycle) {
+        disableLifecycles.add(lifecycle)
         lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onPause(owner: LifecycleOwner) {
                 super.onPause(owner)
-                isEnabled = true
+                updateEnabled()
             }
 
             override fun onResume(owner: LifecycleOwner) {
                 super.onResume(owner)
-                isEnabled = false
+                updateEnabled()
             }
 
             override fun onDestroy(owner: LifecycleOwner) {
                 super.onDestroy(owner)
+                disableLifecycles.remove(lifecycle)
                 lifecycle.removeObserver(this)
             }
         })
+    }
+
+    private fun updateEnabled() {
+        isEnabled = disableLifecycles.all { it.currentState < Lifecycle.State.RESUMED }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -77,7 +84,7 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent) = when {
-        isEnabled && ev.action == MotionEvent.ACTION_MOVE && ev.historySize > 0 && dragStartPoint.x != 0f && dragStartPoint.y != 0f -> {
+        isEnabled && ev.action == MotionEvent.ACTION_MOVE -> {
             controlCenterFragment
             ev.isAccepted()
         }
@@ -96,16 +103,21 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(ev: MotionEvent): Boolean = when (ev.action) {
-        MotionEvent.ACTION_MOVE -> {
-            // We consume this event if we move primarily sideways and if we moved the min distance
+    override fun onTouchEvent(ev: MotionEvent): Boolean = when {
+        isEnabled && ev.action == MotionEvent.ACTION_DOWN -> {
+            // We need this if the current screen does not have any touch listeners at the touched position.
+            // In this case we need to act as a touch listener for down to start receiving move events
+            true
+        }
+
+        isEnabled && ev.action == MotionEvent.ACTION_MOVE -> {
             dragEndPoint.x = ev.x
             dragEndPoint.y = ev.y
             dragProgress = if (ev.isAccepted()) ev.dragProgress() else dragStartProgress
             true
         }
 
-        MotionEvent.ACTION_UP -> {
+        isEnabled && ev.action == MotionEvent.ACTION_UP -> {
             if (dragProgress != 1f && dragProgress != 0f) rejectDrag()
             true
         }
@@ -114,6 +126,7 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
     }
 
     private fun MotionEvent.isAccepted(): Boolean {
+        // We accept this event if we move primarily sideways and if we moved the min distance
         val distanceX = (x - dragStartPoint.x).absoluteValue
         val distanceY = (y - dragStartPoint.y).absoluteValue
         val minXDistance = width * MIN_DRAG_DISTANCE
