@@ -1003,6 +1003,6 @@ happy printing!"</string>
     <string name="timelapse_archive___subtitle"><![CDATA[OctoPrint let\'s you create timelapses of your prints. You can see the recordings below, manage your settings <a href="">here</a>.]]></string>
     <string name="x_secs">"%d sec"</string>
     <string name="x_fps">"%d FPS"</string>
-    <string name="control_center___title">Control center</string>
+    <string name="control_center___title">Quick switch</string>
     <string name="control_center___subtitle"><![CDATA[See tips & tricks to work with multiple printers <a href="https://app.octoapp.eu/help/faq/multiple-octoprint">here.</a>]]></string>
 </resources>

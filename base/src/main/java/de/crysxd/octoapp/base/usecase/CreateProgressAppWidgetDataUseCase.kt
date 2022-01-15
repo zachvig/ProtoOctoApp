@@ -28,7 +28,7 @@ class CreateProgressAppWidgetDataUseCase @Inject constructor(
 
     private suspend fun fromNetworkRequest(instanceId: String): Result = withContext(Dispatchers.IO) {
         val instance = octoPrintRepository.get(instanceId) ?: throw IllegalStateException("Unable to locate instance for $instanceId")
-        val octoPrint = octoPrintProvider.createAdHocOctoPrint(instance)
+        val octoPrint = octoPrintProvider.octoPrint(instance.id)
         val asyncJob = async { octoPrint.createJobApi().getJob() }
         val asyncState = async {
             try {

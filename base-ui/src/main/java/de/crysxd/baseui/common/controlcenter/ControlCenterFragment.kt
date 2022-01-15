@@ -8,7 +8,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import de.crysxd.baseui.BaseFragment
@@ -22,7 +24,10 @@ import de.crysxd.baseui.ext.requireOctoActivity
 import de.crysxd.baseui.menu.MenuBottomSheetFragment
 import de.crysxd.baseui.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.baseui.utils.colorTheme
+import de.crysxd.octoapp.base.UriLibrary
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.base.ext.open
 import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import kotlinx.coroutines.Job
@@ -56,8 +61,18 @@ class ControlCenterFragment : BaseFragment() {
         binding.subtitle.text = getString(R.string.control_center___subtitle).toHtml()
         binding.subtitle.movementMethod = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(requireOctoActivity()))
 
+        val hasQuickSwitch = BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH)
+        binding.imageButton.isVisible = hasQuickSwitch
+        binding.title.isVisible = hasQuickSwitch
+        binding.subtitle.isVisible = hasQuickSwitch
         binding.imageButton.setOnClickListener {
             MenuBottomSheetFragment.createForMenu(SwitchOctoPrintMenu()).show(childFragmentManager)
+        }
+
+        binding.disabled.isVisible = !hasQuickSwitch
+        binding.enableQuickSwitch.setOnClickListener {
+            UriLibrary.getPurchaseUri().open(requireOctoActivity())
+            requireOctoActivity().controlCenter.dismiss()
         }
 
         viewModel.viewState.observe(viewLifecycleOwner) {
@@ -65,6 +80,12 @@ class ControlCenterFragment : BaseFragment() {
                 bindList(it.instances.sortedBy { i -> i.info.colorTheme.order }, it.activeId)
             }
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                requireOctoActivity().controlCenter.dismiss()
+            }
+        })
     }
 
     override fun onDestroyView() {
