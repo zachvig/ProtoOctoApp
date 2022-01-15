@@ -12,21 +12,21 @@ import timber.log.Timber
 
 
 @Parcelize
-class ColorTheme(@ColorRes val colorRes: Int, @ColorRes val lightColorRes: Int) : Parcelable {
+class ColorTheme(@ColorRes val colorRes: Int, @ColorRes val lightColorRes: Int, val order: Int) : Parcelable {
 
     val light get() = ContextCompat.getColor(BaseInjector.get().context(), lightColorRes)
     val dark get() = ContextCompat.getColor(BaseInjector.get().context(), colorRes)
 
     companion object {
-        val default = ColorTheme(R.color.default_color_scheme, R.color.default_color_scheme_light)
-        val red = ColorTheme(R.color.red_color_scheme, R.color.red_color_scheme_light)
-        val orange = ColorTheme(R.color.orange_color_scheme, R.color.orange_color_scheme_light)
-        val yellow = ColorTheme(R.color.yellow_color_scheme, R.color.yellow_color_scheme_light)
-        val green = ColorTheme(R.color.green_color_scheme, R.color.green_color_scheme_light)
-        val blue = ColorTheme(R.color.blue_color_scheme, R.color.blue_color_scheme_light)
-        val violet = ColorTheme(R.color.violet_color_scheme, R.color.violet_color_scheme_light)
-        val black = ColorTheme(R.color.black_color_scheme, R.color.black_color_scheme_light)
-        val white = ColorTheme(R.color.white_color_scheme, R.color.white_color_scheme_light)
+        val white = ColorTheme(R.color.white_color_scheme, R.color.white_color_scheme_light, -4)
+        val black = ColorTheme(R.color.black_color_scheme, R.color.black_color_scheme_light, -3)
+        val blue = ColorTheme(R.color.blue_color_scheme, R.color.blue_color_scheme_light, -2)
+        val violet = ColorTheme(R.color.violet_color_scheme, R.color.violet_color_scheme_light, -1)
+        val red = ColorTheme(R.color.red_color_scheme, R.color.red_color_scheme_light, 0)
+        val orange = ColorTheme(R.color.orange_color_scheme, R.color.orange_color_scheme_light, 1)
+        val yellow = ColorTheme(R.color.yellow_color_scheme, R.color.yellow_color_scheme_light, 2)
+        val default = ColorTheme(R.color.default_color_scheme, R.color.default_color_scheme_light, 3)
+        val green = ColorTheme(R.color.green_color_scheme, R.color.green_color_scheme_light, 4)
 
         private val callbacks = mutableMapOf<View, (ColorTheme) -> Unit>()
         var activeColorTheme = default

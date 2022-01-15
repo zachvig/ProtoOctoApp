@@ -36,7 +36,7 @@ class GetWebcamSettingsUseCase @Inject constructor(
         val settingsFlow = if (param == null) {
             octoPrintRepository.instanceInformationFlow().map { it?.settings ?: octoPrintProvider.octoPrint().createSettingsApi().getSettings() }
         } else {
-            flowOf(octoPrintProvider.createAdHocOctoPrint(param).createSettingsApi().getSettings())
+            flowOf(octoPrintProvider.octoPrint(param.id).createSettingsApi().getSettings())
         }.distinctUntilChangedBy { it.webcam.hashCode() + it.plugins.values.firstOrNull { it is Settings.MultiCamSettings }.hashCode() }
 
         // Compile webcam settings

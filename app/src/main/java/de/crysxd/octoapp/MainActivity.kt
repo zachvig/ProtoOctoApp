@@ -34,6 +34,8 @@ import de.crysxd.baseui.InsetAwareScreen
 import de.crysxd.baseui.OctoActivity
 import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.common.OctoView
+import de.crysxd.baseui.common.controlcenter.ControlCenterFragment
+import de.crysxd.baseui.common.controlcenter.ControlCenterHostLayout
 import de.crysxd.baseui.utils.ColorTheme
 import de.crysxd.baseui.utils.colorTheme
 import de.crysxd.baseui.widget.announcement.AnnouncementWidget
@@ -67,6 +69,7 @@ import de.crysxd.octoapp.printcontrols.ui.widget.tune.TuneWidget
 import de.crysxd.octoapp.signin.di.SignInInjector
 import de.crysxd.octoapp.widgets.updateAllWidgets
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
@@ -86,6 +89,7 @@ class MainActivity : OctoActivity() {
     private val viewModel by lazy { ViewModelProvider(this)[MainActivityViewModel::class.java] }
     private val lastInsets = Rect()
     override val octoToolbar: OctoToolbar by lazy { binding.toolbar }
+    override val controlCenter: ControlCenterHostLayout by lazy { binding.root }
     override val octo: OctoView by lazy { binding.toolbarOctoView }
     override val rootLayout by lazy { binding.coordinator }
     override val navController get() = findNavController(R.id.mainNavController)
@@ -102,6 +106,8 @@ class MainActivity : OctoActivity() {
 
         binding = MainActivityBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
+        binding.root.controlCenterFragment = ControlCenterFragment()
+        binding.root.fragmentManager = supportFragmentManager
 
         // Fix fullscreen layout under system bars for frame layout
         rootLayout.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -144,32 +150,6 @@ class MainActivity : OctoActivity() {
             }
         }
 
-        SignInInjector.get().octoprintRepository().instanceInformationFlow().filter {
-            val webUrlAndApiKey = "${it?.webUrl}:${it?.apiKey}"
-            val pass = viewModel.lastWebUrlAndApiKey != webUrlAndApiKey
-            viewModel.lastWebUrlAndApiKey = webUrlAndApiKey
-            Timber.i("Instance information filter $it => $pass")
-            pass
-        }.asLiveData().observe(this) { instance ->
-            when {
-                instance != null && instance.apiKey.isNotBlank() -> {
-                    Timber.i("Instance information received $this")
-                    updateCapabilities("instance_change", updateM115 = true, escalateError = false)
-                    navigate(R.id.action_connect_printer)
-                    viewModel.pendingUri?.let {
-                        viewModel.pendingUri = null
-                        handleDeepLink(it)
-                    }
-                }
-
-                else -> {
-                    Timber.i("No instance active $this")
-                    navigate(R.id.action_sign_in_required)
-                    LiveNotificationManager.stop(this)
-                }
-            }
-        }
-
         SignInInjector.get().octoprintRepository().instanceInformationFlow()
             .distinctUntilChangedBy { it?.settings?.appearance?.color }
             .asLiveData()
@@ -177,7 +157,7 @@ class MainActivity : OctoActivity() {
                 ColorTheme.applyColorTheme(it.colorTheme)
             }
 
-        lifecycleScope.launchWhenResumed {
+        lifecycleScope.launchWhenStarted {
             val navHost = supportFragmentManager.findFragmentById(R.id.mainNavController) as NavHostFragment
 
             navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -224,6 +204,45 @@ class MainActivity : OctoActivity() {
             // Stop screen rotation on phones
             @SuppressLint("SourceLockedOrientationActivity")
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
+
+        observeActiveInstance()
+    }
+
+    private fun observeActiveInstance() = lifecycleScope.launchWhenResumed {
+        SignInInjector.get().octoprintRepository().instanceInformationFlow().filter {
+            val webUrlAndApiKey = "${it?.webUrl}:${it?.apiKey}"
+            val pass = viewModel.lastWebUrlAndApiKey != webUrlAndApiKey
+            viewModel.lastWebUrlAndApiKey = webUrlAndApiKey
+            Timber.i("Instance information filter $it => $pass")
+            pass
+        }.collect { instance ->
+            when {
+                instance != null && instance.apiKey.isNotBlank() -> {
+                    Timber.i("Instance information received")
+                    updateCapabilities("instance_change", updateM115 = true, escalateError = false)
+
+
+                    // Go to connect screen if not yet connected
+                    if (BaseInjector.get().octoPrintProvider().getLastCurrentMessage(instance.id) == null) {
+                        Timber.i("Not connected, moving to connect state")
+                        navigate(R.id.action_connect_printer)
+                    } else {
+                        Timber.i("Already connected")
+                    }
+
+                    viewModel.pendingUri?.let {
+                        viewModel.pendingUri = null
+                        handleDeepLink(it)
+                    }
+                }
+
+                else -> {
+                    Timber.i("No instance active $this")
+                    navigate(R.id.action_sign_in_required)
+                    LiveNotificationManager.stop(this@MainActivity)
+                }
+            }
         }
     }
 
@@ -314,14 +333,13 @@ class MainActivity : OctoActivity() {
                 )
             )
         } else {
-            screen.view?.updatePadding(
-                top = topOverwrite ?: bannerHeight ?: lastInsets.top,
-                bottom = lastInsets.bottom,
-                left = lastInsets.left,
-                right = lastInsets.right
-            )
+            screen.view?.let { applyInsetsToView(it) }
+            screen.view?.updatePadding(top = topOverwrite ?: bannerHeight ?: screen.view?.paddingTop ?: 0)
         }
     }
+
+    override fun applyInsetsToView(view: View) = view.updatePadding(top = lastInsets.top, bottom = lastInsets.bottom, left = lastInsets.left, right = lastInsets.right)
+
 
     override fun onStart() {
         super.onStart()

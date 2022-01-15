@@ -7,7 +7,10 @@ import de.crysxd.octoapp.base.data.source.DataSource
 import de.crysxd.octoapp.base.logging.SensitiveDataMask
 import de.crysxd.octoapp.octoprint.isBasedOn
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.HttpUrl
@@ -20,7 +23,7 @@ class OctoPrintRepository(
     private val sensitiveDataMask: SensitiveDataMask,
 ) {
 
-    private val instanceInformationChannel = MutableStateFlow<OctoPrintInstanceInformationV3?>(null)
+    private val instanceInformationFlow = MutableStateFlow<Map<String, OctoPrintInstanceInformationV3>>(emptyMap())
     private val lock = Mutex()
 
     init {
@@ -38,18 +41,29 @@ class OctoPrintRepository(
             octoPreferences.activeInstanceWebUrl = null
         }
 
-        postActiveInstance()
+        postInstances()
     }
 
-    fun instanceInformationFlow() = instanceInformationChannel.asStateFlow()
+    fun instanceInformationFlow(instanceId: String? = null) = instanceInformationFlow.flatMapLatest { map ->
+        if (instanceId == null) {
+            octoPreferences.updatedFlow.map { octoPreferences.activeInstanceId }.distinctUntilChanged()
+        } else {
+            flowOf(instanceId)
+        }.map { id ->
+            id?.let { map[it] }
+        }
+    }
 
-    fun getActiveInstanceSnapshot() = instanceInformationChannel.value
+    fun getActiveInstanceSnapshot() = octoPreferences.activeInstanceId?.let { instanceInformationFlow.value[it] }
 
-    private fun postActiveInstance() {
-        val activeInstance = octoPreferences.activeInstanceId?.let(::get)
-        Timber.i("Activating ${activeInstance?.id} (${activeInstance?.label})")
-        activeInstance?.let { sensitiveDataMask.registerInstance(it) }
-        instanceInformationChannel.value = activeInstance
+    private fun postInstances() {
+        instanceInformationFlow.value = getAll().onEach {
+            sensitiveDataMask.registerInstance(it)
+        }.map {
+            it.id to it
+        }.toMap()
+
+        Timber.i("Posting ${instanceInformationFlow.value.size} instances")
     }
 
     private fun storeOctoprintInstanceInformation(id: String, instance: OctoPrintInstanceInformationV3?) {
@@ -57,20 +71,17 @@ class OctoPrintRepository(
         val updated = getAll().filter { it.id != id }.toMutableList()
         instance?.let { updated.add(it) }
         dataSource.store(updated)
-        if (id == octoPreferences.activeInstanceId) {
-            postActiveInstance()
-        }
+        postInstances()
     }
 
     fun setActive(instance: OctoPrintInstanceInformationV3) {
+        Timber.i("Setting as active: ${instance.webUrl}")
         storeOctoprintInstanceInformation(instance.id, instance)
         octoPreferences.activeInstanceId = instance.id
-        Timber.i("Setting as active: ${instance.webUrl}")
-        postActiveInstance()
     }
 
     suspend fun updateActive(block: suspend (OctoPrintInstanceInformationV3) -> OctoPrintInstanceInformationV3?) {
-        instanceInformationChannel.value?.let {
+        getActiveInstanceSnapshot()?.let {
             update(it.id, block)
         }
     }
@@ -98,7 +109,6 @@ class OctoPrintRepository(
     fun clearActive() {
         Timber.i("Clearing active")
         octoPreferences.activeInstanceId = null
-        postActiveInstance()
     }
 
     fun remove(id: String) {

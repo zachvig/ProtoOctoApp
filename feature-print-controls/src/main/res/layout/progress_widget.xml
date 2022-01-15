@@ -88,35 +88,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:label="@string/progress_widget___time_spent"
-        app:value="99:59 h" />
+        tools:value="99:59 h" />
 
     <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
         android:id="@+id/timeLeft"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:label="@string/progress_widget___time_left"
-        app:value="32 min" />
+        tools:value="32 min" />
 
     <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
         android:id="@+id/eta"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:label="@string/progress_widget___eta"
-        app:value="5:33 AM+4" />
+        tools:value="5:33 AM+4" />
 
     <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
         android:id="@+id/layer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:label="@string/progress_widget___layer"
-        app:value="4/204 @ 56%" />
+        tools:value="4/204 @ 56%" />
 
     <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
         android:id="@+id/zHeight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:label="@string/progress_widget___z_height"
-        app:value="32 mm" />
+        tools:value="32 mm" />
 
     <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
         android:id="@+id/printName"
@@ -126,7 +126,7 @@
         app:layout_constraintEnd_toEndOf="@id/itemsFlow"
         app:layout_constraintStart_toStartOf="@id/itemsFlow"
         app:layout_constraintTop_toBottomOf="@id/itemsFlow"
-        app:value="This_is_a_file_withsdi fh sdif hsdiof hdsihf s dfhossdu fhsduo fh.gcode"
+        tools:value="This_is_a_file_withsdi fh sdif hsdiof hdsihf s dfhossdu fhsduo fh.gcode"
         app:valueMaxLines="3" />
 
     <de.crysxd.octoapp.printcontrols.ui.widget.progress.ProgressItemView
@@ -137,7 +137,7 @@
         app:layout_constraintEnd_toEndOf="@id/itemsFlow"
         app:layout_constraintStart_toStartOf="@id/itemsFlow"
         app:layout_constraintTop_toBottomOf="@id/printName"
-        app:value="This_is_a_file_withsdi fh sdif hsdiof hdsihf s dfhossdu fhsduo fh.gcode"
+        tools:value="This_is_a_file_withsdi fh sdif hsdiof hdsihf s dfhossdu fhsduo fh.gcode"
         app:valueMaxLines="1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

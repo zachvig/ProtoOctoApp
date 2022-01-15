@@ -61,7 +61,7 @@ class StartPrintTest {
         onView(withId(R.id.pause_print)).check(matches(isDisplayed()))
         onView(withId(R.id.cancel_print)).check(matches(isDisplayed()))
         onView(withId(R.id.resume_print)).check(matches(not(isDisplayed())))
-        BottomToolbarRobot.confirmButtonWithSwipe(R.id.pause_print)
+        BottomToolbarRobot.confirmButtonWithSwipe(R.id.pause_print, baristaRule)
 
         // Wait for paused and resume
         waitFor(allOf(withText(R.string.pausing), isDisplayed()))
@@ -69,14 +69,14 @@ class StartPrintTest {
         onView(withId(R.id.pause_print)).check(matches(not(isDisplayed())))
         onView(withId(R.id.cancel_print)).check(matches(isDisplayed()))
         onView(withId(R.id.resume_print)).check(matches(isDisplayed()))
-        BottomToolbarRobot.confirmButtonWithSwipe(R.id.resume_print)
+        BottomToolbarRobot.confirmButtonWithSwipe(R.id.resume_print, baristaRule)
 
         // Wait for resume and cancel
         waitFor(allOf(withId(R.id.status), withText("2 %"), isDisplayed()), timeout = 45_000)
         onView(withId(R.id.pause_print)).check(matches(isDisplayed()))
         onView(withId(R.id.cancel_print)).check(matches(isDisplayed()))
         onView(withId(R.id.resume_print)).check(matches(not(isDisplayed())))
-        BottomToolbarRobot.confirmButtonWithSwipe(R.id.cancel_print)
+        BottomToolbarRobot.confirmButtonWithSwipe(R.id.cancel_print, baristaRule)
         WorkspaceRobot.waitForPrepareWorkspace()
     }
 

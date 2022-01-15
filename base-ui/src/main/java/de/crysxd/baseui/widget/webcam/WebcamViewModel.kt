@@ -65,7 +65,7 @@ class WebcamViewModel(
     }
 
     // Hash of all fields in octoPreferences that should cause webcam to reconnect
-    private fun getOctoPreferncesHash() = octoPreferences.isAspectRatioFromOctoPrint.hashCode()
+    private fun getOctoPreferncesHash() = (octoPreferences.isAspectRatioFromOctoPrint.toString() + octoPreferences.recordWebcamForDebug.toString()).hashCode()
 
     private suspend fun getWebcamSettings(): Flow<Pair<ResolvedWebcamSettings?, Int>> {
         // Load settings

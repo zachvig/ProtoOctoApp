@@ -91,6 +91,7 @@ class GcodeRenderView @JvmOverloads constructor(
     init {
         setWillNotDraw(false)
         setLayerType(LAYER_TYPE_HARDWARE, null)
+
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -103,6 +104,13 @@ class GcodeRenderView @JvmOverloads constructor(
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (isAcceptTouchInput) {
+
+            // Play nice with control center overlay. This view gets touch priority
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> parent.requestDisallowInterceptTouchEvent(true)
+                MotionEvent.ACTION_UP -> parent.requestDisallowInterceptTouchEvent(false)
+            }
+
             scaleGestureDetector.onTouchEvent(event)
             if (!scaleGestureDetector.isInProgress) {
                 gestureDetector.onTouchEvent(event)

@@ -5,6 +5,8 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
 import de.crysxd.baseui.OctoActivity
@@ -14,17 +16,19 @@ class CollapsibleToolbarTabsHelper {
 
     private lateinit var binding: CollapsibleToolbarTabsLayoutBinding
     private lateinit var octoActivity: OctoActivity
-    private var showOctoInToolbar: Boolean = true
+    private lateinit var viewLifecycleOwner: LifecycleOwner
     private var lastVerticalOffset = 0
     private var createdAt = System.currentTimeMillis()
 
     fun install(
         octoActivity: OctoActivity,
         binding: CollapsibleToolbarTabsLayoutBinding,
+        viewLifecycleOwner: LifecycleOwner,
         showOctoInToolbar: Boolean = true
     ) {
         this.binding = binding
         this.octoActivity = octoActivity
+        this.viewLifecycleOwner = viewLifecycleOwner
 
         binding.appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
             if (lastVerticalOffset == 0 || verticalOffset == 0) {
@@ -46,6 +50,15 @@ class CollapsibleToolbarTabsHelper {
                 }
             }
         })
+
+        octoActivity.controlCenter.disableForLifecycle(viewLifecycleOwner.lifecycle)
+        viewLifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onResume(owner: LifecycleOwner) {
+                super.onResume(owner)
+                octoActivity.octo.isVisible = lastVerticalOffset == 0 && showOctoInToolbar
+                octoActivity.octoToolbar.isVisible = false
+            }
+        })
     }
 
     fun removeTabs() {
@@ -55,11 +68,6 @@ class CollapsibleToolbarTabsHelper {
 
     fun markTabsCreated() {
         createdAt = System.currentTimeMillis()
-    }
-
-    fun handleResume() {
-        octoActivity.octo.isVisible = lastVerticalOffset == 0 && showOctoInToolbar
-        octoActivity.octoToolbar.isVisible = false
     }
 
     fun handleInsets(insets: Rect) {
