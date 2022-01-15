@@ -12,7 +12,7 @@
         android:layout_height="match_parent" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_2"
@@ -33,9 +33,9 @@
         android:text="@string/control_center___subtitle"
         android:textAppearance="@style/OctoTheme.TextAppearance.Label"
         android:textColor="@color/text_colored_background"
-        app:layout_constraintEnd_toEndOf="@+id/textView5"
-        app:layout_constraintStart_toStartOf="@+id/textView5"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintEnd_toEndOf="@+id/title"
+        app:layout_constraintStart_toStartOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <ImageButton
         android:id="@+id/imageButton"
@@ -45,11 +45,53 @@
         android:layout_marginEnd="@dimen/margin_1"
         android:contentDescription="@string/cd_settings"
         android:src="@drawable/ic_round_edit_24"
-        app:layout_constraintBottom_toBottomOf="@+id/textView5"
+        app:layout_constraintBottom_toBottomOf="@+id/title"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView5"
+        app:layout_constraintTop_toTopOf="@+id/title"
         app:tint="@color/text_colored_background" />
 
+    <TextView
+        android:id="@+id/disabledTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/main_menu___title_quick_switch_disabled"
+        android:textAppearance="@style/OctoTheme.TextAppearance.Title"
+        android:textColor="@color/text_colored_background" />
+
+    <TextView
+        android:id="@+id/disabledSubtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="@dimen/margin_1"
+        android:paddingBottom="@dimen/margin_3"
+        android:text="@string/main_menu___subtitle_quick_switch_disabled"
+        android:textAppearance="@style/OctoTheme.TextAppearance"
+        android:textColor="@color/text_colored_background" />
+
+    <!-- This button is only clickable with a high elevation? No clue... -->
+    <Button
+        android:id="@+id/enableQuickSwitch"
+        style="@style/OctoTheme.Widget.Button.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="100dp"
+        android:text="@string/main_menu___enable_quick_switch" />
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/disabled"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_2"
+        app:constraint_referenced_ids="disabledTitle,disabledSubtitle,enableQuickSwitch"
+        app:flow_horizontalAlign="center"
+        app:flow_maxElementsWrap="1"
+        app:flow_wrapMode="chain"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
