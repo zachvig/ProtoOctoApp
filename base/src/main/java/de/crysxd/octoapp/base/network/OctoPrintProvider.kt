@@ -23,6 +23,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.emptyFlow
@@ -30,7 +31,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -61,43 +61,7 @@ class OctoPrintProvider(
         // Passively collect data for the analytics profile
         // The passive event flow does not actively open a connection but piggy-backs other Flows
         AppScope.launch {
-            octoPrintRepository.instanceInformationFlow().mapNotNull { it?.id }.flatMapLatest { instanceId ->
-                passiveEventFlow(instanceId).onEach { event ->
-                    updateAnalyticsProfileWithEvents(event)
-                    (event as? Event.MessageReceived)?.let {
-                        when (val message = (event as? Event.MessageReceived)?.message) {
-                            is Message.CurrentMessage -> {
-                                // If the last message had data the new one is lacking, upgrade the new one so the cached message
-                                // is always holding all information required
-                                val flow = createCurrentMessageFlow(instanceId)
-                                val last = flow.value
-                                val new = message.copy(
-                                    temps = message.temps.takeIf { it.isNotEmpty() } ?: last?.temps ?: emptyList(),
-                                    progress = message.progress ?: last?.progress,
-                                    state = message.state ?: last?.state,
-                                    job = message.job ?: last?.job,
-                                )
-                                flow.value = new
-                            }
-
-                            is Message.CompanionPluginMessage -> {
-                                createCompanionMessageFlow(instanceId).value = message
-                            }
-
-                            else -> Unit
-                        }
-                    }
-
-                    ((event as? Event.Connected))?.let {
-                        createConnectEventFlow(instanceId).value = it
-                    }
-
-                    ((event as? Event.Disconnected))?.let {
-                        createConnectEventFlow(instanceId).value = null
-                        it.exception?.let(detectBrokenSetupInterceptor::handleException)
-                    }
-                }
-            }.retry { delay(1000); true }.collect()
+            fillPassiveFlows()
         }
     }
 
@@ -142,7 +106,9 @@ class OctoPrintProvider(
         octoPrintCache[id]?.second ?: throw SuppressedIllegalStateException("OctoPrint not available")
     }
 
-    val currentConnection = activeInstanceId?.let { createConnectEventFlow(it).value }
+    fun getCurrentConnection(instanceId: String?) = (instanceId ?: activeInstanceId)?.let { createConnectEventFlow(it).value }
+
+    fun getLastCurrentMessage(instanceId: String?) = (instanceId ?: activeInstanceId)?.let { createCurrentMessageFlow(it).value }
 
     fun passiveConnectionEventFlow(tag: String, instanceId: String? = null) = instanceIdFlow(instanceId)
         .flatMapLatest { it?.let { createConnectEventFlow(it) } ?: emptyFlow() }
@@ -214,6 +180,63 @@ class OctoPrintProvider(
             }
 
             else -> Unit
+        }
+    }
+
+    private suspend fun fillPassiveFlows() {
+        octoPrintRepository.instanceInformationFlow().map {
+            // Get all ids, distinct until changed by adding/removing one
+            octoPrintRepository.getAll().map { it.id }.sorted()
+        }.distinctUntilChanged().flatMapLatest { ids ->
+            // Create passive flow for each and combine them
+            val flows = ids.map { createFillPassiveFlows(it) }
+            combine(flows) { it.toList() }
+        }.retry {
+            delay(1000)
+            true
+        }.collect()
+    }
+
+    private fun createFillPassiveFlows(instanceId: String) = passiveEventFlow(instanceId).onEach { event ->
+        if (instanceId == activeInstanceId) {
+            updateAnalyticsProfileWithEvents(event)
+        }
+
+        (event as? Event.MessageReceived)?.let {
+            when (val message = (event as? Event.MessageReceived)?.message) {
+                is Message.CurrentMessage -> {
+                    // If the last message had data the new one is lacking, upgrade the new one so the cached message
+                    // is always holding all information required
+                    val flow = createCurrentMessageFlow(instanceId)
+                    val last = flow.value
+                    val new = message.copy(
+                        temps = message.temps.takeIf { it.isNotEmpty() } ?: last?.temps ?: emptyList(),
+                        progress = message.progress ?: last?.progress,
+                        state = message.state ?: last?.state,
+                        job = message.job ?: last?.job,
+                    )
+                    flow.value = new
+                }
+
+                is Message.CompanionPluginMessage -> {
+                    createCompanionMessageFlow(instanceId).value = message
+                }
+
+                else -> Unit
+            }
+        }
+
+        ((event as? Event.Connected))?.let {
+            Timber.i("Connected $instanceId @ ${it.connectionType}")
+            createConnectEventFlow(instanceId).value = it
+            createCurrentMessageFlow(instanceId).value = null
+        }
+
+        ((event as? Event.Disconnected))?.let {
+            Timber.i("Disconnected $instanceId")
+            createConnectEventFlow(instanceId).value = null
+            createCurrentMessageFlow(instanceId).value = null
+            it.exception?.let(detectBrokenSetupInterceptor::handleException)
         }
     }
 

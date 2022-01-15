@@ -28,6 +28,7 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
     lateinit var controlCenterFragment: Fragment
     lateinit var fragmentManager: FragmentManager
 
+    private var applyTranslation = true
     private var dragStartPoint = PointF()
     private var dragEndPoint = PointF()
     private var dragStartProgress = 0f
@@ -111,6 +112,7 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
         }
 
         isEnabled && ev.action == MotionEvent.ACTION_MOVE -> {
+            applyTranslation = true
             dragEndPoint.x = ev.x
             dragEndPoint.y = ev.y
             dragProgress = if (ev.isAccepted()) ev.dragProgress() else dragStartProgress
@@ -142,15 +144,18 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
     }
 
     private fun synchronizeViewTranslationWithTouch() {
-        val minXDistance = width * MIN_DRAG_DISTANCE
-        val maxXDistance = width * MAX_DRAG_DISTANCE
-        val direction1 = if (dragEndPoint.x > dragStartPoint.x) -1f else 1f
-        val direction2 = if (dragStartProgress == 1f) -1f else 1f
-        controlCenterFragment.view?.translationX = (maxXDistance - minXDistance) * (1 - dragProgress) * direction1 * direction2
+        if (applyTranslation) {
+            val minXDistance = width * MIN_DRAG_DISTANCE
+            val maxXDistance = width * MAX_DRAG_DISTANCE
+            val direction1 = if (dragEndPoint.x > dragStartPoint.x) -1f else 1f
+            val direction2 = if (dragStartProgress == 1f) -1f else 1f
+            controlCenterFragment.view?.translationX = (maxXDistance - minXDistance) * (1 - dragProgress) * direction1 * direction2
+        }
     }
 
     fun dismiss() {
         dragStartProgress = 0f
+        applyTranslation = false
         rejectDrag()
     }
 
@@ -159,7 +164,7 @@ class ControlCenterHostLayout @JvmOverloads constructor(context: Context, attrib
             it.addUpdateListener {
                 dragProgress = it.animatedValue as Float
             }
-            it.duration = 150
+            it.duration = 250
             it.interpolator = DecelerateInterpolator()
         }.start()
     }

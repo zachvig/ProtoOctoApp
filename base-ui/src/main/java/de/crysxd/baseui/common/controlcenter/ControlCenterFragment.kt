@@ -131,9 +131,8 @@ class ControlCenterFragment : BaseFragment() {
             rippleJob = viewLifecycleOwner.lifecycleScope.launchWhenResumed {
                 delay(300)
                 viewModel.active(instance)
-                delay(300)
+                delay(200)
                 it.state = intArrayOf()
-                delay(300)
                 requireView().findParent<ControlCenterHostLayout>()?.dismiss()
             }
         }

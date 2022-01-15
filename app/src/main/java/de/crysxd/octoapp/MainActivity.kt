@@ -69,6 +69,7 @@ import de.crysxd.octoapp.printcontrols.ui.widget.tune.TuneWidget
 import de.crysxd.octoapp.signin.di.SignInInjector
 import de.crysxd.octoapp.widgets.updateAllWidgets
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
@@ -149,32 +150,6 @@ class MainActivity : OctoActivity() {
             }
         }
 
-        SignInInjector.get().octoprintRepository().instanceInformationFlow().filter {
-            val webUrlAndApiKey = "${it?.webUrl}:${it?.apiKey}"
-            val pass = viewModel.lastWebUrlAndApiKey != webUrlAndApiKey
-            viewModel.lastWebUrlAndApiKey = webUrlAndApiKey
-            Timber.i("Instance information filter $it => $pass")
-            pass
-        }.asLiveData().observe(this) { instance ->
-            when {
-                instance != null && instance.apiKey.isNotBlank() -> {
-                    Timber.i("Instance information received $this")
-                    updateCapabilities("instance_change", updateM115 = true, escalateError = false)
-                    navigate(R.id.action_connect_printer)
-                    viewModel.pendingUri?.let {
-                        viewModel.pendingUri = null
-                        handleDeepLink(it)
-                    }
-                }
-
-                else -> {
-                    Timber.i("No instance active $this")
-                    navigate(R.id.action_sign_in_required)
-                    LiveNotificationManager.stop(this)
-                }
-            }
-        }
-
         SignInInjector.get().octoprintRepository().instanceInformationFlow()
             .distinctUntilChangedBy { it?.settings?.appearance?.color }
             .asLiveData()
@@ -182,7 +157,7 @@ class MainActivity : OctoActivity() {
                 ColorTheme.applyColorTheme(it.colorTheme)
             }
 
-        lifecycleScope.launchWhenResumed {
+        lifecycleScope.launchWhenStarted {
             val navHost = supportFragmentManager.findFragmentById(R.id.mainNavController) as NavHostFragment
 
             navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -229,6 +204,45 @@ class MainActivity : OctoActivity() {
             // Stop screen rotation on phones
             @SuppressLint("SourceLockedOrientationActivity")
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
+
+        observeActiveInstance()
+    }
+
+    private fun observeActiveInstance() = lifecycleScope.launchWhenResumed {
+        SignInInjector.get().octoprintRepository().instanceInformationFlow().filter {
+            val webUrlAndApiKey = "${it?.webUrl}:${it?.apiKey}"
+            val pass = viewModel.lastWebUrlAndApiKey != webUrlAndApiKey
+            viewModel.lastWebUrlAndApiKey = webUrlAndApiKey
+            Timber.i("Instance information filter $it => $pass")
+            pass
+        }.collect { instance ->
+            when {
+                instance != null && instance.apiKey.isNotBlank() -> {
+                    Timber.i("Instance information received")
+                    updateCapabilities("instance_change", updateM115 = true, escalateError = false)
+
+
+                    // Go to connect screen if not yet connected
+                    if (BaseInjector.get().octoPrintProvider().getLastCurrentMessage(instance.id) == null) {
+                        Timber.i("Not connected, moving to connect state")
+                        navigate(R.id.action_connect_printer)
+                    } else {
+                        Timber.i("Already connected")
+                    }
+
+                    viewModel.pendingUri?.let {
+                        viewModel.pendingUri = null
+                        handleDeepLink(it)
+                    }
+                }
+
+                else -> {
+                    Timber.i("No instance active $this")
+                    navigate(R.id.action_sign_in_required)
+                    LiveNotificationManager.stop(this@MainActivity)
+                }
+            }
         }
     }
 
