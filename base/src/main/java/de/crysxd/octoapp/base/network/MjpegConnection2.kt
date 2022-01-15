@@ -160,8 +160,8 @@ class MjpegConnection2(
     }
 
     private fun readNextImage(cache: ByteCache, boundary: String, input: InputStream, dropCount: Int = 0): Pair<Bitmap, Analytics> {
-        var boundaryStart: Int?
-        var boundaryEnd: Int?
+        var boundaryStart: Int? = null
+        var boundaryEnd: Int? = null
         var nextOffset = 0
         require(dropCount < 5) { SuppressedIllegalStateException("Too many dropped frames") }
         var readTime = 0L

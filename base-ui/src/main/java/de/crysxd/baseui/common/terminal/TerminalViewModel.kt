@@ -58,7 +58,7 @@ class TerminalViewModel(
         }
 
     private var clearedFrom: Date = Date(0)
-    private val printStateFlow = octoPrintProvider.eventFlow("terminal", EventFlowConfiguration(requestTerminalLogs = listOf(ALL_LOGS)))
+    private val printStateFlow = octoPrintProvider.eventFlow(tag = "terminal", config = EventFlowConfiguration(requestTerminalLogs = listOf(ALL_LOGS)))
         .mapNotNull { (it as? Event.MessageReceived)?.message as? Message.CurrentMessage }
         .mapNotNull { it.state?.flags }
         .map { it.pausing || it.cancelling || it.printing }

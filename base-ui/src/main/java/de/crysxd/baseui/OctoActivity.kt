@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.Gravity
+import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -22,6 +23,7 @@ import com.google.android.material.snackbar.Snackbar
 import de.crysxd.baseui.common.LinkClickMovementMethod
 import de.crysxd.baseui.common.OctoToolbar
 import de.crysxd.baseui.common.OctoView
+import de.crysxd.baseui.common.controlcenter.ControlCenterHostLayout
 import de.crysxd.baseui.widget.OctoWidgetRecycler
 import de.crysxd.octoapp.base.OctoAnalytics
 import de.crysxd.octoapp.base.UriLibrary
@@ -51,6 +53,7 @@ abstract class OctoActivity : LocalizedActivity() {
     private var dialogHasHighPriority = false
     abstract val octoToolbar: OctoToolbar
     abstract val octo: OctoView
+    abstract val controlCenter: ControlCenterHostLayout
     abstract val rootLayout: FrameLayout
     abstract val navController: NavController
     private val handler = Handler(Looper.getMainLooper())
@@ -87,6 +90,8 @@ abstract class OctoActivity : LocalizedActivity() {
     fun observeErrorEvents(events: LiveData<Event<Throwable>>) = events.observe(this) {
         it.value?.let(this::showDialog)
     }
+
+    abstract fun applyInsetsToView(view: View)
 
     abstract fun enforceAllowAutomaticNavigationFromCurrentDestination()
 

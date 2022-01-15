@@ -27,6 +27,7 @@
     <color name="menu_pin_foreground">@color/white</color>
     <color name="menu_pin_background">@color/black_translucent_2</color>
     <color name="app_widget_button_background">#48000000</color>
+    <color name="control_center_background">#D9000000</color>
 
     <color name="menu_style_support_foreground">@color/red</color>
     <color name="menu_style_support_background">@color/red_translucent</color>

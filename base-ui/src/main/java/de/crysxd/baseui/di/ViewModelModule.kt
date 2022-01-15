@@ -11,6 +11,7 @@ import de.crysxd.baseui.BaseViewModelFactory
 import de.crysxd.baseui.common.NetworkStateViewModel
 import de.crysxd.baseui.common.configureremote.ConfigureRemoteAccessSpaghettiDetectiveViewModel
 import de.crysxd.baseui.common.configureremote.ConfigureRemoteAccessViewModel
+import de.crysxd.baseui.common.controlcenter.ControlCenterViewModel
 import de.crysxd.baseui.common.enter_value.EnterValueViewModel
 import de.crysxd.baseui.common.feedback.SendFeedbackViewModel
 import de.crysxd.baseui.common.gcode.GcodePreviewViewModel
@@ -41,6 +42,7 @@ import de.crysxd.octoapp.base.usecase.GetGcodeShortcutsUseCase
 import de.crysxd.octoapp.base.usecase.GetRemoteServiceConnectUrlUseCase
 import de.crysxd.octoapp.base.usecase.GetTerminalFiltersUseCase
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
+import de.crysxd.octoapp.base.usecase.GetWebcamSnapshotUseCase
 import de.crysxd.octoapp.base.usecase.HandleAutomaticLightEventUseCase
 import de.crysxd.octoapp.base.usecase.OpenEmailClientForFeedbackUseCase
 import de.crysxd.octoapp.base.usecase.SetAlternativeWebUrlUseCase
@@ -246,4 +248,18 @@ open class ViewModelModule {
     @IntoMap
     @ViewModelKey(TimelapsePlaybackViewModel::class)
     fun provideTimelapsePlaybackViewModel(): ViewModel = TimelapsePlaybackViewModel()
+
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(ControlCenterViewModel::class)
+    fun provideControlCenterViewModel(
+        octoPrintRepository: OctoPrintRepository,
+        octoPrintProvider: OctoPrintProvider,
+        getWebcamSnapshotUseCase: GetWebcamSnapshotUseCase,
+    ): ViewModel = ControlCenterViewModel(
+        octoPrintRepository = octoPrintRepository,
+        octoPrintProvider = octoPrintProvider,
+        getWebcamSnapshotUseCase = getWebcamSnapshotUseCase
+    )
 }

@@ -13,6 +13,7 @@ import de.crysxd.baseui.ext.checkRemoteNotificationDisabledVisible
 import de.crysxd.baseui.widget.BaseWidgetHostFragment
 import de.crysxd.baseui.widget.RecyclableOctoWidget
 import de.crysxd.octoapp.base.UriLibrary
+import de.crysxd.octoapp.base.billing.BillingManager
 import de.crysxd.octoapp.base.data.models.Announcement
 import de.crysxd.octoapp.base.data.models.WidgetType
 import de.crysxd.octoapp.base.di.BaseInjector
@@ -70,6 +71,22 @@ class AnnouncementWidget(context: Context) : RecyclableOctoWidget<AnnouncementWi
         )
     }
 
+    private fun isQuickSwitchVisible() =
+        if (BaseInjector.get().octorPrintRepository().getAll().size > 1 && BillingManager.isFeatureEnabled(BillingManager.FEATURE_QUICK_SWITCH)) {
+            binding.announcement.checkVisible(
+                Announcement(
+                    text = { getString(R.string.control_center___announcement) },
+                    actionText = { null },
+                    id = context.getString(R.string.pref_key_quick_switch_announcement),
+                    actionUri = { null },
+                    refreshInterval = 0,
+                )
+            )
+        } else {
+            false
+        }
+
+
     private fun isPlayServicesErrorVisible() = if (BaseInjector.get().octoPreferences().suppressRemoteMessageInitialization) {
         binding.announcement.checkRemoteNotificationDisabledVisible()
     } else {
@@ -83,7 +100,7 @@ class AnnouncementWidget(context: Context) : RecyclableOctoWidget<AnnouncementWi
 
     override fun isVisible(): Boolean {
         // Check all announcements and show the most important one
-        val isVisible = isPlayServicesErrorVisible() || isSaleAnnouncementVisible() || isWhatsNewVisible()
+        val isVisible = isPlayServicesErrorVisible() || isSaleAnnouncementVisible() || isWhatsNewVisible() || isQuickSwitchVisible()
 
         Timber.i("visible=$isVisible this=$this")
         return isVisible

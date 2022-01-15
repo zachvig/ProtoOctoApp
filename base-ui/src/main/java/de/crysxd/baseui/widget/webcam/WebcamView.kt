@@ -6,7 +6,9 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
 import android.util.AttributeSet
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -64,7 +66,25 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     var lastRichPlayerAnalyticsListener: AnalyticsListener? = null
     var lastNativeWidth: Int? = null
     var lastNativeHeight: Int? = null
+    var smallMode: Boolean = false
+        set(value) {
+            binding.loadingState.scaleX = if (value) 0.5f else 1f
+            binding.loadingState.scaleY = binding.loadingState.scaleX
+            field = value
+        }
 
+    private val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+        override fun onDoubleTap(e: MotionEvent?): Boolean {
+            onFullscreenClicked()
+            return true
+        }
+    })
+
+    var allowTouch
+        get() = binding.matrixView.allowTouch
+        set(value) {
+            binding.matrixView.allowTouch = value
+        }
     var suppressResolutionIndicator = false
     var supportsTroubleShooting = false
     var scaleToFill: Boolean
@@ -95,8 +115,8 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
     var canSwitchWebcam: Boolean
         get() = binding.imageButtonSwitchCamera.isVisible
         set(value) {
-            binding.imageButtonSwitchCamera.isVisible = value
-            binding.imageButtonSwitchCameraInPlay.isVisible = value
+            binding.imageButtonSwitchCamera.isVisible = !smallMode && value
+            binding.imageButtonSwitchCameraInPlay.isVisible = !smallMode && value
         }
     var fullscreenIconResource: Int
         get() = 0
@@ -124,11 +144,12 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
         binding.imageButtonSwitchCamera.setOnClickListener { onSwitchWebcamClicked() }
         binding.resolutionIndicator.setOnClickListener { onResolutionClicked() }
         binding.imageButtonShare.setOnClickListener { onShareImageClicked(captureBitmap()) }
-        binding.matrixView.abandonedDoubleTapCallback = {
-            if (canUseDoubleTapToFullscreen) {
-                onFullscreenClicked()
-            }
-        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        gestureDetector.onTouchEvent(event)
+        return true
     }
 
     @SuppressLint("SetTextI18n")
@@ -181,13 +202,13 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             WebcamState.Loading -> binding.loadingState.isVisible = true
 
             WebcamState.Reconnecting -> {
-                binding.loadingState.isVisible = false
-                binding.reconnectingState.isVisible = true
+                binding.loadingState.isVisible = smallMode
+                binding.reconnectingState.isVisible = !smallMode
             }
 
             WebcamState.RichStreamDisabled -> {
                 binding.loadingState.isVisible = false
-                binding.errorState.isVisible = true
+                binding.errorState.isVisible = !smallMode
                 binding.errorTitle.text = context.getString(R.string.rich_stream_disabled_title)
                 binding.errorDescription.text = context.getString(R.string.rich_stream_disbaled_description)
                 binding.buttonReconnect.text = context.getString(R.string.enable)
@@ -195,7 +216,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
 
             is WebcamState.Error -> {
                 binding.loadingState.isVisible = false
-                binding.errorState.isVisible = true
+                binding.errorState.isVisible = !smallMode
                 binding.errorTitle.text = context.getString(R.string.connection_failed)
                 binding.errorDescription.text = newState.streamUrl
                 binding.buttonReconnect.text = context.getString(R.string.reconnect)
@@ -208,7 +229,7 @@ class WebcamView @JvmOverloads constructor(context: Context, attributeSet: Attri
             is WebcamState.NotAvailable -> {
                 binding.notConfiguredState.setText(newState.text)
                 binding.loadingState.isVisible = false
-                binding.notConfiguredState.isVisible = true
+                binding.notConfiguredState.isVisible = !smallMode
             }
 
             is WebcamState.RichStreamReady -> displayHlsStream(newState)
