@@ -1,6 +1,8 @@
 package de.crysxd.baseui.common.controlcenter
 
 import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.RippleDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -27,6 +29,7 @@ class ControlCenterFragment : BaseFragment() {
     override val viewModel by injectActivityViewModel<ControlCenterViewModel>()
     private lateinit var binding: ControlCenterFragmentBinding
     private val formatEtaUseCase by lazy { BaseInjector.get().formatEtaUseCase() }
+    private val placeholderDrawable = ColorDrawable(Color.BLACK)
     private var rippleDrawable: RippleDrawable? = null
     private var rippleJob: Job? = null
         set(value) {
@@ -58,6 +61,7 @@ class ControlCenterFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         (binding.root.parent as? ViewGroup)?.removeView(binding.root)
+//        binding.list.children.forEach { v -> ControleCenterItemBinding.bind(v).resetWebcam() }
     }
 
     private fun bindList(instances: List<ControlCenterViewModel.Instance>, activeId: String?) {
@@ -80,13 +84,23 @@ class ControlCenterFragment : BaseFragment() {
         binding.label.text = instance.info.label
 
         // Button
-        binding.activate.setOnClickListener { if (!isActive) activate(instance, it) }
+        binding.root.setOnClickListener { if (!isActive) activate(instance, it) }
         binding.activate.backgroundTintList = ColorStateList.valueOf(instance.info.colorTheme.dark).takeIf { isActive }
         binding.activate.setImageResource(if (isActive) R.drawable.ic_round_check_24 else R.drawable.ic_round_swap_horiz_24)
 
         // Colors
         binding.colorStrip.setBackgroundColor(instance.info.colorTheme.dark)
         binding.progress.progressTintList = ColorStateList.valueOf(instance.info.colorTheme.dark)
+
+        // Webcam
+        if (instance.snapshot != null) {
+            if (binding.webcam.drawable == placeholderDrawable) {
+                binding.webcamOverlay.animate().alpha(0f).start()
+            }
+            binding.webcam.setImageBitmap(instance.snapshot)
+        } else {
+            binding.resetWebcam()
+        }
 
         // Texts
         binding.detail1.text = if (instance.lastMessage != null) {
@@ -101,17 +115,17 @@ class ControlCenterFragment : BaseFragment() {
                 instance.lastMessage.state?.flags?.isOperational() == true -> {
                     binding.detail2.text = ""
                     binding.percent.text = ""
-                    "Idle"
+                    getString(R.string.app_widget___idle, instance.info.label)
                 }
 
                 else -> {
                     binding.detail2.text = ""
                     binding.percent.text = ""
-                    "No printer connected"
+                    getString(R.string.app_widget___no_printer)
                 }
             }
         } else {
-            "Connecting..."
+            getString(R.string.app_widget___no_data)
         }
     }
 
@@ -142,9 +156,13 @@ class ControlCenterFragment : BaseFragment() {
         formatEtaUseCase.executeBlocking(FormatEtaUseCase.Params(secsLeft = it, useCompactDate = false, showLabel = true, allowRelative = true))
     }
 
+    private fun ControleCenterItemBinding.resetWebcam() {
+        webcam.setImageDrawable(placeholderDrawable)
+        webcamOverlay.alpha = 1f
+    }
+
     private fun createItem() = ControleCenterItemBinding.inflate(LayoutInflater.from(requireContext()), binding.list, false).apply {
-//        webcam.smallMode = true
-//        webcam.canSwitchWebcam = false
+        resetWebcam()
         content.clipToOutline = true
     }
 }

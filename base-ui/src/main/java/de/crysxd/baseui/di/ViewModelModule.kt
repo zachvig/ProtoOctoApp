@@ -42,6 +42,7 @@ import de.crysxd.octoapp.base.usecase.GetGcodeShortcutsUseCase
 import de.crysxd.octoapp.base.usecase.GetRemoteServiceConnectUrlUseCase
 import de.crysxd.octoapp.base.usecase.GetTerminalFiltersUseCase
 import de.crysxd.octoapp.base.usecase.GetWebcamSettingsUseCase
+import de.crysxd.octoapp.base.usecase.GetWebcamSnapshotUseCase
 import de.crysxd.octoapp.base.usecase.HandleAutomaticLightEventUseCase
 import de.crysxd.octoapp.base.usecase.OpenEmailClientForFeedbackUseCase
 import de.crysxd.octoapp.base.usecase.SetAlternativeWebUrlUseCase
@@ -255,8 +256,10 @@ open class ViewModelModule {
     fun provideControlCenterViewModel(
         octoPrintRepository: OctoPrintRepository,
         octoPrintProvider: OctoPrintProvider,
+        getWebcamSnapshotUseCase: GetWebcamSnapshotUseCase,
     ): ViewModel = ControlCenterViewModel(
         octoPrintRepository = octoPrintRepository,
         octoPrintProvider = octoPrintProvider,
+        getWebcamSnapshotUseCase = getWebcamSnapshotUseCase
     )
 }

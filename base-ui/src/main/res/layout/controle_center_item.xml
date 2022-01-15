@@ -17,15 +17,30 @@
         android:backgroundTint="@color/window_background"
         android:outlineProvider="background">
 
-        <View
+        <ImageView
             android:id="@+id/webcam"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="#000"
+            android:importantForAccessibility="no"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/backgrounds/scenic" />
+
+        <View
+            android:id="@+id/webcamOverlay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#000"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="@id/webcam"
+            app:layout_constraintEnd_toEndOf="@id/webcam"
+            app:layout_constraintStart_toStartOf="@id/webcam"
+            app:layout_constraintTop_toTopOf="@id/webcam"
+            tools:src="@tools:sample/backgrounds/scenic" />
 
         <View
             android:id="@+id/colorStrip"

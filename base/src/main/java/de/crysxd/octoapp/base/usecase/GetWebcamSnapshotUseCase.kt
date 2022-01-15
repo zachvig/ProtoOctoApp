@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onCompletion
@@ -79,7 +80,7 @@ class GetWebcamSnapshotUseCase @Inject constructor(
                     // is about to be terminated
                     handleAutomaticLightEventUseCase.executeBlocking(HandleAutomaticLightEventUseCase.Event.WebcamGone("webcam-snapshot-uc", delayAction = true))
                 }
-            }.sample(param.sampleRateMs)
+            }.flowOn(Dispatchers.Default).sample(param.sampleRateMs)
         }
     }
 
