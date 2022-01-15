@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.children
 import androidx.lifecycle.lifecycleScope
+import androidx.transition.TransitionManager
 import de.crysxd.baseui.BaseFragment
 import de.crysxd.baseui.R
 import de.crysxd.baseui.common.LinkClickMovementMethod
@@ -33,6 +34,7 @@ class ControlCenterFragment : BaseFragment() {
     private val formatEtaUseCase by lazy { BaseInjector.get().formatEtaUseCase() }
     private val placeholderDrawable = ColorDrawable(Color.BLACK)
     private var rippleDrawable: RippleDrawable? = null
+    private val isDarkMode get() = requireContext().resources.getBoolean(R.bool.night_mode)
     private var rippleJob: Job? = null
         set(value) {
             field?.cancel()
@@ -40,9 +42,11 @@ class ControlCenterFragment : BaseFragment() {
         }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
-        (viewModel.viewPool ?: ControlCenterFragmentBinding.inflate(inflater, container, false)).also {
+        (viewModel.viewPool.takeIf { viewModel.viewPoolDark == isDarkMode } ?: ControlCenterFragmentBinding.inflate(inflater, container, false)).also {
             viewModel.viewPool = it
+            viewModel.viewPoolDark = isDarkMode
             binding = it
+            (binding.root.parent as? ViewGroup)?.removeView(binding.root)
         }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,13 +70,13 @@ class ControlCenterFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         (binding.root.parent as? ViewGroup)?.removeView(binding.root)
-//        binding.list.children.forEach { v -> ControleCenterItemBinding.bind(v).resetWebcam() }
     }
 
     private fun bindList(instances: List<ControlCenterViewModel.Instance>, activeId: String?) {
         val previousViews = binding.list.children.map { ControleCenterItemBinding.bind(it) }.toMutableList()
         val countChanged = instances.size != previousViews.size
         if (countChanged) {
+            TransitionManager.beginDelayedTransition(binding.root)
             previousViews.forEach { binding.list.removeView(it.root) }
         }
 

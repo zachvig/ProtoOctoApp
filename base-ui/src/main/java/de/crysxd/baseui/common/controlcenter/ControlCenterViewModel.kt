@@ -8,6 +8,7 @@ import de.crysxd.baseui.databinding.ControlCenterFragmentBinding
 import de.crysxd.octoapp.base.data.models.OctoPrintInstanceInformationV3
 import de.crysxd.octoapp.base.data.repository.OctoPrintRepository
 import de.crysxd.octoapp.base.ext.filterEventsForMessageType
+import de.crysxd.octoapp.base.ext.rateLimit
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.usecase.GetWebcamSnapshotUseCase
 import de.crysxd.octoapp.octoprint.models.socket.Message
@@ -36,6 +37,7 @@ class ControlCenterViewModel(
 ) : BaseViewModel() {
 
     var viewPool: ControlCenterFragmentBinding? = null
+    var viewPoolDark: Boolean? = null
     private var loadCurrentMessagesJob: Job? = null
     private var loadSnapshotsJob: Job? = null
     private val currentMessageFlow = MutableStateFlow<Map<String, Message.CurrentMessage?>>(emptyMap())
@@ -54,10 +56,11 @@ class ControlCenterViewModel(
         loadCurrentMessagesJob = loadCurrentMessages()
         loadSnapshotsJob?.cancel()
         loadSnapshotsJob = loadWebcamSnapshots()
+        delay(300)
     }.onCompletion {
         loadSnapshotsJob?.cancel()
         loadCurrentMessagesJob?.cancel()
-    }.asLiveData()
+    }.rateLimit(500).asLiveData()
 
 
     private fun getCurrentMessages(instanceId: String) = octoPrintProvider.eventFlow(

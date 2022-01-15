@@ -132,13 +132,15 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ImageButton
+    <ImageView
         android:id="@+id/activate"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="@dimen/margin_1"
+        android:importantForAccessibility="no"
         android:background="@drawable/bg_control_center_button"
+        android:scaleType="centerInside"
         android:src="@drawable/ic_round_swap_horiz_24"
         app:tint="@color/text_colored_background" />
 
