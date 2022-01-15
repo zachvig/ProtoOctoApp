@@ -12,6 +12,7 @@ import androidx.core.view.children
 import androidx.lifecycle.lifecycleScope
 import de.crysxd.baseui.BaseFragment
 import de.crysxd.baseui.R
+import de.crysxd.baseui.common.LinkClickMovementMethod
 import de.crysxd.baseui.databinding.ControlCenterFragmentBinding
 import de.crysxd.baseui.databinding.ControleCenterItemBinding
 import de.crysxd.baseui.di.injectActivityViewModel
@@ -21,6 +22,7 @@ import de.crysxd.baseui.menu.MenuBottomSheetFragment
 import de.crysxd.baseui.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.baseui.utils.colorTheme
 import de.crysxd.octoapp.base.di.BaseInjector
+import de.crysxd.octoapp.base.ext.toHtml
 import de.crysxd.octoapp.base.usecase.FormatEtaUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -46,6 +48,9 @@ class ControlCenterFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireOctoActivity().applyInsetsToView(binding.root)
+
+        binding.subtitle.text = getString(R.string.control_center___subtitle).toHtml()
+        binding.subtitle.movementMethod = LinkClickMovementMethod(LinkClickMovementMethod.OpenWithIntentLinkClickedListener(requireOctoActivity()))
 
         binding.imageButton.setOnClickListener {
             MenuBottomSheetFragment.createForMenu(SwitchOctoPrintMenu()).show(childFragmentManager)

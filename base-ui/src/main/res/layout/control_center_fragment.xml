@@ -18,7 +18,7 @@
         android:layout_marginStart="@dimen/margin_2"
         android:layout_marginTop="@dimen/margin_3"
         android:layout_marginEnd="@dimen/margin_1"
-        android:text="Control center**"
+        android:text="@string/control_center___title"
         android:textAppearance="@style/OctoTheme.TextAppearance.Title"
         android:textColor="@color/text_colored_background"
         app:layout_constraintEnd_toStartOf="@+id/imageButton"
@@ -26,11 +26,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/subtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_0"
-        android:text="See tips &amp; tricks to work with multiple printers here.**"
+        android:text="@string/control_center___subtitle"
         android:textAppearance="@style/OctoTheme.TextAppearance.Label"
         android:textColor="@color/text_colored_background"
         app:layout_constraintEnd_toEndOf="@+id/textView5"
@@ -61,7 +61,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView7">
+        app:layout_constraintTop_toBottomOf="@+id/subtitle">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/list"
