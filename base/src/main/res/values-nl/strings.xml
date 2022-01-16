@@ -382,7 +382,9 @@ De widget zal altijd de OctoPrint instantie besturen die op dat moment actief is
     <string name="main_menu___item_support_octoapp">"Ondersteuning van OctoApp"</string>
     <string name="main_menu___item_temperature_presets">"Temperatuur Voorinstellingen"</string>
     <string name="main_menu___item_turn_psu_off">"Zet de printer uit"</string>
-    <string name="main_menu___item_use_dark_mode">"Donkere modus"</string>
+
+    <!-- Fuzzy -->
+    <string name="main_menu___item_app_theme">"App ontwerp"</string>
     <string name="main_menu___menu_printer_title">"Printer"</string>
     <string name="main_menu___menu_settings_title">"Opties"</string>
 
@@ -414,7 +416,7 @@ De widget zal altijd de OctoPrint instantie besturen die op dat moment actief is
     <string name="main_menu___title_quick_switch_disabled">"Snelwissel uitgeschakeld"</string>
 
     <!-- Auto filled -->
-    <string name="material_menu___bottom_text"></string>
+    <string name="material_menu___bottom_text"><![CDATA[<small>"A" betekent geactiveerd. Materialen worden geleverd door een <b><a href="http://app.octoapp.eu/help/pluginLibrary?category=materials">ondersteunde plugin</a></b>. <b>Lege spoelen en sjablonen</b> worden niet getoond.]]></string>
 
     <!-- Auto filled -->
     <string name="material_menu___empty_state">"OctoApp integreert met de FilamentManager en de SpoolManager plugins, zodat u uw materialen kunt bijhouden. Eenmaal ingesteld, vindt u uw spoelen hier."</string>
@@ -1051,8 +1053,42 @@ gelukkig printen!"</string>
     <string name="connect_printer___auto_menu___manual_option">"Handmatig verbinden"</string>
     <string name="temperature_widget___change_offset">"Offset toegevoegd aan Gcode temperaturen"</string>
     <string name="main_menu___item_cool_down">"Afkoelen"</string>
-    <string name="progress_widget___printer_message"></string>
-    <string name="progress_widget___settings___show_printer_message"></string>
-    <string name="progress_widget___settings___printer_message_description"></string>
-    <string name="progress_widget___printer_message_no_message"></string>
+    <string name="progress_widget___printer_message">"Printerbericht"</string>
+    <string name="progress_widget___settings___show_printer_message">"Printerbericht tonen"</string>
+    <string name="progress_widget___settings___printer_message_description">"Vereist dat de Companion Plugin op uw OctoPrint is geïnstalleerd. Berichten komen van M117 Gcode commando's."</string>
+    <string name="progress_widget___printer_message_no_message">"Geen bericht"</string>
+    <string name="timelapse_archive___menu___play"><![CDATA[Download & speel timelapse]]></string>
+    <string name="timelapse_archive___menu___share"><![CDATA[Download & deel timelapse]]></string>
+    <string name="timelapse_archive___menu___delete">"Timelapse verwijderen"</string>
+    <string name="timelapse_archive___menu___subtitle">"Spelen of delen zal %s downloaden"</string>
+    <string name="timelapse_config___title">"Timelapse Config"</string>
+    <string name="timelapse_config___change">"Update"</string>
+    <string name="timelapse_config___mode___off">"Uit"</string>
+    <string name="timelapse_config___mode___timed">"Getimed"</string>
+    <string name="timelapse_config___mode___zchange">"Op Z verandering"</string>
+    <string name="timelapse_config___mode">"Modus"</string>
+    <string name="timelapse_config___min_interval">"Minimum interval"</string>
+    <string name="timelapse_config___interval">"Interval"</string>
+    <string name="timelapse_config___retraction_z_hop">"Intrekking Z-Hop"</string>
+    <string name="timelapse_config___frame_rate">"Beeldsnelheid"</string>
+    <string name="timelapse_config___post_roll">"Post rol"</string>
+    <string name="timelapse_config___ask_before_printing">"Vraag het voor het drukken"</string>
+    <string name="timelapse_config___save_as_default">"Opslaan als standaard"</string>
+    <string name="timelapse_config___save_as_default___description">"De timelapse-configuratie wordt gereset wanneer OctoPrint opnieuw wordt opgestart. Deze optie maakt het mogelijk om de huidige configuratie als standaard in te stellen tijdens herstarts."</string>
+    <string name="timelapse_config___start_print">"Start afdrukken"</string>
+    <string name="timelapse_archive___no_timelapse_found">"Geen timelapses gevonden"</string>
+    <string name="timelapse_archive___title">"Timelapse Archief"</string>
+    <string name="timelapse_archive___subtitle"><![CDATA[OctoPrint laat u timelapses maken van uw afdrukken. U kunt de opnames hieronder zien, beheer uw instellingen <a href="">hier</a>.]]></string>
+    <string name="x_secs">"%d sec"</string>
+    <string name="x_fps">"%d FPS"</string>
+    <string name="paused">"Pauzeer"</string>
+
+    <!-- Fuzzy -->
+    <string name="main_menu___item_app_theme_auto">"Auto"</string>
+
+    <!-- Fuzzy -->
+    <string name="main_menu___item_app_theme_light">"Licht"</string>
+
+    <!-- Fuzzy -->
+    <string name="main_menu___item_app_theme_dark">"Donker"</string>
 </resources>

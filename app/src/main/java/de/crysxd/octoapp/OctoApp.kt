@@ -53,7 +53,7 @@ class OctoApp : Application() {
         initializeDagger()
 
         // Dark mode, must be done sync
-        BaseInjector.get().applyLegacyDarkModeUseCase().executeBlocking(Unit)
+        BaseInjector.get().applyAppThemeUseCase().executeBlocking(Unit)
 
         // Setup SerialCommunicationLogsRepository (jsut create the instance)
         BaseInjector.get().serialCommunicationLogsRepository()

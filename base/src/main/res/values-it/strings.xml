@@ -382,7 +382,9 @@ Il widget controllerà sempre l'istanza OctoPrint attualmente attiva nell'applic
     <string name="main_menu___item_support_octoapp">"Supporto OctoApp"</string>
     <string name="main_menu___item_temperature_presets">"Preset di temperatura"</string>
     <string name="main_menu___item_turn_psu_off">"Spegnere la stampante"</string>
-    <string name="main_menu___item_use_dark_mode">"Modalità oscura"</string>
+
+    <!-- Fuzzy -->
+    <string name="main_menu___item_app_theme">"Design dell'app"</string>
     <string name="main_menu___menu_printer_title">"Stampa"</string>
     <string name="main_menu___menu_settings_title">"Opzioni"</string>
 
@@ -414,7 +416,7 @@ Il widget controllerà sempre l'istanza OctoPrint attualmente attiva nell'applic
     <string name="main_menu___title_quick_switch_disabled">"Interruttore rapido disattivato"</string>
 
     <!-- Auto filled -->
-    <string name="material_menu___bottom_text"></string>
+    <string name="material_menu___bottom_text"><![CDATA[<small>"A" significa attivato. I materiali sono forniti da un <b><a href="http://app.octoapp.eu/help/pluginLibrary?category=materials\"> plugin supportato</a></b>. <b>Le bobine e i modelli vuoti</b> non sono mostrati.]]>"."</string>
 
     <!-- Auto filled -->
     <string name="material_menu___empty_state">"OctoApp si integra con i plugin FilamentManager e SpoolManager per permetterti di tenere traccia dei tuoi materiali. Una volta impostato, troverai le tue bobine qui."</string>
@@ -1051,8 +1053,42 @@ felice stampa!"</string>
     <string name="connect_printer___auto_menu___manual_option">"Collegare manualmente"</string>
     <string name="temperature_widget___change_offset">"Offset aggiunto alle temperature Gcode"</string>
     <string name="main_menu___item_cool_down">"Raffreddare"</string>
-    <string name="progress_widget___printer_message"></string>
-    <string name="progress_widget___settings___show_printer_message"></string>
-    <string name="progress_widget___settings___printer_message_description"></string>
-    <string name="progress_widget___printer_message_no_message"></string>
+    <string name="progress_widget___printer_message">"Messaggio della stampante"</string>
+    <string name="progress_widget___settings___show_printer_message">"Mostra il messaggio della stampante"</string>
+    <string name="progress_widget___settings___printer_message_description">"Richiede che il Companion Plugin sia installato sulla tua OctoPrint. I messaggi provengono da comandi Gcode M117."</string>
+    <string name="progress_widget___printer_message_no_message">"Nessun messaggio"</string>
+    <string name="timelapse_archive___menu___play"><![CDATA[Scarica e riproduci timelapse]]></string>
+    <string name="timelapse_archive___menu___share"><![CDATA[Scaricare e condividere timelapse]]></string>
+    <string name="timelapse_archive___menu___delete">"Cancellare il timelapse"</string>
+    <string name="timelapse_archive___menu___subtitle">"La riproduzione o la condivisione scaricherà %s"</string>
+    <string name="timelapse_config___title">"Configurazione del timelapse"</string>
+    <string name="timelapse_config___change">"Aggiornamento"</string>
+    <string name="timelapse_config___mode___off">"Off"</string>
+    <string name="timelapse_config___mode___timed">"Cronometrato"</string>
+    <string name="timelapse_config___mode___zchange">"Sul cambiamento Z"</string>
+    <string name="timelapse_config___mode">"Modo"</string>
+    <string name="timelapse_config___min_interval">"Intervallo minimo"</string>
+    <string name="timelapse_config___interval">"Intervallo"</string>
+    <string name="timelapse_config___retraction_z_hop">"Ritirata Z-Hop"</string>
+    <string name="timelapse_config___frame_rate">"Frame rate"</string>
+    <string name="timelapse_config___post_roll">"Rotolo di posta"</string>
+    <string name="timelapse_config___ask_before_printing">"Chiedi prima di stampare"</string>
+    <string name="timelapse_config___save_as_default">"Salva come predefinito"</string>
+    <string name="timelapse_config___save_as_default___description">"La configurazione del timelapse viene resettata al riavvio della OctoPrint. Questa opzione ti permette di impostare la configurazione corrente come predefinita tra i riavvii."</string>
+    <string name="timelapse_config___start_print">"Avviare la stampa"</string>
+    <string name="timelapse_archive___no_timelapse_found">"Nessun timelapse trovato"</string>
+    <string name="timelapse_archive___title">"Archivio Timelapse"</string>
+    <string name="timelapse_archive___subtitle"><![CDATA[OctoPrint ti permette di creare timelapse delle tue stampe. Puoi vedere le registrazioni qui sotto, gestire le tue impostazioni <a href="">qui</a>.]]></string>
+    <string name="x_secs">"%d sec"</string>
+    <string name="x_fps">"%d FPS"</string>
+    <string name="paused">"Pausa"</string>
+
+    <!-- Fuzzy -->
+    <string name="main_menu___item_app_theme_auto">"Auto"</string>
+
+    <!-- Fuzzy -->
+    <string name="main_menu___item_app_theme_light">"Luce"</string>
+
+    <!-- Fuzzy -->
+    <string name="main_menu___item_app_theme_dark">"Scuro"</string>
 </resources>

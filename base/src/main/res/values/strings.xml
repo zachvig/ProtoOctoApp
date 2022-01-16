@@ -10,7 +10,6 @@
 
     <!-- Auto filled -->
     <string name="app_widget___controlling_x">"Controlling %s"</string>
-    <string name="x_grams">%dg</string>
 
     <!-- Auto filled -->
     <string name="app_widget___edit_items_in_app">"Edit items in the app by long-pressing them"</string>
@@ -342,7 +341,9 @@ The widget will always control the OctoPrint instance that is currently active i
     <string name="main_menu___item_support_octoapp">"Support OctoApp"</string>
     <string name="main_menu___item_temperature_presets">"Temperature presets"</string>
     <string name="main_menu___item_turn_psu_off">"Turn printer off"</string>
-    <string name="main_menu___item_use_dark_mode">"Use dark mode"</string>
+
+    <!-- Fuzzy -->
+    <string name="main_menu___item_app_theme">"App design"</string>
     <string name="main_menu___menu_printer_title">"Printer"</string>
     <string name="main_menu___menu_settings_title">"Settings"</string>
 
@@ -980,4 +981,39 @@ happy printing!"</string>
     <!-- Fuzzy -->
     <string name="progress_widget___settings___printer_message_description">"Requires Companion Plugin to be installed on your OctoPrint. Messages come from M117 Gcode commands."</string>
     <string name="progress_widget___printer_message_no_message">"No message"</string>
+    <string name="timelapse_archive___menu___play"><![CDATA[Download & play timelapse]]></string>
+    <string name="timelapse_archive___menu___share"><![CDATA[Download & share timelapse]]></string>
+    <string name="timelapse_archive___menu___delete">"Delete timelapse"</string>
+    <string name="timelapse_archive___menu___subtitle">"Playing or sharing will download %s"</string>
+    <string name="timelapse_config___title">"Timelapse Config"</string>
+    <string name="timelapse_config___change">"Update"</string>
+    <string name="timelapse_config___mode___off">"Off"</string>
+    <string name="timelapse_config___mode___timed">"Timed"</string>
+    <string name="timelapse_config___mode___zchange">"On Z change"</string>
+    <string name="timelapse_config___mode">"Mode"</string>
+    <string name="timelapse_config___min_interval">"Minimum interval"</string>
+    <string name="timelapse_config___interval">"Interval"</string>
+    <string name="timelapse_config___retraction_z_hop">"Retraction Z-Hop"</string>
+    <string name="timelapse_config___frame_rate">"Frame rate"</string>
+    <string name="timelapse_config___post_roll">"Post roll"</string>
+    <string name="timelapse_config___ask_before_printing">"Ask before printing"</string>
+    <string name="timelapse_config___save_as_default">"Save as default"</string>
+    <string name="timelapse_config___save_as_default___description">"The timelapse config is reset when OctoPrint restarts. This option allows you to set the current config as default across restarts."</string>
+    <string name="timelapse_config___start_print">"Start print"</string>
+    <string name="timelapse_archive___no_timelapse_found">"No timelapses found"</string>
+    <string name="timelapse_archive___title">"Timelapse Archive"</string>
+    <string name="timelapse_archive___subtitle"><![CDATA[OctoPrint let\'s you create timelapses of your prints. You can see the recordings below, manage your settings <a href="">here</a>.]]></string>
+    <string name="x_secs">"%d sec"</string>
+    <string name="x_fps">"%d FPS"</string>
+    <string name="paused">"Paused"</string>
+
+    <!-- Fuzzy -->
+    <string name="main_menu___item_app_theme_auto">"Auto"</string>
+
+    <!-- Fuzzy -->
+    <string name="main_menu___item_app_theme_light">"Light"</string>
+
+    <!-- Fuzzy -->
+    <string name="main_menu___item_app_theme_dark">"Dark"</string>
+    <string name="x_grams">%dg</string>
 </resources>
