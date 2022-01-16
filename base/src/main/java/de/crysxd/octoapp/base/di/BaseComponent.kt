@@ -30,7 +30,7 @@ import de.crysxd.octoapp.base.network.LocalDnsResolver
 import de.crysxd.octoapp.base.network.OctoPrintProvider
 import de.crysxd.octoapp.base.network.SslKeyStoreHandler
 import de.crysxd.octoapp.base.usecase.ActivateMaterialUseCase
-import de.crysxd.octoapp.base.usecase.ApplyLegacyDarkMode
+import de.crysxd.octoapp.base.usecase.ApplyAppThemeUseCase
 import de.crysxd.octoapp.base.usecase.CancelPrintJobUseCase
 import de.crysxd.octoapp.base.usecase.CreateFolderUseCase
 import de.crysxd.octoapp.base.usecase.CreateProgressAppWidgetDataUseCase
@@ -149,7 +149,7 @@ interface BaseComponent {
     fun getAppLanguageUseCase(): GetAppLanguageUseCase
     fun setAppLanguageUseCase(): SetAppLanguageUseCase
     fun getPowerDevicesUseCase(): GetPowerDevicesUseCase
-    fun applyLegacyDarkModeUseCase(): ApplyLegacyDarkMode
+    fun applyAppThemeUseCase(): ApplyAppThemeUseCase
     fun executeSystemCommandUseCase(): ExecuteSystemCommandUseCase
     fun getWebcamSettingsUseCase(): GetWebcamSettingsUseCase
     fun getWebcamSnapshotUseCase(): GetWebcamSnapshotUseCase

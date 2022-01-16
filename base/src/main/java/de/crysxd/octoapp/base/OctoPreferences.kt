@@ -7,6 +7,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.gson.Gson
+import de.crysxd.octoapp.base.data.models.AppTheme
 import de.crysxd.octoapp.base.data.models.FileManagerSettings
 import de.crysxd.octoapp.base.data.models.GcodePreviewSettings
 import de.crysxd.octoapp.base.data.models.ProgressWidgetSettings
@@ -23,7 +24,7 @@ class OctoPreferences(
 
     companion object {
         private const val KEY_PRINT_NOTIFICATION_ENABLED = "print_notification_enabled"
-        private const val KEY_MANUAL_DARK_MODE = "manual_dark_mode_enabled"
+        private const val KEY_APP_THEME = "app_theme"
         private const val KEY_KEEP_SCREEN_ON = "keep_screen_on"
         private const val KEY_APP_LANGUAGE = "app_language"
         private const val KEY_ALLOW_APP_ROTATION = "allow_app_rotation"
@@ -60,9 +61,17 @@ class OctoPreferences(
     val updatedFlow get() = updatedChannel.asStateFlow().map { }
 
     init {
+        // Upgrade dark mode
+        if (sharedPreferences.getBoolean("manual_dark_mode_enabled", false)) {
+            sharedPreferences.edit {
+                putString(KEY_APP_THEME, AppTheme.DARK.name)
+            }
+        }
+
         // Delete legacy
         sharedPreferences.edit {
             remove("print_notification_was_paused")
+            remove("manual_dark_mode_enabled")
         }
     }
 
@@ -152,11 +161,11 @@ class OctoPreferences(
             edit { putBoolean(KEY_PRINT_NOTIFICATION_ENABLED, value) }
         }
 
-    var isManualDarkModeEnabled
-        get() = sharedPreferences.getBoolean(KEY_MANUAL_DARK_MODE, false)
+    var appTheme
+        get() = AppTheme.valueOf(sharedPreferences.getString(KEY_APP_THEME, null) ?: AppTheme.AUTO.name)
         set(value) {
-            edit { putBoolean(KEY_MANUAL_DARK_MODE, value) }
-            BaseInjector.get().applyLegacyDarkModeUseCase().executeBlocking(Unit)
+            edit { putString(KEY_APP_THEME, value.name) }
+            BaseInjector.get().applyAppThemeUseCase().executeBlocking(Unit)
         }
 
     var appLanguage
