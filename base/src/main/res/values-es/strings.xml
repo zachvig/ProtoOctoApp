@@ -1034,4 +1034,7 @@ feliz impresión!"</string>
 
     <!-- %dg -->
     <string name="x_grams">"%dg"</string>
+    <string name="control_center___title">"Cambio rápido"</string>
+    <string name="control_center___subtitle"></string>
+    <string name="control_center___announcement"></string>
 </resources>

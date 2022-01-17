@@ -1096,4 +1096,7 @@ gutes Drucken!"</string>
 
     <!-- %dg -->
     <string name="x_grams"></string>
+    <string name="control_center___title">"Schnellwechsel"</string>
+    <string name="control_center___subtitle"></string>
+    <string name="control_center___announcement"></string>
 </resources>
