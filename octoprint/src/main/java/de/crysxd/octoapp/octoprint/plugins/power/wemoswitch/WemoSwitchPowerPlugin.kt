@@ -18,10 +18,9 @@ class WemoSwitchPowerPlugin(
     internal suspend fun isOn(device: WemoSwitchPowerDevice) =
         api.sendCommandWithResponse(WemoSwitchCommand.GetDeviceStatus(device))?.currentState == WemoSwitchResponse.State.ON
 
-    override fun getDevices(settings: Settings) =
-        settings.plugins.values.mapNotNull {
-            it as? Settings.TpLinkSmartPlugSettings
-        }.firstOrNull()?.devices?.map {
-            it.copy(plugin = this)
-        } ?: emptyList()
+    override fun getDevices(settings: Settings) = settings.plugins.values.mapNotNull {
+        it as? Settings.WemoSettings
+    }.firstOrNull()?.devices?.map {
+        it.copy(plugin = this)
+    } ?: emptyList()
 }

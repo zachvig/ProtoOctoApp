@@ -148,7 +148,7 @@ class AppThemeMenuItem : RevolvingOptionsMenuItem() {
 
     override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_app_theme)
 
-    override fun handleOptionActivated(host: MenuHost?, option: Option) {
+    override suspend fun handleOptionActivated(host: MenuHost?, option: Option) {
         BaseInjector.get().octoPreferences().appTheme = AppTheme.valueOf(option.value)
     }
 }

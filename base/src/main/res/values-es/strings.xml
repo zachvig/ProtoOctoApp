@@ -286,7 +286,7 @@ Por favor <b>abra la interfaz web</b> e instale la última version del plugin <b
 
     <!-- Auto filled -->
     <!-- Fuzzy -->
-    <string name="main_menu___about_text"><![CDATA[Versión <font color="%1$06x"><b>%2$s</b></font> hecha<br/> en Europa <font color="%1$06x"><b>para ti,</b></font> con amor]]> &#127466;&#127482; <![CDATA[<br/>Traducción al español por Luis Diaz ]]> &#127462; &#127479; <![CDATA[<br><a href="privacy">Privacidad de los datos</a>]]></string>
+    <string name="main_menu___about_text"><![CDATA[Versión <font color="%1$06x"><b>%2$s</b></font> hecha<br/> en Europa <font color="%1$06x"><b>para ti,</b></font> con amor]]> &#127466;&#127482; <![CDATA[<br/>Traducción al español por Luis Diaz ]]> &#127462;&#127479; <![CDATA[<br><a href="privacy">Privacidad de los datos</a>]]></string>
 
     <!-- Auto filled -->
     <string name="main_menu___button_enable_automatic_lights">"Activar"</string>
