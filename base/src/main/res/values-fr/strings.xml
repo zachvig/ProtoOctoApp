@@ -1011,4 +1011,7 @@ bonne impression !"</string>
 
     <!-- %dg -->
     <string name="x_grams"></string>
+    <string name="control_center___title">"Changement rapide d'OctoPrint"</string>
+    <string name="control_center___subtitle"></string>
+    <string name="control_center___announcement"></string>
 </resources>
