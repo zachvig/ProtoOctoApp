@@ -181,7 +181,7 @@ class MenuAdapter(
 
         // Colors
         val background = ColorStateList.valueOf(ContextCompat.getColor(context, item.style.backgroundColor))
-        val foreground = ColorStateList.valueOf(ContextCompat.getColor(context, item.style.highlightColor))
+        val foreground = ColorStateList.valueOf(item.getIconColorOverwrite(context) ?: ContextCompat.getColor(context, item.style.highlightColor))
         val transparent = ColorStateList.valueOf(Color.TRANSPARENT)
         holder.binding.secondaryButton.backgroundTintList = background
         holder.binding.secondaryButton.setColorFilter(foreground.defaultColor)

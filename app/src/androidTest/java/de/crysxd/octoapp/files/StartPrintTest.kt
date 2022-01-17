@@ -2,7 +2,6 @@ package de.crysxd.octoapp.files
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -16,6 +15,7 @@ import de.crysxd.octoapp.R
 import de.crysxd.octoapp.base.di.BaseInjector
 import de.crysxd.octoapp.framework.BottomToolbarRobot
 import de.crysxd.octoapp.framework.MenuRobot
+import de.crysxd.octoapp.framework.MenuRobot.checkHasMenuButton
 import de.crysxd.octoapp.framework.TestEnvironmentLibrary
 import de.crysxd.octoapp.framework.WorkspaceRobot
 import de.crysxd.octoapp.framework.rules.AutoConnectPrinterRule
@@ -81,7 +81,7 @@ class StartPrintTest {
     }
 
     @Test(timeout = 60_000)
-    @AllowFlaky(attempts = 3)
+    @AllowFlaky(attempts = 1)
     fun WHEN_a_print_is_started_and_a_spool_is_selected_with_SpoolManager_THEN_the_app_shows_printing() =
         runMaterialTest("SM Spätzle")
 
@@ -132,15 +132,14 @@ class StartPrintTest {
 
     private fun verifyMaterialSelection() {
         waitForDialog(withText(R.string.material_menu___title_select_material))
-        onView(withText("FM Fusili (ABS)")).inRoot(isDialog()).check(matches(isDisplayed()))
-        onView(withText("FM Fusili (PLA)")).inRoot(isDialog()).check(matches(isDisplayed()))
-        onView(withText("SM Ramen (PLA, Japan, 2)")).inRoot(isDialog()).check(matches(isDisplayed()))
-        onView(withText("SM Ramen (PLA, Japan, 4)")).inRoot(isDialog()).check(matches(isDisplayed()))
-        onView(withText("SM Spaghetti")).inRoot(isDialog()).check(matches(isDisplayed()))
-        onView(withText("SM Spätzle")).inRoot(isDialog()).check(matches(isDisplayed()))
-        onView(withText("Template")).inRoot(isDialog()).check(doesNotExist())
-        onView(withText("Not Active")).inRoot(isDialog()).check(doesNotExist())
-        onView(withText("Empty")).inRoot(isDialog()).check(doesNotExist())
-        onView(withText(R.string.material_menu___print_without_selection)).inRoot(isDialog()).check(matches(isDisplayed()))
+        checkHasMenuButton("FM Fusili (ABS)", 0)
+        checkHasMenuButton("FM Fusili (PLA)", 1)
+        checkHasMenuButton("SM Ramen (PLA, Japan)", 2)
+        checkHasMenuButton("SM Ramen (PLA, Japan)", 3)
+        checkHasMenuButton("SM Spaghetti", 4)
+        checkHasMenuButton("SM Spätzle", 5)
+        checkHasMenuButton("Template", 0, false)
+        checkHasMenuButton("Empty", 0, false)
+        checkHasMenuButton(InstrumentationRegistry.getInstrumentation().targetContext.getString(R.string.material_menu___print_without_selection), 6)
     }
 }
