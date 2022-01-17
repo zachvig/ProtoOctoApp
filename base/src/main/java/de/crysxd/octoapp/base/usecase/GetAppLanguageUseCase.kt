@@ -4,7 +4,7 @@ import android.content.res.Resources
 import androidx.core.os.ConfigurationCompat
 import de.crysxd.octoapp.base.OctoPreferences
 import timber.log.Timber
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -17,7 +17,7 @@ class GetAppLanguageUseCase @Inject constructor(
     }
 
     override suspend fun doExecute(param: Unit, timber: Timber.Tree): Result {
-        val confirmedLanguages = listOf("de", "fr") // If device language is listed here, it will be used as default
+        val confirmedLanguages = listOf("de", "fr", "es") // If device language is listed here, it will be used as default
         val deviceLanguage = ConfigurationCompat.getLocales(Resources.getSystem().configuration)[0].language
         val appLanguage = octoPreferences.appLanguage ?: deviceLanguage.takeIf { confirmedLanguages.contains(it) } ?: "en"
 
