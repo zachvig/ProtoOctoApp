@@ -382,7 +382,9 @@ Das Widget steuert immer die OctoPrint-Instanz, die gerade in der App aktiv ist"
     <string name="main_menu___item_support_octoapp">"OctoApp unterstūtzen"</string>
     <string name="main_menu___item_temperature_presets">"Temperatur-Voreinstellungen"</string>
     <string name="main_menu___item_turn_psu_off">"Drucker ausschalten"</string>
-    <string name="main_menu___item_use_dark_mode">"Dark-Mode"</string>
+
+    <!-- Fuzzy -->
+    <string name="main_menu___item_app_theme">"App-Design"</string>
     <string name="main_menu___menu_printer_title">"Drucker"</string>
     <string name="main_menu___menu_settings_title">"Optionen"</string>
 
@@ -414,7 +416,7 @@ Das Widget steuert immer die OctoPrint-Instanz, die gerade in der App aktiv ist"
     <string name="main_menu___title_quick_switch_disabled">"Schnellwechsel deaktiviert"</string>
 
     <!-- Auto filled -->
-    <string name="material_menu___bottom_text"></string>
+    <string name="material_menu___bottom_text"><![CDATA[<small>"A" bedeutet aktiviert. Materialien werden von einem <b><a href="http://app.octoapp.eu/help/pluginLibrary?category=materials">unterstützten Plugin</a></b> bereitgestellt. <b>Leere Spulen und Vorlagen</b> werden nicht angezeigt.]]></string>
 
     <!-- Auto filled -->
     <string name="material_menu___empty_state">"OctoApp ist mit den Plugins FilamentManager und SpoolManager integriert, damit du den Überblick über deine Werkstoffe behälst. Einmal eingerichtet, finden du deine Spulen hier."</string>
@@ -907,7 +909,7 @@ gutes Drucken!"</string>
 
     <!-- Auto filled -->
     <string name="workspace___explainer"><![CDATA[OctoApp wird <b>automatisch</b> zum richtigen Arbeitsbereich wechseln.<br><br><b>Verbinden</b>: Es ist kein Drucker angeschlossen, aber Du hast alle Werkzeuge, um einen anzuschließen.<br><br><b>Vorbereiten</b>: Ein Drucker ist angeschlossen, druckt aber nicht. Bereiten dich vor und starten deinen nächsten Druck!<br><br><b>Drucken</b>: Überwache und kontrolliere den aktiven Druck!<br><br>Jeder Arbeitsbereich enthält alle Steuerelemente, die du in der aktuellen Situation benötigst. Dadurch bleibt App übersichtlich und einfach!]]></string>
-    <string name="main_menu___warning_automatic_lights"><![CDATA[<small>⚠️ Wichtiger Hinweis:<br>Einige Plugins (z.B. TPLink) können <b>deine Drucker abschalten, wenn OctoApp das Licht ausschaltet</b>, wenn du die App schließen! Du kannst dieses Verhalten in den Plugin-Einstellungen im Webinterface deaktivieren</small>]]></string>
+    <string name="main_menu___warning_automatic_lights"><![CDATA[<small>⚠️ Wichtiger Hinweis:<br>Einige Plugins (z.B. TPLink, Wemo) können <b>deine Drucker abschalten, wenn OctoApp das Licht ausschaltet</b>, wenn du die App schließen! Du kannst dieses Verhalten in den Plugin-Einstellungen im Webinterface deaktivieren</small>]]></string>
     <string name="print_notifications_menu___item_live_notification_on">"Live-Benachrichtigungen"</string>
     <string name="main_menu___item_print_notifications">"Druck-Benachrichtigungen"</string>
     <string name="notification_channel___filament_change">"Filamentwechsel"</string>
@@ -1053,8 +1055,45 @@ gutes Drucken!"</string>
     <string name="connect_printer___auto_menu___manual_option">"Manuell verbinden"</string>
     <string name="temperature_widget___change_offset">"Versatz zu Gcode Temperaturen"</string>
     <string name="main_menu___item_cool_down">"Abkühlen"</string>
-    <string name="progress_widget___printer_message"></string>
-    <string name="progress_widget___settings___show_printer_message"></string>
-    <string name="progress_widget___settings___printer_message_description"></string>
-    <string name="progress_widget___printer_message_no_message"></string>
+    <string name="progress_widget___printer_message">"Druckermeldung"</string>
+    <string name="progress_widget___settings___show_printer_message">"Druckermeldung anzeigen"</string>
+    <string name="progress_widget___settings___printer_message_description">"Erfordert, dass das Companion Plugin auf Ihrem OctoPrint installiert ist. Die Meldungen stammen von M117 Gcode-Befehlen."</string>
+    <string name="progress_widget___printer_message_no_message">"Keine Nachricht"</string>
+    <string name="timelapse_archive___menu___play"><![CDATA[Timelapse herunterladen und abspielen]]></string>
+    <string name="timelapse_archive___menu___share"><![CDATA[Zeitraffer herunterladen und weitergeben]]></string>
+    <string name="timelapse_archive___menu___delete">"Timelapse löschen"</string>
+    <string name="timelapse_archive___menu___subtitle">"Beim Abspielen oder Teilen wird %s heruntergeladen"</string>
+    <string name="timelapse_config___title">"Zeitraffer-Konfiguration"</string>
+    <string name="timelapse_config___change">"Update"</string>
+    <string name="timelapse_config___mode___off">"Aus"</string>
+    <string name="timelapse_config___mode___timed">"Zeitgesteuert"</string>
+    <string name="timelapse_config___mode___zchange">"Auf Z ändern"</string>
+    <string name="timelapse_config___mode">"Modus"</string>
+    <string name="timelapse_config___min_interval">"Mindestabstand"</string>
+    <string name="timelapse_config___interval">"Intervall"</string>
+    <string name="timelapse_config___retraction_z_hop">"Rückzug Z-Hop"</string>
+    <string name="timelapse_config___frame_rate">"Bildfrequenz"</string>
+    <string name="timelapse_config___post_roll">"Postrolle"</string>
+    <string name="timelapse_config___ask_before_printing">"Vor dem Drucken fragen"</string>
+    <string name="timelapse_config___save_as_default">"Als Standard speichern"</string>
+    <string name="timelapse_config___save_as_default___description">"Die Zeitrafferkonfiguration wird beim Neustart von OctoPrint zurückgesetzt. Mit dieser Option können Sie die aktuelle Konfiguration über Neustarts hinweg als Standard festlegen."</string>
+    <string name="timelapse_config___start_print">"Druck starten"</string>
+    <string name="timelapse_archive___no_timelapse_found">"Keine Zeitraffer gefunden"</string>
+    <string name="timelapse_archive___title">"Zeitraffer-Archiv"</string>
+    <string name="timelapse_archive___subtitle"><![CDATA[Mit OctoPrint können Sie Zeitraffer von Ihren Drucken erstellen. Sie können die Aufnahmen unten sehen, Ihre Einstellungen verwalten Sie <a href="">hier</a>.]]></string>
+    <string name="x_secs">"%d sec"</string>
+    <string name="x_fps">"%d FPS"</string>
+    <string name="paused">"Pausiert"</string>
+
+    <!-- Fuzzy -->
+    <string name="main_menu___item_app_theme_auto">"Auto"</string>
+
+    <!-- Fuzzy -->
+    <string name="main_menu___item_app_theme_light">"Licht"</string>
+
+    <!-- Fuzzy -->
+    <string name="main_menu___item_app_theme_dark">"Dunkel"</string>
+
+    <!-- %dg -->
+    <string name="x_grams"></string>
 </resources>
