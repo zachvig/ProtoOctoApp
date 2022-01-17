@@ -7,6 +7,7 @@ import de.crysxd.octoapp.octoprint.plugins.power.tasmota.TasmotaPowerDevice
 import de.crysxd.octoapp.octoprint.plugins.power.tplinkplug.TpLinkSmartPlugPowerDevice
 import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TradfriPowerDevice
 import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TuyaPowerDevice
+import de.crysxd.octoapp.octoprint.plugins.power.wemoswitch.WemoSwitchPowerDevice
 
 
 data class Settings(
@@ -71,6 +72,10 @@ data class Settings(
 
     data class TpLinkSmartPlugSettings(
         @SerializedName("arrSmartplugs") val devices: List<TpLinkSmartPlugPowerDevice>?
+    ) : PluginSettings
+
+    data class WemoSettings(
+        @SerializedName("arrSmartplugs") val devices: List<WemoSwitchPowerDevice>?
     ) : PluginSettings
 
     data class TasmotaSettings(

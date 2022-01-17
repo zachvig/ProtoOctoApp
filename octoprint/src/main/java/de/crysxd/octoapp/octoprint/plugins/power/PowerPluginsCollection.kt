@@ -21,6 +21,8 @@ import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TradfriApi
 import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TradfriPowerPlugin
 import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TuyaApi
 import de.crysxd.octoapp.octoprint.plugins.power.tradfri.TuyaPowerPlugin
+import de.crysxd.octoapp.octoprint.plugins.power.wemoswitch.WemoSwitchApi
+import de.crysxd.octoapp.octoprint.plugins.power.wemoswitch.WemoSwitchPowerPlugin
 import de.crysxd.octoapp.octoprint.plugins.power.wled.WledApi
 import de.crysxd.octoapp.octoprint.plugins.power.wled.WledPowerPlugin
 import de.crysxd.octoapp.octoprint.plugins.power.ws281x.WS281xApi
@@ -42,6 +44,7 @@ class PowerPluginsCollection(retrofit: Retrofit) {
         WledPowerPlugin(retrofit.create(WledApi::class.java)),
         OctoCamPowerPlugin(retrofit.create(OctoCamApi::class.java)),
         OctoLightPowerPlugin(retrofit.create(OctoLightApi::class.java)),
+        WemoSwitchPowerPlugin(retrofit.create(WemoSwitchApi::class.java)),
     )
 
     fun getDevices(settings: Settings) = plugins.map {
