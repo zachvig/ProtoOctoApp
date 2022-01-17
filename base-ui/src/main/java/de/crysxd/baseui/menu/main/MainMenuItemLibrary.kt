@@ -29,7 +29,7 @@ class MenuItemLibrary {
         MenuItems.MENU_ITEM_EMERGENCY_STOP to EmergencyStopMenuItem::class,
         MenuItems.MENU_ITEM_TURN_PSU_OFF to TurnPsuOffMenuItem::class,
         MenuItems.MENU_ITEM_POWER_CONTROLS to OpenPowerControlsMenuItem::class,
-        MenuItems.MENU_ITEM_NIGHT_THEME to NightThemeMenuItem::class,
+        MenuItems.MENU_ITEM_NIGHT_THEME to AppThemeMenuItem::class,
         MenuItems.MENU_ITEM_PRINT_NOTIFICATION_SETTINGS to PrintNotificationMenuItem::class,
         MenuItems.MENU_ITEM_LIVE_NOTIFICATION to PrintNotificationsMenu.LiveNotificationMenuItem::class,
         MenuItems.MENU_ITEM_SYSTEM_NOTIFICATION_SETTINGS to PrintNotificationsMenu.SystemNotificationSettings::class,

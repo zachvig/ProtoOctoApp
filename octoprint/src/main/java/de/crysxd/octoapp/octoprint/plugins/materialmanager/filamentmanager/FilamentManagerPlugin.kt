@@ -13,16 +13,18 @@ class FilamentManagerPlugin(private val filamentManagerApi: FilamentManagerApi) 
         val spools = async { filamentManagerApi.listSpools().spools }
         val selection = filamentManagerApi.getSelections()
 
-        spools.await().map { spool ->
+        spools.await().filter { (it.weight ?: 0f) > 0 }.map { spool ->
             Material(
                 id = spool.id,
                 displayName = spool.name,
                 color = null,
+                colorName = null,
                 vendor = spool.profile.vendor ?: "Unknown",
                 material = spool.profile.material ?: "Unknown",
                 pluginDisplayName = "FilamentManager",
                 pluginId = pluginId,
-                isActivated = selection.selections.any { it.spool.id == spool.id }
+                isActivated = selection.selections.any { it.spool.id == spool.id },
+                weightGrams = spool.weight,
             )
         }
     }

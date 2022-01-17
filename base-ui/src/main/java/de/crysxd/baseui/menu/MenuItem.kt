@@ -25,6 +25,7 @@ interface MenuItem {
     suspend fun onSecondaryClicked(host: MenuHost?) = Unit
 
     fun getTitle(context: Context): CharSequence
+    fun getIconColorOverwrite(context: Context): Int? = null
     fun getRightDetail(context: Context): CharSequence? = null
     fun getDescription(context: Context): CharSequence? = null
     fun isVisible(@IdRes destinationId: Int) = true

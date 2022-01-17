@@ -19,13 +19,13 @@ class SpoolManagerPlugin(private val spoolManagerApi: SpoolManagerApi) : Materia
                 id = it.databaseId,
                 displayName = it.displayName,
                 color = it.color,
+                colorName = it.colorName,
                 vendor = it.vendor ?: "Unknown",
                 material = it.material ?: "Unknown",
                 pluginDisplayName = "SpoolManager",
                 pluginId = pluginId,
-                isActivated = response.selectedSpools?.filterNotNull()?.any { s ->
-                    s.databaseId == it.databaseId
-                } == true
+                isActivated = response.selectedSpools?.any { s -> s.databaseId == it.databaseId } == true,
+                weightGrams = it.remainingWeight,
             )
         }
     }

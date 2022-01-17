@@ -10,11 +10,13 @@ import de.crysxd.baseui.menu.Menu
 import de.crysxd.baseui.menu.MenuHost
 import de.crysxd.baseui.menu.MenuItem
 import de.crysxd.baseui.menu.MenuItemStyle
+import de.crysxd.baseui.menu.RevolvingOptionsMenuItem
 import de.crysxd.baseui.menu.SubMenuItem
 import de.crysxd.baseui.menu.ToggleMenuItem
 import de.crysxd.baseui.menu.switchprinter.SwitchOctoPrintMenu
 import de.crysxd.baseui.widget.WidgetHostFragment
 import de.crysxd.octoapp.base.UriLibrary
+import de.crysxd.octoapp.base.data.models.AppTheme
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_AUTOMATIC_LIGHTS
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_AUTO_CONNECT_PRINTER
 import de.crysxd.octoapp.base.data.models.MenuItems.MENU_ITEM_CHANGE_LANGUAGE
@@ -36,7 +38,7 @@ class SettingsMenu : Menu {
     override suspend fun getMenuItem() = listOf(
         HelpMenuItem(),
         ChangeLanguageMenuItem(),
-        NightThemeMenuItem(),
+        AppThemeMenuItem(),
         PrintNotificationMenuItem(),
         KeepScreenOnDuringPrintMenuItem(),
         AutoConnectPrinterMenuItem(),
@@ -129,8 +131,14 @@ class CustomizeWidgetsMenuItem : MenuItem {
     }
 }
 
-class NightThemeMenuItem : ToggleMenuItem() {
-    override val isChecked get() = BaseInjector.get().octoPreferences().isManualDarkModeEnabled
+class AppThemeMenuItem : RevolvingOptionsMenuItem() {
+    private val context = BaseInjector.get().localizedContext()
+    override val activeValue get() = BaseInjector.get().octoPreferences().appTheme.name
+    override val options = listOfNotNull(
+        Option(context.getString(R.string.main_menu___item_app_theme_auto), AppTheme.AUTO.toString()).takeIf { Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q },
+        Option(context.getString(R.string.main_menu___item_app_theme_dark), AppTheme.DARK.toString()),
+        Option(context.getString(R.string.main_menu___item_app_theme_light), AppTheme.LIGHT.toString()),
+    )
     override val itemId = MENU_ITEM_NIGHT_THEME
     override var groupId = ""
     override val order = 104
@@ -138,10 +146,10 @@ class NightThemeMenuItem : ToggleMenuItem() {
     override val style = MenuItemStyle.Settings
     override val icon = R.drawable.ic_round_dark_mode_24
 
-    override fun isVisible(destinationId: Int) = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
-    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_use_dark_mode)
-    override suspend fun handleToggleFlipped(host: MenuHost, enabled: Boolean) {
-        BaseInjector.get().octoPreferences().isManualDarkModeEnabled = enabled
+    override fun getTitle(context: Context) = context.getString(R.string.main_menu___item_app_theme)
+
+    override suspend fun handleOptionActivated(host: MenuHost?, option: Option) {
+        BaseInjector.get().octoPreferences().appTheme = AppTheme.valueOf(option.value)
     }
 }
 
