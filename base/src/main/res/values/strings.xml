@@ -4,9 +4,9 @@
 
     <!-- Auto filled -->
     <string name="announcement___new_version_learn_more">"What's new?"</string>
-    <string name="announcement___new_version_title">"Welcome to OctoApp 1.12! 🍾"</string>
+    <string name="announcement___new_version_title">"Welcome to Protosthetics Printer Control 1.0! 🍾"</string>
     <string name="app_logs">"App logs"</string>
-    <string name="app_name">"OctoApp"</string>
+    <string name="app_name">"Protosthetics Printer Control"</string>
 
     <!-- Auto filled -->
     <string name="app_widget___controlling_x">"Controlling %s"</string>

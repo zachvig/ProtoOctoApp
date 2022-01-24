@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">@color/green</color>
-    <color name="primary_dark">@color/green_3</color>
-    <color name="accent">@color/blue</color>
+    <color name="primary">@color/blue</color>
+    <color name="primary_dark">@color/blue</color>
+    <color name="accent">@color/white</color>
 
     <color name="window_background">@color/white</color>
     <color name="input_background">@color/light_blue</color>
@@ -35,21 +35,21 @@
     <color name="menu_style_settings_background">@color/yellow_translucent</color>
     <color name="menu_style_printer_foreground">@color/blue</color>
     <color name="menu_style_printer_background">@color/blue_translucent</color>
-    <color name="menu_style_octoprint_foreground">@color/green</color>
-    <color name="menu_style_octoprint_background">@color/green_translucent</color>
+    <color name="menu_style_octoprint_foreground">@color/blue</color>
+    <color name="menu_style_octoprint_background">@color/blue_translucent</color>
     <color name="menu_style_neutral_foreground">@color/light_grey</color>
     <color name="menu_style_neutral_background">@color/light_grey_translucent</color>
 
     <color name="default_color_scheme">@color/primary</color>
-    <color name="default_color_scheme_light">#D0F3CC</color>
+    <color name="default_color_scheme_light">#AED6EC</color>
     <color name="red_color_scheme">@color/red</color>
     <color name="red_color_scheme_light">#FFE4E4</color>
     <color name="orange_color_scheme">@color/orange</color>
     <color name="orange_color_scheme_light">#FFE6C1</color>
     <color name="yellow_color_scheme">@color/yellow</color>
     <color name="yellow_color_scheme_light">#FFF2CD</color>
-    <color name="green_color_scheme">@color/green_2</color>
-    <color name="green_color_scheme_light">#CDEFDB</color>
+    <color name="green_color_scheme">@color/light_blue</color>
+    <color name="green_color_scheme_light">#CDD8EF</color>
     <color name="blue_color_scheme">@color/dark_blue</color>
     <color name="blue_color_scheme_light">#CCCFEAFF</color>
     <color name="violet_color_scheme">@color/violet</color>
@@ -64,7 +64,7 @@
     <color name="gcode_previous">#1A389AE5</color>
     <color name="gcode_remaining">#80FFFFFF</color>
     <color name="gcode_unsupported">#FFC000</color>
-    <color name="gcode_travel">#13C100</color>
+    <color name="gcode_travel">#0067C1</color>
     <color name="gcode_print_head">#EE3F3F</color>
 
     <color name="snackbar_neutral">@color/light_grey</color>
@@ -86,12 +86,12 @@
     <color name="dark_blue_transparent">#1A104F80</color>
     <color name="yellow">#FFC000</color>
     <color name="yellow_translucent">#1FFFC000</color>
-    <color name="green">#27AE60</color>
-    <color name="green_translucent">#2627AE60</color>
+    <color name="green">#275DAE</color>
+    <color name="green_translucent">#262764AE</color>
     <color name="orange">#FF9800</color>
     <color name="orange_translucent">#26FF9800</color>
-    <color name="green_2">#13C100</color>
-    <color name="green_3">#249318</color>
+    <color name="green_2">#0094C1</color>
+    <color name="green_3">#185E93</color>
     <color name="violet">#BB6BD9</color>
     <color name="light_grey">#999</color>
     <color name="light_grey_translucent">#2D999999</color>

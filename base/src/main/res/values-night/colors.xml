@@ -16,7 +16,7 @@
     <color name="button_disabled">#393939</color>
     <color name="menu_pin_foreground">@color/white_translucent</color>
     <color name="menu_pin_background">@color/white_translucent_2</color>
-    <color name="default_color_scheme_light">#6A9C63</color>
+    <color name="default_color_scheme_light">#083757</color>
     <color name="menu_style_octoprint_foreground">@color/green_3</color>
     <color name="red_color_scheme_light">#9E5858</color>
     <color name="white_color_scheme">#656565</color>
@@ -31,6 +31,6 @@
 
 
     <color name="blue">#0A90FA</color>
-    <color name="green">#106101</color>
+    <color name="green">#015361</color>
 
 </resources>
